@@ -5,12 +5,17 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
+import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -39,22 +44,22 @@ internal class WaveformView : LinearLayoutCompat {
 
     private val logger by taggedLogger("WaveformView")
 
-    private val tracker: ImageView
+    private val slider: ImageView
 
     init {
         orientation = HORIZONTAL
 
-        tracker = ImageView(context).apply {
+        slider = ImageView(context).apply {
             setBackgroundResource(R.drawable.stream_ui_share_rectangle)
+            isVisible = false
         }
-        tracker.visibility = View.INVISIBLE
 
         val layoutParamsButton = LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.MATCH_PARENT
         )
 
-        addView(tracker, layoutParamsButton)
+        addView(slider, layoutParamsButton)
 
         setWillNotDraw(false)
     }
@@ -69,17 +74,31 @@ internal class WaveformView : LinearLayoutCompat {
     private var onEndDrag: (Int) -> Unit = {}
     private var isDragging = false
 
-    private val paintLeft = Paint().apply {
+    public var onSliderProgressChange: (Float) -> Unit = {}
+
+    private val paintPassed = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
         style = Paint.Style.FILL
     }
 
-    private val paintRight = Paint().apply {
+    private val paintUpcoming = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_grey)
         style = Paint.Style.FILL
     }
 
     private val _waveform = arrayListOf<Float>()
+
+    public var progress: Float = INITIAL_PROGRESS
+        set(value) {
+            field = value
+            invalidate()
+        }
+
+    public var isSliderVisible: Boolean
+        get() = slider.visibility == View.VISIBLE
+        set(value) {
+            slider.isVisible = value
+        }
 
     public var waveform: List<Float>
         get() = _waveform
@@ -103,9 +122,7 @@ internal class WaveformView : LinearLayoutCompat {
         invalidate()
     }
 
-    private var progress: Float = INITIAL_PROGRESS
-
-    internal fun setProgress(progress: Float) {
+    internal fun updateProgress(progress: Float) {
         if (!isDragging) {
             this.progress = progress
             invalidate()
@@ -141,26 +158,69 @@ internal class WaveformView : LinearLayoutCompat {
         barWidth = totalBarWidth.toFloat() / barCount
         spaceWidth = totalSpaceWidth.toFloat() / barCount
         maxHeight = measuredHeight - paddingTop - paddingBottom
+
+        viewportRect.apply {
+            left = paddingStart.toFloat()
+            right = (measuredWidth - paddingEnd).toFloat()
+            top = paddingTop.toFloat()
+            bottom = (measuredHeight - paddingBottom).toFloat()
+        }
     }
 
+    private val viewportRect = RectF()
     private val barRect = RectF()
+
+    override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {
+        return super.onInterceptTouchEvent(ev)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+                isDragging = true
+                slider.updateLayoutParams {
+                    width += EXPAND_TRACKER_WIDTH.dpToPx()
+                }
+                progress = event.x / viewportRect.width()
+                true
+            }
+
+            MotionEvent.ACTION_MOVE -> {
+                progress = event.x / viewportRect.width()
+                onSliderProgressChange(progress)
+                true
+            }
+
+            MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                isDragging = false
+                slider.updateLayoutParams {
+                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
+                }
+                true
+            }
+
+            else -> super.onTouchEvent(event)
+        }
+    }
 
     /**
      * In onDraw all the bars are drawn and the tracker position is calculated.
      */
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        val viewportW = (width - paddingStart - paddingEnd).toFloat()
+        val viewportW = viewportRect.width()
         val perBarW = viewportW / barLimit
         val spacerW = perBarW * 0.3f
         val barW = perBarW - spacerW
 
-        val maxBarHeight = height - paddingBottom - paddingTop
+        val maxBarHeight = viewportRect.height()
         val centerY = height / 2f
         val maxEnd = width - paddingEnd
         val minStart = paddingStart
 
         val minVisibleIndex = maxOf((_waveform.size - barLimit), 0)
+
+        val progressX = viewportW * progress
 
         var deltaX = 0f
         for (index in _waveform.lastIndex downTo minVisibleIndex) {
@@ -186,15 +246,18 @@ internal class WaveformView : LinearLayoutCompat {
             //     barRect.offset(deltaX, 0f)
             // }
 
-
             if (barRect.left < minStart) {
                 barRect.left = minStart.toFloat()
             } else if (barRect.right > maxEnd) {
                 barRect.right = maxEnd.toFloat()
             }
 
-            canvas.drawRoundRect(barRect, rx, ry, paintLeft)
+            val passed = !isSliderVisible || barRect.centerX() < progressX
+            canvas.drawRoundRect(barRect, rx, ry, if (passed) paintPassed else paintUpcoming)
         }
+        val sliderX = progressX - slider.width / 2f
+        val finalSliderX = sliderX.limitTo(viewportRect.left, viewportRect.right - slider.width)
+        slider.translationX = finalSliderX
     }
 }
 

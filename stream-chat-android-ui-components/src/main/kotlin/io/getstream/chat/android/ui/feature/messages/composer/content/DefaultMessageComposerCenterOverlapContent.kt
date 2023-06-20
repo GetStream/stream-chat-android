@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
@@ -52,6 +53,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     public var stopButtonClickListener: () -> Unit = {}
     public var deleteButtonClickListener: () -> Unit = {}
     public var completeButtonClickListener: () -> Unit = {}
+    public var sliderProgressChangeListener: (Float) -> Unit = {}
 
     private val logger by taggedLogger(TAG)
 
@@ -101,6 +103,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         }
         binding.recordingPlayback.setOnClickListener {
             playbackButtonClickListener()
+        }
+        binding.recordingWaveform.onSliderProgressChange = { progress ->
+            sliderProgressChangeListener(progress)
         }
     }
 
@@ -199,6 +204,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingPlayback.isClickable = false
         binding.recordingPlayback.isFocusable = false
         binding.recordingWaveform.isVisible = false
+        binding.recordingWaveform.isSliderVisible = false
         binding.recordingStop.isVisible = false
         binding.recordingDelete.isVisible = false
         binding.recordingComplete.isVisible = false
@@ -221,6 +227,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingTimer.text = formatMillis(state.duration)
         binding.recordingWaveform.isVisible = true
         binding.recordingWaveform.waveform = state.waveform
+        binding.recordingWaveform.isSliderVisible = false
 
         micPopup?.dismiss()
         micPopup = null
@@ -249,6 +256,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingTimer.text = formatMillis(0L)
         binding.recordingWaveform.isVisible = true
         binding.recordingWaveform.waveform = state.waveform
+        binding.recordingWaveform.waveform = state.waveform
+        binding.recordingWaveform.isSliderVisible = true
+        binding.recordingWaveform.progress = state.playingProgress
 
         binding.recordingDelete.isVisible = true
         binding.recordingStop.isVisible = false
@@ -426,14 +436,6 @@ private fun View.getRectInWindow(out: Rect) {
         top = xy[1]
         right = xy[0] + width
         bottom = xy[1] + height
-    }
-}
-
-private fun Int.limitTo(min: Int, max: Int): Int {
-    return when {
-        this < min -> min
-        this > max -> max
-        else -> this
     }
 }
 
