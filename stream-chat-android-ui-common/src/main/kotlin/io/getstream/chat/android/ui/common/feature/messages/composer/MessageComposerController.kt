@@ -734,6 +734,10 @@ public class MessageComposerController(
 
     public fun completeRecording(): Unit = audioRecordingController.completeRecording()
 
+    public fun pauseRecording(): Unit = audioRecordingController.pauseRecording()
+
+    public fun seekRecordingTo(progress: Float): Unit = audioRecordingController.seekRecordingTo(progress)
+
     /**
      * Shows the mention suggestion list popup if necessary.
      */

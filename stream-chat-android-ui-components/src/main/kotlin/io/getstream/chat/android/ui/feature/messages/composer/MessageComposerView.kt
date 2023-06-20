@@ -161,7 +161,8 @@ public class MessageComposerView : ConstraintLayout {
     public var audioStopButtonClickListener: () -> Unit = {}
     public var audioPlaybackButtonClickListener: () -> Unit = {}
     public var audioCompleteButtonClickListener: () -> Unit = {}
-    public var audioSliderProgressChangeListener: (Float) -> Unit = {}
+    public var audioSliderDragStartListener: (Float) -> Unit = {}
+    public var audioSliderDragStopListener: (Float) -> Unit = {}
 
     /**
      * Handle for [PopupWindow] which is currently displayed. Used to display command
@@ -284,7 +285,8 @@ public class MessageComposerView : ConstraintLayout {
                 it.stopButtonClickListener = { audioStopButtonClickListener() }
                 it.playbackButtonClickListener = { audioPlaybackButtonClickListener() }
                 it.completeButtonClickListener = { audioCompleteButtonClickListener() }
-                it.sliderProgressChangeListener = { progress -> audioSliderProgressChangeListener(progress) }
+                it.sliderDragStartListener = { progress -> audioSliderDragStartListener(progress) }
+                it.sliderDragStopListener = { progress -> audioSliderDragStopListener(progress) }
             }
         )
     }

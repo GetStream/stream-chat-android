@@ -29,6 +29,11 @@ private const val DEFAULT_BAR_NUMBER = 40
 private const val DEFAULT_BAR_VALUE = 0F
 private const val INITIAL_PROGRESS = 0F
 
+
+private const val DRAG_START = 1
+private const val DRAG_MOVE = 2
+private const val DRAG_END = 3
+
 /**
  * Custom view that presents a Seekbar that shows and interacts with audio wave bars.
  */
@@ -74,7 +79,8 @@ internal class WaveformView : LinearLayoutCompat {
     private var onEndDrag: (Int) -> Unit = {}
     private var isDragging = false
 
-    public var onSliderProgressChange: (Float) -> Unit = {}
+    public var onSliderDragStart: (Float) -> Unit = {}
+    public var onSliderDragStop: (Float) -> Unit = {}
 
     private val paintPassed = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
@@ -182,16 +188,18 @@ internal class WaveformView : LinearLayoutCompat {
                     width += EXPAND_TRACKER_WIDTH.dpToPx()
                 }
                 progress = event.x / viewportRect.width()
+                onSliderDragStart(progress)
                 true
             }
 
             MotionEvent.ACTION_MOVE -> {
                 progress = event.x / viewportRect.width()
-                onSliderProgressChange(progress)
                 true
             }
 
             MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                progress = event.x / viewportRect.width()
+                onSliderDragStop(progress)
                 isDragging = false
                 slider.updateLayoutParams {
                     width -= EXPAND_TRACKER_WIDTH.dpToPx()

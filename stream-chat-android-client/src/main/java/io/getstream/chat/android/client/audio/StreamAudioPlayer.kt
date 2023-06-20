@@ -219,7 +219,16 @@ internal class StreamMediaPlayer(
 
         if (currentAudioHash == hash) {
             mediaPlayer.seekTo(msec)
+            val currentPosition = mediaPlayer.currentPosition
+            logger.w { "[seekTo] msec: $msec, currentPosition: $currentPosition" }
         }
+    }
+
+    fun getCurrentProgress(audioHash: Int): Int {
+        if (currentIndex == audioHash) {
+            return mediaPlayer.currentPosition
+        }
+        return seekMap[audioHash] ?: 0
     }
 
     override fun startSeek(audioHash: Int) {

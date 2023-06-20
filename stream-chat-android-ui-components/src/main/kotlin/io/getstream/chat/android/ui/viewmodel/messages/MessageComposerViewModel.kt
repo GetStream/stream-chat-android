@@ -245,6 +245,10 @@ public class MessageComposerViewModel(
 
     public fun completeRecording(): Unit = messageComposerController.completeRecording()
 
+    public fun pauseRecording(): Unit = messageComposerController.pauseRecording()
+
+    public fun seekRecordingTo(progress: Float): Unit = messageComposerController.seekRecordingTo(progress)
+
     public fun sendRecording() {
         completeRecording()
         sendMessage(buildNewMessage())

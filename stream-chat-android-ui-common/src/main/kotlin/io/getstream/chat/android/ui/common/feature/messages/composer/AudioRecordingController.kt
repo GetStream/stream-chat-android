@@ -235,7 +235,7 @@ public class AudioRecordingController(
         if (curState is RecordingState.Overview) {
             this.recordingState.value = curState.copy(
                 isPlaying = true,
-                playingProgress = progressState.progress.toFloat()
+                playingProgress = progressState.progress.toFloat(),
             )
         }
     }
@@ -261,10 +261,33 @@ public class AudioRecordingController(
         recordingState.value = RecordingState.Overview(state.duration, normalized, attachment)
     }
 
+    public fun seekRecordingTo(progress: Float) {
+        val state = this.recordingState.value
+        if (state !is RecordingState.Overview) {
+            logger.w { "[seekRecordingTo] rejected (state is not Overview)" }
+            return
+        }
+        val positionInMs = (progress * state.duration).toInt()
+        logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
+        audioPlayer.seekTo(positionInMs, state.playingId)
+        this.recordingState.value = state.copy(playingProgress = progress)
+    }
+
+    public fun pauseRecording() {
+        val state = this.recordingState.value
+        if (state !is RecordingState.Overview) {
+            logger.w { "[pauseRecording] rejected (state is not Overview)" }
+            return
+        }
+        logger.i { "[pauseRecording] state: $state" }
+        audioPlayer.startSeek(state.playingId)
+        this.recordingState.value = state.copy(isPlaying = false)
+    }
+
     public fun completeRecording() {
         val state = this.recordingState.value
         if (state is RecordingState.Idle) {
-            logger.w { "[completeRecording] rejected (state is not Idle)" }
+            logger.w { "[completeRecording] rejected (state is Idle)" }
             return
         }
         logger.i { "[completeRecording] state: $state" }
