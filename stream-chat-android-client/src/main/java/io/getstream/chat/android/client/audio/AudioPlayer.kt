@@ -50,6 +50,8 @@ public interface AudioPlayer {
 
     public fun clearTracks()
 
+    public fun prepare(sourceUrl: String, audioHash: Int)
+
     /**
      * Plays an audio track with sourceUrl.
      *
@@ -105,12 +107,17 @@ public interface AudioPlayer {
      * Disposes the MediaPlayer and remove all audios.
      */
     public fun dispose()
+
 }
 
 /**
  * Progress data of the audio track.
  */
-public data class ProgressData(public val duration: Int, public val progress: Double)
+public data class ProgressData(
+    public val currentPosition: Int,
+    public val progress: Float,
+    public val duration: Int,
+)
 
 /**
  * State of the an audio track. When a song complete and another starts the current song goes to UNSET and the next one

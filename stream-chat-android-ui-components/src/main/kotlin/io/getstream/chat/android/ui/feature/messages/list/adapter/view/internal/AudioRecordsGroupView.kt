@@ -132,7 +132,8 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         }
         onProgressStateChange(hashCode) { (duration, progress) ->
             playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
-            playerView.setProgress(progress)
+            // TODO
+            playerView.setProgress(progress.toDouble())
         }
         onSpeedChange(hashCode, playerView::setSpeedText)
     }

@@ -96,6 +96,7 @@ internal class WaveformView : LinearLayoutCompat {
 
     public var progress: Float = INITIAL_PROGRESS
         set(value) {
+            logger.v { "[setProgress] progress: $value" }
             field = value
             invalidate()
         }
