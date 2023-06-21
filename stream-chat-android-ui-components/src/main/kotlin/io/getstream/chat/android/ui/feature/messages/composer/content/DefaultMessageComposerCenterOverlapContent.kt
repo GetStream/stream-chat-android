@@ -257,7 +257,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
         binding.recordingSlider.isVisible = false
 
-        binding.recordingTimer.text = formatMillis(0L)
+        binding.recordingTimer.text = formatMillis(0)
         binding.recordingWaveform.isVisible = true
         binding.recordingWaveform.waveform = state.waveform
         binding.recordingWaveform.waveform = state.waveform
@@ -446,7 +446,7 @@ private fun View.getRectInWindow(out: Rect) {
 private val ViewParent.id: Int
     get() = (this as? View)?.id ?: ConstraintLayout.NO_ID
 
-private fun formatMillis(milliseconds: Long): String {
+private fun formatMillis(milliseconds: Int): String {
     val totalSeconds = milliseconds / 1000
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60

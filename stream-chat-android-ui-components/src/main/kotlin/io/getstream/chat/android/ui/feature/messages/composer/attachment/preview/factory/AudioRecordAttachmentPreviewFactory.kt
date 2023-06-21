@@ -123,7 +123,7 @@ private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, h
     }
     onProgressStateChange(hashCode) { (duration, progress) ->
         playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
-        playerView.setProgress(progress)
+        playerView.setProgress(progress.toDouble())
     }
     onSpeedChange(hashCode, playerView::setSpeedText)
 }

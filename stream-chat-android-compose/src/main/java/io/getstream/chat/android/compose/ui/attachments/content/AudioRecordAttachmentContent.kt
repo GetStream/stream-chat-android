@@ -74,7 +74,7 @@ public fun AudioRecordAttachmentContent(
 
         onProgressStateChange(audioHash) { progressData ->
             trackProgress = progressData.progress.toFloat()
-            durationText = DurationParser.durationInMilliToReadableTime(progressData.duration)
+            durationText = DurationParser.durationInMilliToReadableTime(progressData.currentPosition)
         }
 
         onAudioStateChange(audioHash) { audioState ->

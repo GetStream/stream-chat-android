@@ -82,7 +82,8 @@ public class AudioRecordingController(
             logger.v { "[onRecorderDurationChanged] duration: $durationMs" }
             val state = recordingState.value
             if (state is RecordingState.Recording) {
-                recordingState.value = state.copy(duration = durationMs)
+                // TODO make duration Int
+                recordingState.value = state.copy(duration = durationMs.toInt())
             }
         }
         mediaRecorder.setOnMaxAmplitudeSampledListener { maxAmplitude ->
@@ -230,12 +231,13 @@ public class AudioRecordingController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
+        //logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = this.recordingState.value
         if (curState is RecordingState.Overview) {
             this.recordingState.value = curState.copy(
                 isPlaying = true,
-                playingProgress = progressState.progress.toFloat(),
+                playingProgress = progressState.progress,
+                duration = progressState.duration,
             )
         }
     }
@@ -267,10 +269,16 @@ public class AudioRecordingController(
             logger.w { "[seekRecordingTo] rejected (state is not Overview)" }
             return
         }
+        val audioFile = state.attachment.upload ?: run {
+            logger.w { "[seekRecordingTo] rejected (audioFile is null)" }
+            return
+        }
         val positionInMs = (progress * state.duration).toInt()
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
-        audioPlayer.seekTo(positionInMs, state.playingId)
-        this.recordingState.value = state.copy(playingProgress = progress)
+        val hash = audioFile.hashCode()
+        //audioPlayer.prepare(fileToUri(audioFile), hash)
+        audioPlayer.seekTo(positionInMs, hash)
+        this.recordingState.value = state.copy(playingProgress = progress, playingId = hash)
     }
 
     public fun pauseRecording() {
