@@ -34,5 +34,5 @@ public interface TokenProvider {
      * @return The valid JWT token.
      */
     @WorkerThread
-    public fun loadToken(): String
+    public fun loadToken(id: Int): String
 }
