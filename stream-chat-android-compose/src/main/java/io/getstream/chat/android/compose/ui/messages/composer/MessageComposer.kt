@@ -788,7 +788,7 @@ internal fun DefaultMessageComposerTrailingContent(
                                                             StreamLog.i("MessageComposer") {
                                                                 "[onRecordingSaved] attachment: $it"
                                                             }
-                                                            onRecordingSaved(it)
+                                                            onRecordingSaved(it.attachment)
                                                         }
                                                         .onError {
                                                             streamLog(throwable = it.extractCause()) {

@@ -213,7 +213,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingDelete.isVisible = false
         binding.recordingComplete.isVisible = false
 
-        binding.recordingTimer.text = formatMillis(state.duration)
+        binding.recordingTimer.text = formatMillis(state.durationInMs)
     }
 
     private fun renderLocked(state: RecordingState.Locked) {
@@ -228,7 +228,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingStop.isVisible = true
         binding.recordingComplete.isVisible = true
 
-        binding.recordingTimer.text = formatMillis(state.duration)
+        binding.recordingTimer.text = formatMillis(state.durationInMs)
         binding.recordingWaveform.isVisible = true
         binding.recordingWaveform.waveform = state.waveform
         binding.recordingWaveform.isSliderVisible = false

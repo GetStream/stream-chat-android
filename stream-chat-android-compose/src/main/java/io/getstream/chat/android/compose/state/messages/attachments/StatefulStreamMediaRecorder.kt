@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.getstream.sdk.chat.audio.recording.MediaRecorderState
+import com.getstream.sdk.chat.audio.recording.RecordedMedia
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
 import io.getstream.chat.android.compose.util.KeyValuePair
@@ -199,7 +200,7 @@ public class StatefulStreamMediaRecorder(
      * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
      * wrapped inside [Result] if the action had failed.
      */
-    public fun stopRecording(): Result<Attachment> =
+    public fun stopRecording(): Result<RecordedMedia> =
         streamMediaRecorder.stopRecording()
 
     /**

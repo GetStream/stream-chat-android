@@ -9,26 +9,26 @@ public sealed class RecordingState {
     }
 
     public sealed class Recording : RecordingState() {
-        public abstract val duration: Int
+        public abstract val durationInMs: Int
         public abstract val waveform: List<Float>
     }
 
     public data class Hold(
-        override val duration: Int = 0,
+        override val durationInMs: Int = 0,
         override val waveform: List<Float> = emptyList(),
     ) : Recording() {
-        override fun toString(): String = "Recording.Hold(waveform=${waveform.size}, duration=${duration}ms)"
+        override fun toString(): String = "Recording.Hold(waveform=${waveform.size}, duration=${durationInMs}ms)"
     }
 
     public data class Locked(
-        override val duration: Int = 0,
+        override val durationInMs: Int = 0,
         override val waveform: List<Float> = emptyList(),
     ) : Recording() {
-        override fun toString(): String = "Recording.Locked(waveform=${waveform.size}, duration=${duration}ms)"
+        override fun toString(): String = "Recording.Locked(waveform=${waveform.size}, duration=${durationInMs}ms)"
     }
 
     public data class Overview(
-        val duration: Int = 0,
+        val durationInMs: Int = 0,
         val waveform: List<Float> = emptyList(),
         val attachment: Attachment,
         val isPlaying: Boolean = false,
@@ -37,7 +37,7 @@ public sealed class RecordingState {
     ) : RecordingState() {
         override fun toString(): String = "Recording.Overview(" +
             "waveform=${waveform.size}, " +
-            "duration=${duration}ms, " +
+            "duration=${durationInMs}ms, " +
             "isPlaying=${isPlaying}, " +
             "playingProgress=${playingProgress}, " +
             "attachment=${attachment.upload}" +
@@ -54,7 +54,7 @@ public sealed class RecordingState {
 }
 
 public fun RecordingState.Recording.copy(
-    duration: Int = this.duration,
+    duration: Int = this.durationInMs,
     waveform: List<Float> = this.waveform,
 ): RecordingState.Recording = when (this) {
     is RecordingState.Hold -> RecordingState.Hold(duration, waveform)

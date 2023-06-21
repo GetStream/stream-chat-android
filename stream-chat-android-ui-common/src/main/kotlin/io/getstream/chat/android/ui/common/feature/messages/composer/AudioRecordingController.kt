@@ -150,7 +150,7 @@ public class AudioRecordingController(
             return
         }
         logger.i { "[lockRecording] state: $state" }
-        this.recordingState.value = RecordingState.Locked(state.duration, state.waveform)
+        this.recordingState.value = RecordingState.Locked(state.durationInMs, state.waveform)
     }
 
     public fun cancelRecording() {
@@ -237,7 +237,7 @@ public class AudioRecordingController(
             this.recordingState.value = curState.copy(
                 isPlaying = true,
                 playingProgress = progressState.progress,
-                duration = progressState.duration,
+                durationInMs = progressState.duration,
             )
         }
     }
@@ -259,8 +259,9 @@ public class AudioRecordingController(
         val adjusted = samples.downsampleMax(samplesTarget)
         val normalized = adjusted.normalize()
         clearData()
-        val attachment = result.getOrThrow()
-        recordingState.value = RecordingState.Overview(state.duration, normalized, attachment)
+        val recorded = result.getOrThrow()
+        logger.v { "[stopRecording] recorded: $recorded" }
+        recordingState.value = RecordingState.Overview(recorded.durationInMs, normalized, recorded.attachment)
     }
 
     public fun seekRecordingTo(progress: Float) {
@@ -273,7 +274,7 @@ public class AudioRecordingController(
             logger.w { "[seekRecordingTo] rejected (audioFile is null)" }
             return
         }
-        val positionInMs = (progress * state.duration).toInt()
+        val positionInMs = (progress * state.durationInMs).toInt()
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
         val hash = audioFile.hashCode()
         //audioPlayer.prepare(fileToUri(audioFile), hash)
@@ -317,10 +318,10 @@ public class AudioRecordingController(
         val adjusted = samples.downsampleMax(samplesTarget)
         val normalized = adjusted.normalize()
         clearData()
-        val attachment = result.getOrThrow().apply {
-            waveformData = normalized
+        val recorded = result.getOrThrow().apply {
+            attachment.waveformData = normalized
         }
-        recordingState.value = RecordingState.Complete(attachment)
+        recordingState.value = RecordingState.Complete(recorded.attachment)
         recordingState.value = RecordingState.Idle
     }
 
