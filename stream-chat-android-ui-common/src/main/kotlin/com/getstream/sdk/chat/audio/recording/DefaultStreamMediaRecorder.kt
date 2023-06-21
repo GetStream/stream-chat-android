@@ -17,8 +17,10 @@
 package com.getstream.sdk.chat.audio.recording
 
 import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.Build
+import androidx.core.net.toUri
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -273,17 +275,23 @@ public class DefaultStreamMediaRecorder(
      * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
      * wrapped inside [Result] if the action had failed.
      */
-    override fun stopRecording(): Result<Attachment> {
+    override fun stopRecording(): Result<RecordedMedia> {
         return try {
             requireNotNull(mediaRecorder)
+            mediaRecorder?.stop()
 
-            val durationMs = activeRecordingStartedAt?.let {
+            val calculatedDurationInMs = activeRecordingStartedAt?.let {
                 System.currentTimeMillis() - it
             } ?: 0
+            val parsedDurationInMs = getAudioDurationInMs(recordingFile)
+            logger.d { "[stopRecording] startedAt: $activeRecordingStartedAt, " +
+                "calculatedDuration: $calculatedDurationInMs, parsedDuration: $parsedDurationInMs" }
 
-            logger.d { "[stopRecording] startedAt: $activeRecordingStartedAt, durationMs: $durationMs" }
-
-            mediaRecorder?.stop()
+            val durationInMs = when(parsedDurationInMs > 0) {
+                true -> parsedDurationInMs
+                else -> calculatedDurationInMs.toInt()
+            }
+            onCurrentRecordingDurationChangedListener?.onDurationChanged(durationInMs.toLong())
             release()
             onStopRecordingListener?.onStopped()
 
@@ -293,11 +301,12 @@ public class DefaultStreamMediaRecorder(
                 type = AttachmentType.AUDIO_RECORDING,
                 mimeType = "audio/aac",
             ).apply {
-                duration = durationMs / 1000f
+                duration = durationInMs / 1000f
                 waveformData = sampleData
             }
-            logger.v { "[stopRecording] succeed: $attachment" }
-            Result.Success(attachment)
+            val recordedMedia = RecordedMedia(attachment = attachment, durationInMs = durationInMs)
+            logger.v { "[stopRecording] succeed: $recordedMedia" }
+            Result.Success(recordedMedia)
         } catch (exception: Exception) {
             logger.e(exception) { "[stopRecording] failed: $exception" }
             release()
@@ -307,6 +316,25 @@ public class DefaultStreamMediaRecorder(
                     cause = exception
                 )
             )
+        }
+    }
+
+    private fun getAudioDurationInMs(file: File?): Int {
+        file ?: return 0
+        val retriever = MediaMetadataRetriever()
+        return try {
+            retriever.setDataSource(file.toUri().toString())
+            val durationString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            val duration = durationString?.toInt()
+            duration ?: 0
+        } catch (e: Throwable) {
+            logger.e(e) { "[getAudioDurationInMs] failed: $e" }
+            0
+        } finally {
+            try {
+                retriever.release()
+            } catch (_: Throwable) {
+            }
         }
     }
 

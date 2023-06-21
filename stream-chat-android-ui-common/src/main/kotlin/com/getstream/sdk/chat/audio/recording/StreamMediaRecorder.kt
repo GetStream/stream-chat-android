@@ -67,7 +67,7 @@ public interface StreamMediaRecorder {
      * @return A Unit wrapped inside a [Result] if recording has been stopped successfully. Returns a [ChatError]
      * wrapped inside [Result] if the action had failed.
      */
-    public fun stopRecording(): Result<Attachment>
+    public fun stopRecording(): Result<RecordedMedia>
 
     /**
      * Deleted the recording to the file provided by [recordingFile].
