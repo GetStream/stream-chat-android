@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed `QueryChannelRequest.withWatchers` to make `watchers` accessible in response. [#4848](https://github.com/GetStream/stream-chat-android/pull/4848)
 
 ### ⬆️ Improved
 
