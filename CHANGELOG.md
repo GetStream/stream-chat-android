@@ -16,6 +16,7 @@
 ### 🐞 Fixed
 - Fixing unread messages count for channels. [#4499](https://github.com/GetStream/stream-chat-android/pull/4499)
 - Fix reconnection socket behavior. [#4821](https://github.com/GetStream/stream-chat-android/pull/4821)
+- Fixed `QueryChannelRequest.withWatchers` to make `watchers` accessible in response. [#4848](https://github.com/GetStream/stream-chat-android/pull/4848)
 
 ### ⬆️ Improved
 - Changes in messages that are quoted now reflect in all messages, not only the original message.[#4646](https://github.com/GetStream/stream-chat-android/pull/4646)
