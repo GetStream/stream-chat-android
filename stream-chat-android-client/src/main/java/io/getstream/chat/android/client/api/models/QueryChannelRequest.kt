@@ -52,6 +52,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     }
 
     public open fun withWatchers(limit: Int, offset: Int): QueryChannelRequest {
+        state = true
         val watchers: MutableMap<String, Any> = HashMap()
         watchers[KEY_LIMIT] = limit
         watchers[KEY_OFFSET] = offset
