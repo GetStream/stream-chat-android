@@ -31,6 +31,7 @@
 - Added `ChatClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 - Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 - Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
+- Added `AttachmentsVerifier` to verify if the uploaded attachments are valid. [#4852](https://github.com/GetStream/stream-chat-android/pull/4852)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
