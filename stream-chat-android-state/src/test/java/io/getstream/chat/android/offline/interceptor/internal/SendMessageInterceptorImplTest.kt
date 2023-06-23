@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.interceptor.internal
 
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
+import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
@@ -158,6 +159,41 @@ internal class SendMessageInterceptorImplTest {
         whenever(logic.channelFromMessage(messageToSend)) doReturn channelLogic
 
         logic.threadFromMessage(messageToSend) `should be` null
+
+        val result = sendMessageInterceptorImpl.interceptMessage(
+            randomString(),
+            randomString(),
+            messageToSend,
+            isRetrying = false
+        )
+
+        result.isSuccess `should be` true
+
+        val resultMessage = result.data()
+
+        verify(channelLogic).upsertMessage(
+            argThat {
+                this.id == resultMessage.id &&
+                    this.parentId == resultMessage.parentId &&
+                    this.text == resultMessage.text
+            }
+        )
+    }
+
+    @Test
+    fun `when send message with non-File attachment, result must be Successful`() = runTest {
+        val locationAttachment = Attachment(
+            type = "location",
+            extraData = mutableMapOf("latitude" to 1.0, "longitude" to 2.0),
+            uploadState = Attachment.UploadState.Success,
+        )
+        val messageToSend = randomMessage(
+            parentId = null,
+            text = randomString(),
+            attachments = arrayListOf(locationAttachment),
+        )
+
+        whenever(logic.channelFromMessage(messageToSend)) doReturn channelLogic
 
         val result = sendMessageInterceptorImpl.interceptMessage(
             randomString(),
