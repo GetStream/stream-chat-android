@@ -46,6 +46,7 @@ internal class AttachmentsSender(
     private val networkType: UploadAttachmentsNetworkType,
     private val clientState: ClientState,
     private val scope: CoroutineScope,
+    private val verifier: AttachmentsVerifier = AttachmentsVerifier()
 ) {
 
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -59,7 +60,7 @@ internal class AttachmentsSender(
         isRetrying: Boolean,
         repositoryFacade: RepositoryFacade,
     ): Result<Message> {
-        return if (!isRetrying) {
+        val result = if (!isRetrying) {
             if (message.hasPendingAttachments()) {
                 logger.d {
                     "[sendAttachments] Message ${message.id}" +
@@ -74,6 +75,7 @@ internal class AttachmentsSender(
             logger.d { "[sendAttachments] Retrying Message ${message.id}" }
             retryMessage(message, channelType, channelId, repositoryFacade)
         }
+        return verifier.verifyAttachments(result)
     }
 
     /**

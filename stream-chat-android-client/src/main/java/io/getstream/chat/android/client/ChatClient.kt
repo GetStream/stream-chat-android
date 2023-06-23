@@ -3070,10 +3070,10 @@ internal constructor(
                 mutableClientState = MutableClientState(module.networkStateProvider),
             ).apply {
                 attachmentsSender = AttachmentsSender(
-                    appContext,
-                    uploadAttachmentsNetworkType,
-                    clientState,
-                    clientScope
+                    context = appContext,
+                    networkType = uploadAttachmentsNetworkType,
+                    clientState = clientState,
+                    scope = clientScope
                 )
             }
         }
