@@ -31,7 +31,8 @@ import okhttp3.OkHttpClient
  */
 internal class ChatModule(
     appContext: Context,
-    scope: UserScope,
+    clientScope: ClientScope,
+    userScope: UserScope,
     config: ChatClientConfig,
     notificationsHandler: NotificationHandler,
     notificationConfig: NotificationConfig,
@@ -41,7 +42,8 @@ internal class ChatModule(
     lifecycle: Lifecycle,
 ) : BaseChatModule(
     appContext,
-    scope,
+    clientScope,
+    userScope,
     config,
     notificationsHandler,
     notificationConfig,

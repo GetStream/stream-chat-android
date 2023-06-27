@@ -171,6 +171,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.user.CredentialConfig
+import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.user.storage.SharedPreferencesCredentialStorage
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -237,6 +238,7 @@ internal constructor(
     private val chatSocketExperimental: ChatSocketExperimental,
     private val pluginFactories: List<PluginFactory>,
     public val clientState: ClientState,
+    private val currentUserFetcher: CurrentUserFetcher,
     private val lifecycleObserver: StreamLifecycleObserver,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
@@ -1055,6 +1057,19 @@ internal constructor(
             chatSocketExperimental.disconnect()
         } else {
             socket.releaseConnection(true)
+        }
+    }
+
+    public fun fetchCurrentUser(): Call<User> {
+        return CoroutineCall(userScope) {
+            logger.d { "[fetchCurrentUser] socketState: ${socketStateService.state}" }
+            when {
+                !isUserSet() -> Result.error(ChatError("User is not set, can't fetch current user"))
+                isSocketConnected() -> Result.error(ChatError("Socket is connected, can't fetch current user"))
+                else -> currentUserFetcher.fetch()
+            }
+        }.doOnResult(userScope) { result ->
+            logger.d { "[fetchCurrentUser] completed: $result" }
         }
     }
 
@@ -3093,6 +3108,7 @@ internal constructor(
             val module =
                 ChatModule(
                     appContext,
+                    clientScope,
                     userScope,
                     config,
                     notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
@@ -3127,7 +3143,8 @@ internal constructor(
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                clientState = ClientStateImpl(module.networkStateProvider)
+                clientState = module.clientState,
+                currentUserFetcher = module.currentUserFetcher,
             )
         }
 
@@ -3196,7 +3213,7 @@ internal constructor(
         @JvmField
         public val DEFAULT_SORT: QuerySorter<Member> = QuerySortByField.descByName("last_updated")
 
-        private const val ANONYMOUS_USER_ID = "!anon"
+        internal const val ANONYMOUS_USER_ID = "!anon"
         private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic
