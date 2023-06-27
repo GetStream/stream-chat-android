@@ -138,7 +138,8 @@ internal class ChatClientTest {
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = Mother.mockedClientState()
+            clientState = Mother.mockedClientState(),
+            currentUserFetcher = mock(),
         ).apply {
             connectUser(user, token).enqueue()
         }

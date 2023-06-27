@@ -108,7 +108,8 @@ internal class ConnectUserTest {
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            clientState = clientState,
+            currentUserFetcher = mock(),
         )
     }
 
