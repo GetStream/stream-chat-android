@@ -26,8 +26,6 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 internal interface CurrentUserFetcher {
     suspend fun fetch(): Result<User>

@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -87,6 +88,7 @@ internal class OfflinePlugin(
     private val typingEventListener: TypingEventListener,
     private val createChannelListener: CreateChannelListener,
     private val getMessageListener: GetMessageListener,
+    private val fetchCurrentUserListener: FetchCurrentUserListener,
     @Deprecated("Delete this when StatePlugin will be separated from OfflinePlugin")
     private val childResolver: DependencyResolver,
     private val provideDependency: (KClass<*>) -> Any? = { null },
@@ -108,7 +110,8 @@ internal class OfflinePlugin(
     QueryMembersListener by queryMembersListener,
     TypingEventListener by typingEventListener,
     CreateChannelListener by createChannelListener,
-    GetMessageListener by getMessageListener {
+    GetMessageListener by getMessageListener,
+    FetchCurrentUserListener by fetchCurrentUserListener{
 
     override val name: String = MODULE_NAME
 

@@ -38,6 +38,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ChannelMarkRea
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerState
+import io.getstream.chat.android.offline.plugin.listener.internal.FetchCurrentUserListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerImpl
@@ -241,6 +242,7 @@ public class StreamStatePluginFactory(
             sendGiphyListener = SendGiphyListenerState(logic),
             shuffleGiphyListener = ShuffleGiphyListenerState(logic),
             typingEventListener = TypingEventListenerState(stateRegistry),
+            fetchCurrentUserListener = FetchCurrentUserListenerState(globalState),
             provideDependency = createDependencyProvider(syncManager, eventHandler)
         )
     }

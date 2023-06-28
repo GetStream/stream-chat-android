@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -34,6 +35,7 @@ import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.offline.plugin.listener.internal.FetchCurrentUserListenerState
 import kotlin.reflect.KClass
 
 /**
@@ -54,6 +56,7 @@ import kotlin.reflect.KClass
  * @param shuffleGiphyListener [ShuffleGiphyListener]
  * @param sendMessageListener [SendMessageListener]
  * @param typingEventListener [TypingEventListener]
+ * @param fetchCurrentUserListener [FetchCurrentUserListener]
  * @param activeUser User associated with [StatePlugin] instance.
  */
 @InternalStreamChatApi
@@ -74,6 +77,7 @@ public class StatePlugin(
     private val shuffleGiphyListener: ShuffleGiphyListener,
     private val sendMessageListener: SendMessageListener,
     private val typingEventListener: TypingEventListener,
+    private val fetchCurrentUserListener: FetchCurrentUserListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : StateAwarePlugin,
     DependencyResolver,
@@ -90,7 +94,8 @@ public class StatePlugin(
     SendGiphyListener by sendGiphyListener,
     ShuffleGiphyListener by shuffleGiphyListener,
     SendMessageListener by sendMessageListener,
-    TypingEventListener by typingEventListener {
+    TypingEventListener by typingEventListener,
+    FetchCurrentUserListener by fetchCurrentUserListener {
 
     override val name: String = MODULE_NAME
 

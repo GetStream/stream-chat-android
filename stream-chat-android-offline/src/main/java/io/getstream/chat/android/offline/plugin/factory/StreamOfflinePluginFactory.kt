@@ -192,6 +192,7 @@ public class StreamOfflinePluginFactory(
             typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
             getMessageListener = getMessageListener,
+            fetchCurrentUserListener = statePlugin,
             childResolver = statePlugin
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
