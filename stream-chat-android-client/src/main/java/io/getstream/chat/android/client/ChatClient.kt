@@ -1061,6 +1061,7 @@ internal constructor(
     }
 
     public fun fetchCurrentUser(): Call<User> {
+        val relevantPlugins = plugins.filterIsInstance<FetchCurrentUserListener>().also(::logPlugins)
         return CoroutineCall(userScope) {
             logger.d { "[fetchCurrentUser] socketState: ${socketStateService.state}" }
             when {
@@ -1070,6 +1071,10 @@ internal constructor(
             }
         }.doOnResult(userScope) { result ->
             logger.d { "[fetchCurrentUser] completed: $result" }
+            relevantPlugins.forEach { plugin ->
+            logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onFetchCurrentUserResult(result)
+            }
         }
     }
 
