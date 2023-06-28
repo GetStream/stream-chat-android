@@ -143,6 +143,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
@@ -1070,7 +1071,7 @@ internal constructor(
                 else -> currentUserFetcher.fetch()
             }
         }.doOnResult(userScope) { result ->
-            logger.d { "[fetchCurrentUser] completed: $result" }
+            logger.v { "[fetchCurrentUser] completed: $result" }
             relevantPlugins.forEach { plugin ->
             logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                 plugin.onFetchCurrentUserResult(result)
