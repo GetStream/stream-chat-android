@@ -92,6 +92,12 @@ private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<Messag
 private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<AttachmentsPickerTabFactory>> {
     error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
+    error("No OwnMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
+    error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -114,6 +120,8 @@ private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<Attachm
  * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
+ * @param ownMessageTheme Theme of the current user messages.
+ * @param otherMessageTheme Theme of the other users messages.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -140,6 +148,14 @@ public fun ChatTheme(
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
+    ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
+        typography = typography,
+        colors = colors,
+    ),
+    otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
+        typography = typography,
+        colors = colors,
+    ),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -159,6 +175,8 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
+        LocalOwnMessageTheme provides ownMessageTheme,
+        LocalOtherMessageTheme provides otherMessageTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -285,4 +303,20 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentsPickerTabFactories.current
+
+    /**
+     * Retrieves the current own [MessageTheme] at the call site's position in the hierarchy.
+     */
+    public val ownMessageTheme: MessageTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalOwnMessageTheme.current
+
+    /**
+     * Retrieves the current other [MessageTheme] at the call site's position in the hierarchy.
+     */
+    public val otherMessageTheme: MessageTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalOtherMessageTheme.current
 }

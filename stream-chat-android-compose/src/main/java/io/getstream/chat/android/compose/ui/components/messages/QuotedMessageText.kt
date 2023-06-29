@@ -57,7 +57,10 @@ public fun QuotedMessageText(
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> ChatTheme.typography.bodyBold
+        else -> when (replyMessage?.isMine(currentUser) != false) {
+            true -> ChatTheme.ownMessageTheme.textStyle
+            else -> ChatTheme.otherMessageTheme.textStyle
+        }
     }
 
     val quotedMessageText = when {
@@ -88,9 +91,9 @@ public fun QuotedMessageText(
     }
 
     val textColor = if (replyMessage?.isMine(currentUser) != false) {
-        ChatTheme.colors.ownMessageQuotedText
+        ChatTheme.ownMessageTheme.textStyle.color
     } else {
-        ChatTheme.colors.otherMessageQuotedText
+        ChatTheme.otherMessageTheme.textStyle.color
     }
     val styledText = buildAnnotatedMessageText(quotedMessageText, textColor)
 
