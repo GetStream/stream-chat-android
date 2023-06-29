@@ -56,7 +56,7 @@ internal class ChatSocket private constructor(
     private val networkStateProvider: NetworkStateProvider,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
-    private val logger = StreamLog.getLogger("Chat:Experimental-Socket")
+    private val logger = StreamLog.getLogger("Chat:SocketExp")
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val chatSocketStateService = ChatSocketStateService()
@@ -64,23 +64,30 @@ internal class ChatSocket private constructor(
     private val healthMonitor = HealthMonitor(
         userScope = coroutineScope,
         checkCallback = { (chatSocketStateService.currentState as? State.Connected)?.event?.let(::sendEvent) },
-        reconnectCallback = { chatSocketStateService.onWebSocketEventLost() }
+        reconnectCallback = {
+            logger.i { "[reconnectCallback] health monitor triggered reconnect; state: ${chatSocketStateService.currentState}" }
+            chatSocketStateService.onWebSocketEventLost()
+        }
     )
     private val lifecycleHandler = object : LifecycleHandler {
         override fun resume() {
+            logger.i { "[onAppResume] no args" }
             chatSocketStateService.onResume()
         }
 
         override fun stopped() {
+            logger.i { "[onAppStop] no args" }
             chatSocketStateService.onStop()
         }
     }
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
         override fun onConnected() {
+            logger.i { "[onNetworkConnected] no args" }
             chatSocketStateService.onNetworkAvailable()
         }
 
         override fun onDisconnected() {
+            logger.i { "[onNetworkDisconnected] no args" }
             chatSocketStateService.onNetworkNotAvailable()
         }
     }
@@ -90,6 +97,7 @@ internal class ChatSocket private constructor(
         var socketListenerJob: Job? = null
 
         fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
+            logger.d { "[connectUser] connectionConf: $connectionConf" }
             coroutineScope.launch { startObservers() }
             this.connectionConf = connectionConf
             socketListenerJob?.cancel()
@@ -109,11 +117,13 @@ internal class ChatSocket private constructor(
         }
 
         fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
+            logger.d { "[reconnect] connectionConf: $connectionConf" }
             connectUser(connectionConf.asReconnectionConf())
         }
 
         return coroutineScope.launch {
             chatSocketStateService.observer { state ->
+                logger.i { "[updateState] newState: ${state.javaClass.simpleName}" }
                 when (state) {
                     is State.RestartConnection -> {
                         connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
@@ -170,6 +180,7 @@ internal class ChatSocket private constructor(
     }
 
     fun connectUser(user: User, isAnonymous: Boolean) {
+        logger.i { "[connectUser] isAnonymous: $isAnonymous, user: $user" }
         socketStateObserverJob?.cancel()
         socketStateObserverJob = observeSocketStateService()
         chatSocketStateService.onConnect(
@@ -181,6 +192,7 @@ internal class ChatSocket private constructor(
     }
 
     fun disconnect() {
+        logger.i { "[disconnect] connectionConf: $connectionConf" }
         connectionConf = null
         chatSocketStateService.onRequiredDisconnect()
     }

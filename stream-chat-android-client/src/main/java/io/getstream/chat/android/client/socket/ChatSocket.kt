@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.logging.StreamLog
@@ -50,6 +51,7 @@ internal open class ChatSocket constructor(
     private val networkStateProvider: NetworkStateProvider,
     private val parser: ChatParser,
     private val userScope: UserScope,
+    private val timeProvider: TimeProvider = TimeProvider,
 ) {
     private val logger = StreamLog.getLogger("Chat:Socket")
     private var connectionConf: SocketFactory.ConnectionConf? = null
@@ -59,8 +61,10 @@ internal open class ChatSocket constructor(
     private val listeners = mutableSetOf<SocketListener>()
     private val eventUiHandler = Handler(Looper.getMainLooper())
     private val healthMonitor = HealthMonitor(
+        timeProvider = timeProvider,
         userScope = userScope,
         reconnectCallback = {
+            logger.i { "[reconnectCallback] health monitor triggered reconnect; state: $state" }
             if (state is State.DisconnectedTemporarily) {
                 this@ChatSocket.reconnect(connectionConf, false)
             }
@@ -103,24 +107,33 @@ internal open class ChatSocket constructor(
                     healthMonitor.stop()
                     callListeners { it.onConnecting() }
                 }
+
                 is State.Connected -> {
                     healthMonitor.ack()
                     callListeners { it.onConnected(newState.event) }
                 }
+
                 is State.NetworkDisconnected -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
                     callListeners { it.onDisconnected(DisconnectCause.NetworkNotAvailable) }
                 }
+
                 is State.DisconnectedByRequest -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
                     callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                 }
+
                 is State.DisconnectedTemporarily -> {
                     shutdownSocketConnection()
                     healthMonitor.onDisconnected()
                     callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
+                }
+                is State.DisconnectedByBackground -> {
+                    shutdownSocketConnection()
+                    healthMonitor.stop()
+                    callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                 }
                 is State.DisconnectedPermanently -> {
                     shutdownSocketConnection()
@@ -169,6 +182,7 @@ internal open class ChatSocket constructor(
                     }
                 }
             }
+
             ChatErrorCode.UNDEFINED_TOKEN.code,
             ChatErrorCode.INVALID_TOKEN.code,
             ChatErrorCode.API_KEY_NOT_FOUND.code,
@@ -176,6 +190,7 @@ internal open class ChatSocket constructor(
             -> {
                 state = State.DisconnectedPermanently(error)
             }
+
             else -> {
                 state = State.DisconnectedTemporarily(error)
             }
@@ -199,7 +214,7 @@ internal open class ChatSocket constructor(
         connect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
-                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+                else -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
             }
         )
     }
@@ -209,7 +224,7 @@ internal open class ChatSocket constructor(
         reconnect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
-                false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
+                else -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
             },
             forceReconnection,
         )
@@ -237,19 +252,22 @@ internal open class ChatSocket constructor(
         logger.d { "[releaseConnection] requested: $requested" }
         state = when (requested) {
             true -> State.DisconnectedByRequest
-            false -> when (state) {
+            else -> when (state) {
                 is State.DisconnectedByRequest,
-                is State.DisconnectedPermanently -> state
+                is State.DisconnectedPermanently,
+                -> state
+
                 is State.Connected,
                 is State.Connecting,
                 is State.DisconnectedTemporarily,
-                is State.NetworkDisconnected -> State.DisconnectedTemporarily(null)
+                is State.DisconnectedByBackground,
+                is State.NetworkDisconnected -> State.DisconnectedByBackground
             }
         }
     }
 
     open fun onConnectionResolved(event: ConnectedEvent) {
-        logger.d { "[releaseConnection] event.type: ${event.type}" }
+        logger.d { "[onConnectionResolved] event.type: ${event.type}" }
         state = State.Connected(event)
     }
 
@@ -268,7 +286,8 @@ internal open class ChatSocket constructor(
         connectionConf: SocketFactory.ConnectionConf?,
         forceReconnection: Boolean,
     ) {
-        logger.d { "[reconnect] user.id: ${connectionConf?.user?.id}" }
+        val userId = connectionConf?.user?.id
+        logger.d { "[reconnect] user.id: $userId, forceReconnection: $forceReconnection, state: $state" }
         if (state != State.DisconnectedByRequest || forceReconnection) {
             shutdownSocketConnection()
             setupSocket(connectionConf?.asReconnectionConf())
@@ -293,13 +312,7 @@ internal open class ChatSocket constructor(
                     State.Connecting
                 }
             }
-            else -> State.DisconnectedTemporarily(
-                ChatNetworkError.create(
-                    description = "Network is not available",
-                    streamCode = ChatErrorCode.SOCKET_FAILURE.code,
-                    statusCode = -1
-                )
-            )
+            else -> State.NetworkDisconnected
         }
     }
 
@@ -344,6 +357,10 @@ internal open class ChatSocket constructor(
         data class DisconnectedPermanently(val error: ChatNetworkError?) : State()
         object DisconnectedByRequest : State() {
             override fun toString(): String = "DisconnectedByRequest"
+        }
+
+        object DisconnectedByBackground : State() {
+            override fun toString(): String = "DisconnectedByBackground"
         }
     }
 }
