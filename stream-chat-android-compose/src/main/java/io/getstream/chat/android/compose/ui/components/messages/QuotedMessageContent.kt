@@ -58,9 +58,9 @@ public fun QuotedMessageContent(
 
     // The quoted section color depends on the author of the reply.
     val messageBubbleColor = if (replyMessage?.isMine(currentUser) != false) {
-        ChatTheme.colors.ownMessageQuotedBackground
+        ChatTheme.ownMessageTheme.quotedBackgroundColor
     } else {
-        ChatTheme.colors.otherMessageQuotedBackground
+        ChatTheme.otherMessageTheme.quotedBackgroundColor
     }
 
     MessageBubble(
