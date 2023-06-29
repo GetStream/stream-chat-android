@@ -71,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageTheme` to customize the message components into `ChatTheme`. [#4855](https://github.com/GetStream/stream-chat-android/pull/4855)
 
 ### ⚠️ Changed
 
