@@ -356,8 +356,8 @@ public object ChatTheme {
         get() = LocalReadCountEnabled.current
 
     /**
-    * Retrieves the current own [MessageTheme] at the call site's position in the hierarchy.
-    */
+     * Retrieves the current own [MessageTheme] at the call site's position in the hierarchy.
+     */
     public val ownMessageTheme: MessageTheme
         @Composable
         @ReadOnlyComposable
