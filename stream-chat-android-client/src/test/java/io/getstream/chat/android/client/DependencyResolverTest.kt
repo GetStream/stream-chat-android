@@ -93,6 +93,7 @@ public class DependencyResolverTest {
             pluginFactories = mock(),
             repositoryFactoryProvider = mock(),
             mutableClientState = mock(),
+            currentUserFetcher = mock(),
         ).apply {
             this.plugins = this@Fixture.plugins
         }

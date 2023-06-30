@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -75,6 +76,9 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var api: ChatApi
 
+    @Mock
+    protected lateinit var currentUserFetcher: CurrentUserFetcher
+
     protected val mutableClientState = mock<MutableClientState>()
 
     protected lateinit var chatClient: ChatClient
@@ -110,10 +114,11 @@ internal open class BaseChatClientTest {
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            chatSocket = fakeChatSocket,
+            chatSocket = getChatSocket(),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            mutableClientState = mutableClientState
+            mutableClientState = mutableClientState,
+            currentUserFetcher = currentUserFetcher,
         )
 
         Mockito.reset(
@@ -123,6 +128,10 @@ internal open class BaseChatClientTest {
             config,
             api,
         )
+    }
+
+    protected open fun getChatSocket(): ChatSocket {
+        return fakeChatSocket
     }
 
     fun runCancellableTest(testBody: suspend TestScope.() -> Unit) {
