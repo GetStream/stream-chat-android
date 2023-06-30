@@ -5,11 +5,40 @@
     <ID>ComplexMethod:Attachment.kt$Attachment$override fun toString(): String</ID>
     <ID>ComplexMethod:Message.kt$Message$override fun toString(): String</ID>
     <ID>ComplexMethod:User.kt$User$override fun getComparableField(fieldName: String): Comparable&lt;*>?</ID>
+    <ID>FinalNewline:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:1</ID>
+    <ID>FinalNewline:io.getstream.chat.android.client.user.CurrentUserFetcher.kt:1</ID>
+    <ID>FinalNewline:io.getstream.chat.android.client.user.CurrentUserFetcherTests.kt:1</ID>
+    <ID>FinalNewline:io.getstream.chat.android.client.user.CurrentUserUrlBuilderTests.kt:1</ID>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
+    <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
     <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
+    <ID>NewLineAtEndOfFile:CurrentUserFetcher.kt$io.getstream.chat.android.client.user.CurrentUserFetcher.kt</ID>
+    <ID>NewLineAtEndOfFile:CurrentUserFetcherTests.kt$io.getstream.chat.android.client.user.CurrentUserFetcherTests.kt</ID>
+    <ID>NewLineAtEndOfFile:CurrentUserUrlBuilderTests.kt$io.getstream.chat.android.client.user.CurrentUserUrlBuilderTests.kt</ID>
+    <ID>NewLineAtEndOfFile:WhenFetchCurrentUser.kt$io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt</ID>
+    <ID>NoBlankLineBeforeRbrace:io.getstream.chat.android.client.user.CurrentUserFetcher.kt:97</ID>
+    <ID>NoConsecutiveBlankLines:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:130</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.DevicesApiCallsTests.kt:26</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:14</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:25</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:5</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:6</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.chatclient.WhenFetchCurrentUser.kt:9</ID>
+    <ID>NoUnusedImports:io.getstream.chat.android.client.user.CurrentUserFetcher.kt:44</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>ReturnCount:CurrentUserFetcher.kt$CurrentUserFetcherImpl$override suspend fun fetch(): Result&lt;User></ID>
+    <ID>TooGenericExceptionCaught:CurrentUserFetcher.kt$CurrentUserFetcherImpl$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:CurrentUserFetcher.kt$CurrentUserFetcherImpl$t: Throwable</ID>
+    <ID>UnusedImports:CurrentUserFetcher.kt$import java.net.URI</ID>
+    <ID>UnusedImports:DevicesApiCallsTests.kt$import kotlinx.coroutines.ExperimentalCoroutinesApi</ID>
+    <ID>UnusedImports:WhenFetchCurrentUser.kt$import io.getstream.chat.android.client.api.models.QueryChannelRequest</ID>
+    <ID>UnusedImports:WhenFetchCurrentUser.kt$import io.getstream.chat.android.client.call.CoroutineCall</ID>
+    <ID>UnusedImports:WhenFetchCurrentUser.kt$import io.getstream.chat.android.client.errors.ChatError</ID>
+    <ID>UnusedImports:WhenFetchCurrentUser.kt$import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener</ID>
+    <ID>UnusedImports:WhenFetchCurrentUser.kt$import org.mockito.kotlin.doAnswer</ID>
+    <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>
     <ID>UnusedPrivateMember:ChatEventsObservable.kt$ChatEventsObservable$private val logger = StreamLog.getLogger("Chat:EventsObservable")</ID>
   </CurrentIssues>
 </SmellBaseline>

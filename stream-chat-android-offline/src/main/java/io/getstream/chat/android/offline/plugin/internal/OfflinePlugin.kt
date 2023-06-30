@@ -111,7 +111,7 @@ internal class OfflinePlugin(
     TypingEventListener by typingEventListener,
     CreateChannelListener by createChannelListener,
     GetMessageListener by getMessageListener,
-    FetchCurrentUserListener by fetchCurrentUserListener{
+    FetchCurrentUserListener by fetchCurrentUserListener {
 
     override val name: String = MODULE_NAME
 
