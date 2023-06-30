@@ -32,6 +32,8 @@
 - Added `ChannelClient.inviteMembers` to invite members to an existing channel. [#4816](https://github.com/GetStream/stream-chat-android/pull/4816)
 - Added `ChannelUserBannedEvent.shadow` property to know if the user is shadow-banned or standard banned. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 - Added `AttachmentsVerifier` to verify if the uploaded attachments are valid. [#4852](https://github.com/GetStream/stream-chat-android/pull/4852)
+- Added `ChannelClient.fetchCurrentUser` to fetch current user from backend. [#4860](https://github.com/GetStream/stream-chat-android/pull/4860)
+- Added `FetchCurrentUserListener` interface used to perform actions as side effects when the `ChatCliet.fetchCurrentUser()` method is used to fetch the current user from the backend. [#4860](https://github.com/GetStream/stream-chat-android/pull/4860)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
