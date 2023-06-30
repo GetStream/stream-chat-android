@@ -65,7 +65,8 @@ internal class ChatSocket private constructor(
         userScope = coroutineScope,
         checkCallback = { (chatSocketStateService.currentState as? State.Connected)?.event?.let(::sendEvent) },
         reconnectCallback = {
-            logger.i { "[reconnectCallback] health monitor triggered reconnect; state: ${chatSocketStateService.currentState}" }
+            val socketState = chatSocketStateService.currentState
+            logger.i { "[reconnectCallback] health monitor triggered reconnect; state: $socketState" }
             chatSocketStateService.onWebSocketEventLost()
         }
     )

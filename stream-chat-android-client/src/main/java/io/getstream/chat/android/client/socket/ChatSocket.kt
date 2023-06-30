@@ -130,11 +130,13 @@ internal open class ChatSocket constructor(
                     healthMonitor.onDisconnected()
                     callListeners { it.onDisconnected(DisconnectCause.Error(newState.error)) }
                 }
+
                 is State.DisconnectedByBackground -> {
                     shutdownSocketConnection()
                     healthMonitor.stop()
                     callListeners { it.onDisconnected(DisconnectCause.ConnectionReleased) }
                 }
+
                 is State.DisconnectedPermanently -> {
                     shutdownSocketConnection()
                     connectionConf = null
@@ -261,7 +263,8 @@ internal open class ChatSocket constructor(
                 is State.Connecting,
                 is State.DisconnectedTemporarily,
                 is State.DisconnectedByBackground,
-                is State.NetworkDisconnected -> State.DisconnectedByBackground
+                is State.NetworkDisconnected,
+                -> State.DisconnectedByBackground
             }
         }
     }
@@ -312,6 +315,7 @@ internal open class ChatSocket constructor(
                     State.Connecting
                 }
             }
+
             else -> State.NetworkDisconnected
         }
     }
