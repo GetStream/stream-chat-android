@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed `QueryChannelRequest.withWatchers` to make `watchers` accessible in response. [#4848](https://github.com/GetStream/stream-chat-android/pull/4848)
+- Fixed WS being reconnected after App backgrounding. [#4858](https://github.com/GetStream/stream-chat-android/pull/4858)
 
 ### ⬆️ Improved
 
