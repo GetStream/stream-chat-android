@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.setup.InitializationCoordinator
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.test.TestCoroutineExtension
@@ -70,6 +71,9 @@ internal open class BaseChatClientTest {
     @Mock
     protected lateinit var api: ChatApi
 
+    @Mock
+    protected lateinit var currentUserFetcher: CurrentUserFetcher
+
     protected val clientState = mock<ClientState>()
 
     protected val initializationCoordinator = InitializationCoordinator.create()
@@ -104,7 +108,8 @@ internal open class BaseChatClientTest {
             lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = clientState
+            clientState = clientState,
+            currentUserFetcher = currentUserFetcher,
         )
 
         Mockito.reset(

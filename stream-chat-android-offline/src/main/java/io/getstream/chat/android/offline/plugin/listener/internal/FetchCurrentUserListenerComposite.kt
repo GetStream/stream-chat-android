@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.plugin.listeners
+package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.utils.Result
 
-/**
- * Listener used when fetching the current user from the backend.
- */
-public interface FetchCurrentUserListener {
+internal class FetchCurrentUserListenerComposite(
+    private val fetchCurrentUserListeners: List<FetchCurrentUserListener>,
+) : FetchCurrentUserListener {
 
-    /**
-     * Called when the current user is fetched from the backend.
-     */
-    public suspend fun onFetchCurrentUserResult(result: Result<User>)
+    override suspend fun onFetchCurrentUserResult(result: Result<User>) {
+        fetchCurrentUserListeners.forEach {
+            it.onFetchCurrentUserResult(result)
+        }
+    }
 }

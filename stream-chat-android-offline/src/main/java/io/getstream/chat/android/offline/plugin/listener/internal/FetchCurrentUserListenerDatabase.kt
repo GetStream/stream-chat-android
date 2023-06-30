@@ -14,18 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.plugin.listeners
+package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.utils.Result
+import io.getstream.logging.StreamLog
 
-/**
- * Listener used when fetching the current user from the backend.
- */
-public interface FetchCurrentUserListener {
+internal class FetchCurrentUserListenerDatabase(
+    private val userRepository: UserRepository,
+) : FetchCurrentUserListener {
 
-    /**
-     * Called when the current user is fetched from the backend.
-     */
-    public suspend fun onFetchCurrentUserResult(result: Result<User>)
+    private val logger = StreamLog.getLogger("Chat:FetchCurUserLDB")
+
+    override suspend fun onFetchCurrentUserResult(result: Result<User>) {
+        if (result.isSuccess) {
+            logger.d { "[onFetchCurrentUserResult] result: $result" }
+            userRepository.insertCurrentUser(result.data())
+        }
+    }
 }

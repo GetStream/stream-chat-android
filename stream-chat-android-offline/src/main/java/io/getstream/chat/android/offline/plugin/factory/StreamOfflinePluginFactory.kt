@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
@@ -45,6 +46,8 @@ import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReaction
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.FetchCurrentUserListenerComposite
+import io.getstream.chat.android.offline.plugin.listener.internal.FetchCurrentUserListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.GetMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerComposite
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
@@ -173,6 +176,10 @@ public class StreamOfflinePluginFactory(
         )
         val getMessageListener: GetMessageListener = getGetMessageListenerDatabase(repositoryFacade)
 
+        val fetchCurrentUserListener: FetchCurrentUserListener = getFetchCurrentUserListener(
+            repositoryFacade, statePlugin
+        )
+
         return OfflinePlugin(
             activeUser = user,
             queryChannelsListener = statePlugin,
@@ -192,7 +199,7 @@ public class StreamOfflinePluginFactory(
             typingEventListener = statePlugin,
             createChannelListener = createChannelListener,
             getMessageListener = getMessageListener,
-            fetchCurrentUserListener = statePlugin,
+            fetchCurrentUserListener = fetchCurrentUserListener,
             childResolver = statePlugin
         ).also { offlinePlugin -> cachedOfflinePluginInstance = offlinePlugin }
     }
@@ -326,6 +333,16 @@ public class StreamOfflinePluginFactory(
      */
     private fun getGetMessageListenerDatabase(repositoryFacade: RepositoryFacade): GetMessageListener =
         GetMessageListenerDatabase(repositoryFacade = repositoryFacade)
+
+    private fun getFetchCurrentUserListener(
+        repositoryFacade: RepositoryFacade,
+        statePlugin: StatePlugin,
+    ): FetchCurrentUserListener {
+        val fetchCurrentUserListenerDatabase = FetchCurrentUserListenerDatabase(
+            userRepository = repositoryFacade,
+        )
+        return FetchCurrentUserListenerComposite(listOf(statePlugin, fetchCurrentUserListenerDatabase))
+    }
 
     private fun clearCachedInstance() {
         cachedOfflinePluginInstance = null
