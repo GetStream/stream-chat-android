@@ -57,6 +57,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed `SyncManager` not emitting missed events after getting online. [#4862](https://github.com/GetStream/stream-chat-android/pull/4862)
 
 ### ⬆️ Improved
 - The `ChannelStateLogic` keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
