@@ -1060,6 +1060,10 @@ internal constructor(
         }
     }
 
+    /**
+     * Fetches the current user.
+     * Works only if the user was previously set and the WS connections is closed.
+     */
     public fun fetchCurrentUser(): Call<User> {
         val relevantPlugins = plugins.filterIsInstance<FetchCurrentUserListener>().also(::logPlugins)
         return CoroutineCall(userScope) {
