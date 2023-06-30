@@ -37,6 +37,7 @@
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fixed a metadata attachment not being sent. [#4851](https://github.com/GetStream/stream-chat-android/pull/4851)
+- Fixed `SyncManager` not emitting missed events after getting online. [#4861](https://github.com/GetStream/stream-chat-android/pull/4861)
 
 ### ⬆️ Improved
 

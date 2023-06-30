@@ -102,6 +102,8 @@ internal class SyncManager(
 
     override val syncedEvents: Flow<List<ChatEvent>> = events
 
+    private val mutex = Mutex()
+
     override fun start() {
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
@@ -202,10 +204,18 @@ internal class SyncManager(
     }
 
     private suspend fun performSync() {
+        logger.d { "[performSync] no args" }
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
         }
+        mutex.withLock {
+            performSync(cids)
+        }
+    }
+
+    @VisibleForTesting
+    internal suspend fun performSync(cids: List<String>) {
         if (cids.isEmpty()) {
             logger.w { "[performSync] rejected (cids is empty)" }
             return
@@ -220,27 +230,32 @@ internal class SyncManager(
             chatClient.getSyncHistory(cids, lastSyncAt).await()
         }
 
-        if (result.isSuccess) {
-            val sortedEvents = result.data().sortedBy { it.createdAt }
-            logger.d { "[performSync] succeed. events: ${sortedEvents.size}" }
-            val latestEvent = sortedEvents.lastOrNull()
-            val latestEventDate = latestEvent?.createdAt ?: Date()
-            val rawLatestEventDate = latestEvent?.rawCreatedAt
-            updateLastSyncedDate(latestEventDate, rawLatestEventDate)
-            sortedEvents.forEach {
-                if (it is MarkAllReadEvent) {
-                    updateAllReadStateForDate(it.user.id, it.createdAt)
-                }
-            }
-            if (sortedEvents.isNotEmpty() && rawLastSyncAt != null && rawLastSyncAt != rawLatestEventDate) {
-                events.emit(sortedEvents)
-                logger.v { "[performSync] events emission completed" }
-            } else {
-                logger.v { "[performSync] no events to emit" }
-            }
-        } else {
+        if (result.isError) {
             logger.e { "[performSync] failed(${result.error().stringify()})" }
+            return
         }
+        val sortedEvents = result.data().sortedBy { it.createdAt }
+        logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
+
+        val latestEvent = sortedEvents.lastOrNull()
+        val latestEventDate = latestEvent?.createdAt ?: Date()
+        val rawLatestEventDate = latestEvent?.rawCreatedAt
+        updateLastSyncedDate(latestEventDate, rawLatestEventDate)
+        sortedEvents.forEach {
+            if (it is MarkAllReadEvent) {
+                updateAllReadStateForDate(it.user.id, it.createdAt)
+            }
+        }
+        if (sortedEvents.isEmpty()) {
+            logger.w { "[performSync] rejected (no events to emit)" }
+            return
+        }
+        if (rawLastSyncAt == rawLatestEventDate) {
+            logger.w { "[performSync] rejected (rawLatestEventDate equals to rawLastSyncAt)" }
+            return
+        }
+        events.emit(sortedEvents)
+        logger.v { "[performSync] events emission completed" }
     }
 
     /**
