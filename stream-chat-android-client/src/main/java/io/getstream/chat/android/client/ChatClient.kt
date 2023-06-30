@@ -3064,6 +3064,7 @@ internal constructor(
             val module =
                 ChatModule(
                     appContext,
+                    clientScope,
                     userScope,
                     config,
                     notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
