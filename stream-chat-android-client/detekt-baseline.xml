@@ -4,6 +4,8 @@
   <CurrentIssues>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
+    <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
+    <ID>MaxLineLength:BaseChatModule.kt$BaseChatModule$NetworkStateProvider(userScope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
@@ -12,5 +14,6 @@
     <ID>ReturnCount:CurrentUserFetcher.kt$CurrentUserFetcherImpl$override suspend fun fetch(): Result&lt;User></ID>
     <ID>TooGenericExceptionCaught:CurrentUserFetcher.kt$CurrentUserFetcherImpl$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:CurrentUserFetcher.kt$CurrentUserFetcherImpl$t: Throwable</ID>
+    <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>
   </CurrentIssues>
 </SmellBaseline>
