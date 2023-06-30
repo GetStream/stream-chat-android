@@ -73,7 +73,9 @@ internal class SendMessageInterceptorImpl(
         if (result.isSuccess) {
             val uploadedMessage = result.data()
             logger.d { "[interceptMessage] #uploader; uploadedAttachments: ${uploadedMessage.attachments}" }
-            val corruptedAttachment = uploadedMessage.attachments.find { it.imageUrl == null && it.assetUrl == null }
+            val corruptedAttachment = uploadedMessage.attachments.find {
+                it.upload != null && it.imageUrl == null && it.assetUrl == null
+            }
             if (corruptedAttachment != null) {
                 logger.e {
                     "[interceptMessage] #uploader; message(${uploadedMessage.id}) " +

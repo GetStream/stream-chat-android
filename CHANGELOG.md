@@ -35,6 +35,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed a metadata attachment not being sent. [#4851](https://github.com/GetStream/stream-chat-android/pull/4851)
 
 ### ⬆️ Improved
 
