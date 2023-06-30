@@ -51,6 +51,7 @@ internal class HealthMonitor(
      * Stop monitoring connection.
      */
     fun stop() {
+        logger.d { "[stop] no args" }
         stopAllJobs()
     }
 
@@ -58,6 +59,7 @@ internal class HealthMonitor(
      * Notify that connection keeps alive.
      */
     fun ack() {
+        logger.v { "[ack] no args" }
         resetHealthMonitor()
     }
 
@@ -65,6 +67,7 @@ internal class HealthMonitor(
      * Notify connection is disconnected.
      */
     fun onDisconnected() {
+        logger.d { "[onDisconnected] no args" }
         stopAllJobs()
         lastAck = 0
         postponeReconnect()
@@ -74,6 +77,7 @@ internal class HealthMonitor(
      * Reset health monitor process.
      */
     private fun resetHealthMonitor() {
+        logger.d { "[resetHealthMonitor] no args" }
         stopAllJobs()
         lastAck = timeProvider.provideCurrentTimeInMilliseconds()
         consecutiveFailures = 0
@@ -86,9 +90,12 @@ internal class HealthMonitor(
      * In another case the healthCheck is postponed.
      */
     private fun postponeHealthMonitor() {
+        logger.d { "[postponeHealthMonitor] no args" }
         healthMonitorJob?.cancel()
         healthMonitorJob = userScope.launchDelayed(MONITOR_INTERVAL) {
-            if (needToReconnect()) {
+            val needReconnect = needToReconnect()
+            logger.d { "[postponeHealthMonitor] needReconnect: $needReconnect" }
+            if (needReconnect) {
                 postponeReconnect()
             } else {
                 postponeHealthCheck()
@@ -101,6 +108,7 @@ internal class HealthMonitor(
      * Just after the event is sent, an action is postponed to verify the connection is alive.
      */
     private fun postponeHealthCheck() {
+        logger.d { "[postponeHealthCheck] no args" }
         healthCheckJob?.cancel()
         healthCheckJob = userScope.launchDelayed(HEALTH_CHECK_INTERVAL) {
             checkCallback()
@@ -113,9 +121,9 @@ internal class HealthMonitor(
      * Just after the reconnection of the socket is started, an action to monitor the connection is started.
      */
     private fun postponeReconnect() {
-        reconnectJob?.cancel()
         val retryIntervalTime = retryInterval.nextInterval(consecutiveFailures++)
-        logger.i { "Next connection attempt in $retryIntervalTime ms" }
+        logger.d { "[postponeReconnect] retryIntervalTime: ${retryIntervalTime}ms" }
+        reconnectJob?.cancel()
         reconnectJob = userScope.launchDelayed(retryIntervalTime) {
             reconnectCallback()
             postponeHealthMonitor()
@@ -126,6 +134,7 @@ internal class HealthMonitor(
      * Stop all launched job on this health monitor.
      */
     private fun stopAllJobs() {
+        logger.d { "[stopAllJobs] no args" }
         reconnectJob?.cancel()
         healthCheckJob?.cancel()
         healthMonitorJob?.cancel()
@@ -136,8 +145,11 @@ internal class HealthMonitor(
      *
      * @return True if time elapsed is bigger and we need to start reconnection process.
      */
-    private fun needToReconnect(): Boolean =
-        (timeProvider.provideCurrentTimeInMilliseconds() - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
+    private fun needToReconnect(): Boolean {
+        val now = timeProvider.provideCurrentTimeInMilliseconds()
+        logger.v { "[needToReconnect] now: $now, lastAck: $lastAck" }
+        return (now - lastAck) >= NO_EVENT_INTERVAL_THRESHOLD
+    }
 
     private fun CoroutineScope.launchDelayed(
         delayMilliseconds: Long,

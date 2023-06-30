@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.client.Mother.randomConnectedEvent
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
@@ -23,10 +24,17 @@ import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.token.TokenManager
+import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.TestLoggingHelper
 import io.getstream.chat.android.test.randomString
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -54,6 +62,7 @@ internal class ChatSocketTest {
     private lateinit var networkStateProvider: NetworkStateProvider
     private lateinit var socketListener: SocketListener
     private lateinit var chatSocket: ChatSocket
+    private lateinit var timeProvider: TimeProvider
 
     @BeforeEach
     fun setup() {
@@ -62,6 +71,11 @@ internal class ChatSocketTest {
         chatParser = mock()
         networkStateProvider = mock()
         socketListener = mock()
+        timeProvider = mock<TimeProvider>().apply {
+            whenever(this.provideCurrentTimeInMilliseconds()) doAnswer {
+                testCoroutines.dispatcher.scheduler.currentTime
+            }
+        }
         chatSocket = ChatSocket(
             apiKey,
             endpoint,
@@ -69,9 +83,14 @@ internal class ChatSocketTest {
             socketFactory,
             networkStateProvider,
             chatParser,
-            UserTestScope(testCoroutines.scope)
+            UserTestScope(testCoroutines.scope),
+            timeProvider,
         )
         chatSocket.addListener(socketListener)
+
+        TestLoggingHelper.initialize {
+            testCoroutines.dispatcher.scheduler.currentTime
+        }
     }
 
     @Test
@@ -92,13 +111,7 @@ internal class ChatSocketTest {
 
         chatSocket.connectUser(randomUser(), isAnonymous = false)
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.DisconnectedTemporarily(
-            ChatNetworkError.create(
-                description = "Network is not available",
-                streamCode = ChatErrorCode.SOCKET_FAILURE.code,
-                statusCode = -1
-            )
-        )
+        chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
@@ -128,13 +141,7 @@ internal class ChatSocketTest {
 
         chatSocket.connectUser(randomUser(), isAnonymous = true)
 
-        chatSocket.state shouldBeEqualTo ChatSocket.State.DisconnectedTemporarily(
-            ChatNetworkError.create(
-                description = "Network is not available",
-                streamCode = ChatErrorCode.SOCKET_FAILURE.code,
-                statusCode = -1
-            )
-        )
+        chatSocket.state shouldBeEqualTo ChatSocket.State.NetworkDisconnected
     }
 
     @Test
@@ -170,5 +177,36 @@ internal class ChatSocketTest {
                 it `should be equal to` SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, user)
             }
         )
+    }
+
+    @Test
+    fun `Should stay disconnected`() = runTest {
+        val user = randomUser()
+        val connectedEvent = randomConnectedEvent(type = "health.check")
+        whenever(networkStateProvider.isConnected()) doReturn true
+        whenever(socketFactory.createSocket(any(), any())) doAnswer {
+            val eventsParser = it.getArgument<EventsParser>(0)
+            testCoroutines.scope.launch {
+                delay(200)
+                eventsParser.onOpen(mock(), mock())
+                chatSocket.onConnectionResolved(connectedEvent)
+            }
+            mock()
+        }
+
+        chatSocket.connectUser(user, isAnonymous = true)
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connecting
+
+        testCoroutines.scope.advanceTimeBy(300L)
+
+        chatSocket.state shouldBeEqualTo ChatSocket.State.Connected(connectedEvent)
+
+        chatSocket.releaseConnection(requested = false)
+
+        chatSocket.state shouldBeInstanceOf ChatSocket.State.DisconnectedByBackground::class.java
+
+        testCoroutines.scope.advanceTimeBy(4000)
+
+        chatSocket.state shouldBeInstanceOf ChatSocket.State.DisconnectedByBackground::class.java
     }
 }

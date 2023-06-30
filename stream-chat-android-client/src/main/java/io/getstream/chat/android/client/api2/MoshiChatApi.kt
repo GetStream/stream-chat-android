@@ -176,6 +176,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     }
 
     override fun appSettings(): Call<AppSettings> {
+        logger.d { "[appSettings] no args" }
         return configApi.getAppSettings().map(AppSettingsResponse::toDomain)
     }
 
