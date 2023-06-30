@@ -36,6 +36,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelL
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.FetchCurrentUserListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.GetMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.HideChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.QueryChannelListenerDatabase
@@ -150,6 +151,10 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
             repositoryFacade = repositoryFacade
         )
 
+        val fetchCurrentUserListener = FetchCurrentUserListenerDatabase(
+            userRepository = repositoryFacade,
+        )
+
         return OfflinePlugin(
             activeUser = user,
             queryChannelListener = queryChannelListener,
@@ -165,6 +170,7 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
             queryMembersListener = queryMembersListener,
             createChannelListener = createChannelListener,
             getMessageListener = getMessageListener,
+            fetchCurrentUserListener = fetchCurrentUserListener,
         )
     }
 

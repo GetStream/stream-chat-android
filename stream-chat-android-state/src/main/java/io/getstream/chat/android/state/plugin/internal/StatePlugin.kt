@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -45,6 +46,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadL
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUserListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
@@ -106,7 +108,8 @@ public class StatePlugin internal constructor(
     ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
     SendMessageListener by SendMessageListenerState(logic),
     TypingEventListener by TypingEventListenerState(stateRegistry),
-    SendAttachmentListener by SendAttachmentListenerState(logic) {
+    SendAttachmentListener by SendAttachmentListenerState(logic),
+    FetchCurrentUserListener by FetchCurrentUserListenerState(globalState) {
 
     override var errorHandler: ErrorHandler = errorHandlerFactory.create()
 

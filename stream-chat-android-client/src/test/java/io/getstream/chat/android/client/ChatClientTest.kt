@@ -131,6 +131,7 @@ internal class ChatClientTest {
             pluginFactories = pluginFactories,
             mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            currentUserFetcher = mock(),
         ).apply {
             connectUser(user, token).enqueue()
         }

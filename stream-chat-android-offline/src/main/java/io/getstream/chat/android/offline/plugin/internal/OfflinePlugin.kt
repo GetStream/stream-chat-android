@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
@@ -51,6 +52,8 @@ import kotlin.reflect.KClass
  * @param queryMembersListener [QueryMembersListener]
  * @param createChannelListener [CreateChannelListener]
  * @param getMessageListener [GetMessageListener]
+ * @param getMessageListener [GetMessageListener]
+ * @param fetchCurrentUserListener [FetchCurrentUserListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
  * @param provideDependency Resolves dependency within [OfflinePlugin].
  */
@@ -70,6 +73,7 @@ internal class OfflinePlugin(
     private val queryMembersListener: QueryMembersListener,
     private val createChannelListener: CreateChannelListener,
     private val getMessageListener: GetMessageListener,
+    private val fetchCurrentUserListener: FetchCurrentUserListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : Plugin,
     DependencyResolver,
@@ -85,13 +89,16 @@ internal class OfflinePlugin(
     QueryMembersListener by queryMembersListener,
     CreateChannelListener by createChannelListener,
     SendAttachmentListener by sendAttachmentListener,
-    GetMessageListener by getMessageListener {
+    GetMessageListener by getMessageListener,
+    FetchCurrentUserListener by fetchCurrentUserListener {
 
     override val errorHandler: ErrorHandler? = null
 
-    override fun onUserSet(user: User) { /* No-Op */ }
+    override fun onUserSet(user: User) { /* No-Op */
+    }
 
-    override fun onUserDisconnected() { /* No-Op */ }
+    override fun onUserDisconnected() { /* No-Op */
+    }
 
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi

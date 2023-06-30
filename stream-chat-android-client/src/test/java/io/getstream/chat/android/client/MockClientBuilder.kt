@@ -117,7 +117,8 @@ internal class MockClientBuilder(
             chatSocket = mock(),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            mutableClientState = mutableClientState
+            mutableClientState = mutableClientState,
+            currentUserFetcher = mock(),
         )
 
         client.attachmentsSender = attachmentSender

@@ -9,5 +9,8 @@
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&amp;oh=$originalHeight&amp;ow=$originalWidth"</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>ReturnCount:CurrentUserFetcher.kt$CurrentUserFetcherImpl$override suspend fun fetch(): Result&lt;User></ID>
+    <ID>TooGenericExceptionCaught:CurrentUserFetcher.kt$CurrentUserFetcherImpl$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:CurrentUserFetcher.kt$CurrentUserFetcherImpl$t: Throwable</ID>
   </CurrentIssues>
 </SmellBaseline>

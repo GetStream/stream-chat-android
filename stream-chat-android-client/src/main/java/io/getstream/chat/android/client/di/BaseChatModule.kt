@@ -60,12 +60,16 @@ import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
+import io.getstream.chat.android.client.user.CurrentUserFetcherImpl
+import io.getstream.chat.android.client.user.CurrentUserUrlBuilderImpl
+import io.getstream.chat.android.models.ConnectionState
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -101,6 +105,26 @@ internal open class BaseChatModule(
         NetworkStateProvider(scope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)
     }
     val userStateService: UserStateService = UserStateService()
+
+    val mutableClientState by lazy {
+        MutableClientState(networkStateProvider)
+    }
+
+    val currentUserFetcher by lazy {
+        CurrentUserFetcherImpl(
+            userScope = scope,
+            httpClient = baseClient.newBuilder().build(),
+            chatParser = moshiParser,
+            networkStateProvider = networkStateProvider,
+            urlBuilder = CurrentUserUrlBuilderImpl(
+                getCurrentUserId = { runCatching { userStateService.state.userOrError() }.getOrNull()?.id },
+                getToken = { tokenManager.getToken() },
+                getApiKey = { config.apiKey },
+                getBaseUrl = { config.wssUrl },
+                chatParser = moshiParser,
+            ),
+        )
+    }
 
     //region Modules
 

@@ -110,6 +110,7 @@ import io.getstream.chat.android.client.token.TokenProvider
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.user.CredentialConfig
+import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.chat.android.client.user.storage.SharedPreferencesCredentialStorage
 import io.getstream.chat.android.client.user.storage.UserCredentialStorage
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -210,6 +211,7 @@ internal constructor(
     private val chatSocket: ChatSocket,
     private val pluginFactories: List<PluginFactory>,
     private val mutableClientState: MutableClientState,
+    private val currentUserFetcher: CurrentUserFetcher,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
 ) {
     private val logger by taggedLogger("Chat:Client")
@@ -1000,6 +1002,31 @@ internal constructor(
             Result.Success(chatSocket.disconnect())
         }
 
+    /**
+     * Fetches the current user.
+     * Works only if the user was previously set and the WS connections is closed.
+     */
+    public fun fetchCurrentUser(): Call<User> {
+        return CoroutineCall(userScope) {
+            logger.d { "[fetchCurrentUser] isUserSet: ${isUserSet()}, isSocketConnected: ${isSocketConnected()}" }
+            when {
+                !isUserSet() -> Result.Failure(Error.GenericError("User is not set, can't fetch current user"))
+                isSocketConnected() -> Result.Failure(
+                    Error.GenericError(
+                        "Socket is connected, can't fetch current user"
+                    )
+                )
+                else -> currentUserFetcher.fetch()
+            }
+        }.doOnResult(userScope) { result ->
+            logger.v { "[fetchCurrentUser] completed: $result" }
+            plugins.forEach { plugin ->
+                logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                plugin.onFetchCurrentUserResult(result)
+            }
+        }
+    }
+
     @CheckResult
     public fun reconnectSocket(): Call<Unit> =
         CoroutineCall(userScope) {
@@ -1011,6 +1038,7 @@ internal constructor(
                         true,
                     )
                 )
+
                 else -> Result.Failure(Error.GenericError("Invalid user state $userState without user being set!"))
             }
         }
@@ -3067,7 +3095,8 @@ internal constructor(
                         .filterIsInstance<RepositoryFactory.Provider>()
                         .firstOrNull()
                     ?: NoOpRepositoryFactory.Provider,
-                mutableClientState = MutableClientState(module.networkStateProvider),
+                mutableClientState = module.mutableClientState,
+                currentUserFetcher = module.currentUserFetcher,
             ).apply {
                 attachmentsSender = AttachmentsSender(
                     context = appContext,
@@ -3143,7 +3172,7 @@ internal constructor(
         @JvmField
         public val DEFAULT_SORT: QuerySorter<Member> = QuerySortByField.descByName("last_updated")
 
-        private const val ANONYMOUS_USER_ID = "!anon"
+        internal const val ANONYMOUS_USER_ID = "!anon"
         private val anonUser by lazy { User(id = ANONYMOUS_USER_ID) }
 
         @JvmStatic

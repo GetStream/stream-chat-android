@@ -132,6 +132,7 @@ internal class ChatClientDebuggerTest {
             pluginFactories = pluginFactories,
             mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
+            currentUserFetcher = mock(),
         ).apply {
             attachmentsSender = this@ChatClientDebuggerTest.attachmentsSender
             connectUser(user, token).enqueue()
