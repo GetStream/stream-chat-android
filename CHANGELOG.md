@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 - Fixed `QueryChannelRequest.withWatchers` to make `watchers` accessible in response. [#4848](https://github.com/GetStream/stream-chat-android/pull/4848)
 - Fixed WS being reconnected after App backgrounding. [#4858](https://github.com/GetStream/stream-chat-android/pull/4858)
+- Fixed `SyncManager` not emitting missed events after getting online. [#4861](https://github.com/GetStream/stream-chat-android/pull/4861)
 
 ### ⬆️ Improved
 
