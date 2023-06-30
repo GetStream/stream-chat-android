@@ -18,6 +18,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelClient.fetchCurrentUser` to fetch current user from backend. [#4857](https://github.com/GetStream/stream-chat-android/pull/4857)
+- Added `FetchCurrentUserListener` interface used to perform actions as side effects when the `ChatCliet.fetchCurrentUser()` method is used to fetch the current user from the backend. [#4857](https://github.com/GetStream/stream-chat-android/pull/4857)
 
 ### ⚠️ Changed
 
