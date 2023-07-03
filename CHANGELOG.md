@@ -118,6 +118,7 @@
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessagesViewModelFactory`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
 - Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4807](https://github.com/GetStream/stream-chat-android/pull/4807)
 - Add `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not. [#4812](https://github.com/GetStream/stream-chat-android/pull/4812)
+- Added `MessageTheme` to customize the message components into `ChatTheme`. [#4856](https://github.com/GetStream/stream-chat-android/pull/4856)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessagesScreen`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)

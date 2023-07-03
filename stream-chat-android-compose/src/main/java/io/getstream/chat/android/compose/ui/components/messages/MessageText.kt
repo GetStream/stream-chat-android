@@ -67,9 +67,9 @@ public fun MessageText(
     val context = LocalContext.current
 
     val textColor = if (message.isMine(currentUser)) {
-        ChatTheme.colors.ownMessageText
+        ChatTheme.ownMessageTheme.textStyle.color
     } else {
-        ChatTheme.colors.otherMessageText
+        ChatTheme.otherMessageTheme.textStyle.color
     }
     val styledText = buildAnnotatedMessageText(message.text, textColor)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
@@ -78,7 +78,11 @@ public fun MessageText(
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> ChatTheme.typography.bodyBold
+        else -> if (message.isMine(currentUser)) {
+            ChatTheme.ownMessageTheme.textStyle
+        } else {
+            ChatTheme.otherMessageTheme.textStyle
+        }
     }
 
     if (annotations.isNotEmpty()) {
