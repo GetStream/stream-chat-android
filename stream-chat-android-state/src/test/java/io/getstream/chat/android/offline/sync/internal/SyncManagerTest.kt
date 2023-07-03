@@ -175,6 +175,33 @@ internal class SyncManagerTest {
         verify(_syncEvents, never()).emit(any())
     }
 
+    @Test
+    fun `test initial syncing when rawLastSyncedAt is null`() = runTest {
+        /* Given */
+        val createdAt = Date()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+
+        val mockedChatEvent: ChatEvent = mock {
+            on(it.createdAt) doReturn createdAt
+            on(it.rawCreatedAt) doReturn rawCreatedAt
+        }
+
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
+            Result.success(listOf(mockedChatEvent))
+        )
+        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(
+            Result.success(listOf(mockedChatEvent))
+        )
+
+        val syncManager = buildSyncManager()
+
+        /* When */
+        syncManager.performSync(cids = listOf("1", "2"))
+
+        /* Then */
+        verify(_syncEvents).emit(listOf(mockedChatEvent))
+    }
+
     private fun buildSyncManager(): SyncManager {
         return SyncManager(
             currentUserId = user.id,

@@ -252,8 +252,12 @@ internal constructor(
             "The new Socket Implementation handle it internally"
     )
     private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() = reconnectSocket(false)
+        override fun resume() {
+            logger.d { "[onAppResume] no args" }
+            reconnectSocket(false)
+        }
         override fun stopped() {
+            logger.d { "[onAppStop] no args" }
             socket.releaseConnection(false)
         }
     }
@@ -354,8 +358,9 @@ internal constructor(
                         DisconnectCause.ConnectionReleased,
                         DisconnectCause.NetworkNotAvailable,
                         DisconnectCause.WebSocketNotAvailable,
-                        is DisconnectCause.Error,
-                        -> if (ToggleService.isSocketExperimental().not()) socketStateService.onDisconnected()
+                        is DisconnectCause.Error -> if (ToggleService.isSocketExperimental().not()) {
+                            socketStateService.onDisconnected()
+                        }
                         is DisconnectCause.UnrecoverableError -> {
                             userStateService.onSocketUnrecoverableError()
                             if (ToggleService.isSocketExperimental().not()) {
@@ -1045,6 +1050,7 @@ internal constructor(
     //endregion
 
     public fun disconnectSocket() {
+        logger.d { "[disconnectSocket] no args" }
         if (ToggleService.isSocketExperimental()) {
             chatSocketExperimental.disconnect()
         } else {
@@ -1057,11 +1063,13 @@ internal constructor(
     }
 
     private fun reconnectSocket(forceReconnection: Boolean) {
+        logger.d { "[reconnectSocket] forceReconnection: $forceReconnection" }
         if (ToggleService.isSocketExperimental().not()) {
             when (socketStateService.state) {
                 is SocketState.Disconnected,
                 is SocketState.Idle -> when (val userState = userStateService.state) {
-                    is UserState.UserSet, is UserState.AnonymousUserSet -> socket.reconnectUser(
+                    is UserState.UserSet,
+                    is UserState.AnonymousUserSet -> socket.reconnectUser(
                         userState.userOrError(),
                         userState is UserState.AnonymousUserSet,
                         forceReconnection,
