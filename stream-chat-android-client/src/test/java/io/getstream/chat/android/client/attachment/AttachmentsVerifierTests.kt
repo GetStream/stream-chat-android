@@ -27,12 +27,10 @@ import java.io.File
 
 internal class AttachmentsVerifierTests {
 
-    private lateinit var verifier: AttachmentsVerifier
+    private val verifier = AttachmentsVerifier
 
     @BeforeEach
     fun setUp() {
-        verifier = AttachmentsVerifier()
-
         TestLoggingHelper.initialize()
     }
 
