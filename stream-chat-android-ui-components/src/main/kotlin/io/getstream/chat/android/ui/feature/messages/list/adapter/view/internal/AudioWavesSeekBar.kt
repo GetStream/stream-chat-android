@@ -197,6 +197,8 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         }
     }
 
+    private val rect = RectF()
+
     /**
      * In onDraw all the bars are drawn and the tracker position is calculated.
      */
@@ -211,7 +213,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
             val top = (height - barHeight) / 2
             val bottom = top + barHeight
 
-            val rect = RectF(left, top, right, bottom)
+            rect.set(left, top, right, bottom)
             val paint = if (progressToX(progress) > left + barWidth!! / 2) paintLeft else paintRight
 
             tracker.x = trackerPosition(progressToX(progress)) - tracker.width / 2

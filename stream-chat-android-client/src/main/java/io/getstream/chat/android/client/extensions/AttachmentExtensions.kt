@@ -33,6 +33,9 @@ public var Attachment.uploadId: String?
         value?.let { extraData[EXTRA_UPLOAD_ID] = it }
     }
 
+/**
+ * Duration of the attachment in seconds.
+ */
 public var Attachment.duration: Float?
     get() = extraData[EXTRA_DURATION] as? Float
     set(value) {
@@ -41,6 +44,9 @@ public var Attachment.duration: Float?
         }
     }
 
+/**
+ * Waveform data of the attachment.
+ */
 public var Attachment.waveformData: List<Float>?
     get() = extraData[EXTRA_WAVEFORM_DATA] as? List<Float>
     set(value) {

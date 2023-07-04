@@ -46,7 +46,7 @@ import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.DurationParser
+import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
 /**
  * Represents fallback content for unsupported attachments.
@@ -61,8 +61,8 @@ public fun AudioRecordAttachmentContent(
 ) {
     val audioPlayer = ChatClient.instance().audioPlayer
 
-    val duration = ((audioTrack.duration?.toInt()) ?: 0)
-        .let(DurationParser::durationInMilliToReadableTime)
+    val duration = (audioTrack.duration ?: 0f)
+        .let(DurationFormatter::formatDurationInSeconds)
 
     var trackProgress by remember { mutableStateOf(0F) }
     var durationText by remember { mutableStateOf(duration) }
@@ -74,7 +74,7 @@ public fun AudioRecordAttachmentContent(
 
         onProgressStateChange(audioHash) { progressData ->
             trackProgress = progressData.progress.toFloat()
-            durationText = DurationParser.durationInMilliToReadableTime(progressData.currentPosition)
+            durationText = DurationFormatter.formatDurationInMillis(progressData.currentPosition)
         }
 
         onAudioStateChange(audioHash) { audioState ->
