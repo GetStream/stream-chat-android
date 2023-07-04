@@ -111,6 +111,12 @@ private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme."
     )
 }
+private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
+    error("No OwnMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
+    error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
@@ -137,6 +143,8 @@ private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
+ * @param ownMessageTheme Theme of the current user messages.
+ * @param otherMessageTheme Theme of the other users messages.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -166,6 +174,14 @@ public fun ChatTheme(
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
+    ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
+        typography = typography,
+        colors = colors,
+    ),
+    otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
+        typography = typography,
+        colors = colors,
+    ),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -185,6 +201,8 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
+        LocalOwnMessageTheme provides ownMessageTheme,
+        LocalOtherMessageTheme provides otherMessageTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -336,4 +354,20 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReadCountEnabled.current
+
+    /**
+     * Retrieves the current own [MessageTheme] at the call site's position in the hierarchy.
+     */
+    public val ownMessageTheme: MessageTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalOwnMessageTheme.current
+
+    /**
+     * Retrieves the current other [MessageTheme] at the call site's position in the hierarchy.
+     */
+    public val otherMessageTheme: MessageTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalOtherMessageTheme.current
 }

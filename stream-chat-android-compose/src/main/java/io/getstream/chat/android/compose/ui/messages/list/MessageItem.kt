@@ -499,9 +499,14 @@ internal fun RegularMessageContent(
 
     val messageBubbleColor = when {
         message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> ChatTheme.colors.deletedMessagesBackground
-        ownsMessage -> ChatTheme.colors.ownMessagesBackground
-        else -> ChatTheme.colors.otherMessagesBackground
+        message.isDeleted() -> when (ownsMessage) {
+            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
+            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
+        }
+        else -> when (ownsMessage) {
+            true -> ChatTheme.ownMessageTheme.backgroundColor
+            else -> ChatTheme.otherMessageTheme.backgroundColor
+        }
     }
 
     if (!messageItem.isFailed()) {
