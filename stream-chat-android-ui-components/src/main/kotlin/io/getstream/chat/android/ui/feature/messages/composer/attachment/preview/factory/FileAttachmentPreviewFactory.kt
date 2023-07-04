@@ -17,6 +17,8 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding
@@ -25,11 +27,15 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 import io.getstream.chat.android.uiutils.extension.isAnyFileType
+import io.getstream.log.taggedLogger
 
 /**
  * The default [AttachmentPreviewFactory] for file attachments.
  */
 public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
+
+    private val logger by taggedLogger("AttachFilePreviewFactory")
+
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.
      *
@@ -37,6 +43,7 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
+        logger.i { "[canHandle] isAnyFileType: ${attachment.isAnyFileType()}; $attachment" }
         return attachment.isAnyFileType()
     }
 
@@ -71,6 +78,8 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
         attachmentRemovalListener: (Attachment) -> Unit,
     ) : AttachmentPreviewViewHolder(binding.root) {
 
+        private val logger by taggedLogger("AttachFilePreviewHolder")
+
         private lateinit var attachment: Attachment
 
         init {
@@ -78,6 +87,7 @@ public class FileAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         override fun bind(attachment: Attachment) {
+            logger.v { "[bind] isAnyFileType: ${attachment.isAnyFileType()}; $attachment" }
             this.attachment = attachment
 
             binding.fileNameTextView.text = attachment.title

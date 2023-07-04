@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
@@ -24,19 +25,23 @@ import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.DurationParser
+import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayerView
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
-private const val NULL_DURATION = 0.0
+private const val NULL_DURATION = 0.0f
 
 /**
  * The default [AttachmentPreviewFactory] for file attachments.
  */
 public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
+
+    private val logger by taggedLogger("AttachRecordPreviewFactory")
+
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.
      *
@@ -44,6 +49,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
+        logger.i { "[canHandle] isAudioRecording: ${attachment.isAudioRecording()}; $attachment" }
         return attachment.isAudioRecording()
     }
 
@@ -77,6 +83,8 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         attachmentRemovalListener: (Attachment) -> Unit,
     ) : AttachmentPreviewViewHolder(binding.root) {
 
+        private val logger by taggedLogger("AttachRecordPreviewHolder")
+
         private lateinit var attachment: Attachment
 
         init {
@@ -84,17 +92,17 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         override fun bind(attachment: Attachment) {
-            if (attachment.assetUrl == null) return
-
+            if (attachment.upload == null) return
+            logger.d { "[bind] attachment: $attachment" }
             val audioPlayer = ChatClient.instance().audioPlayer
             val playerView = binding.playerView
 
             this.attachment = attachment
 
             attachment.duration
-                ?.toInt()
-                ?.let(DurationParser::durationInMilliToReadableTime)
+                ?.let(DurationFormatter::formatDurationInSeconds)
                 ?.let { duration ->
+                    logger.v { "[bind] duration: $duration" }
                     playerView.setDuration(duration)
                 }
 
@@ -109,52 +117,53 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         override fun unbind() {
             ChatClient.instance().audioPlayer.removeAudios(listOf(attachment.hashCode()))
         }
-    }
-}
 
-private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
-    onAudioStateChange(hashCode) { audioState ->
-        when (audioState) {
-            AudioState.LOADING -> playerView.setLoading()
-            AudioState.PAUSE -> playerView.setPaused()
-            AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
-            AudioState.PLAYING -> playerView.setPlaying()
+        private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
+            onAudioStateChange(hashCode) { audioState ->
+                when (audioState) {
+                    AudioState.LOADING -> playerView.setLoading()
+                    AudioState.PAUSE -> playerView.setPaused()
+                    AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
+                    AudioState.PLAYING -> playerView.setPlaying()
+                }
+            }
+            onProgressStateChange(hashCode) { (duration, progress) ->
+                playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
+                playerView.setProgress(progress.toDouble())
+            }
+            onSpeedChange(hashCode, playerView::setSpeedText)
         }
-    }
-    onProgressStateChange(hashCode) { (duration, progress) ->
-        playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
-        playerView.setProgress(progress.toDouble())
-    }
-    onSpeedChange(hashCode, playerView::setSpeedText)
-}
 
-private fun AudioRecordPlayerView.registerButtonsListeners(
-    audioPlayer: AudioPlayer,
-    attachment: Attachment,
-    hashCode: Int,
-) {
-    onPlayButtonPress {
-        if (attachment.assetUrl != null) {
-            audioPlayer.play(attachment.assetUrl!!, hashCode)
-        } else {
-            setLoading()
+        private fun AudioRecordPlayerView.registerButtonsListeners(
+            audioPlayer: AudioPlayer,
+            attachment: Attachment,
+            hashCode: Int,
+        ) {
+            onPlayButtonPress {
+                val audioFile = attachment.upload ?: run {
+                    logger.w { "[toggleRecordingPlayback] rejected (audioFile is null)" }
+                    return@onPlayButtonPress
+                }
+                val fileUri = audioFile.toUri().toString()
+                audioPlayer.play(fileUri, hashCode)
+            }
+
+            onSpeedButtonPress {
+                audioPlayer.changeSpeed()
+            }
+
+            onSeekbarMove({
+                audioPlayer.startSeek(attachment.hashCode())
+            }, { progress ->
+                audioPlayer.seekTo(
+                    progressToDecimal(progress, attachment.duration),
+                    attachment.hashCode()
+                )
+            })
         }
-    }
 
-    onSpeedButtonPress {
-        audioPlayer.changeSpeed()
     }
-
-    onSeekbarMove({
-        audioPlayer.startSeek(attachment.hashCode())
-    }, { progress ->
-        audioPlayer.seekTo(
-            progressToDecimal(progress, attachment.extraData["duration"] as? Double),
-            attachment.hashCode()
-        )
-    })
 }
-
 @Suppress("MagicNumber")
-private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
-    progress * (totalDuration ?: NULL_DURATION).toInt() / 100
+private fun progressToDecimal(progress: Int, totalDuration: Float?): Int =
+    (progress * (totalDuration ?: NULL_DURATION) / 100).toInt()

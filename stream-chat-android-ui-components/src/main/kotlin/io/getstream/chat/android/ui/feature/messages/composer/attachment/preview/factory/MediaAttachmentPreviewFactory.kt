@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
@@ -31,11 +32,15 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
+import io.getstream.log.taggedLogger
 
 /**
  * The default [AttachmentPreviewFactory] for image and video attachments.
  */
 public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
+
+    private val logger by taggedLogger("AttachMediaPreviewFactory")
+
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.
      *
@@ -43,6 +48,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
     public override fun canHandle(attachment: Attachment): Boolean {
+        logger.i { "[canHandle] isImage: ${attachment.isImage()}, isVideo: ${attachment.isVideo()}; $attachment" }
         return attachment.isImage() || attachment.isVideo()
     }
 
@@ -85,6 +91,8 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
         attachmentRemovalListener: (Attachment) -> Unit,
         private val style: MessageComposerViewStyle?,
     ) : AttachmentPreviewViewHolder(binding.root) {
+
+        private val logger by taggedLogger("AttachMediaPreviewHolder")
 
         private lateinit var attachment: Attachment
 
@@ -139,6 +147,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         override fun bind(attachment: Attachment) {
+            logger.v { "[bind] isImage: ${attachment.isImage()}, isVideo: ${attachment.isVideo()}; $attachment" }
             this.attachment = attachment
             val upload = attachment.upload
 

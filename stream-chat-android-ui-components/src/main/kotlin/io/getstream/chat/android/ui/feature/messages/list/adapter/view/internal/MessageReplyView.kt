@@ -31,7 +31,7 @@ import io.getstream.chat.android.client.utils.attachment.isLink
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.common.utils.DurationParser
+import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 import io.getstream.chat.android.ui.databinding.StreamUiMessageReplyViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
@@ -194,7 +194,7 @@ internal class MessageReplyView : FrameLayout {
         if (message.attachments.any { it.isAudioRecording() }) {
             binding.additionalInfo.isVisible = true
             binding.additionalInfo.text =
-                DurationParser.durationInMilliToReadableTime(
+                DurationFormatter.formatDurationInMillis(
                     (
                         message.attachments
                             .first { it.isAudioRecording() }

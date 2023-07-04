@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FallbackAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
+import io.getstream.log.taggedLogger
 
 /**
  * A manager for registered attachment preview factories.
@@ -36,11 +37,14 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
     attachmentPreviewFactories: List<AttachmentPreviewFactory> = listOf(
         MediaAttachmentPreviewFactory(),
+        AudioRecordAttachmentPreviewFactory(),
         FileAttachmentPreviewFactory(),
-        AudioRecordAttachmentPreviewFactory()
     ),
     private val fallbackAttachmentPreviewFactory: FallbackAttachmentPreviewFactory = FallbackAttachmentPreviewFactory(),
 ) {
+
+    private val logger by taggedLogger("AttachPreviewFM")
+
     private val viewTypeToFactoryMapping = SparseArrayCompat<AttachmentPreviewFactory>()
 
     init {
@@ -82,6 +86,7 @@ public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
     public fun getItemViewType(attachment: Attachment): Int {
         for (i in 0 until viewTypeToFactoryMapping.size()) {
             val factory = viewTypeToFactoryMapping.valueAt(i)
+            logger.w { "[getItemViewType] i: $i, factory: $factory" }
             if (factory.canHandle(attachment)) {
                 return viewTypeToFactoryMapping.keyAt(i)
             }

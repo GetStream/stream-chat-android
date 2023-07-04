@@ -153,7 +153,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param speed
      */
     public fun setSpeedText(speed: Float) {
-        playerView.speedButton.text = "${speed}x"
+        playerView.speedButton.text = "x${speed}"
     }
 
     /**

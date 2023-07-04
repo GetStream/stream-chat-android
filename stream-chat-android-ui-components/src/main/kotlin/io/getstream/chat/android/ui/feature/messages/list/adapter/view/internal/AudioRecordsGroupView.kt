@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.ui.common.utils.DurationParser
+import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
@@ -93,8 +93,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
 
         AudioRecordPlayerView(context).apply {
             attachment.duration
-                ?.toInt()
-                ?.let(DurationParser::durationInMilliToReadableTime)
+                ?.let(DurationFormatter::formatDurationInSeconds)
                 ?.let(this::setTotalDuration)
 
             logger.i { "[addAttachmentPlayerView] waveformData: ${attachment.waveformData}" }
@@ -131,7 +130,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             }
         }
         onProgressStateChange(hashCode) { (duration, progress) ->
-            playerView.setDuration(DurationParser.durationInMilliToReadableTime(duration))
+            playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
             // TODO
             playerView.setProgress(progress.toDouble())
         }

@@ -17,23 +17,31 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentPreviewBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewViewHolder
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
 /**
  * A fallback [AttachmentPreviewFactory] for attachments unhandled by other factories.
  */
 public class FallbackAttachmentPreviewFactory : AttachmentPreviewFactory {
+
+    private val logger by taggedLogger("AttachFallbackPreviewFactory")
+
     /**
      * Checks if the factory can create a preview ViewHolder for this attachment.
      *
      * @param attachment The attachment we want to show a preview for.
      * @return True if the factory is able to provide a preview for the given [Attachment].
      */
-    override fun canHandle(attachment: Attachment): Boolean = true
+    override fun canHandle(attachment: Attachment): Boolean {
+        logger.i { "[canHandle] isAudioRecording: ${attachment.isAudioRecording()}; $attachment" }
+        return true
+    }
 
     /**
      * Creates and instantiates a new instance of [FallbackAttachmentPreviewViewHolder].
