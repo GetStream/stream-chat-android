@@ -21,7 +21,7 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 
-internal class AttachmentsVerifier {
+internal object AttachmentsVerifier {
 
     private val logger by taggedLogger("Chat:AttachmentVerifier")
 

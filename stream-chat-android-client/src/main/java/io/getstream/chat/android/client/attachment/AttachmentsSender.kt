@@ -46,7 +46,7 @@ internal class AttachmentsSender(
     private val networkType: UploadAttachmentsNetworkType,
     private val clientState: ClientState,
     private val scope: CoroutineScope,
-    private val verifier: AttachmentsVerifier = AttachmentsVerifier()
+    private val verifier: AttachmentsVerifier = AttachmentsVerifier
 ) {
 
     private var jobsMap: Map<String, Job> = emptyMap()
