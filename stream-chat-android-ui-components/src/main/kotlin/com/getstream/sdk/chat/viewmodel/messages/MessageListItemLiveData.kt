@@ -341,6 +341,7 @@ internal class MessageListItemLiveData(
         // filter your own read status and sort by last read
         val sortedReads = reads
             .filter { it.user.id != currentUserId }
+            .filterNot { it.lastRead == null }
             .sortedBy { it.lastRead }
             .toMutableList()
         if (sortedReads.isEmpty()) return messages
