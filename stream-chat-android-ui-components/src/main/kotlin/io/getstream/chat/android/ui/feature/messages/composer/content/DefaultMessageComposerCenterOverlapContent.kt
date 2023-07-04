@@ -4,11 +4,17 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Rect
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+import android.transition.Fade
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.PopupWindow
@@ -26,6 +32,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterOverlapContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.utils.PermissionChecker
+import io.getstream.chat.android.ui.utils.extensions.displayMetrics
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
 
@@ -75,6 +82,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private val micLastRect = Rect()
     private val micMoveRect = Rect()
 
+    private var holdPopup: PopupWindow? = null
+    private var holdStartTime = 0L
+    private val holdHandler = Handler(Looper.getMainLooper())
+
     private val baseTouch = FloatArray(size = 2)
 
     private var micW: Int = 64.dpToPx()
@@ -122,6 +133,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     override fun renderState(state: MessageComposerState) {
         binding.root.isVisible = state.recording != RecordingState.Idle
         val recording = state.recording
+        logger.i { "[renderState] recordingState: ${recording::class.simpleName}" }
         if (recording is RecordingState.Hold) {
             renderHold(recording)
         } else if (recording is RecordingState.Locked) {
@@ -197,6 +209,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun renderHold(state: RecordingState.Hold) {
         logger.d { "[renderHold] no args" }
+        holdPopup?.dismiss()
+        holdPopup = null
 
         binding.horizontalGuideline.setGuidelinePercent(1f)
         layoutParams.height = centerContentHeight
@@ -235,9 +249,9 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
         micPopup?.dismiss()
         micPopup = null
-        (lockPopup?.contentView as? ImageView?)?.setImageResource(R.drawable.stream_ui_ic_mic_locked_light)
 
-        lockPopup?.update(lockBaseRect.left, lockBaseRect.top - 16.dpToPx(), -1, 64.dpToPx())
+        (lockPopup?.contentView as? ImageView?)?.setImageResource(R.drawable.stream_ui_ic_mic_locked_light)
+        lockPopup?.update(lockBaseRect.left, lockBaseRect.top, NO_CHANGE, lockBaseRect.width())
     }
 
     private fun renderOverview(state: RecordingState.Overview) {
@@ -246,10 +260,12 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
 
-        binding.recordingPlayback.setImageResource(when (state.isPlaying) {
-            true -> R.drawable.stream_ui_ic_pause
-            else -> R.drawable.stream_ui_ic_play
-        })
+        binding.recordingPlayback.setImageResource(
+            when (state.isPlaying) {
+                true -> R.drawable.stream_ui_ic_pause
+                else -> R.drawable.stream_ui_ic_play
+            }
+        )
         binding.recordingPlayback.setImageColorRes(R.color.stream_ui_accent_blue)
         binding.recordingPlayback.isClickable = true
         binding.recordingPlayback.isFocusable = true
@@ -305,12 +321,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                         ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)
                         ?: error("recordAudioButton not found")
                 recordAudioButton.getRectInWindow(micOrigRect)
+
+                logger.w { "[onTouchEvent] parentHeight: $parentHeight, centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().heightPixels}" }
+                baseTouch[0] = x
+                baseTouch[1] = y
+                holdStartTime = SystemClock.elapsedRealtime()
+
                 showMicPopup()
                 showLockPopup()
                 recordButtonHoldListener()
-
-                baseTouch[0] = x
-                baseTouch[1] = y
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -356,6 +375,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                     return false
                 }
             }
+
             MotionEvent.ACTION_CANCEL -> {
                 logger.d { "[onTouchEvent] ACTION_CANCEL" }
                 recordButtonCancelListener()
@@ -363,8 +383,14 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             }
 
             MotionEvent.ACTION_UP -> {
-                logger.d { "[onTouchEvent] ACTION_UP" }
-                recordButtonReleaseListener()
+                val duration = SystemClock.elapsedRealtime() - holdStartTime
+                logger.d { "[onTouchEvent] ACTION_UP ($duration)" }
+                if (duration > 1000) {
+                    recordButtonReleaseListener()
+                } else {
+                    showHoldPopup()
+                    recordButtonCancelListener()
+                }
                 return true
             }
         }
@@ -372,7 +398,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun showMicPopup() {
-        logger.d { "[showMicPopup] orig: $micOrigRect" }
+        logger.d { "[showMicPopup] micOrigRect: $micOrigRect" }
         val micW = micW
         val micH = micH
         val micContent = LayoutInflater.from(context).inflate(
@@ -402,7 +428,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun showLockPopup() {
-        logger.d { "[showLockPopup] micOrigRect: $micOrigRect" }
+        logger.d { "[showLockPopup] micBaseRect: $micBaseRect" }
         val lockW = 52.dpToPx()
         val lockH = 92.dpToPx()
         val lockContent = LayoutInflater.from(context).inflate(
@@ -419,7 +445,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
             lockBaseRect.set(0, 0, lockW, lockH)
             val deltaX = micBaseRect.centerX() - lockBaseRect.centerX()
-            val deltaY = micBaseRect.top - lockBaseRect.bottom
+            val spacerY = 16.dpToPx()
+            val deltaY = micBaseRect.top - lockBaseRect.height() - spacerY
             lockBaseRect.offset(deltaX, deltaY)
 
             lockLastRect.set(lockBaseRect)
@@ -429,6 +456,54 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             }
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, lockBaseRect.left, lockBaseRect.top)
         }
+    }
+
+    private fun showHoldPopup() {
+        val holdContent = LayoutInflater.from(context).inflate(
+            R.layout.stream_ui_message_composer_default_center_overlap_floating_hold, this, false
+        )
+        val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+
+        holdContent.measure(widthMeasureSpec, heightMeasureSpec)
+        val popupH = maxOf(holdContent.measuredHeight, holdContent.layoutParams.height)
+
+        logger.d { "[showHoldPopup] holdContent.h: ${holdContent.measuredHeight} - ${holdContent.layoutParams.height}" }
+        holdPopup?.dismiss()
+        holdPopup = PopupWindow(context).apply {
+            setBackgroundDrawable(null)
+            isClippingEnabled = true
+
+            contentView = holdContent
+            width = ViewGroup.LayoutParams.MATCH_PARENT
+            height = popupH
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                enterTransition = Fade(Fade.IN).apply {
+                    duration = ANIM_DURATION
+                }
+                exitTransition = Fade(Fade.OUT).apply {
+                    duration = ANIM_DURATION
+                }
+            }
+            val xy = IntArray(2)
+            binding.root.getLocationInWindow(xy)
+            val top = xy[1] - popupH
+            showAtLocation(binding.root, Gravity.TOP or Gravity.START, 0, top)
+        }
+
+        holdHandler.removeCallbacksAndMessages(null)
+        holdHandler.postDelayed({
+            logger.v { "[showHoldPopup] delayed cancellation" }
+            holdPopup?.dismiss()
+            holdPopup = null
+        }, HOLD_TIMEOUT)
+    }
+
+    internal companion object {
+        private const val HOLD_TIMEOUT = 1000L
+        private const val ANIM_DURATION = 100L
+        private const val NO_CHANGE = -1
     }
 }
 
