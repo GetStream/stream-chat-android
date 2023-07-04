@@ -8,6 +8,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.transition.Fade
 import android.util.AttributeSet
 import android.view.Gravity
@@ -65,6 +68,30 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private val logger by taggedLogger(TAG)
 
+
+    private fun vibrateDevice(milliseconds: Long) {
+        val vibrator = when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
+            }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
+                ContextCompat.getSystemService(context, Vibrator::class.java)
+            }
+            else -> {
+                context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
+            }
+        }
+
+        // Check if the device has vibrator capabilities
+        if (vibrator?.hasVibrator() == true) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val vibrationEffect = VibrationEffect.createOneShot(milliseconds, VibrationEffect.DEFAULT_AMPLITUDE)
+                vibrator.vibrate(vibrationEffect)
+            } else {
+                vibrator.vibrate(milliseconds)
+            }
+        }
+    }
     private val binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
 
     private var parentHeight: Int = 0
@@ -329,6 +356,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
                 showMicPopup()
                 showLockPopup()
+                vibrateDevice(VIBRATE_MS)
                 recordButtonHoldListener()
             }
 
@@ -385,7 +413,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             MotionEvent.ACTION_UP -> {
                 val duration = SystemClock.elapsedRealtime() - holdStartTime
                 logger.d { "[onTouchEvent] ACTION_UP ($duration)" }
-                if (duration > 1000) {
+                vibrateDevice(VIBRATE_MS)
+                if (duration > HOLD_TIMEOUT_MS) {
                     recordButtonReleaseListener()
                 } else {
                     showHoldPopup()
@@ -480,10 +509,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 enterTransition = Fade(Fade.IN).apply {
-                    duration = ANIM_DURATION
+                    duration = ANIM_DURATION_MS
                 }
                 exitTransition = Fade(Fade.OUT).apply {
-                    duration = ANIM_DURATION
+                    duration = ANIM_DURATION_MS
                 }
             }
             val xy = IntArray(2)
@@ -497,12 +526,13 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             logger.v { "[showHoldPopup] delayed cancellation" }
             holdPopup?.dismiss()
             holdPopup = null
-        }, HOLD_TIMEOUT)
+        }, HOLD_TIMEOUT_MS)
     }
 
     internal companion object {
-        private const val HOLD_TIMEOUT = 1000L
-        private const val ANIM_DURATION = 100L
+        private const val HOLD_TIMEOUT_MS = 1000L
+        private const val ANIM_DURATION_MS = 100L
+        private const val VIBRATE_MS = 100L
         private const val NO_CHANGE = -1
     }
 }
