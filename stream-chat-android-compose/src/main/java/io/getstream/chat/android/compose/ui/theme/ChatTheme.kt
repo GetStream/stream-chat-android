@@ -193,7 +193,7 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
-    streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(),
+    streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
