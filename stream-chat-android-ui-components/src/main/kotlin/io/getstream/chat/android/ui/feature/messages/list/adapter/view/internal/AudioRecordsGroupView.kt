@@ -120,8 +120,18 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         }
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        logger.d { "[onDetachedFromWindow] no args" }
+        val audioPlayer = ChatClient.instance().audioPlayer
+        audioAttachments?.forEach { attachment ->
+            audioPlayer.resetAudio(attachment.hashCode())
+        }
+    }
+
     private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
         onAudioStateChange(hashCode) { audioState ->
+            logger.d { "[onAudioStateChange] audioState: $audioState" }
             when (audioState) {
                 AudioState.LOADING -> playerView.setLoading()
                 AudioState.PAUSE -> playerView.setPaused()
@@ -143,6 +153,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
         hashCode: Int,
     ) {
         onPlayButtonPress {
+            logger.d { "[onPlayButtonPress] no args" }
             audioPlayer.clearTracks()
             audioAttachments?.forEachIndexed { index, attachment ->
                 audioPlayer.registerTrack(attachment.assetUrl!!, attachment.hashCode(), index)

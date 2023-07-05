@@ -71,7 +71,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         addView(tracker, layoutParamsButton)
     }
 
-    private val barPadding = DEFAULT_BAR_PADDING.dpToPx()
+    private val barPadding = 0 //DEFAULT_BAR_PADDING.dpToPx()
     private val realPaddingStart = paddingStart + barPadding
     private val realPaddingEnd = paddingEnd + barPadding
     private var barWidth: Float? = null
