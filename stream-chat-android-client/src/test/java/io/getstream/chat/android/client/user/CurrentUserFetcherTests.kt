@@ -17,6 +17,8 @@
 package io.getstream.chat.android.client.user
 
 import io.getstream.chat.android.client.Mother.randomConnectedEvent
+import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -25,7 +27,11 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.client.socket.SocketFactory
+import io.getstream.chat.android.client.socket.StreamWebSocket
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,8 +40,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.plus
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
-import okhttp3.OkHttpClient
 import okhttp3.WebSocket
+import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -56,24 +62,34 @@ internal class CurrentUserFetcherTests {
 
     lateinit var userScope: UserScope
     lateinit var chatParser: ChatParser
-    lateinit var httpClient: OkHttpClient
-    lateinit var networkStateProvider: NetworkStateProvider
-    lateinit var urlBuilder: CurrentUserUrlBuilder
-    lateinit var fetcher: CurrentUserFetcherImpl
+    val networkStateProvider: NetworkStateProvider = mock()
+    lateinit var fetcher: CurrentUserFetcher
+    lateinit var webSocketListener: WebSocketListener
+    lateinit var streamWebSocket: StreamWebSocket
+    private val ws: WebSocket = mock()
 
     @BeforeEach
     fun before() {
         userScope = UserTestScope(testCoroutines.scope)
-        networkStateProvider = mock()
-        httpClient = mock()
         chatParser = mock()
-        urlBuilder = mock()
-        fetcher = CurrentUserFetcherImpl(
-            userScope = userScope,
-            httpClient = httpClient,
+        streamWebSocket = StreamWebSocket(chatParser) {
+            webSocketListener = it
+            ws
+        }
+        val socketFactory: SocketFactory = mock()
+        whenever(socketFactory.createSocket(any())) doReturn streamWebSocket
+        fetcher = CurrentUserFetcher(
             networkStateProvider = networkStateProvider,
-            urlBuilder = urlBuilder,
-            chatParser = chatParser
+            socketFactory = socketFactory,
+            ChatClientConfig(
+                apiKey = randomString(),
+                httpUrl = randomString(),
+                cdnHttpUrl = randomString(),
+                wssUrl = randomString(),
+                warmUp = randomBoolean(),
+                loggerConfig = mock(),
+                debugRequests = randomBoolean(),
+            ).apply { isAnonymous = randomBoolean() }
         )
     }
 
@@ -83,23 +99,19 @@ internal class CurrentUserFetcherTests {
         whenever(networkStateProvider.isConnected()) doReturn false
 
         /* When */
-        val result = fetcher.fetch()
+        val result = fetcher.fetch(randomUser())
 
         /* Then */
         result.isFailure `should be equal to` true
     }
 
     @Test
-    fun `When fails de to Timeout`() = runTest {
+    fun `When fails due to Timeout`() = runTest {
         /* Given */
-        val ws: WebSocket = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
-        whenever(urlBuilder.buildUrl()) doReturn "wss://test.com"
-        whenever(httpClient.newWebSocket(any(), any())) doReturn ws
 
         /* When */
-        val result = fetcher.fetch()
-        testCoroutines.scope.advanceTimeBy(20_000)
+        val result = fetcher.fetch(randomUser())
 
         /* Then */
         result.isFailure `should be equal to` true
@@ -109,23 +121,18 @@ internal class CurrentUserFetcherTests {
     @Test
     fun `When ws message contains error`() = runTest {
         /* Given */
-        val ws: WebSocket = mock()
         val errorMessage = SocketErrorMessage(
             ErrorResponse(message = "Error")
         )
         whenever(networkStateProvider.isConnected()) doReturn true
-        whenever(urlBuilder.buildUrl()) doReturn "wss://test.com"
-        whenever(httpClient.newWebSocket(any(), any())) doReturn ws
+        whenever(chatParser.fromJsonOrError(errorMessage.toString(), ChatEvent::class.java)) doReturn Result.Failure(Error.GenericError(""))
         whenever(chatParser.fromJsonOrError(errorMessage.toString(), SocketErrorMessage::class.java)) doReturn Result.Success(errorMessage)
 
         /* When */
-        val localScope = testCoroutines.scope + Job()
-        val deferredResult = localScope.async {
-            fetcher.fetch()
+        val deferredResult = testCoroutines.scope.async {
+            fetcher.fetch(randomUser())
         }
-        testCoroutines.scope.advanceTimeBy(2_000)
-        fetcher.onMessage(ws, errorMessage.toString())
-        testCoroutines.scope.advanceTimeBy(2_000)
+        webSocketListener.onMessage(ws, errorMessage.toString())
 
         val result = deferredResult.await()
 
@@ -139,48 +146,46 @@ internal class CurrentUserFetcherTests {
     @Test
     fun `When ws fails`() = runTest {
         /* Given */
-        val ws: WebSocket = mock()
         whenever(networkStateProvider.isConnected()) doReturn true
-        whenever(urlBuilder.buildUrl()) doReturn "wss://test.com"
-        whenever(httpClient.newWebSocket(any(), any())) doReturn ws
+        val exception = Exception("Error")
 
         /* When */
-        val localScope = testCoroutines.scope + Job()
-        val deferredResult = localScope.async {
-            fetcher.fetch()
+        val deferredResult = testCoroutines.scope.async {
+            fetcher.fetch(randomUser())
         }
-        testCoroutines.scope.advanceTimeBy(2_000)
-        fetcher.onFailure(ws, Exception("Error"), null)
+
+        webSocketListener.onFailure(ws, exception, null)
         testCoroutines.scope.advanceTimeBy(2_000)
 
         val result = deferredResult.await()
 
         /* Then */
         result.isFailure `should be equal to` true
-        result.errorOrNull() `should be equal to` ChatErrorCode.SOCKET_CLOSED.let {
-            Error.NetworkError(serverErrorCode = it.code, message = it.description)
+        result.errorOrNull() `should be equal to` ChatErrorCode.SOCKET_FAILURE.let {
+            Error.NetworkError(
+                serverErrorCode = it.code,
+                message = it.description,
+                cause = exception,
+            )
         }
     }
 
     @Test
     fun `When everything is ok`() = runTest {
         /* Given */
-        val ws: WebSocket = mock()
         val message = "health_check"
         val connectedEvent = randomConnectedEvent()
         whenever(networkStateProvider.isConnected()) doReturn true
-        whenever(urlBuilder.buildUrl()) doReturn "wss://test.com"
-        whenever(httpClient.newWebSocket(any(), any())) doReturn ws
         whenever(chatParser.fromJsonOrError(message, SocketErrorMessage::class.java)) doReturn Result.Failure(Error.GenericError("Error"))
         whenever(chatParser.fromJsonOrError(message, ChatEvent::class.java)) doReturn Result.Success(connectedEvent)
 
         /* When */
         val localScope = testCoroutines.scope + Job()
         val deferredResult = localScope.async {
-            fetcher.fetch()
+            fetcher.fetch(randomUser())
         }
         testCoroutines.scope.advanceTimeBy(2_000)
-        fetcher.onMessage(ws, message)
+        webSocketListener.onMessage(ws, message)
         testCoroutines.scope.advanceTimeBy(2_000)
 
         val result = deferredResult.await()
