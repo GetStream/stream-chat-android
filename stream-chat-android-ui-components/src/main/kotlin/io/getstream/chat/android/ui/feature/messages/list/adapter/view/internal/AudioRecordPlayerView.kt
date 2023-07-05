@@ -23,6 +23,7 @@ import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
 import androidx.core.view.setPadding
+import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
 import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
@@ -63,6 +64,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param duration
      */
     public fun setTotalDuration(duration: String) {
+        logger.i { "[setTotalDuration] duration: $duration" }
         totalDuration = duration
         setDuration(duration)
     }
@@ -153,7 +155,11 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param speed
      */
     public fun setSpeedText(speed: Float) {
-        playerView.speedButton.text = "x${speed}"
+        logger.d { "[setSpeedText] speed: $speed" }
+        playerView.speedButton.text = when (speed.isInt()) {
+            true -> "x${speed.toInt()}"
+            else -> "x${speed}"
+        }
     }
 
     /**

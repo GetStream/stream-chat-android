@@ -15,34 +15,35 @@
     limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
+    android:padding="6dp"
     tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
     >
 
     <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="36dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="6dp"
         >
 
-        <com.google.android.material.progressindicator.CircularProgressIndicator
+        <ProgressBar
             android:id="@+id/loadingView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_gravity="center"
+            android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
             android:visibility="visible"
             />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/playButton"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_gravity="center"
-            android:layout_marginVertical="8dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="4dp"
             android:background="@drawable/stream_ui_white_shape_circular"
             android:elevation="2dp"
             android:padding="6dp"
@@ -59,24 +60,24 @@
         android:gravity="center"
         android:paddingHorizontal="6dp"
         android:textAlignment="center"
-        android:visibility="gone"
+        android:textColor="#747881"
+        android:textSize="14sp"
+        android:visibility="visible"
         tools:text="4:19"
         />
 
     <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioWavesSeekBar
         android:id="@+id/progressBar"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="36dp"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:background="@android:color/transparent"
-        android:paddingHorizontal="5dp"
-        android:paddingVertical="5dp"
         />
 
     <FrameLayout
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
-        android:layout_marginEnd="8dp"
         >
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -84,26 +85,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/stream_ui_ic_file_mp3"
+            android:src="@drawable/stream_ui_ic_file_aac"
             android:visibility="visible"
             />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/speedButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="36dp"
+            android:layout_height="32dp"
             android:layout_gravity="center"
             android:layout_marginHorizontal="2dp"
             android:background="@drawable/stream_ui_literal_white_shape_16dp_corners"
             android:elevation="2dp"
             android:gravity="center"
-            android:padding="8dp"
-            android:text="x1.0"
             android:textAlignment="center"
-            android:textColor="@color/stream_ui_literal_black"
-            android:textStyle="bold"
-            android:visibility="visible"
-            tools:text="x1.0"
+            android:textColor="#080707"
+            android:textSize="14sp"
+            android:visibility="gone"
+            tools:text="x0.5"
             />
     </FrameLayout>
 

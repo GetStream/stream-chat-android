@@ -37,7 +37,7 @@ public var Attachment.uploadId: String?
  * Duration of the attachment in seconds.
  */
 public var Attachment.duration: Float?
-    get() = extraData[EXTRA_DURATION] as? Float
+    get() = (extraData[EXTRA_DURATION] as? Number)?.toFloat()
     set(value) {
         value?.also {
             extraData[EXTRA_DURATION] = it
