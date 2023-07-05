@@ -35,6 +35,7 @@ import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoInteractions
@@ -99,7 +100,7 @@ internal class WhenFetchCurrentUser : BaseChatClientTest() {
 
         result.isSuccess `should be` true
         result.data() `should be equal to` user
-        verify(currentUserFetcher).fetch()
+        verify(currentUserFetcher).fetch(eq(user))
         verify(plugin).onFetchCurrentUserResult(any())
     }
 
@@ -131,7 +132,7 @@ internal class WhenFetchCurrentUser : BaseChatClientTest() {
         }
 
         suspend fun givenFetchedCurrentUser(user: User) = apply {
-            whenever(currentUserFetcher.fetch()) doReturn Result.success(user)
+            whenever(currentUserFetcher.fetch(any())) doReturn Result.success(user)
         }
 
         fun givenUserNotSetState() = apply {
