@@ -91,12 +91,11 @@ internal open class BaseChatModule(
 ) {
 
     private val moshiParser: ChatParser by lazy { MoshiChatParser() }
+    private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, notificationConfig) }
     private val defaultApi by lazy { buildApi(config) }
-    internal val chatSocket: ChatSocket by lazy {
-        buildChatSocket(config, moshiParser)
-    }
+    internal val chatSocket: ChatSocket by lazy { buildChatSocket(config) }
     private val defaultFileUploader by lazy {
         StreamFileUploader(buildRetrofitCdnApi())
     }
@@ -223,12 +222,11 @@ internal open class BaseChatModule(
 
     private fun buildChatSocket(
         chatConfig: ChatClientConfig,
-        parser: ChatParser,
     ) = ChatSocket(
         chatConfig.apiKey,
         chatConfig.wssUrl,
         tokenManager,
-        SocketFactory(parser, tokenManager),
+        socketFactory,
         userScope,
         lifecycleObserver,
         networkStateProvider,
