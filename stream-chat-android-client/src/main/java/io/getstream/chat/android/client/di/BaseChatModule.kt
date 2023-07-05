@@ -68,8 +68,7 @@ import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
-import io.getstream.chat.android.client.user.CurrentUserFetcherImpl
-import io.getstream.chat.android.client.user.CurrentUserUrlBuilderImpl
+import io.getstream.chat.android.client.user.CurrentUserFetcher
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -111,18 +110,10 @@ internal open class BaseChatModule(
     }
 
     val currentUserFetcher by lazy {
-        CurrentUserFetcherImpl(
-            userScope = userScope,
-            httpClient = baseClient.newBuilder().build(),
-            chatParser = moshiParser,
+        CurrentUserFetcher(
             networkStateProvider = networkStateProvider,
-            urlBuilder = CurrentUserUrlBuilderImpl(
-                getCurrentUserId = { runCatching { userStateService.state.userOrError() }.getOrNull()?.id },
-                getToken = { tokenManager.getToken() },
-                getApiKey = { config.apiKey },
-                getBaseUrl = { config.wssUrl },
-                chatParser = moshiParser,
-            ),
+            socketFactory = socketFactory,
+            config = config,
         )
     }
 

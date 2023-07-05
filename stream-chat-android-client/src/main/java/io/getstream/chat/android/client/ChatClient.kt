@@ -1016,7 +1016,7 @@ internal constructor(
                         "Socket is connected, can't fetch current user"
                     )
                 )
-                else -> currentUserFetcher.fetch()
+                else -> currentUserFetcher.fetch(getCurrentUser()!!)
             }
         }.doOnResult(userScope) { result ->
             logger.v { "[fetchCurrentUser] completed: $result" }
