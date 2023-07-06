@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListene
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
+import io.getstream.result.onSuccessSuspend
 
 internal class FetchCurrentUserListenerDatabase(
     private val userRepository: UserRepository,
@@ -29,9 +30,9 @@ internal class FetchCurrentUserListenerDatabase(
     private val logger by taggedLogger("Chat:FetchCurUserLDB")
 
     override suspend fun onFetchCurrentUserResult(result: Result<User>) {
-        if (result.isSuccess) {
+        result.onSuccessSuspend {
             logger.d { "[onFetchCurrentUserResult] result: $result" }
-            userRepository.insertCurrentUser(result.getOrThrow())
+            userRepository.insertCurrentUser(it)
         }
     }
 }
