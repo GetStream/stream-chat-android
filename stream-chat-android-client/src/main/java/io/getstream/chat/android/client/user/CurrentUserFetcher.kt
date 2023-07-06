@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.withTimeoutOrNull
+import java.io.UnsupportedEncodingException
 
 /**
  * Fetches the current user from the backend.
@@ -58,13 +59,13 @@ internal class CurrentUserFetcher(
             ws.listen().firstUserWithTimeout(TIMEOUT_MS).also {
                 logger.v { "[fetch] completed: $it" }
             }
-        } catch (e: Throwable) {
+        } catch (e: UnsupportedEncodingException) {
             logger.e { "[fetch] failed: $e" }
             Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
         } finally {
             try {
                 ws?.close()
-            } catch (_: Exception) {
+            } catch (_: IllegalArgumentException) {
                 // no-op
             }
         }
