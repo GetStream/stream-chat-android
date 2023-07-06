@@ -1071,7 +1071,7 @@ internal constructor(
             when {
                 !isUserSet() -> Result.error(ChatError("User is not set, can't fetch current user"))
                 isSocketConnected() -> Result.error(ChatError("Socket is connected, can't fetch current user"))
-                else -> currentUserFetcher.fetch()
+                else -> currentUserFetcher.fetch(getCurrentUser()!!)
             }
         }.doOnResult(userScope) { result ->
             logger.v { "[fetchCurrentUser] completed: $result" }
