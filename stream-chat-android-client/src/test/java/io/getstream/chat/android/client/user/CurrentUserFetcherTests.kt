@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.user
 
 import io.getstream.chat.android.client.Mother.randomConnectedEvent
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
@@ -29,10 +29,10 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.experimental.ws.StreamWebSocket
+import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
