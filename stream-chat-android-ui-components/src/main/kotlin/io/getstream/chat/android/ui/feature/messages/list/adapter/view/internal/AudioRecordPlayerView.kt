@@ -36,13 +36,13 @@ private const val PERCENTAGE = 100
 /**
  * Embedded player of audio messages.
  */
-public class AudioRecordPlayerView : LinearLayoutCompat {
+internal class AudioRecordPlayerView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context)
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val playerView = StreamUiAudioRecordPlayerBinding.inflate(streamThemeInflater, this)
+    internal val binding = StreamUiAudioRecordPlayerBinding.inflate(streamThemeInflater, this)
 
     init {
         orientation = HORIZONTAL
@@ -76,7 +76,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      */
     public fun setWaveBars(waveBars: List<Float>) {
         logger.i { "[setWaveBars] value: $waveBars" }
-        playerView.progressBar.waveBars = waveBars
+        binding.audioSeekBar.waveBars = waveBars
     }
 
     /**
@@ -85,7 +85,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param duration
      */
     public fun setDuration(duration: String) {
-        playerView.duration.run {
+        binding.duration.run {
             text = duration
             visibility = View.VISIBLE
         }
@@ -97,28 +97,28 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param progress
      */
     public fun setProgress(progress: Double) {
-        playerView.progressBar.setProgress((progress * PERCENTAGE).toFloat())
+        binding.audioSeekBar.setProgress((progress * PERCENTAGE).toFloat())
     }
 
     /**
      * Sets the view into loading state.
      */
     public fun setLoading() {
-        playerView.loadingView.isVisible = true
-        playerView.playButton.isVisible = false
+        binding.loadingView.isVisible = true
+        binding.playButton.isVisible = false
     }
 
     /**
      * Set the view into playing state.
      */
     public fun setPlaying() {
-        playerView.loadingView.isVisible = false
-        playerView.playButton.run {
+        binding.loadingView.isVisible = false
+        binding.playButton.run {
             setImageResource(R.drawable.stream_ui_ic_pause)
             isVisible = true
         }
-        playerView.speedButton.isVisible = true
-        playerView.fileView.isVisible = false
+        binding.speedButton.isVisible = true
+        binding.fileView.isVisible = false
     }
 
     /**
@@ -126,27 +126,27 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      */
     public fun setIdle() {
         totalDuration?.let(::setDuration)
-        playerView.loadingView.isVisible = false
-        playerView.playButton.run {
+        binding.loadingView.isVisible = false
+        binding.playButton.run {
             isVisible = true
             setImageResource(R.drawable.stream_ui_ic_play)
         }
         setProgress(0.0)
-        playerView.speedButton.isVisible = false
-        playerView.fileView.isVisible = true
+        binding.speedButton.isVisible = false
+        binding.fileView.isVisible = true
     }
 
     /**
      * Set sthe view into paused state.
      */
     public fun setPaused() {
-        playerView.loadingView.isVisible = false
-        playerView.playButton.run {
+        binding.loadingView.isVisible = false
+        binding.playButton.run {
             isVisible = true
             setImageResource(R.drawable.stream_ui_ic_play)
         }
-        playerView.speedButton.isVisible = true
-        playerView.fileView.isVisible = false
+        binding.speedButton.isVisible = true
+        binding.fileView.isVisible = false
     }
 
     /**
@@ -156,7 +156,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      */
     public fun setSpeedText(speed: Float) {
         logger.d { "[setSpeedText] speed: $speed" }
-        playerView.speedButton.text = when (speed.isInt()) {
+        binding.speedButton.text = when (speed.isInt()) {
             true -> "x${speed.toInt()}"
             else -> "x${speed}"
         }
@@ -168,7 +168,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param func
      */
     public fun onPlayButtonPress(func: () -> Unit) {
-        playerView.playButton.setOnClickListener { func() }
+        binding.playButton.setOnClickListener { func() }
     }
 
     /**
@@ -177,7 +177,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param func
      */
     public fun onSpeedButtonPress(func: () -> Unit) {
-        playerView.speedButton.setOnClickListener { func() }
+        binding.speedButton.setOnClickListener { func() }
     }
 
     /**
@@ -187,7 +187,7 @@ public class AudioRecordPlayerView : LinearLayoutCompat {
      * @param stopDrag Triggered when the drag of the seekbar stops
      */
     public fun onSeekbarMove(startDrag: () -> Unit, stopDrag: (Int) -> Unit) {
-        playerView.progressBar.run {
+        binding.audioSeekBar.run {
             setOnStartDrag(startDrag)
             setOnEndDrag(stopDrag)
         }

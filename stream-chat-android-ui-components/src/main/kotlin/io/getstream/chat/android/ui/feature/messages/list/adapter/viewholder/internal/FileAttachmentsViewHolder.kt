@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFrie
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
 /**
  * ViewHolder that displays message items containing file attachments.
@@ -62,6 +63,8 @@ internal class FileAttachmentsViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
+    private val logger by taggedLogger("FileAttachmentListVH")
+
     /**
      * Initializes the ViewHolder class.
      */
@@ -77,6 +80,7 @@ internal class FileAttachmentsViewHolder(
      * Binds the data to the view.
      */
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        logger.d { "[bindData] data: $data, diff: $diff" }
         super.bindData(data, diff)
 
         updateHorizontalBias(data)

@@ -68,15 +68,16 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private val logger by taggedLogger(TAG)
 
-
     private fun vibrateDevice(milliseconds: Long) {
         val vibrator = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
                 (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager)?.defaultVibrator
             }
+
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.M -> {
                 ContextCompat.getSystemService(context, Vibrator::class.java)
             }
+
             else -> {
                 context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
             }
@@ -92,11 +93,12 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             }
         }
     }
+
     private val binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
 
-    private var parentHeight: Int = 0
-    private var parentWidth: Int = 0
-    private var centerContentHeight: Int = 0
+    private var parentHeight: Int = Int.MAX_VALUE
+    private var parentWidth: Int = Int.MAX_VALUE
+    private var centerContentHeight: Int = Int.MAX_VALUE
 
     private var lockPopup: PopupWindow? = null
     private val lockBaseRect = Rect()
@@ -127,6 +129,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         }
 
     init {
+        logger.i { "<init> state: ${_state}" }
         val inflater = LayoutInflater.from(context)
         binding = StreamUiMessageComposerDefaultCenterOverlapContentBinding.inflate(inflater, this)
 
@@ -149,6 +152,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingWaveform.onSliderDragStop = { progress ->
             sliderDragStopListener(progress)
         }
+        renderIdle()
     }
 
     private lateinit var composerContext: MessageComposerContext
@@ -158,19 +162,14 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     override fun renderState(state: MessageComposerState) {
-        binding.root.isVisible = state.recording != RecordingState.Idle
         val recording = state.recording
         logger.i { "[renderState] recordingState: ${recording::class.simpleName}" }
-        if (recording is RecordingState.Hold) {
-            renderHold(recording)
-        } else if (recording is RecordingState.Locked) {
-            renderLocked(recording)
-        } else if (recording is RecordingState.Overview) {
-            renderOverview(recording)
-        } else if (recording is RecordingState.Complete) {
-            renderComplete()
-        } else if (recording is RecordingState.Idle) {
-            renderIdle()
+        when (recording) {
+            is RecordingState.Hold -> renderHold(recording)
+            is RecordingState.Locked -> renderLocked(recording)
+            is RecordingState.Overview -> renderOverview(recording)
+            is RecordingState.Complete -> renderComplete()
+            is RecordingState.Idle -> renderIdle()
         }
         _state = recording
     }
@@ -180,23 +179,25 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         renderIdle()
     }
 
+    override fun onVisibilityChanged(changedView: View, visibility: Int) {
+        super.onVisibilityChanged(changedView, visibility)
+        if (visibility == View.VISIBLE) {
+            logger.i { "[onVisibilityChanged] VISIBLE; state: $_state" }
+            // if (_state is RecordingState.Idle) {
+            //     logger.i { "[onVisibilityChanged] renderIdle: $isVisible" }
+            //     isVisible = false
+            // }
+        } else {
+            logger.i { "[onVisibilityChanged] NOT_VISIBLE; state: $_state" }
+        }
+    }
+
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
         return _state is RecordingState.Idle || _state is RecordingState.Hold
     }
 
-    override fun onVisibilityChanged(changedView: View, visibility: Int) {
-        super.onVisibilityChanged(changedView, visibility)
-        if (visibility == View.VISIBLE) {
-            logger.i { "[onVisibilityChanged] VISIBLE" }
-        } else {
-            logger.i { "[onVisibilityChanged] NOT_VISIBLE" }
-            resetUI()
-        }
-    }
-
     private fun resetUI() {
         logger.d { "[resetUI] no args" }
-
         binding.recordingWaveform.clearData()
         binding.recordingSlider.translationX = 0f
         binding.recordingSlider.alpha = 1f
@@ -211,26 +212,19 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
-        logger.i { "[onLayout] w: $width, h: $height" }
+        logger.d { "[onLayout] w: $width, h: $height" }
     }
 
     private fun renderIdle() {
         val state = _state
-        if (state is RecordingState.Idle) {
-            logger.w { "[renderIdle] rejected (state is Idle)" }
-            return
-        }
-        logger.e { "[renderIdle] no args" }
+        logger.i { "[renderIdle] state: $state" }
+        isVisible = false
         resetUI()
     }
 
     private fun renderComplete() {
         val state = _state
-        if (state is RecordingState.Complete) {
-            logger.w { "[renderComplete] rejected (state is Complete)" }
-            return
-        }
-        logger.e { "[renderComplete] no args" }
+        logger.i { "[renderComplete] state: $state" }
         resetUI()
     }
 
@@ -239,6 +233,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         holdPopup?.dismiss()
         holdPopup = null
 
+        isVisible = true
         binding.horizontalGuideline.setGuidelinePercent(1f)
         layoutParams.height = centerContentHeight
         binding.recordingSlider.isVisible = true
@@ -260,6 +255,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private fun renderLocked(state: RecordingState.Locked) {
         logger.d { "[renderLocked] waveform: ${state.waveform.size}" }
 
+        isVisible = true
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
         binding.recordingSlider.isVisible = false
@@ -284,6 +280,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private fun renderOverview(state: RecordingState.Overview) {
         logger.d { "[renderOverview] state.isPlaying: ${state.isPlaying}" }
 
+        isVisible = true
         layoutParams.height = parentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
 
@@ -339,10 +336,12 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                     permissionChecker.checkAudioRecordPermissions(this)
                     return false
                 }
-                parentWidth = composerContext.content.asView().width
-                parentHeight = composerContext.content.asView().height
-                centerContentHeight =
+                parentWidth = minOf(parentWidth, composerContext.content.asView().width)
+                parentHeight = minOf(parentHeight, composerContext.content.asView().height)
+                centerContentHeight = minOf(
+                    centerContentHeight,
                     composerContext.content.center?.asView()?.height ?: error("no center content found")
+                )
                 val recordAudioButton =
                     composerContext.content.findRecordAudioButton()
                         ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)

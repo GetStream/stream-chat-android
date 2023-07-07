@@ -67,7 +67,7 @@
         />
 
     <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioWavesSeekBar
-        android:id="@+id/progressBar"
+        android:id="@+id/audioSeekBar"
         android:layout_width="0dp"
         android:layout_height="36dp"
         android:layout_gravity="center_vertical"

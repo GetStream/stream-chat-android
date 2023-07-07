@@ -44,5 +44,5 @@
 
     <!-- Audio Recording -->
     <string name="stream_ui_message_composer_slide_to_cancel">Slide to cancel</string>
-    <string name="stream_ui_message_composer_hold_to_record">Hold to record, release to send</string>
+    <string name="stream_ui_message_composer_hold_to_record">Hold to start recording</string>
 </resources>

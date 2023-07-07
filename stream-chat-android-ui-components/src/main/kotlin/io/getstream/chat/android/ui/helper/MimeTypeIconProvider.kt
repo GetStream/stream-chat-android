@@ -69,6 +69,7 @@ public class MimeTypeIconProviderImpl : MimeTypeIconProvider {
         MimeType.MIME_TYPE_AUDIO_MP4 to R.drawable.stream_ui_ic_file_mp3,
         MimeType.MIME_TYPE_M4A to R.drawable.stream_ui_ic_file_m4a,
         MimeType.MIME_TYPE_MP3 to R.drawable.stream_ui_ic_file_mp3,
+        MimeType.MIME_TYPE_AAC to R.drawable.stream_ui_ic_file_aac,
     )
 
     /**

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?selectableItemBackground"
+    android:padding="6dp"
+    >
+
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayerView
+        android:id="@+id/playerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/uploadingContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/fileTypeIcon"
+            android:layout_width="@dimen/stream_ui_attachment_dialog_file_type_width"
+            android:layout_height="@dimen/stream_ui_attachment_dialog_file_type_height"
+            android:layout_marginStart="6dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/stream_ui_ic_file_aac"
+            />
+
+        <TextView
+            android:id="@+id/fileTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+            android:textAppearance="@style/StreamUiTextAppearance.Body"
+            android:textDirection="locale"
+            app:layout_constraintBottom_toTopOf="@id/fileSize"
+            app:layout_constraintEnd_toStartOf="@id/actionButton"
+            app:layout_constraintStart_toEndOf="@id/fileTypeIcon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text="SlimAaron.pdf"
+            />
+
+        <TextView
+            android:id="@+id/fileSize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+            android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+            android:textDirection="locale"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/actionButton"
+            app:layout_constraintStart_toEndOf="@id/progressBar"
+            app:layout_constraintTop_toBottomOf="@id/fileTitle"
+            app:layout_goneMarginStart="0dp"
+            tools:text="123 KB / 2.4 MB"
+            android:ellipsize="end"
+            android:maxLines="1"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="@id/fileTitle"
+            app:layout_constraintTop_toBottomOf="@id/fileTitle"
+            />
+
+        <ImageView
+            android:id="@+id/actionButton"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/stream_ui_ic_icon_download"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="ContentDescription"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
