@@ -123,6 +123,21 @@ public class AddingCustomAttachments extends Fragment {
 
                 binding.commandsButton.setSelected(hasCommandSuggestions);
             }
+
+            @Nullable
+            @Override
+            public View findViewByKey(@NonNull String key) {
+                switch (key) {
+                    case "attachmentsButton":
+                        return binding.attachmentsButton;
+                    case "commandsButton":
+                        return binding.commandsButton;
+                    case "calendarButton":
+                        return binding.calendarButton;
+                    default:
+                        return null;
+                }
+            }
         }
 
         private void setLeadingContent(Context context) {

@@ -53,11 +53,11 @@ import java.util.Date
  */
 private object AddingCustomAttachmentsSnippet {
 
-    //TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
-
     class MessagesActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -71,7 +71,8 @@ private object AddingCustomAttachmentsSnippet {
                 ChatTheme(attachmentFactories = customFactories + defaultFactories) {
                     CustomMessagesScreen(
                         channelId = channelId,
-                        onBackPressed = { finish() }
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
+                        onBackPressed = { finish() },
                     )
                 }
             }
@@ -91,6 +92,7 @@ private object AddingCustomAttachmentsSnippet {
     @Composable
     fun CustomMessagesScreen(
         channelId: String,
+        statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
         onBackPressed: () -> Unit = {},
     ) {
         val factory = MessagesViewModelFactory(
@@ -112,6 +114,7 @@ private object AddingCustomAttachmentsSnippet {
                     // 1
                     CustomMessageComposer(
                         viewModel = composerViewModel,
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                         onDateSelected = { date ->
                             // 2
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
@@ -122,7 +125,7 @@ private object AddingCustomAttachmentsSnippet {
 
                             // 3
                             composerViewModel.addSelectedAttachments(listOf(attachment))
-                        }
+                        },
                     )
                 }
             ) {
@@ -134,6 +137,7 @@ private object AddingCustomAttachmentsSnippet {
     @Composable
     fun CustomMessageComposer(
         viewModel: MessageComposerViewModel,
+        statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
         onDateSelected: (Long) -> Unit,
     ) {
         val activity = LocalContext.current as AppCompatActivity
@@ -271,6 +275,10 @@ private object AddingCustomAttachmentsSnippet {
      */
     class QuotedMessagesActivity : AppCompatActivity() {
 
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
@@ -287,6 +295,7 @@ private object AddingCustomAttachmentsSnippet {
                     quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
                     CustomMessagesScreen(
                         channelId = channelId,
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                         onBackPressed = { finish() }
                     )
                 }

@@ -26,7 +26,7 @@ class BuildingAMessageListScreen : Fragment() {
 
     fun usage() {
         // Create ViewModels for the Views
-        val factory = MessageListViewModelFactory(cid = "messaging:123")
+        val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
         val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
         val messageListViewModel: MessageListViewModel by viewModels { factory }
         val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }

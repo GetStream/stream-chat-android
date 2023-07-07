@@ -50,7 +50,7 @@ private object MessageComposer : Fragment() {
 
         fun usage1() {
             // Create MessageComposerViewModel for a given channel
-            val factory = MessageListViewModelFactory(cid = "messaging:123")
+            val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
             // Bind MessageComposerViewModel with MessageComposerView
@@ -59,7 +59,7 @@ private object MessageComposer : Fragment() {
 
         fun usage2() {
             // Create ViewModels for MessageComposerView and MessageListView
-            val factory = MessageListViewModelFactory(cid = "messaging:123")
+            val factory = MessageListViewModelFactory(requireContext(), cid = "messaging:123")
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
             val messageListViewModel: MessageListViewModel by viewModels { factory }
 

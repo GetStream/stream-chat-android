@@ -22,11 +22,11 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  */
 private object MessagesScreenUsageSnippet {
 
-    //TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
-
     class MyActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -54,11 +54,11 @@ private object MessagesScreenUsageSnippet {
  */
 private object MessagesScreenHandlingActionsSnippet {
 
-    //TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
-
     class MyActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -90,11 +90,11 @@ private object MessagesScreenHandlingActionsSnippet {
  */
 private object MessagesScreenCustomizationSnippet {
 
-    //TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
-
     class MyActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)

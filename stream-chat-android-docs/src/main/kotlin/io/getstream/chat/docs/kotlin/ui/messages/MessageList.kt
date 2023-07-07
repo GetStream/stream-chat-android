@@ -47,7 +47,7 @@ class MessageListViewSnippets : Fragment() {
     fun usage() {
         // Init ViewModel
         val viewModel: MessageListViewModel by viewModels {
-            MessageListViewModelFactory(cid = "messaging:123")
+            MessageListViewModelFactory(requireContext(), cid = "messaging:123")
         }
 
         // Bind View and ViewModel

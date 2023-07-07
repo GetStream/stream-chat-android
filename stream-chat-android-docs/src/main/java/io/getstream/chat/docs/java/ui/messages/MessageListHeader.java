@@ -20,7 +20,7 @@ public class MessageListHeader extends Fragment {
      */
     public void usage() {
         // Initialize ViewModel
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
