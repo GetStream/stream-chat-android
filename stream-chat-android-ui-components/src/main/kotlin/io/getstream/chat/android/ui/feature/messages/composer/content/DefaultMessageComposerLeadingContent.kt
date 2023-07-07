@@ -17,7 +17,6 @@
 package io.getstream.chat.android.ui.feature.messages.composer.content
 
 import android.content.Context
-import android.graphics.Color
 import android.util.AttributeSet
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
@@ -126,7 +125,7 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         val noRecording = state.recording is RecordingState.Idle
 
         binding.root.isVisible = noRecording
-        //isVisible = noRecording
+        // isVisible = noRecording
         binding.attachmentsButton.isEnabled = !hasCommandInput && !hasCommandSuggestions && !hasMentionSuggestions
         binding.attachmentsButton.isVisible = style.attachmentsButtonVisible && canSendMessage && canUploadFile && !isInEditMode
 

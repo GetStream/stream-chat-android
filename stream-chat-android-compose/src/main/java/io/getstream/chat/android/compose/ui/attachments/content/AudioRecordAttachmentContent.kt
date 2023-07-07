@@ -101,12 +101,14 @@ public fun AudioRecordAttachmentContent(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Card(elevation = 2.dp, shape = CircleShape) {
-                IconButton(onClick = {
-                    onPlayPress(audioTrack)
-                },
+                IconButton(
+                    onClick = {
+                        onPlayPress(audioTrack)
+                    },
                     modifier = Modifier
                         .width(36.dp)
-                        .height(36.dp)) {
+                        .height(36.dp)
+                ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_play),
                         contentDescription = null,
@@ -115,9 +117,12 @@ public fun AudioRecordAttachmentContent(
                 }
             }
 
-            Text(text = durationText, modifier = Modifier
-                .fillMaxHeight()
-                .padding(8.dp))
+            Text(
+                text = durationText,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(8.dp)
+            )
 
             Slider(
                 value = trackProgress,

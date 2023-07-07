@@ -191,7 +191,7 @@ internal class AudioRecordsGroupView : LinearLayoutCompat {
      * Unbinds the view.
      */
     public fun unbind() {
-        //extractor.stop()
+        // extractor.stop()
         audioAttachments?.map { attachment -> attachment.hashCode() }
             ?.let(ChatClient.instance().audioPlayer::removeAudios)
     }

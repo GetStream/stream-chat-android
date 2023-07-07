@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 
 import android.content.Context
@@ -28,7 +44,6 @@ private const val DEFAULT_BAR_SPACING = 0.4
 private const val DEFAULT_BAR_NUMBER = 40
 private const val DEFAULT_BAR_VALUE = 0F
 private const val INITIAL_PROGRESS = 0F
-
 
 private const val DRAG_START = 1
 private const val DRAG_MOVE = 2

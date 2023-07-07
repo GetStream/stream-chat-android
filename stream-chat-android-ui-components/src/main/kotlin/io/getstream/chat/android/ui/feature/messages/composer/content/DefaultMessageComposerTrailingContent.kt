@@ -125,7 +125,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         val noRecording = state.recording is RecordingState.Idle
 
         binding.root.isVisible = noRecording
-        //isVisible = noRecording
+        // isVisible = noRecording
         binding.apply {
             if (coolDownTime > 0 && !isInEditMode) {
                 cooldownBadgeTextView.isVisible = true
@@ -145,7 +145,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
 
     override fun findViewByKey(key: String): View? {
         return when (key) {
-            MessageComposerContent.RECORD_AUDIO_BUTTON ->  binding.recordAudioButton
+            MessageComposerContent.RECORD_AUDIO_BUTTON -> binding.recordAudioButton
             else -> null
         }
     }

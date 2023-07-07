@@ -156,30 +156,31 @@ private class FileAttachmentsAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
         return when (viewType) {
-            VIEW_TYPE_RECORDING -> StreamUiItemRecordingAttachmentBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let {
-                    RecordingFileAttachmentViewHolder(
-                        it,
-                        attachmentClickListener,
-                        attachmentLongClickListener,
-                        attachmentDownloadClickListener,
-                        style
-                    )
-                }
-            else -> StreamUiItemFileAttachmentBinding
-                .inflate(parent.streamThemeInflater, parent, false)
-                .let {
-                    GeneralFileAttachmentViewHolder(
-                        it,
-                        attachmentClickListener,
-                        attachmentLongClickListener,
-                        attachmentDownloadClickListener,
-                        style
-                    )
-                }
+            VIEW_TYPE_RECORDING ->
+                StreamUiItemRecordingAttachmentBinding
+                    .inflate(parent.streamThemeInflater, parent, false)
+                    .let {
+                        RecordingFileAttachmentViewHolder(
+                            it,
+                            attachmentClickListener,
+                            attachmentLongClickListener,
+                            attachmentDownloadClickListener,
+                            style
+                        )
+                    }
+            else ->
+                StreamUiItemFileAttachmentBinding
+                    .inflate(parent.streamThemeInflater, parent, false)
+                    .let {
+                        GeneralFileAttachmentViewHolder(
+                            it,
+                            attachmentClickListener,
+                            attachmentLongClickListener,
+                            attachmentDownloadClickListener,
+                            style
+                        )
+                    }
         }
-
     }
 
     override fun onViewAttachedToWindow(holder: FileAttachmentViewHolder) {
@@ -327,7 +328,6 @@ private class GeneralFileAttachmentViewHolder(
         super.unbind()
     }
 }
-
 
 private class RecordingFileAttachmentViewHolder(
     private val binding: StreamUiItemRecordingAttachmentBinding,

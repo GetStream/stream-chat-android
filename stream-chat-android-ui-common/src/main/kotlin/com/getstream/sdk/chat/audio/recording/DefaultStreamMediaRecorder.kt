@@ -284,10 +284,12 @@ public class DefaultStreamMediaRecorder(
                 System.currentTimeMillis() - it
             } ?: 0
             val parsedDurationInMs = getAudioDurationInMs(recordingFile)
-            logger.d { "[stopRecording] startedAt: $activeRecordingStartedAt, " +
-                "calculatedDuration: $calculatedDurationInMs, parsedDuration: $parsedDurationInMs" }
+            logger.d {
+                "[stopRecording] startedAt: $activeRecordingStartedAt, " +
+                    "calculatedDuration: $calculatedDurationInMs, parsedDuration: $parsedDurationInMs"
+            }
 
-            val durationInMs = when(parsedDurationInMs > 0) {
+            val durationInMs = when (parsedDurationInMs > 0) {
                 true -> parsedDurationInMs
                 else -> calculatedDurationInMs.toInt()
             }
