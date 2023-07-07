@@ -19,8 +19,20 @@ package io.getstream.chat.android.ui.channel.list.adapter.viewholder
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 
 public abstract class BaseChannelListItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    public abstract fun bind(channel: Channel, diff: ChannelListPayloadDiff)
+
+    @Deprecated(
+        message = "This method is deprecated, and will be removed on V6",
+        replaceWith = ReplaceWith(
+            expression = "this.bind(channelItem, diff)",
+            imports = arrayOf("io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem")
+        )
+    )
+    public open fun bind(channel: Channel, diff: ChannelListPayloadDiff) { }
+    public open fun bind(channelItem: ChannelListItem.ChannelItem, diff: ChannelListPayloadDiff) {
+        bind(channelItem.channel, diff)
+    }
 }
