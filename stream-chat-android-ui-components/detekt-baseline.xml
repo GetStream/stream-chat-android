@@ -3,12 +3,14 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.isFile() || attachment.isVideo() || attachment.isAudio() || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
-    <ID>ComplexCondition:FileAttachmentsView.kt$FileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
+    <ID>ComplexCondition:FileAttachmentsView.kt$GeneralFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
+    <ID>ComplexCondition:FileAttachmentsView.kt$RecordingFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:MediaAttachmentView.kt$MediaAttachmentView$attachment.isImage() || (attachment.isVideo() &amp;&amp; ChatUI.videoThumbnailsEnabled &amp;&amp; attachment.thumbUrl != null)</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.deleteMessageEnabled &amp;&amp; (canDeleteAnyMessage || (isOwnMessage &amp;&amp; canDeleteOwnMessage))</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.editMessageEnabled &amp;&amp; ((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; selectedMessage.command != AttachmentType.GIPHY</ID>
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canThreadReply</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
+    <ID>ComplexMethod:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
@@ -17,6 +19,7 @@
     <ID>ComplexMethod:MessageReplyView.kt$MessageReplyView$private fun setReplyBackground(quotedMessage: Message, isMine: Boolean, style: MessageReplyStyle?)</ID>
     <ID>ForbiddenComment:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$// TODO: leaves empty space after pagination</ID>
     <ID>ForbiddenComment:SearchViewModel.kt$SearchViewModel$// TODO: use the pagination based on "limit" nad "next" params here</ID>
+    <ID>IteratorNotThrowingNoSuchElementException:MessageComposerView.kt$&lt;no name provided>$&lt;no name provided> : Iterator</ID>
     <ID>LargeClass:MessageComposerViewStyle.kt$MessageComposerViewStyle$Companion</ID>
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>LongMethod:AttachmentGalleryOptionsViewStyle.kt$AttachmentGalleryOptionsViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryOptionsViewStyle</ID>
@@ -25,6 +28,7 @@
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
     <ID>LongMethod:ChannelAvatarView.kt$ChannelAvatarView$private fun createImageViews(count: Int): List&lt;ImageView></ID>
     <ID>LongMethod:ChannelListViewStyle.kt$ChannelListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle</ID>
+    <ID>LongMethod:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
     <ID>LongMethod:FileAttachmentViewStyle.kt$FileAttachmentViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): GiphyMediaAttachmentViewStyle</ID>
     <ID>LongMethod:GiphyViewHolderStyle.kt$GiphyViewHolderStyle.Companion$operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle</ID>
@@ -48,9 +52,19 @@
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$4</ID>
     <ID>MagicNumber:ChannelItemSwipeListener.kt$ChannelItemSwipeListener$100</ID>
     <ID>MagicNumber:ChannelViewHolder.kt$ChannelViewHolder$99</ID>
+    <ID>MagicNumber:DefaultMessageComposerCenterOverlapContent.kt$1000</ID>
+    <ID>MagicNumber:DefaultMessageComposerCenterOverlapContent.kt$60</ID>
+    <ID>MagicNumber:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$0.5f</ID>
+    <ID>MagicNumber:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$1.5f</ID>
+    <ID>MagicNumber:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$3</ID>
     <ID>MagicNumber:EditReactionsView.kt$EditReactionsView$5</ID>
     <ID>MagicNumber:EditReactionsViewStyle.kt$EditReactionsViewStyle.Builder$5</ID>
+    <ID>MagicNumber:FileAttachmentsView.kt$RecordingFileAttachmentViewHolder$100</ID>
     <ID>MagicNumber:MediaAttachmentGridView.kt$MediaAttachmentGridView.SharedMediaSpaceItemDecorator$4</ID>
+    <ID>MagicNumber:MessageComposerView.kt$&lt;no name provided>$3</ID>
+    <ID>MagicNumber:MessageComposerView.kt$&lt;no name provided>$4</ID>
+    <ID>MagicNumber:MessageComposerView.kt$&lt;no name provided>$5</ID>
+    <ID>MagicNumber:MessageComposerView.kt$&lt;no name provided>$6</ID>
     <ID>MagicNumber:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$7</ID>
     <ID>MagicNumber:MessageListItemStyle.kt$MessageListItemStyle.Builder$0.75</ID>
     <ID>MagicNumber:MessageListItemStyle.kt$MessageListItemStyle.Builder$5</ID>
@@ -85,6 +99,7 @@
     <ID>MaxLineLength:ChannelListVisibilityContainerImpl.kt$ChannelListVisibilityContainerImpl$override</ID>
     <ID>MaxLineLength:ChatUI.kt$ChatUI$public</ID>
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
+    <ID>MaxLineLength:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$logger.w { "[onTouchEvent] parentHeight: $parentHeight, centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().heightPixels}" }</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
@@ -170,20 +185,36 @@
     <ID>ReturnCount:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>
+    <ID>ReturnCount:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
     <ID>ReturnCount:MessageComposerView.kt$MessageComposerView.SuggestionPopupTouchListener$override fun onTouch(v: View?, event: MotionEvent?): Boolean</ID>
     <ID>SerialVersionUIDInSerializableClass:TextStyle.kt$TextStyle : Serializable</ID>
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
+    <ID>ThrowingExceptionsWithoutMessageOrCause:MessageComposerView.kt$&lt;no name provided>.&lt;no name provided>$IndexOutOfBoundsException()</ID>
     <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionThrown:AttachmentGalleryPagerAdapter.kt$AttachmentGalleryPagerAdapter$throw Throwable("Unsupported attachment type")</ID>
     <ID>TooManyFunctions:AttachmentGalleryActivity.kt$AttachmentGalleryActivity : AppCompatActivity</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
+    <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
     <ID>TooManyFunctions:MessageListHeaderView.kt$MessageListHeaderView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory</ID>
     <ID>TooManyFunctions:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>TooManyFunctions:SimpleChannelListView.kt$SimpleChannelListView : RecyclerView</ID>
     <ID>UnnecessaryAbstractClass:InnerAttachmentViewHolder.kt$InnerAttachmentViewHolder$InnerAttachmentViewHolder</ID>
     <ID>UnusedPrivateClass:MediaAttachmentGridView.kt$MediaAttachmentGridView$SharedMediaSpaceItemDecorator : ItemDecoration</ID>
+    <ID>UnusedPrivateMember:AudioWavesSeekBar.kt$private const val DEFAULT_BAR_PADDING = 5</ID>
+    <ID>UnusedPrivateMember:DefaultMessageComposerCenterOverlapContent.kt$private fun ImageView.setImageColor(@ColorInt color: Int)</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$WaveformView$private fun forceProgress(progress: Float)</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$WaveformView$private var barHeightRatio: Float = DEFAULT_BAR_HEIGHT_RATIO</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$WaveformView$var deltaX = 0f</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val DEFAULT_BAR_NUMBER = 40</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val DEFAULT_BAR_PADDING = 5</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val DEFAULT_BAR_VALUE = 0F</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val DRAG_END = 3</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val DRAG_MOVE = 2</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val DRAG_START = 1</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private const val MIN_BAR_VALUE = 0.05F</ID>
+    <ID>UnusedPrivateMember:WaveformView.kt$private fun List&lt;Float>.downsampleRms(targetSamples: Int): List&lt;Float></ID>
     <ID>VariableNaming:ChannelListView.kt$ChannelListView$private val CHANNEL_LIST_VIEW_ID = generateViewId()</ID>
   </CurrentIssues>
 </SmellBaseline>
