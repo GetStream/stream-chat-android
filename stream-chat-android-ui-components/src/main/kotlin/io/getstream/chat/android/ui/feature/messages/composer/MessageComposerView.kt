@@ -39,8 +39,8 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerHeaderContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerLeadingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerMentionSuggestionsContent
-import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerOverlappingContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContentContainer
 import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageComposerSuggestionsPopup
@@ -146,9 +146,9 @@ public class MessageComposerView : ConstraintLayout {
      * Touch listener for the audio record button.
      */
     public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
-        //maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
-        logger.v { "[onMicBtnTouchListener] event(${maxOffset}): $event" }
-        //event.offsetLocation(maxOffset.toFloat(), 0f)
+        // maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
+        logger.v { "[onMicBtnTouchListener] event($maxOffset): $event" }
+        // event.offsetLocation(maxOffset.toFloat(), 0f)
         binding.centerOverlapContent.children.first().dispatchTouchEvent(event)
         true
     }

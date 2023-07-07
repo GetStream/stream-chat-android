@@ -19,7 +19,6 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.shape.ShapeAppearanceModel
-import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment

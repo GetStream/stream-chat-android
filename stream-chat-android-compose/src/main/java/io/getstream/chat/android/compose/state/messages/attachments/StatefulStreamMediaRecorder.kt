@@ -28,7 +28,6 @@ import com.getstream.sdk.chat.audio.recording.RecordedMedia
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
 import io.getstream.chat.android.compose.util.KeyValuePair
-import io.getstream.chat.android.models.Attachment
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
 import io.getstream.result.Result

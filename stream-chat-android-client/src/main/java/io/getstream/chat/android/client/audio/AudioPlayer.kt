@@ -107,7 +107,6 @@ public interface AudioPlayer {
      * Disposes the MediaPlayer and remove all audios.
      */
     public fun dispose()
-
 }
 
 /**

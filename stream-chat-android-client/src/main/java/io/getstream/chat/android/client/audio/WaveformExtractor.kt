@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.client.audio
 
 import android.content.Context
@@ -90,8 +106,8 @@ public class WaveformExtractor(
                     override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {
                         sampleRate = format.getInteger(MediaFormat.KEY_SAMPLE_RATE)
                         channels = format.getInteger(MediaFormat.KEY_CHANNEL_COUNT)
-                        pcmEncodingBit = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
-                            && format.containsKey(MediaFormat.KEY_PCM_ENCODING)
+                        pcmEncodingBit = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N &&
+                            format.containsKey(MediaFormat.KEY_PCM_ENCODING)
                         ) {
                             when (format.getInteger(MediaFormat.KEY_PCM_ENCODING)) {
                                 AudioFormat.ENCODING_PCM_16BIT -> 16
@@ -176,7 +192,7 @@ public class WaveformExtractor(
             args["progress"] = progress
             args["playerKey"] = key
             // TODO notify success
-            //logger.v { "[rms] sampleData: $sampleData" }
+            // logger.v { "[rms] sampleData: $sampleData" }
         }
 
         sampleCount++

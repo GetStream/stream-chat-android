@@ -158,7 +158,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
         logger.d { "[setSpeedText] speed: $speed" }
         binding.speedButton.text = when (speed.isInt()) {
             true -> "x${speed.toInt()}"
-            else -> "x${speed}"
+            else -> "x$speed"
         }
     }
 

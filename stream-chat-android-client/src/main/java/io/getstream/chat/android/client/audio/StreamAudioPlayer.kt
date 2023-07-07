@@ -289,7 +289,8 @@ internal class StreamMediaPlayer(
                 logger.v { "[pollProgress] #3; finalPosition: $finalPosition($currentPosition), prevPosition: $prevPosition" }
                 withContext(Dispatchers.Main) {
                     publishProgress(
-                        currentAudioHash, ProgressData(
+                        currentAudioHash,
+                        ProgressData(
                             currentPosition = finalPosition,
                             progress = progress,
                             duration = durationMs,

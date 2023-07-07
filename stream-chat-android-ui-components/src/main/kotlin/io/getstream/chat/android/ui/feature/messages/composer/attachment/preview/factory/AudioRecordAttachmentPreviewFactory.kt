@@ -161,7 +161,6 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
                 )
             })
         }
-
     }
 }
 @Suppress("MagicNumber")

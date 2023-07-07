@@ -17,8 +17,6 @@
 package io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 
 import android.view.ViewGroup
-import io.getstream.chat.android.client.utils.attachment.isImage
-import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.databinding.StreamUiFileAttachmentPreviewBinding

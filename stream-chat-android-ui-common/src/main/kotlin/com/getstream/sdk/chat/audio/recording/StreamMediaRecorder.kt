@@ -17,8 +17,6 @@
 package com.getstream.sdk.chat.audio.recording
 
 import android.media.MediaRecorder
-import io.getstream.chat.android.models.Attachment
-import io.getstream.result.Error
 import io.getstream.result.Result
 import java.io.File
 

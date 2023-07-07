@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
 import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
@@ -43,7 +59,7 @@ public class AudioRecordingController(
     public val recordingState: MutableStateFlow<RecordingState> = MutableStateFlow(RecordingState.Idle)
 
     private val drawPollingInterval = 100 // 100ms
-    private val realPollingInterval = 10  // 10ms
+    private val realPollingInterval = 10 // 10ms
 
     private val samples = arrayListOf<Int>()
     private val samplesTarget = 100 // 100 samples represent entire recording
@@ -115,7 +131,7 @@ public class AudioRecordingController(
     private fun processWave(maxAmplitude: Int) {
         waveformBuffer[waveformBufferCount++] = maxAmplitude
         if (waveformBufferCount < waveformBuffer.size) {
-            //logger.v { "[processWave] skip ($waveformBufferCount): $maxAmplitude" }
+            // logger.v { "[processWave] skip ($waveformBufferCount): $maxAmplitude" }
             return
         }
         val amplitude = waveformBuffer.downsampleMax()
@@ -196,7 +212,7 @@ public class AudioRecordingController(
         }
         if (state.playingId != -1) {
             logger.v { "[toggleRecordingPlayback] resume playback" }
-            //audioPlayer.play(fileToUri(audioFile), state.playingId)
+            // audioPlayer.play(fileToUri(audioFile), state.playingId)
             audioPlayer.resume(state.playingId)
             this.recordingState.value = state.copy(isPlaying = true)
             return
@@ -210,7 +226,6 @@ public class AudioRecordingController(
             isPlaying = true,
             playingId = hash,
         )
-
     }
 
     private fun onAudioStateChanged(playbackState: AudioState) {
@@ -231,7 +246,7 @@ public class AudioRecordingController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        //logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
+        // logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = this.recordingState.value
         if (curState is RecordingState.Overview) {
             this.recordingState.value = curState.copy(
@@ -277,7 +292,7 @@ public class AudioRecordingController(
         val positionInMs = (progress * state.durationInMs).toInt()
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
         val hash = audioFile.hashCode()
-        //audioPlayer.prepare(fileToUri(audioFile), hash)
+        // audioPlayer.prepare(fileToUri(audioFile), hash)
         audioPlayer.seekTo(positionInMs, hash)
         this.recordingState.value = state.copy(playingProgress = progress, playingId = hash)
     }
@@ -352,14 +367,14 @@ public class AudioRecordingController(
     }
 
     private fun normalize(maxAmplitude: Int): Float {
-        //val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
+        // val normalized = maxOf(maxAmplitude.toFloat() / 32767f, 0.2f)
         val normalized = maxAmplitude.toFloat() / Short.MAX_VALUE
 
         val MAX_AMPLITUDE = 32767f
         val MAX_DB = 90.0 // Maximum decibel level for normalization
 
         val decibels = 20 * log10(maxAmplitude / MAX_AMPLITUDE)
-        //val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
+        // val normalizedValue = maxOf(0.0, minOf(decibels / MAX_DB, 1.0))
         val normalizedValue = abs((50 + decibels) / 50)
         // logger.v { "[onRecorderMaxAmplitudeSampled] maxAmplitude: $maxAmplitude, decibels: $decibels, " +
         //     "normalizedValue: $normalizedValue ($normalized)" }
@@ -395,7 +410,7 @@ public class AudioRecordingController(
             var max = 0
             for (sourceIndex in 0 until sourceStep) {
                 val sourceSample = this[targetIndex * sourceStep + sourceIndex]
-                max = maxOf (max, sourceSample)
+                max = maxOf(max, sourceSample)
             }
             target.add(max)
         }
@@ -418,7 +433,6 @@ public class AudioRecordingController(
         return last()
     }
 
-
     private fun IntArray.downsampleRms(): Int {
         var sumOfSquaredSamples = 0
         for (sample in this) {
@@ -437,5 +451,4 @@ public class AudioRecordingController(
     private fun List<Int>.downsampleToSingleMax(): Int {
         return max()
     }
-
 }
