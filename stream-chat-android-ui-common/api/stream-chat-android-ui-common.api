@@ -1,8 +1,6 @@
 public final class com/getstream/sdk/chat/audio/recording/DefaultStreamMediaRecorder : com/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
 	public static final field $stable I
-	public fun <init> ()V
-	public fun <init> (J)V
-	public synthetic fun <init> (JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;)V
 	public fun deleteRecording (Ljava/io/File;)Lio/getstream/result/Result;
 	public fun release ()V
 	public fun setOnCurrentRecordingDurationChangedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnCurrentRecordingDurationChanged;)V
@@ -12,8 +10,8 @@ public final class com/getstream/sdk/chat/audio/recording/DefaultStreamMediaReco
 	public fun setOnMediaRecorderStateChangedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMediaRecorderStateChange;)V
 	public fun setOnRecordingStartedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStarted;)V
 	public fun setOnRecordingStoppedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStopped;)V
-	public fun startAudioRecording (Landroid/content/Context;Ljava/io/File;)Lio/getstream/result/Result;
-	public fun startAudioRecording (Landroid/content/Context;Ljava/lang/String;Z)Lio/getstream/result/Result;
+	public fun startAudioRecording (Ljava/io/File;J)Lio/getstream/result/Result;
+	public fun startAudioRecording (Ljava/lang/String;JZ)Lio/getstream/result/Result;
 	public fun stopRecording ()Lio/getstream/result/Result;
 }
 
@@ -23,6 +21,20 @@ public final class com/getstream/sdk/chat/audio/recording/MediaRecorderState : j
 	public static final field UNINITIALIZED Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
 	public static fun valueOf (Ljava/lang/String;)Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
 	public static fun values ()[Lcom/getstream/sdk/chat/audio/recording/MediaRecorderState;
+}
+
+public final class com/getstream/sdk/chat/audio/recording/RecordedMedia {
+	public static final field $stable I
+	public fun <init> (ILio/getstream/chat/android/models/Attachment;)V
+	public final fun component1 ()I
+	public final fun component2 ()Lio/getstream/chat/android/models/Attachment;
+	public final fun copy (ILio/getstream/chat/android/models/Attachment;)Lcom/getstream/sdk/chat/audio/recording/RecordedMedia;
+	public static synthetic fun copy$default (Lcom/getstream/sdk/chat/audio/recording/RecordedMedia;ILio/getstream/chat/android/models/Attachment;ILjava/lang/Object;)Lcom/getstream/sdk/chat/audio/recording/RecordedMedia;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
+	public final fun getDurationInMs ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder {
@@ -35,13 +47,14 @@ public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMed
 	public abstract fun setOnMediaRecorderStateChangedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnMediaRecorderStateChange;)V
 	public abstract fun setOnRecordingStartedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStarted;)V
 	public abstract fun setOnRecordingStoppedListener (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnRecordingStopped;)V
-	public abstract fun startAudioRecording (Landroid/content/Context;Ljava/io/File;)Lio/getstream/result/Result;
-	public abstract fun startAudioRecording (Landroid/content/Context;Ljava/lang/String;Z)Lio/getstream/result/Result;
+	public abstract fun startAudioRecording (Ljava/io/File;J)Lio/getstream/result/Result;
+	public abstract fun startAudioRecording (Ljava/lang/String;JZ)Lio/getstream/result/Result;
 	public abstract fun stopRecording ()Lio/getstream/result/Result;
 }
 
 public final class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$DefaultImpls {
-	public static synthetic fun startAudioRecording$default (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Landroid/content/Context;Ljava/lang/String;ZILjava/lang/Object;)Lio/getstream/result/Result;
+	public static synthetic fun startAudioRecording$default (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Ljava/io/File;JILjava/lang/Object;)Lio/getstream/result/Result;
+	public static synthetic fun startAudioRecording$default (Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Ljava/lang/String;JZILjava/lang/Object;)Lio/getstream/result/Result;
 }
 
 public abstract interface class com/getstream/sdk/chat/audio/recording/StreamMediaRecorder$OnCurrentRecordingDurationChanged {
@@ -106,6 +119,22 @@ public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDoc
 	public static fun getIntent (Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;
 	public fun loadDocument (Ljava/lang/String;)V
 	protected fun onCreate (Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/AudioRecordingController {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lcom/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lkotlin/jvm/functions/Function1;Lkotlinx/coroutines/CoroutineScope;)V
+	public final fun cancelRecording ()V
+	public final fun completeRecording ()V
+	public final fun deleteRecording ()V
+	public final fun getRecordingState ()Lkotlinx/coroutines/flow/MutableStateFlow;
+	public final fun lockRecording ()V
+	public final fun onCleared ()V
+	public final fun pauseRecording ()V
+	public final fun seekRecordingTo (F)V
+	public final fun startRecording ()V
+	public final fun stopRecording ()V
+	public final fun toggleRecordingPlayback ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler {
@@ -469,13 +498,21 @@ public final class io/getstream/chat/android/ui/common/state/messages/MessageMod
 	public fun <init> (Lio/getstream/chat/android/models/Message;)V
 	public fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun component2 ()Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
+	public final fun copy (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;)Lio/getstream/chat/android/ui/common/state/messages/MessageMode$MessageThread;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/MessageMode$MessageThread;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/MessageMode$MessageThread;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getParentMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getThreadState ()Lio/getstream/chat/android/state/plugin/state/channel/thread/ThreadState;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/state/messages/MessageMode$Normal : io/getstream/chat/android/ui/common/state/messages/MessageMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageMode$Normal;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/state/messages/Pin : io/getstream/chat/android/ui/common/state/messages/MessageAction {
@@ -556,11 +593,13 @@ public final class io/getstream/chat/android/ui/common/state/messages/composer/M
 	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;)V
 	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;Z)V
 	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Set;
 	public final fun component11 ()Z
 	public final fun component12 ()Lio/getstream/chat/android/models/User;
+	public final fun component13 ()Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Lio/getstream/chat/android/ui/common/state/messages/MessageAction;
 	public final fun component4 ()Ljava/util/List;
@@ -569,8 +608,8 @@ public final class io/getstream/chat/android/ui/common/state/messages/composer/M
 	public final fun component7 ()I
 	public final fun component8 ()Lio/getstream/chat/android/ui/common/state/messages/MessageMode;
 	public final fun component9 ()Z
-	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;)Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;
+	public final fun copy (Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;)Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILio/getstream/chat/android/ui/common/state/messages/MessageMode;ZLjava/util/Set;ZLio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAction ()Lio/getstream/chat/android/ui/common/state/messages/MessageAction;
 	public final fun getAlsoSendToChannel ()Z
@@ -583,9 +622,98 @@ public final class io/getstream/chat/android/ui/common/state/messages/composer/M
 	public final fun getMentionSuggestions ()Ljava/util/List;
 	public final fun getMessageMode ()Lio/getstream/chat/android/ui/common/state/messages/MessageMode;
 	public final fun getOwnCapabilities ()Ljava/util/Set;
+	public final fun getRecording ()Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;
 	public final fun getValidationErrors ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Complete : io/getstream/chat/android/ui/common/state/messages/composer/RecordingState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Attachment;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Attachment;
+	public final fun copy (Lio/getstream/chat/android/models/Attachment;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Complete;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Complete;Lio/getstream/chat/android/models/Attachment;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Complete;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Hold : io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ILjava/util/List;)V
+	public synthetic fun <init> (ILjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Hold;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Hold;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Hold;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDurationInMs ()I
+	public fun getWaveform ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Idle : io/getstream/chat/android/ui/common/state/messages/composer/RecordingState {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Idle;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Locked : io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (ILjava/util/List;)V
+	public synthetic fun <init> (ILjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Locked;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Locked;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Locked;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getDurationInMs ()I
+	public fun getWaveform ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Overview : io/getstream/chat/android/ui/common/state/messages/composer/RecordingState {
+	public static final field $stable I
+	public fun <init> (ILjava/util/List;Lio/getstream/chat/android/models/Attachment;ZFI)V
+	public synthetic fun <init> (ILjava/util/List;Lio/getstream/chat/android/models/Attachment;ZFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun component3 ()Lio/getstream/chat/android/models/Attachment;
+	public final fun component4 ()Z
+	public final fun component5 ()F
+	public final fun component6 ()I
+	public final fun copy (ILjava/util/List;Lio/getstream/chat/android/models/Attachment;ZFI)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Overview;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Overview;ILjava/util/List;Lio/getstream/chat/android/models/Attachment;ZFIILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Overview;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
+	public final fun getDurationInMs ()I
+	public final fun getPlayingId ()I
+	public final fun getPlayingProgress ()F
+	public final fun getWaveform ()Ljava/util/List;
+	public fun hashCode ()I
+	public final fun isPlaying ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording : io/getstream/chat/android/ui/common/state/messages/composer/RecordingState {
+	public static final field $stable I
+	public abstract fun getDurationInMs ()I
+	public abstract fun getWaveform ()Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/composer/RecordingStateKt {
+	public static final fun copy (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording;ILjava/util/List;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState$Recording;
 }
 
 public abstract class io/getstream/chat/android/ui/common/state/messages/composer/ValidationError {
@@ -937,10 +1065,11 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Typin
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/utils/DurationParser {
+public final class io/getstream/chat/android/ui/common/utils/DurationFormatter {
 	public static final field $stable I
-	public static final field INSTANCE Lio/getstream/chat/android/ui/common/utils/DurationParser;
-	public final fun durationInMilliToReadableTime (I)Ljava/lang/String;
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/utils/DurationFormatter;
+	public final fun formatDurationInMillis (I)Ljava/lang/String;
+	public final fun formatDurationInSeconds (F)Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/common/utils/GiphyInfo {
