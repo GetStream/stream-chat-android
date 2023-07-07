@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.composer
 
+import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.models.Attachment
 
 public sealed class RecordingState {
@@ -64,6 +65,7 @@ public sealed class RecordingState {
         val attachment: Attachment,
     ) : RecordingState() {
         override fun toString(): String = "Recording.Complete(" +
+            "duration=${attachment.duration}, " +
             "attachment=${attachment.upload}" +
             ")"
     }

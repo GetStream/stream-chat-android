@@ -83,10 +83,10 @@ public class AudioRecordingController(
             logger.i { "[onRecorderStarted] no args" }
         }
         mediaRecorder.setOnRecordingStoppedListener {
-            logger.i { "[onRecorderStopped] no args" }
+            logger.i { "[onRecorderStopped] recordingState: ${recordingState.value}" }
         }
         mediaRecorder.setOnMediaRecorderStateChangedListener { state ->
-            logger.i { "[onRecorderStateChanged] state: $state" }
+            logger.i { "[onRecorderStateChanged] state: $state; recordingState: ${recordingState.value}" }
         }
         mediaRecorder.setOnErrorListener { _, what, extra ->
             logger.e { "[onRecorderError] what: $what, extra: $extra" }
@@ -95,11 +95,13 @@ public class AudioRecordingController(
             logger.i { "[onRecorderInfo] what: $what, extra: $extra" }
         }
         mediaRecorder.setOnCurrentRecordingDurationChangedListener { durationMs ->
-            logger.v { "[onRecorderDurationChanged] duration: $durationMs" }
-            val state = recordingState.value
-            if (state is RecordingState.Recording) {
-                // TODO make duration Int
-                recordingState.value = state.copy(duration = durationMs.toInt())
+            scope.launch(DispatcherProvider.Main) {
+                val state = recordingState.value
+                logger.v { "[onRecorderDurationChanged] duration: $durationMs, state: $state" }
+                if (state is RecordingState.Recording) {
+                    // TODO make duration Int
+                    recordingState.value = state.copy(duration = durationMs.toInt())
+                }
             }
         }
         mediaRecorder.setOnMaxAmplitudeSampledListener { maxAmplitude ->
@@ -310,12 +312,13 @@ public class AudioRecordingController(
 
     public fun completeRecording() {
         val state = this.recordingState.value
+        logger.w { "[completeRecording] state: $state" }
         if (state is RecordingState.Idle) {
             logger.w { "[completeRecording] rejected (state is Idle)" }
             return
         }
-        logger.i { "[completeRecording] state: $state" }
         if (state is RecordingState.Overview) {
+            logger.d { "[completeRecording] completing from Overview state" }
             audioPlayer.resetAudio(state.playingId)
             clearData()
             state.attachment.waveformData = state.waveform
@@ -336,6 +339,7 @@ public class AudioRecordingController(
         val recorded = result.getOrThrow().apply {
             attachment.waveformData = normalized
         }
+        logger.d { "[completeRecording] complete from state: $state" }
         recordingState.value = RecordingState.Complete(recorded.attachment)
         recordingState.value = RecordingState.Idle
     }

@@ -402,6 +402,7 @@ public class MessageComposerController(
         }.launchIn(scope)
 
         audioRecordingController.recordingState.onEach { recording ->
+            logger.d { "[onRecordingState] recording: $recording" }
             state.value = state.value.copy(recording = recording)
             if (recording is RecordingState.Complete) {
                 selectedAttachments.value = selectedAttachments.value + recording.attachment
@@ -518,6 +519,7 @@ public class MessageComposerController(
      * [selectedAttachments].
      */
     public fun clearData() {
+        logger.i { "[clearData]" }
         input.value = ""
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
