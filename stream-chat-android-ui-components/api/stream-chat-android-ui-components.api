@@ -1169,7 +1169,8 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 
 public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
 	public fun <init> (Landroid/view/View;)V
-	public abstract fun bind (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;)V
+	public fun bind (Lio/getstream/chat/android/client/models/Channel;Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;)V
+	public fun bind (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;)V
 }
 
 public class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListItemViewHolderFactory {
