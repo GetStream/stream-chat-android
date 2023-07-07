@@ -54,7 +54,7 @@ internal class ChannelListItemAdapter(
     private fun bind(position: Int, holder: BaseChannelListItemViewHolder, payload: ChannelListPayloadDiff) {
         when (val channelItem = getItem(position)) {
             is ChannelListItem.LoadingMoreItem -> Unit
-            is ChannelListItem.ChannelItem -> holder.bind(channelItem.channel, payload)
+            is ChannelListItem.ChannelItem -> holder.bind(channelItem, payload)
         }
     }
 

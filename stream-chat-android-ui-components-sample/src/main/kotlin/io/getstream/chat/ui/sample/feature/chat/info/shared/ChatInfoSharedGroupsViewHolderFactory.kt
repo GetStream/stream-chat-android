@@ -23,6 +23,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -52,8 +53,8 @@ class ChatInfoSharedGroupsViewHolder(
         binding.root.setOnClickListener { channelClickListener.onClick(channel) }
     }
 
-    override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
-        this.channel = channel
+    override fun bind(channelItem: ChannelListItem.ChannelItem, diff: ChannelListPayloadDiff) {
+        this.channel = channelItem.channel
 
         binding.apply {
             channelAvatarView.setChannel(channel)
