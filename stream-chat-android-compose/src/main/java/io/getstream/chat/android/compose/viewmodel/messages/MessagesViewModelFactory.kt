@@ -99,7 +99,7 @@ public class MessagesViewModelFactory(
                 MessageComposerController(
                     chatClient = chatClient,
                     mediaRecorder = mediaRecorder,
-                    fileToUriConverter = fileToUriConverter,
+                    fileToUri = fileToUriConverter,
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize
