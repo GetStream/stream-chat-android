@@ -21,11 +21,11 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
  */
 private object ChatThemeUsageSnippet {
 
-    //TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
-
     class MessageListActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -54,11 +54,11 @@ private object ChatThemeUsageSnippet {
  */
 private object ChatThemeCustomizationSnippet {
 
-    //TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
-
     class MyActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
+        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)

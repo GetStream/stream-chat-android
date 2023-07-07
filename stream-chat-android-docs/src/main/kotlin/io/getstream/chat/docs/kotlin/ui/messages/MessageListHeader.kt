@@ -20,7 +20,7 @@ private class MessageListHeader : Fragment() {
     fun usage() {
         // Initialize ViewModel
         val viewModel: MessageListHeaderViewModel by viewModels {
-            MessageListViewModelFactory(cid = "messaging:123")
+            MessageListViewModelFactory(requireContext(), cid = "messaging:123")
         }
 
         // Bind the View and ViewModel

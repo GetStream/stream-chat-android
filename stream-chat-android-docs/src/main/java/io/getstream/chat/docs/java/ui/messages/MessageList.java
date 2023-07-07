@@ -38,7 +38,7 @@ public class MessageList extends Fragment {
 
     public void usage() {
         // Init ViewModel
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
+        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
                 .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
