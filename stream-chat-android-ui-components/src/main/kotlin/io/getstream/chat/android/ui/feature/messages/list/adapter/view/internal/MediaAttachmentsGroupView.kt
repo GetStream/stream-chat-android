@@ -45,8 +45,12 @@ import io.getstream.chat.android.ui.utils.extensions.horizontalChainInParent
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
 import io.getstream.chat.android.ui.utils.extensions.verticalChainInParent
 import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.log.taggedLogger
 
 internal class MediaAttachmentsGroupView : ConstraintLayout {
+
+    private val logger by taggedLogger("MediaAttachGroupView")
+
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     private val maxMediaAttachmentHeight: Int by lazy {
@@ -76,6 +80,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             !attachment.hasLink() &&
                 (attachment.isImage() || attachment.isVideo())
         }
+        logger.d { "[showAttachments] attachments.size: ${media.size}" }
         when (media.size) {
             0 -> Unit
             1 -> showOne(media.first())

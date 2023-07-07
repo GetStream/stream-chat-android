@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFrie
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
 /**
  * ViewHolder used for displaying messages that contain image and/or video attachments.
@@ -59,6 +60,8 @@ internal class MediaAttachmentsViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
+    private val logger by taggedLogger("Chat:MediaAttachmentsVH")
+
     /**
      * Initializes the ViewHolder class.
      */
@@ -70,11 +73,13 @@ internal class MediaAttachmentsViewHolder(
     override fun messageContainerView(): View = binding.messageContainer
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        logger.d { "[bindData] data: $data, diff: $diff" }
         super.bindData(data, diff)
 
         bindMessageText()
         bindHorizontalBias()
         if (diff?.attachments != false) {
+            logger.v { "[bindData] has attachments" }
             bindMediaAttachments()
             bindAudioRecordAttachments()
         }
@@ -104,12 +109,14 @@ internal class MediaAttachmentsViewHolder(
      * Updates the media attachments section of the message.
      */
     private fun bindMediaAttachments() {
+        logger.d { "[bindMediaAttachments] no args" }
         binding.mediaAttachmentView.setPadding(1.dpToPx())
         binding.mediaAttachmentView.setupBackground(data)
         binding.mediaAttachmentView.showAttachments(data.message.attachments)
     }
 
     private fun bindAudioRecordAttachments() {
+        logger.d { "[bindAudioRecordAttachments] no args" }
         if (data.message.attachments.any { attachment -> attachment.isAudioRecording() }) {
             binding.audioRecordsView.isVisible = true
             binding.audioRecordsView.showAudioAttachments(data.message.attachments)
@@ -166,6 +173,13 @@ internal class MediaAttachmentsViewHolder(
                     container.attachmentClickListener.onAttachmentClick(data.message, attachment)
                 }
                 mediaAttachmentView.attachmentLongClickListener = AttachmentLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                }
+
+                audioRecordsView.attachmentClickListener = AttachmentClickListener { attachment ->
+                    container.attachmentClickListener.onAttachmentClick(data.message, attachment)
+                }
+                audioRecordsView.attachmentLongClickListener = AttachmentLongClickListener {
                     container.messageLongClickListener.onMessageLongClick(data.message)
                 }
             }

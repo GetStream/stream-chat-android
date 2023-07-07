@@ -29,12 +29,20 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.shape.CornerFamily
 import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.waveformData
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.doForAllViewHolders
+import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.getDisplayableName
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemRecordingAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -44,10 +52,14 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
 import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 
 internal class FileAttachmentsView : RecyclerView {
+
+    private val logger by taggedLogger("FileAttachmentListView")
+
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
     var attachmentDownloadClickListener: AttachmentDownloadClickListener? = null
@@ -82,6 +94,7 @@ internal class FileAttachmentsView : RecyclerView {
      * before setting the data on the RecyclerView adapter.
      */
     fun setAttachments(attachments: List<Attachment>) {
+        logger.d { "[setAttachments] attachments: $attachments" }
         if (!::fileAttachmentsAdapter.isInitialized) {
             fileAttachmentsAdapter = FileAttachmentsAdapter(
                 attachmentClickListener = attachmentClickListener?.let { listener ->
@@ -99,8 +112,10 @@ internal class FileAttachmentsView : RecyclerView {
             adapter = fileAttachmentsAdapter
         }
 
-        val filteredAttachments = attachments.filter { attachment -> !attachment.hasLink() }
-
+        val filteredAttachments = attachments.filter { attachment ->
+            !attachment.hasLink() /*&& !attachment.isAudioRecording()*/
+        }
+        logger.v { "[setAttachments] filteredAttachments.size: ${filteredAttachments.size}" }
         fileAttachmentsAdapter.setItems(filteredAttachments)
     }
 
@@ -127,18 +142,44 @@ private class FileAttachmentsAdapter(
     private val style: FileAttachmentViewStyle,
 ) : SimpleListAdapter<Attachment, FileAttachmentViewHolder>() {
 
+    companion object {
+        private const val VIEW_TYPE_RECORDING = 1
+        private const val VIEW_TYPE_GENERAL = 2
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when (itemList.getOrNull(position)?.isAudioRecording()) {
+            true -> VIEW_TYPE_RECORDING
+            else -> VIEW_TYPE_GENERAL
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FileAttachmentViewHolder {
-        return StreamUiItemFileAttachmentBinding
-            .inflate(parent.streamThemeInflater, parent, false)
-            .let {
-                FileAttachmentViewHolder(
-                    it,
-                    attachmentClickListener,
-                    attachmentLongClickListener,
-                    attachmentDownloadClickListener,
-                    style
-                )
-            }
+        return when (viewType) {
+            VIEW_TYPE_RECORDING -> StreamUiItemRecordingAttachmentBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let {
+                    RecordingFileAttachmentViewHolder(
+                        it,
+                        attachmentClickListener,
+                        attachmentLongClickListener,
+                        attachmentDownloadClickListener,
+                        style
+                    )
+                }
+            else -> StreamUiItemFileAttachmentBinding
+                .inflate(parent.streamThemeInflater, parent, false)
+                .let {
+                    GeneralFileAttachmentViewHolder(
+                        it,
+                        attachmentClickListener,
+                        attachmentLongClickListener,
+                        attachmentDownloadClickListener,
+                        style
+                    )
+                }
+        }
+
     }
 
     override fun onViewAttachedToWindow(holder: FileAttachmentViewHolder) {
@@ -157,18 +198,28 @@ private class FileAttachmentsAdapter(
     }
 }
 
-private class FileAttachmentViewHolder(
+private sealed class FileAttachmentViewHolder(itemView: View) : SimpleListAdapter.ViewHolder<Attachment>(itemView) {
+
+    abstract fun clearScope()
+
+    abstract fun restartJob()
+}
+
+private class GeneralFileAttachmentViewHolder(
     private val binding: StreamUiItemFileAttachmentBinding,
     attachmentClickListener: AttachmentClickListener?,
     attachmentLongClickListener: AttachmentLongClickListener?,
     attachmentDownloadClickListener: AttachmentDownloadClickListener?,
     private val style: FileAttachmentViewStyle,
-) : SimpleListAdapter.ViewHolder<Attachment>(binding.root) {
+) : FileAttachmentViewHolder(binding.root) {
+
+    private val logger by taggedLogger("FileAttachmentVH")
+
     private var attachment: Attachment? = null
 
     private var scope: CoroutineScope? = null
 
-    fun clearScope() {
+    override fun clearScope() {
         scope?.cancel()
         scope = null
     }
@@ -212,7 +263,7 @@ private class FileAttachmentViewHolder(
         binding.root.background = ShapeAppearanceModelFactory.fileBackground(context)
     }
 
-    fun restartJob() {
+    override fun restartJob() {
         attachment?.let(::subscribeForProgressIfNeeded)
     }
 
@@ -226,6 +277,7 @@ private class FileAttachmentViewHolder(
     }
 
     override fun bind(item: Attachment) {
+        logger.d { "[bind] item: $item" }
         this.attachment = item
 
         binding.apply {
@@ -273,5 +325,202 @@ private class FileAttachmentViewHolder(
     override fun unbind() {
         clearScope()
         super.unbind()
+    }
+}
+
+
+private class RecordingFileAttachmentViewHolder(
+    private val binding: StreamUiItemRecordingAttachmentBinding,
+    attachmentClickListener: AttachmentClickListener?,
+    attachmentLongClickListener: AttachmentLongClickListener?,
+    attachmentDownloadClickListener: AttachmentDownloadClickListener?,
+    private val style: FileAttachmentViewStyle,
+) : FileAttachmentViewHolder(binding.root) {
+
+    private val logger by taggedLogger("RecordingAttachmentVH")
+
+    private var attachment: Attachment? = null
+
+    private var scope: CoroutineScope? = null
+
+    override fun clearScope() {
+        scope?.cancel()
+        scope = null
+    }
+
+    init {
+        attachmentClickListener?.let { listener ->
+            binding.root.setOnClickListener {
+                attachment?.let(listener::onAttachmentClick)
+            }
+        }
+
+        attachmentLongClickListener?.let { listener ->
+            binding.root.setOnLongClickListener {
+                listener.onAttachmentLongClick()
+                true
+            }
+        }
+
+        attachmentDownloadClickListener?.let { listener ->
+            binding.actionButton.setOnClickListener {
+                attachment?.let(listener::onAttachmentDownloadClick)
+            }
+        }
+
+        val audioPlayer = ChatClient.instance().audioPlayer
+
+        binding.playerView.registerButtonsListeners(audioPlayer)
+    }
+
+    private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
+        onAudioStateChange(hashCode) { audioState ->
+            logger.d { "[onAudioStateChange] audioState: $audioState" }
+            when (audioState) {
+                AudioState.LOADING -> playerView.setLoading()
+                AudioState.PAUSE -> playerView.setPaused()
+                AudioState.UNSET, AudioState.IDLE -> playerView.setIdle()
+                AudioState.PLAYING -> playerView.setPlaying()
+            }
+        }
+        onProgressStateChange(hashCode) { (duration, progress) ->
+            playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
+            // TODO
+            playerView.setProgress(progress.toDouble())
+        }
+        onSpeedChange(hashCode, playerView::setSpeedText)
+    }
+
+    private fun AudioRecordPlayerView.registerButtonsListeners(
+        audioPlayer: AudioPlayer,
+    ) {
+        onPlayButtonPress {
+            val assetUrl = attachment?.assetUrl
+            val hash = attachment.hashCode()
+            logger.d { "[onPlayButtonPress] hash: $hash, assetUrl: $assetUrl" }
+            if (assetUrl != null) {
+
+                audioPlayer.play(assetUrl, hash)
+            }
+        }
+
+        onSpeedButtonPress {
+            audioPlayer.changeSpeed()
+        }
+
+        onSeekbarMove({
+            val hash = attachment.hashCode()
+            audioPlayer.startSeek(hash)
+        }, { progress ->
+            val hash = attachment.hashCode()
+            audioPlayer.seekTo(
+                progressToDecimal(progress, attachment?.duration),
+                hash
+            )
+        })
+    }
+
+    private fun progressToDecimal(progress: Int, totalDuration: Float?): Int =
+        progress * (totalDuration ?: NULL_DURATION).toInt() / 100
+
+    private fun setupBackground() {
+        val shapeAppearanceModel = ShapeAppearanceModel.Builder()
+            .setAllCorners(CornerFamily.ROUNDED, style.cornerRadius.toFloat())
+            .build()
+        val bgShapeDrawable = MaterialShapeDrawable(shapeAppearanceModel)
+        bgShapeDrawable.apply {
+            fillColor = ColorStateList.valueOf(style.backgroundColor)
+            strokeColor = ColorStateList.valueOf(style.strokeColor)
+            strokeWidth = style.strokeWidth.toFloat()
+        }
+
+        binding.root.background = bgShapeDrawable
+    }
+
+    init {
+        binding.root.background = ShapeAppearanceModelFactory.fileBackground(context)
+    }
+
+    override fun restartJob() {
+        attachment?.let(::subscribeForProgressIfNeeded)
+    }
+
+    private fun subscribeForProgressIfNeeded(attachment: Attachment) {
+        val uploadState = attachment.uploadState
+        if (uploadState is Attachment.UploadState.Idle) {
+            handleInProgressAttachment(binding.fileSize, 0L, attachment.upload?.length() ?: 0)
+        } else if (uploadState is Attachment.UploadState.InProgress) {
+            handleInProgressAttachment(binding.fileSize, uploadState.bytesUploaded, uploadState.totalBytes)
+        }
+    }
+
+    override fun bind(item: Attachment) {
+        logger.d { "[bind] item: $item" }
+        this.attachment = item
+
+        binding.apply {
+            fileTitle.setTextStyle(style.titleTextStyle)
+            fileSize.setTextStyle(style.fileSizeTextStyle)
+
+            fileTypeIcon.loadAttachmentThumb(item)
+            fileTitle.text = context.getString(R.string.stream_ui_attachment_list_recording)
+
+            val isUploading = item.uploadState is Attachment.UploadState.InProgress
+            uploadingContainer.isVisible = isUploading
+            playerView.isVisible = isUploading.not()
+
+            item.duration
+                ?.let(DurationFormatter::formatDurationInSeconds)
+                ?.let(playerView::setDuration)
+
+            item.waveformData?.also {
+                playerView.setWaveBars(it)
+            }
+
+            if (item.uploadState is Attachment.UploadState.Idle ||
+                item.uploadState is Attachment.UploadState.InProgress ||
+                (item.uploadState is Attachment.UploadState.Success && item.fileSize == 0)
+            ) {
+                actionButton.visibility = View.GONE
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
+            } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
+                actionButton.visibility = View.VISIBLE
+                actionButton.setImageDrawable(style.failedAttachmentIcon)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
+            } else {
+                actionButton.visibility = View.GONE
+                actionButton.setImageDrawable(style.actionButtonIcon)
+                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
+            }
+
+            binding.progressBar.indeterminateDrawable = style.progressBarDrawable
+            binding.progressBar.isVisible = item.uploadState is Attachment.UploadState.InProgress
+
+            subscribeForProgressIfNeeded(item)
+            setupBackground()
+        }
+
+        val audioPlayer = ChatClient.instance().audioPlayer
+        audioPlayer.registerStateChange(binding.playerView, item.hashCode())
+    }
+
+    private fun handleInProgressAttachment(fileSizeView: TextView, bytesRead: Long, totalBytes: Long) {
+        val totalValue = MediaStringUtil.convertFileSizeByteCount(totalBytes)
+
+        fileSizeView.text =
+            context.getString(
+                R.string.stream_ui_message_list_attachment_upload_progress,
+                MediaStringUtil.convertFileSizeByteCount(bytesRead),
+                totalValue
+            )
+    }
+
+    override fun unbind() {
+        clearScope()
+        super.unbind()
+    }
+
+    companion object {
+        private const val NULL_DURATION = 0.0f
     }
 }

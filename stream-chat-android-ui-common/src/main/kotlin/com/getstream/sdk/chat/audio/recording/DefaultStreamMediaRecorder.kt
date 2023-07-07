@@ -296,7 +296,7 @@ public class DefaultStreamMediaRecorder(
             onStopRecordingListener?.onStopped()
 
             val attachment = Attachment(
-                title = recordingFile?.name ?: "recording",
+                title = recordingFile?.name ?: "Recording",
                 upload = recordingFile,
                 type = AttachmentType.AUDIO_RECORDING,
                 mimeType = "audio/aac",

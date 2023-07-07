@@ -39,7 +39,7 @@ private const val NULL_DURATION = 0.0
  * A LinearLayoutCompat that present the list of audio messages.
  */
 @Suppress("MagicNumber")
-public class AudioRecordsGroupView : LinearLayoutCompat {
+internal class AudioRecordsGroupView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper())
     public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
@@ -52,6 +52,9 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
     init {
         setPadding(2.dpToPx(), 0.dpToPx(), 2.dpToPx(), 2.dpToPx())
     }
+
+    var attachmentClickListener: AttachmentClickListener? = null
+    var attachmentLongClickListener: AttachmentLongClickListener? = null
 
     private val logger by taggedLogger("AudioRecordsGroupView")
 
@@ -77,6 +80,7 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
      * @param attachments attachments of type "audio_recording".
      */
     public fun showAudioAttachments(attachments: List<Attachment>) {
+        logger.d { "[showAudioAttachments] attachments.size: ${attachments.size}" }
         removeAllViews()
 
         val audiosAttachment = attachments.filter { attachment -> attachment.isAudioRecording() }
@@ -99,24 +103,24 @@ public class AudioRecordsGroupView : LinearLayoutCompat {
             logger.i { "[addAttachmentPlayerView] waveformData: ${attachment.waveformData}" }
             attachment.waveformData?.let(::setWaveBars)
         }.let { playerView ->
-            if (attachment.assetUrl != null) {
+            setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
+            setOnLongClickListener { attachmentLongClickListener?.onAttachmentLongClick(); true }
 
-                addView(playerView)
+            addView(playerView)
 
-                if (index > 0) {
-                    playerView.updateLayoutParams {
-                        if (this is MarginLayoutParams) {
-                            this.setMargins(0, 2.dpToPx(), 0, 0)
-                        }
+            if (index > 0) {
+                playerView.updateLayoutParams {
+                    if (this is MarginLayoutParams) {
+                        this.setMargins(0, 2.dpToPx(), 0, 0)
                     }
                 }
-
-                val audioPlayer = ChatClient.instance().audioPlayer
-                val hashCode = attachment.hashCode()
-
-                audioPlayer.registerStateChange(playerView, hashCode)
-                playerView.registerButtonsListeners(audioPlayer, attachment, hashCode)
             }
+
+            val audioPlayer = ChatClient.instance().audioPlayer
+            val hashCode = attachment.hashCode()
+
+            audioPlayer.registerStateChange(playerView, hashCode)
+            playerView.registerButtonsListeners(audioPlayer, attachment, hashCode)
         }
     }
 
