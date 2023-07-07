@@ -5,12 +5,28 @@
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
     <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$127f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$16</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$1_000_000f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$24</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$2_147_483_648f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$32767f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$4</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$8</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$16</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$32</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$8</ID>
     <ID>MaxLineLength:BaseChatModule.kt$BaseChatModule$NetworkStateProvider(userScope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
+    <ID>MaxLineLength:StreamAudioPlayer.kt$StreamMediaPlayer$logger.v { "[pollProgress] #3; finalPosition: $finalPosition($currentPosition), prevPosition: $prevPosition" }</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&amp;oh=$originalHeight&amp;ow=$originalWidth"</ID>
+    <ID>MaxLineLength:WaveformExtractor.kt$WaveformExtractor$logger.v { "[handle16bit] this.totalSamples: $totalSamples, sampleRate: $sampleRate, duration: $durationInSeconds" }</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>SwallowedException:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
     <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>
+    <ID>UnusedPrivateMember:StreamAudioPlayer.kt$StreamMediaPlayer$private fun normalize(uri: String): String</ID>
   </CurrentIssues>
 </SmellBaseline>

@@ -14,6 +14,7 @@
     <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", (recordingDuration - remainder) / 60_000)</ID>
     <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", remainder / 1000)</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
+    <ID>LongMethod:AudioRecordAttachmentContent.kt$@Composable public fun AudioRecordAttachmentContent( modifier: Modifier = Modifier, audioTrack: Attachment, onPlayPress: (Attachment) -> Unit )</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
@@ -31,6 +32,10 @@
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, statefulStreamMediaRecorder: StatefulStreamMediaRecorder?, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
     <ID>MagicNumber:AudioRecording.kt$2.5f</ID>
+    <ID>MagicNumber:AudioWaveSeekbar.kt$0.4</ID>
+    <ID>MagicNumber:AudioWaveSeekbar.kt$100F</ID>
+    <ID>MagicNumber:AudioWaveSeekbar.kt$10F</ID>
+    <ID>MagicNumber:AudioWaveSeekbar.kt$50F</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
@@ -55,5 +60,9 @@
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
+    <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_HEIGHT_DP = 60</ID>
+    <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_WIDTH = 4</ID>
+    <ID>UnusedPrivateMember:AudioWaveSeekbar.kt$val trackerHeight = DEFAULT_TRACKER_HEIGHT_DP</ID>
+    <ID>UnusedPrivateMember:StatefulStreamMediaRecorder.kt$StatefulStreamMediaRecorder$context: Context</ID>
   </CurrentIssues>
 </SmellBaseline>

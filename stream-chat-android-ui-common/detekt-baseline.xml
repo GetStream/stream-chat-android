@@ -8,16 +8,40 @@
     <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
     <ID>LongParameterList:MessageListController.kt$MessageListController$( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, )</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$10</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$100</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$20</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$20_000</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$32767f</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$50</ID>
+    <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$90.0</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$1000</ID>
+    <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$1000f</ID>
+    <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$20</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$31</ID>
+    <ID>MagicNumber:DurationFormatter.kt$DurationFormatter$1000</ID>
     <ID>MaxLineLength:MessageComposerController.kt$MessageComposerController$val</ID>
+    <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun completeRecording()</ID>
+    <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun toggleRecordingPlayback()</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:StreamFileUtil.kt$StreamFileUtil$e: Exception</ID>
+    <ID>TooManyFunctions:AudioRecordingController.kt$AudioRecordingController</ID>
     <ID>TooManyFunctions:MessageListController.kt$MessageListController</ID>
     <ID>TooManyFunctions:StreamMediaRecorder.kt$StreamMediaRecorder</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun FloatArray.downsample(): Float</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun FloatArray.downsampleAverage(): Float</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun FloatArray.downsampleRms(): Float</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun IntArray.downsampleRms(): Int</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Float>.downsample(targetSamples: Int): List&lt;Float></ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Int>.downsampleToSingleMax(): Int</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private val channelId: String</ID>
+    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$val MAX_DB = 90.0 // Maximum decibel level for normalization</ID>
     <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val extra: Int</ID>
     <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val streamMediaRecorder: StreamMediaRecorder</ID>
     <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val what: Int</ID>
+    <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_AMPLITUDE = 32767f</ID>
+    <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_DB = 90.0 // Maximum decibel level for normalization</ID>
   </CurrentIssues>
 </SmellBaseline>
