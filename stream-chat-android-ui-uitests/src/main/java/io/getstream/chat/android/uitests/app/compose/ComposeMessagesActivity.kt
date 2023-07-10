@@ -35,8 +35,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 class ComposeMessagesActivity : AppCompatActivity() {
 
     // TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+    private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+    private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

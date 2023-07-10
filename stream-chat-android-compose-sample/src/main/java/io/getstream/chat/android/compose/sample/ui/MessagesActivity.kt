@@ -78,8 +78,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 
 class MessagesActivity : BaseConnectedActivity() {
 
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-    private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+    private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+    private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
     private val factory by lazy {
         MessagesViewModelFactory(
@@ -105,7 +105,8 @@ class MessagesActivity : BaseConnectedActivity() {
                     viewModelFactory = factory,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
-                    statefulStreamMediaRecorder = statefulStreamMediaRecorder
+                    // TODO
+                    //statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )
 
                 // MyCustomUi()

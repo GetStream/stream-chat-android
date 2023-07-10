@@ -33,6 +33,8 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
@@ -98,5 +100,13 @@ class ChatInitializer(private val context: Context) {
 
         // Using markdown as text transformer
         ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
+
+
+        // TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+        //     defaultStyle.copy(
+        //         audioRecordingHoldToRecordText = "Bla bla bla",
+        //         audioRecordingSlideToCancelText = "Wash to cancel",
+        //     )
+        // }
     }
 }
