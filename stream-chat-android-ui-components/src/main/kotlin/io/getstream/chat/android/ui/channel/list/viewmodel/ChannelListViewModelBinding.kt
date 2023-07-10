@@ -39,33 +39,40 @@ public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-    state.combineWith(paginationState) { state, paginationState ->
-        paginationState?.let {
-            view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
-        }
 
-        var list: List<ChannelListItem> = state?.channels?.map(ChannelListItem::ChannelItem) ?: emptyList()
-        if (paginationState?.loadingMore == true) {
-            list = list + ChannelListItem.LoadingMoreItem
-        }
+    state.combineWith(paginationState) { state, paginationState -> state to paginationState }
+        .combineWith(typingEvents) { states, typingEvents ->
+            val state = states?.first
+            val paginationState = states?.second
 
-        list to (state?.isLoading == true)
-    }.distinctUntilChanged().observe(lifecycleOwner) { (list, isLoading) ->
-
-        when {
-            isLoading && list.isEmpty() -> view.showLoadingView()
-
-            list.isNotEmpty() -> {
-                view.hideLoadingView()
-                view.setChannels(list)
+            paginationState?.let {
+                view.setPaginationEnabled(!it.endOfChannels && !it.loadingMore)
             }
 
-            else -> {
-                view.hideLoadingView()
-                view.setChannels(emptyList())
+            var list: List<ChannelListItem> = state?.channels?.map {
+                ChannelListItem.ChannelItem(it, typingEvents?.get(it.cid)?.users ?: emptyList())
+            } ?: emptyList()
+            if (paginationState?.loadingMore == true) {
+                list = list + ChannelListItem.LoadingMoreItem
+            }
+
+            list to (state?.isLoading == true)
+        }.distinctUntilChanged().observe(lifecycleOwner) { (list, isLoading) ->
+
+            when {
+                isLoading && list.isEmpty() -> view.showLoadingView()
+
+                list.isNotEmpty() -> {
+                    view.hideLoadingView()
+                    view.setChannels(list)
+                }
+
+                else -> {
+                    view.hideLoadingView()
+                    view.setChannels(emptyList())
+                }
             }
         }
-    }
 
     view.setOnEndReachedListener {
         onAction(ChannelListViewModel.Action.ReachedEndOfList)

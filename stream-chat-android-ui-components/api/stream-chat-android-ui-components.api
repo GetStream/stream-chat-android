@@ -1122,12 +1122,14 @@ public abstract class io/getstream/chat/android/ui/channel/list/adapter/ChannelL
 }
 
 public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem : io/getstream/chat/android/ui/channel/list/adapter/ChannelListItem {
-	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public fun <init> (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
-	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/client/models/Channel;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$ChannelItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun getTypingUsers ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
