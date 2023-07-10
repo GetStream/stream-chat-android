@@ -69,7 +69,7 @@ import java.util.Date
 class MessagesActivity : AppCompatActivity() {
 
     // TODO add this and related entries to docs when documentation effort occurs
-    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder()
+    private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
     private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
 
     override fun onCreate(savedInstanceState: Bundle?) {
