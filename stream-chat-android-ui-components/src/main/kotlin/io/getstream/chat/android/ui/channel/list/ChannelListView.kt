@@ -297,6 +297,24 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
+     * Allows clients to set a visibility controller for the "more options" icon in ViewHolder items.
+     *
+     * @param isMoreOptionsVisible The callback to be invoked when the visibility of "more options" gets checked.
+     */
+    public fun setIsMoreOptionsVisible(isMoreOptionsVisible: (Channel) -> Boolean) {
+        simpleChannelListView.setIsMoreOptionsVisible(isMoreOptionsVisible)
+    }
+
+    /**
+     * Allows clients to set a visibility controller for the "delete option" icon in ViewHolder items.
+     *
+     * @param isDeleteOptionVisible The callback to be invoked when the visibility of "delete option" gets checked.
+     */
+    public fun setIsDeleteOptionVisible(isDeleteOptionVisible: (Channel) -> Boolean) {
+        simpleChannelListView.setIsDeleteOptionVisible(isDeleteOptionVisible)
+    }
+
+    /**
      * Allows a client to set a click listener to be notified of "channel info" clicks in the "more options" menu.
      *
      * @param listener The callback to be invoked when "channel info" is clicked.
@@ -499,6 +517,23 @@ public class ChannelListView : FrameLayout {
          * @return True if the callback consumed the long click, false otherwise.
          */
         public fun onLongClick(channel: Channel): Boolean
+    }
+
+    public fun interface ChannelOptionVisibilityPredicate : Function1<Channel, Boolean> {
+        public companion object {
+            @JvmField
+            public val DEFAULT: ChannelOptionVisibilityPredicate = ChannelOptionVisibilityPredicate {
+                // option is visible by default
+                true
+            }
+        }
+
+        /**
+         * Called to check option's visibility for the specified [channel].
+         *
+         * @return True if the option is visible.
+         */
+        override fun invoke(p1: Channel): Boolean
     }
 
     public fun interface EndReachedListener {
