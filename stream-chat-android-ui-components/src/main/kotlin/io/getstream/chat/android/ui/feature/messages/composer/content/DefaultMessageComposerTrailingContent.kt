@@ -24,6 +24,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.internal.getColorList
@@ -113,8 +115,13 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      * @param state The state that will be used to render the updated UI.
      */
     override fun renderState(state: MessageComposerState) {
+        val appSettings = ChatClient.instance().getAppSettings()
+        val blockedMimeTypes = appSettings.app.fileUploadConfig.blockedMimeTypes
+        val blockedFileExtensions = appSettings.app.fileUploadConfig.blockedFileExtensions
         val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
         val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
+        val canUploadRecording = !blockedMimeTypes.contains(AttachmentType.AUDIO)
+            && !blockedFileExtensions.contains(AAC_EXTENSION)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val isInputValid = state.validationErrors.isEmpty()
@@ -125,7 +132,6 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         val noRecording = state.recording is RecordingState.Idle
 
         binding.root.isVisible = noRecording
-        // isVisible = noRecording
         binding.apply {
             if (coolDownTime > 0 && !isInEditMode) {
                 cooldownBadgeTextView.isVisible = true
@@ -134,11 +140,10 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 recordAudioButton.isVisible = false
             } else {
                 cooldownBadgeTextView.isVisible = false
-                // sendMessageButton.isVisible = hasTextInput || isInEditMode
                 sendMessageButton.isVisible = true
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
-                // recordAudioButton.isVisible = canUploadFile && canSendMessage && !hasTextInput && !isInEditMode
-                recordAudioButton.isVisible = canUploadFile && canSendMessage && /*!hasTextInput &&*/ !isInEditMode
+                recordAudioButton.isVisible = style.audioRecordingButtonVisible && canUploadFile && canUploadRecording
+                    && canSendMessage && !isInEditMode
             }
         }
     }
@@ -158,5 +163,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 ?: container.findViewWithTag(RECORD_AUDIO_TAG)
                 ?: error("recordAudioButton not found in $container")
         }
+
+        private const val AAC_EXTENSION = "aac"
     }
 }
