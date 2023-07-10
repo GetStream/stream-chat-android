@@ -66,8 +66,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added Typing Users list to `ChannelItem`. [#4867](https://github.com/GetStream/stream-chat-android/pull/4867)
+- Added typing indicator on `ChannelLitsView`. [#4867](https://github.com/GetStream/stream-chat-android/pull/4867)
 
 ### ⚠️ Changed
+- Create new `bind()` method on `BaseChannelListItemViewHolder` that takes as parameter `ChannelItem`. [#4867](https://github.com/GetStream/stream-chat-android/pull/4867)
 
 ### ❌ Removed
 
