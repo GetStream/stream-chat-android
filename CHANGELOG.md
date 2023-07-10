@@ -100,6 +100,7 @@
   * `streamUiMessageComposerAttachmentsPickerMediaMode`
 - Added Typing Users list to `ChannelItem`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
 - Added typing indicator on `ChannelLitsView`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
+- Added options visibility customization for each channel in a list. [#4870](https://github.com/GetStream/stream-chat-android/pull/4870)
 
 ### ⚠️ Changed
 - Replaced the method parameter `replyMessageId: String` with `replyTo: Message` inside `ReplyMessageClickListener.onReplyClick()`. The new parameter now contains the complete message to which the reply was made. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
