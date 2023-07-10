@@ -225,6 +225,11 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureUnreadCountBadge()
                 }
 
+                if (typingUsersChanged) {
+                    typingIndicatorView.setTypingUsers(channelItem.typingUsers)
+                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty()
+                }
+
                 muteIcon.isVisible = channelItem.channel.isMuted
             }
         }
