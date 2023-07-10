@@ -29,11 +29,18 @@ public open class ChannelListItemViewHolderFactory {
     protected lateinit var listenerContainer: ChannelListListenerContainer
         private set
 
+    protected lateinit var visibilityContainer: ChannelListVisibilityContainer
+        private set
+
     protected lateinit var style: ChannelListViewStyle
         private set
 
     internal fun setListenerContainer(listenerContainer: ChannelListListenerContainer) {
         this.listenerContainer = listenerContainer
+    }
+
+    internal fun setVisibilityContainer(visibilityContainer: ChannelListVisibilityContainer) {
+        this.visibilityContainer = visibilityContainer
     }
 
     internal fun setStyle(style: ChannelListViewStyle) {
@@ -80,6 +87,8 @@ public open class ChannelListItemViewHolderFactory {
             listenerContainer.userClickListener,
             listenerContainer.swipeListener,
             style,
+            visibilityContainer.isMoreOptionsVisible,
+            visibilityContainer.isDeleteOptionVisible,
         )
     }
 
@@ -93,6 +102,9 @@ public open class ChannelListItemViewHolderFactory {
     private fun ensureInitialized(context: Context) {
         if (!::listenerContainer.isInitialized) {
             listenerContainer = ChannelListListenerContainerImpl()
+        }
+        if (!::visibilityContainer.isInitialized) {
+            visibilityContainer = ChannelListVisibilityContainerImpl()
         }
         if (!::style.isInitialized) {
             style = ChannelListViewStyle(context, null)

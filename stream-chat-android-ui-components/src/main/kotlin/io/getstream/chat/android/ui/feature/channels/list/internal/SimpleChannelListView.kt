@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListIte
 import io.getstream.chat.android.ui.feature.channels.list.adapter.internal.ChannelListItemAdapter
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListListenerContainerImpl
+import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListVisibilityContainerImpl
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.widgets.internal.ScrollPauseLinearLayoutManager
@@ -55,6 +56,8 @@ internal class SimpleChannelListView @JvmOverloads constructor(
     private lateinit var adapter: ChannelListItemAdapter
 
     internal val listenerContainer = ChannelListListenerContainerImpl()
+
+    internal val visibilityContainer = ChannelListVisibilityContainerImpl()
 
     private lateinit var style: ChannelListViewStyle
 
@@ -98,6 +101,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
         }
 
         viewHolderFactory.setListenerContainer(this.listenerContainer)
+        viewHolderFactory.setVisibilityContainer(this.visibilityContainer)
         viewHolderFactory.setStyle(style)
 
         adapter = ChannelListItemAdapter(viewHolderFactory)
@@ -134,6 +138,14 @@ internal class SimpleChannelListView @JvmOverloads constructor(
 
     fun setMoreOptionsClickListener(listener: ChannelListView.ChannelClickListener?) {
         listenerContainer.moreOptionsClickListener = listener ?: ChannelListView.ChannelClickListener.DEFAULT
+    }
+
+    fun setIsMoreOptionsVisible(isMoreOptionsVisible: ChannelListView.ChannelOptionVisibilityPredicate) {
+        visibilityContainer.isMoreOptionsVisible = isMoreOptionsVisible
+    }
+
+    fun setIsDeleteOptionVisible(isDeleteOptionVisible: ChannelListView.ChannelOptionVisibilityPredicate) {
+        visibilityContainer.isDeleteOptionVisible = isDeleteOptionVisible
     }
 
     fun setSwipeListener(listener: ChannelListView.SwipeListener?) {
