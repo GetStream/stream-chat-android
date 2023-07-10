@@ -31,7 +31,6 @@ import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.channel.list.adapter.internal.ChannelListItemAdapter
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListListenerContainerImpl
-import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListVisibilityContainer
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListVisibilityContainerImpl
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelItemSwipeListener
 import io.getstream.chat.android.ui.common.extensions.internal.cast

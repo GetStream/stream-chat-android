@@ -984,6 +984,8 @@ public final class io/getstream/chat/android/ui/channel/list/ChannelListView : a
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/channel/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setErrorEventHandler (Lio/getstream/chat/android/ui/channel/list/ChannelListView$ErrorEventHandler;)V
+	public final fun setIsDeleteOptionVisible (Lkotlin/jvm/functions/Function1;)V
+	public final fun setIsMoreOptionsVisible (Lkotlin/jvm/functions/Function1;)V
 	public final fun setItemSeparator (I)V
 	public final fun setItemSeparatorHeight (I)V
 	public final fun setLoadingView (Landroid/view/View;)V
@@ -1025,6 +1027,15 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/Channe
 }
 
 public final class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelLongClickListener$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelOptionVisibilityPredicate : kotlin/jvm/functions/Function1 {
+	public static final field Companion Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelOptionVisibilityPredicate$Companion;
+	public static final field DEFAULT Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelOptionVisibilityPredicate;
+	public abstract fun invoke (Lio/getstream/chat/android/client/models/Channel;)Ljava/lang/Boolean;
+}
+
+public final class io/getstream/chat/android/ui/channel/list/ChannelListView$ChannelOptionVisibilityPredicate$Companion {
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/ChannelListView$EndReachedListener {
@@ -1185,6 +1196,7 @@ public class io/getstream/chat/android/ui/channel/list/adapter/viewholder/Channe
 	public fun getItemViewType (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListListenerContainer;
 	protected final fun getStyle ()Lio/getstream/chat/android/ui/channel/list/ChannelListViewStyle;
+	protected final fun getVisibilityContainer ()Lio/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListVisibilityContainer;
 }
 
 public abstract interface class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListListenerContainer {
@@ -1194,6 +1206,11 @@ public abstract interface class io/getstream/chat/android/ui/channel/list/adapte
 	public abstract fun getMoreOptionsClickListener ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelClickListener;
 	public abstract fun getSwipeListener ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$SwipeListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$UserClickListener;
+}
+
+public abstract interface class io/getstream/chat/android/ui/channel/list/adapter/viewholder/ChannelListVisibilityContainer {
+	public abstract fun isDeleteOptionVisible ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelOptionVisibilityPredicate;
+	public abstract fun isMoreOptionsVisible ()Lio/getstream/chat/android/ui/channel/list/ChannelListView$ChannelOptionVisibilityPredicate;
 }
 
 public abstract class io/getstream/chat/android/ui/channel/list/adapter/viewholder/SwipeViewHolder : io/getstream/chat/android/ui/channel/list/adapter/viewholder/BaseChannelListItemViewHolder {
