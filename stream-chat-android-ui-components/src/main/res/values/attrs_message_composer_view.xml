@@ -129,6 +129,9 @@
         set on top, bottom, start and end sides of the icon. -->
         <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding" format="dimension" />
 
+        <!-- Center Overlap content -->
+        <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
+
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />

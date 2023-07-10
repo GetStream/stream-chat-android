@@ -87,6 +87,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * drawable and its parent card.
  * @param messageInputVideoAttachmentIconDrawablePaddingEnd Sets the end padding between the video attachment drawable
  * and its parent card.
+ * @param audioRecordingButtonVisible If the button to record audio is displayed.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -162,6 +163,8 @@ public data class MessageComposerViewStyle(
     public val messageInputVideoAttachmentIconDrawablePaddingBottom: Int,
     public val messageInputVideoAttachmentIconDrawablePaddingStart: Int,
     public val messageInputVideoAttachmentIconDrawablePaddingEnd: Int,
+    // Center overlap content
+    public val audioRecordingButtonVisible: Boolean,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -433,6 +436,14 @@ public data class MessageComposerViewStyle(
                 val messageInputCannotSendHintText = a.getString(
                     R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCannotSendHintText
                 ) ?: context.getString(R.string.stream_ui_message_composer_hint_cannot_send_message)
+
+                /**
+                 * Center overlap content
+                 */
+                val audioRecordingButtonVisible = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
+                    false
+                )
 
                 /**
                  * Leading content
@@ -736,6 +747,8 @@ public data class MessageComposerViewStyle(
                         ?: messageInputVideoAttachmentIconDrawablePaddingStart,
                     messageInputVideoAttachmentIconDrawablePaddingEnd = messageInputVideoAttachmentIconDrawablePadding
                         ?: messageInputVideoAttachmentIconDrawablePaddingEnd,
+                    //Center overlap content
+                    audioRecordingButtonVisible = audioRecordingButtonVisible,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
