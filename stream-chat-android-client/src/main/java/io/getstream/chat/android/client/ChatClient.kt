@@ -125,6 +125,7 @@ import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
 import io.getstream.chat.android.client.utils.stringify
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
@@ -217,6 +218,7 @@ internal constructor(
     private val mutableClientState: MutableClientState,
     private val currentUserFetcher: CurrentUserFetcher,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
+    @InternalStreamChatApi
     public val audioPlayer: AudioPlayer
 ) {
     private val logger by taggedLogger("Chat:Client")
