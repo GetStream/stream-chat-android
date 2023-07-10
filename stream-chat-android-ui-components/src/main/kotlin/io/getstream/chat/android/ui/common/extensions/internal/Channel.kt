@@ -17,25 +17,9 @@
 package io.getstream.chat.android.ui.common.extensions.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.getMemberExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.common.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.extensions.getLastMessage
-
-internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
-    val usersChanged = getMemberExcludingCurrent() != other.getMemberExcludingCurrent()
-    return ChannelListPayloadDiff(
-        nameChanged = name != other.name,
-        avatarViewChanged = usersChanged,
-        usersChanged = usersChanged,
-        readStateChanged = read != other.read,
-        lastMessageChanged = getLastMessage() != other.getLastMessage(),
-        unreadCountChanged = unreadCount != other.unreadCount && other.unreadCount != null,
-        extraDataChanged = extraData != other.extraData
-    )
-}
 
 internal fun Channel.isMessageRead(message: Message): Boolean {
     val currentUser = ChatClient.instance().getCurrentUser()

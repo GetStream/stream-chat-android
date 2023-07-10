@@ -109,6 +109,7 @@ class ChannelListItemViewTest : ScreenshotTest {
             readStateChanged = true,
             unreadCountChanged = true,
             extraDataChanged = true,
+            typingUsersChanged = true
         )
     }
 }
