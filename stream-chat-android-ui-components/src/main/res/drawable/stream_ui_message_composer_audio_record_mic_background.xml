@@ -14,17 +14,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<ImageView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/stream_ui_message_composer_overlapping_content_floating_lock_width"
-    android:layout_height="@dimen/stream_ui_message_composer_overlapping_content_floating_lock_height"
-    android:padding="@dimen/stream_ui_spacing_tiny"
-    android:scaleType="center"
-    android:src="@drawable/stream_ui_ic_mic_lock"
-    tools:ignore="ContentDescription"
-    />
-
-
-
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval"
+    >
+    <solid android:color="@color/stream_ui_grey_gainsboro" />
+    <size android:width="64dp" android:height="64dp" />
+</shape>

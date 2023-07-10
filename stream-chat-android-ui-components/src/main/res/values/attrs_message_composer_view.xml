@@ -129,8 +129,19 @@
         set on top, bottom, start and end sides of the icon. -->
         <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding" format="dimension" />
 
-        <!-- Center Overlap content -->
+        <!-- Center overlap content -->
         <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordText" format="reference|string" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelText" format="reference|string" />
+        <attr name="streamUiMessageComposerAudioRecordingMicIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingMicIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingLockIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingLockIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingLockedIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingLockedIconDrawableTint" format="reference|color" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
