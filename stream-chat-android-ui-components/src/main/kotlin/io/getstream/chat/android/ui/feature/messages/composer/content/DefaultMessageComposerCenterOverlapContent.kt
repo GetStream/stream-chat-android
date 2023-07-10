@@ -37,6 +37,7 @@ import android.view.ViewGroup
 import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -50,10 +51,14 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCenterOverlapContentBinding
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.utils.PermissionChecker
+import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.displayMetrics
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
+import org.w3c.dom.Text
 
 private const val TAG = "OverlappingContent"
 
@@ -133,9 +138,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private val baseTouch = FloatArray(size = 2)
 
-    private var micW: Int = 64.dpToPx()
-    private var micH: Int = 64.dpToPx()
-
     private val permissionChecker = PermissionChecker()
 
     private var _state: RecordingState = RecordingState.Idle
@@ -171,10 +173,21 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         renderIdle()
     }
 
+    /**
+     * The composer context.
+     */
     private lateinit var composerContext: MessageComposerContext
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    private lateinit var style: MessageComposerViewStyle
 
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         composerContext = messageComposerContext
+        style = messageComposerContext.style
+
+        binding.recordingSlider.text = style.audioRecordingSlideToCancelText
     }
 
     override fun renderState(state: MessageComposerState) {
@@ -199,10 +212,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         super.onVisibilityChanged(changedView, visibility)
         if (visibility == View.VISIBLE) {
             logger.i { "[onVisibilityChanged] VISIBLE; state: $_state" }
-            // if (_state is RecordingState.Idle) {
-            //     logger.i { "[onVisibilityChanged] renderIdle: $isVisible" }
-            //     isVisible = false
-            // }
         } else {
             logger.i { "[onVisibilityChanged] NOT_VISIBLE; state: $_state" }
         }
@@ -288,7 +297,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         micPopup?.dismiss()
         micPopup = null
 
-        (lockPopup?.contentView as? ImageView?)?.setImageResource(R.drawable.stream_ui_ic_mic_locked_light)
+        val lockedIconDrawable = style.audioRecordingLockedIconDrawable.applyTint(
+            style.audioRecordingLockedIconDrawableTint
+        )
+        (lockPopup?.contentView as? ImageView?)?.setImageDrawable(lockedIconDrawable)
         lockPopup?.update(lockBaseRect.left, lockBaseRect.top, NO_CHANGE, lockBaseRect.width())
     }
 
@@ -442,11 +454,16 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun showMicPopup() {
         logger.d { "[showMicPopup] micOrigRect: $micOrigRect" }
-        val micW = micW
-        val micH = micH
         val micContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_mic, this, false
         )
+        val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+
+        micContent.measure(widthMeasureSpec, heightMeasureSpec)
+        val micW = maxOf(micContent.measuredWidth, micContent.layoutParams.width)
+        val micH = maxOf(micContent.measuredHeight, micContent.layoutParams.height)
+
         micPopup?.dismiss()
         micPopup = PopupWindow(context).apply {
             setBackgroundDrawable(null)
@@ -472,11 +489,22 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun showLockPopup() {
         logger.d { "[showLockPopup] micBaseRect: $micBaseRect" }
-        val lockW = 52.dpToPx()
-        val lockH = 92.dpToPx()
         val lockContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_lock, this, false
-        )
+        ).also { imageView ->
+            (imageView as ImageView).apply {
+                val iconDrawable = style.audioRecordingLockIconDrawable.applyTint(
+                    style.audioRecordingLockIconDrawableTint
+                )
+                setImageDrawable(iconDrawable)
+            }
+        }
+        val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+
+        lockContent.measure(widthMeasureSpec, heightMeasureSpec)
+        val lockW = maxOf(lockContent.measuredWidth, lockContent.layoutParams.width)
+        val lockH = maxOf(lockContent.measuredHeight, lockContent.layoutParams.height)
         lockPopup?.dismiss()
         lockPopup = PopupWindow(context).apply {
             setBackgroundDrawable(null)
@@ -504,7 +532,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     private fun showHoldPopup() {
         val holdContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_hold, this, false
-        )
+        ).also {
+            it.findViewById<TextView>(R.id.holdToRecordText).apply {
+                text = style.audioRecordingHoldToRecordText
+                setTextColor(style.audioRecordingHoldToRecordTextColor)
+                background = style.audioRecordingHoldToRecordBackgroundDrawable.applyTint(
+                    style.audioRecordingHoldToRecordBackgroundDrawableTint
+                )
+            }
+        }
         val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
         val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
 

@@ -15,8 +15,9 @@
     limitations under the License.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval"
+    android:shape="rectangle"
     >
-    <solid android:color="#DBDDE1" />
-    <size android:width="64dp" android:height="64dp" />
+    <solid android:color="@color/stream_ui_black_85" />
+    <size android:height="@dimen/stream_ui_message_composer_overlapping_content_floating_hold_height" />
+    <corners android:radius="16dp" />
 </shape>

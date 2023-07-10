@@ -19,16 +19,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="32dp"
-    android:background="#DBDDE1"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
     >
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:id="@+id/holdToRecordText"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/stream_ui_message_composer_overlapping_content_floating_hold_height"
+        android:background="@drawable/stream_ui_message_composer_audio_record_hold_background"
+        android:paddingHorizontal="16dp"
+        android:gravity="center_vertical"
         android:text="@string/stream_ui_message_composer_hold_to_record"
-        android:textColor="#72767E"
+        android:textColor="@color/stream_ui_white_snow"
         android:textStyle="bold"
         />
 

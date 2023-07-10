@@ -18,13 +18,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="@dimen/stream_ui_message_composer_overlapping_content_floating_mic_width"
+    android:layout_height="@dimen/stream_ui_message_composer_overlapping_content_floating_mic_height"
     android:padding="@dimen/stream_ui_spacing_tiny"
     android:scaleType="center"
     android:src="@drawable/stream_ui_ic_mic"
-    android:background="@drawable/stream_ui_message_composer_audio_record_background"
-    app:tint="#005FFF"
+    android:background="@drawable/stream_ui_message_composer_audio_record_mic_background"
+    app:tint="@color/stream_ui_accent_blue"
     tools:ignore="ContentDescription"
     />
 

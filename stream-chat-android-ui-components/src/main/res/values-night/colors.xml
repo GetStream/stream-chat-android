@@ -18,6 +18,7 @@
     <!-- Greys -->
     <color name="stream_ui_black">#FFFFFF</color>
     <color name="stream_ui_black_50">#80FFFFFF</color>
+    <color name="stream_ui_black_85">#D9FFFFFF</color>
     <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_grey_gainsboro">#2D2F2F</color>
     <color name="stream_ui_grey_whisper">#1C1E22</color>
