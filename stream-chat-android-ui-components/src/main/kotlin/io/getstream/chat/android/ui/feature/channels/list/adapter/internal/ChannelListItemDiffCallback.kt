@@ -17,10 +17,12 @@
 package io.getstream.chat.android.ui.feature.channels.list.adapter.internal
 
 import androidx.recyclerview.widget.DiffUtil
+import io.getstream.chat.android.client.extensions.getMembersExcludingCurrent
 import io.getstream.chat.android.ui.common.extensions.internal.cast
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
-import io.getstream.chat.android.ui.utils.extensions.diff
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
+import io.getstream.chat.android.ui.utils.extensions.getLastMessage
 
 internal object ChannelListItemDiffCallback : DiffUtil.ItemCallback<ChannelListItem>() {
     override fun areItemsTheSame(oldItem: ChannelListItem, newItem: ChannelListItem): Boolean {
@@ -42,8 +44,7 @@ internal object ChannelListItemDiffCallback : DiffUtil.ItemCallback<ChannelListI
         return when (oldItem) {
             is ChannelListItem.ChannelItem -> {
                 oldItem
-                    .channel
-                    .diff(newItem.cast<ChannelListItem.ChannelItem>().channel)
+                    .diff(newItem.cast())
                     .hasDifference()
                     .not()
             }
@@ -56,7 +57,19 @@ internal object ChannelListItemDiffCallback : DiffUtil.ItemCallback<ChannelListI
         // only called if their contents aren't the same, so they must be channel items and not loading items
         return oldItem
             .cast<ChannelListItem.ChannelItem>()
-            .channel
-            .diff(newItem.cast<ChannelListItem.ChannelItem>().channel)
+            .diff(newItem.cast())
+    }
+    private fun ChannelListItem.ChannelItem.diff(other: ChannelListItem.ChannelItem): ChannelListPayloadDiff {
+        val usersChanged = channel.getMembersExcludingCurrent() != other.channel.getMembersExcludingCurrent()
+        return ChannelListPayloadDiff(
+            nameChanged = channel.name != other.channel.name,
+            avatarViewChanged = usersChanged,
+            usersChanged = usersChanged,
+            readStateChanged = channel.read != other.channel.read,
+            lastMessageChanged = channel.getLastMessage() != other.channel.getLastMessage(),
+            unreadCountChanged = channel.unreadCount != other.channel.unreadCount && other.channel.unreadCount != null,
+            extraDataChanged = channel.extraData != other.channel.extraData,
+            typingUsersChanged = typingUsers != other.typingUsers,
+        )
     }
 }

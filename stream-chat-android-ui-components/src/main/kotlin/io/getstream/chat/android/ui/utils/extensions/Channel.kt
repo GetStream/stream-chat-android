@@ -18,14 +18,12 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.getMembersExcludingCurrent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.uiutils.extension.getMembersStatusText
 import io.getstream.chat.android.uiutils.extension.getPreviewMessage
 
@@ -64,19 +62,6 @@ public fun Channel.getMembersStatusText(
  * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getLastMessage(): Message? = getPreviewMessage(ChatUI.currentUserProvider.getCurrentUser())
-
-internal fun Channel.diff(other: Channel): ChannelListPayloadDiff {
-    val usersChanged = getMembersExcludingCurrent() != other.getMembersExcludingCurrent()
-    return ChannelListPayloadDiff(
-        nameChanged = name != other.name,
-        avatarViewChanged = usersChanged,
-        usersChanged = usersChanged,
-        readStateChanged = read != other.read,
-        lastMessageChanged = getLastMessage() != other.getLastMessage(),
-        unreadCountChanged = unreadCount != other.unreadCount && other.unreadCount != null,
-        extraDataChanged = extraData != other.extraData
-    )
-}
 
 internal fun Channel.readCount(message: Message): Int {
     val currentUser = ChatClient.instance().globalState.user.value
