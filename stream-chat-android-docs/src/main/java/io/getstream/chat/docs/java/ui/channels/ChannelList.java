@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem;
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff;
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder;
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory;
@@ -114,8 +115,8 @@ public class ChannelList extends Fragment {
             }
 
             @Override
-            public void bind(@NonNull Channel channel, @NonNull ChannelListPayloadDiff diff) {
-                this.channel = channel;
+            public void bind(@NonNull ChannelListItem.ChannelItem channelItem, @NonNull ChannelListPayloadDiff diff) {
+                this.channel = channelItem.getChannel();
                 binding.channelAvatarView.setChannel(channel);
                 String channelName = ChatUI.getChannelNameFormatter().formatChannelName(
                         channel,

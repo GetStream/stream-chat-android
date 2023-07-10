@@ -343,12 +343,14 @@ public abstract class io/getstream/chat/android/ui/feature/channels/list/adapter
 }
 
 public final class io/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem : io/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem {
-	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Ljava/util/List;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
-	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;Ljava/util/List;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/models/Channel;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public final fun getTypingUsers ()Ljava/util/List;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -364,7 +366,7 @@ public final class io/getstream/chat/android/ui/feature/channels/list/adapter/Ch
 }
 
 public final class io/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff {
-	public fun <init> (ZZZZZZZ)V
+	public fun <init> (ZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
@@ -372,14 +374,16 @@ public final class io/getstream/chat/android/ui/feature/channels/list/adapter/Ch
 	public final fun component5 ()Z
 	public final fun component6 ()Z
 	public final fun component7 ()Z
-	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;
+	public final fun component8 ()Z
+	public final fun copy (ZZZZZZZZ)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;ZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarViewChanged ()Z
 	public final fun getExtraDataChanged ()Z
 	public final fun getLastMessageChanged ()Z
 	public final fun getNameChanged ()Z
 	public final fun getReadStateChanged ()Z
+	public final fun getTypingUsersChanged ()Z
 	public final fun getUnreadCountChanged ()Z
 	public final fun getUsersChanged ()Z
 	public final fun hasDifference ()Z
@@ -390,7 +394,7 @@ public final class io/getstream/chat/android/ui/feature/channels/list/adapter/Ch
 
 public abstract class io/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/BaseChannelListItemViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
 	public fun <init> (Landroid/view/View;)V
-	public abstract fun bind (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;)V
+	public abstract fun bind (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;)V
 }
 
 public class io/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/ChannelListItemViewHolderFactory {

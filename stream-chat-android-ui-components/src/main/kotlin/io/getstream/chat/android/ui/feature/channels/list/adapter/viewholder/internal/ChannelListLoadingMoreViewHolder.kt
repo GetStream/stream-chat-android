@@ -17,8 +17,8 @@
 package io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.internal
 
 import android.view.ViewGroup
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -28,5 +28,5 @@ internal class ChannelListLoadingMoreViewHolder(
     style: ChannelListViewStyle,
 ) : BaseChannelListItemViewHolder(parent.streamThemeInflater.inflate(style.loadingMoreView, parent, false)) {
 
-    override fun bind(channel: Channel, diff: ChannelListPayloadDiff): Unit = Unit
+    override fun bind(channelItem: ChannelListItem.ChannelItem, diff: ChannelListPayloadDiff): Unit = Unit
 }

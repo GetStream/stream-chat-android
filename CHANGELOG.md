@@ -98,12 +98,15 @@
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessageListViewModelFactory`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
 - Added the ability to choose `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not in `MessageComposerView` via xml attributes. [#4812](https://github.com/GetStream/stream-chat-android/pull/4812)
   * `streamUiMessageComposerAttachmentsPickerMediaMode`
+- Added Typing Users list to `ChannelItem`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
+- Added typing indicator on `ChannelLitsView`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
 
 ### ⚠️ Changed
 - Replaced the method parameter `replyMessageId: String` with `replyTo: Message` inside `ReplyMessageClickListener.onReplyClick()`. The new parameter now contains the complete message to which the reply was made. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 - Added the parameter `parentId: String?` to `AttachmentGalleryResultItem`. It is used to indicate when a message is belongs to a thread. Same has been added to the extension function `Attachment.toAttachmentGalleryResultItem()`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 - Added the parameter `parentMessageId: String?` to the class `MessageListViewModel.ShowMessage`. If the message you want to scroll to is a thread message, pass in its parent message ID, otherwise you can pass in `null`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 - 🚨 Breaking change: Removed `ChatUI.showThreadSeparatorInEmptyThread`. It has been replaced by `MessageListController.showDateSeparatorInEmptyThread`. If you are using our `ViewModel` factory, `MessageListViewModelFactory.showDateSeparatorInEmptyThread` will pass the parameter through to the `MessageListController` contained by `MessageListViewMode`. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
+- Create new `bind()` method on `BaseChannelListItemViewHolder` that takes as parameter `ChannelItem`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
 
 ### ❌ Removed
 

@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroun
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.SwipeViewHolder
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -116,10 +117,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    override fun bind(channel: Channel, diff: ChannelListPayloadDiff) {
-        this.channel = channel
+    override fun bind(channelItem: ChannelListItem.ChannelItem, diff: ChannelListPayloadDiff) {
+        this.channel = channelItem.channel
 
-        configureForeground(diff, channel)
+        configureForeground(diff, channelItem)
         configureBackground()
 
         listener?.onRestoreSwipePosition(this, absoluteAdapterPosition)
@@ -200,10 +201,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         this.optionsCount = optionsCount
     }
 
-    private fun configureForeground(diff: ChannelListPayloadDiff, channel: Channel) {
+    private fun configureForeground(diff: ChannelListPayloadDiff, channelItem: ChannelListItem.ChannelItem) {
         binding.itemForegroundView.apply {
             diff.run {
-                if (nameChanged || (channel.isAnonymousChannel() && diff.usersChanged)) {
+                if (nameChanged || (channelItem.channel.isAnonymousChannel() && diff.usersChanged)) {
                     configureChannelNameLabel()
                 }
 
@@ -211,7 +212,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureAvatarView()
                 }
 
-                val lastMessage = channel.getLastMessage()
+                val lastMessage = channelItem.channel.getLastMessage()
                 if (lastMessageChanged) {
                     configureLastMessageLabelAndTimestamp(lastMessage)
                 }
@@ -224,7 +225,12 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     configureUnreadCountBadge()
                 }
 
-                muteIcon.isVisible = channel.isMuted
+                if (typingUsersChanged) {
+                    typingIndicatorView.setTypingUsers(channelItem.typingUsers)
+                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty()
+                }
+
+                muteIcon.isVisible = channelItem.channel.isMuted
             }
         }
     }

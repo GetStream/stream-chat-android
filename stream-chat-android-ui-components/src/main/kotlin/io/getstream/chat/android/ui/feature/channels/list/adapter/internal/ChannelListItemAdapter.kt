@@ -54,7 +54,7 @@ internal class ChannelListItemAdapter(
     private fun bind(position: Int, holder: BaseChannelListItemViewHolder, payload: ChannelListPayloadDiff) {
         when (val channelItem = getItem(position)) {
             is ChannelListItem.LoadingMoreItem -> Unit
-            is ChannelListItem.ChannelItem -> holder.bind(channelItem.channel, payload)
+            is ChannelListItem.ChannelItem -> holder.bind(channelItem, payload)
         }
     }
 
@@ -75,6 +75,7 @@ internal class ChannelListItemAdapter(
             readStateChanged = true,
             unreadCountChanged = true,
             extraDataChanged = true,
+            typingUsersChanged = true
         )
 
         val EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(
@@ -85,6 +86,7 @@ internal class ChannelListItemAdapter(
             readStateChanged = false,
             unreadCountChanged = false,
             extraDataChanged = false,
+            typingUsersChanged = false
         )
     }
 }
