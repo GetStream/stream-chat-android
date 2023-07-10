@@ -49,8 +49,8 @@ private object MessageComposerUsageSnippet {
     class MyActivity : AppCompatActivity() {
 
         //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         val factory by lazy {
             MessagesViewModelFactory(
@@ -109,8 +109,8 @@ private object MessageComposerHandlingActionsSnippet {
     class MyActivity : AppCompatActivity() {
 
         //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         val factory by lazy {
             MessagesViewModelFactory(
@@ -182,8 +182,8 @@ private object MessageComposerCustomizationSnippet {
     class MyActivity : AppCompatActivity() {
 
         //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         val factory by lazy {
             MessagesViewModelFactory(

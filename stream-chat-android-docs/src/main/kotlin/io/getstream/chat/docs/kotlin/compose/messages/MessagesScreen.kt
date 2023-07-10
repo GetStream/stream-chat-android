@@ -25,8 +25,8 @@ private object MessagesScreenUsageSnippet {
     class MyActivity : AppCompatActivity() {
 
         //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -57,8 +57,8 @@ private object MessagesScreenHandlingActionsSnippet {
     class MyActivity : AppCompatActivity() {
 
         //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -93,8 +93,8 @@ private object MessagesScreenCustomizationSnippet {
     class MyActivity : AppCompatActivity() {
 
         //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(applicationContext)
-        private val statefulStreamMediaRecorder = StatefulStreamMediaRecorder(streamMediaRecorder)
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)

@@ -52,6 +52,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageListView"
         app:streamUiMessageComposerAudioRecordingButtonVisible="true"
+
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
