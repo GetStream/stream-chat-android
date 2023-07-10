@@ -24,10 +24,17 @@ public data class ChannelListPayloadDiff(
     val readStateChanged: Boolean,
     val unreadCountChanged: Boolean,
     val extraDataChanged: Boolean,
+    val typingUsersChanged: Boolean,
 ) {
-    public fun hasDifference(): Boolean {
-        return nameChanged || avatarViewChanged || usersChanged || lastMessageChanged || readStateChanged || unreadCountChanged || extraDataChanged
-    }
+    public fun hasDifference(): Boolean =
+        nameChanged
+            .or(avatarViewChanged)
+            .or(usersChanged)
+            .or(lastMessageChanged)
+            .or(readStateChanged)
+            .or(unreadCountChanged)
+            .or(extraDataChanged)
+            .or(typingUsersChanged)
 
     public operator fun plus(other: ChannelListPayloadDiff): ChannelListPayloadDiff =
         copy(
@@ -38,5 +45,6 @@ public data class ChannelListPayloadDiff(
             readStateChanged = readStateChanged || other.readStateChanged,
             unreadCountChanged = unreadCountChanged || other.unreadCountChanged,
             extraDataChanged = extraDataChanged || other.extraDataChanged,
+            typingUsersChanged = typingUsersChanged || other.typingUsersChanged,
         )
 }

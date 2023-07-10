@@ -1145,7 +1145,7 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 }
 
 public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff {
-	public fun <init> (ZZZZZZZ)V
+	public fun <init> (ZZZZZZZZ)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
@@ -1153,14 +1153,16 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 	public final fun component5 ()Z
 	public final fun component6 ()Z
 	public final fun component7 ()Z
-	public final fun copy (ZZZZZZZ)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;ZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
+	public final fun component8 ()Z
+	public final fun copy (ZZZZZZZZ)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;ZZZZZZZZILjava/lang/Object;)Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListPayloadDiff;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAvatarViewChanged ()Z
 	public final fun getExtraDataChanged ()Z
 	public final fun getLastMessageChanged ()Z
 	public final fun getNameChanged ()Z
 	public final fun getReadStateChanged ()Z
+	public final fun getTypingUsersChanged ()Z
 	public final fun getUnreadCountChanged ()Z
 	public final fun getUsersChanged ()Z
 	public final fun hasDifference ()Z
