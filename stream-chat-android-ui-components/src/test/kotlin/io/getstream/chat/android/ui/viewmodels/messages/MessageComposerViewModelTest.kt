@@ -400,6 +400,8 @@ internal class MessageComposerViewModelTest {
                 MessageComposerController(
                     chatClient = chatClient,
                     channelId = channelId,
+                    mediaRecorder = mock(),
+                    fileToUri = { it.path },
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
                 )
