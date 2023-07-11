@@ -107,7 +107,7 @@
 - Added `AudioRecordAttachmentPreviewFactory` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 - Added `DefaultMessageComposerOverlappingContent` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 - Added new custom views (`AudioRecordPlayerView`, `AudioWavesSeekBar`, `WaveformView`) as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
-- Added `AudioRecordsGroupView` in addition to `MediaAttachmentsGroupView` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added `AudioRecordingAttachmentsGroupView` in addition to `MediaAttachmentsGroupView` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 
 ### ⚠️ Changed
 - Replaced the method parameter `replyMessageId: String` with `replyTo: Message` inside `ReplyMessageClickListener.onReplyClick()`. The new parameter now contains the complete message to which the reply was made. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)

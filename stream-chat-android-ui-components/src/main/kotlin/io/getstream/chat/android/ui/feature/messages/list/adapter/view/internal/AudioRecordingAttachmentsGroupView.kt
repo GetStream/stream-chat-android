@@ -39,7 +39,7 @@ private const val NULL_DURATION = 0.0
  * A LinearLayoutCompat that present the list of audio messages.
  */
 @Suppress("MagicNumber")
-internal class AudioRecordsGroupView : LinearLayoutCompat {
+internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper())
     public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
@@ -56,7 +56,7 @@ internal class AudioRecordsGroupView : LinearLayoutCompat {
     var attachmentClickListener: AttachmentClickListener? = null
     var attachmentLongClickListener: AttachmentLongClickListener? = null
 
-    private val logger by taggedLogger("AudioRecordsGroupView")
+    private val logger by taggedLogger("AudioRecAttachGroupView")
 
     private var audioAttachments: List<Attachment>? = null
 
