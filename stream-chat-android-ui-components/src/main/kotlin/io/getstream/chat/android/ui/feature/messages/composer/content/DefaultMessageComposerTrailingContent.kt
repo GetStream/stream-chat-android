@@ -120,8 +120,8 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         val blockedFileExtensions = appSettings.app.fileUploadConfig.blockedFileExtensions
         val canSendMessage = state.ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
         val canUploadFile = state.ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
-        val canUploadRecording = !blockedMimeTypes.contains(AttachmentType.AUDIO)
-            && !blockedFileExtensions.contains(AAC_EXTENSION)
+        val canUploadRecording = !blockedMimeTypes.contains(AttachmentType.AUDIO) &&
+            !blockedFileExtensions.contains(AAC_EXTENSION)
         val hasTextInput = state.inputValue.isNotEmpty()
         val hasAttachments = state.attachments.isNotEmpty()
         val isInputValid = state.validationErrors.isEmpty()
@@ -142,8 +142,8 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 cooldownBadgeTextView.isVisible = false
                 sendMessageButton.isVisible = true
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
-                recordAudioButton.isVisible = style.audioRecordingButtonVisible && canUploadFile && canUploadRecording
-                    && canSendMessage && !isInEditMode
+                recordAudioButton.isVisible = style.audioRecordingButtonVisible && canUploadFile && canUploadRecording &&
+                    canSendMessage && !isInEditMode
             }
         }
     }

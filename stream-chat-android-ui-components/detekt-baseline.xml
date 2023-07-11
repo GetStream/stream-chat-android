@@ -101,6 +101,7 @@
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
     <ID>MaxLineLength:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$logger.w { "[onTouchEvent] parentHeight: $parentHeight, centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().heightPixels}" }</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
+    <ID>MaxLineLength:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$recordAudioButton.isVisible</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
     <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
@@ -138,6 +139,7 @@
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextSize</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextStyle</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable</ID>
+    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets</ID>
