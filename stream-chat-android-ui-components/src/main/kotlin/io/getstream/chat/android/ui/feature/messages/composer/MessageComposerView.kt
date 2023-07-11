@@ -332,11 +332,6 @@ public class MessageComposerView : ConstraintLayout {
         )
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        // TODO background = ColorDrawable(Color.LTGRAY)
-    }
-
     override fun onRestoreInstanceState(state: Parcelable?) {
         logger.w { "[onRestoreInstanceState] state: $state" }
         super.onRestoreInstanceState(state)
