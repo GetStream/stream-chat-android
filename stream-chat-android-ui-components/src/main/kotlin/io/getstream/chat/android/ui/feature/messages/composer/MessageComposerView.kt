@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.composer
 
 import android.content.Context
 import android.graphics.Rect
+import android.os.Parcelable
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.MotionEvent
@@ -294,6 +295,16 @@ public class MessageComposerView : ConstraintLayout {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         // TODO background = ColorDrawable(Color.LTGRAY)
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        logger.w { "[onRestoreInstanceState] state: $state" }
+        super.onRestoreInstanceState(state)
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        logger.w { "[onSaveInstanceState] no args" }
+        return super.onSaveInstanceState()
     }
 
     /**
