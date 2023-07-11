@@ -23,12 +23,14 @@ import android.media.MediaExtractor
 import android.media.MediaFormat
 import android.net.Uri
 import android.os.Build
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.log.taggedLogger
 import java.nio.ByteBuffer
 import java.util.concurrent.CountDownLatch
 import kotlin.math.pow
 import kotlin.math.sqrt
 
+@InternalStreamChatApi
 public class WaveformExtractor(
     private val context: Context,
     private val key: String,
@@ -258,6 +260,7 @@ public class WaveformExtractor(
 
 public fun MediaCodec.BufferInfo.isEof(): Boolean = flags and MediaCodec.BUFFER_FLAG_END_OF_STREAM != 0
 
+@InternalStreamChatApi
 public fun interface ExtractorCallBack {
     public fun onProgress(extractor: WaveformExtractor, value: Float)
 }

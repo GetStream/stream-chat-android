@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.client.audio
 
-@Suppress("TooManyFunctions")
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 /**
  * Audio player used to play audio messages.
  */
+@Suppress("TooManyFunctions")
+@InternalStreamChatApi
 public interface AudioPlayer {
 
     /**

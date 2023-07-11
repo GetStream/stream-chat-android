@@ -34,6 +34,7 @@
 - Added `AttachmentsVerifier` to verify if the uploaded attachments are valid. [#4852](https://github.com/GetStream/stream-chat-android/pull/4852)
 - Added `ChannelClient.fetchCurrentUser` to fetch current user from backend. [#4860](https://github.com/GetStream/stream-chat-android/pull/4860)
 - Added `FetchCurrentUserListener` interface used to perform actions as side effects when the `ChatCliet.fetchCurrentUser()` method is used to fetch the current user from the backend. [#4860](https://github.com/GetStream/stream-chat-android/pull/4860)
+- Added `AudioPlayer` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 
 ### ⚠️ Changed
 - Changed `newMessageIntent` lambda's signature of `NotificationHandlerFactory.createNotificationHandler()`. It receives the whole `Message`/`Channel` entity to help you  create a more complex navigation intent.
@@ -79,6 +80,8 @@
 
 ### ✅ Added
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessageListController`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
+- Added `StreamMediaRecorder` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added `AudioRecordingController` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 
 ### ⚠️ Changed
 
@@ -101,6 +104,10 @@
 - Added Typing Users list to `ChannelItem`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
 - Added typing indicator on `ChannelLitsView`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
 - Added options visibility customization for each channel in a list. [#4870](https://github.com/GetStream/stream-chat-android/pull/4870)
+- Added `AudioRecordAttachmentPreviewFactory` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added `DefaultMessageComposerOverlappingContent` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added new custom views (`AudioRecordPlayerView`, `AudioWavesSeekBar`, `WaveformView`) as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added `AudioRecordsGroupView` in addition to `MediaAttachmentsGroupView` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 
 ### ⚠️ Changed
 - Replaced the method parameter `replyMessageId: String` with `replyTo: Message` inside `ReplyMessageClickListener.onReplyClick()`. The new parameter now contains the complete message to which the reply was made. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
@@ -108,6 +115,34 @@
 - Added the parameter `parentMessageId: String?` to the class `MessageListViewModel.ShowMessage`. If the message you want to scroll to is a thread message, pass in its parent message ID, otherwise you can pass in `null`. [#4639](https://github.com/GetStream/stream-chat-android/pull/4639)
 - 🚨 Breaking change: Removed `ChatUI.showThreadSeparatorInEmptyThread`. It has been replaced by `MessageListController.showDateSeparatorInEmptyThread`. If you are using our `ViewModel` factory, `MessageListViewModelFactory.showDateSeparatorInEmptyThread` will pass the parameter through to the `MessageListController` contained by `MessageListViewMode`. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
 - Create new `bind()` method on `BaseChannelListItemViewHolder` that takes as parameter `ChannelItem`. [#4868](https://github.com/GetStream/stream-chat-android/pull/4868)
+- Added `MessageComposerView.setCenterOverlapContent` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- `FileAttachmentsView` supports new audio recording view type as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added audio recording style customization into `MessageComposerViewStyle` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+  * `audioRecordingButtonVisible`
+  * `audioRecordingHoldToRecordText`
+  * `audioRecordingHoldToRecordTextColor`
+  * `audioRecordingHoldToRecordBackgroundDrawable`
+  * `audioRecordingHoldToRecordBackgroundDrawableTint`
+  * `audioRecordingSlideToCancelText`
+  * `audioRecordingMicIconDrawable`
+  * `audioRecordingMicIconDrawableTint`
+  * `audioRecordingLockIconDrawable`
+  * `audioRecordingLockIconDrawableTint`
+  * `audioRecordingLockedIconDrawable`
+  * `audioRecordingLockedIconDrawableTint`
+- Added audio recording xml attrs for `MessageComposerView` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+  * `streamUiMessageComposerAudioRecordingButtonVisible`
+  * `streamUiMessageComposerAudioRecordingHoldToRecordText`
+  * `streamUiMessageComposerAudioRecordingHoldToRecordTextColor`
+  * `streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable`
+  * `streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint`
+  * `streamUiMessageComposerAudioRecordingSlideToCancelText`
+  * `streamUiMessageComposerAudioRecordingMicIconDrawable`
+  * `streamUiMessageComposerAudioRecordingMicIconDrawableTint`
+  * `streamUiMessageComposerAudioRecordingLockIconDrawable`
+  * `streamUiMessageComposerAudioRecordingLockIconDrawableTint`
+  * `streamUiMessageComposerAudioRecordingLockedIconDrawable`
+  * `streamUiMessageComposerAudioRecordingLockedIconDrawableTint`
 
 ### ❌ Removed
 
@@ -127,6 +162,9 @@
 - Add `ThreadMessagesStart` that allows to control if the stack of thread messages starts at the bottom or the top. [#4807](https://github.com/GetStream/stream-chat-android/pull/4807)
 - Add `PickerMediaMode` that allows control if the camera recorder and/or take picture feature is allowed or not. [#4812](https://github.com/GetStream/stream-chat-android/pull/4812)
 - Added `MessageTheme` to customize the message components into `ChatTheme`. [#4856](https://github.com/GetStream/stream-chat-android/pull/4856)
+- Added `StatefulStreamMediaRecorder` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added `AudioRecordAttachmentFactory` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
+- Added new components (`RunningWaveForm`, `AudioWaveVSeekbar`, `AudioRecordAttachmentContent`, `AudioRecordGroupContent`) as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 
 ### ⚠️ Changed
 - 🚨 Breaking change: Renamed `onHeaderActionClick` to `onHeaderTitleClick` in `MessagesScreen`. Change made in order to better reflect the handler's behavior. [#4535](https://github.com/GetStream/stream-chat-android/pull/4535)
