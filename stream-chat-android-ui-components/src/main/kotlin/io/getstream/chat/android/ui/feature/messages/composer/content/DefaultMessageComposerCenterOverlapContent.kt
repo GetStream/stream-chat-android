@@ -19,10 +19,12 @@ package io.getstream.chat.android.ui.feature.messages.composer.content
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
+import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.os.Parcelable
 import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
@@ -193,7 +195,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     override fun renderState(state: MessageComposerState) {
         val recording = state.recording
-        logger.i { "[renderState] recordingState: ${recording::class.simpleName}" }
+        logger.i { "[renderState] measuredHeight: $measuredHeight, recordingState: ${recording::class.simpleName}" }
         when (recording) {
             is RecordingState.Hold -> renderHold(recording)
             is RecordingState.Locked -> renderLocked(recording)
@@ -204,9 +206,30 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         _state = recording
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        logger.i { "[onAttachedToWindow] newConfig: $newConfig" }
+        super.onConfigurationChanged(newConfig)
+    }
+
+    override fun onAttachedToWindow() {
+        logger.i { "[onAttachedToWindow] no args" }
+        super.onAttachedToWindow()
+    }
+
     override fun onDetachedFromWindow() {
+        logger.i { "[onDetachedFromWindow] no args" }
         super.onDetachedFromWindow()
         renderIdle()
+    }
+
+    override fun onRestoreInstanceState(state: Parcelable?) {
+        logger.w { "[onRestoreInstanceState] state: $state" }
+        super.onRestoreInstanceState(state)
+    }
+
+    override fun onSaveInstanceState(): Parcelable? {
+        logger.w { "[onSaveInstanceState] no args" }
+        return super.onSaveInstanceState()
     }
 
     override fun onVisibilityChanged(changedView: View, visibility: Int) {
@@ -279,7 +302,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun renderLocked(state: RecordingState.Locked) {
-        logger.d { "[renderLocked] waveform: ${state.waveform.size}" }
+        logger.d { "[renderLocked] waveform: ${state.waveform.size}, windowToken: $windowToken" }
 
         isVisible = true
         layoutParams.height = centerContentHeight * 2
@@ -298,11 +321,16 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         micPopup?.dismiss()
         micPopup = null
 
-        val lockedIconDrawable = style.audioRecordingLockedIconDrawable.applyTint(
-            style.audioRecordingLockedIconDrawableTint
-        )
-        (lockPopup?.contentView as? ImageView?)?.setImageDrawable(lockedIconDrawable)
-        lockPopup?.update(lockBaseRect.left, lockBaseRect.top, NO_CHANGE, lockBaseRect.width())
+        if (_state !is RecordingState.Locked || lockPopup == null) {
+            showLockedPopup()
+        }
+
+        // TODO delete this when we switch to usage of `showAsDropDown` inside of `showLockPopup`
+        // val lockedIconDrawable = style.audioRecordingLockedIconDrawable.applyTint(
+        //     style.audioRecordingLockedIconDrawableTint
+        // )
+        // (lockPopup?.contentView as? ImageView?)?.setImageDrawable(lockedIconDrawable)
+        // lockPopup?.update(lockBaseRect.left, lockBaseRect.top, NO_CHANGE, lockBaseRect.width())
     }
 
     private fun renderOverview(state: RecordingState.Overview) {
@@ -450,6 +478,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun showMicPopup() {
+        if (windowToken == null) {
+            logger.w { "[showMicPopup] rejected (windowToken is null)" }
+            return
+        }
         logger.d { "[showMicPopup] micOrigRect: $micOrigRect" }
         val micContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_mic, this, false
@@ -485,6 +517,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     private fun showLockPopup() {
+        if (windowToken == null) {
+            logger.w { "[showLockPopup] rejected (windowToken is null)" }
+            return
+        }
         logger.d { "[showLockPopup] micBaseRect: $micBaseRect" }
         val lockContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_lock, this, false
@@ -523,6 +559,44 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 top -= centerContentHeight * 2
             }
             showAtLocation(binding.root, Gravity.TOP or Gravity.START, lockBaseRect.left, lockBaseRect.top)
+            // TODO make it work using showAsDropDown, cause we won't have a proper way to restore it's position
+            // showAsDropDown(binding.root, 0, 200, Gravity.BOTTOM or Gravity.END)
+        }
+    }
+
+    private fun showLockedPopup() {
+        if (windowToken == null) {
+            logger.w { "[showLockedPopup] rejected (windowToken is null)" }
+            return
+        }
+        logger.d { "[showLockedPopup] micBaseRect: $micBaseRect" }
+        val lockContent = LayoutInflater.from(context).inflate(
+            R.layout.stream_ui_message_composer_default_center_overlap_floating_locked, this, false
+        ).also { imageView ->
+            (imageView as ImageView).apply {
+                val iconDrawable = style.audioRecordingLockedIconDrawable.applyTint(
+                    style.audioRecordingLockedIconDrawableTint
+                )
+                setImageDrawable(iconDrawable)
+            }
+        }
+        val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+        val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
+
+        lockContent.measure(widthMeasureSpec, heightMeasureSpec)
+        val lockW = maxOf(lockContent.measuredWidth, lockContent.layoutParams.width)
+        val lockH = maxOf(lockContent.measuredHeight, lockContent.layoutParams.height)
+        lockPopup?.dismiss()
+        lockPopup = PopupWindow(context).apply {
+            setBackgroundDrawable(null)
+            isClippingEnabled = true
+
+            contentView = lockContent
+            width = lockW
+            height = lockH
+
+            val spacerY = 16.dpToPx()
+            showAsDropDown(binding.root, 0, -spacerY, Gravity.BOTTOM or Gravity.END)
         }
     }
 

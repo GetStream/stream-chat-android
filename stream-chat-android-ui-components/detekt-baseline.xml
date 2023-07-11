@@ -99,7 +99,7 @@
     <ID>MaxLineLength:ChannelListVisibilityContainerImpl.kt$ChannelListVisibilityContainerImpl$override</ID>
     <ID>MaxLineLength:ChatUI.kt$ChatUI$public</ID>
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
-    <ID>MaxLineLength:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$logger.w { "[onTouchEvent] parentHeight: $parentHeight, centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().heightPixels}" }</ID>
+    <ID>MaxLineLength:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$logger.w { "[onTouchEvent] centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().widthPixels}" }</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
     <ID>MaxLineLength:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$recordAudioButton.isVisible</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
@@ -197,6 +197,7 @@
     <ID>TooGenericExceptionThrown:AttachmentGalleryPagerAdapter.kt$AttachmentGalleryPagerAdapter$throw Throwable("Unsupported attachment type")</ID>
     <ID>TooManyFunctions:AttachmentGalleryActivity.kt$AttachmentGalleryActivity : AppCompatActivity</ID>
     <ID>TooManyFunctions:ChannelListView.kt$ChannelListView : FrameLayout</ID>
+    <ID>TooManyFunctions:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent : ConstraintLayoutMessageComposerContent</ID>
     <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
     <ID>TooManyFunctions:MessageListHeaderView.kt$MessageListHeaderView : FrameLayout</ID>
     <ID>TooManyFunctions:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory</ID>
@@ -205,6 +206,7 @@
     <ID>UnnecessaryAbstractClass:InnerAttachmentViewHolder.kt$InnerAttachmentViewHolder$InnerAttachmentViewHolder</ID>
     <ID>UnusedPrivateClass:MediaAttachmentGridView.kt$MediaAttachmentGridView$SharedMediaSpaceItemDecorator : ItemDecoration</ID>
     <ID>UnusedPrivateMember:AudioWavesSeekBar.kt$private const val DEFAULT_BAR_PADDING = 5</ID>
+    <ID>UnusedPrivateMember:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent.Companion$private const val NO_CHANGE = -1</ID>
     <ID>UnusedPrivateMember:DefaultMessageComposerCenterOverlapContent.kt$private fun ImageView.setImageColor(@ColorInt color: Int)</ID>
     <ID>UnusedPrivateMember:WaveformView.kt$WaveformView$private fun forceProgress(progress: Float)</ID>
     <ID>UnusedPrivateMember:WaveformView.kt$WaveformView$private var barHeightRatio: Float = DEFAULT_BAR_HEIGHT_RATIO</ID>
