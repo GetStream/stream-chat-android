@@ -68,7 +68,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.getstream.sdk.chat.audio.recording.MediaRecorderState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.client.errors.extractCause
@@ -97,6 +96,7 @@ import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.log.Priority
 import io.getstream.log.StreamLog
 import io.getstream.log.streamLog
+import io.getstream.sdk.chat.audio.recording.MediaRecorderState
 import kotlinx.coroutines.launch
 import java.util.Date
 

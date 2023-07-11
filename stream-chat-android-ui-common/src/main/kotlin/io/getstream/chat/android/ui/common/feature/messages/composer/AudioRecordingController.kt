@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
@@ -26,6 +25,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
 import io.getstream.chat.android.ui.common.state.messages.composer.copy
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch

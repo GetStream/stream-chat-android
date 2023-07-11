@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.audio.recording
+package io.getstream.sdk.chat.audio.recording
 
-import android.media.MediaRecorder
+import io.getstream.chat.android.models.Attachment
 
-/**
- * Holds information about the current state of the [MediaRecorder] used by [StreamMediaRecorder].
- * The values correspond to the info and error values found inside [MediaRecorder].
- *
- * @param streamMediaRecorder The [StreamMediaRecorder] instance this event is tied to.
- * @param what Error or info type.
- * @param extra An extra code, specific to the error or info type.
- */
-public class StreamMediaRecorderState(
-    private val streamMediaRecorder: StreamMediaRecorder,
-    private val what: Int,
-    private val extra: Int,
+public data class RecordedMedia(
+    val durationInMs: Int,
+    val attachment: Attachment,
 )

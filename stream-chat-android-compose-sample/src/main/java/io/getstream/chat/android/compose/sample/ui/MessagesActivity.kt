@@ -47,9 +47,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.MediaRecorderState
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -75,6 +72,9 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.MediaRecorderState
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 class MessagesActivity : BaseConnectedActivity() {
 
