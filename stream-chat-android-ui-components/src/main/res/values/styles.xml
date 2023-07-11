@@ -1043,6 +1043,21 @@
         <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart">2dp</item>
         <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd">2dp</item>
 
+        <!-- Center overlap content -->
+        <item name="streamUiMessageComposerAudioRecordingButtonVisible">false</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonPreferred">false</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordText">@string/stream_ui_message_composer_hold_to_record</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextColor">@color/stream_ui_white_snow</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable">@drawable/stream_ui_message_composer_audio_record_hold_background</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint">@null</item>
+        <item name="streamUiMessageComposerAudioRecordingSlideToCancelText">@string/stream_ui_message_composer_slide_to_cancel</item>
+        <item name="streamUiMessageComposerAudioRecordingMicIconDrawable">@drawable/stream_ui_ic_mic</item>
+        <item name="streamUiMessageComposerAudioRecordingMicIconDrawableTint">@null</item>
+        <item name="streamUiMessageComposerAudioRecordingLockIconDrawable">@drawable/stream_ui_ic_mic_lock</item>
+        <item name="streamUiMessageComposerAudioRecordingLockIconDrawableTint">@null</item>
+        <item name="streamUiMessageComposerAudioRecordingLockedIconDrawable">@drawable/stream_ui_ic_mic_locked</item>
+        <item name="streamUiMessageComposerAudioRecordingLockedIconDrawableTint">@null</item>
+
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
         <item name="streamUiMessageComposerAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_attach</item>

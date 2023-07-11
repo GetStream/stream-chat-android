@@ -364,6 +364,7 @@ internal class MessageComposerViewModelTest {
             whenever(statePlugin.resolveDependency(eq(GlobalState::class))) doReturn globalState
             whenever(statePlugin.resolveDependency(eq(StatePluginConfig::class))) doReturn statePluginConfig
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
+            whenever(chatClient.audioPlayer) doReturn mock()
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
