@@ -57,6 +57,7 @@ import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.displayMetrics
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.log.taggedLogger
 
 private const val TAG = "OverlappingContent"
@@ -116,7 +117,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private val binding: StreamUiMessageComposerDefaultCenterOverlapContentBinding
 
-    private var parentHeight: Int = Int.MAX_VALUE
     private var parentWidth: Int = Int.MAX_VALUE
     private var centerContentHeight: Int = Int.MAX_VALUE
 
@@ -169,6 +169,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingWaveform.onSliderDragStop = { progress ->
             sliderDragStopListener(progress)
         }
+        centerContentHeight = context.getDimension(R.dimen.stream_ui_message_composer_center_content_height)
+        parentWidth = displayMetrics().widthPixels
         renderIdle()
     }
 
@@ -280,7 +282,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         logger.d { "[renderLocked] waveform: ${state.waveform.size}" }
 
         isVisible = true
-        layoutParams.height = parentHeight * 2
+        layoutParams.height = centerContentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
         binding.recordingSlider.isVisible = false
 
@@ -307,7 +309,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         logger.d { "[renderOverview] state.isPlaying: ${state.isPlaying}" }
 
         isVisible = true
-        layoutParams.height = parentHeight * 2
+        layoutParams.height = centerContentHeight * 2
         binding.horizontalGuideline.setGuidelinePercent(0.5f)
 
         binding.recordingPlayback.setImageResource(
@@ -363,18 +365,14 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                     return false
                 }
                 parentWidth = minOf(parentWidth, composerContext.content.asView().width)
-                parentHeight = minOf(parentHeight, composerContext.content.asView().height)
-                centerContentHeight = minOf(
-                    centerContentHeight,
-                    composerContext.content.center?.asView()?.height ?: error("no center content found")
-                )
+                centerContentHeight = context.getDimension(R.dimen.stream_ui_message_composer_center_content_height)
                 val recordAudioButton =
                     composerContext.content.findRecordAudioButton()
                         ?: composerContext.content.trailing?.asView()?.findViewById(R.id.recordAudioButton)
                         ?: error("recordAudioButton not found")
                 recordAudioButton.getRectInWindow(micOrigRect)
 
-                logger.w { "[onTouchEvent] parentHeight: $parentHeight, centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().heightPixels}" }
+                logger.w { "[onTouchEvent] centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().widthPixels}" }
                 baseTouch[0] = x
                 baseTouch[1] = y
                 holdStartTime = SystemClock.elapsedRealtime()
