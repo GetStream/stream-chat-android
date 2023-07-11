@@ -1,0 +1,124 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Audio Recording Support
+
+## Introduction
+
+
+The UI Components Chat SDK provides the flexibility to customize the visual presentation of audio recording. You can personalize the way audio recording is displayed and make it more unique according to your preferences and requirements.
+
+## Customization
+
+`MessageComposerView` in Chat UI Components serves as the container where audio recording functionality is rendered. It provides the necessary components and elements to handle the recording process and display relevant user interface elements related to audio recording.
+
+### Theming
+
+We'll start changing it by replacing the stock play button in favor of a flatter, semi-transparent
+design.
+
+First, let's enable audio recording by setting `streamUiMessageComposerAudioRecordingButtonVisible`
+to `true` in our `MessageComposerViewTheme`:
+
+```xml
+
+<style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+    <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+</style>
+```
+
+This will show the microphone button in the `MessageComposerView` next to the send button.
+
+If you want to show the send button only when there's text in the input, you can do that by
+setting `streamUiMessageComposerAudioRecordingButtonPreferred` to true in
+the `MessageComposerViewTheme`. This way, the send button will only be visible when there's
+something typed in the composer.
+
+```xml
+
+<style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+    <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonPreferred">true</item>
+</style>
+```
+
+:::note
+Only certain attributes were used here, you can find the rest in
+the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
+.
+:::
+
+Next, add it to your Stream theme:
+
+```xml
+
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMessageComposerViewStyle">@style/MessageComposerViewTheme</item>
+</style>
+```
+
+And finally, override `streamUiTheme`:
+
+```xml
+
+<style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="streamUiTheme">@style/StreamTheme</item>
+</style>
+```
+
+### XML Attributes
+
+The same result can be achieved by using XML attributes directly on the `MessageComposerView`:
+
+```xml {5-7}
+<io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+    android:id="@+id/messageComposerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:streamUiMessageComposerAudioRecordingButtonVisible="true"
+    app:streamUiMessageComposerAudioRecordingButtonPreferred="true"
+    />
+```
+
+:::note
+Only certain attributes were used here, you can find the rest in
+the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
+.
+:::
+
+### TransformStyle
+
+The last but not least option is to use `TransformStyle` to modify the audio recording
+functionality:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        audioRecordingButtonVisible = true,
+        audioRecordingButtonPreferred = true,
+    )
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageComposerStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+
+</TabItem>
+</Tabs>
+
+:::note
+Only certain attributes were used here, you can find the rest in
+the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
+.
+:::
