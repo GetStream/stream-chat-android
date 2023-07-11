@@ -27,8 +27,6 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
@@ -45,6 +43,8 @@ import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 /**
  * Local providers for various properties we connect to our components, for styling.

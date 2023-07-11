@@ -41,8 +41,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
@@ -60,6 +58,8 @@ import io.getstream.chat.android.guides.catalog.compose.customattachments.factor
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import java.text.SimpleDateFormat
 import java.util.Date
 

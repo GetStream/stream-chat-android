@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.audio.recording
+package io.getstream.sdk.chat.audio.recording
 
 import android.media.MediaRecorder
 import io.getstream.result.Result

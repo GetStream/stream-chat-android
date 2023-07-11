@@ -23,14 +23,14 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.getstream.sdk.chat.audio.recording.MediaRecorderState
-import com.getstream.sdk.chat.audio.recording.RecordedMedia
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
 import io.getstream.chat.android.compose.util.KeyValuePair
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
 import io.getstream.result.Result
+import io.getstream.sdk.chat.audio.recording.MediaRecorderState
+import io.getstream.sdk.chat.audio.recording.RecordedMedia
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorderState
 import java.io.File
 
 /**

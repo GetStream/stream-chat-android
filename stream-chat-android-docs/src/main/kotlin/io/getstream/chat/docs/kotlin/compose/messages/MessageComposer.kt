@@ -29,8 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
@@ -40,6 +39,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.docs.R
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#usage)

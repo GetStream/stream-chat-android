@@ -7,8 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -16,6 +15,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)

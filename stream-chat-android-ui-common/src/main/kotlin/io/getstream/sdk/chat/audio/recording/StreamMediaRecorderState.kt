@@ -14,26 +14,20 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.audio.recording
+package io.getstream.sdk.chat.audio.recording
 
 import android.media.MediaRecorder
 
 /**
- * Represents the current state of the [MediaRecorder].
+ * Holds information about the current state of the [MediaRecorder] used by [StreamMediaRecorder].
+ * The values correspond to the info and error values found inside [MediaRecorder].
+ *
+ * @param streamMediaRecorder The [StreamMediaRecorder] instance this event is tied to.
+ * @param what Error or info type.
+ * @param extra An extra code, specific to the error or info type.
  */
-public enum class MediaRecorderState {
-    /**
-     * The media recorder has not yet been set up at this point and cannot record.
-     */
-    UNINITIALIZED,
-
-    /**
-     * The media recorder has been set up and is ready to record.
-     */
-    PREPARED,
-
-    /**
-     * The media recorder is currently recording.
-     */
-    RECORDING
-}
+public class StreamMediaRecorderState(
+    private val streamMediaRecorder: StreamMediaRecorder,
+    private val what: Int,
+    private val extra: Int,
+)

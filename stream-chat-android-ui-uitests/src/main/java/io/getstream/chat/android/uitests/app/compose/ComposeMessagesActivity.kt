@@ -21,12 +21,12 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 /**
  * An Activity that represents a message list screen. Relies on the components

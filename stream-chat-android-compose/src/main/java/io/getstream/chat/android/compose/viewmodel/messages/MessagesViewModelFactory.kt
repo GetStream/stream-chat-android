@@ -21,8 +21,6 @@ import android.content.Context
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import com.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -38,6 +36,8 @@ import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import java.io.File
 
 /**

@@ -14,11 +14,26 @@
  * limitations under the License.
  */
 
-package com.getstream.sdk.chat.audio.recording
+package io.getstream.sdk.chat.audio.recording
 
-import io.getstream.chat.android.models.Attachment
+import android.media.MediaRecorder
 
-public data class RecordedMedia(
-    val durationInMs: Int,
-    val attachment: Attachment,
-)
+/**
+ * Represents the current state of the [MediaRecorder].
+ */
+public enum class MediaRecorderState {
+    /**
+     * The media recorder has not yet been set up at this point and cannot record.
+     */
+    UNINITIALIZED,
+
+    /**
+     * The media recorder has been set up and is ready to record.
+     */
+    PREPARED,
+
+    /**
+     * The media recorder is currently recording.
+     */
+    RECORDING
+}
