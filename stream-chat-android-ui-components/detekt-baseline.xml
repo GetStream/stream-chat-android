@@ -11,6 +11,7 @@
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canThreadReply</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ComplexMethod:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
+    <ID>ComplexMethod:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$override fun renderState(state: MessageComposerState)</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
@@ -101,7 +102,6 @@
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
     <ID>MaxLineLength:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$logger.w { "[onTouchEvent] centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().widthPixels}" }</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
-    <ID>MaxLineLength:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$recordAudioButton.isVisible</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
     <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
@@ -183,6 +183,7 @@
     <ID>MaxLineLength:SwipeViewHolder.kt$SwipeViewHolder$* If the swipe view is swiped of not. When true, swipe view is completely swiped, when false it is in the default state</ID>
     <ID>MaxLineLength:TypingIndicatorViewStyle.kt$TypingIndicatorViewStyle$*</ID>
     <ID>MaxLineLength:ViewReactionsBubbleDrawer.kt$ViewReactionsBubbleDrawer$"You need to specify either bubbleBorderColorTheirs and bubbleBorderWidthTheirs to draw a border for another user reaction bubble"</ID>
+    <ID>NestedBlockDepth:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$override fun renderState(state: MessageComposerState)</ID>
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
     <ID>ReturnCount:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>

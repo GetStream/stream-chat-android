@@ -155,15 +155,54 @@ public class MessageComposerView : ConstraintLayout {
         true
     }
 
+    /**
+     * Hold listener invoked when the microphone button gets pressed down.
+     */
     public var audioRecordButtonHoldListener: () -> Unit = {}
+
+    /**
+     * Lock listener invoked when the audio recording gets locked.
+     */
     public var audioRecordButtonLockListener: () -> Unit = {}
+
+    /**
+     * Cancel listener invoked when the audio recording gets cancelled.
+     */
     public var audioRecordButtonCancelListener: () -> Unit = {}
+
+    /**
+     * Release listener invoked when the microphone button gets released.
+     */
     public var audioRecordButtonReleaseListener: () -> Unit = {}
+
+    /**
+     * Click listener for the audio recording delete button.
+     */
     public var audioDeleteButtonClickListener: () -> Unit = {}
+
+    /**
+     * Click listener for the audio recording stop button.
+     */
     public var audioStopButtonClickListener: () -> Unit = {}
+
+    /**
+     * Click listener for the audio recording playback button.
+     */
     public var audioPlaybackButtonClickListener: () -> Unit = {}
+
+    /**
+     * Click listener for the audio recording complete button.
+     */
     public var audioCompleteButtonClickListener: () -> Unit = {}
+
+    /**
+     * Drag start listener invoked when the audio slider starts being dragged.
+     */
     public var audioSliderDragStartListener: (Float) -> Unit = {}
+
+    /**
+     * Drag stop listener invoked when the audio slider stops being dragged.
+     */
     public var audioSliderDragStopListener: (Float) -> Unit = {}
 
     /**

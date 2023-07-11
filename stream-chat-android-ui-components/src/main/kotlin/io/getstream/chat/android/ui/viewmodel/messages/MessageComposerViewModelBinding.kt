@@ -43,6 +43,16 @@ import kotlinx.coroutines.launch
  * @param dismissActionClickListener Click listener for the dismiss action button.
  * @param commandsButtonClickListener Click listener for the pick commands button.
  * @param dismissSuggestionsListener Click listener invoked when suggestion popup is dismissed.
+ * @param audioRecordButtonHoldListener Hold listener invoked when the microphone button gets pressed down.
+ * @param audioRecordButtonLockListener Lock listener invoked when the audio recording gets locked.
+ * @param audioRecordButtonCancelListener Cancel listener invoked when the audio recording gets cancelled.
+ * @param audioRecordButtonReleaseListener Release listener invoked when the microphone button gets released.
+ * @param audioDeleteButtonClickListener Click listener for the audio recording delete button.
+ * @param audioStopButtonClickListener Click listener for the audio recording stop button.
+ * @param audioPlaybackButtonClickListener Click listener for the audio recording playback button.
+ * @param audioCompleteButtonClickListener Click listener for the audio recording complete button.
+ * @param audioSliderDragStartListener Drag start listener invoked when the audio slider starts being dragged.
+ * @param audioSliderDragStopListener Drag stop listener invoked when the audio slider stops being dragged.
  */
 @JvmName("bind")
 @JvmOverloads
@@ -63,7 +73,7 @@ public fun MessageComposerViewModel.bindView(
     audioRecordButtonLockListener: () -> Unit = { lockRecording() },
     audioRecordButtonCancelListener: () -> Unit = { cancelRecording() },
     audioRecordButtonReleaseListener: () -> Unit = { sendRecording() },
-    audioDeleteButtonClickListener: () -> Unit = { deleteRecording() },
+    audioDeleteButtonClickListener: () -> Unit = { cancelRecording() },
     audioStopButtonClickListener: () -> Unit = { stopRecording() },
     audioPlaybackButtonClickListener: () -> Unit = { toggleRecordingPlayback() },
     audioCompleteButtonClickListener: () -> Unit = { completeRecording() },
