@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.ui.common.utils
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
 private const val TIME_DIVIDER = 60
 
+@InternalStreamChatApi
 public object DurationFormatter {
 
     /**

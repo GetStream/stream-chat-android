@@ -58,11 +58,10 @@ import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.displayMetrics
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
-import org.w3c.dom.Text
 
 private const val TAG = "OverlappingContent"
 
-@OptIn(InternalStreamChatApi::class)
+@InternalStreamChatApi
 public class DefaultMessageComposerOverlappingContent : ConstraintLayout, MessageComposerContent {
 
     public constructor(context: Context) : super(context)
