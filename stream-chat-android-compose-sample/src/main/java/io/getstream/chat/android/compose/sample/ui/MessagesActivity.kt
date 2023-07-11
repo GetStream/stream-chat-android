@@ -106,7 +106,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
                     // TODO
-                    //statefulStreamMediaRecorder = statefulStreamMediaRecorder
+                    // statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )
 
                 // MyCustomUi()

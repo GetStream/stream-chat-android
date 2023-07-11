@@ -801,7 +801,7 @@ public data class MessageComposerViewStyle(
                         ?: messageInputVideoAttachmentIconDrawablePaddingStart,
                     messageInputVideoAttachmentIconDrawablePaddingEnd = messageInputVideoAttachmentIconDrawablePadding
                         ?: messageInputVideoAttachmentIconDrawablePaddingEnd,
-                    //Center overlap content
+                    // Center overlap content
                     audioRecordingButtonVisible = audioRecordingButtonVisible,
                     audioRecordingHoldToRecordText = audioRecordingHoldToRecordText,
                     audioRecordingHoldToRecordTextColor = audioRecordingHoldToRecordTextColor,
