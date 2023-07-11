@@ -29,22 +29,6 @@ public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDoc
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
 
-public final class io/getstream/chat/android/ui/common/feature/messages/composer/AudioRecordingController {
-	public static final field $stable I
-	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lkotlin/jvm/functions/Function1;Lkotlinx/coroutines/CoroutineScope;)V
-	public final fun cancelRecording ()V
-	public final fun completeRecording ()V
-	public final fun deleteRecording ()V
-	public final fun getRecordingState ()Lkotlinx/coroutines/flow/MutableStateFlow;
-	public final fun lockRecording ()V
-	public final fun onCleared ()V
-	public final fun pauseRecording ()V
-	public final fun seekRecordingTo (F)V
-	public final fun startRecording ()V
-	public final fun stopRecording ()V
-	public final fun toggleRecordingPlayback ()V
-}
-
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler {
 	public static final field Companion Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion;
 	public abstract fun shouldAddDateSeparator (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Message;)Z

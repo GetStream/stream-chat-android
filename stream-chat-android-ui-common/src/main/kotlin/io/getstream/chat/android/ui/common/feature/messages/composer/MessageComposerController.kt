@@ -119,7 +119,7 @@ public class MessageComposerController(
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
     private val audioRecordingController = AudioRecordingController(
-        channelId, chatClient, mediaRecorder, fileToUri, scope
+        channelId, chatClient.audioPlayer, mediaRecorder, fileToUri, scope
     )
 
     /**
@@ -722,22 +722,48 @@ public class MessageComposerController(
         commandSuggestions.value = emptyList()
     }
 
+    /**
+     * Starts audio recording and moves [MessageComposerState.recording] state
+     * from [RecordingState.Idle] to [RecordingState.Hold].
+     */
     public fun startRecording(): Unit = audioRecordingController.startRecording()
 
+    /**
+     * Moves [MessageComposerState.recording] state to [RecordingState.Locked].
+     */
     public fun lockRecording(): Unit = audioRecordingController.lockRecording()
 
+    /**
+     * Cancels audio recording and moves [MessageComposerState.recording] state to [RecordingState.Idle].
+     */
     public fun cancelRecording(): Unit = audioRecordingController.cancelRecording()
 
-    public fun deleteRecording(): Unit = audioRecordingController.deleteRecording()
-
+    /**
+     * Toggles audio recording playback if [MessageComposerState.recording] is instance of [RecordingState.Overview].
+     */
     public fun toggleRecordingPlayback(): Unit = audioRecordingController.toggleRecordingPlayback()
 
+    /**
+     * Stops audio recording and moves [MessageComposerState.recording] state to [RecordingState.Overview].
+     */
     public fun stopRecording(): Unit = audioRecordingController.stopRecording()
 
+    /**
+     * Completes audio recording and moves [MessageComposerState.recording] state to [RecordingState.Complete].
+     * Also, it wil update [MessageComposerState.attachments] list.
+     */
     public fun completeRecording(): Unit = audioRecordingController.completeRecording()
 
+    /**
+     * Pauses audio recording and sets [RecordingState.Overview.isPlaying] to false.
+     */
     public fun pauseRecording(): Unit = audioRecordingController.pauseRecording()
 
+    /**
+     * Pauses audio recording and seeks to the given [progress].
+     * Sets [RecordingState.Overview.isPlaying] to false.
+     * Sets [RecordingState.Overview.playingProgress] to the given progress.
+     */
     public fun seekRecordingTo(progress: Float): Unit = audioRecordingController.seekRecordingTo(progress)
 
     /**

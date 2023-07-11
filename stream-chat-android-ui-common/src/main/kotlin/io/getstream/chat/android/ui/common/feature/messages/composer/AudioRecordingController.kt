@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer
 
-import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
 import io.getstream.chat.android.client.extensions.waveformData
@@ -37,9 +37,19 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-public class AudioRecordingController(
+/**
+ * Controller responsible for recording audio messages.
+ *
+ * @param channelId The ID of the channel we're chatting in.
+ * @param audioPlayer The audio player used to play audio messages.
+ * @param mediaRecorder The media recorder used to record audio messages.
+ * @param fileToUri Coverts [File] into Uri like string.
+ * @param scope Coverts [File] into Uri like string.
+ * @param scope MessageComposerController's scope.
+ */
+internal class AudioRecordingController(
     private val channelId: String,
-    private val chatClient: ChatClient,
+    private val audioPlayer: AudioPlayer,
     private val mediaRecorder: StreamMediaRecorder,
     private val fileToUri: (File) -> String,
     private val scope: CoroutineScope,
@@ -50,8 +60,6 @@ public class AudioRecordingController(
      * and other things to log.
      */
     private val logger: TaggedLogger = StreamLog.getLogger("Chat:RecordController")
-
-    private val audioPlayer get() = chatClient.audioPlayer
 
     /**
      * Represents the current recording state.
@@ -178,18 +186,6 @@ public class AudioRecordingController(
             return
         }
         logger.i { "[cancelRecording] state: $state" }
-        mediaRecorder.release()
-        clearData()
-        this.recordingState.value = RecordingState.Idle
-    }
-
-    public fun deleteRecording() {
-        val state = this.recordingState.value
-        if (state is RecordingState.Idle) {
-            logger.w { "[deleteRecording] rejected (state is not Idle)" }
-            return
-        }
-        logger.i { "[deleteRecording] state: $state" }
         mediaRecorder.release()
         clearData()
         this.recordingState.value = RecordingState.Idle

@@ -235,8 +235,6 @@ public class MessageComposerViewModel(
 
     public fun lockRecording(): Unit = messageComposerController.lockRecording()
 
-    public fun deleteRecording(): Unit = messageComposerController.deleteRecording()
-
     public fun cancelRecording(): Unit = messageComposerController.cancelRecording()
 
     public fun stopRecording(): Unit = messageComposerController.stopRecording()
