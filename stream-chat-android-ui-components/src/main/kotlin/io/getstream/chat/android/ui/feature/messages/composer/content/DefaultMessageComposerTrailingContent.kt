@@ -140,10 +140,18 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 recordAudioButton.isVisible = false
             } else {
                 cooldownBadgeTextView.isVisible = false
-                sendMessageButton.isVisible = true
+                sendMessageButton.isVisible = when (style.audioRecordingButtonPreferred) {
+                    true -> hasTextInput || isInEditMode
+                    else -> true
+                }
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
-                recordAudioButton.isVisible = style.audioRecordingButtonVisible && canUploadFile && canUploadRecording &&
-                    canSendMessage && !isInEditMode
+                recordAudioButton.isVisible = when (style.audioRecordingButtonVisible) {
+                    true -> when (style.audioRecordingButtonPreferred) {
+                        true -> canUploadFile && canUploadRecording && canSendMessage && !isInEditMode && !hasTextInput
+                        else -> canUploadFile && canUploadRecording && canSendMessage && !isInEditMode
+                    }
+                    else -> false
+                }
             }
         }
     }

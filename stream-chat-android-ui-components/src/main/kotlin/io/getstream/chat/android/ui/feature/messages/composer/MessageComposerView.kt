@@ -147,6 +147,7 @@ public class MessageComposerView : ConstraintLayout {
      * Touch listener for the audio record button.
      */
     public var audioRecordButtonTouchListener: (event: MotionEvent) -> Boolean = { event ->
+        // TODO delete commented code below after finalizing audio recording
         // maxOffset = maxOf(maxOffset, v.width - v.micButton.width)
         logger.v { "[onMicBtnTouchListener] event($maxOffset): $event" }
         // event.offsetLocation(maxOffset.toFloat(), 0f)

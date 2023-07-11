@@ -165,6 +165,7 @@ public data class MessageComposerViewStyle(
     public val messageInputVideoAttachmentIconDrawablePaddingEnd: Int,
     // Center overlap content
     public val audioRecordingButtonVisible: Boolean,
+    public val audioRecordingButtonPreferred: Boolean,
     public val audioRecordingHoldToRecordText: String,
     @ColorInt public val audioRecordingHoldToRecordTextColor: Int,
     public val audioRecordingHoldToRecordBackgroundDrawable: Drawable,
@@ -453,6 +454,10 @@ public data class MessageComposerViewStyle(
                  */
                 val audioRecordingButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
+                    false
+                )
+                val audioRecordingButtonPreferred = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPreferred,
                     false
                 )
                 val audioRecordingHoldToRecordText = a.getString(
@@ -803,6 +808,7 @@ public data class MessageComposerViewStyle(
                         ?: messageInputVideoAttachmentIconDrawablePaddingEnd,
                     // Center overlap content
                     audioRecordingButtonVisible = audioRecordingButtonVisible,
+                    audioRecordingButtonPreferred = audioRecordingButtonPreferred,
                     audioRecordingHoldToRecordText = audioRecordingHoldToRecordText,
                     audioRecordingHoldToRecordTextColor = audioRecordingHoldToRecordTextColor,
                     audioRecordingHoldToRecordBackgroundDrawable = audioRecordingHoldToRecordBackgroundDrawable,

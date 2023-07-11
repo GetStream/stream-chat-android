@@ -131,6 +131,7 @@
 
         <!-- Center overlap content -->
         <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonPreferred" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordText" format="reference|string" />
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextColor" format="reference|color" />
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable" format="reference" />
