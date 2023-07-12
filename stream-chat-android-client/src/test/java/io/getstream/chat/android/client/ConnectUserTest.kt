@@ -118,8 +118,8 @@ internal class ConnectUserTest {
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,
-            currentUserFetcher = mock()
-            audioPlayer = mock()
+            currentUserFetcher = mock(),
+            audioPlayer = mock(),
         )
     }
 
