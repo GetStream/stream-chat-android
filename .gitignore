@@ -98,6 +98,7 @@ lint/tmp/
 docusaurus/docs/Android/Dokka
 # Ignore Algolia credentials
 docusaurus/.env
+docusaurus/shared
 
 .sign/keystore.properties
 .sign/release.keystore
