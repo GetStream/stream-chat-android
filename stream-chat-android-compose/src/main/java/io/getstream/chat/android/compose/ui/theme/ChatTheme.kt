@@ -150,12 +150,9 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param streamCdnImageResizing Sets the strategy for resizing images hosted on Stream's CDN. Disabled by default,
  * set [StreamCdnImageResizing.imageResizingEnabled] to true if you wish to enable resizing images. Note that resizing
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
-<<<<<<< HEAD
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
-=======
  * @param streamMediaRecorder Used for recording audio messages.
->>>>>>> 8ffce3200e (- [4654] Further evolve `StreamMediaRecorder` and create a preliminary proof of concept integration with `MessageComposer`)
  * @param content The content shown within the theme wrapper.
  */
 @Composable
