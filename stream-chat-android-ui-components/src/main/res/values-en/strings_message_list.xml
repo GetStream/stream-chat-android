@@ -17,7 +17,6 @@
 <resources>
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>
-    <string name="stream_ui_message_audio_reply_info">Voice Message</string>
 
     <!-- Message List Item -->
     <string name="stream_ui_message_list_giphy_title">Giphy</string>

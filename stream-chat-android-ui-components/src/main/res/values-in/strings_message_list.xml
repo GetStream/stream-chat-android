@@ -17,7 +17,6 @@
 <resources>
     <string name="stream_ui_message_list_empty">Tidak ada pesan</string>
     <string name="stream_ui_message_list_download_started">Unduhan dimulai</string>
-    <string name="stream_ui_message_audio_reply_info">"Pesan suara"</string>
 
     <!-- Message List Item -->
     <string name="stream_ui_message_list_giphy_title">Giphy</string>
