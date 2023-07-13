@@ -134,6 +134,9 @@ public class StateRegistry constructor(
      */
     public fun clear() {
         job.cancelChildren()
+        // TODO we need also clear each QueryChannelsMutableState inside queryChannels.
+        //  After logout ChannelListViewModel still keeps reference to QueryChannelsMutableState with data.
+        //  That data is being emitted because we drop GlobalState.channelMutes to emptyList on logout.
         queryChannels.clear()
         channels.clear()
         threads.clear()

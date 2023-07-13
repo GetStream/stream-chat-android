@@ -57,6 +57,6 @@ private class DefaultCurrentUserProvider : CurrentUserProvider {
      *  @return The currently logged in user.
      */
     override fun getCurrentUser(): User? {
-        return ChatClient.instance().globalState.user.value
+        return ChatClient.instance().getCurrentUser()
     }
 }
