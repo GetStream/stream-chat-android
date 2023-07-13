@@ -16,14 +16,15 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="stream_ui_message_composer_camera_access">"Permitir acceso a la cámara"</string>
-  <string name="stream_ui_message_composer_error_attachment_count">"Recuento de archivo adjunto (%1$d) excedido."</string>
-  <string name="stream_ui_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %1$s."</string>
-  <string name="stream_ui_message_composer_error_message_length">"Tamaño máximo del mensaje (%1$d) excedido."</string>
+  <string name="stream_ui_message_composer_error_attachment_count">"Número de archivos adjuntos (%d) excedido."</string>
+  <string name="stream_ui_message_composer_error_file_size">"El fichero es demasiado grande - Máximo %s."</string>
+  <string name="stream_ui_message_composer_error_message_length">"Tamaño máximo del mensaje (%d) excedido."</string>
   <string name="stream_ui_message_composer_file_not_supported">"Tipo de archivo no compatible"</string>
   <string name="stream_ui_message_composer_files_access">"Permitir acceso a tus ficheros"</string>
   <string name="stream_ui_message_composer_gallery_access">"Permitir acceso a tu galería"</string>
   <string name="stream_ui_message_composer_hint_cannot_send_message">"No puedes enviar mensajes en este canal"</string>
   <string name="stream_ui_message_composer_hint_normal">"Escribe algo aquí"</string>
+  <string name="stream_ui_message_composer_hold_to_record">"Mantén pulsado para empezar, suelta para enviar."</string>
   <string name="stream_ui_message_composer_instant_commands">"Comandos instantáneos"</string>
   <string name="stream_ui_message_composer_mode_edit">"Editar Mensaje"</string>
   <string name="stream_ui_message_composer_mode_reply">"Contestar al mensaje"</string>
@@ -31,4 +32,5 @@
   <string name="stream_ui_message_composer_recent_files">"Ficheros recientes"</string>
   <string name="stream_ui_message_composer_send_to_channel">"También enviar al canal"</string>
   <string name="stream_ui_message_composer_sending_links_not_allowed">"No se permite enviar enlaces en esta conversación."</string>
+  <string name="stream_ui_message_composer_slide_to_cancel">"Deslizar para cancelar"</string>
 </resources>

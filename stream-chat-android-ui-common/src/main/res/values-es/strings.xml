@@ -16,6 +16,10 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
   <string name="stream_ui_message_composer_capture_media">"Tomar foto o video"</string>
+  <string name="stream_ui_message_composer_capture_media_take_photo">"Tomar foto"</string>
+  <string name="stream_ui_message_composer_capture_media_video">"Capturar Vídeo"</string>
+  <string name="stream_ui_message_composer_permission_audio_record_message">"Se necesita el permiso de grabación de audio para poder grabar y enviar archivos de audio"</string>
+  <string name="stream_ui_message_composer_permission_audio_record_title">"Permisos de grabación de audio"</string>
   <string name="stream_ui_message_composer_permission_camera_message">"Se necesitan permisos de acceso a la cámara y al almacenamiento para poder tomar fotos y vídeos"</string>
   <string name="stream_ui_message_composer_permission_camera_title">"Permiso de Cámara y acceso a almacenamiento"</string>
   <string name="stream_ui_message_composer_permission_setting_message">"Activar permisos en ajustes de App"</string>
