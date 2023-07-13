@@ -1,4 +1,4 @@
-# 100ms: Guide for Android
+# 100ms: Video Integration Guide for Android
 
 <!-- Code is available here: https://github.com/GetStream/android-video-integration-100ms -->
 
@@ -29,7 +29,7 @@ This tutorial assumes you already use [Stream Chat SDK for Android](https://gets
 
 First, let’s go over a quick introduction to [100ms](https://www.100ms.live). It is a service that allows you to do video conferencing, audio, and more. Their aim is to provide you with a wide range of extensible features, all while allowing you to get started quickly with minimum effort.
 
-To get started, you must [set up an account](https://dashboard.100ms.live/register) for the platform, click the **Try For Free** button for a trial to use for this tutorial. You can sign up with either a Google or GitHub account, or you can use any other email address. You will receive an email asking you to confirm your credentials.
+To get started, you must [set up an account](https://dashboard.100ms.live/register) for the platform. Click the **Try For Free** button for a trial to use for this tutorial. You can sign up with either a Google or GitHub account, or you can use any other email address. You will receive an email asking you to confirm your credentials.
 
 Next, you’ll get a quick tour of how to create your own video conference. Here is an outline of the steps you must take:
 
@@ -118,7 +118,7 @@ class VideoCallViewModel constructor(
 
 Next, you can create a new video call with an unique call id and get a video call token with Stream chat SDK like the below:
 
-```kotlin
+```kotlin {4, 17}
 private suspend fun createVideoCall(): String = withContext(Dispatchers.IO) {
     val uuid = UUID.randomUUID().toString()
     val (channelType, channelId) = cid.cidToTypeAndId()
