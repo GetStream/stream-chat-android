@@ -137,6 +137,7 @@ public class StateRegistry constructor(
         queryChannels.forEach { it.value.destroy() }
         queryChannels.clear()
         channels.clear()
+        threads.forEach { it.value.destroy() }
         threads.clear()
     }
 }

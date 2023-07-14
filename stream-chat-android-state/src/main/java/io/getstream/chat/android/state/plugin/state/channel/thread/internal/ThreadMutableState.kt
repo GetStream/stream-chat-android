@@ -29,43 +29,51 @@ internal class ThreadMutableState(
     override val parentId: String,
     scope: CoroutineScope,
 ) : ThreadState {
-    private val _messages = MutableStateFlow(emptyMap<String, Message>())
-    private val _loading = MutableStateFlow(false)
-    private val _loadingOlderMessages = MutableStateFlow(false)
-    private val _endOfOlderMessages = MutableStateFlow(false)
-    private val _oldestInThread: MutableStateFlow<Message?> = MutableStateFlow(null)
+    private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
+    private var _loading: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _loadingOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _endOfOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _oldestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
 
-    val rawMessage: StateFlow<Map<String, Message>> = _messages
-    override val messages: StateFlow<List<Message>> = _messages
+    val rawMessage: StateFlow<Map<String, Message>> = _messages!!
+    override val messages: StateFlow<List<Message>> = rawMessage
         .map { it.values }
         .map { threadMessages -> threadMessages.sortedBy { m -> m.createdAt ?: m.createdLocallyAt } }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
-    override val loading: StateFlow<Boolean> = _loading
-    override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
-    override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
-    override val oldestInThread: StateFlow<Message?> = _oldestInThread
+    override val loading: StateFlow<Boolean> = _loading!!
+    override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages!!
+    override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
+    override val oldestInThread: StateFlow<Message?> = _oldestInThread!!
 
     fun setLoading(isLoading: Boolean) {
-        _loading.value = isLoading
+        _loading?.value = isLoading
     }
 
     fun setLoadingOlderMessages(isLoading: Boolean) {
-        _loadingOlderMessages.value = isLoading
+        _loadingOlderMessages?.value = isLoading
     }
 
     fun setEndOfOlderMessages(isEnd: Boolean) {
-        _endOfOlderMessages.value = isEnd
+        _endOfOlderMessages?.value = isEnd
     }
 
     fun setOldestInThread(message: Message?) {
-        _oldestInThread.value = message
+        _oldestInThread?.value = message
     }
 
     fun deleteMessage(message: Message) {
-        _messages.value -= message.id
+        _messages?.apply { value -= message.id }
     }
 
     fun upsertMessages(messages: List<Message>) {
-        _messages.value += messages.associateBy(Message::id)
+        _messages?.apply { value += messages.associateBy(Message::id) }
+    }
+
+    fun destroy() {
+        _messages = null
+        _loading = null
+        _loadingOlderMessages = null
+        _endOfOlderMessages = null
+        _oldestInThread = null
     }
 }
