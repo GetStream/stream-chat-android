@@ -134,6 +134,7 @@ public class StateRegistry constructor(
      */
     public fun clear() {
         job.cancelChildren()
+        queryChannels.forEach { it.value.destroy() }
         queryChannels.clear()
         channels.clear()
         threads.clear()
