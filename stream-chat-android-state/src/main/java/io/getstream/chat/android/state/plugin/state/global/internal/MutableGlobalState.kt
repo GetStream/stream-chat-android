@@ -30,65 +30,57 @@ import kotlinx.coroutines.flow.StateFlow
  */
 internal class MutableGlobalState : GlobalState {
 
-    private val _totalUnreadCount = MutableStateFlow(0)
-    private val _channelUnreadCount = MutableStateFlow(0)
-    private val _banned = MutableStateFlow(false)
+    private var _totalUnreadCount: MutableStateFlow<Int>? = MutableStateFlow(0)
+    private var _channelUnreadCount: MutableStateFlow<Int>? = MutableStateFlow(0)
+    private var _banned: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _mutedUsers: MutableStateFlow<List<Mute>>? = MutableStateFlow(emptyList())
+    private var _channelMutes: MutableStateFlow<List<ChannelMute>>? = MutableStateFlow(emptyList())
+    private var _typingChannels: MutableStateFlow<Map<String, TypingEvent>>? = MutableStateFlow(emptyMap())
+    private var _user: MutableStateFlow<User?>? = MutableStateFlow(null)
 
-    private val _mutedUsers = MutableStateFlow<List<Mute>>(emptyList())
-    private val _channelMutes = MutableStateFlow<List<ChannelMute>>(emptyList())
-    private val _typingChannels = MutableStateFlow(emptyMap<String, TypingEvent>())
-
-    private val _user = MutableStateFlow<User?>(null)
-
-    override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount
-
-    override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount
-
-    override val muted: StateFlow<List<Mute>> = _mutedUsers
-
-    override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes
-
-    override val banned: StateFlow<Boolean> = _banned
-
-    override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels
-
-    override val user: StateFlow<User?> = _user
+    override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
+    override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
+    override val muted: StateFlow<List<Mute>> = _mutedUsers!!
+    override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes!!
+    override val banned: StateFlow<Boolean> = _banned!!
+    override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels!!
+    override val user: StateFlow<User?> = _user!!
 
     /**
-     * Clears the state of [GlobalState].
+     * Destroys the state.
      */
-    fun clearState() {
-        _user.value = null
-        _totalUnreadCount.value = 0
-        _channelUnreadCount.value = 0
-        _mutedUsers.value = emptyList()
-        _channelMutes.value = emptyList()
-        _banned.value = false
-        _typingChannels.value = emptyMap()
+    fun destroy() {
+        _user = null
+        _totalUnreadCount = null
+        _channelUnreadCount = null
+        _mutedUsers = null
+        _channelMutes = null
+        _banned = null
+        _typingChannels = null
     }
 
     fun setUser(user: User) {
-        _user.value = user
+        _user?.value = user
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {
-        _totalUnreadCount.value = totalUnreadCount
+        _totalUnreadCount?.value = totalUnreadCount
     }
 
     fun setChannelUnreadCount(channelUnreadCount: Int) {
-        _channelUnreadCount.value = channelUnreadCount
+        _channelUnreadCount?.value = channelUnreadCount
     }
 
     fun setBanned(banned: Boolean) {
-        _banned.value = banned
+        _banned?.value = banned
     }
 
     fun setChannelMutes(channelMutes: List<ChannelMute>) {
-        _channelMutes.value = channelMutes
+        _channelMutes?.value = channelMutes
     }
 
     fun setMutedUsers(mutedUsers: List<Mute>) {
-        _mutedUsers.value = mutedUsers
+        _mutedUsers?.value = mutedUsers
     }
 
     /**
@@ -98,13 +90,16 @@ internal class MutableGlobalState : GlobalState {
      * @param typingEvent [TypingEvent] with information about typing users. Current user is excluded.
      */
     fun tryEmitTypingEvent(cid: String, typingEvent: TypingEvent) {
-        val typingChannelsCopy = _typingChannels.value.toMutableMap()
-
-        if (typingEvent.users.isEmpty()) {
-            typingChannelsCopy.remove(cid)
-        } else {
-            typingChannelsCopy[cid] = typingEvent
+        _typingChannels?.let {
+            it.tryEmit(
+                it.value.toMutableMap().apply {
+                    if (typingEvent.users.isEmpty()) {
+                        remove(cid)
+                    } else {
+                        this[cid] = typingEvent
+                    }
+                }
+            )
         }
-        _typingChannels.tryEmit(typingChannelsCopy)
     }
 }

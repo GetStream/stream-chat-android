@@ -233,6 +233,6 @@ internal class LogicRegistry internal constructor(
         queryChannels.clear()
         channels.clear()
         threads.clear()
-        mutableGlobalState.clearState()
+        mutableGlobalState.destroy()
     }
 }
