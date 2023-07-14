@@ -84,7 +84,6 @@ public class StreamStatePluginFactory(
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
         val clientState = chatClient.clientState
-        mutableGlobalState.clearState()
 
         val stateRegistry = StateRegistry(
             mutableGlobalState.user,
