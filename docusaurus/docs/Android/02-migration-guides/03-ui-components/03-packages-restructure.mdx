@@ -1,0 +1,353 @@
+# Package Restructure
+
+### TransformStyle changes
+```kotlin
+Was: io.getstream.chat.android.ui.TransformStyle
+Now: io.getstream.chat.android.ui.helper.TransformStyle
+
+Was: io.getstream.chat.android.ui.StyleTransformer
+Now: io.getstream.chat.android.ui.helper.StyleTransformer
+
+Was: io.getstream.chat.android.ui.avatar.AvatarStyle
+Now: io.getstream.chat.android.ui.widgets.avatar.AvatarStyle
+
+Was: io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
+Now: io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.MessageListViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.MessageListItemStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
+
+Was: io.getstream.chat.android.ui.message.list.MessageListItemStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
+
+Was: io.getstream.chat.android.ui.message.list.ScrollButtonViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.ScrollButtonViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.reactions.edit.EditReactionsViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.user.SingleReactionViewStyle
+
+Was: io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
+Now: io.getstream.chat.android.ui.feature.channels.actions.ChannelActionsDialogViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.GiphyViewHolderStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
+
+Was: io.getstream.chat.android.ui.message.list.adapter.view.ImageAttachmentViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle (REPLACEMENT)
+
+Was: io.getstream.chat.android.ui.message.list.MessageReplyStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
+
+Was: io.getstream.chat.android.ui.message.list.FileAttachmentViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.header.MessageListHeaderViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderViewStyle
+
+Was: io.getstream.chat.android.ui.mention.list.MentionListViewStyle
+Now: io.getstream.chat.android.ui.feature.mentions.list.MentionListViewStyle
+
+Was: io.getstream.chat.android.ui.search.SearchInputViewStyle
+Now: io.getstream.chat.android.ui.feature.search.SearchInputViewStyle
+
+Was: io.getstream.chat.android.ui.search.list.SearchResultListViewStyle
+Now: io.getstream.chat.android.ui.feature.search.list.SearchResultListViewStyle
+
+Was: io.getstream.chat.android.ui.typing.TypingIndicatorViewStyle
+Now: io.getstream.chat.android.ui.widgets.typing.TypingIndicatorViewStyle
+
+Was: io.getstream.chat.android.ui.pinned.list.PinnedMessageListViewStyle
+Now: io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListViewStyle
+
+Was: io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle
+
+Was: io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
+Now: io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOptionsViewStyle
+
+Was: io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
+Now: io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
+
+Was: io.getstream.chat.android.ui.message.composer.AttachmentsPickerDialogStyle
+Now: io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
+
+Was: io.getstream.chat.android.ui.message.composer.AttachmentGalleryViewMediaStyle
+Now: io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryViewMediaStyle
+```
+
+### ChatUI customizations
+```kotlin
+Was: io.getstream.chat.android.ui.SupportedReactions
+Now: io.getstream.chat.android.ui.helper.SupportedReactions
+
+Was: io.getstream.chat.android.ui.common.style.TextStyle
+Now: io.getstream.chat.android.ui.font.TextStyle
+
+Was: io.getstream.chat.android.ui.common.navigation.ChatNavigator
+Now: io.getstream.chat.android.ui.navigation.ChatNavigator
+
+Was: io.getstream.chat.android.ui.common.style.ChatFonts
+Now: io.getstream.chat.android.ui.font.ChatFonts
+
+Was: io.getstream.chat.android.ui.common.style.ChatStyle
+Now: io.getstream.chat.android.ui.font.ChatStyle
+
+Was: com.getstream.sdk.chat.utils.DateFormatter
+Now: io.getstream.chat.android.ui.common.helper.DateFormatter
+
+Was: com.getstream.sdk.chat.images.ImageHeadersProvider
+Now: io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+
+Was: com.getstream.sdk.chat.images.StreamImageLoader (internal)
+Now: io.getstream.chat.android.ui.common.images.internal.StreamImageLoader (internal)
+
+Was: io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+Now: io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
+
+Was: io.getstream.chat.android.ui.transformer.AutoLinkableTextTransformer
+Now: io.getstream.chat.android.ui.helper.transformer.AutoLinkableTextTransformer
+
+Was: io.getstream.chat.android.ui.MimeTypeIconProvider
+Now: io.getstream.chat.android.ui.helper.MimeTypeIconProvider
+
+Was: io.getstream.chat.android.ui.MimeTypeIconProviderImpl
+Now: io.getstream.chat.android.ui.helper.MimeTypeIconProviderImpl
+
+Was: io.getstream.chat.android.ui.common.ChannelNameFormatter
+Now: io.getstream.chat.android.ui.helper.ChannelNameFormatter
+
+Was: io.getstream.chat.android.ui.MessagePreviewFormatter
+Now: io.getstream.chat.android.ui.helper.MessagePreviewFormatter
+
+Was: io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.AttachmentFactoryManager
+Now: io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+
+Was: io.getstream.chat.android.ui.message.composer.attachment.preview.AttachmentPreviewFactoryManager
+Now: io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+
+Was: io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+Now: io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+
+Was: io.getstream.chat.android.ui.message.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
+Now: io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
+```
+
+### Views
+```kotlin
+Was: io.getstream.chat.android.ui.avatar.UserAvatarView
+Now: io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+
+Was: io.getstream.chat.android.ui.avatar.ChannelAvatarView
+Now: io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
+
+Was: io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+Now: io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
+
+Was: io.getstream.chat.android.ui.channel.list.ChannelListView
+Now: io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+
+Was: io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+Now: io.getstream.chat.android.ui.feature.messages.list.header.MessageListHeaderView
+
+Was: io.getstream.chat.android.ui.message.list.MessageListView
+Now: io.getstream.chat.android.ui.feature.messages.list.MessageListView
+
+Was: io.getstream.chat.android.ui.message.composer.MessageComposerView
+Now: io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+
+Was: io.getstream.chat.android.ui.pinned.list.PinnedMessageListView
+Now: io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView
+
+Was: io.getstream.chat.android.ui.search.SearchInputView
+Now: io.getstream.chat.android.ui.feature.search.SearchInputView
+
+Was: io.getstream.chat.android.ui.search.list.SearchResultListView
+Now: io.getstream.chat.android.ui.feature.search.list.SearchResultListView
+
+Was: io.getstream.chat.android.ui.gallery.overview.MediaAttachmentGridView
+Now: io.getstream.chat.android.ui.feature.gallery.overview.MediaAttachmentGridView
+
+Was: io.getstream.chat.android.ui.typing.TypingIndicatorView
+Now: io.getstream.chat.android.ui.widgets.typing.TypingIndicatorView
+
+Was: io.getstream.chat.android.ui.mention.list.MentionListView
+Now: io.getstream.chat.android.ui.feature.mentions.list.MentionListView
+
+Was: io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView (internal)
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.user.internal.UserReactionsView (internal)
+
+Was: io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView (internal)
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.edit.internal.EditReactionsView (internal)
+
+Was: io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView (internal)
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView (internal)
+
+```
+
+
+### Android Manifest
+```kotlin
+Was: io.getstream.chat.android.ui.common.ChatUIInitializer
+Now: io.getstream.chat.android.ui.initializer.ChatUIInitializer
+
+Was: io.getstream.chat.android.ui.gallery.AttachmentGalleryActivity
+Now: io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity
+
+Was: io.getstream.chat.android.ui.gallery.AttachmentMediaActivity
+Now: io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
+
+Was: io.getstream.chat.android.ui.gallery.AttachmentActivity
+Now: io.getstream.chat.android.ui.feature.gallery.AttachmentActivity
+
+Was: io.getstream.chat.android.ui.channel.ChannelListActivity
+Now: io.getstream.chat.android.ui.feature.channels.ChannelListActivity
+
+Was: io.getstream.chat.android.ui.message.MessageListActivity
+Now: io.getstream.chat.android.ui.feature.messages.MessageListActivity
+
+
+// UI Common
+Was: com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
+Now: io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
+```
+
+### Deleted
+```kotlin
+com.getstream.sdk.chat.navigation.ChatNavigator
+```
+
+Was: io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel
+Now: io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
+
+Was: io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+Now: io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+
+Was: com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
+Now: io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
+
+```kotlin
+Was: io.getstream.chat.android.ui.message.composer.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.messages.bindView
+
+Was: io.getstream.chat.android.ui.message.list.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.messages.bindView
+
+Was: io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.messages.bindView
+
+Was: io.getstream.chat.android.ui.channel.list.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.channels.bindView
+
+Was: io.getstream.chat.android.ui.search.list.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.search.bindView
+
+Was: io.getstream.chat.android.ui.channel.list.header.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.channels.bindView
+
+Was: io.getstream.chat.android.ui.mention.list.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.mentions.bindView
+
+Was: io.getstream.chat.android.ui.pinned.list.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.pinned.bindView
+```
+
+Was: com.getstream.sdk.chat.utils.Utils
+Now: io.getstream.chat.android.ui.common.utils.Utils
+
+Was: io.getstream.chat.android.ui.common.Debouncer
+Now: io.getstream.chat.android.ui.utils.Debouncer
+
+Was: io.getstream.chat.android.ui.common.extensions.getLastSeenText
+Now: io.getstream.chat.android.ui.utils.extensions.getLastSeenText
+
+Was: com.getstream.sdk.chat.utils.Utils
+Now: io.getstream.chat.android.ui.common.utils.Utils
+
+Was: io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
+Now: io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
+
+Was: io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+Now: io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
+
+Was: io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
+Now: io.getstream.chat.android.ui.viewmodel.search.SearchViewModel
+
+Was: io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
+Now: io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
+
+Was: com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
+Now: io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
+
+Was: com.getstream.sdk.chat.view.EndlessScrollListener
+Now: io.getstream.chat.android.ui.widgets.EndlessScrollListener
+
+Was: io.getstream.chat.android.ui.channel.list.adapter.ChannelListPayloadDiff
+Now: io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
+
+Was: io.getstream.chat.android.ui.channel.list.adapter.viewholder.BaseChannelListItemViewHolder
+Now:
+io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.BaseChannelListItemViewHolder
+
+Was: io.getstream.chat.android.ui.channel.list.adapter.viewholder.ChannelListItemViewHolderFactory
+Now:
+io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
+
+Was: io.getstream.chat.android.ui.common.navigation.destinations.AttachmentDestination
+Now: io.getstream.chat.android.ui.navigation.destinations.AttachmentDestination
+
+Was: io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
+Now: io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
+
+Was: io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+Now: io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
+
+Was: com.getstream.sdk.chat.adapter.MessageListItem
+Now: io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+
+Was: com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+Now: io.getstream.chat.android.ui.model.MessageListItemWrapper
+
+Was: io.getstream.chat.android.common.state.message.list.MessagePosition
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+
+Was: io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
+Now: io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel
+
+Was: io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel.PaginationState
+Now: io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.PaginationState
+
+Was: io.getstream.chat.android.ui.mention.list.viewmodel.MentionListViewModel
+Now: io.getstream.chat.android.ui.viewmodel.mentions.MentionListViewModel
+
+Was: io.getstream.chat.android.ui.pinned.list.viewmodel.PinnedMessageListViewModel
+Now: io.getstream.chat.android.ui.viewmodel.pinned.PinnedMessageListViewModel
+
+Was: io.getstream.chat.android.ui.pinned.list.viewmodel.PinnedMessageListViewModelFactory
+Now: io.getstream.chat.android.ui.viewmodel.pinned.PinnedMessageListViewModelFactory
+
+
+Was: io.getstream.chat.android.ui.common.navigation.ChatNavigator
+Now: io.getstream.chat.android.ui.navigation.ChatNavigator
+
+
+Was: io.getstream.chat.android.ui.common.extensions.getLastMessage
+Now: io.getstream.chat.android.ui.utils.extensions.getLastMessage
+
+
+
+
+
+
+
+
+
+
