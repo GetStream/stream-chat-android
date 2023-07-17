@@ -57,31 +57,42 @@ internal class ChannelMutableState(
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
-    private val _messages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    private val _countedMessage: MutableSet<String> = mutableSetOf()
-    private val _typing = MutableStateFlow(TypingEvent(channelId, emptyList()))
-    private val _typingChatEvents = MutableStateFlow<Map<String, TypingStartEvent>>(emptyMap())
-    private val _rawReads = MutableStateFlow<Map<String, ChannelUserRead>>(emptyMap())
-    private val _members = MutableStateFlow<Map<String, Member>>(emptyMap())
-    private val _oldMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
-    private val _watchers = MutableStateFlow<Map<String, User>>(emptyMap())
-    private val _watcherCount = MutableStateFlow(0)
-    private val _endOfNewerMessages = MutableStateFlow(true)
-    private val _endOfOlderMessages = MutableStateFlow(false)
-    private val _loading = MutableStateFlow(false)
-    private val _hidden = MutableStateFlow(false)
-    private val _muted = MutableStateFlow(false)
-    private val _channelData = MutableStateFlow<ChannelData?>(null)
-    private val _repliedMessage = MutableStateFlow<Message?>(null)
-    private val _quotedMessagesMap = MutableStateFlow<MutableMap<String, List<String>>>(mutableMapOf())
-    private val _membersCount = MutableStateFlow(0)
-    private val _insideSearch = MutableStateFlow(false)
-    private val _loadingOlderMessages = MutableStateFlow(false)
-    private val _loadingNewerMessages = MutableStateFlow(false)
-    private val _lastSentMessageDate = MutableStateFlow<Date?>(null)
+    private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
+    private var _countedMessage: MutableSet<String>? = mutableSetOf()
+    private var _typing: MutableStateFlow<TypingEvent>? = MutableStateFlow(TypingEvent(channelId, emptyList()))
+    private var _typingChatEvents: MutableStateFlow<Map<String, TypingStartEvent>>? = MutableStateFlow(emptyMap())
+    private var _rawReads: MutableStateFlow<Map<String, ChannelUserRead>>? = MutableStateFlow(emptyMap())
+    private var rawReads: StateFlow<Map<String, ChannelUserRead>> = _rawReads!!
+    private var _members: MutableStateFlow<Map<String, Member>>? = MutableStateFlow(emptyMap())
+    private var _oldMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
+    private var _watchers: MutableStateFlow<Map<String, User>>? = MutableStateFlow(emptyMap())
+    private var _watcherCount: MutableStateFlow<Int>? = MutableStateFlow(0)
+    private var _endOfNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(true)
+    private var _endOfOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _loading: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _hidden: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _muted: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _channelData: MutableStateFlow<ChannelData?>? = MutableStateFlow(null)
+    private var _repliedMessage: MutableStateFlow<Message?>? = MutableStateFlow(null)
+    private var _quotedMessagesMap: MutableStateFlow<MutableMap<String, List<String>>>? =
+        MutableStateFlow(mutableMapOf())
+    private var _membersCount: MutableStateFlow<Int>? = MutableStateFlow(0)
+    private var _insideSearch: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _loadingOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _loadingNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _lastSentMessageDate: MutableStateFlow<Date?>? = MutableStateFlow(null)
 
     /** Channel config data. */
-    private val _channelConfig: MutableStateFlow<Config> = MutableStateFlow(Config())
+    private var _channelConfig: MutableStateFlow<Config>? = MutableStateFlow(Config())
+
+    override val hidden: StateFlow<Boolean> = _hidden!!
+    override val muted: StateFlow<Boolean> = _muted!!
+    override val loading: StateFlow<Boolean> = _loading!!
+    override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages!!
+    override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages!!
+    override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages!!
+
+    override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages!!
 
     /** the data to hide messages before */
     var hideMessagesBefore: Date? = null
@@ -93,15 +104,15 @@ internal class ChannelMutableState(
 
     /** The raw message list updated by recent users value. */
     val messageList: StateFlow<List<Message>> =
-        _messages.combine(latestUsers) { messageMap, userMap -> messageMap.values.updateUsers(userMap) }
+        _messages!!.combine(latestUsers) { messageMap, userMap -> messageMap.values.updateUsers(userMap) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =
         messagesTransformation(messageList).stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    private val _messagesState: StateFlow<MessagesState> =
-        _loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
+    override val messagesState: StateFlow<MessagesState> =
+        loading.combine(sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
             when {
                 loading -> MessagesState.Loading
                 messages.isEmpty() -> MessagesState.OfflineNoResults
@@ -134,31 +145,30 @@ internal class ChannelMutableState(
         messagesMap.values.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
     }.stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val repliedMessage: StateFlow<Message?> = _repliedMessage
+    override val repliedMessage: StateFlow<Message?> = _repliedMessage!!
 
-    override val quotedMessagesMap: StateFlow<Map<String, List<String>>> = _quotedMessagesMap
+    override val quotedMessagesMap: StateFlow<Map<String, List<String>>> = _quotedMessagesMap!!
 
     /** Channel config data */
-    override val channelConfig: StateFlow<Config> = _channelConfig
+    override val channelConfig: StateFlow<Config> = _channelConfig!!
 
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages
 
-    override val messagesState: StateFlow<MessagesState> = _messagesState
-    override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages.map { it.values })
-    override val watcherCount: StateFlow<Int> = _watcherCount
+    override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages!!.map { it.values })
+    override val watcherCount: StateFlow<Int> = _watcherCount!!
 
     override val watchers: StateFlow<List<User>> =
-        _watchers.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
+        _watchers!!.combine(latestUsers) { watcherMap, userMap -> watcherMap.values.updateUsers(userMap) }
             .map { it.sortedBy(User::createdAt) }
             .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val typing: StateFlow<TypingEvent> = _typing
+    override val typing: StateFlow<TypingEvent> = _typing!!
 
-    override val reads: StateFlow<List<ChannelUserRead>> = _rawReads
+    override val reads: StateFlow<List<ChannelUserRead>> = rawReads
         .map { it.values.sortedBy(ChannelUserRead::lastRead) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val read: StateFlow<ChannelUserRead?> = _rawReads
+    override val read: StateFlow<ChannelUserRead?> = rawReads
         .combine(userFlow) { readsMap, user -> user?.id?.let { readsMap[it] } }
         .stateIn(scope, SharingStarted.Eagerly, null)
 
@@ -168,15 +178,15 @@ internal class ChannelMutableState(
     override val unreadCount: StateFlow<Int> = read.mapLatest { it?.unreadMessages ?: 0 }
         .stateIn(scope, SharingStarted.Eagerly, 0)
 
-    override val members: StateFlow<List<Member>> = _members
+    override val members: StateFlow<List<Member>> = _members!!
         .combine(latestUsers) { membersMap, usersMap -> membersMap.values.updateUsers(usersMap) }
         .map { it.sortedBy(Member::createdAt) }
         .stateIn(scope, SharingStarted.Eagerly, emptyList())
 
-    override val membersCount: StateFlow<Int> = _membersCount
+    override val membersCount: StateFlow<Int> = _membersCount!!
 
     override val channelData: StateFlow<ChannelData> =
-        combine(_channelData.filterNotNull(), latestUsers) { channelData, users ->
+        combine(_channelData!!.filterNotNull(), latestUsers) { channelData, users ->
             if (users.containsKey(channelData.createdBy.id)) {
                 channelData.copy(createdBy = users[channelData.createdBy.id] ?: channelData.createdBy)
             } else {
@@ -191,20 +201,12 @@ internal class ChannelMutableState(
             )
         )
 
-    override val hidden: StateFlow<Boolean> = _hidden
-    override val muted: StateFlow<Boolean> = _muted
-    override val loading: StateFlow<Boolean> = _loading
-    override val loadingOlderMessages: StateFlow<Boolean> = _loadingOlderMessages
-    override val loadingNewerMessages: StateFlow<Boolean> = _loadingNewerMessages
-    override val endOfOlderMessages: StateFlow<Boolean> = _endOfOlderMessages
-    override val endOfNewerMessages: StateFlow<Boolean> = _endOfNewerMessages
-
     /** If we need to recover state when connection established again. */
     override var recoveryNeeded: Boolean = false
 
-    override val insideSearch: StateFlow<Boolean> = _insideSearch
+    override val insideSearch: StateFlow<Boolean> = _insideSearch!!
 
-    override val lastSentMessageDate: StateFlow<Date?> = _lastSentMessageDate
+    override val lastSentMessageDate: StateFlow<Date?> = _lastSentMessageDate!!
 
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
@@ -214,16 +216,16 @@ internal class ChannelMutableState(
         val cachedMessages = cachedLatestMessages.value.values.toList()
         val members = members.value
         val watchers = watchers.value
-        val reads = _rawReads.value.values.toList()
-        val watcherCount = _watcherCount.value
-        val insideSearch = _insideSearch.value
+        val reads = rawReads.value.values.toList()
+        val watcherCount = watcherCount.value
+        val insideSearch = insideSearch.value
 
         val channel = channelData
             .toChannel(messages, cachedMessages, members, reads, watchers, watcherCount, insideSearch)
-        channel.config = _channelConfig.value
+        channel.config = channelConfig.value
         channel.unreadCount = unreadCount.value
-        channel.hidden = _hidden.value
-        channel.isInsideSearch = _insideSearch.value
+        channel.hidden = hidden.value
+        channel.isInsideSearch = insideSearch
         channel.cachedLatestMessages = cachedLatestMessages.value.values.toList()
 
         return channel
@@ -235,7 +237,7 @@ internal class ChannelMutableState(
      * @param isLoading Boolean.
      */
     fun setLoadingOlderMessages(isLoading: Boolean) {
-        _loadingOlderMessages.value = isLoading
+        _loadingOlderMessages?.value = isLoading
     }
 
     /**
@@ -244,12 +246,12 @@ internal class ChannelMutableState(
      * @param isLoading Boolean.
      */
     fun setLoadingNewerMessages(isLoading: Boolean) {
-        _loadingNewerMessages.value = isLoading
+        _loadingNewerMessages?.value = isLoading
     }
 
     /** Sets the end for newer messages. */
     fun setEndOfNewerMessages(isEnd: Boolean) {
-        _endOfNewerMessages.value = isEnd
+        _endOfNewerMessages?.value = isEnd
     }
 
     /**
@@ -258,7 +260,7 @@ internal class ChannelMutableState(
      * @param isEnd Boolean
      */
     fun setEndOfOlderMessages(isEnd: Boolean) {
-        _endOfOlderMessages.value = isEnd
+        _endOfOlderMessages?.value = isEnd
     }
 
     /**
@@ -267,7 +269,7 @@ internal class ChannelMutableState(
      * @param isLoading Boolean.
      */
     fun setLoading(isLoading: Boolean) {
-        _loading.value = isLoading
+        _loading?.value = isLoading
     }
 
     /**
@@ -276,7 +278,7 @@ internal class ChannelMutableState(
      * @param isHidden Boolean
      */
     fun setHidden(isHidden: Boolean) {
-        _hidden.value = isHidden
+        _hidden?.value = isHidden
     }
 
     /**
@@ -285,12 +287,12 @@ internal class ChannelMutableState(
      * @param isMuted Boolean.
      */
     fun setMuted(isMuted: Boolean) {
-        _muted.value = isMuted
+        _muted?.value = isMuted
     }
 
     /** Sets [ChannelData]. */
     fun setChannelData(channelData: ChannelData) {
-        _channelData.value = channelData
+        _channelData?.value = channelData
     }
 
     /**
@@ -299,7 +301,7 @@ internal class ChannelMutableState(
      * @param repliedMessage [Message]
      */
     fun setRepliedMessage(repliedMessage: Message?) {
-        _repliedMessage.value = repliedMessage
+        _repliedMessage?.value = repliedMessage
     }
 
     /**
@@ -308,7 +310,7 @@ internal class ChannelMutableState(
      * @param count Int.
      */
     fun setMembersCount(count: Int) {
-        _membersCount.value = count
+        _membersCount?.value = count
     }
 
     /** Sets inside search. This must be set when a search is started in the channel and the
@@ -318,16 +320,16 @@ internal class ChannelMutableState(
      * */
     fun setInsideSearch(isInsideSearch: Boolean) {
         when {
-            isInsideSearch && !_insideSearch.value -> {
+            isInsideSearch && !insideSearch.value -> {
                 cacheLatestMessages()
             }
 
-            !isInsideSearch && _insideSearch.value -> {
+            !isInsideSearch && insideSearch.value -> {
                 cachedLatestMessages.value = emptyMap()
             }
         }
 
-        _insideSearch.value = isInsideSearch
+        _insideSearch?.value = isInsideSearch
     }
 
     /**
@@ -336,7 +338,7 @@ internal class ChannelMutableState(
      * @param lastSentMessageDate The date of the last message.
      */
     fun setLastSentMessageDate(lastSentMessageDate: Date?) {
-        _lastSentMessageDate.value = lastSentMessageDate
+        _lastSentMessageDate?.value = lastSentMessageDate
     }
 
     /**
@@ -345,26 +347,26 @@ internal class ChannelMutableState(
      * @param channelConfig [Config]
      */
     fun setChannelConfig(channelConfig: Config) {
-        _channelConfig.value = channelConfig
+        _channelConfig?.value = channelConfig
     }
 
     /**
      * Adds a quoted message to the state.
      */
     fun addQuotedMessage(quotedMessageId: String, quotingMessageId: String) {
-        val quotesMap = _quotedMessagesMap.value
-
-        quotesMap[quotedMessageId] = quotesMap[quotedMessageId]?.plus(quotingMessageId) ?: listOf(quotingMessageId)
-
-        _quotedMessagesMap.value = quotesMap
+        _quotedMessagesMap?.apply {
+            val quotesMap = value
+            quotesMap[quotedMessageId] = quotesMap[quotedMessageId]?.plus(quotingMessageId) ?: listOf(quotingMessageId)
+            value = quotesMap
+        }
     }
 
     /**
      * Updates StateFlows related to typing updates.
      */
     fun updateTypingEvents(eventsMap: Map<String, TypingStartEvent>, typingEvent: TypingEvent) {
-        _typingChatEvents.value = eventsMap
-        _typing.value = typingEvent
+        _typingChatEvents?.value = eventsMap
+        _typing?.value = typingEvent
     }
 
     /**
@@ -374,7 +376,7 @@ internal class ChannelMutableState(
      */
     fun upsertMembers(members: List<Member>) {
         val membersMap = members.associateBy(Member::getUserId)
-        _members.value = _members.value + membersMap
+        _members?.apply { value = value + membersMap }
     }
 
     /**
@@ -383,7 +385,8 @@ internal class ChannelMutableState(
      * @param member The member to be added.
      */
     fun addMember(member: Member) {
-        _membersCount.value += 1.takeUnless { _members.value.keys.contains(member.getUserId()) } ?: 0
+        _membersCount?.value = membersCount.value +
+            (1.takeUnless { _members?.value?.keys?.contains(member.getUserId()) == true } ?: 0)
         upsertMembers(listOf(member))
     }
 
@@ -393,12 +396,16 @@ internal class ChannelMutableState(
      * @param member The member to be removed.
      */
     fun deleteMember(member: Member) {
-        _membersCount.value -= _members.value.count { it.key == member.getUserId() }
-        _members.value = _members.value - member.getUserId()
-        deleteWatcher(
-            member.user,
-            _watcherCount.value - _watchers.value.count { it.key == member.getUserId() }
-        )
+        _members?.let {
+            _membersCount?.value = membersCount.value - it.value.count { it.key == member.getUserId() }
+            it.value = it.value - member.getUserId()
+        }
+        _watchers?.let {
+            deleteWatcher(
+                member.user,
+                watcherCount.value - it.value.count { it.key == member.getUserId() }
+            )
+        }
     }
 
     /**
@@ -408,21 +415,22 @@ internal class ChannelMutableState(
      * @param watchersCount The current number of watchers.
      */
     internal fun deleteWatcher(user: User, watchersCount: Int) {
-        _watchers.value = _watchers.value - user.id
-        _watcherCount.value = watchersCount.takeUnless { it < 0 } ?: _watchers.value.size
+        _watchers?.let { upsertWatchers((it.value - user.id).values.toList(), watchersCount) }
     }
 
     fun deleteMessage(message: Message, updateCount: Boolean = true) {
-        _messages.value = _messages.value - message.id
+        _messages?.apply { value = value - message.id }
 
         if (updateCount) {
-            _countedMessage.remove(message.id)
+            _countedMessage?.remove(message.id)
         }
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
-        _watchers.value += watchers.associateBy(User::id)
-        _watcherCount.value = watchersCount.takeUnless { it == 0 } ?: _watchers.value.size
+        _watchers?.apply {
+            value = value + watchers.associateBy(User::id)
+            _watcherCount?.value = watchersCount.takeUnless { it < 0 } ?: value.size
+        }
     }
 
     /**
@@ -431,17 +439,17 @@ internal class ChannelMutableState(
      * @param message message to be upserted.
      */
     fun upsertMessage(message: Message, updateCount: Boolean = true) {
-        _messages.value = _messages.value + (message.id to message)
+        _messages?.apply { value = value + (message.id to message) }
 
         if (updateCount) {
-            _countedMessage.add(message.id)
+            _countedMessage?.add(message.id)
         }
     }
 
     fun upsertUserPresence(user: User) {
-        _members.value[user.id]?.copy(user = user)?.let { upsertMembers(listOf(it)) }
-        user.takeIf { _watchers.value.any { it.key == user.id } }
-            ?.let { upsertWatchers(listOf(it), _watcherCount.value) }
+        _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }
+        user.takeIf { _watchers?.value?.any { it.key == user.id } == true }
+            ?.let { upsertWatchers(listOf(it), watcherCount.value) }
     }
 
     fun increaseReadWith(message: Message) {
@@ -453,7 +461,7 @@ internal class ChannelMutableState(
                 lastMessageSeenDate = message.createdAt,
             )
         }
-        _rawReads.value = _rawReads.value + (user.id to newUserRead)
+        _rawReads?.apply { value = value + (user.id to newUserRead) }
     }
 
     fun upsertReads(reads: List<ChannelUserRead>) {
@@ -468,9 +476,11 @@ internal class ChannelMutableState(
             incomingUserRead.lastRead?.inOffsetWith(lastRead, OFFSET_EVENT_TIME) == true -> incomingUserRead
             else -> currentUserRead
         }
-        _rawReads.value = _rawReads.value +
-            reads.associateBy(ChannelUserRead::getUserId) +
-            listOfNotNull(newUserRead).associateBy(ChannelUserRead::getUserId)
+        _rawReads?.apply {
+            value = value +
+                reads.associateBy(ChannelUserRead::getUserId) +
+                listOfNotNull(newUserRead).associateBy(ChannelUserRead::getUserId)
+        }
     }
 
     /**
@@ -495,19 +505,19 @@ internal class ChannelMutableState(
         } ?: false
 
     fun removeMessagesBefore(date: Date) {
-        _messages.value = _messages.value.filter { it.value.wasCreatedAfter(date) }
+        _messages?.apply { value = value.filter { it.value.wasCreatedAfter(date) } }
     }
 
     fun upsertMessages(updatedMessages: Collection<Message>, updateCount: Boolean = true) {
-        _messages.value += updatedMessages.associateBy(Message::id)
+        _messages?.apply { value += updatedMessages.associateBy(Message::id) }
 
         if (updateCount) {
-            _countedMessage.addAll(updatedMessages.map { it.id })
+            _countedMessage?.addAll(updatedMessages.map { it.id })
         }
     }
 
     fun setMessages(messages: List<Message>) {
-        _messages.value = messages.associateBy(Message::id)
+        _messages?.value = messages.associateBy(Message::id)
     }
 
     private fun cacheLatestMessages() {
@@ -522,16 +532,42 @@ internal class ChannelMutableState(
     }
 
     fun clearCountedMessages() {
-        _countedMessage.clear()
+        _countedMessage?.clear()
     }
 
     fun insertCountedMessages(ids: List<String>) {
-        _countedMessage.addAll(ids)
+        _countedMessage?.addAll(ids)
     }
 
-    fun isMessageAlreadyCounted(messageId: String): Boolean = _countedMessage.contains(messageId)
+    fun isMessageAlreadyCounted(messageId: String): Boolean = _countedMessage?.contains(messageId) == true
 
-    override fun getMessageById(id: String): Message? = _messages.value[id]
+    override fun getMessageById(id: String): Message? = _messages?.value?.get(id)
+
+    internal fun destroy() {
+        _messages = null
+        _countedMessage = null
+        _typing = null
+        _typingChatEvents = null
+        _rawReads = null
+        _members = null
+        _oldMessages = null
+        _watchers = null
+        _watcherCount = null
+        _endOfNewerMessages = null
+        _endOfOlderMessages = null
+        _loading = null
+        _hidden = null
+        _muted = null
+        _channelData = null
+        _repliedMessage = null
+        _quotedMessagesMap = null
+        _membersCount = null
+        _insideSearch = null
+        _loadingOlderMessages = null
+        _loadingNewerMessages = null
+        _lastSentMessageDate = null
+        _channelConfig = null
+    }
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
