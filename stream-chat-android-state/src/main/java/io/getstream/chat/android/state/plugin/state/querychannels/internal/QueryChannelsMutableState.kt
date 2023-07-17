@@ -48,9 +48,9 @@ internal class QueryChannelsMutableState(
     private val logger by taggedLogger("Chat:QueryChannelsState")
 
     internal var rawChannels: Map<String, Channel>?
-        get() = _channels.value
+        get() = _channels?.value
         private set(value) {
-            _channels.value = value
+            _channels?.value = value
         }
 
     // This is needed for queries
@@ -65,16 +65,17 @@ internal class QueryChannelsMutableState(
      * - emptyMap() - the stat should be [ChannelsStateData.OfflineNoResults]
      * - notEmptyMap() - the state should be [ChannelsStateData.Result]
      */
-    private val _channels = MutableStateFlow<Map<String, Channel>?>(null)
-    private val _loading = MutableStateFlow(false)
-    private val _loadingMore = MutableStateFlow(false)
+    private var _channels: MutableStateFlow<Map<String, Channel>?>? = MutableStateFlow(null)
+    private val mapChannels: StateFlow<Map<String, Channel>?> = _channels!!
+    private var _loading: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _loadingMore: MutableStateFlow<Boolean>? = MutableStateFlow(false)
 
-    internal val currentLoading: MutableStateFlow<Boolean>
-        get() = if (channels.value.isNullOrEmpty()) _loading else _loadingMore
+    internal val currentLoading: StateFlow<Boolean>
+        get() = if (channels.value.isNullOrEmpty()) loading else loadingMore
 
-    private val _endOfChannels = MutableStateFlow(false)
-    private val _sortedChannels: StateFlow<List<Channel>?> =
-        _channels.combine(latestUsers) { channelMap, userMap ->
+    private var _endOfChannels: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private val sortedChannels: StateFlow<List<Channel>?> =
+        mapChannels.combine(latestUsers) { channelMap, userMap ->
             channelMap?.values?.updateUsers(userMap)
         }.map { channels ->
             if (channels?.isNotEmpty() == true) {
@@ -93,33 +94,34 @@ internal class QueryChannelsMutableState(
                 }
             }
         }.stateIn(scope, SharingStarted.Eagerly, null)
-    private val _currentRequest = MutableStateFlow<QueryChannelsRequest?>(null)
-    private val _recoveryNeeded: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    internal val channelsOffset: MutableStateFlow<Int> = MutableStateFlow(0)
+    private var _currentRequest: MutableStateFlow<QueryChannelsRequest?>? = MutableStateFlow(null)
+    private var _recoveryNeeded: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _channelsOffset: MutableStateFlow<Int>? = MutableStateFlow(0)
+    internal val channelsOffset: StateFlow<Int> = _channelsOffset!!
 
     override var chatEventHandlerFactory: ChatEventHandlerFactory? = null
 
-    override val recoveryNeeded: StateFlow<Boolean> = _recoveryNeeded
+    override val recoveryNeeded: StateFlow<Boolean> = _recoveryNeeded!!
 
     /**
      * Non-nullable property of [ChatEventHandler] to ensure we always have some handler to handle events. Returns
      * handler set by user or default one if there is no.
      */
     private val eventHandler: ChatEventHandler by lazy {
-        (chatEventHandlerFactory ?: ChatEventHandlerFactory()).chatEventHandler(_channels)
+        (chatEventHandlerFactory ?: ChatEventHandlerFactory()).chatEventHandler(mapChannels)
     }
 
     fun handleChatEvent(event: ChatEvent, cachedChannel: Channel?): EventHandlingResult {
         return eventHandler.handleChatEvent(event, filter, cachedChannel)
     }
 
-    override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest
-    override val loading: StateFlow<Boolean> = _loading
-    override val loadingMore: StateFlow<Boolean> = _loadingMore
-    override val endOfChannels: StateFlow<Boolean> = _endOfChannels
-    override val channels: StateFlow<List<Channel>?> = _sortedChannels
+    override val currentRequest: StateFlow<QueryChannelsRequest?> = _currentRequest!!
+    override val loading: StateFlow<Boolean> = _loading!!
+    override val loadingMore: StateFlow<Boolean> = _loadingMore!!
+    override val endOfChannels: StateFlow<Boolean> = _endOfChannels!!
+    override val channels: StateFlow<List<Channel>?> = sortedChannels
     override val channelsStateData: StateFlow<ChannelsStateData> =
-        _loading.combine(_sortedChannels) { loading: Boolean, channels: List<Channel>? ->
+        loading.combine(sortedChannels) { loading: Boolean, channels: List<Channel>? ->
             when {
                 loading || channels == null -> ChannelsStateData.Loading
                 channels.isEmpty() -> ChannelsStateData.OfflineNoResults
@@ -136,14 +138,14 @@ internal class QueryChannelsMutableState(
      * Set loading more. Notifies if the SDK is loading more channels.
      */
     fun setLoadingMore(isLoading: Boolean) {
-        _loadingMore.value = isLoading
+        _loadingMore?.value = isLoading
     }
 
     /**
      * Set loading more. Notifies if the SDK is loading the first page.
      */
     fun setLoadingFirstPage(isLoading: Boolean) {
-        _loading.value = isLoading
+        _loading?.value = isLoading
     }
 
     /**
@@ -152,7 +154,7 @@ internal class QueryChannelsMutableState(
      * @param request [QueryChannelsRequest]
      */
     fun setCurrentRequest(request: QueryChannelsRequest) {
-        _currentRequest.value = request
+        _currentRequest?.value = request
     }
 
     /**
@@ -161,7 +163,7 @@ internal class QueryChannelsMutableState(
      * @parami isEnd Boolean
      */
     fun setEndOfChannels(isEnd: Boolean) {
-        _endOfChannels.value = isEnd
+        _endOfChannels?.value = isEnd
     }
 
     /**
@@ -170,7 +172,7 @@ internal class QueryChannelsMutableState(
      * @param recoveryNeeded Boolean
      */
     fun setRecoveryNeeded(recoveryNeeded: Boolean) {
-        _recoveryNeeded.value = recoveryNeeded
+        _recoveryNeeded?.value = recoveryNeeded
     }
 
     /**
@@ -179,11 +181,21 @@ internal class QueryChannelsMutableState(
      * @param offset Int
      */
     fun setChannelsOffset(offset: Int) {
-        channelsOffset.value = offset
+        _channelsOffset?.value = offset
     }
 
     fun setChannels(channelsMap: Map<String, Channel>) {
         rawChannels = channelsMap
+    }
+
+    fun destroy() {
+        _channels = null
+        _loading = null
+        _loadingMore = null
+        _endOfChannels = null
+        _currentRequest = null
+        _recoveryNeeded = null
+        _channelsOffset = null
     }
 }
 

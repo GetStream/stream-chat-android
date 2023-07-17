@@ -71,8 +71,7 @@ internal class ChannelStateLogicTest {
 
     @BeforeEach
     fun setup() {
-        mutableGlobalState.clearState()
-        mutableGlobalState.setUser(user)
+        spyMutableGlobalState = spy(MutableGlobalState().apply { setUser(this@ChannelStateLogicTest.user) })
         channelStateLogic = ChannelStateLogic(
             mutableState,
             globalMutableState = spyMutableGlobalState,
@@ -126,8 +125,7 @@ internal class ChannelStateLogicTest {
         on(mock.cachedLatestMessages) doReturn _cachedMessages
         on(mock.quotedMessagesMap) doReturn _quotedMessagesMap
     }
-    private val mutableGlobalState = MutableGlobalState()
-    private val spyMutableGlobalState = spy(mutableGlobalState)
+    private lateinit var spyMutableGlobalState: MutableGlobalState
     private val unreadCountLogic: UnreadCountLogic = mock()
 
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
