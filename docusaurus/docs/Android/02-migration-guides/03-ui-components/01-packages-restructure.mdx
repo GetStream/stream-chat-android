@@ -262,6 +262,9 @@ Now: io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 Was: com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
 Now: io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
 
+Was: com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel.Event.*
+Now: io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.*
+
 ```kotlin
 Was: io.getstream.chat.android.ui.message.composer.viewmodel.bindView
 Now: io.getstream.chat.android.ui.viewmodel.messages.bindView
@@ -286,6 +289,9 @@ Now: io.getstream.chat.android.ui.viewmodel.mentions.bindView
 
 Was: io.getstream.chat.android.ui.pinned.list.viewmodel.bindView
 Now: io.getstream.chat.android.ui.viewmodel.pinned.bindView
+
+Was: io.getstream.chat.android.ui.typing.viewmodel.bindView
+Now: io.getstream.chat.android.ui.viewmodel.typing.bindView
 ```
 
 Was: com.getstream.sdk.chat.utils.Utils
@@ -642,6 +648,44 @@ Now: io.getstream.chat.android.ui.feature.messages.list.options.message.MessageO
 
 Was: io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 Now: io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
+
+Was: io.getstream.chat.android.ui.message.list.reactions.view.MessageOptionsUserReactionOrientation
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.view.MessageOptionsUserReactionOrientation
+
+Was: io.getstream.chat.android.ui.message.list.reactions.view.getUserReactionOrientation
+Now: io.getstream.chat.android.ui.feature.messages.list.reactions.view.getUserReactionOrientation
+
+Was: io.getstream.chat.android.ui.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
+Now: io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView.PinnedMessageSelectedListener
+
+Was: io.getstream.chat.android.ui.pinned.list.PinnedMessageListView.LoadMoreListener
+Now: io.getstream.chat.android.ui.feature.pinned.list.PinnedMessageListView.LoadMoreListener
+
+Was: io.getstream.chat.android.ui.common.Debouncer
+Now: io.getstream.chat.android.ui.utils.Debouncer
+
+Was: io.getstream.chat.android.compose.state.messages.MessagesState
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+
+Was: io.getstream.chat.android.ui.typing.viewmodel.TypingIndicatorViewModel
+Now: io.getstream.chat.android.ui.viewmodel.typing.TypingIndicatorViewModel
+
+Was: io.getstream.chat.android.ui.typing.viewmodel.TypingIndicatorViewModelFactory
+Now: io.getstream.chat.android.ui.typing.viewmodel.factory.TypingIndicatorViewModelFactory
+
+Was: io.getstream.chat.android.ui.avatar.AvatarShape
+Now: io.getstream.chat.android.ui.widgets.avatar.AvatarShape
+
+Was: io.getstream.chat.android.ui.avatar.OnlineIndicatorPosition
+Now: io.getstream.chat.android.ui.widgets.avatar.OnlineIndicatorPosition
+
+
+Was: com.getstream.sdk.chat.enums.GiphyAction (stream-chat-android-ui-components)
+Now: io.getstream.chat.android.ui.common.state.messages.list.GiphyAction (stream-chat-android-ui-common)
+
+
+
+
 
 
 
