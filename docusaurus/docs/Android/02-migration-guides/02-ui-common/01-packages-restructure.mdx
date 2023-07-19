@@ -1,117 +1,114 @@
 # Package Restructure
 
+Chat SDK V6 brings some package changes that need to be addressed in order to successfully complete the transition from v5 to v6.
 
-Was: io.getstream.chat.android.common.notifications.StreamCoilUserIconBuilder
-Now: io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder
+## Android Manifest
+The following change is required to be made in the `AndroidManifest.xml` file in case you've used the Stream's classes directly in your manifest:
 
-Was: io.getstream.chat.android.common.notifications.permissions.SnackbarNotificationPermissionHandler
-Now: io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler (io.getstream:stream-android-push-permissions-snackbar:1.0.1)
-
-Was: io.getstream.chat.android.common.model.ModeratedMessageOption
-Now: io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
-
-Was: io.getstream.chat.android.common.model.DeleteMessage
-Now: io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
-
-Was: io.getstream.chat.android.common.model.EditMessage
-Now: io.getstream.chat.android.ui.common.state.messages.list.EditMessage
-
-Was: io.getstream.chat.android.common.model.SendAnyway
-Now: io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
-
-Was: io.getstream.chat.android.common.model.CustomModerationOption
-Now: io.getstream.chat.android.ui.common.state.messages.list.CustomModerationOption
-
-Was: io.getstream.chat.android.common.state.MessageAction
-Now: io.getstream.chat.android.ui.common.state.messages.MessageAction
-
-Was: io.getstream.chat.android.common.state.Copy
-Now: io.getstream.chat.android.ui.common.state.messages.list.Copy
-
-Was: io.getstream.chat.android.common.state.CustomAction
-Now: io.getstream.chat.android.ui.common.state.messages.list.CustomAction
-
-Was: io.getstream.chat.android.common.state.Delete
-Now: io.getstream.chat.android.ui.common.state.messages.list.Delete
-
-Was: io.getstream.chat.android.common.state.DeletedMessageVisibility
-Now: io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
-
-Was: io.getstream.chat.android.common.state.Edit
-Now: io.getstream.chat.android.ui.common.state.messages.Edit
-
-Was: io.getstream.chat.android.common.state.Pin
-Now: io.getstream.chat.android.ui.common.state.messages.Pin
-
-Was: io.getstream.chat.android.common.state.React
-Now: io.getstream.chat.android.ui.common.state.messages.React
-
-Was: io.getstream.chat.android.common.state.Reply
-Now: io.getstream.chat.android.ui.common.state.messages.Reply
-
-Was: io.getstream.chat.android.common.state.ThreadReply
-Now: io.getstream.chat.android.ui.common.state.messages.ThreadReply
-
-Was: io.getstream.chat.android.common.state.MessageMode
-Now: io.getstream.chat.android.ui.common.state.messages.MessageMode
-
-Was: com.getstream.sdk.chat.enums.GiphyAction (stream-chat-android-ui-components)
-Now: io.getstream.chat.android.ui.common.state.messages.list.GiphyAction (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.messages.list.GiphyAction (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.messages.list.GiphyAction (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.messages.list.SendGiphy (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.messages.list.SendGiphy (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.messages.list.ShuffleGiphy (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.messages.list.CancelGiphy (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.messages.list.CancelGiphy (stream-chat-android-ui-common)
-
-Was: com.getstream.sdk.chat.utils.MediaStringUtil
-Now: io.getstream.chat.android.ui.common.utils.MediaStringUtil
-
-Was: com.getstream.sdk.chat.model.AttachmentMetaData
-Now: io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
-
-Was: com.getstream.sdk.chat.utils.extensions.isDirectMessaging
-Now: io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
-
-Was: io.getstream.chat.android.client.models.initials (stream-chat-android-client)
-Now: io.getstream.chat.android.ui.common.utils.extensions.initials (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.ChannelAction (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.ViewInfo (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.LeaveGroup (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.MuteChannel (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.UnmuteChannel (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.UnmuteChannel (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.DeleteConversation (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation (stream-chat-android-ui-common)
-
-Was: io.getstream.chat.android.compose.state.channels.list.Cancel (stream-chat-android-compose)
-Now: io.getstream.chat.android.ui.common.state.channels.actions.Cancel (stream-chat-android-ui-common)
-
-
-### Android Manifest
-```kotlin
+```java
 Was: io.getstream.chat.android.ui.gallery.AttachmentDocumentActivity
 Now: io.getstream.chat.android.ui.feature.gallery.AttachmentDocumentActivity
 ```
 
-Was: com.getstream.sdk.chat.model.AttachmentMetaData
-Now: io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+## Message Actions
+
+Message actions have been moved from to `stream-chat-android-compose` to `stream-chat-android-ui-common` module.
+
+```java
+Was: io.getstream.chat.android.common.state.MessageAction
+Now: io.getstream.chat.android.ui.common.state.messages.MessageAction
+
+// MessageAction descendants
+Was: io.getstream.chat.android.common.state.*
+Now: io.getstream.chat.android.ui.common.state.messages.*
+```
+
+#### Moderation Message Options
+
+Message Options have been moved to slightly different packages as well.
+```java
+Was: io.getstream.chat.android.common.model.ModeratedMessageOption
+Now: io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
+
+// ModeratedMessageOption descendants
+Was: io.getstream.chat.android.common.model.*
+Now: io.getstream.chat.android.ui.common.state.messages.list.*
+```
+
+#### Giphy Actions
+
+Giphy actions have been moved from to `stream-chat-android-compose` and `stream-chat-android-ui-components` to `stream-chat-android-ui-common` module.
+```java
+Was: 
+ - com.getstream.sdk.chat.enums.GiphyAction (stream-chat-android-ui-components)
+ - io.getstream.chat.android.compose.state.messages.list.GiphyAction (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.messages.list.GiphyAction (stream-chat-android-ui-common)
+
+// GiphyAction descendants
+Was: io.getstream.chat.android.compose.state.messages.list.* (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.messages.list.* (stream-chat-android-ui-common)
+```
+
+## Channel List Changes
+
+Channel actions have been moved from to `stream-chat-android-compose` to `stream-chat-android-ui-common` module.
+Please update your imports accordingly.
+```java
+Was: io.getstream.chat.android.compose.state.channels.list.ChannelAction (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction (stream-chat-android-ui-common)
+
+// ChannelAction descendants
+Was: io.getstream.chat.android.compose.state.channels.list.* (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.channels.actions.* (stream-chat-android-ui-common)
+```
+
+
+## Message List Changes
+
+Due to a package restructure, there have been changes that affect the message list classes. 
+To ensure proper integration and functionality, we kindly request you to update your imports accordingly.
+```java
+Was: io.getstream.chat.android.common.message.list.MessageListController
+Now: io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
+
+Was: io.getstream.chat.android.common.message.list.MessagePositionHandler
+Now: io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
+
+Was: io.getstream.chat.android.common.message.list.DateSeparatorHandler
+Now: io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
+
+Was: io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
+
+Was: io.getstream.chat.android.common.state.message.list.MessageFocused
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
+
+Was: io.getstream.chat.android.common.state.MessageFooterVisibility
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
+
+Was: io.getstream.chat.android.common.state.DeletedMessageVisibility
+Now: io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+```
+
+In addition, `MessageListItemState` and its' descendants have been moved from to `stream-chat-android-compose` to `stream-chat-android-ui-common` module.
+```java
+Was: io.getstream.chat.android.common.model.messsage.list.MessageListItemState (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState (stream-chat-android-ui-common)
+
+// MessageListItemState descendants
+Was: io.getstream.chat.android.common.model.messsage.list.* (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.messages.list.* (stream-chat-android-ui-common)
+
+// Related classes
+Was: io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition (stream-chat-android-compose)
+Now: io.getstream.chat.android.ui.common.state.messages.list.MessagePosition (stream-chat-android-ui-common)
+```
+
+## Message Composer Changes
+If you have been using Stream's Message Composer related functionality, please update your imports accordingly as described below.
+```java
+Was: io.getstream.chat.android.common.composer.MessageComposerController
+Now: io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 
 Was: io.getstream.chat.android.common.composer.MessageComposerState
 Now: io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -119,12 +116,35 @@ Now: io.getstream.chat.android.ui.common.state.messages.composer.MessageComposer
 Was: io.getstream.chat.android.common.state.ValidationError
 Now: io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 
+Was: com.getstream.sdk.chat.model.AttachmentMetaData
+Now: io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
-Was: io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
-Now: io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
+Was: io.getstream.chat.android.common.state.MessageMode
+Now: io.getstream.chat.android.ui.common.state.messages.MessageMode
+```
 
-Was: io.getstream.chat.android.common.state.message.list.MessagePosition
-Now: io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+## Extracted to a separate library
+Please pay attention that the `SnackbarNotificationPermissionHandler` has been extracted to a separate library, and now it should be imported as `io.getstream:stream-android-push-permissions-snackbar:1.0.1`.
+
+```java
+Was: io.getstream.chat.android.common.notifications.permissions.SnackbarNotificationPermissionHandler
+Now: io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler (io.getstream:stream-android-push-permissions-snackbar:1.0.1)
+```
+
+## Other Changes
+Other affected classes are listed below:
+```java
+Was: io.getstream.chat.android.common.notifications.StreamCoilUserIconBuilder
+Now: io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder
+
+Was: com.getstream.sdk.chat.utils.MediaStringUtil
+Now: io.getstream.chat.android.ui.common.utils.MediaStringUtil
+
+Was: com.getstream.sdk.chat.utils.extensions.isDirectMessaging
+Now: io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
+
+Was: io.getstream.chat.android.client.models.initials (stream-chat-android-client)
+Now: io.getstream.chat.android.ui.common.utils.extensions.initials (stream-chat-android-ui-common)
 
 Was: io.getstream.chat.android.ui.utils.GiphyInfo
 Now: io.getstream.chat.android.ui.common.utils.GiphyInfo
@@ -134,24 +154,4 @@ Now: io.getstream.chat.android.ui.common.utils.GiphyInfoType
 
 Was: io.getstream.chat.android.ui.utils.GiphySizingMode
 Now: io.getstream.chat.android.ui.common.utils.GiphySizingMode
-
-Was: io.getstream.chat.android.common.message.list.MessageListController
-Now: io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
-
-Was: io.getstream.chat.android.common.message.list.MessagePositionHandler
-Now: io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
-
-
-Was: io.getstream.chat.android.common.state.MessageFooterVisibility
-Now: io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
-
-
-Was: io.getstream.chat.android.common.state.message.list.MessageFocused
-Now: io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
-
-
-Was: io.getstream.chat.android.common.model.messsagelist.MessageItemState
-Now: io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
-
-Was: io.getstream.chat.android.common.message.list.DateSeparatorHandler
-Now: io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
+```
