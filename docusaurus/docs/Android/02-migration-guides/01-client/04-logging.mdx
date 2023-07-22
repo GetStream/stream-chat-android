@@ -1,0 +1,86 @@
+# Stream Logger
+
+`StreamLog` was originally a part of [stream-chat-android](https://github.com/getStream/stream-chat-android), but it has been extracted into an [open-source library](https://github.com/GetStream/stream-log) that you can use in your own project without the need to depend on ChatSDK. 
+
+In case you have used `StreamLog` in your project previously, you can now use the open-source library instead.
+
+## Introduction
+You can add the dependency to your project by using the following code:
+```groovy {2}
+dependencies {
+    implementation "io.getstream:stream-log:$stream_log_version"
+}
+```
+
+`StreamLog` itself represents a logging manager (entry point) that allows you to install a logger and configure the output.
+
+```kotlin
+// Install a logger
+StreamLog.installLogger(logger = KotlinLogger())
+
+// Configure the output.
+// The log will be printed to the console only if the priority is DEBUG and the tag is TAG_NAME
+StreamLog.setValidator { priority, tag ->
+    priority.level >= Priority.DEBUG.level && tag == "TAG_NAME"
+}
+```
+
+Now you can use the logger to print the log:
+```kotlin
+streamLog(priority = Priority.INFO, tag = "TAG_NAME") { "This is a log message 1" }
+StreamLog.d(tag = "TAG_NAME") { "This is a log message 2" }
+```
+
+That will result in the following output:
+```
+2023-06-21 16:43:50'345 (main:1) [I/TAG_NAME]: This is a log message 1
+2023-06-21 16:43:50'345 (main:1) [D/TAG_NAME]: This is a log message 2
+```
+
+Additionally, you can use the tagged logger per class usage, like in example below:
+```kotlin
+class SomeClass {
+    private val logger = StreamLog.getLogger(tag = "SomeClass")
+    // OR you can use the lazy initialization
+    private val logger by taggedLogger(tag = "SomeClass")
+    
+    fun someFunction() {
+        logger.d { "This is a log message" }
+    }
+}
+```
+:::note
+If you don't specify the `tag` for `taggedLogger`, the class name will be used as a tag.
+:::
+
+## Android Logging
+
+If you have used other implementations of `StreamLogger` such as `AndroidStreamLogger`.
+It has be extracted to the separate library as well.
+
+Here is the way it can be included into your project:
+```groovy {2}
+dependencies {
+    implementation "io.getstream:stream-log-android:$stream_log_version"
+}
+```
+
+### Initialization
+`AndroidStreamLogger` is a logger implementation which utilizes `Logcat` for the logs printing.
+It can be installed as shown in the snippet below.
+```kotlin
+class App : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+
+        // install AndroidStreamLogger.
+        AndroidStreamLogger.installOnDebuggableApp(this)
+
+        // change the log validator as your taste.
+        StreamLog.setValidator { priority, tag -> 
+            priority.level >= Priority.VERBOSE.level && tag == "TAG_NAME" 
+        }
+    }
+}
+```
