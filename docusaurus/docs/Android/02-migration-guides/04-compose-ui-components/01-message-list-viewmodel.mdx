@@ -7,7 +7,7 @@ That layer is represented by a class called `MessageListController`.
 
 If you're using our `MessagesViewModelFactory`, you'll notice that the experience remains mostly the same along with a few changed parameters:
 
-```kotlin {6,8,17-20}
+```kotlin {7-9,11-12,19-22}
 public class MessagesViewModelFactory(
     private val context: Context,
     private val channelId: String,
@@ -15,6 +15,8 @@ public class MessagesViewModelFactory(
     private val parentMessageId: String? = null,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
+    private val fileToUriConverter: (File) -> String = { file -> file.toUri().toString() },
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val clipboardHandler: ClipboardHandler =
         ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
