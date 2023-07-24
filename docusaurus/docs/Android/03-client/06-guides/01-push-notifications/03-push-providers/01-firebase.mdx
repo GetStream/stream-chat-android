@@ -30,7 +30,7 @@ Finally, add the `FirebasePushDeviceGenerator` to your `NotificationConfig` and 
 
 ```kotlin {2,5}
 val notificationConfig = NotificationConfig(
-    pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
+    pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "providerName"))
 )
 ChatClient.Builder("apiKey", context)
     .notifications(notificationConfig)
@@ -42,11 +42,15 @@ ChatClient.Builder("apiKey", context)
 
 ```java
 boolean pushNotificationEnabled = true;
-List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new FirebasePushDeviceGenerator());
-NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
-new ChatClient.Builder("apiKey", context)
-        .notifications(notificationConfig)
-        .build();
+    List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+            new FirebasePushDeviceGenerator(
+                    "providerName"
+            )
+    );
+    NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+    new ChatClient.Builder("apiKey", context)
+            .notifications(notificationConfig)
+            .build();
 ```
 </TabItem>
 </Tabs>
@@ -72,7 +76,7 @@ class CustomFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         // Update device's token on Stream backend
         try {
-            FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name")
+            FirebaseMessagingDelegate.registerFirebaseToken(token, "providerName")
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -102,7 +106,7 @@ public final class CustomFirebaseMessagingService extends FirebaseMessagingServi
     public void onNewToken(@NonNull String token) {
         // Update device's token on Stream backend
         try {
-            FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name");
+            FirebaseMessagingDelegate.registerFirebaseToken(token, "providerName");
         } catch (IllegalStateException exception) {
             // ChatClient was not initialized
         }

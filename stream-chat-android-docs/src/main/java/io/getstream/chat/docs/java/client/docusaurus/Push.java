@@ -8,7 +8,6 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.huawei.hms.push.HmsMessageService;
@@ -176,8 +175,7 @@ public class Push {
             boolean pushNotificationEnabled = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
                     new FirebasePushDeviceGenerator(
-                            FirebaseMessaging.getInstance(),
-                            "Firebase"
+                            "providerName"
                     )
             );
             NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
@@ -195,7 +193,7 @@ public class Push {
             public void onNewToken(@NonNull String token) {
                 // Update device's token on Stream backend
                 try {
-                    FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name");
+                    FirebaseMessagingDelegate.registerFirebaseToken(token, "providerName");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -226,7 +224,9 @@ public class Push {
          */
         public void configureHuaweiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", null));
+            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+                    new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "providerName")
+            );
             NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
@@ -241,7 +241,7 @@ public class Push {
             public void onNewToken(String token) {
                 // Update device's token on Stream backend
                 try {
-                    HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name");
+                    HuaweiMessagingDelegate.registerHuaweiToken(token, "providerName");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -271,7 +271,7 @@ public class Push {
          */
         public void configureXiaomiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", null, Region.Global));
+            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", "providerName", Region.Global));
             NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
@@ -287,7 +287,7 @@ public class Push {
             public void onReceiveRegisterResult(Context context, MiPushCommandMessage miPushCommandMessage) {
                 // Update device's token on Stream backend
                 try {
-                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name");
+                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "providerName");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
