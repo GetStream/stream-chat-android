@@ -1258,7 +1258,7 @@ public class MessageListViewModel(
     private fun onOpenedFromPushNotification(messageId: String) {
         viewModelScope.launch {
             val result = chatClient.getMessageUsingCache(messageId = messageId).await()
-            val parentMessageId = result.data().parentId
+            val parentMessageId = result.takeIf { it.isSuccess }?.data()?.parentId
 
             // The channel will be automatically loaded given so we only need to
             // account for opening threads when thread messages arrive via PNs
