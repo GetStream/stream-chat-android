@@ -8,6 +8,7 @@ import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.huawei.hms.push.HmsMessageService;
@@ -173,7 +174,12 @@ public class Push {
          */
         public void configureFirebaseNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new FirebasePushDeviceGenerator());
+            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+                    new FirebasePushDeviceGenerator(
+                            FirebaseMessaging.getInstance(),
+                            "Firebase"
+                    )
+            );
             NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)

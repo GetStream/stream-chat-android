@@ -154,7 +154,7 @@ class Push {
          */
         fun configureFirebaseNotifications(context: Context) {
             val notificationConfig = NotificationConfig(
-                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
+                pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "providerName")),
             )
             ChatClient.Builder("apiKey", context)
                 .notifications(notificationConfig)
@@ -169,7 +169,7 @@ class Push {
             override fun onNewToken(token: String) {
                 // Update device's token on Stream backend
                 try {
-                    FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name")
+                    FirebaseMessagingDelegate.registerFirebaseToken(token, providerName = "providerName")
                 } catch (exception: IllegalStateException) {
                     // ChatClient was not initialized
                 }
@@ -202,7 +202,8 @@ class Push {
                 pushDeviceGenerators = listOf(
                     HuaweiPushDeviceGenerator(
                         context = context,
-                        appId = "YOUR HUAWEI APP ID"
+                        appId = "YOUR HUAWEI APP ID",
+                        providerName = "providerName"
                     )
                 )
             )
@@ -253,6 +254,7 @@ class Push {
                         context = context,
                         appId = "YOUR XIAOMI APP ID",
                         appKey = "YOUR XIAOMI APP KEY",
+                        providerName = "providerName",
                     )
                 )
             )
