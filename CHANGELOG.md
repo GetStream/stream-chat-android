@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix Partial User Update [#4888](https://github.com/GetStream/stream-chat-android/pull/4888)
 
 ### ⬆️ Improved
 
