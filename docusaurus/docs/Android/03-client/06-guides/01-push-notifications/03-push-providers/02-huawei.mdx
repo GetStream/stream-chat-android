@@ -36,7 +36,8 @@ val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(
         HuaweiPushDeviceGenerator(
             context = context,
-            appId = "YOUR HUAWEI APP ID"
+            appId = "YOUR HUAWEI APP ID",
+            providerName = "provierName",
         )
     )
 )
@@ -50,7 +51,13 @@ ChatClient.Builder("apiKey", context)
 
 ```java
 boolean pushNotificationEnabled = true;
-List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", null));
+List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+    new HuaweiPushDeviceGenerator(
+        context,
+        "YOUR HUAWEI APP ID",
+        "provierName"
+    )
+);
 NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
 new ChatClient.Builder("apiKey", context)
         .notifications(notificationConfig)
@@ -80,7 +87,7 @@ class CustomHuaweiMessagingService : HmsMessageService() {
     override fun onNewToken(token: String) {
         // Update device's token on Stream backend
         try {
-            HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name")
+            HuaweiMessagingDelegate.registerHuaweiToken(token, "providerName")
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -109,7 +116,7 @@ public final class CustomHuaweiMessagingService extends HmsMessageService {
     public void onNewToken(String token) {
         // Update device's token on Stream backend
         try {
-            HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name");
+            HuaweiMessagingDelegate.registerHuaweiToken(token, "providerName");
         } catch (IllegalStateException exception){
             // ChatClient was not initialized
         }

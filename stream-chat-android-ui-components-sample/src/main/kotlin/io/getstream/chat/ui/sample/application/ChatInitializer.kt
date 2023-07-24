@@ -60,12 +60,17 @@ class ChatInitializer(private val context: Context) {
         val notificationConfig =
             NotificationConfig(
                 pushDeviceGenerators = listOf(
-                    FirebasePushDeviceGenerator(),
-                    HuaweiPushDeviceGenerator(context, ApplicationConfigurator.HUAWEI_APP_ID),
+                    FirebasePushDeviceGenerator(providerName = "Firebase"),
+                    HuaweiPushDeviceGenerator(
+                        context = context,
+                        appId = ApplicationConfigurator.HUAWEI_APP_ID,
+                        providerName = "huawei",
+                    ),
                     XiaomiPushDeviceGenerator(
-                        context,
-                        ApplicationConfigurator.XIAOMI_APP_ID,
-                        ApplicationConfigurator.XIAOMI_APP_KEY,
+                        context = context,
+                        appId = ApplicationConfigurator.XIAOMI_APP_ID,
+                        appKey = ApplicationConfigurator.XIAOMI_APP_KEY,
+                        providerName = "Xiaomi",
                     ),
                 ),
                 requestPermissionOnAppLaunch = { true }

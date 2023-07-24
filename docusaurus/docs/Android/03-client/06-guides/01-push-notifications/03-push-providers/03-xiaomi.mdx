@@ -32,13 +32,14 @@ Then, create a `XiaomiPushDeviceGenerator` and add it to the list of generators 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
 
-```kotlin {3-7,11}
+```kotlin {3-8,12}
 val notificationConfig = NotificationConfig(
     pushDeviceGenerators = listOf(
         XiaomiPushDeviceGenerator(
             context = context,
             appId = "YOUR XIAOMI APP ID",
             appKey = "YOUR XIAOMI APP KEY",
+            providerName = "providerName",
         )
     )
 )
@@ -52,7 +53,7 @@ ChatClient.Builder("apiKey", context)
 
 ```java
 boolean pushNotificationEnabled = true;
-List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", null, Region.Global));
+List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", "providerName", Region.Global));
 NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
 new ChatClient.Builder("apiKey", context)
         .notifications(notificationConfig)
@@ -82,7 +83,7 @@ class CustomPushMessageReceiver : PushMessageReceiver() {
     override fun onReceiveRegisterResult(context: Context, miPushCommandMessage: MiPushCommandMessage) {
         // Update device's token on Stream backend
         try {
-            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name")
+            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "providerName")
         } catch (exception: IllegalStateException) {
             // ChatClient was not initialized
         }
@@ -112,7 +113,7 @@ public final class CustomPushMessageReceiver extends PushMessageReceiver {
     public void onReceiveRegisterResult(Context context, MiPushCommandMessage miPushCommandMessage) {
         // Update device's token on Stream backend
         try {
-            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name");
+            XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "providerName");
         } catch (IllegalStateException exception) {
             // ChatClient was not initialized
         }
