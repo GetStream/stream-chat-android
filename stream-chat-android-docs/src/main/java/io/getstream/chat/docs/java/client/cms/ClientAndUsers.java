@@ -37,10 +37,11 @@ public class ClientAndUsers {
          */
         @SuppressWarnings("Convert2Lambda")
         public void connectingUser() {
-            User user = new User();
-            user.setId("bender");
-            user.setName("Bender");
-            user.setImage("https://bit.ly/321RmWb");
+            User user = new User.Builder()
+                    .withId("bender")
+                    .withName("Bender")
+                    .withImage("https://bit.ly/321RmWb")
+                    .build();
 
             // You can setup a user token in two ways:
 
@@ -83,10 +84,11 @@ public class ClientAndUsers {
          * @see <a href="https://getstream.io/chat/docs/tokens_and_authentication/?language=java#development-tokens">Development Tokens</a>
          */
         public void developmentToken() {
-            User user = new User();
-            user.setId("bender");
-            user.setName("Bender");
-            user.setImage("https://bit.ly/321RmWb");
+            User user = new User.Builder()
+                    .withId("bender")
+                    .withName("Bender")
+                    .withImage("https://bit.ly/321RmWb")
+                    .build();
 
             String token = client.devToken(user.getId());
 
@@ -98,10 +100,11 @@ public class ClientAndUsers {
          */
         @SuppressWarnings("Convert2Lambda")
         public void tokenExpiration() {
-            User user = new User();
-            user.setId("bender");
-            user.setName("Bender");
-            user.setImage("https://bit.ly/321RmWb");
+            User user = new User.Builder()
+                    .withId("bender")
+                    .withName("Bender")
+                    .withImage("https://bit.ly/321RmWb")
+                    .build();
 
             TokenProvider tokenProvider = new TokenProvider() {
                 @NotNull

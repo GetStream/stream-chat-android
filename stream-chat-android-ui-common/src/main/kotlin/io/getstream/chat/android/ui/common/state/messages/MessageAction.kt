@@ -24,64 +24,97 @@ import io.getstream.chat.android.models.Reaction
  *
  * @param message The selected message.
  */
-public sealed class MessageAction(public val message: Message)
+public sealed class MessageAction {
+    public abstract val message: Message
+}
 
 /**
  * Add/remove a reaction on a message.
  *
  * @param reaction The reaction to add or remove from the message.
  */
-public class React(
+public data class React(
     public val reaction: Reaction,
-    message: Message,
-) : MessageAction(message)
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Retry sending a message.
  */
-public class Resend(message: Message) : MessageAction(message)
+public data class Resend(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Start a message reply.
  */
-public class Reply(message: Message) : MessageAction(message)
+public data class Reply(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Start a thread reply.
  */
-public class ThreadReply(message: Message) : MessageAction(message)
+public data class ThreadReply(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Copy the message content.
  */
-public class Copy(message: Message) : MessageAction(message)
+public data class Copy(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Start editing an owned message.
  */
-public class Edit(message: Message) : MessageAction(message)
+public data class Edit(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Pins or unpins the message from the channel.
  */
-public class Pin(message: Message) : MessageAction(message)
+public data class Pin(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Show a delete dialog for owned message.
  */
-public class Delete(message: Message) : MessageAction(message)
+public data class Delete(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * Show a flag dialog for a message.
  */
-public class Flag(message: Message) : MessageAction(message)
+public data class Flag(
+    override val message: Message,
+) : MessageAction()
 
 /**
  * User-customizable action, with any number of extra properties.
  *
  * @param extraProperties Map of key-value pairs that let you store extra data for this action.
  */
-public class CustomAction(
-    message: Message,
+public data class CustomAction(
+    override val message: Message,
     public val extraProperties: Map<String, Any> = emptyMap(),
-) : MessageAction(message)
+) : MessageAction()
+
+public fun MessageAction.updateMessage(message: Message): MessageAction {
+    return when (this) {
+        is React -> copy(message = message)
+        is Resend -> copy(message = message)
+        is Reply -> copy(message = message)
+        is ThreadReply -> copy(message = message)
+        is Copy -> copy(message = message)
+        is Edit -> copy(message = message)
+        is Pin -> copy(message = message)
+        is Delete -> copy(message = message)
+        is Flag -> copy(message = message)
+        is CustomAction -> copy(message = message)
+    }
+}

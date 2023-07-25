@@ -68,11 +68,11 @@ class UserLoginViewModel : ViewModel() {
 
         App.instance.userRepository.setUser(user)
 
-        val chatUser = ChatUser().apply {
-            id = user.id
-            image = user.image
-            name = user.name
-        }
+        val chatUser = ChatUser(
+            id = user.id,
+            image = user.image,
+            name = user.name,
+        )
 
         ChatClient.instance().run {
             if (switchUser) {

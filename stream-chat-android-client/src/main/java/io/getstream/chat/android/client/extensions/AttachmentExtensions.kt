@@ -20,37 +20,24 @@ import io.getstream.chat.android.models.Attachment
 
 internal const val ATTACHMENT_TYPE_IMAGE = "image"
 internal const val ATTACHMENT_TYPE_FILE = "file"
-private const val EXTRA_UPLOAD_ID: String = "uploadId"
-private const val EXTRA_DURATION = "duration"
-private const val EXTRA_WAVEFORM_DATA = "waveform_data"
+public const val EXTRA_UPLOAD_ID: String = "uploadId"
+public const val EXTRA_DURATION: String = "duration"
+public const val EXTRA_WAVEFORM_DATA: String = "waveform_data"
 
 internal val Attachment.isImage: Boolean
     get() = mimeType?.startsWith(ATTACHMENT_TYPE_IMAGE) ?: false
 
-public var Attachment.uploadId: String?
+public val Attachment.uploadId: String?
     get() = extraData[EXTRA_UPLOAD_ID] as String?
-    set(value) {
-        value?.let { extraData[EXTRA_UPLOAD_ID] = it }
-    }
 
 /**
  * Duration of the attachment in seconds.
  */
-public var Attachment.duration: Float?
+public val Attachment.duration: Float?
     get() = (extraData[EXTRA_DURATION] as? Number)?.toFloat()
-    set(value) {
-        value?.also {
-            extraData[EXTRA_DURATION] = it
-        }
-    }
 
 /**
  * Waveform data of the attachment.
  */
-public var Attachment.waveformData: List<Float>?
+public val Attachment.waveformData: List<Float>?
     get() = extraData[EXTRA_WAVEFORM_DATA] as? List<Float>
-    set(value) {
-        value?.also {
-            extraData[EXTRA_WAVEFORM_DATA] = it
-        }
-    }

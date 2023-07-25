@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.models
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-
 /**
  * A [Channel] object that contains less information.
  * Used only internally.
@@ -29,7 +27,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param name Channel's name.
  * @param image Channel's image.
  */
-@InternalStreamChatApi
 public data class ChannelInfo(
     val cid: String? = null,
     val id: String? = null,

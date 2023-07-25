@@ -193,6 +193,11 @@ internal class MessageListViewModelTest {
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
         private val message1 = Message(id = "message-id-1", createdAt = Date())
         private val message2 = Message(id = "message-id-2", createdAt = Date())
-        private val reaction1 = Reaction("message-id-1", "like", 1).apply { user = user1 }
+        private val reaction1 = Reaction(
+            messageId = "message-id-1",
+            type = "like",
+            score = 1,
+            user = user1,
+        )
     }
 }

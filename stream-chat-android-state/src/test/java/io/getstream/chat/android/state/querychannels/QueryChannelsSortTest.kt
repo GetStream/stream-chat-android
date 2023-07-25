@@ -316,13 +316,13 @@ internal class QueryChannelsSortTest {
                 testName = "Sorting by name extra data field in ascending order",
                 querySort = QuerySortByField.ascByName("name"),
             ) {
-                randomChannel().apply { name = "$it" }
+                randomChannel(name = "$it")
             },
             sortArguments(
                 testName = "Sorting by name extra data field in descending order",
                 querySort = QuerySortByField.descByName("name"),
             ) {
-                randomChannel().apply { name = "${9 - it}" }
+                randomChannel(name = "${9 - it}")
             }
         )
 
@@ -369,10 +369,10 @@ internal class QueryChannelsSortTest {
                     .descByName<Channel>("unreadCount")
                     .ascByName("name")
             ) {
-                randomChannel().apply {
-                    name = "$it"
-                    unreadCount = if (it < 5) 9 - it else 0
-                }
+                randomChannel(
+                    name = "$it",
+                    unreadCount = if (it < 5) 9 - it else 0,
+                )
             },
         )
 

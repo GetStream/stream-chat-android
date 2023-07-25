@@ -190,7 +190,7 @@ internal class UsersApiCallsTests {
 
     @Test
     fun getUsersSuccess() = runTest {
-        val user = User().apply { id = "a-user" }
+        val user = User(id = "a-user")
 
         val request = QueryUsersRequest(Filters.eq("id", "1"), 0, 1)
 
@@ -207,8 +207,7 @@ internal class UsersApiCallsTests {
 
     @Test
     fun removeMembersSuccess() = runTest {
-        val channel = Channel()
-            .apply { id = "a-channel" }
+        val channel = Channel(id = "a-channel")
 
         Mockito.`when`(
             mock.api.removeMembers(
@@ -227,7 +226,7 @@ internal class UsersApiCallsTests {
 
     @Test
     fun muteUserSuccess() = runTest {
-        val targetUser = User().apply { id = "target-id" }
+        val targetUser = User(id = "target-id")
         val mute = Mute(
             mock.user,
             targetUser,
@@ -249,7 +248,7 @@ internal class UsersApiCallsTests {
 
     @Test
     fun unmuteUserSuccess() = runTest {
-        val targetUser = User().apply { id = "target-id" }
+        val targetUser = User(id = "target-id")
 
         Mockito.`when`(
             mock.api.unmuteUser(targetUser.id)

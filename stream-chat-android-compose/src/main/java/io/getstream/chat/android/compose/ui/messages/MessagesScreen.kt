@@ -84,6 +84,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
+import io.getstream.chat.android.ui.common.state.messages.updateMessage
 
 /**
  * Default root Messages screen component, that provides the necessary ViewModels and
@@ -185,10 +186,10 @@ public fun MessagesScreen(
                     },
                     onSendMessage = { message ->
                         composerViewModel.sendMessage(
-                            message.apply {
-                                this.skipPushNotification = skipPushNotification
-                                this.skipEnrichUrl = skipEnrichUrl
-                            }
+                            message.copy(
+                                skipPushNotification = skipPushNotification,
+                                skipEnrichUrl = skipEnrichUrl,
+                            )
                         )
                     },
                     statefulStreamMediaRecorder = statefulStreamMediaRecorder,
@@ -217,10 +218,10 @@ public fun MessagesScreen(
                             if (message != null) {
                                 composerViewModel.performMessageAction(
                                     Reply(
-                                        message.apply {
-                                            this.skipPushNotification = skipPushNotification
-                                            this.skipEnrichUrl = skipEnrichUrl
-                                        }
+                                        message.copy(
+                                            skipPushNotification = skipPushNotification,
+                                            skipEnrichUrl = skipEnrichUrl,
+                                        )
                                     )
                                 )
                             }
@@ -369,11 +370,15 @@ private fun BoxScope.MessagesScreenMenus(
             message = selectedMessage,
             ownCapabilities = ownCapabilities,
             onMessageAction = { action ->
-                action.message.skipPushNotification = skipPushNotification
-                action.message.skipEnrichUrl = skipEnrichUrl
-
-                composerViewModel.performMessageAction(action)
-                listViewModel.performMessageAction(action)
+                action.updateMessage(
+                    action.message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    )
+                ).let {
+                    composerViewModel.performMessageAction(it)
+                    listViewModel.performMessageAction(it)
+                }
             },
             onShowMoreReactionsSelected = {
                 listViewModel.selectExtendedReactions(selectedMessage)
@@ -403,11 +408,16 @@ private fun BoxScope.MessagesScreenMenus(
             currentUser = user,
             message = selectedMessage,
             onMessageAction = { action ->
-                action.message.skipPushNotification = skipPushNotification
-                action.message.skipEnrichUrl = skipEnrichUrl
+                action.updateMessage(
+                    action.message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    )
+                ).let {
+                    composerViewModel.performMessageAction(it)
+                    listViewModel.performMessageAction(it)
+                }
 
-                composerViewModel.performMessageAction(action)
-                listViewModel.performMessageAction(action)
             },
             onShowMoreReactionsSelected = {
                 listViewModel.selectExtendedReactions(selectedMessage)
@@ -466,11 +476,15 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                 ),
             message = selectedMessage,
             onMessageAction = { action ->
-                action.message.skipPushNotification = skipPushNotification
-                action.message.skipEnrichUrl = skipEnrichUrl
-
-                composerViewModel.performMessageAction(action)
-                listViewModel.performMessageAction(action)
+                action.updateMessage(
+                    action.message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    )
+                ).let {
+                    composerViewModel.performMessageAction(action)
+                    listViewModel.performMessageAction(action)
+                }
             },
             onDismiss = { listViewModel.removeOverlay() }
         )
@@ -560,10 +574,10 @@ private fun MessageModerationDialog(
                     EditMessage -> composerViewModel.performMessageAction(Edit(message))
                     SendAnyway -> listViewModel.performMessageAction(
                         Resend(
-                            message.apply {
-                                this.skipPushNotification = skipPushNotification
-                                this.skipEnrichUrl = skipEnrichUrl
-                            }
+                            message.copy(
+                                skipPushNotification = skipPushNotification,
+                                skipEnrichUrl = skipEnrichUrl,
+                            )
                         )
                     )
                     else -> {

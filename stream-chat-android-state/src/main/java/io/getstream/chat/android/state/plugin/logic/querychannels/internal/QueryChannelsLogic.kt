@@ -136,12 +136,14 @@ internal class QueryChannelsLogic(
 
         if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
-            result.value.forEach { channel ->
-                channel.messages.lastOrNull()?.createdAt?.let { date ->
-                    updateLastMessageSeenOfReads(channel.read, date)
-                }
+            val channels = result.value.map { channel ->
+                channel.copy(
+                    read = channel.messages.lastOrNull()
+                        ?.createdAt?.let { updateLastMessageSeenOfReads(channel.read, it) }
+                        ?: channel.read,
+                )
             }
-            updateOnlineChannels(request, result.value)
+            updateOnlineChannels(request, channels)
         } else {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
         }
@@ -150,9 +152,9 @@ internal class QueryChannelsLogic(
         logger.d { "loadingPerPage: false. success: $result.isSuccess" }
     }
 
-    private fun updateLastMessageSeenOfReads(reads: List<ChannelUserRead>, lastSeenDate: Date) {
-        reads.forEach { channelUserRead ->
-            channelUserRead.lastMessageSeenDate = lastSeenDate
+    private fun updateLastMessageSeenOfReads(reads: List<ChannelUserRead>, lastSeenDate: Date): List<ChannelUserRead> {
+        return reads.map { channelUserRead ->
+            channelUserRead.copy(lastMessageSeenDate = lastSeenDate)
         }
     }
 

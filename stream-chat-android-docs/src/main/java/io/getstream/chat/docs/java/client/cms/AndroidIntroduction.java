@@ -55,10 +55,11 @@ public class AndroidIntroduction {
                 .build();
 
         // Step 3 - Authenticate and connect the user
-        User user = new User();
-        user.setId("summer-brook-2");
-        user.setName("Paranoid Android");
-        user.setImage("https://bit.ly/2TIt8NR");
+        User user = new User.Builder()
+                .withId("summer-brook-2")
+                .withName("Paranoid Android")
+                .withImage("https://bit.ly/2TIt8NR")
+                .build();
 
         client.connectUser(user, token).enqueue((result) -> {
             if (result.isSuccess()) {
@@ -112,10 +113,11 @@ public class AndroidIntroduction {
         Map<String, Object> extraData = new HashMap<>();
         extraData.put("customField", "123");
 
-        Message message = new Message();
-        message.setText("I’m mowing the air Rand, I’m mowing the air.");
-        message.setCid("messaging:travel");
-        message.setExtraData(extraData);
+        Message message = new Message.Builder()
+                .withText("I’m mowing the air Rand, I’m mowing the air.")
+                .withCid("messaging:travel")
+                .withExtraData(extraData)
+                .build();
 
 
         channelClient.sendMessage(message).enqueue((result) -> {

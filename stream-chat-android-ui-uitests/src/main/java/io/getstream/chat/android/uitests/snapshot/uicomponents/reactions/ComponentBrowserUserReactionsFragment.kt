@@ -56,34 +56,34 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
         binding.apply {
             val currentUser = randomUser()
             userReactionsView1.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     latestReactions = mutableListOf(
                         Reaction(type = LOVE, user = currentUser),
-                    )
-                },
+                    ),
+                ),
                 currentUser = currentUser
             )
             userReactionsView2.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     latestReactions = mutableListOf(
                         Reaction(type = LOVE, user = currentUser),
                         Reaction(type = LOVE, user = randomUser()),
-                    )
-                },
+                    ),
+                ),
                 currentUser = currentUser
             )
             userReactionsView3.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     latestReactions = mutableListOf(
                         Reaction(type = LOVE, user = currentUser),
                         Reaction(type = WUT, user = randomUser()),
                         Reaction(type = LOL, user = randomUser()),
-                    )
-                },
+                    ),
+                ),
                 currentUser = currentUser
             )
             userReactionsView4.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     latestReactions = mutableListOf(
                         Reaction(type = LOVE, user = currentUser),
                         Reaction(type = THUMBS_UP, user = randomUser()),
@@ -100,8 +100,8 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
                         Reaction(type = THUMBS_DOWN, user = randomUser()),
                         Reaction(type = LOL, user = randomUser()),
                         Reaction(type = WUT, user = randomUser()),
-                    )
-                },
+                    ),
+                ),
                 currentUser = currentUser
             )
         }

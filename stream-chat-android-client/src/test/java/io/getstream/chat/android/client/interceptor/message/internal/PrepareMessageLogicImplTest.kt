@@ -151,18 +151,22 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given message's attachment upload id is empty, it should be generated`() {
-        val attachment = randomAttachment { uploadId = null }
+        val attachment = randomAttachment()
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment)
         )
 
-        prepareMessageInterceptorImpl.prepareMessage(
+        println("initialAttachments: ${messageWithAttachments.attachments}")
+
+        val result = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
             randomUser()
         )
 
-        attachment.uploadId `should not be equal to` null
+        println("resultAttachments: ${result.attachments}")
+
+        result.attachments.first().uploadId `should not be equal to` null
     }
 }

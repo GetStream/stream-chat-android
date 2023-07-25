@@ -96,10 +96,10 @@ class Messages(
          */
         fun updateAMessage() {
             // Update some field of the message
-            message.text = "my updated text"
+            val updatedMessage = message.copy(text = "my updated text")
 
             // Send the message to the channel
-            channelClient.updateMessage(message).enqueue { result ->
+            channelClient.updateMessage(updatedMessage).enqueue { result ->
                 when (result) {
                     is Result.Success -> {
                         val updatedMessage: Message = result.value

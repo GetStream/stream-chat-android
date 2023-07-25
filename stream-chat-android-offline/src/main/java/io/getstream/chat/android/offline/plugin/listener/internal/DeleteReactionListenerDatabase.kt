@@ -64,8 +64,7 @@ internal class DeleteReactionListenerDatabase(
         reactionsRepository.insertReaction(reaction)
 
         messageRepository.selectMessage(messageId = messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.removeMyReaction(reaction)
-            messageRepository.insertMessage(cachedMessage)
+            messageRepository.insertMessage(cachedMessage.removeMyReaction(reaction))
         }
     }
 

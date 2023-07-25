@@ -21,6 +21,8 @@ import android.media.MediaMetadataRetriever
 import android.media.MediaRecorder
 import android.os.Build
 import androidx.core.net.toUri
+import io.getstream.chat.android.client.extensions.EXTRA_DURATION
+import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -302,10 +304,11 @@ public class DefaultStreamMediaRecorder(
                 upload = recordingFile,
                 type = AttachmentType.AUDIO_RECORDING,
                 mimeType = "audio/aac",
-            ).apply {
-                duration = durationInMs / 1000f
-                waveformData = sampleData
-            }
+                extraData = mapOf(
+                    EXTRA_DURATION to durationInMs / 1000f,
+                    EXTRA_WAVEFORM_DATA to sampleData,
+                )
+            )
             val recordedMedia = RecordedMedia(attachment = attachment, durationInMs = durationInMs)
             logger.v { "[stopRecording] succeed: $recordedMedia" }
             Result.Success(recordedMedia)

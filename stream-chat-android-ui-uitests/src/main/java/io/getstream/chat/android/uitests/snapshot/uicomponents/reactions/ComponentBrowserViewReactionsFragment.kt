@@ -58,58 +58,58 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
 
         binding.apply {
             viewReactionsView1.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     reactionCounts = mutableMapOf(
                         LOVE to 1,
-                    )
+                    ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
-                    )
-                },
+                    ),
+                ),
                 isMyMessage = true
             )
             viewReactionsView2.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     reactionCounts = mutableMapOf(
                         LOVE to 1,
-                    )
+                    ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
-                    )
-                },
+                    ),
+                ),
                 isMyMessage = false
             )
             viewReactionsView3.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     reactionCounts = mutableMapOf(
                         LOVE to 1,
-                    )
-                    ownReactions = mutableListOf()
-                },
+                    ),
+                    ownReactions = mutableListOf(),
+                ),
                 isMyMessage = true
             )
             viewReactionsView4.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     reactionCounts = mutableMapOf(
                         LOVE to 1,
-                    )
-                    ownReactions = mutableListOf()
-                },
+                    ),
+                    ownReactions = mutableListOf(),
+                ),
                 isMyMessage = false
             )
             viewReactionsView5.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     reactionCounts = mutableMapOf(
                         LOVE to 10,
                         WUT to 20,
                         LOL to 20,
                         THUMBS_UP to 20
-                    )
+                    ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
                         Reaction(type = WUT)
-                    )
-                },
+                    ),
+                ),
                 isMyMessage = true
             )
 
@@ -125,13 +125,13 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             }
 
             viewReactionsView6.setMessage(
-                message = randomMessage().apply {
-                    reactionCounts = customReactions.toMutableMap()
+                message = randomMessage().copy(
+                    reactionCounts = customReactions.toMutableMap(),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
-                        Reaction(type = WUT)
-                    )
-                },
+                        Reaction(type = WUT),
+                    ),
+                ),
                 isMyMessage = false
             )
         }

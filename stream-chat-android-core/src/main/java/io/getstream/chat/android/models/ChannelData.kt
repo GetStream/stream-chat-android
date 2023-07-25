@@ -40,21 +40,21 @@ import java.util.Date
  * @param membership Represents relationship of the current user to the channel.
  */
 public data class ChannelData(
-    var id: String,
-    var type: String,
-    var name: String = "",
-    var image: String = "",
-    var createdBy: User = User(),
-    var cooldown: Int = 0,
-    var frozen: Boolean = false,
-    var createdAt: Date? = null,
-    var updatedAt: Date? = null,
-    var deletedAt: Date? = null,
-    var memberCount: Int = 0,
-    var team: String = "",
-    var extraData: MutableMap<String, Any> = mutableMapOf(),
-    var ownCapabilities: Set<String> = setOf(),
-    var membership: Member? = null,
+    val id: String,
+    val type: String,
+    val name: String = "",
+    val image: String = "",
+    val createdBy: User = User(),
+    val cooldown: Int = 0,
+    val frozen: Boolean = false,
+    val createdAt: Date? = null,
+    val updatedAt: Date? = null,
+    val deletedAt: Date? = null,
+    val memberCount: Int = 0,
+    val team: String = "",
+    val extraData: Map<String, Any> = mapOf(),
+    val ownCapabilities: Set<String> = setOf(),
+    val membership: Member? = null,
 ) {
 
     /**

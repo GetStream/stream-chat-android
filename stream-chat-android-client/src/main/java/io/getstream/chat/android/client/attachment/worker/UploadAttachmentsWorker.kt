@@ -89,7 +89,7 @@ public class UploadAttachmentsWorker(
             Result.Success(Unit)
         } else {
             val attachments = uploadAttachments(message)
-            updateMessages(message)
+            updateMessages(message.copy(attachments = attachments))
 
             if (attachments.all { it.uploadState == Attachment.UploadState.Success }) {
                 logger.d { "[sendAttachments] #uploader; all attachments for message ${message.id} uploaded" }
@@ -119,7 +119,7 @@ public class UploadAttachmentsWorker(
                     }
 
                     attachmentUploader.uploadAttachment(channelType, channelId, attachment, progressCallback)
-                        .recover { error -> attachment.apply { uploadState = Attachment.UploadState.Failed(error) } }
+                        .recover { error -> attachment.copy(uploadState = Attachment.UploadState.Failed(error)) }
                         .value
                 } else {
                     logger.i {
@@ -132,26 +132,28 @@ public class UploadAttachmentsWorker(
         } catch (e: Exception) {
             logger.e { "[uploadAttachments] #uploader; unable to upload attachments: ${e.message}" }
             message.attachments.map {
-                if (it.uploadState != Attachment.UploadState.Success) {
-                    it.uploadState = Attachment.UploadState.Failed(
-                        Error.ThrowableError(message = "Could not upload attachments.", cause = e),
-                    )
-                }
-                it
+                it.copy(
+                    uploadState = it.uploadState
+                        .takeIf { it == Attachment.UploadState.Success}
+                        ?: Attachment.UploadState.Failed(
+                            Error.ThrowableError(message = "Could not upload attachments.", cause = e),
+                        )
+                )
             }.toMutableList()
-        }.also { attachments ->
-            message.attachments = attachments
         }
     }
 
     private suspend fun updateMessages(message: Message) {
-        if (message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }) {
-            message.syncStatus = SyncStatus.FAILED_PERMANENTLY
-        }
-        channelStateLogic?.upsertMessage(message)
+        val updatedMessage = message.copy(
+            syncStatus = message.syncStatus
+                .takeUnless {
+                    message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }
+                } ?: SyncStatus.FAILED_PERMANENTLY
+        )
+        channelStateLogic?.upsertMessage(updatedMessage)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
-        messageRepository.deleteChannelMessage(message)
-        messageRepository.insertMessage(message)
+        messageRepository.deleteChannelMessage(updatedMessage)
+        messageRepository.insertMessage(updatedMessage)
     }
 
     private class ProgressCallbackImpl(

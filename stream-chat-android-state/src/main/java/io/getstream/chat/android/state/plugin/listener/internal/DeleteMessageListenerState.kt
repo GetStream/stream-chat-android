@@ -104,10 +104,7 @@ internal class DeleteMessageListenerState(
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
         when (result) {
             is Result.Success -> {
-                val deletedMessage = result.value.apply {
-                    syncStatus = SyncStatus.COMPLETED
-                }
-                updateMessage(deletedMessage)
+                updateMessage(result.value.copy(syncStatus = SyncStatus.COMPLETED))
             }
             is Result.Failure -> {
                 logic.channelFromMessageId(originalMessageId)

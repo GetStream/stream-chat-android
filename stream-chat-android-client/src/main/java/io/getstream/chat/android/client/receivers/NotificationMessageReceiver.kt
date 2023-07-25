@@ -184,10 +184,10 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         ChatClient.instance().sendMessage(
             channelType = type,
             channelId = channelId,
-            message = Message().apply {
-                text = messageChars.toString()
-                cid = (type to channelId).toCid()
-            }
+            message = Message(
+                text = messageChars.toString(),
+                cid = (type to channelId).toCid(),
+            )
         ).enqueue()
     }
 

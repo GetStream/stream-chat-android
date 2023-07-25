@@ -71,8 +71,5 @@ internal fun Channel.readCount(message: Message): Int {
 
 internal const val EXTRA_DATA_MUTED: String = "mutedChannel"
 
-internal var Channel.isMuted: Boolean
+internal val Channel.isMuted: Boolean
     get() = extraData[EXTRA_DATA_MUTED] as Boolean? ?: false
-    set(value) {
-        extraData[EXTRA_DATA_MUTED] = value
-    }

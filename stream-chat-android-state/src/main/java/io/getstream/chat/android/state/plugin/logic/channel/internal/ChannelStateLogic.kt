@@ -226,10 +226,10 @@ internal class ChannelStateLogic(
      */
     private fun normalizeReplyMessages(quotedMessage: Message): List<Message>? {
         return getAllReplies(quotedMessage)?.map { replyMessage ->
-            replyMessage.apply {
-                replyTo = quotedMessage
-                replyMessageId = quotedMessage.id
-            }
+            replyMessage.copy(
+                replyTo = quotedMessage,
+                replyMessageId = quotedMessage.id,
+            )
         }
     }
 

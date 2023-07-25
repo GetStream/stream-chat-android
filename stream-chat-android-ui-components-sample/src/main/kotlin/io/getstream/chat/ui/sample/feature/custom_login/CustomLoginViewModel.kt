@@ -53,10 +53,10 @@ class CustomLoginViewModel : ViewModel() {
     }
 
     private fun initChatUser(loginCredentials: LoginCredentials) {
-        val chatUser = ChatUser().apply {
-            id = loginCredentials.userId
-            name = loginCredentials.userName
-        }
+        val chatUser = ChatUser(
+            id = loginCredentials.userId,
+            name = loginCredentials.userName,
+        )
 
         ChatClient.instance().connectUser(chatUser, loginCredentials.userToken)
             .enqueue { result ->

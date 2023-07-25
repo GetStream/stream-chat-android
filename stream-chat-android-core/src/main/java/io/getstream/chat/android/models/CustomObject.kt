@@ -17,7 +17,7 @@
 package io.getstream.chat.android.models
 
 public sealed interface CustomObject {
-    public var extraData: MutableMap<String, Any>
+    public val extraData: Map<String, Any>
 
     @Suppress("UNCHECKED_CAST")
     public fun <T> getExtraValue(key: String, default: T): T {
@@ -26,9 +26,5 @@ public sealed interface CustomObject {
         } else {
             default
         }
-    }
-
-    public fun putExtraValue(key: String, value: Any) {
-        extraData[key] = value
     }
 }

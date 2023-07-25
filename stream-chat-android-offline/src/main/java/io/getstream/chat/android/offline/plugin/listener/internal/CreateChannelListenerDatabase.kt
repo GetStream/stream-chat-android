@@ -73,10 +73,9 @@ internal class CreateChannelListenerDatabase(
             createdAt = Date(),
             createdBy = currentUser,
             syncStatus = if (clientState.isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-        ).apply {
-            name = getExtraValue("name", "")
-            image = getExtraValue("image", "")
-        }
+            name = extraData["name"] as? String ?: "",
+            image = extraData["image"] as? String ?: "",
+        )
 
         channelRepository.upsertChannel(channel)
     }
@@ -113,9 +112,7 @@ internal class CreateChannelListenerDatabase(
         val generatedCid = "$channelType:${generateChannelIdIfNeeded(channelId, memberIds)}"
         when (result) {
             is Result.Success -> {
-                val channel = result.value.apply {
-                    syncStatus = SyncStatus.COMPLETED
-                }
+                val channel = result.value.copy(syncStatus = SyncStatus.COMPLETED)
 
                 // Generated if might differ from the actual one. This might happen when the channel already exists.
                 if (channel.cid != generatedCid) {
@@ -125,12 +122,15 @@ internal class CreateChannelListenerDatabase(
             }
             is Result.Failure -> {
                 channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
-                    cachedChannel.syncStatus = if (result.value.isPermanent()) {
-                        SyncStatus.FAILED_PERMANENTLY
-                    } else {
-                        SyncStatus.SYNC_NEEDED
-                    }
-                    channelRepository.upsertChannel(cachedChannel)
+                    channelRepository.upsertChannel(
+                        cachedChannel.copy(
+                            syncStatus = if (result.value.isPermanent()) {
+                                SyncStatus.FAILED_PERMANENTLY
+                            } else {
+                                SyncStatus.SYNC_NEEDED
+                            }
+                        )
+                    )
                 }
             }
         }

@@ -16,10 +16,11 @@ public class Attachments {
 
     public void sendAttachment() {
         Attachment attachment = new Attachment();
-        Message message = new Message();
-        message.setCid("messaging:general");
-        message.setText("Look at this attachment!");
-        message.setAttachments(Collections.singletonList(attachment));
+        Message message = new Message.Builder()
+                .withCid("messaging:general")
+                .withText("Look at this attachment!")
+                .withAttachments(Collections.singletonList(attachment))
+                .build();
 
         ChatClient.instance().sendMessage("messaging", "general", message, false).enqueue(result -> {
                     if (result.isSuccess()) {
@@ -32,21 +33,19 @@ public class Attachments {
     }
 
     public void attachmentWithoutFile() {
-        Attachment attachment = new Attachment();
-        // 1
-        attachment.setType("location");
-        // 2
         Map<String, Object> extraData = new HashMap<>();
         extraData.put("lat", 40.017985);
         extraData.put("lon", -105.280184);
-        attachment.setExtraData(extraData);
+        Attachment attachment = new Attachment.Builder()
+                .withType("location")
+                .withExtraData(extraData)
+                .build();
     }
 
     public void attachmentWithFile() {
-        Attachment attachment = new Attachment();
-        // 1
-        attachment.setType("audio");
-        // 2
-        attachment.setUpload(new File("audio-file.mp3"));
+        Attachment attachment = new Attachment.Builder()
+                .withType("audio")
+                .withUpload(new File("auido-file.mp3"))
+                .build();
     }
 }

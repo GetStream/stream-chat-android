@@ -58,11 +58,10 @@ public fun Message.updateUsers(users: Map<String, User>): Message =
  * @param channel The channel whose members we can check for the mention.
  */
 @InternalStreamChatApi
-public fun Message.populateMentions(channel: Channel) {
+public fun Message.populateMentions(channel: Channel): Message {
     if ('@' !in text) {
-        return
+        return this
     }
-
     val text = text.lowercase()
     val mentions = mentionedUsersIds.toMutableSet() + channel.members.mapNotNullTo(mutableListOf()) { member ->
         if (text.contains("@${member.user.name.lowercase()}")) {
@@ -71,8 +70,7 @@ public fun Message.populateMentions(channel: Channel) {
             null
         }
     }
-
-    mentionedUsersIds = mentions.toMutableList()
+    return copy(mentionedUsersIds = mentions.toList())
 }
 
 @InternalStreamChatApi

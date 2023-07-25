@@ -31,6 +31,6 @@ public data class ChannelMute(
     val user: User,
     val channel: Channel,
     val createdAt: Date,
-    var updatedAt: Date,
+    val updatedAt: Date,
     val expires: Date?,
 )

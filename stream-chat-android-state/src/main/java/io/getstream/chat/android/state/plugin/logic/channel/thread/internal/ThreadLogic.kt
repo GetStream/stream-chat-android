@@ -95,9 +95,9 @@ internal class ThreadLogic(
     private fun handleEvent(event: HasMessage) {
         when (event) {
             is MessageUpdatedEvent -> {
-                event.message.apply {
-                    replyTo = mutableState.messages.value.firstOrNull { it.id == replyMessageId }
-                }.let(::upsertMessage)
+                event.message.copy(
+                    replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId }
+                ).let(::upsertMessage)
             }
             is NewMessageEvent,
             is MessageDeletedEvent,

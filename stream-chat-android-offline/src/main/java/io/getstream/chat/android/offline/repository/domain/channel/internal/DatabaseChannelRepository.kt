@@ -207,10 +207,12 @@ internal class DatabaseChannelRepository(
             }
 
             if (updateNeeded) {
-                channel.apply {
-                    lastMessageAt = messageCreatedAt
-                    messages = listOf(lastMessage)
-                }.also { upsertChannel(it) }
+                upsertChannel(
+                    channel.copy(
+                        lastMessageAt = messageCreatedAt,
+                        messages = listOf(lastMessage),
+                    )
+                )
             }
         }
     }

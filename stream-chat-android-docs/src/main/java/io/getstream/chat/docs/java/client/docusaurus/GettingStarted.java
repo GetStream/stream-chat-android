@@ -90,10 +90,11 @@ public class GettingStarted {
     }
 
     public void connectingAUser() {
-        User user = new User();
-        user.setId("bender");
-        user.setName("Bender");
-        user.setImage("https://bit.ly/321RmWb");
+        User user = new User.Builder()
+                .withId("bender")
+                .withName("Bender")
+                .withImage("https://bit.ly/321RmWb")
+                .build();
 
         // Connect the user only if they aren't already connected
         if (ChatClient.instance().getCurrentUser() == null) {

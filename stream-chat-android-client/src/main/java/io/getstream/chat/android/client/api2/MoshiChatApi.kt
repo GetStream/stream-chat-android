@@ -698,16 +698,18 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel {
-        return response.channel.toDomain().apply {
-            watcherCount = response.watcher_count
-            read = response.read.map(DownstreamChannelUserRead::toDomain)
-            members = response.members.map(DownstreamMemberDto::toDomain)
-            membership = response.membership?.toDomain()
-            messages = response.messages.map { it.toDomain().enrichWithCid(cid) }
-            watchers = response.watchers.map(DownstreamUserDto::toDomain)
-            hidden = response.hidden
-            hiddenMessagesBefore = response.hide_messages_before
-            unreadCount = response.read.firstOrNull { it.user.id == userId }?.unread_messages
+        return response.channel.toDomain().let{ channel ->
+            channel.copy(
+                watcherCount = response.watcher_count,
+                read = response.read.map(DownstreamChannelUserRead::toDomain),
+                members = response.members.map(DownstreamMemberDto::toDomain),
+                membership = response.membership?.toDomain(),
+                messages = response.messages.map { it.toDomain().enrichWithCid(channel.cid) },
+                watchers = response.watchers.map(DownstreamUserDto::toDomain),
+                hidden = response.hidden,
+                hiddenMessagesBefore = response.hide_messages_before,
+                unreadCount = response.read.firstOrNull { it.user.id == userId }?.unread_messages,
+            )
         }
     }
 
@@ -784,10 +786,13 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return generalApi.searchMessages(newRequest)
             .map { response ->
                 response.results.map { resp ->
-                    resp.message.toDomain().apply {
-                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
-                            ?.let(::enrichWithCid)
-                    }
+                    resp.message.toDomain()
+                        .let { message ->
+                            (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+                                ?.let(message::enrichWithCid)
+                                ?: message
+
+                        }
                 }
             }
     }
@@ -813,9 +818,10 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 val results = response.results
 
                 val messages = results.map { resp ->
-                    resp.message.toDomain().apply {
-                        (cid.takeUnless(CharSequence::isBlank) ?: channelInfo?.cid)
-                            ?.let(::enrichWithCid)
+                    resp.message.toDomain().let { message ->
+                        (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
+                            ?.let(message::enrichWithCid)
+                            ?: message
                     }
                 }
                 SearchMessagesResult(

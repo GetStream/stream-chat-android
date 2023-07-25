@@ -24,19 +24,9 @@ import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamConnectedEventDto
 import io.getstream.chat.android.client.api2.model.response.SocketErrorResponse
-import io.getstream.chat.android.client.events.ChannelTruncatedEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
-import io.getstream.chat.android.client.events.ChannelUpdatedEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.events.MessageDeletedEvent
-import io.getstream.chat.android.client.events.MessageUpdatedEvent
-import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.ReactionDeletedEvent
-import io.getstream.chat.android.client.events.ReactionNewEvent
-import io.getstream.chat.android.client.events.ReactionUpdateEvent
-import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.adapters.AttachmentDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
@@ -133,22 +123,5 @@ internal class MoshiChatParser : ChatParser {
     private fun parseAndProcessEvent(raw: String): ChatEvent {
         val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain()
         return event.enrichIfNeeded()
-    }
-
-    private fun ChatEvent.enrichIfNeeded(): ChatEvent = apply {
-        when (this) {
-            is NewMessageEvent -> message.enrichWithCid(cid)
-            is MessageDeletedEvent -> message.enrichWithCid(cid)
-            is MessageUpdatedEvent -> message.enrichWithCid(cid)
-            is ReactionNewEvent -> message.enrichWithCid(cid)
-            is ReactionUpdateEvent -> message.enrichWithCid(cid)
-            is ReactionDeletedEvent -> message.enrichWithCid(cid)
-            is ChannelUpdatedEvent -> message?.enrichWithCid(cid)
-            is ChannelTruncatedEvent -> message?.enrichWithCid(cid)
-            is ChannelUpdatedByUserEvent -> message?.enrichWithCid(cid)
-            is NotificationMessageNewEvent -> message.enrichWithCid(cid)
-            else -> { /* Do nothing */
-            }
-        }
     }
 }

@@ -1567,24 +1567,23 @@ public class MessageListController(
         ).enqueue { result ->
             when (result) {
                 is Result.Success -> {
-                    val message = result.value
-
-                    message.attachments.removeAll { attachment ->
-                        val imageUrl = attachmentToBeDeleted.imageUrl
-                        val assetUrl = attachmentToBeDeleted.assetUrl
-
-                        when {
-                            assetUrl != null -> {
-                                attachment.assetUrl?.substringBefore("?") ==
-                                    assetUrl.substringBefore("?")
+                    val message = result.value.copy(
+                        attachments = result.value.attachments.filterNot { attachment ->
+                            val imageUrl = attachmentToBeDeleted.imageUrl
+                            val assetUrl = attachmentToBeDeleted.assetUrl
+                            when {
+                                assetUrl != null -> {
+                                    attachment.assetUrl?.substringBefore("?") ==
+                                        assetUrl.substringBefore("?")
+                                }
+                                imageUrl != null -> {
+                                    attachment.imageUrl?.substringBefore("?") ==
+                                        imageUrl.substringBefore("?")
+                                }
+                                else -> false
                             }
-                            imageUrl != null -> {
-                                attachment.imageUrl?.substringBefore("?") ==
-                                    imageUrl.substringBefore("?")
-                            }
-                            else -> false
                         }
-                    }
+                    )
 
                     if (message.text.isBlank() && message.attachments.isEmpty()) {
                         chatClient.deleteMessage(messageId = messageId).enqueue(

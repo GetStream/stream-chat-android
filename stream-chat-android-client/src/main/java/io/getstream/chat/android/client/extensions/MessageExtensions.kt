@@ -24,10 +24,10 @@ import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 import java.util.Date
 
-public fun Message.enrichWithCid(cid: String): Message = apply {
-    replyTo?.enrichWithCid(cid)
-    this.cid = cid
-}
+public fun Message.enrichWithCid(newCid: String): Message = copy(
+    replyTo = replyTo?.enrichWithCid(newCid),
+    cid = newCid
+)
 
 /**
  * Updates a message that whose request (Edition/Delete/Reaction update...) has failed.

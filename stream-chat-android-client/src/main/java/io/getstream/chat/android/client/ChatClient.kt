@@ -695,7 +695,10 @@ internal constructor(
 
         userCredentialStorage.get()?.let { config ->
             initializeClientWithUser(
-                User(id = config.userId).apply { name = config.userName },
+                User(
+                    id = config.userId,
+                    name = config.userName
+                ),
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
                 isAnonymous = config.isAnonymous,
             )

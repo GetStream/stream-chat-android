@@ -19,9 +19,9 @@ package io.getstream.chat.android.models
 import java.util.Date
 
 public data class Mute(
-    var user: User,
-    var target: User,
-    var createdAt: Date,
-    var updatedAt: Date,
+    val user: User,
+    val target: User,
+    val createdAt: Date,
+    val updatedAt: Date,
     val expires: Date?,
 )

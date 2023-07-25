@@ -25,17 +25,17 @@ public data class Message(
      * The unique string identifier of the message. This is either created by Stream
      * or set on the client side when the message is added.
      */
-    var id: String = "",
+    val id: String = "",
 
     /**
      * Channel unique identifier in <type>:<id> format
      */
-    var cid: String = "",
+    val cid: String = "",
 
     /**
      * The text of this message
      */
-    var text: String = "",
+    val text: String = "",
 
     /**
      * The message text formatted as HTML
@@ -45,88 +45,88 @@ public data class Message(
     /**
      * The ID of the parent message, if the message is a thread reply
      */
-    var parentId: String? = null,
+    val parentId: String? = null,
 
     /**
      * Contains provided slash command
      */
-    var command: String? = null,
+    val command: String? = null,
 
     /**
      * The list of message attachments
      */
-    var attachments: MutableList<Attachment> = mutableListOf(),
+    val attachments: List<Attachment> = listOf(),
 
     /**
      * The list of user mentioned in the message
      */
-    var mentionedUsersIds: MutableList<String> = mutableListOf(),
+    val mentionedUsersIds: List<String> = listOf(),
 
     /**
      * The list of user mentioned in the message
      */
-    var mentionedUsers: MutableList<User> = mutableListOf(),
+    val mentionedUsers: List<User> = listOf(),
 
     /**
      * The number of replies to this message
      */
-    var replyCount: Int = 0,
+    val replyCount: Int = 0,
 
     /**
      * A mapping between reaction type and the count, ie like:10, heart:4
      */
-    var reactionCounts: MutableMap<String, Int> = mutableMapOf(),
+    val reactionCounts: Map<String, Int> = mapOf(),
 
     /**
      * A mapping between reaction type and the reaction score, ie like:10, heart:4
      */
-    var reactionScores: MutableMap<String, Int> = mutableMapOf(),
+    val reactionScores: Map<String, Int> = mapOf(),
 
     /**
      * If the message has been synced to the servers, default is synced
      */
-    var syncStatus: SyncStatus = SyncStatus.COMPLETED,
+    val syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     /**
      * Contains details related to [syncStatus].
      */
-    var syncDescription: MessageSyncDescription? = null,
+    val syncDescription: MessageSyncDescription? = null,
 
     /**
      * Contains type of the message. Can be one of the following: regular, ephemeral,
      * error, reply, system, deleted.
      */
-    var type: String = "",
+    val type: String = "",
 
     /**
      * List of the latest reactions to this message
      */
-    var latestReactions: MutableList<Reaction> = mutableListOf(),
+    val latestReactions: List<Reaction> = listOf(),
 
     /**
      * List of reactions of authenticated user to this message
      */
-    var ownReactions: MutableList<Reaction> = mutableListOf(),
+    val ownReactions: List<Reaction> = listOf(),
 
     /**
      * When the message was created
      */
-    var createdAt: Date? = null,
+    val createdAt: Date? = null,
 
     /**
      * When the message was updated
      */
-    var updatedAt: Date? = null,
+    val updatedAt: Date? = null,
 
     /**
      * When the message was deleted
      */
-    var deletedAt: Date? = null,
+    val deletedAt: Date? = null,
 
     /**
      * When the message was updated locally
      */
-    var updatedLocallyAt: Date? = null,
+    val updatedLocallyAt: Date? = null,
 
     /**
      * When the message was created locally
@@ -136,22 +136,22 @@ public data class Message(
     /**
      * The user who sent the message
      */
-    var user: User = User(),
+    val user: User = User(),
 
     /**
      * All the custom data provided for this message
      */
-    override var extraData: MutableMap<String, Any> = mutableMapOf(),
+    override val extraData: Map<String, Any> = mapOf(),
 
     /**
      * Whether message is silent or not
      */
-    var silent: Boolean = false,
+    val silent: Boolean = false,
 
     /**
      * If the message was sent by shadow banned user
      */
-    var shadowed: Boolean = false,
+    val shadowed: Boolean = false,
 
     /**
      * Mapping with translations. Key `language` contains the original language key.
@@ -162,45 +162,44 @@ public data class Message(
     /**
      * Whether thread reply should be shown in the channel as well
      */
-    var showInChannel: Boolean = false,
+    val showInChannel: Boolean = false,
 
-    @property:InternalStreamChatApi
-    var channelInfo: ChannelInfo? = null,
+    val channelInfo: ChannelInfo? = null,
 
     /**
      * Contains quoted message
      */
-    var replyTo: Message? = null,
+    val replyTo: Message? = null,
 
     /**
      * The ID of the quoted message, if the message is a quoted reply.
      */
-    var replyMessageId: String? = null,
+    val replyMessageId: String? = null,
 
     /**
      * Whether message is pinned or not
      */
-    var pinned: Boolean = false,
+    val pinned: Boolean = false,
 
     /**
      * Date when the message got pinned
      */
-    var pinnedAt: Date? = null,
+    val pinnedAt: Date? = null,
 
     /**
      * Date when pinned message expires
      */
-    var pinExpires: Date? = null,
+    val pinExpires: Date? = null,
 
     /**
      * Contains user who pinned the message
      */
-    var pinnedBy: User? = null,
+    val pinnedBy: User? = null,
 
     /**
      * The list of users who participate in thread
      */
-    var threadParticipants: List<User> = emptyList(),
+    val threadParticipants: List<User> = emptyList(),
 
     /**
      * If the message should skip triggering a push notification when sent. Used when sending a new message.
@@ -208,7 +207,7 @@ public data class Message(
      *
      * Note: This property is local only, it is not sent to the backend.
      */
-    var skipPushNotification: Boolean = false,
+    val skipPushNotification: Boolean = false,
 
     /**
      * If the message should skip enriching the URL. If URl is not enriched, it will not be
@@ -216,7 +215,7 @@ public data class Message(
      *
      * Note: This property is local only, it is not sent to the backend.
      */
-    var skipEnrichUrl: Boolean = false,
+    val skipEnrichUrl: Boolean = false,
 
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
@@ -314,4 +313,171 @@ public data class Message(
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
+
+    @SinceKotlin("99999.9")
+    @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
+    public fun newBuilder(): Builder = Builder(this)
+    public class Builder() {
+        private var id: String = ""
+        private var cid: String = ""
+        private var text: String = ""
+        private var html: String = ""
+        private var parentId: String? = null
+        private var command: String? = null
+        private var attachments: List<Attachment> = listOf()
+        private var mentionedUsersIds: List<String> = listOf()
+        private var mentionedUsers: List<User> = listOf()
+        private var replyCount: Int = 0
+        private var reactionCounts: Map<String, Int> = mapOf()
+        private var reactionScores: Map<String, Int> = mapOf()
+        private var syncStatus: SyncStatus = SyncStatus.COMPLETED
+        private var syncDescription: MessageSyncDescription? = null
+        private var type: String = ""
+        private var latestReactions: List<Reaction> = listOf()
+        private var ownReactions: List<Reaction> = listOf()
+        private var createdAt: Date? = null
+        private var updatedAt: Date? = null
+        private var deletedAt: Date? = null
+        private var updatedLocallyAt: Date? = null
+        private var createdLocallyAt: Date? = null
+        private var user: User = User()
+        private var extraData: Map<String, Any> = mapOf()
+        private var silent: Boolean = false
+        private var shadowed: Boolean = false
+        private var i18n: Map<String, String> = mapOf()
+        private var showInChannel: Boolean = false
+        private var channelInfo: ChannelInfo? = null
+        private var replyTo: Message? = null
+        private var replyMessageId: String? = null
+        private var pinned: Boolean = false
+        private var pinnedAt: Date? = null
+        private var pinExpires: Date? = null
+        private var pinnedBy: User? = null
+        private var threadParticipants: List<User> = emptyList()
+        private var skipPushNotification: Boolean = false
+        private var skipEnrichUrl: Boolean = false
+
+        public constructor(message: Message) : this() {
+            id = message.id
+            cid = message.cid
+            text = message.text
+            html = message.html
+            parentId = message.parentId
+            command = message.command
+            attachments = message.attachments
+            mentionedUsersIds = message.mentionedUsersIds
+            mentionedUsers = message.mentionedUsers
+            replyCount = message.replyCount
+            reactionCounts = message.reactionCounts
+            reactionScores = message.reactionScores
+            syncStatus = message.syncStatus
+            syncDescription = message.syncDescription
+            type = message.type
+            latestReactions = message.latestReactions
+            ownReactions = message.ownReactions
+            createdAt = message.createdAt
+            updatedAt = message.updatedAt
+            deletedAt = message.deletedAt
+            updatedLocallyAt = message.updatedLocallyAt
+            createdLocallyAt = message.createdLocallyAt
+            user = message.user
+            extraData = message.extraData
+            silent = message.silent
+            shadowed = message.shadowed
+            i18n = message.i18n
+            showInChannel = message.showInChannel
+            channelInfo = message.channelInfo
+            replyTo = message.replyTo
+            replyMessageId = message.replyMessageId
+            pinned = message.pinned
+            pinnedAt = message.pinnedAt
+            pinExpires = message.pinExpires
+            pinnedBy = message.pinnedBy
+            threadParticipants = message.threadParticipants
+            skipPushNotification = message.skipPushNotification
+            skipEnrichUrl = message.skipEnrichUrl
+        }
+
+        public fun withId(id: String): Builder = apply { this.id = id }
+        public fun withCid(cid: String): Builder = apply { this.cid = cid }
+        public fun withText(text: String): Builder = apply { this.text = text }
+        public fun withHtml(html: String): Builder = apply { this.html = html }
+        public fun withParentId(parentId: String?): Builder = apply { this.parentId = parentId }
+        public fun withCommand(command: String?): Builder = apply { this.command = command }
+        public fun withAttachments(attachments: List<Attachment>): Builder = apply { this.attachments = attachments }
+        public fun withMentionedUsersIds(mentionedUsersIds: List<String>): Builder = apply { this.mentionedUsersIds = mentionedUsersIds }
+        public fun withMentionedUsers(mentionedUsers: List<User>): Builder = apply { this.mentionedUsers = mentionedUsers }
+        public fun withReplyCount(replyCount: Int): Builder = apply { this.replyCount = replyCount }
+        public fun withReactionCounts(reactionCounts: Map<String, Int>): Builder = apply { this.reactionCounts = reactionCounts }
+        public fun withReactionScores(reactionScores: Map<String, Int>): Builder = apply { this.reactionScores = reactionScores }
+        public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
+        public fun withSyncDescription(syncDescription: MessageSyncDescription?): Builder = apply { this.syncDescription = syncDescription }
+        public fun withType(type: String): Builder = apply { this.type = type }
+        public fun withLatestReactions(latestReactions: List<Reaction>): Builder = apply { this.latestReactions = latestReactions }
+        public fun withOwnReactions(ownReactions: List<Reaction>): Builder = apply { this.ownReactions = ownReactions }
+        public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
+        public fun withUpdatedAt(updatedAt: Date?): Builder = apply { this.updatedAt = updatedAt }
+        public fun withDeletedAt(deletedAt: Date?): Builder = apply { this.deletedAt = deletedAt }
+        public fun withUpdatedLocallyAt(updatedLocallyAt: Date?): Builder = apply { this.updatedLocallyAt = updatedLocallyAt }
+        public fun withCreatedLocallyAt(createdLocallyAt: Date?): Builder = apply { this.createdLocallyAt = createdLocallyAt }
+        public fun withUser(user: User): Builder = apply { this.user = user }
+        public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
+        public fun withSilent(silent: Boolean): Builder = apply { this.silent = silent }
+        public fun withShadowed(shadowed: Boolean): Builder = apply { this.shadowed = shadowed }
+        public fun withI18n(i18n: Map<String, String>): Builder = apply { this.i18n = i18n }
+        public fun withShowInChannel(showInChannel: Boolean): Builder = apply { this.showInChannel = showInChannel }
+        public fun withChannelInfo(channelInfo: ChannelInfo?): Builder = apply { this.channelInfo = channelInfo }
+        public fun withReplyTo(replyTo: Message?): Builder = apply { this.replyTo = replyTo }
+        public fun withReplyMessageId(replyMessageId: String?): Builder = apply { this.replyMessageId = replyMessageId }
+        public fun withPinned(pinned: Boolean): Builder = apply { this.pinned = pinned }
+        public fun withPinnedAt(pinnedAt: Date?): Builder = apply { this.pinnedAt = pinnedAt }
+        public fun withPinExpires(pinExpires: Date?): Builder = apply { this.pinExpires = pinExpires }
+        public fun withPinnedBy(pinnedBy: User?): Builder = apply { this.pinnedBy = pinnedBy }
+        public fun withThreadParticipants(threadParticipants: List<User>): Builder = apply { this.threadParticipants = threadParticipants }
+        public fun withSkipPushNotification(skipPushNotification: Boolean): Builder = apply { this.skipPushNotification = skipPushNotification }
+        public fun withSkipEnrichUrl(skipEnrichUrl: Boolean): Builder = apply { this.skipEnrichUrl = skipEnrichUrl }
+
+        public fun build(): Message {
+            return Message(
+                id = id,
+                cid = cid,
+                text = text,
+                html = html,
+                parentId = parentId,
+                command = command,
+                attachments = attachments,
+                mentionedUsersIds = mentionedUsersIds,
+                mentionedUsers = mentionedUsers,
+                replyCount = replyCount,
+                reactionCounts = reactionCounts,
+                reactionScores = reactionScores,
+                syncStatus = syncStatus,
+                syncDescription = syncDescription,
+                type = type,
+                latestReactions = latestReactions,
+                ownReactions = ownReactions,
+                createdAt = createdAt,
+                updatedAt = updatedAt,
+                deletedAt = deletedAt,
+                updatedLocallyAt = updatedLocallyAt,
+                createdLocallyAt = createdLocallyAt,
+                user = user,
+                extraData = extraData,
+                silent = silent,
+                shadowed = shadowed,
+                i18n = i18n,
+                showInChannel = showInChannel,
+                channelInfo = channelInfo,
+                replyTo = replyTo,
+                replyMessageId = replyMessageId,
+                pinned = pinned,
+                pinnedAt = pinnedAt,
+                pinExpires = pinExpires,
+                pinnedBy = pinnedBy,
+                threadParticipants = threadParticipants,
+                skipPushNotification = skipPushNotification,
+                skipEnrichUrl = skipEnrichUrl
+            )
+        }
+    }
 }

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.interceptor.message.internal
 
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
@@ -50,42 +51,44 @@ internal class PrepareMessageLogicImpl(
     override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
         val channel = channelStateLogicProvider?.channelStateLogic(channelType, channelId)
 
-        return message.copy().apply {
-            if (id.isEmpty()) {
-                id = generateMessageId(user.id)
+        val attachments = message.attachments.map {
+            when (it.upload) {
+                null -> it.copy(
+                    extraData = it.extraData + mapOf(EXTRA_UPLOAD_ID to (it.uploadId ?: generateUploadId())),
+                    uploadState = Attachment.UploadState.Idle,
+                )
+                else -> it.copy(uploadState = Attachment.UploadState.Success)
             }
-            if (cid.isEmpty()) {
-                enrichWithCid("$channelType:$channelId")
-            }
-
-            this.user = user
-
-            val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
-
-            attachmentsToUpload.forEach { attachment ->
-                if (attachment.uploadId == null) {
-                    attachment.uploadId = generateUploadId()
-                }
-                attachment.uploadState = Attachment.UploadState.Idle
-            }
-            nonFileAttachments.forEach { attachment ->
-                attachment.uploadState = Attachment.UploadState.Success
-            }
-
-            type = getMessageType(message)
-            createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
+        }
+        return message.copy(
+            id = message.id.takeIf { it.isNotBlank() } ?: generateMessageId(user.id),
+            user = user,
+            attachments = attachments,
+            type = getMessageType(message),
+            createdLocallyAt = message.createdAt ?: message.createdLocallyAt ?: Date(),
             syncStatus = when {
-                attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
+                attachments.any { it.upload == null } -> SyncStatus.AWAITING_ATTACHMENTS
                 clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
-
-            channel?.listenForChannelState()?.toChannel()?.let(message::populateMentions)
-        }.also { preparedMessage ->
-            if (preparedMessage.replyMessageId != null) {
-                channel?.replyMessage(null)
+        )
+            .let { copiedMessage ->
+                copiedMessage.takeIf { it.cid.isBlank() }
+                    ?.enrichWithCid("$channelType:$channelId")
+                    ?: copiedMessage
             }
-        }
+            .let {copiedMessage ->
+                channel
+                    ?.listenForChannelState()
+                    ?.toChannel()
+                    ?.let(copiedMessage::populateMentions)
+                    ?: copiedMessage
+            }
+            .also { preparedMessage ->
+                if (preparedMessage.replyMessageId != null) {
+                    channel?.replyMessage(null)
+                }
+            }
     }
 
     /**

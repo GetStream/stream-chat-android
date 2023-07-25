@@ -179,8 +179,7 @@ internal class ChannelsApiCallsTests {
 
     @Test
     fun updateChannelSuccess() = runTest {
-        val updateMessage = Message()
-            .apply { text = "update-message" }
+        val updateMessage = Message(text = "update-message")
         val updateChannelData = mapOf<String, Any>()
         val responseChannel = Channel()
 
@@ -202,8 +201,7 @@ internal class ChannelsApiCallsTests {
 
     @Test
     fun updateChannelError() = runTest {
-        val updateMessage = Message()
-            .apply { text = "update-message" }
+        val updateMessage = Message(text = "update-message")
         val updateChannelData = mapOf<String, Any>()
 
         Mockito.`when`(
@@ -353,8 +351,7 @@ internal class ChannelsApiCallsTests {
     fun queryChannelsSuccess() = runTest {
         val offset = 0
         val limit = 1
-        val channel = Channel()
-            .apply { id = "10" }
+        val channel = Channel(id = "10")
 
         val request = QueryChannelsRequest(
             Filters.eq("type", "messaging"),

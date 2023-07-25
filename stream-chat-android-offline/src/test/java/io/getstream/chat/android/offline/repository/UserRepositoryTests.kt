@@ -150,9 +150,10 @@ internal class UserRepositoryTests {
         runTest {
             val newUser1 = randomUser()
             val newUser2 = randomUser()
-            val updatedUser1 = newUser1.copy(extraData = mutableMapOf()).apply {
-                name = "newUserName"
-            }
+            val updatedUser1 = newUser1.copy(
+                extraData = mutableMapOf(),
+                name = "newUserName",
+            )
             var observedTimes = 0
 
             sut.observeLatestUsers()

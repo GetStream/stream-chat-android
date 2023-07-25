@@ -79,21 +79,21 @@ public class RepositoryFacade private constructor(
             emptyMap()
         }
 
-        return channels.onEach { channel ->
+        return channels.map { channel ->
             channel.enrichChannel(messagesMap, defaultConfig)
         }
     }
 
     @VisibleForTesting
-    public fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
-        config = selectChannelConfig(type)?.config ?: defaultConfig
+    public fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config): Channel = copy(
+        config = selectChannelConfig(type)?.config ?: defaultConfig,
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
             fullList.distinctBy(Message::id)
         } else {
             messages
-        }
-    }
+        },
+    )
 
     override suspend fun upsertChannel(channel: Channel) {
         insertUsers(channel.let(Channel::users))

@@ -134,17 +134,18 @@ internal class DatabaseUserRepository(
     }
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
-        User(id = this.originalId).also { user ->
-            user.name = name
-            user.image = image
-            user.role = role
-            user.createdAt = createdAt
-            user.updatedAt = updatedAt
-            user.lastActive = lastActive
-            user.invisible = invisible
-            user.extraData = extraData.toMutableMap()
-            user.banned = banned
-        }
+        User(
+            id = this.originalId,
+            name = name,
+            image = image,
+            role = role,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            invisible = invisible,
+            extraData = extraData.toMutableMap(),
+            banned = banned,
+        )
     }
 
     companion object {

@@ -42,13 +42,11 @@ class UserCredentialsRepository(context: Context) {
 
         return UserCredentials(
             apiKey = apiKey,
-            user = User().apply {
-                id = userId
-                name = userName
-                if (userImage.isNotEmpty()) {
-                    image = userImage
-                }
-            },
+            user = User(
+                id = userId,
+                name = userName,
+                image = userImage,
+            ),
             token = token
         )
     }
