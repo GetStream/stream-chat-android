@@ -115,7 +115,7 @@ internal class AttachmentUrlValidatorTests {
     @Test
     fun `If old messages contains the same id and old url is still valid Should return list with new message with old url`() {
         val oldValidUrl = "oldValidUrl"
-        val oldAttachment = Attachment(imageUrl = oldValidUrl)
+        val oldAttachment = randomAttachment().copy(imageUrl = oldValidUrl)
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
         val newMessage = oldMessage.copy(
             attachments = listOf(oldAttachment.copy(imageUrl = "SomeNewUrl")),

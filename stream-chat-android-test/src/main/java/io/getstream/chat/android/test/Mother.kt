@@ -68,3 +68,19 @@ public fun createDate(
     calendar.set(year, month, date, hourOfDay, minute, seconds)
     return calendar.time
 }
+
+public fun randomValue(): Any {
+    return when (Random.nextInt(0, 5)) {
+        0 -> randomString()
+        1 -> randomInt()
+        2 -> randomLong()
+        3 -> randomBoolean()
+        4 -> randomDate()
+        else -> randomString()
+    }
+}
+public fun randomExtraData(maxPossibleEntries: Int = 10): Map<String, Any> {
+    val size =  positiveRandomInt(maxPossibleEntries)
+    return (1..size).associate { randomString() to randomValue() }
+}
+
