@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.test
 
-import com.flextrade.jfixture.JFixture
-import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
@@ -62,11 +60,12 @@ import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomCID
 import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomExtraData
+import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomIntBetween
 import io.getstream.chat.android.test.randomString
 import java.util.Date
-
-private val fixture = JFixture()
 
 private val streamFormatter = StreamDateFormatter()
 
@@ -566,12 +565,32 @@ public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus
     (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
 
 public fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
-    return KFixture(fixture) {
-        sameInstance(
-            Attachment.UploadState::class.java,
-            Attachment.UploadState.Success
-        )
-    } <Attachment>().apply(attachmentBuilder)
+    return Attachment(
+        authorName = randomString(),
+        authorLink = randomString(),
+        titleLink = randomString(),
+        thumbUrl = randomString(),
+        imageUrl = randomString(),
+        assetUrl = randomString(),
+        ogUrl = randomString(),
+        mimeType = randomString(),
+        fileSize = randomIntBetween(
+            min = 1 * 1024 * 1024,
+            max = 100 * 1024 * 1024
+        ),
+        title = randomString(),
+        text = randomString(),
+        type = randomString(),
+        image = randomString(),
+        url = randomString(),
+        name = randomString(),
+        fallback = randomString(),
+        originalHeight = randomInt(),
+        originalWidth = randomInt(),
+        upload = randomFile(),
+        uploadState = Attachment.UploadState.Success,
+        extraData = randomExtraData()
+    ).apply(attachmentBuilder)
 }
 
 public fun randomChannelUpdatedEvent(
@@ -698,7 +717,7 @@ public fun randomQueryChannelsSpec(
 public fun randomNotificationAddedToChannelEvent(
     cid: String = randomString(),
     channel: Channel = randomChannel(),
-    member: Member = randomMember()
+    member: Member = randomMember(),
 ): NotificationAddedToChannelEvent {
     val createdAt = Date()
 
@@ -738,7 +757,7 @@ public fun randomNotificationRemovedFromChannelEvent(
 
 public fun randomNotificationMessageNewEvent(
     cid: String = randomString(),
-    channel: Channel = randomChannel()
+    channel: Channel = randomChannel(),
 ): NotificationMessageNewEvent {
     val createdAt = Date()
 
