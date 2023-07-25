@@ -370,12 +370,10 @@ internal class ChannelLogic(
     }
 
     private fun upsertEventMessage(message: Message) {
-        // make sure we don't lose ownReactions
-        getMessage(message.id)?.let {
-            message.ownReactions = it.ownReactions
-        }
-
-        channelStateLogic.upsertMessage(message, updateCount = false)
+        channelStateLogic.upsertMessage(
+            message.copy(ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions),
+            updateCount = false,
+        )
     }
 
     /**
@@ -394,41 +392,30 @@ internal class ChannelLogic(
 
     private fun upsertUser(user: User) {
         upsertUserPresence(user)
-        // channels have users
         val userId = user.id
-        val channelData = mutableState.channelData.value
-        if (channelData.createdBy.id == userId) {
-            channelData.createdBy = user
+        mutableState.channelData.value.takeIf { it.createdBy.id == userId }?.let { channelData ->
+            mutableState.setChannelData(channelData.copy(createdBy = user))
         }
-
-        // updating messages is harder
-        // user updates don't happen frequently, it's probably ok for this update to be sluggish
-        // if it turns out to be slow we can do a simple reverse index from user -> message
-        val messages = mutableState.messageList.value
-        val changedMessages = mutableListOf<Message>()
-        for (message in messages) {
-            var changed = false
-            if (message.user.id == userId) {
-                message.user = user
-                changed = true
+        mutableState.messageList.value
+            .map { message ->
+                message.copy(
+                    user = message.user.takeUnless { it.id == userId } ?: user,
+                    ownReactions = message.ownReactions.map { reaction ->
+                        reaction.takeUnless { it.fetchUserId() == userId } ?: reaction.copy(user = user)
+                    },
+                    latestReactions = message.latestReactions.map { reaction ->
+                        reaction.takeUnless { it.fetchUserId() == userId } ?: reaction.copy(user = user)
+                    },
+                )
             }
-            for (reaction in message.ownReactions) {
-                if (reaction.user!!.id == userId) {
-                    reaction.user = user
-                    changed = true
-                }
+            .also { mutableState.setMessages(it) }
+            .filter {
+                it.user.id == userId ||
+                    it.ownReactions.any { reaction -> reaction.fetchUserId() == userId } ||
+                    it.latestReactions.any { reaction -> reaction.fetchUserId() == userId }
+            }.takeUnless { it.isEmpty() }?.let { changedMessages ->
+                channelStateLogic.upsertMessages(changedMessages)
             }
-            for (reaction in message.latestReactions) {
-                if (reaction.user!!.id == userId) {
-                    reaction.user = user
-                    changed = true
-                }
-            }
-            if (changed) changedMessages.add(message)
-        }
-        if (changedMessages.isNotEmpty()) {
-            channelStateLogic.upsertMessages(changedMessages)
-        }
     }
 
     /**
@@ -455,9 +442,9 @@ internal class ChannelLogic(
                 channelStateLogic.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
-                event.message.apply {
-                    replyTo = mutableState.messageList.value.firstOrNull { it.id == replyMessageId }
-                }.let(::upsertEventMessage)
+                event.message.copy(
+                    replyTo = mutableState.messageList.value.firstOrNull { it.id == event.message.replyMessageId }
+                ).let(::upsertEventMessage)
 
                 channelStateLogic.toggleHidden(false)
             }

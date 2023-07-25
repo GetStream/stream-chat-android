@@ -60,7 +60,7 @@ internal class MockClientBuilder(
     val channelId = "channel-id"
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
     val serverErrorCode = 500
-    val user = User().apply { id = userId }
+    val user = User(id = userId)
     val userStateFlow = MutableStateFlow(user)
     val createdAt = Date()
     val rawCreatedAt = streamDateFormatter.format(createdAt)

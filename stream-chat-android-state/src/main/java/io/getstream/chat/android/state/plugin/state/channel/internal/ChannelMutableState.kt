@@ -222,13 +222,13 @@ internal class ChannelMutableState(
 
         val channel = channelData
             .toChannel(messages, cachedMessages, members, reads, watchers, watcherCount, insideSearch)
-        channel.config = channelConfig.value
-        channel.unreadCount = unreadCount.value
-        channel.hidden = hidden.value
-        channel.isInsideSearch = insideSearch
-        channel.cachedLatestMessages = cachedLatestMessages.value.values.toList()
-
-        return channel
+        return channel.copy(
+            config = channelConfig.value,
+            unreadCount = unreadCount.value,
+            hidden = hidden.value,
+            isInsideSearch = insideSearch,
+            cachedLatestMessages = cachedLatestMessages.value.values.toList(),
+        )
     }
 
     /**
@@ -457,7 +457,7 @@ internal class ChannelMutableState(
         val newUserRead = (read.value ?: ChannelUserRead(user)).let { currentUserRead ->
             currentUserRead.copy(
                 user = user,
-                unreadMessages = ++currentUserRead.unreadMessages,
+                unreadMessages = currentUserRead.unreadMessages + 1,
                 lastMessageSeenDate = message.createdAt,
             )
         }

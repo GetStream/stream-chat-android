@@ -61,9 +61,9 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
-import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
+import io.getstream.chat.android.client.extensions.internal.enrichIfNeeded
 import io.getstream.chat.android.client.extensions.internal.mergeReactions
 import io.getstream.chat.android.client.extensions.internal.removeMember
 import io.getstream.chat.android.client.extensions.internal.removeMembership
@@ -372,7 +372,7 @@ internal class EventHandlerSequential(
 
     private suspend fun updateOfflineStorage(batchEvent: BatchEvent) {
         logger.v { "[updateOfflineStorage] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size} " }
-        val events = batchEvent.sortedEvents
+        val events = batchEvent.sortedEvents.map { it.enrichIfNeeded() }
         val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
         batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
 
@@ -399,29 +399,29 @@ internal class EventHandlerSequential(
                 // keep the data in Room updated based on the various events..
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
-                    event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessageData(event.cid, event.message, isNewMessage = true)
+                    val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    batch.addMessageData(event.cid, enrichedMessage, isNewMessage = true)
                     repos.selectChannelWithoutMessages(event.cid)?.let { channel ->
                         val updatedChannel = channel.copy(
                             hidden = false,
-                            messages = listOf(event.message)
+                            messages = listOf(enrichedMessage)
                         )
                         batch.addChannel(updatedChannel)
                     }
                 }
                 is MessageDeletedEvent -> {
-                    event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessageData(event.cid, event.message)
+                    batch.addMessageData(
+                        event.cid,
+                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    )
                 }
                 is MessageUpdatedEvent -> {
-                    event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessageData(event.cid, event.message)
+                    batch.addMessageData(
+                        event.cid,
+                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                    )
                 }
                 is NotificationMessageNewEvent -> {
-                    event.message.enrichWithCid(event.cid)
                     batch.addMessageData(event.cid, event.message, isNewMessage = true)
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
@@ -446,16 +446,16 @@ internal class EventHandlerSequential(
                 }
                 is ChannelHiddenEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        val updatedChannel = it.apply {
-                            hidden = true
-                            hiddenMessagesBefore = event.createdAt.takeIf { event.clearHistory }
-                        }
+                        val updatedChannel = it.copy(
+                            hidden = true,
+                            hiddenMessagesBefore = event.createdAt.takeIf { event.clearHistory },
+                        )
                         batch.addChannel(updatedChannel)
                     }
                 }
                 is ChannelVisibleEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
-                        batch.addChannel(it.apply { hidden = false })
+                        batch.addChannel(it.copy(hidden = false))
                     }
                 }
                 is NotificationMutesUpdatedEvent -> {
@@ -464,19 +464,14 @@ internal class EventHandlerSequential(
                 }
 
                 is ReactionNewEvent -> {
-                    event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessage(event.message)
+
+                    batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
                 }
                 is ReactionDeletedEvent -> {
-                    event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessage(event.message)
+                    batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
                 }
                 is ReactionUpdateEvent -> {
-                    event.message.enrichWithCid(event.cid)
-                    event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessage(event.message)
+                    batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
                 }
                 is ChannelUserBannedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
@@ -520,10 +515,10 @@ internal class EventHandlerSequential(
                 is NotificationRemovedFromChannelEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.removeMembership(currentUserId).apply {
-                                memberCount = event.channel.memberCount
-                                members = event.channel.members
-                            }
+                            channel.removeMembership(currentUserId).copy(
+                                memberCount = event.channel.memberCount,
+                                members = event.channel.members,
+                            )
                         )
                     }
                 }
@@ -553,23 +548,19 @@ internal class EventHandlerSequential(
                 // get the channel, update reads, write the channel
                 is MessageReadEvent ->
                     batch.getCurrentChannel(event.cid)
-                        ?.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
-                        }
+                        ?.updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         ?.let(batch::addChannel)
 
                 is NotificationMarkReadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.apply {
-                            updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
-                        }
+                        ?.updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
                         ?.let(batch::addChannel)
                 }
                 is GlobalUserBannedEvent -> {
-                    batch.addUser(event.user.apply { banned = true })
+                    batch.addUser(event.user.copy(banned = true))
                 }
                 is GlobalUserUnbannedEvent -> {
-                    batch.addUser(event.user.apply { banned = false })
+                    batch.addUser(event.user.copy(banned = false))
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     repos.insertCurrentUser(event.user)
@@ -644,7 +635,11 @@ internal class EventHandlerSequential(
         }
     }
 
-    private fun Message.enrichWithOwnReactions(batch: EventBatchUpdate, currentUserId: UserId, eventUser: User?) {
+    private fun Message.enrichWithOwnReactions(
+        batch: EventBatchUpdate,
+        currentUserId: UserId,
+        eventUser: User?,
+    ): Message = copy(
         ownReactions = if (eventUser != null && currentUserId != eventUser.id) {
             batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
         } else {
@@ -653,7 +648,7 @@ internal class EventHandlerSequential(
                 batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
             ).toMutableList()
         }
-    }
+    )
 
     private infix fun UserId.mustBe(currentUserId: UserId?) {
         if (this != currentUserId) {

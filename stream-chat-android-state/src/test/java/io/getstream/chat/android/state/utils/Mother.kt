@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.utils
 
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.test.positiveRandomInt
@@ -25,8 +26,9 @@ import java.util.UUID
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
     createAttachment: (Int) -> Attachment = {
-        Attachment(upload = randomFile()).apply {
-            uploadId = "upload_id_${UUID.randomUUID()}"
-        }
+        Attachment(
+            upload = randomFile(),
+            extraData = mapOf(EXTRA_UPLOAD_ID to "upload_id_${UUID.randomUUID()}"),
+        )
     },
 ): List<Attachment> = (1..size).map(createAttachment)

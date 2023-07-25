@@ -84,11 +84,11 @@ class UserViewHolder(
         itemView.apply {
             binding.nameTextView.text = user.name
             binding.userAvatarView.setUser(
-                User().apply {
-                    image = user.image
-                    name = user.name
-                    id = user.id
-                }
+                User(
+                    image = user.image,
+                    name = user.name,
+                    id = user.id,
+                )
             )
         }
     }

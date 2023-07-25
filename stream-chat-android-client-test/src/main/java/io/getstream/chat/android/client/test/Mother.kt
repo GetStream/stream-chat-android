@@ -472,6 +472,7 @@ public fun randomChannelInfo(
 
 public fun randomChannel(
     id: String = randomString(),
+    name: String = randomString(),
     type: String = randomString(),
     watcherCount: Int = randomInt(),
     frozen: Boolean = randomBoolean(),
@@ -491,8 +492,10 @@ public fun randomChannel(
     team: String = randomString(),
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
+    extraData: Map<String, Any> = emptyMap(),
 ): Channel = Channel(
     id = id,
+    name = name,
     type = type,
     watcherCount = watcherCount,
     frozen = frozen,
@@ -511,7 +514,8 @@ public fun randomChannel(
     unreadCount = unreadCount,
     team = team,
     hidden = hidden,
-    hiddenMessagesBefore = hiddenMessagesBefore
+    hiddenMessagesBefore = hiddenMessagesBefore,
+    extraData = extraData,
 )
 
 public fun randomMember(
@@ -561,7 +565,7 @@ public fun randomReaction(
 public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
     (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
 
-public fun randomAttachment(attachmentBuilder: Attachment.() -> Unit): Attachment {
+public fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
     return KFixture(fixture) {
         sameInstance(
             Attachment.UploadState::class.java,

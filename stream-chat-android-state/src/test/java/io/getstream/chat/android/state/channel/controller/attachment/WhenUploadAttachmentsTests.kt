@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.channel.controller.attachment
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsWorker
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.test.randomAttachment
@@ -49,15 +50,11 @@ import org.mockito.kotlin.whenever
 internal class WhenUploadAttachmentsTests {
 
     private val attachmentsSent = mutableListOf(
-        randomAttachment {
-            this.uploadState = Attachment.UploadState.Success
-        }
+        randomAttachment().copy(uploadState = Attachment.UploadState.Success)
     )
 
     private val attachmentsPending = mutableListOf(
-        randomAttachment {
-            this.uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30)
-        }
+        randomAttachment().copy(uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30))
     )
 
     private val defaultMessageSentAttachments = randomMessage(
@@ -136,10 +133,12 @@ internal class WhenUploadAttachmentsTests {
         val message = randomMessage(
             id = "messageId123",
             attachments = mutableListOf(
-                randomAttachment {
-                    uploadState = Attachment.UploadState.Idle
-                    uploadId = "uploadId123"
-                }
+                randomAttachment().copy(
+                    uploadState = Attachment.UploadState.Idle,
+                    extraData = mutableMapOf(
+                        EXTRA_UPLOAD_ID to "uploadId123"
+                    ),
+                )
             )
         )
         val sut =
@@ -167,14 +166,14 @@ internal class WhenUploadAttachmentsTests {
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
-                    randomAttachment {
-                        uploadState = Attachment.UploadState.Idle
-                        uploadId = "uploadId1"
-                    },
-                    randomAttachment {
-                        uploadState = Attachment.UploadState.Success
-                        uploadId = "uploadId2"
-                    }
+                    randomAttachment().copy(
+                        uploadState = Attachment.UploadState.Idle,
+                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
+                    ),
+                    randomAttachment().copy(
+                        uploadState = Attachment.UploadState.Success,
+                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                    )
                 )
             )
             val sut =
@@ -220,14 +219,14 @@ internal class WhenUploadAttachmentsTests {
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
-                    randomAttachment {
-                        uploadState = Attachment.UploadState.Idle
-                        uploadId = "uploadId1"
-                    },
-                    randomAttachment {
-                        uploadState = Attachment.UploadState.Success
-                        uploadId = "uploadId2"
-                    }
+                    randomAttachment().copy(
+                        uploadState = Attachment.UploadState.Idle,
+                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
+                    ),
+                    randomAttachment().copy(
+                        uploadState = Attachment.UploadState.Success,
+                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                    )
                 )
             )
             val sut =
@@ -264,14 +263,14 @@ internal class WhenUploadAttachmentsTests {
             val message = randomMessage(
                 id = "messageId123",
                 attachments = mutableListOf(
-                    randomAttachment {
-                        uploadState = Attachment.UploadState.Idle
-                        uploadId = "uploadId1"
-                    },
-                    randomAttachment {
-                        uploadState = Attachment.UploadState.Success
-                        uploadId = "uploadId2"
-                    }
+                    randomAttachment().copy(
+                        uploadState = Attachment.UploadState.Idle,
+                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId1"),
+                    ),
+                    randomAttachment().copy(
+                        uploadState = Attachment.UploadState.Success,
+                        extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
+                    )
                 )
             )
             val sut =

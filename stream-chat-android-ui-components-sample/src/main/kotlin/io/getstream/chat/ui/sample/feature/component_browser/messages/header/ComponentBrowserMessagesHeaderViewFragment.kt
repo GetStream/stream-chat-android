@@ -72,11 +72,11 @@ class ComponentBrowserMessagesHeaderViewFragment : Fragment() {
         binding.headerOnlineAvatar.apply {
             setTitle("Chat title")
             setOnlineStateSubtitle("Chat status")
-            val channel = randomChannel().apply {
-                type = "messaging"
-                id = "!members-p28xtFuiwKzLG4IgCFCN0v1WQSwTGH0ZcnINefSxdS4"
-                members = listOf(Member(user = randomUser(isOnline = true)))
-            }
+            val channel = randomChannel().copy(
+                type = "messaging",
+                id = "!members-p28xtFuiwKzLG4IgCFCN0v1WQSwTGH0ZcnINefSxdS4",
+                members = listOf(Member(user = randomUser(isOnline = true))),
+            )
             setAvatar(channel)
             showOnlineStateSubtitle()
         }

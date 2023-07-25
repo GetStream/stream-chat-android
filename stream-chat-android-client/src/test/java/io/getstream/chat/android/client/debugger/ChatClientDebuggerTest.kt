@@ -69,7 +69,7 @@ internal class ChatClientDebuggerTest {
     lateinit var result: MutableList<ChatEvent>
     val token = randomString()
     val userId = randomString()
-    val user = Mother.randomUser { id = userId }
+    val user = Mother.randomUser().copy(id = userId)
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
 
@@ -147,7 +147,7 @@ internal class ChatClientDebuggerTest {
         /* Given */
         val channelType = "messaging"
         val channelId = "general"
-        val message = Message().apply { text = "test-message" }
+        val message = Message(text = "test-message")
         val isRetrying = false
         whenever(attachmentsSender.sendAttachments(any(), any(), any(), any(), any())) doReturn Result.Success(message)
         whenever(api.sendMessage(any(), any(), any())) doReturn message.asCall()

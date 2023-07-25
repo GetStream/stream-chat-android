@@ -94,10 +94,10 @@ internal class DeleteMessageListenerDatabase(
     override suspend fun onMessageDeleteResult(originalMessageId: String, result: Result<Message>) {
         when (result) {
             is Result.Success -> {
-                val deletedMessage = result.value
-                deletedMessage.syncStatus = SyncStatus.COMPLETED
-
-                messageRepository.insertMessage(deletedMessage, true)
+                messageRepository.insertMessage(
+                    result.value.copy(syncStatus = SyncStatus.COMPLETED),
+                    true
+                )
             }
             is Result.Failure -> {
                 messageRepository.selectMessage(originalMessageId)?.let { originalMessage ->

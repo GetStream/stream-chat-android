@@ -181,17 +181,13 @@ public class MediaGalleryPreviewViewModel(
         val numberOfAttachments = attachments.size
 
         if (message.text.isNotEmpty() || numberOfAttachments > 1) {
-            val message = message
-
-            attachments.removeAll {
-                it.url == currentMediaAttachment.url
-            }
-
-            chatClient.updateMessage(
-                message = message.apply {
-                    this.skipEnrichUrl = skipEnrichUrl
-                }
-            ).enqueue()
+            message = message.copy(
+                attachments = attachments.filterNot {
+                    it.url == currentMediaAttachment.url
+                },
+                skipEnrichUrl = skipEnrichUrl,
+            )
+            chatClient.updateMessage(message = message).enqueue()
         } else if (message.text.isEmpty() && numberOfAttachments == 1) {
             chatClient.deleteMessage(message.id).enqueue { result ->
                 if (result is Result.Success) {

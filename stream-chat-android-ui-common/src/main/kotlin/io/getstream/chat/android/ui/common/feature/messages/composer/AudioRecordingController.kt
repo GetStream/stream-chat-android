@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
-import io.getstream.chat.android.client.extensions.waveformData
+import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.copy
@@ -317,8 +317,13 @@ internal class AudioRecordingController(
             logger.d { "[completeRecording] completing from Overview state" }
             audioPlayer.resetAudio(state.playingId)
             clearData()
-            state.attachment.waveformData = state.waveform
-            this.recordingState.value = RecordingState.Complete(state.attachment)
+            this.recordingState.value = RecordingState.Complete(
+                state.attachment.copy(
+                    extraData = state.attachment.extraData + mapOf(
+                        EXTRA_WAVEFORM_DATA to state.waveform
+                    )
+                )
+            )
             this.recordingState.value = RecordingState.Idle
             return
         }
@@ -332,8 +337,14 @@ internal class AudioRecordingController(
         val adjusted = samples.downsampleMax(samplesTarget)
         val normalized = adjusted.normalize()
         clearData()
-        val recorded = result.getOrThrow().apply {
-            attachment.waveformData = normalized
+        val recorded = result.getOrThrow().let {
+            it.copy(
+                attachment = it.attachment.copy(
+                    extraData = it.attachment.extraData + mapOf(
+                        EXTRA_WAVEFORM_DATA to normalized
+                    )
+                )
+            )
         }
         logger.d { "[completeRecording] complete from state: $state" }
         recordingState.value = RecordingState.Complete(recorded.attachment)

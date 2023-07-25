@@ -24,9 +24,10 @@ public class UserPresence {
      * @see <a href="https://getstream.io/chat/docs/presence_format/?language=java#invisible">Invisible</a>
      */
     public void invisible() {
-        User user = new User();
-        user.setId("user-id");
-        user.setInvisible(true);
+        User user = new User.Builder()
+                .withId("user-id")
+                .withInvisible(true)
+                .build();
         client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
             if (result.isSuccess()) {
                 User userRes = result.getOrNull().getUser();

@@ -153,11 +153,12 @@ public class AddingCustomAttachments extends Fragment {
                 // Add an attachment to the message input when the user selects a date
                 datePickerDialog.addOnPositiveButtonClickListener(date -> {
                     String payload = new SimpleDateFormat("MMMM dd, yyyy").format(new Date(date));
-                    Attachment attachment = new Attachment();
-                    attachment.setType("date");
                     Map<String, Object> extraData = new HashMap<>();
                     extraData.put("payload", payload);
-                    attachment.setExtraData(extraData);
+                    Attachment attachment = new Attachment.Builder()
+                            .withType("date")
+                            .withExtraData(extraData)
+                            .build();
                     messageComposerViewModel.addSelectedAttachments(Collections.singletonList(attachment));
                 });
 

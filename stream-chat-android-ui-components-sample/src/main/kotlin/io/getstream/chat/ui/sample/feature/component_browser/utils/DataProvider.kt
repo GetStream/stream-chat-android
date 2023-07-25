@@ -37,16 +37,14 @@ internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int)
 }
 
 internal fun randomUser(withImage: Boolean = true, isOnline: Boolean = true): User {
-    return User().apply {
-        id = "${('A'..'Z').random()}${('A'..'Z').random()}"
-        name = "${('A'..'Z').random()} ${('A'..'Z').random()}"
-
-        if (withImage) {
-            image = randomImageUrl()
-        }
-        if (isOnline) {
-            online = true
-        }
+    return User(
+        id = "${('A'..'Z').random()}${('A'..'Z').random()}",
+        name = "${('A'..'Z').random()} ${('A'..'Z').random()}",
+        online = isOnline,
+    ).let {
+        it.copy(
+            image = it.image.takeUnless { withImage } ?: randomImageUrl()
+        )
     }
 }
 
@@ -55,12 +53,12 @@ internal fun randomUsers(size: Int = 30): List<User> {
 }
 
 internal fun randomChannel(members: List<Member> = emptyList()): Channel {
-    return Channel().apply {
-        type = ('A'..'Z').random().toString()
-        id = ('A'..'Z').random().toString()
-        name = "Sample Channel"
-        this.members = members
-    }
+    return Channel(
+        type = ('A'..'Z').random().toString(),
+        id = ('A'..'Z').random().toString(),
+        name = "Sample Channel",
+        members = members,
+    )
 }
 
 internal fun randomMember(withImage: Boolean = true): Member {
@@ -68,9 +66,7 @@ internal fun randomMember(withImage: Boolean = true): Member {
 }
 
 internal fun randomMessage(): Message {
-    return Message().apply {
-        text = "Random message"
-    }
+    return Message(text = "Random message")
 }
 
 @ExperimentalStreamChatApi

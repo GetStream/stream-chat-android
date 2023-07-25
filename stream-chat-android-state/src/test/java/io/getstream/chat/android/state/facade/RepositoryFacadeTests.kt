@@ -265,8 +265,12 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `When storing state for a channel, messages and config should be stored as well`() = runTest {
         val channel = randomChannel(
             config = randomConfig(),
-            messages = (0..positiveRandomInt(20)).map { randomMessage() },
-        )
+
+        ).let {channel ->
+            channel.copy(
+                messages = (0..positiveRandomInt(20)).map { randomMessage(cid = channel.cid) },
+            )
+        }
         val expectedChannelsConfig = listOf(ChannelConfig(channel.type, channel.config))
         val expectedChannels = listOf(channel)
         val expectedMessages = channel.messages
@@ -283,8 +287,11 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val channelsToBeInserted = (0..positiveRandomInt(20)).map {
             randomChannel(
                 config = randomConfig(),
-                messages = (0..positiveRandomInt(20)).map { randomMessage() },
-            )
+            ).let { channel ->
+                channel.copy(
+                    messages = (0..positiveRandomInt(20)).map { randomMessage(cid = channel.cid) },
+                )
+            }
         }
         val expectedChannelsConfig = channelsToBeInserted.map { ChannelConfig(it.type, it.config) }
         val expectedChannels = channelsToBeInserted

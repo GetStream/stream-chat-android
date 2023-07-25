@@ -541,19 +541,19 @@ public class MessageComposerController(
         val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {
             getEditMessageCall(message)
         } else {
-            message.showInChannel = isInThread && alsoSendToChannel.value
             val (channelType, channelId) = message.cid.cidToTypeAndId()
-
             if (activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
                 chatClient.deleteMessage(activeMessage.id, true).enqueue()
             }
 
-            chatClient.sendMessage(channelType, channelId, message)
+            chatClient.sendMessage(
+                channelType,
+                channelId,
+                message.copy(showInChannel = isInThread && alsoSendToChannel.value),
+            )
         }
-
         dismissMessageActions()
         clearData()
-
         sendMessageCall.enqueue()
     }
 

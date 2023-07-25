@@ -212,9 +212,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
         logger.d { "[onSuccessfulUpload] #uploader; attachment ${augmentedAttachment.uploadId} uploaded successfully" }
-        augmentedAttachment.uploadState = Attachment.UploadState.Success
         progressCallback?.onSuccess(augmentedAttachment.url)
-        return Result.Success(augmentedAttachment)
+        return Result.Success(augmentedAttachment.copy(uploadState = Attachment.UploadState.Success))
     }
 
     /**
@@ -234,7 +233,6 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
         logger.e { "[onFailedUpload] #uploader; attachment ${attachment.uploadId} upload failed: ${result.value}" }
-        attachment.uploadState = Attachment.UploadState.Failed(result.value)
         progressCallback?.onError(result.value)
         return Result.Failure(result.value)
     }
@@ -263,29 +261,19 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             mimeType = mimeType,
             url = url,
             uploadState = Attachment.UploadState.Success,
-        ).apply {
-            // If attachment type was not set, set it based on this value
-            // determined by the MIME type guessed from the file's extension
-            if (type == null) {
-                type = attachmentType.toString()
+            title = title.takeUnless { it.isNullOrBlank() } ?: file.name,
+            thumbUrl = thumbUrl,
+            type = type ?: attachmentType.toString(),
+            imageUrl = when (attachmentType) {
+                AttachmentType.IMAGE -> url
+                AttachmentType.VIDEO -> thumbUrl
+                else -> imageUrl
+            },
+            assetUrl = when (attachmentType) {
+                AttachmentType.IMAGE -> assetUrl
+                else -> url
             }
-            when (attachmentType) {
-                AttachmentType.IMAGE -> {
-                    imageUrl = url
-                }
-                AttachmentType.VIDEO -> {
-                    imageUrl = thumbUrl
-                    assetUrl = url
-                }
-                else -> {
-                    assetUrl = url
-                }
-            }
-            this.thumbUrl = thumbUrl
-            if (title.isNullOrBlank()) {
-                title = file.name
-            }
-        }
+        )
     }
 
     private fun String?.toAttachmentType(): AttachmentType {

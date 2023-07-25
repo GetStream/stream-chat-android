@@ -18,7 +18,7 @@ package io.getstream.chat.android.models
 
 public sealed interface UserEntity {
 
-    public var user: User
+    public val user: User
 
     public fun getUserId(): String {
         return user.id

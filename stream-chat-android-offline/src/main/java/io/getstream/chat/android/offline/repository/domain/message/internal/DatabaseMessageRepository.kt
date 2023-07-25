@@ -224,27 +224,18 @@ internal class DatabaseMessageRepository(
             }
     }
 
-    private fun List<Message>.filterReactions(): List<Message> = also {
-        forEach { it.filterReactions() }
-    }
+    private fun List<Message>.filterReactions(): List<Message> = map { it.filterReactions() }
 
     /**
      * Workaround to remove reactions which should not be displayed in the UI. This filtering
      * should be done in `MessageDao`.
      */
-    private fun Message.filterReactions(): Message = also {
-        if (ownReactions.isNotEmpty()) {
-            ownReactions = ownReactions
-                .filter { it.deletedAt == null }
-                .filter { currentUser == null || it.userId == currentUser.id }
-                .toMutableList()
-        }
-        if (latestReactions.isNotEmpty()) {
-            latestReactions = latestReactions
-                .filter { it.deletedAt == null }
-                .toMutableList()
-        }
-    }
+    private fun Message.filterReactions(): Message = copy(
+        ownReactions = ownReactions
+            .filter { it.deletedAt == null }
+            .filter { currentUser == null || it.userId == currentUser.id },
+        latestReactions = latestReactions.filter { it.deletedAt == null }
+    )
 
     private companion object {
         private const val DEFAULT_MESSAGE_LIMIT = 100

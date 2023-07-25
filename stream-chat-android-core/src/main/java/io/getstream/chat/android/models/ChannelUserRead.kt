@@ -28,8 +28,8 @@ import java.util.Date
  * the createdAt newer than this one, that means that the count of unread messages should be incremented.
  */
 public data class ChannelUserRead(
-    override var user: User,
-    var lastRead: Date? = null,
-    var unreadMessages: Int = 0,
-    var lastMessageSeenDate: Date? = null
+    override val user: User,
+    val lastRead: Date? = null,
+    val unreadMessages: Int = 0,
+    val lastMessageSeenDate: Date? = null
 ) : UserEntity

@@ -81,8 +81,9 @@ internal class SendReactionListenerDatabase(
         reactionsRepository.insertReaction(reaction = reactionToSend)
 
         messageRepository.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-            messageRepository.insertMessage(cachedMessage)
+            messageRepository.insertMessage(
+                cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+            )
         }
     }
 

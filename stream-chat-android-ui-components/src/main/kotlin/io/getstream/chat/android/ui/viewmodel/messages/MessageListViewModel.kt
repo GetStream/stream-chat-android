@@ -431,11 +431,11 @@ public class MessageListViewModel(
      * @param reactionType The exact reaction type.
      */
     private fun onMessageReaction(message: Message, reactionType: String) {
-        val reaction = Reaction().apply {
-            messageId = message.id
-            type = reactionType
-            score = 1
-        }
+        val reaction = Reaction(
+            messageId = message.id,
+            type = reactionType,
+            score = 1,
+        )
         messageListController.reactToMessage(reaction, message)
     }
 

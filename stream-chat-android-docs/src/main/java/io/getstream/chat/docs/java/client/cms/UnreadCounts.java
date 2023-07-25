@@ -24,8 +24,9 @@ public class UnreadCounts {
      */
     class Unread {
         public void userConnect() {
-            User user = new User();
-            user.setId("user-id");
+            User user = new User.Builder()
+                    .withId("user-id")
+                    .build();
             client.connectUser(user, "{{ chat_user_token }}").enqueue(result -> {
                 if (result.isSuccess()) {
                     User userRes = result.getOrNull().getUser();

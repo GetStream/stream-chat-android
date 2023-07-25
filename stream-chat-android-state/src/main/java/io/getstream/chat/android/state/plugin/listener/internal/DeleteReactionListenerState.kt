@@ -69,16 +69,12 @@ internal class DeleteReactionListenerState(
         val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
             ?: logic.channelFromMessageId(reaction.messageId)
         val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
-            ?.apply {
-                removeMyReaction(reaction = reaction)
-            }
+            ?.removeMyReaction(reaction = reaction)
         cachedChannelMessage?.let(channelLogic::upsertMessage)
 
         val threadLogic = logic.threadFromMessageId(messageId)
         val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
-            ?.apply {
-                removeMyReaction(reaction = reaction)
-            }
+            ?.removeMyReaction(reaction = reaction)
         cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 

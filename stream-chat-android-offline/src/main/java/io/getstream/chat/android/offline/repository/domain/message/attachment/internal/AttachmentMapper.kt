@@ -23,57 +23,69 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.in
 import io.getstream.result.Error
 import java.io.File
 
-internal fun Attachment.toEntity(messageId: String, index: Int): AttachmentEntity = AttachmentEntity(
-    id = getOrGenerateId(messageId, index),
-    messageId = messageId,
-    authorName = authorName,
-    titleLink = titleLink,
-    authorLink = authorLink,
-    thumbUrl = thumbUrl,
-    imageUrl = imageUrl,
-    assetUrl = assetUrl,
-    ogUrl = ogUrl,
-    mimeType = mimeType,
-    fileSize = fileSize,
-    title = title,
-    text = text,
-    type = type,
-    image = image,
-    url = url,
-    name = name,
-    fallback = fallback,
-    uploadFilePath = upload?.absolutePath,
-    uploadState = uploadState?.toEntity(),
-    originalHeight = originalHeight,
-    originalWidth = originalWidth,
-    extraData = extraData,
-)
+internal fun Attachment.toEntity(messageId: String, index: Int): AttachmentEntity {
+    val mutableExtraData = extraData.toMutableMap()
+    val generatedId = mutableExtraData.getOrPut(AttachmentEntity.EXTRA_DATA_ID_KEY) {
+        AttachmentEntity.generateId(messageId, index)
+    } as String
+    return AttachmentEntity(
+        id = generatedId,
+        messageId = messageId,
+        authorName = authorName,
+        titleLink = titleLink,
+        authorLink = authorLink,
+        thumbUrl = thumbUrl,
+        imageUrl = imageUrl,
+        assetUrl = assetUrl,
+        ogUrl = ogUrl,
+        mimeType = mimeType,
+        fileSize = fileSize,
+        title = title,
+        text = text,
+        type = type,
+        image = image,
+        url = url,
+        name = name,
+        fallback = fallback,
+        uploadFilePath = upload?.absolutePath,
+        uploadState = uploadState?.toEntity(),
+        originalHeight = originalHeight,
+        originalWidth = originalWidth,
+        extraData = mutableExtraData,
+    )
+}
 
-internal fun Attachment.toReplyEntity(messageId: String, index: Int) = ReplyAttachmentEntity(
-    id = getOrGenerateId(messageId, index),
-    messageId = messageId,
-    authorName = authorName,
-    titleLink = titleLink,
-    authorLink = authorLink,
-    thumbUrl = thumbUrl,
-    imageUrl = imageUrl,
-    assetUrl = assetUrl,
-    ogUrl = ogUrl,
-    mimeType = mimeType,
-    fileSize = fileSize,
-    title = title,
-    text = text,
-    type = type,
-    image = image,
-    url = url,
-    name = name,
-    fallback = fallback,
-    uploadFilePath = upload?.absolutePath,
-    uploadState = uploadState?.toEntity(),
-    originalHeight = originalHeight,
-    originalWidth = originalWidth,
-    extraData = extraData,
-)
+internal fun Attachment.toReplyEntity(messageId: String, index: Int): ReplyAttachmentEntity {
+    val mutableExtraData = extraData.toMutableMap()
+    val generatedId = mutableExtraData.getOrPut(AttachmentEntity.EXTRA_DATA_ID_KEY) {
+        AttachmentEntity.generateId(messageId, index)
+    } as String
+    return ReplyAttachmentEntity(
+        id = generatedId,
+        messageId = messageId,
+        authorName = authorName,
+        titleLink = titleLink,
+        authorLink = authorLink,
+        thumbUrl = thumbUrl,
+        imageUrl = imageUrl,
+        assetUrl = assetUrl,
+        ogUrl = ogUrl,
+        mimeType = mimeType,
+        fileSize = fileSize,
+        title = title,
+        text = text,
+        type = type,
+        image = image,
+        url = url,
+        name = name,
+        fallback = fallback,
+        uploadFilePath = upload?.absolutePath,
+        uploadState = uploadState?.toEntity(),
+        originalHeight = originalHeight,
+        originalWidth = originalWidth,
+        extraData = mutableExtraData,
+    )
+}
 
 internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     authorName = authorName,
@@ -96,7 +108,7 @@ internal fun AttachmentEntity.toModel(): Attachment = Attachment(
     uploadState = uploadState?.toModel(uploadFilePath?.let(::File)),
     originalHeight = originalHeight,
     originalWidth = originalWidth,
-    extraData = extraData.toMutableMap(),
+    extraData = extraData,
 )
 
 internal fun ReplyAttachmentEntity.toModel(): Attachment = Attachment(
@@ -120,7 +132,7 @@ internal fun ReplyAttachmentEntity.toModel(): Attachment = Attachment(
     uploadState = uploadState?.toModel(uploadFilePath?.let(::File)),
     originalHeight = originalHeight,
     originalWidth = originalWidth,
-    extraData = extraData.toMutableMap(),
+    extraData = extraData,
 )
 
 private fun Attachment.UploadState.toEntity(): UploadStateEntity {
@@ -138,14 +150,4 @@ private fun UploadStateEntity.toModel(uploadFile: File?): Attachment.UploadState
     UPLOAD_STATE_IN_PROGRESS -> Attachment.UploadState.InProgress(0, uploadFile?.length() ?: 0)
     UPLOAD_STATE_FAILED -> Attachment.UploadState.Failed(Error.GenericError(message = this.errorMessage ?: ""))
     else -> error("Integer value of $statusCode can't be mapped to UploadState")
-}
-
-private fun Attachment.getOrGenerateId(messageId: String, index: Int): String {
-    return if (extraData.containsKey(AttachmentEntity.EXTRA_DATA_ID_KEY)) {
-        extraData[AttachmentEntity.EXTRA_DATA_ID_KEY] as String
-    } else {
-        AttachmentEntity.generateId(messageId, index).also { id ->
-            extraData[AttachmentEntity.EXTRA_DATA_ID_KEY] = id
-        }
-    }
 }

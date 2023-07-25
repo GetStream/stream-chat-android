@@ -19,7 +19,7 @@ package io.getstream.chat.android.client.attachment
 import android.webkit.MimeTypeMap
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.extensions.uploadId
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
@@ -112,7 +112,7 @@ internal class AttachmentUploaderTests {
         runTest {
             val attachment = randomAttachments(size = 1)
                 .first()
-                .apply { mimeType = "video/mp4" }
+                .copy(mimeType = "video/mp4")
 
             val url = "url"
             val thumbUrl = "thumbUrl"
@@ -195,7 +195,7 @@ internal class AttachmentUploaderTests {
     private fun randomAttachments(size: Int = positiveRandomInt(10)): MutableList<Attachment> {
         return randomAttachmentsWithFile(size)
             .map { attachment ->
-                attachment.apply { this.uploadState = Attachment.UploadState.Idle }
+                attachment.copy(uploadState = Attachment.UploadState.Idle)
             }
             .toMutableList()
     }
@@ -258,9 +258,10 @@ internal class AttachmentUploaderTests {
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Attachment = {
-        Attachment(upload = randomFile()).apply {
-            uploadId = generateUploadId()
-        }
+        Attachment(
+            upload = randomFile(),
+            extraData = mapOf(EXTRA_UPLOAD_ID to generateUploadId()),
+        )
     },
 ): List<Attachment> = (1..size).map(creationFunction)
 

@@ -18,6 +18,7 @@ package io.getstream.chat.android.offline
 
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
@@ -49,9 +50,12 @@ import java.util.concurrent.Executors
 internal fun randomAttachmentsWithFile(
     size: Int = positiveRandomInt(10),
     creationFunction: (Int) -> Attachment = {
-        Attachment(upload = randomFile()).apply {
-            uploadId = "upload_id_${UUID.randomUUID()}"
-        }
+        Attachment(
+            upload = randomFile(),
+            extraData = mutableMapOf(
+                EXTRA_UPLOAD_ID to "upload_id_${UUID.randomUUID()}",
+            ),
+        )
     },
 ): List<Attachment> = (1..size).map(creationFunction)
 

@@ -78,7 +78,7 @@ internal class ChatClientTest {
     lateinit var result: MutableList<ChatEvent>
     val token = randomString()
     val userId = randomString()
-    val user = Mother.randomUser { id = userId }
+    val user = Mother.randomUser().copy(id = userId)
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
     var errorHandlerFactories: List<ErrorHandlerFactory> = emptyList()
@@ -250,7 +250,10 @@ internal class ChatClientTest {
 
     @Test
     fun `Given connected user When handle event with updated user Should updated user value`() = runTest {
-        val updateUser = user.copy(extraData = mutableMapOf()).apply { name = "updateUserName" }
+        val updateUser = user.copy(
+            extraData = mutableMapOf(),
+            name = "updateUserName",
+        )
 
         fakeChatSocket.mockEventReceived(Mother.randomUserPresenceChangedEvent(updateUser))
 

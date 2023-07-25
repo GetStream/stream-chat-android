@@ -46,17 +46,18 @@ public val Channel.lastMessage: Message?
     get() = messages.lastOrNull()
 
 @InternalStreamChatApi
-public fun Channel.updateLastMessage(message: Message) {
+public fun Channel.updateLastMessage(message: Message): Channel {
     val createdAt = message.createdAt ?: message.createdLocallyAt
     val messageCreatedAt =
         checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
     val updateNeeded = message.id == lastMessage?.id
     val newLastMessage = lastMessageAt == null || messageCreatedAt.after(lastMessageAt)
-    if (newLastMessage || updateNeeded) {
-        lastMessageAt = messageCreatedAt
-        messages = messages + message
-    }
+    return this.takeUnless { updateNeeded || newLastMessage }
+        ?: copy(
+            lastMessageAt = messageCreatedAt,
+            messages = messages + message,
+        )
 }
 
 /**
@@ -66,12 +67,10 @@ public fun Channel.updateLastMessage(message: Message) {
  * @param memberUserId User id of the removed member.
  */
 @InternalStreamChatApi
-public fun Channel.removeMember(memberUserId: String?): Channel {
-    memberUserId ?: return this
-    members = members.filterNot { it.user.id == memberUserId }
-    memberCount -= 1
-    return this
-}
+public fun Channel.removeMember(memberUserId: String?): Channel = copy(
+    members = members.filterNot { it.user.id == memberUserId },
+    memberCount = memberCount - (1.takeIf { members.any { it.user.id == memberUserId } } ?: 0),
+)
 
 /**
  * Adds member to the [Channel.members] and aligns [Channel.memberCount].
@@ -79,13 +78,13 @@ public fun Channel.removeMember(memberUserId: String?): Channel {
  * @param member Added member.
  */
 @InternalStreamChatApi
-public fun Channel.addMember(member: Member?): Channel {
-    val memberUserId = member?.user?.id ?: return this
-    val foundMember = members.find { it.user.id == memberUserId }
-    if (foundMember != null) return this
-    members = members + member
-    memberCount += 1
-    return this
+public fun Channel.addMember(member: Member): Channel {
+    val memberExists = members.any { it.getUserId() == member.getUserId() }
+    return copy(
+        members = members + listOfNotNull(member.takeUnless { memberExists }),
+        memberCount = memberCount + (1.takeUnless { memberExists } ?: 0),
+
+    )
 }
 
 /**
@@ -94,16 +93,11 @@ public fun Channel.addMember(member: Member?): Channel {
  * @param member Updated member.
  */
 @InternalStreamChatApi
-public fun Channel.updateMember(member: Member?): Channel {
-    val memberUserId = member?.user?.id ?: return this
+public fun Channel.updateMember(member: Member): Channel = copy(
     members = members.map { iterableMember ->
-        when (iterableMember.user.id == memberUserId) {
-            true -> member
-            else -> iterableMember
-        }
-    }
-    return this
-}
+        iterableMember.takeUnless { it.getUserId() == member.getUserId() } ?: member
+    },
+)
 
 /**
  * Updates [Member.banned] property inside the [Channel.members].
@@ -114,34 +108,26 @@ public fun Channel.updateMember(member: Member?): Channel {
  */
 @InternalStreamChatApi
 public fun Channel.updateMemberBanned(
-    memberUserId: String?,
+    memberUserId: String,
     banned: Boolean,
     shadow: Boolean,
-): Channel {
+): Channel = copy(
     members = members.map { member ->
-        member.apply {
-            if (this.user.id == memberUserId) {
-                this.banned = banned
-                this.shadowBanned = shadow
-            }
-        }
+        member.takeUnless { it.user.id == memberUserId }
+            ?: member.copy(banned = banned, shadowBanned = shadow)
     }
-    return this
-}
+)
 
 /**
- * Sets [Channel.membership] to [member] if [currentUserId] equals to [member.user.id].
+ * Sets [Channel.membership] to [member] if [currentUserId] equals to [member.getUserId()].
  *
  * @param currentUserId User id of the currently logged in user.
  * @param member Added member.
  */
 @InternalStreamChatApi
-public fun Channel.addMembership(currentUserId: String?, member: Member?): Channel {
-    if (member?.user?.id == currentUserId) {
-        membership = member
-    }
-    return this
-}
+public fun Channel.addMembership(currentUserId: String, member: Member): Channel = copy(
+    membership = member.takeIf { it.getUserId() == currentUserId } ?: membership,
+)
 
 /**
  * Sets [Channel.membership] to [member] if [member.user.id] equals to [Channel.membership.user.id].
@@ -149,16 +135,16 @@ public fun Channel.addMembership(currentUserId: String?, member: Member?): Chann
  * @param member Updated member.
  */
 @InternalStreamChatApi
-public fun Channel.updateMembership(member: Member?): Channel {
-    val memberUserId = member?.user?.id
-    val membershipUserId = membership?.user?.id
-    if (memberUserId == membershipUserId) {
-        membership = member
-    } else StreamLog.w(TAG) {
-        "[updateMembership] rejected; memberUserId($memberUserId) != membershipUserId($membershipUserId)"
-    }
-    return this
-}
+public fun Channel.updateMembership(member: Member): Channel = copy(
+    membership = member
+        .takeIf { it.getUserId() == membership?.getUserId() }
+        ?: membership.also {
+            StreamLog.w(TAG) {
+                "[updateMembership] rejected; memberUserId(${member.getUserId()}) != " +
+                    "membershipUserId(${membership?.getUserId()})"
+            }
+        },
+)
 
 /**
  * Sets [Channel.membership.banned] to [banned] if [memberUserId] equals to [membership.user.id].
@@ -167,12 +153,12 @@ public fun Channel.updateMembership(member: Member?): Channel {
  * @param banned Shows whether a user is banned or not in this channel.
  */
 @InternalStreamChatApi
-public fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boolean): Channel {
-    if (membership?.user?.id == memberUserId) {
-        membership?.banned = banned
-    }
-    return this
-}
+public fun Channel.updateMembershipBanned(memberUserId: String, banned: Boolean): Channel = copy(
+    membership = membership
+        ?.takeIf { it.getUserId() == memberUserId }
+        ?.copy(banned = banned)
+        ?: membership
+)
 
 /**
  * Sets [Channel.membership] to null if [currentUserId] equals to [membership.user.id].
@@ -180,21 +166,19 @@ public fun Channel.updateMembershipBanned(memberUserId: String?, banned: Boolean
  * @param currentUserId User id of the currently logged in user.
  */
 @InternalStreamChatApi
-public fun Channel.removeMembership(currentUserId: String?): Channel {
-    if (membership?.user?.id == currentUserId) {
-        membership = null
-    }
-    return this
-}
+public fun Channel.removeMembership(currentUserId: String?): Channel =
+    copy(membership = membership.takeUnless { it?.user?.id == currentUserId })
 
 @InternalStreamChatApi
-public fun Channel.updateReads(newRead: ChannelUserRead) {
+public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
     val oldRead = read.firstOrNull { it.user == newRead.user }
-    read = if (oldRead != null) {
-        read - oldRead + newRead
-    } else {
-        read + newRead
-    }
+    return copy(
+        read = if (oldRead != null) {
+            read - oldRead + newRead
+        } else {
+            read + newRead
+        }
+    )
 }
 
 /**
@@ -204,12 +188,16 @@ public fun Channel.updateReads(newRead: ChannelUserRead) {
  * @param lastMessageSeenDate The Date of the last message that the SDK is aware of.
  */
 @InternalStreamChatApi
-public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date?) {
-    read.firstOrNull { it.user.id == currentUserId }
-        ?.let {
-            it.lastMessageSeenDate = lastMessageSeenDate
-            it.unreadMessages++
+public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date?): Channel {
+    return copy(
+        read = read.map { read ->
+            read.takeUnless { it.user.id == currentUserId }
+                ?: read.copy(
+                    lastMessageSeenDate = lastMessageSeenDate,
+                    unreadMessages = read.unreadMessages + 1,
+                )
         }
+    )
 }
 
 @InternalStreamChatApi

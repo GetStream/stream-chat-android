@@ -115,18 +115,18 @@ class ComponentBrowserHomeFragment : Fragment() {
 
     private fun setupViewReactionsView() {
         binding.viewReactionsView.setMessage(
-            message = randomMessage().apply {
+            message = randomMessage().copy(
                 reactionCounts = mutableMapOf(
                     LOVE to 10,
                     WUT to 20,
                     LOL to 20,
                     THUMBS_UP to 20
-                )
+                ),
                 ownReactions = mutableListOf(
                     Reaction(type = LOVE),
                     Reaction(type = WUT)
-                )
-            },
+                ),
+            ),
             isMyMessage = true
         )
         binding.viewReactionsViewContainer.setOnClickListener {
@@ -136,12 +136,12 @@ class ComponentBrowserHomeFragment : Fragment() {
 
     private fun setupEditReactionsView() {
         binding.editReactionsView.setMessage(
-            message = randomMessage().apply {
+            message = randomMessage().copy(
                 ownReactions = mutableListOf(
                     Reaction(type = LOVE),
                     Reaction(type = WUT)
-                )
-            },
+                ),
+            ),
             isMyMessage = false
         )
         binding.editReactionsViewContainer.setOnClickListener {
@@ -152,12 +152,12 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupUserReactionsView() {
         val currentUser = randomUser()
         binding.userReactionsView.setMessage(
-            message = randomMessage().apply {
+            message = randomMessage().copy(
                 latestReactions = mutableListOf(
                     Reaction(type = LOVE, user = currentUser),
                     Reaction(type = WUT, user = randomUser()),
-                )
-            },
+                ),
+            ),
             currentUser = currentUser
         )
         binding.userReactionsViewContainer.setOnClickListener {

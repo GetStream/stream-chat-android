@@ -29,14 +29,14 @@ data class UserData(
     val lastActive: Date?,
 ) : Serializable
 
-fun UserData.toUser(): User = User().also { user ->
-    user.id = id
-    user.name = name
-    user.image = image
-    user.online = online
-    user.createdAt = createdAt
-    user.lastActive = lastActive
-}
+fun UserData.toUser(): User = User(
+    id = id,
+    name = name,
+    image = image,
+    online = online,
+    createdAt = createdAt,
+    lastActive = lastActive,
+)
 
 fun User.toUserData() = UserData(
     id = id,

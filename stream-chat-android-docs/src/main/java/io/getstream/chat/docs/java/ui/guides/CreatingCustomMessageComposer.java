@@ -58,13 +58,15 @@ public class CreatingCustomMessageComposer {
                     String text = binding.inputField.getText().toString();
 
                     if (messageToEdit != null) {
-                        Message message = messageToEdit;
-                        message.setText(text);
+                        Message message = messageToEdit.newBuilder()
+                                .withText(text)
+                                .build();
                         channelClient.updateMessage(message).enqueue();
                     } else {
-                        Message message = new Message();
-                        message.setText(text);
-                        message.setParentId(null);
+                        Message message = new Message.Builder()
+                                .withText(text)
+                                .withParentId(null)
+                                .build();
                         channelClient.sendMessage(message).enqueue();
                     }
 
@@ -128,13 +130,15 @@ public class CreatingCustomMessageComposer {
                     String text = binding.inputField.getText().toString();
 
                     if (messageToEdit != null) {
-                        Message message = messageToEdit;
-                        message.setText(text);
+                        Message message = messageToEdit.newBuilder()
+                                .withText(text)
+                                .build();
                         channelClient.updateMessage(message).enqueue();
                     } else {
-                        Message message = new Message();
-                        message.setText(text);
-                        message.setParentId(parentMessage != null ? parentMessage.getId() : null);
+                        Message message = new Message.Builder()
+                                .withText(text)
+                                .withParentId(parentMessage != null ? parentMessage.getId() : null)
+                                .build();
                         channelClient.sendMessage(message).enqueue();
                     }
 

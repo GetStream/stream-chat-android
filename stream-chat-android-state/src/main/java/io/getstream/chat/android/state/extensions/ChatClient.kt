@@ -133,7 +133,7 @@ public fun ChatClient.watchChannelAsState(
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<ChannelState?> {
     return getStateOrNull(coroutineScope) {
-        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig?.userPresence == true)
+        requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig.userPresence)
     }
 }
 

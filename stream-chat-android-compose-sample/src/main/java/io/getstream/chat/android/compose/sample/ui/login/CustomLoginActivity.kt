@@ -147,10 +147,10 @@ class CustomLoginActivity : AppCompatActivity() {
                             onLoginButtonClick(
                                 UserCredentials(
                                     apiKey = apiKeyText,
-                                    user = User().apply {
-                                        id = userIdText
-                                        name = userNameText
-                                    },
+                                    user = User(
+                                        id = userIdText,
+                                        name = userNameText,
+                                    ),
                                     token = userTokenText,
                                 )
                             )

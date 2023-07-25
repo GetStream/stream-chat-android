@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
@@ -64,16 +65,12 @@ internal class SendReactionListenerState(
         val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
             ?: logic.channelFromMessageId(reaction.messageId)
         val cachedChannelMessage = channelLogic?.getMessage(reaction.messageId)
-            ?.apply {
-                addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-            }
+            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
         cachedChannelMessage?.let(channelLogic::upsertMessage)
 
         val threadLogic = logic.threadFromMessageId(reaction.messageId)
         val cachedThreadMessage = threadLogic?.getMessage(reaction.messageId)
-            ?.apply {
-                addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-            }
+            ?.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
         cachedThreadMessage?.let(threadLogic::upsertMessage)
     }
 
@@ -87,28 +84,22 @@ internal class SendReactionListenerState(
         val channelLogic = cid?.cidToTypeAndId()?.let { (type, id) -> logic.channel(type, id) }
             ?: logic.channelFromMessageId(reaction.messageId)
         channelLogic?.getMessage(reaction.messageId)?.let { message ->
-            message.ownReactions
-                .find { ownReaction -> ownReaction == reaction }
-                ?.updateSyncStatus(result)
-
-            message.latestReactions
-                .find { ownReaction -> ownReaction == reaction }
-                ?.updateSyncStatus(result)
-
-            channelLogic.upsertMessage(message)
+            channelLogic.upsertMessage(
+                message.updateReactionSyncStatus(
+                    originReaction = reaction,
+                    result = result,
+                )
+            )
         }
 
         val threadLogic = logic.threadFromMessageId(reaction.messageId)
         threadLogic?.getMessage(reaction.messageId)?.let { message ->
-            message.ownReactions
-                .find { ownReaction -> ownReaction == reaction }
-                ?.updateSyncStatus(result)
-
-            message.latestReactions
-                .find { ownReaction -> ownReaction == reaction }
-                ?.updateSyncStatus(result)
-
-            threadLogic.upsertMessage(message)
+            threadLogic.upsertMessage(
+                message.updateReactionSyncStatus(
+                    originReaction = reaction,
+                    result = result,
+                ),
+            )
         }
     }
 
@@ -136,18 +127,30 @@ internal class SendReactionListenerState(
         }
     }
 
-    private fun Reaction.updateSyncStatus(result: Result<*>) {
-        when (result) {
-            is Result.Success -> syncStatus = SyncStatus.COMPLETED
-            is Result.Failure -> updateFailedReactionSyncStatus(result.value)
-        }
-    }
+    private fun Message.updateReactionSyncStatus(originReaction: Reaction, result: Result<*>): Message = this.copy(
+        ownReactions = ownReactions
+            .map { ownReaction ->
+                when (ownReaction.id) {
+                    originReaction.id -> ownReaction.updateSyncStatus(result)
+                    else -> ownReaction
+                }
+            },
+        latestReactions = latestReactions
+            .map { latestReaction ->
+                when (latestReaction.id) {
+                    originReaction.id -> latestReaction.updateSyncStatus(result)
+                    else -> latestReaction
+                }
+            },
+    )
 
-    private fun Reaction.updateFailedReactionSyncStatus(streamError: Error) {
-        syncStatus = if (streamError.isPermanent()) {
-            SyncStatus.FAILED_PERMANENTLY
-        } else {
-            SyncStatus.SYNC_NEEDED
+    private fun Reaction.updateSyncStatus(result: Result<*>): Reaction = this.copy(
+        syncStatus = when (result) {
+            is Result.Success -> SyncStatus.COMPLETED
+            is Result.Failure -> when {
+                result.value.isPermanent() -> SyncStatus.FAILED_PERMANENTLY
+                else -> SyncStatus.SYNC_NEEDED
+            }
         }
-    }
+    )
 }

@@ -241,9 +241,9 @@ public class Channels {
             Map<String, Object> channelData = new HashMap<>();
             channelData.put("name", "myspecialchannel");
             channelData.put("color", "green");
-            Message updateMessage = new Message();
-            updateMessage.setText("Thierry changed the channel color to green");
-
+            Message updateMessage = new Message.Builder()
+                    .withText("Thierry changed the channel color to green")
+                    .build();
             channelClient.update(updateMessage, channelData).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
@@ -290,8 +290,9 @@ public class Channels {
         public void messageParameter() {
             ChannelClient channelClient = client.channel("messaging", "general");
 
-            Message addMemberSystemMessage = new Message();
-            addMemberSystemMessage.setText("Thierry and Josh were added to this channel");
+            Message addMemberSystemMessage = new Message.Builder()
+                    .withText("Thierry and Josh were added to this channel")
+                    .build();
             // Add members with ids "thierry" and "josh"
             channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage, false).enqueue(result -> {
                 if (result.isSuccess()) {
@@ -301,8 +302,9 @@ public class Channels {
                 }
             });
 
-            Message removeMemberSystemMessage = new Message();
-            addMemberSystemMessage.setText("Tommaso was removed from this channel");
+            Message removeMemberSystemMessage = new Message.Builder()
+                    .withText("Tommaso was removed from this channel")
+                    .build();
             // Remove member with id "tommaso"
             channelClient.removeMembers(Collections.singletonList("tommaso"), removeMemberSystemMessage).enqueue(result -> {
                 if (result.isSuccess()) {
@@ -678,8 +680,9 @@ public class Channels {
                 });
 
                 // Get list of muted channels when user is connected
-                User user = new User();
-                user.setId("user-id");
+                User user = new User.Builder()
+                        .withId("user-id")
+                        .build();
                 client.connectUser(user, "token").enqueue(result -> {
                     if (result.isSuccess()) {
                         // Result contains the list of channel mutes
@@ -896,8 +899,9 @@ public class Channels {
                     Channel channel = channelResult.getOrNull();
                     int cooldown = channel.getCooldown();
 
-                    Message message = new Message();
-                    message.setText("Hello");
+                    Message message = new Message.Builder()
+                            .withText("Hello")
+                            .build();
                     channelClient.sendMessage(message).enqueue((messageResult) -> {
                         // After sending a message, block the UI temporarily
                         // The disable/enable UI methods have to be implemented by you

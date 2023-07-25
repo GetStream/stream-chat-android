@@ -51,32 +51,28 @@ class ComponentBrowserEditReactionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             editReactionsView1.setMessage(
-                message = randomMessage().apply {
-                    ownReactions = mutableListOf()
-                },
+                message = randomMessage().copy(ownReactions = mutableListOf()),
                 isMyMessage = true
             )
             editReactionsView2.setMessage(
-                message = randomMessage().apply {
-                    ownReactions = mutableListOf()
-                },
+                message = randomMessage().copy(ownReactions = mutableListOf()),
                 isMyMessage = false
             )
             editReactionsView3.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE)
                     )
-                },
+                ),
                 isMyMessage = true
             )
             editReactionsView4.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
                         Reaction(type = WUT)
                     )
-                },
+                ),
                 isMyMessage = false
             )
         }

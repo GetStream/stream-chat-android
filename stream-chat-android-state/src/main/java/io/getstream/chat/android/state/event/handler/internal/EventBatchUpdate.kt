@@ -69,9 +69,10 @@ internal class EventBatchUpdate private constructor(
      */
     fun addMessageData(cid: String, message: Message, isNewMessage: Boolean = false) {
         addMessage(message)
-        getCurrentChannel(cid)?.also { channel ->
-            channel.updateLastMessage(message)
-
+        getCurrentChannel(cid)
+            ?.updateLastMessage(message)
+            ?.also { channel ->
+                addChannel(channel)
             val currentUserId = currentUserId ?: return
 
             if (isNewMessage) {
@@ -83,7 +84,7 @@ internal class EventBatchUpdate private constructor(
                         isChannelMuted = globalState.isChannelMutedForCurrentUser(channel.cid)
                     )
                 ) {
-                    channel.incrementUnreadCount(currentUserId, message.createdAt)
+                    addChannel(channel.incrementUnreadCount(currentUserId, message.createdAt))
                 }
             }
         }

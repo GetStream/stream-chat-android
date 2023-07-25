@@ -16,90 +16,20 @@
 
 package io.getstream.chat.android.uitests.snapshot.utils
 
-import android.content.ContentResolver
-import android.content.Context
-import android.net.Uri
-import androidx.annotation.DrawableRes
-import io.getstream.chat.android.core.ExperimentalStreamChatApi
-import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
-internal fun drawableResToUri(context: Context, @DrawableRes drawableResId: Int): String {
-    val res = context.resources
-    return ContentResolver.SCHEME_ANDROID_RESOURCE +
-        "://" + res.getResourcePackageName(drawableResId) +
-        '/' + res.getResourceTypeName(drawableResId) +
-        '/' + res.getResourceEntryName(drawableResId)
-}
-
-internal fun randomUser(withImage: Boolean = true, isOnline: Boolean = true): User {
-    return User().apply {
-        id = "${('A'..'Z').random()}${('A'..'Z').random()}"
-        name = "${('A'..'Z').random()} ${('A'..'Z').random()}"
-
-        if (withImage) {
-            image = randomImageUrl()
-        }
-        if (isOnline) {
-            online = true
-        }
-    }
-}
-
-internal fun randomUsers(size: Int = 30): List<User> {
-    return 0.until(size).map { randomUser() }
-}
-
-internal fun randomChannel(members: List<Member> = emptyList()): Channel {
-    return Channel().apply {
-        id = ('A'..'Z').random().toString()
-        type = ('A'..'Z').random().toString()
-        name = "Sample Channel"
-        this.members = members
-    }
-}
-
-internal fun randomMember(withImage: Boolean = true): Member {
-    return Member(user = randomUser(withImage))
+internal fun randomUser(isOnline: Boolean = true): User {
+    return User(
+        id = "${('A'..'Z').random()}${('A'..'Z').random()}",
+        name = "${('A'..'Z').random()} ${('A'..'Z').random()}",
+        online = isOnline,
+        image = randomImageUrl(),
+    )
 }
 
 internal fun randomMessage(): Message {
-    return Message().apply {
-        text = "Random message"
-    }
-}
-
-@ExperimentalStreamChatApi
-internal fun randomMediaAttachments(count: Int): List<AttachmentMetaData> {
-    return List(count) {
-        AttachmentMetaData(
-            uri = Uri.parse(randomImageUrl()),
-            type = "image",
-            mimeType = "image/png"
-        )
-    }
-}
-
-@ExperimentalStreamChatApi
-internal fun randomFileAttachments(count: Int): List<AttachmentMetaData> {
-    return List(count) {
-        AttachmentMetaData(
-            uri = Uri.parse(randomImageUrl()),
-            type = "file",
-            mimeType = "application/pdf",
-        ).apply {
-            size = 100000L
-            title = "Sample PDF"
-        }
-    }
-}
-
-internal fun randomCommand(): Command {
-    return Command("giphy", "Post a random gif to the channel", "[text]", "fun_set")
+    return Message(text = "Random message")
 }
 
 internal fun randomImageUrl(): String {

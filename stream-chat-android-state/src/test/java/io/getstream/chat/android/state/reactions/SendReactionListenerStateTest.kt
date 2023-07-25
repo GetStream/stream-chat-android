@@ -52,18 +52,18 @@ internal class SendReactionListenerStateTest {
 
     private val myReactions: List<Reaction> = listOf(
         randomReaction(),
-        Reaction().apply {
-            userId = currentUser.id
-            type = "type1"
-            score = 123
-            syncStatus = SyncStatus.SYNC_NEEDED
-        },
-        Reaction().apply {
-            userId = currentUser.id
-            type = "type2"
-            score = 234
-            syncStatus = SyncStatus.SYNC_NEEDED
-        },
+        Reaction(
+            userId = currentUser.id,
+            type = "type1",
+            score = 123,
+            syncStatus = SyncStatus.SYNC_NEEDED,
+        ),
+        Reaction(
+            userId = currentUser.id,
+            type = "type2",
+            score = 234,
+            syncStatus = SyncStatus.SYNC_NEEDED,
+        ),
     )
 
     private val clientState = mock<ClientState>()

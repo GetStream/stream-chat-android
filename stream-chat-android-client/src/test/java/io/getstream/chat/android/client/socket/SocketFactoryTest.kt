@@ -69,7 +69,7 @@ internal class SocketFactoryTest {
         @JvmStatic
         @Suppress("MaxLineLength")
         fun arguments() = listOf(
-            randomUser().let {
+            randomUser().copy(image = randomString(), name = randomString()).let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
                     "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"

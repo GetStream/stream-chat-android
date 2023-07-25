@@ -44,10 +44,7 @@ internal class ShuffleGiphyListenerDatabase(
      */
     override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) {
         if (result is Result.Success) {
-            val processedMessage = result.value.apply {
-                syncStatus = SyncStatus.COMPLETED
-            }
-
+            val processedMessage = result.value.copy(syncStatus = SyncStatus.COMPLETED)
             userRepository.insertUsers(processedMessage.users())
             messageRepository.insertMessage(processedMessage, cache = false)
         }
