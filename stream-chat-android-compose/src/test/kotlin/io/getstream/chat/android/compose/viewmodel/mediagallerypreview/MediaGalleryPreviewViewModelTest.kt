@@ -92,8 +92,8 @@ internal class MediaGalleryPreviewViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
-            whenever(clientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected(currentUser))
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.connectionState) doReturn MutableStateFlow(ConnectionState.Connected)
         }
 
         fun givenAttachments(attachments: MutableList<Attachment>) = apply {

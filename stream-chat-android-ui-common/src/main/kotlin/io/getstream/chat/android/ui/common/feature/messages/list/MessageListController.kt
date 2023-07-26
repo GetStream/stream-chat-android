@@ -50,7 +50,6 @@ import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
@@ -148,7 +147,6 @@ public class MessageListController(
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
-    globalState: GlobalState = chatClient.globalState,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -193,7 +191,7 @@ public class MessageListController(
     /**
      * Gives us information about the logged in user state.
      */
-    public val user: StateFlow<User?> = globalState.user
+    public val user: StateFlow<User?> = clientState.user
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.

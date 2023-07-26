@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
@@ -86,7 +87,7 @@ public class StreamStatePluginFactory(
         val clientState = chatClient.clientState
 
         val stateRegistry = StateRegistry(
-            mutableGlobalState.user,
+            clientState.user,
             repositoryFacade.observeLatestUsers(),
             scope.coroutineContext.job,
             scope
@@ -96,6 +97,7 @@ public class StreamStatePluginFactory(
 
         val logic = LogicRegistry(
             stateRegistry = stateRegistry,
+            clientState = clientState,
             mutableGlobalState = mutableGlobalState,
             userPresence = config.userPresence,
             repos = repositoryFacade,
@@ -123,6 +125,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             logicRegistry = logic,
             stateRegistry = stateRegistry,
+            clientState = clientState,
             mutableGlobalState = mutableGlobalState,
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
@@ -163,6 +166,7 @@ public class StreamStatePluginFactory(
         client: ChatClient,
         logicRegistry: LogicRegistry,
         stateRegistry: StateRegistry,
+        clientState: ClientState,
         mutableGlobalState: MutableGlobalState,
         repos: RepositoryFacade,
         sideEffect: suspend () -> Unit,
@@ -174,6 +178,7 @@ public class StreamStatePluginFactory(
             subscribeForEvents = { listener -> client.subscribe(listener) },
             logicRegistry = logicRegistry,
             stateRegistry = stateRegistry,
+            clientState = clientState,
             mutableGlobalState = mutableGlobalState,
             repos = repos,
             syncedEvents = syncedEvents,

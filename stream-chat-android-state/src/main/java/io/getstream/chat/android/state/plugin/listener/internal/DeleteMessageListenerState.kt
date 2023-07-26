@@ -48,7 +48,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         return channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == globalState.user.value?.id &&
+            val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 
@@ -77,7 +77,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == globalState.user.value?.id &&
+            val isModerationFailed = message.user.id == clientState.user.value?.id &&
                 message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
                 message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
 

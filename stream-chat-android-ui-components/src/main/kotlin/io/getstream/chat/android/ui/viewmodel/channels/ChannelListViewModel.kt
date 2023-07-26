@@ -167,7 +167,7 @@ public class ChannelListViewModel(
      * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
      */
     private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.globalState.user.map(Filters::defaultChannelListFilter).filterNotNull()
+        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
     }
 
     /**
@@ -274,7 +274,7 @@ public class ChannelListViewModel(
      * @param channel The channel that the current user will leave.
      */
     public fun leaveChannel(channel: Channel) {
-        chatClient.globalState.user.value?.let { user ->
+        chatClient.clientState.user.value?.let { user ->
             chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue(
                 onError = { error ->
                     logger.e {

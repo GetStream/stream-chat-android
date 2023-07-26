@@ -46,10 +46,10 @@ internal class DeleteMessageListenerStateTest {
         on(it.stateLogic()) doReturn channelStateLogic
     }
 
-    private val clientState: ClientState = mock()
-    private val globalState: GlobalState = mock {
+    private val clientState: ClientState = mock {
         on(it.user) doReturn MutableStateFlow(randomUser())
     }
+    private val globalState: GlobalState = mock()
     private val logicRegistry: LogicRegistry = mock {
         on(it.channel(any(), any())) doReturn channelLogic
         on(it.channelFromMessageId(any())) doReturn channelLogic

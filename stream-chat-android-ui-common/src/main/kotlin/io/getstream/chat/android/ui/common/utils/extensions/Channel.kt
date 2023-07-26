@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.common.utils.extensions
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.state.extensions.globalState
 
 public val Channel.initials: String
     get() = name.initials()
@@ -28,6 +27,6 @@ public fun Channel.isDirectMessaging(): Boolean {
 }
 
 private fun Channel.includesCurrentUser(): Boolean {
-    val currentUserId = ChatClient.instance().globalState.user.value?.id ?: return false
+    val currentUserId = ChatClient.instance().clientState.user.value?.id ?: return false
     return members.any { it.user.id == currentUserId }
 }

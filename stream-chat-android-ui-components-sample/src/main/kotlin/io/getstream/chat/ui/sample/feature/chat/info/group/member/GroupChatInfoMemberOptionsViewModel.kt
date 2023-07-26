@@ -27,7 +27,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.result.Result
 import kotlinx.coroutines.launch
@@ -47,7 +46,7 @@ class GroupChatInfoMemberOptionsViewModel(
 
     init {
         viewModelScope.launch {
-            val currentUser = chatClient.globalState.user.value!!
+            val currentUser = chatClient.clientState.user.value!!
 
             val result = chatClient.queryChannels(
                 request = QueryChannelsRequest(

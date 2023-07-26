@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.setup.state
 
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -30,6 +31,11 @@ public interface ClientState {
      * The state of the initialization process of the SDK.
      */
     public val initializationState: StateFlow<InitializationState>
+
+    /**
+     * The current user if connected.
+     */
+    public val user: StateFlow<User?>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.

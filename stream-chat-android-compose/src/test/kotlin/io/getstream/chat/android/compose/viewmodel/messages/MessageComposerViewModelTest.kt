@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -356,6 +357,7 @@ internal class MessageComposerViewModelTest {
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
+        private val clientState: ClientState = mock()
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -367,7 +369,7 @@ internal class MessageComposerViewModelTest {
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
-            whenever(globalState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.user) doReturn MutableStateFlow(currentUser)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

@@ -26,15 +26,14 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.watchChannelAsState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +45,7 @@ class ChatInfoViewModel(
     private val cid: String?,
     userData: UserData?,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val globalState: GlobalState = chatClient.globalState,
+    private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
 
     /**
@@ -69,7 +68,7 @@ class ChatInfoViewModel(
             _state.value = State()
             viewModelScope.launch {
                 // Update channel mute status
-                globalState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
+                clientState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
                 _state.addSource(channelState.flatMapLatest { it.members }.asLiveData()) { memberList ->
                     // Updates only if the user state is already set
@@ -89,7 +88,7 @@ class ChatInfoViewModel(
                     channelClient.queryMembers(
                         offset = 0,
                         limit = 1,
-                        filter = globalState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
+                        filter = clientState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
                         sort = QuerySortByField()
                     ).await()
 

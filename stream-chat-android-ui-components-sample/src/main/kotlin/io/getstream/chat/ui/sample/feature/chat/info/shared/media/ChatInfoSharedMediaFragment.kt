@@ -28,7 +28,6 @@ import androidx.lifecycle.map
 import androidx.lifecycle.switchMap
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
@@ -111,7 +110,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
 
     private fun bindViewModel() {
         viewModel.state.switchMap { state ->
-            ChatClient.instance().globalState.user.asLiveData().map { user ->
+            ChatClient.instance().clientState.user.asLiveData().map { user ->
                 user to state
             }
         }.observe(viewLifecycleOwner) { (user, state) ->

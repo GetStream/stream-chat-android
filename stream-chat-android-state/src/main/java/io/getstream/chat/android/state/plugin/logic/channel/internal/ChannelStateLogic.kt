@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -47,11 +48,13 @@ import java.util.Date
  * The logic of the state of a channel. This class contains the logic of how to
  * update the state of the channel in the SDK.
  *
+ * @property clientState [ClientState]
  * @property mutableState [ChannelMutableState]
  * @property globalMutableState [MutableGlobalState]
  * @property attachmentUrlValidator [AttachmentUrlValidator]
  */
 internal class ChannelStateLogic(
+    private val clientState: ClientState,
     private val mutableState: ChannelMutableState,
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
@@ -136,7 +139,7 @@ internal class ChannelStateLogic(
      * @param event The start typing event or null if user stops typing.
      */
     fun setTyping(userId: String, event: TypingStartEvent?) {
-        if (userId != globalMutableState.user.value?.id) {
+        if (userId != clientState.user.value?.id) {
             typingEventPruner.processEvent(userId, typingStartEvent = event)
         }
     }

@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.plugin.logic.channel.internal
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomNewMessageEvent
@@ -71,9 +72,13 @@ internal class ChannelStateLogicTest {
 
     @BeforeEach
     fun setup() {
-        spyMutableGlobalState = spy(MutableGlobalState().apply { setUser(this@ChannelStateLogicTest.user) })
+        clientState = mock() {
+            on(it.user) doReturn this@ChannelStateLogicTest.userFlow
+        }
+        spyMutableGlobalState = spy(MutableGlobalState())
         channelStateLogic = ChannelStateLogic(
-            mutableState,
+            clientState = clientState,
+            mutableState = mutableState,
             globalMutableState = spyMutableGlobalState,
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
@@ -91,6 +96,7 @@ internal class ChannelStateLogicTest {
     }
 
     private val user = randomUser()
+    private val userFlow = MutableStateFlow(user)
     private var _messages: Map<String, Message> = emptyMap()
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
     private val unreadCount = randomInt()
@@ -125,6 +131,7 @@ internal class ChannelStateLogicTest {
         on(mock.cachedLatestMessages) doReturn _cachedMessages
         on(mock.quotedMessagesMap) doReturn _quotedMessagesMap
     }
+    private lateinit var clientState: ClientState
     private lateinit var spyMutableGlobalState: MutableGlobalState
     private val unreadCountLogic: UnreadCountLogic = mock()
 

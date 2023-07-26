@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.plugin.state.global.internal
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.TypingEvent
-import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,7 +35,6 @@ internal class MutableGlobalState : GlobalState {
     private var _mutedUsers: MutableStateFlow<List<Mute>>? = MutableStateFlow(emptyList())
     private var _channelMutes: MutableStateFlow<List<ChannelMute>>? = MutableStateFlow(emptyList())
     private var _typingChannels: MutableStateFlow<Map<String, TypingEvent>>? = MutableStateFlow(emptyMap())
-    private var _user: MutableStateFlow<User?>? = MutableStateFlow(null)
 
     override val totalUnreadCount: StateFlow<Int> = _totalUnreadCount!!
     override val channelUnreadCount: StateFlow<Int> = _channelUnreadCount!!
@@ -44,23 +42,17 @@ internal class MutableGlobalState : GlobalState {
     override val channelMutes: StateFlow<List<ChannelMute>> = _channelMutes!!
     override val banned: StateFlow<Boolean> = _banned!!
     override val typingChannels: StateFlow<Map<String, TypingEvent>> = _typingChannels!!
-    override val user: StateFlow<User?> = _user!!
 
     /**
      * Destroys the state.
      */
     fun destroy() {
-        _user = null
         _totalUnreadCount = null
         _channelUnreadCount = null
         _mutedUsers = null
         _channelMutes = null
         _banned = null
         _typingChannels = null
-    }
-
-    fun setUser(user: User) {
-        _user?.value = user
     }
 
     fun setTotalUnreadCount(totalUnreadCount: Int) {

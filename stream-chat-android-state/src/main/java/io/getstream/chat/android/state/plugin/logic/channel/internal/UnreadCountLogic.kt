@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
@@ -51,6 +52,7 @@ private const val COUNT_BUFFER_LIMIT = 100
  * moment.
  */
 internal class UnreadCountLogic(
+    private val clientState: ClientState,
     private val mutableState: ChannelMutableState,
     private val globalState: GlobalState,
     private val unreadTrigger: StateFlow<Boolean>,
@@ -109,7 +111,7 @@ internal class UnreadCountLogic(
      * Perform count the a new message arrive.
      */
     private fun performCount(message: Message) {
-        val user = globalState.user.value ?: return
+        val user = clientState.user.value ?: return
         val currentUserId = user.id
 
         /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the

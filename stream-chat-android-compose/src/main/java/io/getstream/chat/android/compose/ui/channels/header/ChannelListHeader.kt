@@ -221,7 +221,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
 @Preview(name = "ChannelListHeader Preview (Connected state)")
 @Composable
 private fun ChannelListHeaderForConnectedStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.Connected(PreviewUserData.user1))
+    ChannelListHeaderPreview(connectionState = ConnectionState.Connected)
 }
 
 /**
@@ -246,7 +246,7 @@ private fun ChannelListHeaderForConnectingStatePreview() {
 private fun ChannelListHeaderPreview(
     title: String = "Stream Chat",
     currentUser: User? = PreviewUserData.user1,
-    connectionState: ConnectionState = ConnectionState.Connected(PreviewUserData.user1),
+    connectionState: ConnectionState = ConnectionState.Connected,
 ) {
     ChatTheme {
         ChannelListHeader(

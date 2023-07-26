@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.extensions.internal.updateMembership
 import io.getstream.chat.android.client.extensions.internal.updateMembershipBanned
 import io.getstream.chat.android.client.extensions.internal.updateReads
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelUserRead
@@ -123,6 +124,7 @@ internal class EventHandlerSequential(
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
+    private val clientState: ClientState,
     private val mutableGlobalState: MutableGlobalState,
     private val repos: RepositoryFacade,
     private val sideEffect: suspend () -> Unit,
@@ -252,23 +254,24 @@ internal class EventHandlerSequential(
 
     private suspend fun updateGlobalState(batchEvent: BatchEvent) {
         logger.v { "[updateGlobalState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
+        val currentUser = clientState.user.value
         batchEvent.sortedEvents.forEach { event: ChatEvent ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
                     event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
+                    mutableGlobalState.updateCurrentUser(currentUser, SelfUserFull(event.me))
                 }
                 is NotificationMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
+                    mutableGlobalState.updateCurrentUser(currentUser, SelfUserFull(event.me))
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
+                    mutableGlobalState.updateCurrentUser(currentUser, SelfUserFull(event.me))
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    mutableGlobalState.updateCurrentUser(SelfUserPart(event.user))
+                    mutableGlobalState.updateCurrentUser(currentUser, SelfUserPart(event.user))
                 }
                 is MarkAllReadEvent -> {
                     mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
