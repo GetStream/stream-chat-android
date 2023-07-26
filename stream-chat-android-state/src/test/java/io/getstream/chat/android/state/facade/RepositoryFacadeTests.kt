@@ -266,7 +266,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val channel = randomChannel(
             config = randomConfig(),
 
-        ).let {channel ->
+        ).let { channel ->
             channel.copy(
                 messages = (0..positiveRandomInt(20)).map { randomMessage(cid = channel.cid) },
             )

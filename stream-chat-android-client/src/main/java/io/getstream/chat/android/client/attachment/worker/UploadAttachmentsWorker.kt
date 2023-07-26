@@ -134,7 +134,7 @@ public class UploadAttachmentsWorker(
             message.attachments.map {
                 it.copy(
                     uploadState = it.uploadState
-                        .takeIf { it == Attachment.UploadState.Success}
+                        .takeIf { it == Attachment.UploadState.Success }
                         ?: Attachment.UploadState.Failed(
                             Error.ThrowableError(message = "Could not upload attachments.", cause = e),
                         )

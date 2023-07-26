@@ -62,13 +62,13 @@ private fun ReactionData.clearOwnReactions(userId: String): ReactionData {
     return copy(
         latestReactions = latestReactions.filterNot { it.userId == userId },
         reactionCounts = reactionCounts.mapNotNull { (type, count) ->
-            when(val ownReaction = ownReactionsMap[type]) {
+            when (val ownReaction = ownReactionsMap[type]) {
                 null -> type to count
                 else -> type to (count - ownReaction.size)
             }.takeUnless { it.second <= 0 }
         }.toMap(),
         reactionScores = reactionScores.mapNotNull { (type, score) ->
-            when(val ownReaction = ownReactionsMap[type]) {
+            when (val ownReaction = ownReactionsMap[type]) {
                 null -> type to score
                 else -> type to (score - ownReaction.sumOf { it.score })
             }.takeUnless { it.second <= 0 }

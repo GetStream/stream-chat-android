@@ -62,7 +62,6 @@ internal object PreviewChannelData {
         ),
     )
 
-
     val channelWithManyMembers: Channel = Channel(
         type = "channelType",
         id = "channelId4",
