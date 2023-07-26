@@ -232,7 +232,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
                 if (typingUsersChanged) {
                     typingIndicatorView.setTypingUsers(channelItem.typingUsers)
-                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty()
+                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty() && lastMessage.isNotNull()
                 }
 
                 muteIcon.isVisible = channelItem.channel.isMuted
@@ -257,7 +257,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         lastMessageLabel.isVisible = lastMessage.isNotNull()
         lastMessageTimeLabel.isVisible = lastMessage.isNotNull()
 
-        lastMessage ?: return
+        lastMessage ?: return run {
+            lastMessageLabel.text = ""
+            lastMessageTimeLabel.text = ""
+        }
 
         lastMessageLabel.text = ChatUI.messagePreviewFormatter.formatMessagePreview(
             channel = channel,
