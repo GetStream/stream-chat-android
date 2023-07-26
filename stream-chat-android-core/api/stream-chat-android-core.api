@@ -623,22 +623,18 @@ public abstract class io/getstream/chat/android/models/ConnectionState {
 }
 
 public final class io/getstream/chat/android/models/ConnectionState$Connected : io/getstream/chat/android/models/ConnectionState {
-	public fun <init> (Lio/getstream/chat/android/models/User;)V
-	public final fun component1 ()Lio/getstream/chat/android/models/User;
-	public final fun copy (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/ConnectionState$Connected;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ConnectionState$Connected;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/models/ConnectionState$Connected;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getUser ()Lio/getstream/chat/android/models/User;
-	public fun hashCode ()I
+	public static final field INSTANCE Lio/getstream/chat/android/models/ConnectionState$Connected;
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ConnectionState$Connecting : io/getstream/chat/android/models/ConnectionState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ConnectionState$Connecting;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ConnectionState$Offline : io/getstream/chat/android/models/ConnectionState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ConnectionState$Offline;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ContainsFilterObject : io/getstream/chat/android/models/FilterObject {

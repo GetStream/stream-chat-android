@@ -58,6 +58,8 @@
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
+    <ID>UnusedPrivateMember:ChatClientStateCalls.kt$ChatClientStateCalls$private val globalState: GlobalState</ID>
+    <ID>UnusedPrivateMember:DeleteMessageListenerState.kt$DeleteMessageListenerState$private val globalState: GlobalState</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
   </CurrentIssues>
 </SmellBaseline>
