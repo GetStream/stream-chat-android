@@ -294,7 +294,7 @@ internal class CustomObjectFilteringTest {
 
         @JvmStatic
         fun equalsFilterArguments() = listOf(
-            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0 )) }
+            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
                 .let { expectedList ->
                     val doubleValue: Double = 2.0
                     Arguments.of(
@@ -312,7 +312,7 @@ internal class CustomObjectFilteringTest {
                         expectedList
                     )
                 },
-            List(positiveRandomInt(10)) { randomChannel( extraData = mapOf("someField" to 2.0)) }
+            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
                 .let { expectedList ->
                     val longValue: Long = 2L
                     Arguments.of(
@@ -321,7 +321,7 @@ internal class CustomObjectFilteringTest {
                         expectedList
                     )
                 },
-            List(positiveRandomInt(10)) { randomChannel( extraData = mapOf("someField" to 2.0)) }
+            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
                 .let { expectedList ->
                     val intValue: Int = 2
                     Arguments.of(
@@ -330,7 +330,7 @@ internal class CustomObjectFilteringTest {
                         expectedList
                     )
                 },
-            List(positiveRandomInt(10)) { randomChannel( extraData = mapOf("someField" to 2.0)) }
+            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
                 .let { expectedList ->
                     val charValue: Char = 2.toChar()
                     Arguments.of(
@@ -339,7 +339,7 @@ internal class CustomObjectFilteringTest {
                         expectedList
                     )
                 },
-            List(positiveRandomInt(10)) { randomChannel( extraData = mapOf("someField" to 2.0)) }
+            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
                 .let { expectedList ->
                     val shortValue: Short = 2
                     Arguments.of(
@@ -348,7 +348,7 @@ internal class CustomObjectFilteringTest {
                         expectedList
                     )
                 },
-            List(positiveRandomInt(10)) { randomChannel( extraData = mapOf("someField" to 2.0)) }
+            List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
                 .let { expectedList ->
                     val byteValue: Byte = 2
                     Arguments.of(

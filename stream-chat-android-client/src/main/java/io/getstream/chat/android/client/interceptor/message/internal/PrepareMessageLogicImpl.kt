@@ -77,7 +77,7 @@ internal class PrepareMessageLogicImpl(
                     ?.enrichWithCid("$channelType:$channelId")
                     ?: copiedMessage
             }
-            .let {copiedMessage ->
+            .let { copiedMessage ->
                 channel
                     ?.listenForChannelState()
                     ?.toChannel()

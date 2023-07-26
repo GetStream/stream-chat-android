@@ -417,7 +417,6 @@ private fun BoxScope.MessagesScreenMenus(
                     composerViewModel.performMessageAction(it)
                     listViewModel.performMessageAction(it)
                 }
-
             },
             onShowMoreReactionsSelected = {
                 listViewModel.selectExtendedReactions(selectedMessage)

@@ -24,7 +24,6 @@ import androidx.core.net.toUri
 import io.getstream.chat.android.client.extensions.EXTRA_DURATION
 import io.getstream.chat.android.client.extensions.EXTRA_WAVEFORM_DATA
 import io.getstream.chat.android.client.extensions.duration
-import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType

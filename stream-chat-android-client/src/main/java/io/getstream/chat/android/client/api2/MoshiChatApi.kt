@@ -698,7 +698,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel {
-        return response.channel.toDomain().let{ channel ->
+        return response.channel.toDomain().let { channel ->
             channel.copy(
                 watcherCount = response.watcher_count,
                 read = response.read.map(DownstreamChannelUserRead::toDomain),
@@ -791,7 +791,6 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                             (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
                                 ?.let(message::enrichWithCid)
                                 ?: message
-
                         }
                 }
             }

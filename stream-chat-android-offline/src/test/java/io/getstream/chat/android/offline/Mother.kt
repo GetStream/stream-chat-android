@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
-import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject

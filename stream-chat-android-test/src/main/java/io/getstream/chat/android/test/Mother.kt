@@ -80,7 +80,6 @@ public fun randomValue(): Any {
     }
 }
 public fun randomExtraData(maxPossibleEntries: Int = 10): Map<String, Any> {
-    val size =  positiveRandomInt(maxPossibleEntries)
+    val size = positiveRandomInt(maxPossibleEntries)
     return (1..size).associate { randomString() to randomValue() }
 }
-

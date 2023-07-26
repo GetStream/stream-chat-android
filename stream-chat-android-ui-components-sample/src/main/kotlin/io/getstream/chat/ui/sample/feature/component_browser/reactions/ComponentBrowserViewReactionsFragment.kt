@@ -85,7 +85,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                         LOVE to 1,
                     ),
                     ownReactions = mutableListOf(),
-    ),
+                ),
                 isMyMessage = true
             )
             viewReactionsView4.setMessage(
@@ -131,7 +131,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                         Reaction(type = LOVE),
                         Reaction(type = WUT)
                     ),
-            ),
+                ),
                 isMyMessage = false
             )
         }
