@@ -3,16 +3,16 @@ module.exports = {
     [
       '@docusaurus/plugin-content-docs',
       {
-        lastVersion: 'current',
+        lastVersion: '5.x.x',
         versions: {
           current: {
-            label: 'v6',
+            label: 'v6-Beta',
+            path: 'next'
           },
           '5.x.x': {
             label: 'v5',
-            path: 'v5',
-            banner: 'unmaintained'
-          },
+            banner: 'none'
+          }
         }
       }
     ]
