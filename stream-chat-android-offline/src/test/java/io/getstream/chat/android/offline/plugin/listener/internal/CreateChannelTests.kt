@@ -121,6 +121,7 @@ internal class CreateChannelTests {
             val channelId = "channelId"
             val result =
                 Result.Success(randomChannel(id = channelId, type = channelType))
+            val expected = result.value.copy(syncStatus = SyncStatus.COMPLETED)
 
             sut.onCreateChannelResult(
                 channelType = channelType,
@@ -129,7 +130,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).upsertChannel((result as Result.Success).value)
+            verify(repos).upsertChannel(expected)
         }
 
     @Test
