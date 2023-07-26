@@ -2442,6 +2442,7 @@ public final class io/getstream/chat/android/client/query/pagination/AnyChannelP
 public abstract interface class io/getstream/chat/android/client/setup/state/ClientState {
 	public abstract fun getConnectionState ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getInitializationState ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getUser ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun isConnecting ()Z
 	public abstract fun isNetworkAvailable ()Z
 	public abstract fun isOffline ()Z
