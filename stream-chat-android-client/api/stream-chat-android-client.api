@@ -1928,12 +1928,12 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 }
 
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
+	public static final field EXTRA_DURATION Ljava/lang/String;
+	public static final field EXTRA_UPLOAD_ID Ljava/lang/String;
+	public static final field EXTRA_WAVEFORM_DATA Ljava/lang/String;
 	public static final fun getDuration (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/Float;
 	public static final fun getUploadId (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
 	public static final fun getWaveformData (Lio/getstream/chat/android/models/Attachment;)Ljava/util/List;
-	public static final fun setDuration (Lio/getstream/chat/android/models/Attachment;Ljava/lang/Float;)V
-	public static final fun setUploadId (Lio/getstream/chat/android/models/Attachment;Ljava/lang/String;)V
-	public static final fun setWaveformData (Lio/getstream/chat/android/models/Attachment;Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
@@ -1961,6 +1961,10 @@ public final class io/getstream/chat/android/client/extensions/StringExtensionsK
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/ChannelKt {
+}
+
+public final class io/getstream/chat/android/client/extensions/internal/ChatEventKt {
+	public static final fun enrichIfNeeded (Lio/getstream/chat/android/client/events/ChatEvent;)Lio/getstream/chat/android/client/events/ChatEvent;
 }
 
 public final class io/getstream/chat/android/client/extensions/internal/MemberKt {
