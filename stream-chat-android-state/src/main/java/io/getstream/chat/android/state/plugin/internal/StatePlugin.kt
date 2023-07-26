@@ -109,12 +109,11 @@ public class StatePlugin internal constructor(
     SendMessageListener by SendMessageListenerState(logic),
     TypingEventListener by TypingEventListenerState(stateRegistry),
     SendAttachmentListener by SendAttachmentListenerState(logic),
-    FetchCurrentUserListener by FetchCurrentUserListenerState(globalState) {
+    FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState) {
 
     override var errorHandler: ErrorHandler = errorHandlerFactory.create()
 
     override fun onUserSet(user: User) {
-        globalState.setUser(user)
         syncManager.start()
         eventHandler.startListening()
     }

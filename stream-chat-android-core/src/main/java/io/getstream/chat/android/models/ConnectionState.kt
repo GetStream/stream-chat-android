@@ -25,15 +25,15 @@ public sealed class ConnectionState {
      *
      * @property user Current [User] connected to the WebSocket.
      */
-    public data class Connected(val user: User) : ConnectionState()
+    public object Connected : ConnectionState() { override fun toString(): String = "Connected" }
 
     /**
      * The client is trying to connect to the WebSocket.
      */
-    public object Connecting : ConnectionState()
+    public object Connecting : ConnectionState() { override fun toString(): String = "Connecting" }
 
     /**
      * The client is permanently disconnected from the WebSocket.
      */
-    public object Offline : ConnectionState()
+    public object Offline : ConnectionState() { override fun toString(): String = "Offline" }
 }

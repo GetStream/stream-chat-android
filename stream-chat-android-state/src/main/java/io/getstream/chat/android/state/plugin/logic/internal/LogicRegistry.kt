@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Message
@@ -50,6 +51,7 @@ import java.util.concurrent.ConcurrentHashMap
 @Suppress("LongParameterList")
 internal class LogicRegistry internal constructor(
     private val stateRegistry: StateRegistry,
+    private val clientState: ClientState,
     private val mutableGlobalState: MutableGlobalState,
     private val userPresence: Boolean,
     private val repos: RepositoryFacade,
@@ -97,11 +99,12 @@ internal class LogicRegistry internal constructor(
         return channels.getOrPut(channelType to channelId) {
             val mutableState = stateRegistry.mutableChannel(channelType, channelId)
             val stateLogic = ChannelStateLogic(
+                clientState = clientState,
                 mutableState = mutableState,
                 globalMutableState = mutableGlobalState,
                 searchLogic = SearchLogic(mutableState),
                 coroutineScope = coroutineScope,
-                unreadCountLogic = UnreadCountLogic(mutableState, mutableGlobalState, queryingChannelsFree)
+                unreadCountLogic = UnreadCountLogic(clientState, mutableState, mutableGlobalState, queryingChannelsFree)
             )
 
             ChannelLogic(

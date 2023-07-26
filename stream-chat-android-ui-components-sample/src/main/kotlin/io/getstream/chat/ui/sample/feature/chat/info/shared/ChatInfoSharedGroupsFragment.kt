@@ -26,7 +26,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.channels.bindView
@@ -46,7 +45,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
                 Filters.`in`(
                     "members",
                     listOf(args.memberId).let { members ->
-                        ChatClient.instance().globalState.user.value?.id?.let(members::plus) ?: members
+                        ChatClient.instance().clientState.user.value?.id?.let(members::plus) ?: members
                     }
                 ),
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),

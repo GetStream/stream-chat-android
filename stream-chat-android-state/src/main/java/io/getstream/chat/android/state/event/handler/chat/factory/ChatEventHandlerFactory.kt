@@ -21,8 +21,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.state.extensions.globalState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -33,7 +31,6 @@ import kotlinx.coroutines.flow.StateFlow
  */
 public open class ChatEventHandlerFactory(
     private val clientState: ClientState = ChatClient.instance().clientState,
-    private val globalState: GlobalState = ChatClient.instance().globalState,
 ) {
 
     /**
@@ -42,6 +39,6 @@ public open class ChatEventHandlerFactory(
      * @param channels The visible channels map.
      */
     public open fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler {
-        return DefaultChatEventHandler(channels = channels, clientState = clientState, globalState = globalState)
+        return DefaultChatEventHandler(channels = channels, clientState = clientState)
     }
 }

@@ -29,7 +29,6 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
@@ -397,7 +396,7 @@ public class MessageComposerController(
             state.value = state.value.copy(ownCapabilities = ownCapabilities)
         }.launchIn(scope)
 
-        chatClient.globalState.user.onEach { currentUser ->
+        chatClient.clientState.user.onEach { currentUser ->
             state.value = state.value.copy(currentUser = currentUser)
         }.launchIn(scope)
 

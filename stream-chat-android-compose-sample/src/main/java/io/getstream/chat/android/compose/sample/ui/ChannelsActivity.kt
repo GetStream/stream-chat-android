@@ -63,7 +63,6 @@ import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFact
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
 import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
@@ -117,7 +116,7 @@ class ChannelsActivity : BaseConnectedActivity() {
      */
     @Composable
     private fun MyCustomUiSimplified() {
-        val user by ChatClient.instance().globalState.user.collectAsState()
+        val user by ChatClient.instance().clientState.user.collectAsState()
         val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
 
         Scaffold(

@@ -30,7 +30,7 @@ private object ChannelListHeaderUsageSnippet {
 
             setContent {
                 ChatTheme {
-                    val user by ChatClient.instance().globalState.user.collectAsState()
+                    val user by ChatClient.instance().clientState.user.collectAsState()
                     val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
                     ChannelListHeader(
                         modifier = Modifier.fillMaxWidth(),
@@ -80,7 +80,7 @@ private object ChannelListHeaderCustomizationSnippet {
 
             setContent {
                 ChatTheme {
-                    val user by ChatClient.instance().globalState.user.collectAsState()
+                    val user by ChatClient.instance().clientState.user.collectAsState()
                     val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
                     ChannelListHeader(
                         // Customizing the appearance

@@ -318,7 +318,7 @@ private fun MessageListHeaderConnectedPreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connected(PreviewUserData.user1),
+            connectionState = ConnectionState.Connected,
         )
     }
 }
@@ -364,7 +364,7 @@ private fun MessageListHeaderUserTypingPreview() {
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
             typingUsers = listOf(PreviewUserData.user2),
-            connectionState = ConnectionState.Connected(PreviewUserData.user1),
+            connectionState = ConnectionState.Connected,
         )
     }
 }
@@ -379,7 +379,7 @@ private fun MessageListHeaderManyMembersPreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithManyMembers,
             currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connected(PreviewUserData.user1),
+            connectionState = ConnectionState.Connected,
         )
     }
 }

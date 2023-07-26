@@ -31,7 +31,6 @@ import androidx.navigation.findNavController
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Filters
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
@@ -51,7 +50,7 @@ class ChannelListFragment : Fragment() {
     private val viewModel: ChannelListViewModel by viewModels {
         val user = App.instance.userRepository.getUser()
         val userId = if (user == SampleUser.None) {
-            ChatClient.instance().globalState.user.value?.id ?: ""
+            ChatClient.instance().clientState.user.value?.id ?: ""
         } else {
             user.id
         }

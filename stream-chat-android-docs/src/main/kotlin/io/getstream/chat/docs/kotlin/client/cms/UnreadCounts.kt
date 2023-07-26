@@ -128,7 +128,7 @@ class UnreadCounts(val client: ChatClient, val channelClient: ChannelClient) {
         fun unreadMentions() {
             // Get channel
             val queryChannelRequest = QueryChannelRequest().withState()
-            val currentUser = client.globalState.user.value
+            val currentUser = client.clientState.user.value
             if (currentUser == null) {
                 // Handle user not connected state
                 return

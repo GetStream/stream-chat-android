@@ -117,7 +117,7 @@ internal object Mother {
         val networkStatProvider: NetworkStateProvider = mock()
         whenever(networkStatProvider.isConnected()) doReturn true
         return MutableClientState(networkStatProvider).apply {
-            setConnectionState(ConnectionState.Connected(randomUser()))
+            setConnectionState(ConnectionState.Connected)
             setInitializationState(InitializationState.COMPLETE)
         }
     }

@@ -27,7 +27,6 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -85,7 +84,7 @@ class AddChannelViewModel : ViewModel() {
         userPresence: Boolean,
     ): QueryUsersRequest {
         val filter = if (querySearch.isEmpty()) {
-            val currentUserId = chatClient.globalState.user.value?.id
+            val currentUserId = chatClient.clientState.user.value?.id
             if (currentUserId != null) {
                 Filters.ne(FIELD_ID, currentUserId)
             } else {
@@ -94,7 +93,7 @@ class AddChannelViewModel : ViewModel() {
         } else {
             createFilter(
                 Filters.autocomplete(FIELD_NAME, querySearch),
-                chatClient.globalState.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
+                chatClient.clientState.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
             )
         }
         return QueryUsersRequest(
@@ -132,7 +131,7 @@ class AddChannelViewModel : ViewModel() {
         }
         viewModelScope.launch(Dispatchers.IO) {
             val currentUserId =
-                chatClient.globalState.user.value?.id ?: error("User must be set before create new channel!")
+                chatClient.clientState.user.value?.id ?: error("User must be set before create new channel!")
             val result = chatClient.createChannel(
                 channelType = CHANNEL_MESSAGING_TYPE,
                 channelId = "",

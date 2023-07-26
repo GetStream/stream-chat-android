@@ -21,14 +21,13 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.uiutils.extension.getMembersStatusText
 import io.getstream.chat.android.uiutils.extension.getPreviewMessage
 
 internal fun Channel.isCurrentUserBanned(): Boolean {
-    val currentUserId = ChatClient.instance().globalState.user.value?.id ?: return false
+    val currentUserId = ChatClient.instance().clientState.user.value?.id ?: return false
     return members.any { it.user.id == currentUserId && it.banned }
 }
 
@@ -64,7 +63,7 @@ public fun Channel.getMembersStatusText(
 public fun Channel.getLastMessage(): Message? = getPreviewMessage(ChatUI.currentUserProvider.getCurrentUser())
 
 internal fun Channel.readCount(message: Message): Int {
-    val currentUser = ChatClient.instance().globalState.user.value
+    val currentUser = ChatClient.instance().clientState.user.value
     return read.filter { it.user.id != currentUser?.id }
         .mapNotNull { it.lastRead }
         .count { it.time >= message.getCreatedAtOrThrow().time }

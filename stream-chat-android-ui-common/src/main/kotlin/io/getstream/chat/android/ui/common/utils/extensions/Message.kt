@@ -22,14 +22,13 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.globalState
 import java.util.Date
 
 /**
  * @return if the message was sent by current user.
  */
 @InternalStreamChatApi
-public fun Message.isMine(chatClient: ChatClient): Boolean = chatClient.globalState.user.value?.id == user.id
+public fun Message.isMine(chatClient: ChatClient): Boolean = chatClient.clientState.user.value?.id == user.id
 
 @InternalStreamChatApi
 public fun Message.isMine(currentUser: User?): Boolean = currentUser?.id == user.id

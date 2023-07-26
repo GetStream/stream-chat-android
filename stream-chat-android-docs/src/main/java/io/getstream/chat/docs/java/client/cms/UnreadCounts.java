@@ -113,7 +113,7 @@ public class UnreadCounts {
         public void unreadMentions() {
             // Get channel
             QueryChannelRequest queryChannelRequest = new QueryChannelRequest().withState();
-            User currentUser = ChatClientExtensions.getGlobalState(client).getUser().getValue();
+            User currentUser = client.getClientState().getUser().getValue();
             if (currentUser == null) {
                 // Handle user not connected state
                 return;

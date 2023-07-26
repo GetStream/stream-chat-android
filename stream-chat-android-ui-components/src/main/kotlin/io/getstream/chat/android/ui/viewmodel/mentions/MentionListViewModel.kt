@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
@@ -98,7 +97,7 @@ public class MentionListViewModel : ViewModel() {
 
     private suspend fun fetchServerResults() {
         val currentState = _state.value!!
-        val currentUser = requireNotNull(ChatClient.instance().globalState.user.value)
+        val currentUser = requireNotNull(ChatClient.instance().clientState.user.value)
         val channelFilter = Filters.`in`("members", listOf(currentUser.id))
         val messageFilter = Filters.contains("mentioned_users.id", currentUser.id)
 

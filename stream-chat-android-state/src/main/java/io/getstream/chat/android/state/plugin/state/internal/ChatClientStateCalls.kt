@@ -51,7 +51,7 @@ internal class ChatClientStateCalls(
      * It needs to be accessed after the user is connected to be sure needed plugins are initialized.
      */
     private val deferredState: Deferred<StateRegistry> = scope.async(start = CoroutineStart.LAZY) {
-        globalState.user.first { it != null }
+        chatClient.clientState.user.first { it != null }
         chatClient.state
     }
 

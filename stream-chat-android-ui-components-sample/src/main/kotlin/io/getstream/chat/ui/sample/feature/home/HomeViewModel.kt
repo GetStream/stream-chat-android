@@ -24,6 +24,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
  */
 class HomeViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
+    private val clientState: ClientState = chatClient.clientState,
     private val globalState: GlobalState = chatClient.globalState,
 ) : ViewModel() {
 
@@ -76,7 +78,7 @@ class HomeViewModel(
         _state.addSource(globalState.totalUnreadCount.asLiveData()) { count ->
             setState { copy(totalUnreadCount = count) }
         }
-        _state.addSource(globalState.user.asLiveData()) { user ->
+        _state.addSource(clientState.user.asLiveData()) { user ->
             setState { copy(user = user ?: User()) }
         }
     }

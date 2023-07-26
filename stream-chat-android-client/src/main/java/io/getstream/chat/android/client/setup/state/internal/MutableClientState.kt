@@ -35,6 +35,10 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
 
     private val _initializationState = MutableStateFlow(InitializationState.NOT_INITIALIZED)
     private val _connectionState: MutableStateFlow<ConnectionState> = MutableStateFlow(ConnectionState.Offline)
+    private var _user: MutableStateFlow<User?> = MutableStateFlow(null)
+
+    override val user: StateFlow<User?>
+        get() = _user
 
     override val isOnline: Boolean
         get() = _connectionState.value is ConnectionState.Connected
@@ -60,6 +64,7 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
         logger.d { "[clearState] no args" }
         _initializationState.value = InitializationState.NOT_INITIALIZED
         _connectionState.value = ConnectionState.Offline
+        _user.value = null
     }
 
     /**
@@ -82,13 +87,11 @@ internal class MutableClientState(private val networkStateProvider: NetworkState
     }
 
     /**
-     * Update the current connected user.
+     * Sets the current connected user.
      *
-     * @param currentUser The [User] instance that will be configured.
+     * @param user The [User] instance that will be configured.
      */
-    fun updateCurrentUser(currentUser: User) {
-        (_connectionState.value as? ConnectionState.Connected)
-            ?.copy(user = currentUser)
-            ?.let { _connectionState.value = it }
+    fun setUser(user: User) {
+        _user.value = user
     }
 }

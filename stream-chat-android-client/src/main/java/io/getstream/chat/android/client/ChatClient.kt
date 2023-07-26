@@ -75,6 +75,7 @@ import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.UserEvent
+import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_FILE
 import io.getstream.chat.android.client.extensions.ATTACHMENT_TYPE_IMAGE
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
@@ -322,7 +323,8 @@ internal constructor(
                 api.setConnection(user.id, connectionId)
                 notifications.onSetUser()
 
-                mutableClientState.setConnectionState(ConnectionState.Connected(user))
+                mutableClientState.setConnectionState(ConnectionState.Connected)
+                mutableClientState.setUser(user)
             }
 
             is NewMessageEvent -> {
@@ -332,6 +334,23 @@ internal constructor(
             is ConnectingEvent -> {
                 logger.i { "[handleEvent] event: ConnectingEvent" }
                 mutableClientState.setConnectionState(ConnectionState.Connecting)
+            }
+
+            is UserUpdatedEvent -> {
+                val eventUser = event.user
+                val currentUser = clientState.user.value
+                if (currentUser?.id == eventUser.id) {
+                    val mergedUser = currentUser.mergePartially(eventUser)
+                    mutableClientState.setUser(mergedUser)
+                }
+            }
+
+            is NotificationMutesUpdatedEvent -> {
+                mutableClientState.setUser(event.me)
+            }
+
+            is NotificationChannelMutesUpdatedEvent -> {
+                mutableClientState.setUser(event.me)
             }
 
             is DisconnectedEvent -> {
@@ -357,7 +376,7 @@ internal constructor(
 
         event.extractCurrentUser()?.let { currentUser ->
             userStateService.onUserUpdated(currentUser)
-            mutableClientState.updateCurrentUser(currentUser)
+            mutableClientState.setUser(currentUser)
             storePushNotificationsConfig(
                 currentUser.id,
                 currentUser.name,
@@ -418,8 +437,8 @@ internal constructor(
 
             userState is UserState.NotSet -> {
                 logger.v { "[setUser] user is NotSet" }
+                mutableClientState.setUser(user)
                 initializeClientWithUser(user, cacheableTokenProvider, isAnonymous)
-
                 userStateService.onSetUser(user, isAnonymous)
                 chatSocket.connectUser(user, isAnonymous)
                 mutableClientState.setInitializationState(InitializationState.COMPLETE)
@@ -1026,6 +1045,9 @@ internal constructor(
             }
         }.doOnResult(userScope) { result ->
             logger.v { "[fetchCurrentUser] completed: $result" }
+            result.getOrNull()?.also { currentUser ->
+                mutableClientState.setUser(currentUser)
+            }
             plugins.forEach { plugin ->
                 logger.v { "[fetchCurrentUser] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                 plugin.onFetchCurrentUserResult(result)

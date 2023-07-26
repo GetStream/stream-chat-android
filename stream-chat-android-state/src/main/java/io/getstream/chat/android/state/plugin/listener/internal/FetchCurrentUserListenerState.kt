@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.state.event.handler.internal.utils.updateCurrentUser
@@ -25,6 +26,7 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 
 internal class FetchCurrentUserListenerState(
+    private val clientState: ClientState,
     private val globalMutableState: MutableGlobalState,
 ) : FetchCurrentUserListener {
 
@@ -33,7 +35,10 @@ internal class FetchCurrentUserListenerState(
     override suspend fun onFetchCurrentUserResult(result: Result<User>) {
         if (result.isSuccess) {
             logger.d { "[onFetchCurrentUserResult] result: $result" }
-            globalMutableState.updateCurrentUser(SelfUserFull(result.getOrThrow()))
+            globalMutableState.updateCurrentUser(
+                currentUser = clientState.user.value,
+                receivedUser = SelfUserFull(result.getOrThrow())
+            )
         }
     }
 }
