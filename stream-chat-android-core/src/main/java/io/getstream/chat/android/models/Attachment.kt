@@ -153,6 +153,7 @@ public data class Attachment(
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
     public fun newBuilder(): Builder = Builder(this)
 
+    @Suppress("TooManyFunctions")
     public class Builder() {
         private var authorName: String? = null
         private var authorLink: String? = null

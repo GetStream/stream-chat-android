@@ -139,6 +139,7 @@ public data class Channel(
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
     public fun newBuilder(): Builder = Builder(this)
 
+    @Suppress("TooManyFunctions")
     public class Builder() {
         private var id: String = ""
         private var type: String = ""
@@ -223,12 +224,20 @@ public data class Channel(
         public fun withUnreadCount(unreadCount: Int?): Builder = apply { this.unreadCount = unreadCount }
         public fun withTeam(team: String): Builder = apply { this.team = team }
         public fun withHidden(hidden: Boolean?): Builder = apply { this.hidden = hidden }
-        public fun withHiddenMessagesBefore(hiddenMessagesBefore: Date?): Builder = apply { this.hiddenMessagesBefore = hiddenMessagesBefore }
+        public fun withHiddenMessagesBefore(hiddenMessagesBefore: Date?): Builder = apply {
+            this.hiddenMessagesBefore = hiddenMessagesBefore
+        }
         public fun withCooldown(cooldown: Int): Builder = apply { this.cooldown = cooldown }
-        public fun withPinnedMessages(pinnedMessages: List<Message>): Builder = apply { this.pinnedMessages = pinnedMessages }
-        public fun withOwnCapabilities(ownCapabilities: Set<String>): Builder = apply { this.ownCapabilities = ownCapabilities }
+        public fun withPinnedMessages(pinnedMessages: List<Message>): Builder = apply {
+            this.pinnedMessages = pinnedMessages
+        }
+        public fun withOwnCapabilities(ownCapabilities: Set<String>): Builder = apply {
+            this.ownCapabilities = ownCapabilities
+        }
         public fun withMembership(membership: Member?): Builder = apply { this.membership = membership }
-        public fun withCachedLatestMessages(cachedLatestMessages: List<Message>): Builder = apply { this.cachedLatestMessages = cachedLatestMessages }
+        public fun withCachedLatestMessages(cachedLatestMessages: List<Message>): Builder = apply {
+            this.cachedLatestMessages = cachedLatestMessages
+        }
         public fun withIsInsideSearch(isInsideSearch: Boolean): Builder = apply { this.isInsideSearch = isInsideSearch }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
 

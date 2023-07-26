@@ -316,6 +316,8 @@ public data class Message(
     @SinceKotlin("99999.9")
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
     public fun newBuilder(): Builder = Builder(this)
+
+    @Suppress("TooManyFunctions")
     public class Builder() {
         private var id: String = ""
         private var cid: String = ""
@@ -404,21 +406,37 @@ public data class Message(
         public fun withParentId(parentId: String?): Builder = apply { this.parentId = parentId }
         public fun withCommand(command: String?): Builder = apply { this.command = command }
         public fun withAttachments(attachments: List<Attachment>): Builder = apply { this.attachments = attachments }
-        public fun withMentionedUsersIds(mentionedUsersIds: List<String>): Builder = apply { this.mentionedUsersIds = mentionedUsersIds }
-        public fun withMentionedUsers(mentionedUsers: List<User>): Builder = apply { this.mentionedUsers = mentionedUsers }
+        public fun withMentionedUsersIds(mentionedUsersIds: List<String>): Builder = apply {
+            this.mentionedUsersIds = mentionedUsersIds
+        }
+        public fun withMentionedUsers(mentionedUsers: List<User>): Builder = apply {
+            this.mentionedUsers = mentionedUsers
+        }
         public fun withReplyCount(replyCount: Int): Builder = apply { this.replyCount = replyCount }
-        public fun withReactionCounts(reactionCounts: Map<String, Int>): Builder = apply { this.reactionCounts = reactionCounts }
-        public fun withReactionScores(reactionScores: Map<String, Int>): Builder = apply { this.reactionScores = reactionScores }
+        public fun withReactionCounts(reactionCounts: Map<String, Int>): Builder = apply {
+            this.reactionCounts = reactionCounts
+        }
+        public fun withReactionScores(reactionScores: Map<String, Int>): Builder = apply {
+            this.reactionScores = reactionScores
+        }
         public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
-        public fun withSyncDescription(syncDescription: MessageSyncDescription?): Builder = apply { this.syncDescription = syncDescription }
+        public fun withSyncDescription(syncDescription: MessageSyncDescription?): Builder = apply {
+            this.syncDescription = syncDescription
+        }
         public fun withType(type: String): Builder = apply { this.type = type }
-        public fun withLatestReactions(latestReactions: List<Reaction>): Builder = apply { this.latestReactions = latestReactions }
+        public fun withLatestReactions(latestReactions: List<Reaction>): Builder = apply {
+            this.latestReactions = latestReactions
+        }
         public fun withOwnReactions(ownReactions: List<Reaction>): Builder = apply { this.ownReactions = ownReactions }
         public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
         public fun withUpdatedAt(updatedAt: Date?): Builder = apply { this.updatedAt = updatedAt }
         public fun withDeletedAt(deletedAt: Date?): Builder = apply { this.deletedAt = deletedAt }
-        public fun withUpdatedLocallyAt(updatedLocallyAt: Date?): Builder = apply { this.updatedLocallyAt = updatedLocallyAt }
-        public fun withCreatedLocallyAt(createdLocallyAt: Date?): Builder = apply { this.createdLocallyAt = createdLocallyAt }
+        public fun withUpdatedLocallyAt(updatedLocallyAt: Date?): Builder = apply {
+            this.updatedLocallyAt = updatedLocallyAt
+        }
+        public fun withCreatedLocallyAt(createdLocallyAt: Date?): Builder = apply {
+            this.createdLocallyAt = createdLocallyAt
+        }
         public fun withUser(user: User): Builder = apply { this.user = user }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withSilent(silent: Boolean): Builder = apply { this.silent = silent }
@@ -432,8 +450,12 @@ public data class Message(
         public fun withPinnedAt(pinnedAt: Date?): Builder = apply { this.pinnedAt = pinnedAt }
         public fun withPinExpires(pinExpires: Date?): Builder = apply { this.pinExpires = pinExpires }
         public fun withPinnedBy(pinnedBy: User?): Builder = apply { this.pinnedBy = pinnedBy }
-        public fun withThreadParticipants(threadParticipants: List<User>): Builder = apply { this.threadParticipants = threadParticipants }
-        public fun withSkipPushNotification(skipPushNotification: Boolean): Builder = apply { this.skipPushNotification = skipPushNotification }
+        public fun withThreadParticipants(threadParticipants: List<User>): Builder = apply {
+            this.threadParticipants = threadParticipants
+        }
+        public fun withSkipPushNotification(skipPushNotification: Boolean): Builder = apply {
+            this.skipPushNotification = skipPushNotification
+        }
         public fun withSkipEnrichUrl(skipEnrichUrl: Boolean): Builder = apply { this.skipEnrichUrl = skipEnrichUrl }
 
         public fun build(): Message {

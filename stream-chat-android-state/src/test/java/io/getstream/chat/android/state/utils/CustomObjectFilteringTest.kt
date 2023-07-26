@@ -160,7 +160,11 @@ internal class CustomObjectFilteringTest {
                     randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())
                 }.let { expectedList ->
                     Arguments.of(
-                        (expectedList + List(10) { randomChannel(members = List(positiveRandomInt(10)) { randomMember() }) }).shuffled(),
+                        (
+                            expectedList + List(10) {
+                                randomChannel(members = List(positiveRandomInt(10)) { randomMember() })
+                            }
+                            ).shuffled(),
                         Filters.contains("members", memberId),
                         expectedList,
                     )
@@ -168,7 +172,9 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to (List(positiveRandomInt(10)) { randomLong() } + longQuery).shuffled())
+                    extraData = mapOf(
+                        "someField" to (List(positiveRandomInt(10)) { randomLong() } + longQuery).shuffled()
+                    )
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -179,7 +185,9 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to (List(positiveRandomInt(10)) { randomString() } + stringQuery).shuffled())
+                    extraData = mapOf(
+                        "someField" to (List(positiveRandomInt(10)) { randomString() } + stringQuery).shuffled()
+                    )
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -190,7 +198,9 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to (List(positiveRandomInt(10)) { randomInt() } + intQuery).shuffled())
+                    extraData = mapOf(
+                        "someField" to (List(positiveRandomInt(10)) { randomInt() } + intQuery).shuffled()
+                    )
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -203,7 +213,9 @@ internal class CustomObjectFilteringTest {
 
         @JvmStatic
         fun autocompleteFilterArguments() = listOf(
-            List(positiveRandomInt(10)) { randomChannel(type = randomString(20) + stringQuery + randomString(20)) }.let { expectedList ->
+            List(positiveRandomInt(10)) {
+                randomChannel(type = randomString(20) + stringQuery + randomString(20))
+            }.let { expectedList ->
                 Arguments.of(
                     (expectedList + List(10) { randomChannel(type = randomString(8)) }).shuffled(),
                     Filters.autocomplete("type", stringQuery),
