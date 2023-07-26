@@ -62,7 +62,8 @@
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/messageEditText"
             android:layout_width="0dp"
-            android:layout_height="@dimen/stream_ui_message_composer_center_content_height"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/stream_ui_message_composer_center_content_height"
             android:background="@null"
             android:ellipsize="end"
             android:hint="@string/stream_ui_message_composer_hint_normal"
