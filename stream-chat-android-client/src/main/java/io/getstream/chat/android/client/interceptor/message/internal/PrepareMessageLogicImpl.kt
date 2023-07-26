@@ -48,6 +48,7 @@ internal class PrepareMessageLogicImpl(
      *
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
+    @Suppress("ComplexMethod")
     override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
         val channel = channelStateLogicProvider?.channelStateLogic(channelType, channelId)
 

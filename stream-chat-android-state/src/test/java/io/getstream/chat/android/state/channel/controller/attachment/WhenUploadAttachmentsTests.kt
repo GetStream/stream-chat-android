@@ -54,7 +54,9 @@ internal class WhenUploadAttachmentsTests {
     )
 
     private val attachmentsPending = mutableListOf(
-        randomAttachment().copy(uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30))
+        randomAttachment().copy(
+            uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30),
+        )
     )
 
     private val defaultMessageSentAttachments = randomMessage(

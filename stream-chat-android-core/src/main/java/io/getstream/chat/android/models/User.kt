@@ -137,11 +137,15 @@ public data class User(
         public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
         public fun withUpdatedAt(updatedAt: Date?): Builder = apply { this.updatedAt = updatedAt }
         public fun withLastActive(lastActive: Date?): Builder = apply { this.lastActive = lastActive }
-        public fun withTotalUnreadCount(totalUnreadCount: Int): Builder = apply { this.totalUnreadCount = totalUnreadCount }
+        public fun withTotalUnreadCount(totalUnreadCount: Int): Builder = apply {
+            this.totalUnreadCount = totalUnreadCount
+        }
         public fun withUnreadChannels(unreadChannels: Int): Builder = apply { this.unreadChannels = unreadChannels }
         public fun withMutes(mutes: List<Mute>): Builder = apply { this.mutes = mutes }
         public fun withTeams(teams: List<String>): Builder = apply { this.teams = teams }
-        public fun withChannelMutes(channelMutes: List<ChannelMute>): Builder = apply { this.channelMutes = channelMutes }
+        public fun withChannelMutes(channelMutes: List<ChannelMute>): Builder = apply {
+            this.channelMutes = channelMutes
+        }
         public fun withExtraData(extraData: Map<String, Any>): Builder = apply { this.extraData = extraData }
         public fun withDeactivatedAt(deactivatedAt: Date?): Builder = apply { this.deactivatedAt = deactivatedAt }
 
