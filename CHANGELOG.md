@@ -12,8 +12,6 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix Partial User Update [#4888](https://github.com/GetStream/stream-chat-android/pull/4888)
-- Fix inconsistent reconnection state after an unrecoverable error [#4896](https://github.com/GetStream/stream-chat-android/pull/4896)
 
 ### ⬆️ Improved
 
@@ -121,6 +119,12 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# July 26th, 2023 - 5.17.8
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix Partial User Update [#4888](https://github.com/GetStream/stream-chat-android/pull/4888)
+- Fix inconsistent reconnection state after an unrecoverable error [#4896](https://github.com/GetStream/stream-chat-android/pull/4896)
 
 # July 11th, 2023 - 5.17.7
 ## stream-chat-android-client
