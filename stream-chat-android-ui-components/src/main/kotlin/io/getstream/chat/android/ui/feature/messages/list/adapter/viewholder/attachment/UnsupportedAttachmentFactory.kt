@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentV
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.chat.android.uiutils.extension.hasLink
 
 /**
  * Fallback factory for unsupported attachment types.
@@ -42,7 +43,8 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
      * @return True it the message contains unsupported attachment.
      */
     override fun canHandle(message: Message): Boolean {
-        return message.attachments.isNotEmpty() && message.attachments.all { !it.isSupported() }
+        return message.attachments.isNotEmpty() &&
+            message.attachments.all { !it.hasLink() && !it.isSupported() }
     }
 
     /**
