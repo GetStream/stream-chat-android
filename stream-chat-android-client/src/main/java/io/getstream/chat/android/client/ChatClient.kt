@@ -364,6 +364,7 @@ internal constructor(
                             socketStateService.onDisconnected()
                         }
                         is DisconnectCause.UnrecoverableError -> {
+                            lifecycleObserver.dispose(lifecycleHandler)
                             userStateService.onSocketUnrecoverableError()
                             if (ToggleService.isSocketExperimental().not()) {
                                 socketStateService.onSocketUnrecoverableError()
