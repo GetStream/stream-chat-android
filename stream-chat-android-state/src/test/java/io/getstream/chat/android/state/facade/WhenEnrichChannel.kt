@@ -37,9 +37,9 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val config = Config(name = "forChannel")
             whenever(configs.selectChannelConfig("channelType")) doReturn ChannelConfig("channelType", config)
 
-            channel.enrichChannel(emptyMap(), defaultConfig)
+            val result = channel.enrichChannel(emptyMap(), defaultConfig)
 
-            channel.config `should be equal to` config
+            result.config `should be equal to` config
         }
     }
 
@@ -50,9 +50,9 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val defaultConfig = Config(name = "default")
             whenever(configs.selectChannelConfig("channelType")) doReturn null
 
-            channel.enrichChannel(emptyMap(), defaultConfig)
+            val result = channel.enrichChannel(emptyMap(), defaultConfig)
 
-            channel.config `should be equal to` defaultConfig
+            result.config `should be equal to` defaultConfig
         }
     }
 
@@ -64,9 +64,9 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val channel = randomChannel()
             val messageMap = mapOf(channel.cid to listOf(message1, message2))
 
-            channel.enrichChannel(messageMap, Config())
+            val result = channel.enrichChannel(messageMap, Config())
 
-            val channelMessages = channel.messages
+            val channelMessages = result.messages
             channelMessages.size `should be equal to` 2
             channelMessages[0] `should be equal to` message1
             channelMessages[1] `should be equal to` message2
@@ -82,9 +82,9 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val channel = randomChannel(messages = listOf(message1, message3))
             val messageMap = mapOf(channel.cid to listOf(message1, message2))
 
-            channel.enrichChannel(messageMap, Config())
+            val result = channel.enrichChannel(messageMap, Config())
 
-            val channelMessages = channel.messages
+            val channelMessages = result.messages
             channelMessages.size `should be equal to` 3
             channelMessages[0] `should be equal to` message1
             channelMessages[1] `should be equal to` message2
@@ -102,9 +102,9 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val channel = randomChannel(messages = listOf(randomMessage(id = commonMessageId), message3))
             val messageMap = mapOf(channel.cid to listOf(commonMessage, message2))
 
-            channel.enrichChannel(messageMap, Config())
+            val result = channel.enrichChannel(messageMap, Config())
 
-            val channelMessages = channel.messages
+            val channelMessages = result.messages
             channelMessages.size `should be equal to` 3
             channelMessages[0] `should be equal to` commonMessage
             channelMessages[1] `should be equal to` message2
@@ -121,9 +121,9 @@ internal class WhenEnrichChannel : BaseRepositoryFacadeTest() {
             val channel = randomChannel(messages = listOf(message1))
             val messageMap = mapOf("cid2" to listOf(message2, message3))
 
-            channel.enrichChannel(messageMap, Config())
+            val result = channel.enrichChannel(messageMap, Config())
 
-            val channelMessages = channel.messages
+            val channelMessages = result.messages
             channelMessages.size `should be equal to` 1
             channelMessages[0] `should be equal to` message1
         }
