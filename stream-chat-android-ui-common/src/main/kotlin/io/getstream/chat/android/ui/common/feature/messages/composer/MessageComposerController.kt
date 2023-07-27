@@ -351,7 +351,7 @@ public class MessageComposerController(
             state.value = state.value.copy(inputValue = input)
 
             if (canSendTypingUpdates.value) {
-                typingUpdatesBuffer.onKeystroke()
+                typingUpdatesBuffer.onKeystroke(input)
             }
             handleCommandSuggestions()
             handleValidationErrors()

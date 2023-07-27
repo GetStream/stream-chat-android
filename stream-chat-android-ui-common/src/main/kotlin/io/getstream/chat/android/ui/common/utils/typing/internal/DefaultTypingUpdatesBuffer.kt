@@ -82,15 +82,25 @@ internal class DefaultTypingUpdatesBuffer(
     /**
      * Sets the value of [isTyping] only if there is
      * a change in state in order to not create unnecessary events.
-     *
      * Also resets the job used to time periods of typing activity.
+     * If the [inputText] is empty, it will call [onTypingStopped].
+     *
+     * @param [inputText] the current input text.
      */
-    override fun onKeystroke() {
-        if (!isTyping) {
-            isTyping = true
-        }
+    override fun onKeystroke(inputText: String) {
         isTypingTimerJob?.cancel()
-        isTypingTimerJob = coroutineScope.launch { startTypingTimer() }
+        when (inputText.isEmpty()) {
+            true -> {
+                isTyping = false
+                onTypingStopped()
+            }
+            false -> {
+                if (!isTyping) {
+                    isTyping = true
+                }
+                isTypingTimerJob = coroutineScope.launch { startTypingTimer() }
+            }
+        }
     }
 
     /**
