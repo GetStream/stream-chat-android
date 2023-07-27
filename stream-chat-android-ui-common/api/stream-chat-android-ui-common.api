@@ -1052,7 +1052,7 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/UserKt {
 
 public abstract interface class io/getstream/chat/android/ui/common/utils/typing/TypingUpdatesBuffer {
 	public abstract fun clear ()V
-	public abstract fun onKeystroke ()V
+	public abstract fun onKeystroke (Ljava/lang/String;)V
 }
 
 public final class io/getstream/sdk/chat/audio/recording/DefaultStreamMediaRecorder : io/getstream/sdk/chat/audio/recording/StreamMediaRecorder {

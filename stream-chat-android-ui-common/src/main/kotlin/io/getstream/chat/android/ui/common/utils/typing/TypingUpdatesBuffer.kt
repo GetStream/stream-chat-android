@@ -29,8 +29,10 @@ public interface TypingUpdatesBuffer {
 
     /**
      * Should be called on every input change.
+     *
+     * @param [inputText] the current input text.
      */
-    public fun onKeystroke()
+    public fun onKeystroke(inputText: String)
 
     /**
      * Should send a stop typing event manually.
