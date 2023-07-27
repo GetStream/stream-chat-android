@@ -47,7 +47,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Send `TypingStopEvent` whenever the message is sent or the messageComposer contains an empty text message. [#4905](https://github.com/GetStream/stream-chat-android/pull/4905)
 
 ### ✅ Added
 
@@ -57,8 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed `ChannelViewHolder` to show proper last message value. [#4900](https://github.com/GetStream/stream-chat-android/pull/4900)
-- Fixed `CnahnelViewHolder` to handle TypingIndicator visibility properly. [#4905](https://github.com/GetStream/stream-chat-android/pull/4905)
 
 ### ⬆️ Improved
 
@@ -122,6 +119,16 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# July 27th, 2023 - 5.17.9
+## stream-chat-android-ui-common
+### ⬆️ Improved
+- Send `TypingStopEvent` whenever the message is sent or the messageComposer contains an empty text message. [#4905](https://github.com/GetStream/stream-chat-android/pull/4905)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed `ChannelViewHolder` to show proper last message value. [#4900](https://github.com/GetStream/stream-chat-android/pull/4900)
+- Fixed `CnahnelViewHolder` to handle TypingIndicator visibility properly. [#4905](https://github.com/GetStream/stream-chat-android/pull/4905)
 
 # July 26th, 2023 - 5.17.8
 ## stream-chat-android-client
