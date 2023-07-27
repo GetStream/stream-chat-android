@@ -886,9 +886,7 @@ public class MessageInputView : ConstraintLayout {
 
     private fun handleKeyStroke() {
         if (canSendTypingUpdates) {
-            if (binding.messageInputFieldView.messageText.isNotEmpty()) {
-                typingUpdatesBuffer?.onKeystroke()
-            }
+            typingUpdatesBuffer?.onKeystroke(binding.messageInputFieldView.messageText)
         }
     }
 

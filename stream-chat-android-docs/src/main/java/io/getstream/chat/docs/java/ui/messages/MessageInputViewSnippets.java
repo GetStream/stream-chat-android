@@ -55,7 +55,7 @@ public class MessageInputViewSnippets extends Fragment {
 
         messageInputView.setTypingUpdatesBuffer(new TypingUpdatesBuffer() {
             @Override
-            public void onKeystroke() {
+            public void onKeystroke(@NonNull String inputText) {
                 // Your custom implementation of TypingUpdatesBuffer
             }
 
