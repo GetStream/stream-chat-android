@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
@@ -46,7 +47,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {
-        val attachment: Attachment = randomAttachment()
+        val attachment: Attachment = randomAttachment().copy(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
             syncStatus = SyncStatus.SYNC_NEEDED
@@ -65,7 +66,7 @@ internal class PrepareMessageLogicImplTest {
     @Test
     fun `given message is prepared, it should always have id, user, cid, type, createdLocallyAt and syncStatus`() {
         val newUser = randomUser()
-        val attachment: Attachment = randomAttachment()
+        val attachment: Attachment = randomAttachment().copy(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
             syncStatus = SyncStatus.SYNC_NEEDED,
@@ -151,7 +152,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given message's attachment upload id is empty, it should be generated`() {
-        val attachment = randomAttachment()
+        val attachment = randomAttachment().copy(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment)
         )
