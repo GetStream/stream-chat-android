@@ -90,6 +90,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed edit messages and reply messages with unsupported attachments. [#4757](https://github.com/GetStream/stream-chat-android/pull/4757)
+- Fixed `ChannelViewHolder` to show proper last message value. [#4901](https://github.com/GetStream/stream-chat-android/pull/4901)
 
 ### ⬆️ Improved
 - Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
