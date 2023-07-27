@@ -3,14 +3,103 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Added baseline profiles to compose and clients modules for improving performance [#4610](https://github.com/GetStream/stream-chat-android/pull/4610)
 
 ### ✅ Added
-- Count for read messages. [#4678](https://github.com/GetStream/stream-chat-android/pull/4678)
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-state
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+# July 27th, 2023 - 6.0.0-beta3
+
+I hope you're interested in our latest major release - v6.0.0-beta3! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## Common changes for all artifacts
+### ⬆️ Improved
+- Added baseline profiles to compose and clients modules for improving performance [#4610](https://github.com/GetStream/stream-chat-android/pull/4610)
+
+### ✅ Added
+- Count for read messages. [#4678](https://github.com/GetStream/stream-chat-android/pull/4678)
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -52,14 +141,6 @@
 - Fixed pagination problems related for quoted messages [#4638](https://github.com/GetStream/stream-chat-android/issues/4638)
 - Fixed message gaps in message list view when using offline support. [#4633](https://github.com/GetStream/stream-chat-android/pull/4633)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fixed `SyncManager` not emitting missed events after getting online. [#4862](https://github.com/GetStream/stream-chat-android/pull/4862)
@@ -67,15 +148,7 @@
 ### ⬆️ Improved
 - The `ChannelStateLogic` keeps members updated after ban/unban events are received. [#4836](https://github.com/GetStream/stream-chat-android/pull/4836)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Send `TypingStopEvent` whenever the message is sent or the messageComposer contains an empty text message. [#4904](https://github.com/GetStream/stream-chat-android/pull/4904)
 
@@ -83,10 +156,6 @@
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessageListController`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
 - Added `StreamMediaRecorder` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
 - Added `AudioRecordingController` as a part of `async-voice-messaging` feature. [#4828](https://github.com/GetStream/stream-chat-android/pull/4828)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -97,7 +166,6 @@
 ### ⬆️ Improved
 - Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
 - `ChannelListPayloadDiff` is calculated using the list of members instead of the list of users. [#4840](https://github.com/GetStream/stream-chat-android/pull/4840)
-
 
 ### ✅ Added
 - Added `ChatUI.streamCdnImageResizing` which allows resizing images where they appear as previews, such as the message list, attachment gallery overview or user and channel avatars. Only images hosted by Stream's CDN which contain original width and height query parameters can be resized. Image resizing is a paid feature and is disabled by default, you can enable it by overriding the aforementioned `ChatUI.streamCdnImageResizing` property with with an instance that has `StreamCdnImageResizing.imageResizingEnabled` set to true. Pricing can be found [here](https://getstream.io/chat/pricing/). [#4600](https://github.com/GetStream/stream-chat-android/pull/4600)
@@ -147,11 +215,7 @@
   * `streamUiMessageComposerAudioRecordingLockedIconDrawable`
   * `streamUiMessageComposerAudioRecordingLockedIconDrawableTint`
 
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Updated Compose compiler version to `1.4.3`. [#4697](https://github.com/GetStream/stream-chat-android/pull/4697)
 - Added `ChatClient.clearPersistence()` to be able to clear local data even if the user is not connected. [#4797](https://github.com/GetStream/stream-chat-android/pull/4797)
@@ -179,17 +243,6 @@
 
 ### ❌ Removed
 - Removed `ImagePreviewAction`, `ImagePreviewOption`, `ImagePreviewResult`, `ImagePreviewResultType`, `ImagePreviewViewModel` and `ImagePreviewViewModelFactory`. These were removed in favor of using the newer `MediaGalleryPreviewActivity` along with it's accompanying classes. The removed classes have their media gallery counterparts, for instance `ImagePreviewAction` becomes `MediaGalleryPreviewAction`, and so on. [#4766](https://github.com/GetStream/stream-chat-android/pull/4766)
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # December 1st, 2022 - 6.0.0-beta2
 
