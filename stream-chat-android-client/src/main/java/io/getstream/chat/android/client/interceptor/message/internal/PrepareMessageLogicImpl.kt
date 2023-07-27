@@ -54,11 +54,11 @@ internal class PrepareMessageLogicImpl(
 
         val attachments = message.attachments.map {
             when (it.upload) {
-                null -> it.copy(
+                null -> it.copy(uploadState = Attachment.UploadState.Success)
+                else -> it.copy(
                     extraData = it.extraData + mapOf(EXTRA_UPLOAD_ID to (it.uploadId ?: generateUploadId())),
                     uploadState = Attachment.UploadState.Idle,
                 )
-                else -> it.copy(uploadState = Attachment.UploadState.Success)
             }
         }
         return message.copy(
@@ -68,7 +68,7 @@ internal class PrepareMessageLogicImpl(
             type = getMessageType(message),
             createdLocallyAt = message.createdAt ?: message.createdLocallyAt ?: Date(),
             syncStatus = when {
-                attachments.any { it.upload == null } -> SyncStatus.AWAITING_ATTACHMENTS
+                attachments.any { it.uploadState is Attachment.UploadState.Idle } -> SyncStatus.AWAITING_ATTACHMENTS
                 clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
             }
