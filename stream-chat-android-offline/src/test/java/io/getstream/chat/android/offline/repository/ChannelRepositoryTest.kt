@@ -48,13 +48,8 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     @Test
     fun `updating a channel should work as intended`(): Unit = runTest {
         helper.upsertChannels(listOf(data.channel1, data.channel1Updated))
-        val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
+        val channel = helper.selectChannelWithoutMessages(data.channel1.cid)
 
-        // // ignore these 4 fields
-        // channel.config = data.channel1.config
-        // channel.createdBy = data.channel1.createdBy
-        // channel.watchers = data.channel1Updated.watchers
-        // channel.watcherCount = data.channel1Updated.watcherCount
         channel shouldBeEqualTo data.channel1Updated
     }
 }
