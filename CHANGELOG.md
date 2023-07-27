@@ -77,6 +77,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Send `TypingStopEvent` whenever the message is sent or the messageComposer contains an empty text message. [#4904](https://github.com/GetStream/stream-chat-android/pull/4904)
 
 ### ✅ Added
 - Added `showDateSeparatorInEmptyThread: Boolean` to `MessageListController`. It is used to regulate whether date separators appear in empty threads. [#4742](https://github.com/GetStream/stream-chat-android/pull/4742)
@@ -91,6 +92,7 @@
 ### 🐞 Fixed
 - Fixed edit messages and reply messages with unsupported attachments. [#4757](https://github.com/GetStream/stream-chat-android/pull/4757)
 - Fixed `ChannelViewHolder` to show proper last message value. [#4901](https://github.com/GetStream/stream-chat-android/pull/4901)
+- Fixed `CnahnelViewHolder` to handle TypingIndicator visibility properly. [#4904](https://github.com/GetStream/stream-chat-android/pull/4904)
 
 ### ⬆️ Improved
 - Emails are highlighted and clickable in the message text. [#4833](https://github.com/GetStream/stream-chat-android/pull/4833)
