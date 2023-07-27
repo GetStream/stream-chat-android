@@ -166,7 +166,7 @@ public final class com/getstream/sdk/chat/utils/extensions/MessageKt {
 
 public abstract interface class com/getstream/sdk/chat/utils/typing/TypingUpdatesBuffer {
 	public abstract fun clear ()V
-	public abstract fun onKeystroke ()V
+	public abstract fun onKeystroke (Ljava/lang/String;)V
 }
 
 public class com/getstream/sdk/chat/view/activity/AttachmentDocumentActivity : androidx/appcompat/app/AppCompatActivity {

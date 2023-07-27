@@ -52,7 +52,7 @@ private class MessageInputViewSnippets : Fragment() {
         }
 
         messageInputView.setTypingUpdatesBuffer(object : TypingUpdatesBuffer {
-            override fun onKeystroke() {
+            override fun onKeystroke(inputText: String) {
                 // Your custom implementation of TypingUpdatesBuffer
             }
 

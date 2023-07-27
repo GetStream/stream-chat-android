@@ -218,8 +218,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                 }
 
                 val lastMessage = channelItem.channel.getLastMessage()
-                if (lastMessageChanged) {
+                if (lastMessageChanged || typingUsersChanged) {
+                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty() && lastMessage.isNotNull()
                     configureLastMessageLabelAndTimestamp(lastMessage)
+                    typingIndicatorView.setTypingUsers(channelItem.typingUsers)
                 }
 
                 if (readStateChanged || lastMessageChanged) {
@@ -228,11 +230,6 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
                 if (unreadCountChanged) {
                     configureUnreadCountBadge()
-                }
-
-                if (typingUsersChanged) {
-                    typingIndicatorView.setTypingUsers(channelItem.typingUsers)
-                    lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty() && lastMessage.isNotNull()
                 }
 
                 muteIcon.isVisible = channelItem.channel.isMuted
@@ -254,7 +251,6 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun StreamUiChannelListItemForegroundViewBinding.configureLastMessageLabelAndTimestamp(
         lastMessage: Message?,
     ) {
-        lastMessageLabel.isVisible = lastMessage.isNotNull()
         lastMessageTimeLabel.isVisible = lastMessage.isNotNull()
 
         lastMessage ?: return run {
