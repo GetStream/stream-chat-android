@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed `ChannelViewHolder` to show proper last message value. [#4900](https://github.com/GetStream/stream-chat-android/pull/4900)
 
 ### ⬆️ Improved
 
