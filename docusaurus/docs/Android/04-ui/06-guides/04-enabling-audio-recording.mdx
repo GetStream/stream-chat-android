@@ -17,13 +17,14 @@ The UI Components Chat SDK provides the flexibility to customize the visual pres
 We'll start changing it by replacing the stock play button in favor of a flatter, semi-transparent
 design.
 
-First, let's enable audio recording by setting `streamUiMessageComposerAudioRecordingButtonVisible`
-to `true` in our `MessageComposerViewTheme`:
+First, let's display enabled audio recording button by setting `streamUiMessageComposerAudioRecordingButtonVisible` 
+and `streamUiMessageComposerAudioRecordingButtonEnabled` to `true` in our `MessageComposerViewTheme`:
 
 ```xml
 
 <style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
     <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
 </style>
 ```
 
@@ -38,13 +39,15 @@ something typed in the composer.
 
 <style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
     <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
     <item name="streamUiMessageComposerAudioRecordingButtonPreferred">true</item>
 </style>
 ```
 
 :::note
 Only certain attributes were used here, you can find the rest in
-the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
+the source code [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L199-L202)
+and [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
 .
 :::
 
@@ -76,13 +79,15 @@ The same result can be achieved by using XML attributes directly on the `Message
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:streamUiMessageComposerAudioRecordingButtonVisible="true"
+    app:streamUiMessageComposerAudioRecordingButtonEnabled="true"
     app:streamUiMessageComposerAudioRecordingButtonPreferred="true"
     />
 ```
 
 :::note
 Only certain attributes were used here, you can find the rest in
-the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
+the source code [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L199-L202)
+and [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
 .
 :::
 
@@ -98,6 +103,7 @@ functionality:
 TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
     defaultStyle.copy(
         audioRecordingButtonVisible = true,
+        audioRecordingButtonEnabled = true,
         audioRecordingButtonPreferred = true,
     )
 }
@@ -119,6 +125,7 @@ TransformStyle.setMessageComposerStyleTransformer(source -> {
 
 :::note
 Only certain attributes were used here, you can find the rest in
-the [source file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml#L132)
+the source code [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle.kt#L222-L225)
+and [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle.kt#L185-L200)
 .
 :::
