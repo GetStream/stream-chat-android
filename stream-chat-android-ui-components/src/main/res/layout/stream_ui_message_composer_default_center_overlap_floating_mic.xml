@@ -24,7 +24,6 @@
     android:scaleType="center"
     android:src="@drawable/stream_ui_ic_mic"
     android:background="@drawable/stream_ui_message_composer_audio_record_mic_background"
-    app:tint="@color/stream_ui_accent_blue"
     tools:ignore="ContentDescription"
     />
 

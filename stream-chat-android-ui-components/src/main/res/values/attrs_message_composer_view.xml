@@ -130,19 +130,38 @@
         <attr name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding" format="dimension" />
 
         <!-- Center overlap content -->
-        <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
-        <attr name="streamUiMessageComposerAudioRecordingButtonPreferred" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordText" format="reference|string" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextSize" format="reference|dimension" />
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextFont" format="string" />
+        <attr name="streamUiMessageComposerAudioRecordingHoldToRecordTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable" format="reference" />
         <attr name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint" format="reference|color" />
         <attr name="streamUiMessageComposerAudioRecordingSlideToCancelText" format="reference|string" />
-        <attr name="streamUiMessageComposerAudioRecordingMicIconDrawable" format="reference" />
-        <attr name="streamUiMessageComposerAudioRecordingMicIconDrawableTint" format="reference|color" />
-        <attr name="streamUiMessageComposerAudioRecordingLockIconDrawable" format="reference" />
-        <attr name="streamUiMessageComposerAudioRecordingLockIconDrawableTint" format="reference|color" />
-        <attr name="streamUiMessageComposerAudioRecordingLockedIconDrawable" format="reference" />
-        <attr name="streamUiMessageComposerAudioRecordingLockedIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelTextSize" format="reference|dimension" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelTextColor" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelTextFontAssets" format="string" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelTextFont" format="string" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelStartDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingSlideToCancelStartDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingButtonIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint" format="reference|color" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
@@ -177,6 +196,10 @@
         <!-- Trailing content -->
         <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerSendMessageButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonPreferred" format="boolean" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonIconDrawable" format="reference" />
 
         <attr name="streamUiMessageComposerCooldownTimerTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCooldownTimerTextColor" format="reference|color" />

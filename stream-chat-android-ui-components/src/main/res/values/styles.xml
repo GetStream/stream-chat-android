@@ -1044,19 +1044,26 @@
         <item name="streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd">2dp</item>
 
         <!-- Center overlap content -->
-        <item name="streamUiMessageComposerAudioRecordingButtonVisible">false</item>
-        <item name="streamUiMessageComposerAudioRecordingButtonPreferred">false</item>
         <item name="streamUiMessageComposerAudioRecordingHoldToRecordText">@string/stream_ui_message_composer_hold_to_record</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextColor">@color/stream_ui_white_snow</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextStyle">bold</item>
+        <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextFont">@font/stream_roboto_medium</item>
         <item name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable">@drawable/stream_ui_message_composer_audio_record_hold_background</item>
         <item name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint">@null</item>
         <item name="streamUiMessageComposerAudioRecordingSlideToCancelText">@string/stream_ui_message_composer_slide_to_cancel</item>
-        <item name="streamUiMessageComposerAudioRecordingMicIconDrawable">@drawable/stream_ui_ic_mic</item>
-        <item name="streamUiMessageComposerAudioRecordingMicIconDrawableTint">@null</item>
-        <item name="streamUiMessageComposerAudioRecordingLockIconDrawable">@drawable/stream_ui_ic_mic_lock</item>
-        <item name="streamUiMessageComposerAudioRecordingLockIconDrawableTint">@null</item>
-        <item name="streamUiMessageComposerAudioRecordingLockedIconDrawable">@drawable/stream_ui_ic_mic_locked</item>
-        <item name="streamUiMessageComposerAudioRecordingLockedIconDrawableTint">@null</item>
+        <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextSize">@dimen/stream_ui_text_medium</item>
+        <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextColor">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextStyle">normal</item>
+        <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextFont">@font/stream_roboto_medium</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingButtonIconDrawable">@drawable/stream_ui_ic_mic</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingButtonIconDrawableTint">@color/stream_ui_accent_blue</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable">@drawable/stream_ui_message_composer_audio_record_mic_background</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint">@null</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawable">@drawable/stream_ui_ic_mic_lock</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint">@null</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable">@drawable/stream_ui_ic_mic_locked</item>
+        <item name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint">@null</item>
 
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
@@ -1083,6 +1090,10 @@
         <!-- Trailing content -->
         <item name="streamUiMessageComposerSendMessageButtonEnabled">true</item>
         <item name="streamUiMessageComposerSendMessageButtonIconDrawable">@drawable/stream_ui_ic_send_message</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonVisible">false</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonPreferred">false</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonIconDrawable">@drawable/stream_ui_ic_mic</item>
         <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>

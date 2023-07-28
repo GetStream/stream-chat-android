@@ -104,6 +104,14 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
             )
         }
+        binding.recordAudioButton.setImageDrawable(style.audioRecordingButtonIconDrawable)
+        style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.recordAudioButton.imageTintList = getColorList(
+                normalColor = tintColor,
+                selectedColor = tintColor,
+                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
+            )
+        }
 
         binding.cooldownBadgeTextView.setTextStyle(style.cooldownTimerTextStyle)
         binding.cooldownBadgeTextView.background = style.cooldownTimerBackgroundDrawable
@@ -145,6 +153,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                     else -> true
                 }
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
+                recordAudioButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && canUploadRecording && canUploadFile
                 recordAudioButton.isVisible = when (style.audioRecordingButtonVisible) {
                     true -> when (style.audioRecordingButtonPreferred) {
                         true -> canUploadFile && canUploadRecording && canSendMessage && !isInEditMode && !hasTextInput
