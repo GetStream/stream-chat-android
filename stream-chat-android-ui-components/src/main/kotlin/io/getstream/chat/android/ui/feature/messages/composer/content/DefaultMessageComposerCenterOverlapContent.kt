@@ -55,11 +55,13 @@ import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerDefaultCe
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.displayMetrics
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.setStartDrawable
 import io.getstream.log.taggedLogger
 
 private const val TAG = "OverlappingContent"
@@ -191,6 +193,12 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         style = messageComposerContext.style
 
         binding.recordingSlider.text = style.audioRecordingSlideToCancelText
+        binding.recordingSlider.setTextStyle(style.audioRecordingSlideToCancelTextStyle)
+        binding.recordingSlider.setStartDrawable(
+            style.audioRecordingSlideToCancelStartDrawable.applyTint(
+                style.audioRecordingSlideToCancelStartDrawableTint
+            )
+        )
     }
 
     override fun renderState(state: MessageComposerState) {
@@ -485,7 +493,18 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         logger.d { "[showMicPopup] micOrigRect: $micOrigRect" }
         val micContent = LayoutInflater.from(context).inflate(
             R.layout.stream_ui_message_composer_default_center_overlap_floating_mic, this, false
-        )
+        ).also { imageView ->
+            (imageView as ImageView).apply {
+                val iconDrawable = style.audioRecordingFloatingButtonIconDrawable.applyTint(
+                    style.audioRecordingFloatingButtonIconDrawableTint
+                )
+                setImageDrawable(iconDrawable)
+                val bgDrawable = style.audioRecordingFloatingButtonBackgroundDrawable.applyTint(
+                    style.audioRecordingFloatingButtonBackgroundDrawableTint
+                )
+                background = bgDrawable
+            }
+        }
         val widthMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
         val heightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED)
 
@@ -526,8 +545,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             R.layout.stream_ui_message_composer_default_center_overlap_floating_lock, this, false
         ).also { imageView ->
             (imageView as ImageView).apply {
-                val iconDrawable = style.audioRecordingLockIconDrawable.applyTint(
-                    style.audioRecordingLockIconDrawableTint
+                val iconDrawable = style.audioRecordingFloatingLockIconDrawable.applyTint(
+                    style.audioRecordingFloatingLockIconDrawableTint
                 )
                 setImageDrawable(iconDrawable)
             }
@@ -574,8 +593,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             R.layout.stream_ui_message_composer_default_center_overlap_floating_locked, this, false
         ).also { imageView ->
             (imageView as ImageView).apply {
-                val iconDrawable = style.audioRecordingLockedIconDrawable.applyTint(
-                    style.audioRecordingLockedIconDrawableTint
+                val iconDrawable = style.audioRecordingFloatingLockedIconDrawable.applyTint(
+                    style.audioRecordingFloatingLockedIconDrawableTint
                 )
                 setImageDrawable(iconDrawable)
             }
@@ -606,7 +625,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         ).also {
             it.findViewById<TextView>(R.id.holdToRecordText).apply {
                 text = style.audioRecordingHoldToRecordText
-                setTextColor(style.audioRecordingHoldToRecordTextColor)
+                setTextStyle(style.audioRecordingHoldToRecordTextStyle)
                 background = style.audioRecordingHoldToRecordBackgroundDrawable.applyTint(
                     style.audioRecordingHoldToRecordBackgroundDrawableTint
                 )

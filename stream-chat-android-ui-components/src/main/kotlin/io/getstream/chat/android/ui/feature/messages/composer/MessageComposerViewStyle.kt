@@ -88,6 +88,24 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param messageInputVideoAttachmentIconDrawablePaddingEnd Sets the end padding between the video attachment drawable
  * and its parent card.
  * @param audioRecordingButtonVisible If the button to record audio is displayed.
+ * @param audioRecordingButtonEnabled If the button to record audio is enabled.
+ * @param audioRecordingButtonPreferred If the button to record audio is displayed over send button while input is empty.
+ * @param audioRecordingHoldToRecordText The info text that will be shown if touch event on audio button was too short.
+ * @param audioRecordingHoldToRecordTextStyle The text style that will be used for the "hold to record" text.
+ * @param audioRecordingHoldToRecordBackgroundDrawable The drawable will be used as a background for the "hold to record" text.
+ * @param audioRecordingHoldToRecordBackgroundDrawableTint The tint color will be used for background drawable of the "hold to record" text.
+ * @param audioRecordingSlideToCancelText The info text that will be shown while holding mic button.
+ * @param audioRecordingSlideToCancelTextStyle The text style that will be used for the "slide to cancel" text.
+ * @param audioRecordingSlideToCancelStartDrawable The icon that will be displayed in front of the "slide to cancel" text.
+ * @param audioRecordingSlideToCancelStartDrawableTint The tint color that will be used for the icon in front of the "slide to cancel" text.
+ * @param audioRecordingFloatingButtonIconDrawable The icon that will be displayed in inside the floating draggable button while recording.
+ * @param audioRecordingFloatingButtonIconDrawableTint The tint color that will be used for the the mic icon inside the floating draggable button.
+ * @param audioRecordingFloatingButtonBackgroundDrawable The background drawable that will be applied to the floating draggable button while recording.
+ * @param audioRecordingFloatingButtonBackgroundDrawableTint The tint color that will be used for the background drawable in the floating draggable button.
+ * @param audioRecordingFloatingLockIconDrawable The floating icon that will be displayed above floating button while unlocked.
+ * @param audioRecordingFloatingLockIconDrawableTint The tint color that will be used for the the lock icon.
+ * @param audioRecordingFloatingLockedIconDrawable The floating icon that will be displayed above recording view when locked.
+ * @param audioRecordingFloatingLockedIconDrawableTint The tint color that will be used for the the locked icon.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
@@ -164,19 +182,22 @@ public data class MessageComposerViewStyle(
     public val messageInputVideoAttachmentIconDrawablePaddingStart: Int,
     public val messageInputVideoAttachmentIconDrawablePaddingEnd: Int,
     // Center overlap content
-    public val audioRecordingButtonVisible: Boolean,
-    public val audioRecordingButtonPreferred: Boolean,
     public val audioRecordingHoldToRecordText: String,
-    @ColorInt public val audioRecordingHoldToRecordTextColor: Int,
+    public val audioRecordingHoldToRecordTextStyle: TextStyle,
     public val audioRecordingHoldToRecordBackgroundDrawable: Drawable,
     @ColorInt public val audioRecordingHoldToRecordBackgroundDrawableTint: Int?,
     public val audioRecordingSlideToCancelText: String,
-    public val audioRecordingMicIconDrawable: Drawable,
-    @ColorInt public val audioRecordingMicIconDrawableTint: Int?,
-    public val audioRecordingLockIconDrawable: Drawable,
-    @ColorInt public val audioRecordingLockIconDrawableTint: Int?,
-    public val audioRecordingLockedIconDrawable: Drawable,
-    @ColorInt public val audioRecordingLockedIconDrawableTint: Int?,
+    public val audioRecordingSlideToCancelTextStyle: TextStyle,
+    public val audioRecordingSlideToCancelStartDrawable: Drawable,
+    @ColorInt public val audioRecordingSlideToCancelStartDrawableTint: Int?,
+    public val audioRecordingFloatingButtonIconDrawable: Drawable,
+    @ColorInt public val audioRecordingFloatingButtonIconDrawableTint: Int?,
+    public val audioRecordingFloatingButtonBackgroundDrawable: Drawable,
+    @ColorInt public val audioRecordingFloatingButtonBackgroundDrawableTint: Int?,
+    public val audioRecordingFloatingLockIconDrawable: Drawable,
+    @ColorInt public val audioRecordingFloatingLockIconDrawableTint: Int?,
+    public val audioRecordingFloatingLockedIconDrawable: Drawable,
+    @ColorInt public val audioRecordingFloatingLockedIconDrawableTint: Int?,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -198,6 +219,10 @@ public data class MessageComposerViewStyle(
     // Trailing content
     public val sendMessageButtonEnabled: Boolean,
     public val sendMessageButtonIconDrawable: Drawable,
+    public val audioRecordingButtonVisible: Boolean,
+    public val audioRecordingButtonEnabled: Boolean,
+    public val audioRecordingButtonPreferred: Boolean,
+    public val audioRecordingButtonIconDrawable: Drawable,
     public val cooldownTimerTextStyle: TextStyle,
     public val cooldownTimerBackgroundDrawable: Drawable,
     // Message reply customization, by default belongs to center content as well
@@ -452,21 +477,27 @@ public data class MessageComposerViewStyle(
                 /**
                  * Center overlap content
                  */
-                val audioRecordingButtonVisible = a.getBoolean(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
-                    false
-                )
-                val audioRecordingButtonPreferred = a.getBoolean(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPreferred,
-                    false
-                )
                 val audioRecordingHoldToRecordText = a.getString(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordText
                 ) ?: context.getString(R.string.stream_ui_message_composer_hold_to_record)
-                val audioRecordingHoldToRecordTextColor = a.getColor(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextColor,
-                    context.getColorCompat(R.color.stream_ui_white_snow)
-                )
+                val audioRecordingHoldToRecordTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextColor,
+                        context.getColorCompat(R.color.stream_ui_white_snow)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextStyle,
+                        Typeface.BOLD
+                    )
+                    .build()
                 val audioRecordingHoldToRecordBackgroundDrawable = a.getDrawableCompat(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable,
@@ -479,29 +510,62 @@ public data class MessageComposerViewStyle(
                 val audioRecordingSlideToCancelText = a.getString(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelText
                 ) ?: context.getString(R.string.stream_ui_message_composer_slide_to_cancel)
-
-                val audioRecordingMicIconDrawable = a.getDrawableCompat(
+                val audioRecordingSlideToCancelTextStyle = TextStyle.Builder(a)
+                    .size(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextSize,
+                        context.getDimension(R.dimen.stream_ui_text_medium)
+                    )
+                    .color(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextColor,
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    )
+                    .font(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextFontAssets,
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextFont
+                    )
+                    .style(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextStyle,
+                        Typeface.NORMAL
+                    )
+                    .build()
+                val audioRecordingSlideToCancelStartDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingMicIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelStartDrawable,
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_arrow_left)!!
+
+                val audioRecordingSlideToCancelStartDrawableTint = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelStartDrawableTint
+                )
+                val audioRecordingFloatingButtonIconDrawable = a.getDrawableCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!
-                val audioRecordingMicIconDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingMicIconDrawableTint
+                val audioRecordingFloatingButtonIconDrawableTint = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonIconDrawableTint
                 )
 
-                val audioRecordingLockIconDrawable = a.getDrawableCompat(
+                val audioRecordingFloatingButtonBackgroundDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingLockIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_message_composer_audio_record_mic_background)!!
+                val audioRecordingFloatingButtonBackgroundDrawableTint = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint
+                )
+
+                val audioRecordingFloatingLockIconDrawable = a.getDrawableCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic_lock)!!
-                val audioRecordingLockIconDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingLockIconDrawableTint
+                val audioRecordingFloatingLockIconDrawableTint = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint
                 )
 
-                val audioRecordingLockedIconDrawable = a.getDrawableCompat(
+                val audioRecordingFloatingLockedIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingLockedIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic_locked)!!
-                val audioRecordingLockedIconDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingLockedIconDrawableTint
+                val audioRecordingFloatingLockedIconDrawableTint = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint
                 )
 
                 /**
@@ -605,6 +669,23 @@ public data class MessageComposerViewStyle(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
+
+                val audioRecordingButtonEnabled = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonEnabled,
+                    true
+                )
+                val audioRecordingButtonVisible = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
+                    false
+                )
+                val audioRecordingButtonPreferred = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPreferred,
+                    false
+                )
+                val audioRecordingButtonIconDrawable = a.getDrawableCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonIconDrawable
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!
 
                 val cooldownTimerTextStyle = TextStyle.Builder(a)
                     .size(
@@ -807,19 +888,22 @@ public data class MessageComposerViewStyle(
                     messageInputVideoAttachmentIconDrawablePaddingEnd = messageInputVideoAttachmentIconDrawablePadding
                         ?: messageInputVideoAttachmentIconDrawablePaddingEnd,
                     // Center overlap content
-                    audioRecordingButtonVisible = audioRecordingButtonVisible,
-                    audioRecordingButtonPreferred = audioRecordingButtonPreferred,
                     audioRecordingHoldToRecordText = audioRecordingHoldToRecordText,
-                    audioRecordingHoldToRecordTextColor = audioRecordingHoldToRecordTextColor,
+                    audioRecordingHoldToRecordTextStyle = audioRecordingHoldToRecordTextStyle,
                     audioRecordingHoldToRecordBackgroundDrawable = audioRecordingHoldToRecordBackgroundDrawable,
                     audioRecordingHoldToRecordBackgroundDrawableTint = audioRecordingHoldToRecordBackgroundDrawableTint,
                     audioRecordingSlideToCancelText = audioRecordingSlideToCancelText,
-                    audioRecordingMicIconDrawable = audioRecordingMicIconDrawable,
-                    audioRecordingMicIconDrawableTint = audioRecordingMicIconDrawableTint,
-                    audioRecordingLockIconDrawable = audioRecordingLockIconDrawable,
-                    audioRecordingLockIconDrawableTint = audioRecordingLockIconDrawableTint,
-                    audioRecordingLockedIconDrawable = audioRecordingLockedIconDrawable,
-                    audioRecordingLockedIconDrawableTint = audioRecordingLockedIconDrawableTint,
+                    audioRecordingSlideToCancelTextStyle = audioRecordingSlideToCancelTextStyle,
+                    audioRecordingSlideToCancelStartDrawable = audioRecordingSlideToCancelStartDrawable,
+                    audioRecordingSlideToCancelStartDrawableTint = audioRecordingSlideToCancelStartDrawableTint,
+                    audioRecordingFloatingButtonIconDrawable = audioRecordingFloatingButtonIconDrawable,
+                    audioRecordingFloatingButtonIconDrawableTint = audioRecordingFloatingButtonIconDrawableTint,
+                    audioRecordingFloatingButtonBackgroundDrawable = audioRecordingFloatingButtonBackgroundDrawable,
+                    audioRecordingFloatingButtonBackgroundDrawableTint = audioRecordingFloatingButtonBackgroundDrawableTint,
+                    audioRecordingFloatingLockIconDrawable = audioRecordingFloatingLockIconDrawable,
+                    audioRecordingFloatingLockIconDrawableTint = audioRecordingFloatingLockIconDrawableTint,
+                    audioRecordingFloatingLockedIconDrawable = audioRecordingFloatingLockedIconDrawable,
+                    audioRecordingFloatingLockedIconDrawableTint = audioRecordingFloatingLockedIconDrawableTint,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
@@ -841,6 +925,10 @@ public data class MessageComposerViewStyle(
                     // Trailing content
                     sendMessageButtonEnabled = sendMessageButtonEnabled,
                     sendMessageButtonIconDrawable = sendMessageButtonIconDrawable,
+                    audioRecordingButtonEnabled = audioRecordingButtonEnabled,
+                    audioRecordingButtonVisible = audioRecordingButtonVisible,
+                    audioRecordingButtonPreferred = audioRecordingButtonPreferred,
+                    audioRecordingButtonIconDrawable = audioRecordingButtonIconDrawable,
                     cooldownTimerTextStyle = cooldownTimerTextStyle,
                     cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                     messageReplyBackgroundColor = messageReplyBackgroundColor,
