@@ -153,7 +153,10 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                     else -> true
                 }
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
-                recordAudioButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && canUploadRecording && canUploadFile
+                recordAudioButton.isEnabled = style.sendMessageButtonEnabled &&
+                    canSendMessage &&
+                    canUploadRecording &&
+                    canUploadFile
                 recordAudioButton.isVisible = when (style.audioRecordingButtonVisible) {
                     true -> when (style.audioRecordingButtonPreferred) {
                         true -> canUploadFile && canUploadRecording && canSendMessage && !isInEditMode && !hasTextInput

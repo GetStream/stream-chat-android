@@ -89,22 +89,33 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * and its parent card.
  * @param audioRecordingButtonVisible If the button to record audio is displayed.
  * @param audioRecordingButtonEnabled If the button to record audio is enabled.
- * @param audioRecordingButtonPreferred If the button to record audio is displayed over send button while input is empty.
+ * @param audioRecordingButtonPreferred If the button to record audio is displayed over send button while input is
+ * empty.
  * @param audioRecordingHoldToRecordText The info text that will be shown if touch event on audio button was too short.
  * @param audioRecordingHoldToRecordTextStyle The text style that will be used for the "hold to record" text.
- * @param audioRecordingHoldToRecordBackgroundDrawable The drawable will be used as a background for the "hold to record" text.
- * @param audioRecordingHoldToRecordBackgroundDrawableTint The tint color will be used for background drawable of the "hold to record" text.
+ * @param audioRecordingHoldToRecordBackgroundDrawable The drawable will be used as a background for the "hold to
+ * record" text.
+ * @param audioRecordingHoldToRecordBackgroundDrawableTint The tint color will be used for background drawable of
+ * the "hold to record" text.
  * @param audioRecordingSlideToCancelText The info text that will be shown while holding mic button.
  * @param audioRecordingSlideToCancelTextStyle The text style that will be used for the "slide to cancel" text.
- * @param audioRecordingSlideToCancelStartDrawable The icon that will be displayed in front of the "slide to cancel" text.
- * @param audioRecordingSlideToCancelStartDrawableTint The tint color that will be used for the icon in front of the "slide to cancel" text.
- * @param audioRecordingFloatingButtonIconDrawable The icon that will be displayed in inside the floating draggable button while recording.
- * @param audioRecordingFloatingButtonIconDrawableTint The tint color that will be used for the the mic icon inside the floating draggable button.
- * @param audioRecordingFloatingButtonBackgroundDrawable The background drawable that will be applied to the floating draggable button while recording.
- * @param audioRecordingFloatingButtonBackgroundDrawableTint The tint color that will be used for the background drawable in the floating draggable button.
- * @param audioRecordingFloatingLockIconDrawable The floating icon that will be displayed above floating button while unlocked.
+ * @param audioRecordingSlideToCancelStartDrawable The icon that will be displayed in front of the
+ * "slide to cancel" text.
+ * @param audioRecordingSlideToCancelStartDrawableTint The tint color that will be used for the icon in front of the
+ * "slide to cancel" text.
+ * @param audioRecordingFloatingButtonIconDrawable The icon that will be displayed in inside the floating draggable
+ * button while recording.
+ * @param audioRecordingFloatingButtonIconDrawableTint The tint color that will be used for the the mic icon inside
+ * the floating draggable button.
+ * @param audioRecordingFloatingButtonBackgroundDrawable The background drawable that will be applied to the floating
+ * draggable button while recording.
+ * @param audioRecordingFloatingButtonBackgroundDrawableTint The tint color that will be used for the background
+ * drawable in the floating draggable button.
+ * @param audioRecordingFloatingLockIconDrawable The floating icon that will be displayed above floating button
+ * while unlocked.
  * @param audioRecordingFloatingLockIconDrawableTint The tint color that will be used for the the lock icon.
- * @param audioRecordingFloatingLockedIconDrawable The floating icon that will be displayed above recording view when locked.
+ * @param audioRecordingFloatingLockedIconDrawable The floating icon that will be displayed above recording view
+ * when locked.
  * @param audioRecordingFloatingLockedIconDrawableTint The tint color that will be used for the the locked icon.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
@@ -257,6 +268,8 @@ public data class MessageComposerViewStyle(
     )
 
     public companion object {
+
+        @Suppress("MaxLineLength", "ComplexMethod", "LongMethod")
         internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle {
             context.obtainStyledAttributes(
                 attrs,
@@ -376,7 +389,8 @@ public data class MessageComposerViewStyle(
                         context.getColorCompat(R.color.stream_ui_text_color_primary)
                     )
                     .font(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets,
+                        R.styleable
+                            .MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets,
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFont
                     )
                     .style(
@@ -722,7 +736,9 @@ public data class MessageComposerViewStyle(
                 )
 
                 val messageInputVideoAttachmentIconDrawable =
-                    a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable)
+                    a.getDrawable(
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable
+                    )
                         ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_play)!!
 
                 val messageInputVideoAttachmentIconDrawableTint =
@@ -943,6 +959,7 @@ public data class MessageComposerViewStyle(
             }
         }
 
+        @Suppress("MaxLineLength", "LongMethod", "ComplexMethod")
         private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle {
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
