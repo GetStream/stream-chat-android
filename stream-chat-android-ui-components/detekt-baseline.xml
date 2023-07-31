@@ -12,8 +12,6 @@
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ComplexMethod:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$@SuppressLint("ClickableViewAccessibility") override fun onTouchEvent(event: MotionEvent): Boolean</ID>
     <ID>ComplexMethod:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$override fun renderState(state: MessageComposerState)</ID>
-    <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
-    <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
     <ID>ComplexMethod:MessageListItemViewHolderFactory.kt$MessageListItemViewHolderFactory$public open fun createViewHolder( parentView: ViewGroup, viewType: Int, ): BaseMessageItemViewHolder&lt;out MessageListItem></ID>
     <ID>ComplexMethod:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$override fun createMessageOptionItems( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, style: MessageListViewStyle, ): List&lt;MessageOptionItem></ID>
@@ -35,8 +33,6 @@
     <ID>LongMethod:GiphyViewHolderStyle.kt$GiphyViewHolderStyle.Companion$operator fun invoke(context: Context, attributes: TypedArray): GiphyViewHolderStyle</ID>
     <ID>LongMethod:MediaAttachmentGridViewStyle.kt$MediaAttachmentGridViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): MediaAttachmentGridViewStyle</ID>
     <ID>LongMethod:MentionListViewStyle.kt$MentionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MentionListViewStyle</ID>
-    <ID>LongMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
-    <ID>LongMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle</ID>
     <ID>LongMethod:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle</ID>
     <ID>LongMethod:MessageListItemStyle.kt$MessageListItemStyle.Builder$fun build(): MessageListItemStyle</ID>
     <ID>LongMethod:MessageListViewModelBinding.kt$@JvmName("bind") public fun MessageListViewModel.bindView( view: MessageListView, lifecycleOwner: LifecycleOwner, )</ID>
@@ -102,7 +98,6 @@
     <ID>MaxLineLength:Context.kt$theme.resolveAttribute(R.attr.streamUiTheme, typedValue, true) -> ContextThemeWrapper(this, typedValue.resourceId)</ID>
     <ID>MaxLineLength:DefaultMessageComposerCenterOverlapContent.kt$DefaultMessageComposerOverlappingContent$logger.w { "[onTouchEvent] centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().widthPixels}" }</ID>
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
-    <ID>MaxLineLength:DefaultMessageComposerTrailingContent.kt$DefaultMessageComposerTrailingContent$recordAudioButton.isEnabled = style.sendMessageButtonEnabled &amp;&amp; canSendMessage &amp;&amp; canUploadRecording &amp;&amp; canUploadFile</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
     <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
@@ -114,58 +109,6 @@
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle$*</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAttachmentTabToggleButtonStateList</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFont</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextSize</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextStyle</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFont</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextSize</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextStyle</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFont</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextSize</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextStyle</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFont</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextSize</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextStyle</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextStyle</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextColor</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextStyle</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePadding</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconDrawableTint)</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconBackgroundColor)</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawableTint)</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$a.getDrawable(R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable)</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$audioRecordingFloatingButtonBackgroundDrawableTint = audioRecordingFloatingButtonBackgroundDrawableTint</ID>
-    <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$messageInputVideoAttachmentIconDrawablePaddingBottom</ID>
     <ID>MaxLineLength:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle$*</ID>
     <ID>MaxLineLength:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$*</ID>
     <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date</ID>
