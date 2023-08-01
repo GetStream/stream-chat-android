@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -308,6 +309,7 @@ internal class MessageListControllerTests {
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

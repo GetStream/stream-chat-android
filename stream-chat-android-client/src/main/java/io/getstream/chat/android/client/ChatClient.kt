@@ -276,13 +276,19 @@ internal constructor(
 
     /**
      * Resolves dependency [T] within the provided plugin [P].
+     * This method can't be called before user is connected because plugins are added only after user
+     * connection is completed.
      *
      * @see [Plugin]
      * @throws IllegalStateException if plugin was not added or dependency is not found.
      */
     @InternalStreamChatApi
     @Throws(IllegalStateException::class)
+    @Suppress("ThrowsCount")
     public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T {
+        if (clientState.initializationState.value != InitializationState.COMPLETE) {
+            throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
+        }
         val resolver = plugins.find { plugin ->
             plugin is P && plugin is DependencyResolver
         } as? DependencyResolver

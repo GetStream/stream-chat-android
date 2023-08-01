@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -372,6 +373,7 @@ internal class MessageComposerViewModelTest {
         fun givenCurrentUser(currentUser: User = user1) = apply {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
             whenever(chatClient.clientState) doReturn clientState
+            whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
         }
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {

@@ -19,8 +19,11 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.invoking
@@ -28,7 +31,11 @@ import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.`with message`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import kotlin.reflect.KClass
 
 public class DependencyResolverTest {
@@ -36,6 +43,7 @@ public class DependencyResolverTest {
     @Test
     public fun `Should throw an exception if plugin was not found`(): TestResult = runTest {
         val client = Fixture()
+            .with(InitializationState.COMPLETE)
             .get()
 
         invoking {
@@ -48,6 +56,7 @@ public class DependencyResolverTest {
     @Test
     public fun `Should throw an exception if dependency was not found`(): TestResult = runTest {
         val client = Fixture()
+            .with(InitializationState.COMPLETE)
             .with(PluginDependency(emptyMap()))
             .get()
 
@@ -58,10 +67,27 @@ public class DependencyResolverTest {
             .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved from plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency'")
     }
 
+    /** This method use [initializationStatesArguments] as a source of arguments. */
+    @ParameterizedTest
+    @MethodSource("initializationStatesArguments")
+    public fun `Should throw an exception if user is not connected`(initializationState: InitializationState): TestResult = runTest {
+        val client = Fixture()
+            .with(initializationState)
+            .with(PluginDependency(emptyMap()))
+            .get()
+
+        invoking {
+            client.resolveDependency<PluginDependency, SomeDependency>()
+        }
+            .`should throw`(IllegalStateException::class)
+            .`with message`("ChatClient::connectUser() must be called before resolving any dependency")
+    }
+
     @Test
     public fun `Should return expected dependency`(): TestResult = runTest {
         val expectedDependency = SomeDependency()
         val client = Fixture()
+            .with(InitializationState.COMPLETE)
             .with(PluginDependency(mapOf(SomeDependency::class to expectedDependency)))
             .get()
 
@@ -70,11 +96,25 @@ public class DependencyResolverTest {
         result `should be` expectedDependency
     }
 
+    public companion object {
+
+        @JvmStatic
+        public fun initializationStatesArguments(): List<Arguments> =
+            InitializationState.values()
+                .filterNot { it == InitializationState.COMPLETE }
+                .map { Arguments.of(it) }
+    }
+
     private class Fixture {
         var plugins: List<Plugin> = emptyList()
+        val mutableClientState: MutableClientState = mock()
 
         fun with(plugin: Plugin) = apply {
             plugins = plugins + plugin
+        }
+
+        fun with(state: InitializationState) = apply {
+            whenever(mutableClientState.initializationState).thenReturn(MutableStateFlow(state))
         }
 
         suspend fun get(): ChatClient = ChatClient(
@@ -92,7 +132,7 @@ public class DependencyResolverTest {
             chatSocket = mock(),
             pluginFactories = mock(),
             repositoryFactoryProvider = mock(),
-            mutableClientState = mock(),
+            mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
         ).apply {
