@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Business models are immutable now. [#4893](https://github.com/GetStream/stream-chat-android/pull/4893)
 
 ### ❌ Removed
 
