@@ -26,6 +26,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.OrFilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -288,6 +289,7 @@ internal class ChannelListViewModelTest {
 
         fun givenCurrentUser(currentUser: User = User(id = "Jc")) = apply {
             whenever(clientState.user) doReturn MutableStateFlow(currentUser)
+            whenever(clientState.initializationState) doReturn MutableStateFlow(InitializationState.COMPLETE)
         }
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
