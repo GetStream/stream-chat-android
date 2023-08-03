@@ -2,18 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
-    <ID>ComplexMethod:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun equalsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun greaterThanOrEqualsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun inFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
-    <ID>ComplexMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
-    <ID>ComplexMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
-    <ID>ComplexMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
     <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>
     <ID>LongMethod:ChannelLogic.kt$ChannelLogic$internal fun handleEvent(event: ChatEvent)</ID>
@@ -38,8 +26,6 @@
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it > 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it >= 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$(expectedList + List(10) { randomChannel(members = List(positiveRandomInt(10)) { randomMember() }) }).shuffled()</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$List(positiveRandomInt(10)) { randomChannel(type = randomString(20) + stringQuery + randomString(20)) }</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
     <ID>MaxLineLength:DeleteReactionErrorHandlerImpl.kt$DeleteReactionErrorHandlerImpl$*</ID>
@@ -53,13 +39,9 @@
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
-    <ID>NestedBlockDepth:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>ReturnCount:SyncManager.kt$SyncManager$@VisibleForTesting internal suspend fun performSync(cids: List&lt;String>)</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
-    <ID>UnusedPrivateMember:ChatClientStateCalls.kt$ChatClientStateCalls$private val globalState: GlobalState</ID>
-    <ID>UnusedPrivateMember:DeleteMessageListenerState.kt$DeleteMessageListenerState$private val globalState: GlobalState</ID>
-    <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
   </CurrentIssues>
 </SmellBaseline>

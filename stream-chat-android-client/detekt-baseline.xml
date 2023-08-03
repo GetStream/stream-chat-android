@@ -4,6 +4,8 @@
   <CurrentIssues>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
+    <ID>Indentation:ChatClient.kt$ChatClient$ </ID>
+    <ID>Indentation:HttpLoggingInterceptor.kt$HttpLoggingInterceptor$ </ID>
     <ID>LongMethod:ChatClient.kt$ChatClient$private suspend fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:ChatClientDebuggerTest.kt$ChatClientDebuggerTest$@BeforeEach fun setUp()</ID>
     <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
@@ -25,10 +27,8 @@
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
     <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&amp;oh=$originalHeight&amp;ow=$originalWidth"</ID>
     <ID>MaxLineLength:WaveformExtractor.kt$WaveformExtractor$logger.v { "[handle16bit] this.totalSamples: $totalSamples, sampleRate: $sampleRate, duration: $durationInSeconds" }</ID>
-    <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
     <ID>SwallowedException:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
     <ID>TooGenericExceptionCaught:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
-    <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>
     <ID>UnusedPrivateMember:StreamAudioPlayer.kt$StreamMediaPlayer$private fun normalize(uri: String): String</ID>
   </CurrentIssues>
 </SmellBaseline>

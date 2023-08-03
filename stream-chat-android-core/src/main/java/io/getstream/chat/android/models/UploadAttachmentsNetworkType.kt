@@ -38,5 +38,5 @@ public enum class UploadAttachmentsNetworkType {
     /**
      * A metered network connection is required.
      */
-    METERED;
+    METERED,
 }

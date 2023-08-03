@@ -2,13 +2,12 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:LoginUsers.kt$LoginUsers$fun createUsers(): List&lt;LoginUser></ID>
     <ID>LongMethod:CatalogActivity.kt$CatalogActivity$@Composable private fun CatalogScreen()</ID>
     <ID>LongMethod:LoginUsers.kt$LoginUsers$fun createUsers(): List&lt;LoginUser></ID>
     <ID>MagicNumber:CustomPlayButton.kt$0.8f</ID>
-    <ID>MagicNumber:multimediaAttachmentFactory.kt$0.35f</ID>
-    <ID>MagicNumber:multimediaAttachmentFactory.kt$0.3f</ID>
-    <ID>MagicNumber:multimediaAttachmentFactory.kt$1.20f</ID>
+    <ID>MagicNumber:MultimediaAttachmentFactory.kt$0.35f</ID>
+    <ID>MagicNumber:MultimediaAttachmentFactory.kt$0.3f</ID>
+    <ID>MagicNumber:MultimediaAttachmentFactory.kt$1.20f</ID>
     <ID>MaxLineLength:LoginUsers.kt$LoginUsers$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o"</ID>
     <ID>MaxLineLength:LoginUsers.kt$LoginUsers$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYmVsYWwifQ.a0DwMMb0V1Lona_1dIB7a4GtNl4oQ_WCp-W-UP3_CUQ"</ID>
     <ID>MaxLineLength:LoginUsers.kt$LoginUsers$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG1pdHJpaSJ9._j7pM2kqj46ztls0tG1DiUMl45l54VOLvl8jp5VCmZU"</ID>

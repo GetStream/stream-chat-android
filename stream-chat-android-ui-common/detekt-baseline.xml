@@ -2,8 +2,6 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
-    <ID>ComplexMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
-    <ID>ComplexMethod:MessagePositionHandler.kt$MessagePositionHandler.Companion$@Suppress("ComplexCondition") public fun defaultHandler(): MessagePositionHandler</ID>
     <ID>LargeClass:MessageListController.kt$MessageListController</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
@@ -36,11 +34,6 @@
     <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun IntArray.downsampleRms(): Int</ID>
     <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Float>.downsample(targetSamples: Int): List&lt;Float></ID>
     <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Int>.downsampleToSingleMax(): Int</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private val channelId: String</ID>
-    <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$val MAX_DB = 90.0 // Maximum decibel level for normalization</ID>
-    <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val extra: Int</ID>
-    <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val streamMediaRecorder: StreamMediaRecorder</ID>
-    <ID>UnusedPrivateMember:StreamMediaRecorderState.kt$StreamMediaRecorderState$private val what: Int</ID>
     <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_AMPLITUDE = 32767f</ID>
     <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_DB = 90.0 // Maximum decibel level for normalization</ID>
   </CurrentIssues>

@@ -6,9 +6,6 @@
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
-    <ID>ComplexMethod:MessageComposer.kt$@OptIn(ExperimentalPermissionsApi::class) @Composable internal fun DefaultMessageComposerTrailingContent( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, statefulStreamMediaRecorder: StatefulStreamMediaRecorder?, )</ID>
-    <ID>ComplexMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
-    <ID>ComplexMethod:QuotedMessageText.kt$@Composable public fun QuotedMessageText( message: Message, currentUser: User?, modifier: Modifier = Modifier, replyMessage: Message? = null, quoteMaxLines: Int = DefaultQuoteMaxLines, )</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", (recordingDuration - remainder) / 60_000)</ID>
@@ -62,7 +59,5 @@
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_HEIGHT_DP = 60</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_WIDTH = 4</ID>
-    <ID>UnusedPrivateMember:AudioWaveSeekbar.kt$val trackerHeight = DEFAULT_TRACKER_HEIGHT_DP</ID>
-    <ID>UnusedPrivateMember:StatefulStreamMediaRecorder.kt$StatefulStreamMediaRecorder$context: Context</ID>
   </CurrentIssues>
 </SmellBaseline>

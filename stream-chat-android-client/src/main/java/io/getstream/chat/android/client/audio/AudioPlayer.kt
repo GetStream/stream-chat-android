@@ -126,12 +126,20 @@ public data class ProgressData(
  * go to LOADING and PLAYING.
  */
 public enum class AudioState {
-    UNSET, LOADING, IDLE, PAUSE, PLAYING;
+    UNSET,
+    LOADING,
+    IDLE,
+    PAUSE,
+    PLAYING,
 }
 
 /**
  * State of the AudioPlayer. This is the state of the whole player, not individual songs.
  */
 public enum class PlayerState {
-    UNSET, LOADING, IDLE, PAUSE, PLAYING;
+    UNSET,
+    LOADING,
+    IDLE,
+    PAUSE,
+    PLAYING,
 }
