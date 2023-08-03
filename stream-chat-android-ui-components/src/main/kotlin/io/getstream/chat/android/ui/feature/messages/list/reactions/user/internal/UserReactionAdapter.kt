@@ -40,10 +40,10 @@ internal class UserReactionAdapter(
     var messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment =
         MessageOptionsUserReactionAlignment.BY_USER
         @SuppressLint("NotifyDataSetChanged")
-            set(value) {
-                field = value
-                notifyDataSetChanged()
-            }
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserReactionViewHolder {
         return StreamUiItemUserReactionBinding

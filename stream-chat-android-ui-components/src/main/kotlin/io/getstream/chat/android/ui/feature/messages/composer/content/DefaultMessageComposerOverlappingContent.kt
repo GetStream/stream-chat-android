@@ -40,7 +40,6 @@ import android.view.ViewParent
 import android.widget.ImageView
 import android.widget.PopupWindow
 import android.widget.TextView
-import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -67,6 +66,7 @@ import io.getstream.log.taggedLogger
 private const val TAG = "OverlappingContent"
 
 @InternalStreamChatApi
+@Suppress("TooManyFunctions")
 public class DefaultMessageComposerOverlappingContent : ConstraintLayout, MessageComposerContent {
 
     public constructor(context: Context) : super(context)
@@ -379,6 +379,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     @SuppressLint("ClickableViewAccessibility")
+    @Suppress("ReturnCount")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val state = _state
         val action = event.actionMasked
@@ -673,7 +674,6 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         private const val HOLD_TIMEOUT_MS = 1000L
         private const val ANIM_DURATION_MS = 100L
         private const val VIBRATE_MS = 100L
-        private const val NO_CHANGE = -1
     }
 }
 
@@ -696,10 +696,6 @@ private fun formatMillis(milliseconds: Int): String {
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return "%02d:%02d".format(minutes, seconds)
-}
-
-private fun ImageView.setImageColor(@ColorInt color: Int) {
-    ImageViewCompat.setImageTintList(this, ColorStateList.valueOf(color))
 }
 
 private fun ImageView.setImageColorRes(@ColorRes colorResId: Int) {
