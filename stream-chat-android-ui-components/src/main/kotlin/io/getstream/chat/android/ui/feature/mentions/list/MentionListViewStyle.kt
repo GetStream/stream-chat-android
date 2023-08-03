@@ -50,63 +50,63 @@ public data class MentionListViewStyle(
                 )
 
                 val emptyStateDrawable = typedArray.getDrawable(
-                    R.styleable.MentionListView_streamUiEmptyStateDrawable
+                    R.styleable.MentionListView_streamUiEmptyStateDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mentions_empty)!!
 
                 val senderTextStyle = TextStyle.Builder(typedArray)
                     .size(
                         R.styleable.MentionListView_streamUiSenderNameTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MentionListView_streamUiSenderNameTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MentionListView_streamUiSenderNameTextFontAssets,
-                        R.styleable.MentionListView_streamUiSenderNameTextFont
+                        R.styleable.MentionListView_streamUiSenderNameTextFont,
                     )
                     .style(
                         R.styleable.MentionListView_streamUiSenderNameTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val messageTextStyle = TextStyle.Builder(typedArray)
                     .size(
                         R.styleable.MentionListView_streamUiMessageTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MentionListView_streamUiMessageTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MentionListView_streamUiMessageTextFontAssets,
-                        R.styleable.MentionListView_streamUiMessageTextFont
+                        R.styleable.MentionListView_streamUiMessageTextFont,
                     )
                     .style(
                         R.styleable.MentionListView_streamUiMessageTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val messageTimeTextStyle = TextStyle.Builder(typedArray)
                     .size(
                         R.styleable.MentionListView_streamUiMessageTimeTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MentionListView_streamUiMessageTimeTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MentionListView_streamUiMessageTimeTextFontAssets,
-                        R.styleable.MentionListView_streamUiMessageTimeTextFont
+                        R.styleable.MentionListView_streamUiMessageTimeTextFont,
                     )
                     .style(
                         R.styleable.MentionListView_streamUiMessageTimeTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 

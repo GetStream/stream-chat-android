@@ -53,7 +53,7 @@ internal class FilterObjectTypeAdapterTest {
                 randomString().let { value ->
                     Arguments.of(
                         Filters.autocomplete(fieldName, value),
-                        "{\"$fieldName\":{\"\$autocomplete\":\"$value\"}}"
+                        "{\"$fieldName\":{\"\$autocomplete\":\"$value\"}}",
                     )
                 }
             },
@@ -121,7 +121,7 @@ internal class FilterObjectTypeAdapterTest {
                 randomString().let { value ->
                     Arguments.of(
                         Filters.greaterThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$gte\":\"$value\"}}"
+                        "{\"$fieldName\":{\"\$gte\":\"$value\"}}",
                     )
                 }
             },
@@ -129,7 +129,7 @@ internal class FilterObjectTypeAdapterTest {
                 randomInt().let { value ->
                     Arguments.of(
                         Filters.greaterThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$gte\":$value}}"
+                        "{\"$fieldName\":{\"\$gte\":$value}}",
                     )
                 }
             },
@@ -137,7 +137,7 @@ internal class FilterObjectTypeAdapterTest {
                 randomBoolean().let { value ->
                     Arguments.of(
                         Filters.greaterThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$gte\":$value}}"
+                        "{\"$fieldName\":{\"\$gte\":$value}}",
                     )
                 }
             },
@@ -160,7 +160,7 @@ internal class FilterObjectTypeAdapterTest {
                 randomString().let { value ->
                     Arguments.of(
                         Filters.lessThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$lte\":\"$value\"}}"
+                        "{\"$fieldName\":{\"\$lte\":\"$value\"}}",
                     )
                 }
             },
@@ -178,7 +178,7 @@ internal class FilterObjectTypeAdapterTest {
                 List(positiveRandomInt(20)) { randomString() }.let { values ->
                     Arguments.of(
                         Filters.`in`(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}"
+                        "{\"$fieldName\":{\"\$in\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}",
                     )
                 }
             },
@@ -186,7 +186,7 @@ internal class FilterObjectTypeAdapterTest {
                 List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
                         Filters.`in`(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -194,7 +194,7 @@ internal class FilterObjectTypeAdapterTest {
                 List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
                     Arguments.of(
                         Filters.`in`(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -202,7 +202,7 @@ internal class FilterObjectTypeAdapterTest {
                 List(positiveRandomInt(20)) { randomString() }.let { values ->
                     Arguments.of(
                         Filters.nin(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}"
+                        "{\"$fieldName\":{\"\$nin\":[\"${values.toSet().joinToString(separator = "\",\"")}\"]}}",
                     )
                 }
             },
@@ -210,7 +210,7 @@ internal class FilterObjectTypeAdapterTest {
                 List(positiveRandomInt(20)) { randomInt() }.let { values ->
                     Arguments.of(
                         Filters.nin(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -218,7 +218,7 @@ internal class FilterObjectTypeAdapterTest {
                 List(positiveRandomInt(20)) { randomBoolean() }.let { values ->
                     Arguments.of(
                         Filters.nin(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$nin\":[${values.toSet().joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -230,7 +230,7 @@ internal class FilterObjectTypeAdapterTest {
                             Filters.eq(fieldName, values.first()),
                         ),
                         "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}" +
-                            ",{\"$fieldName\":${values.first()}}]}"
+                            ",{\"$fieldName\":${values.first()}}]}",
                     )
                 }
             },
@@ -242,7 +242,7 @@ internal class FilterObjectTypeAdapterTest {
                             Filters.eq(fieldName, values.first()),
                         ),
                         "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}" +
-                            ",{\"$fieldName\":${values.first()}}]}"
+                            ",{\"$fieldName\":${values.first()}}]}",
                     )
                 }
             },
@@ -254,16 +254,16 @@ internal class FilterObjectTypeAdapterTest {
                             Filters.eq(fieldName, values.first()),
                         ),
                         "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.toSet().joinToString(separator = ",")}]}}" +
-                            ",{\"$fieldName\":${values.first()}}]}"
+                            ",{\"$fieldName\":${values.first()}}]}",
                     )
                 }
             },
             List(positiveRandomInt(20)) { randomString() }.let { memberIds ->
                 Arguments.of(
                     Filters.distinct(memberIds),
-                    "{\"distinct\":true,\"members\":[\"${memberIds.toSet().joinToString(separator = "\",\"")}\"]}"
+                    "{\"distinct\":true,\"members\":[\"${memberIds.toSet().joinToString(separator = "\",\"")}\"]}",
                 )
-            }
+            },
         )
     }
 }

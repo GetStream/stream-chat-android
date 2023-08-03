@@ -30,7 +30,7 @@ internal object PreviewUserReactionData {
     fun user1Reaction() = UserReactionItemState(
         user = PreviewUserData.user1,
         painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-        type = "like"
+        type = "like",
     )
 
     @Composable
@@ -56,7 +56,7 @@ internal object PreviewUserReactionData {
 
     @Composable
     fun oneUserReaction() = listOf(
-        user1Reaction()
+        user1Reaction(),
     )
 
     @Composable
@@ -64,6 +64,6 @@ internal object PreviewUserReactionData {
         user1Reaction(),
         user2Reaction(),
         user3Reaction(),
-        user4Reaction()
+        user4Reaction(),
     )
 }

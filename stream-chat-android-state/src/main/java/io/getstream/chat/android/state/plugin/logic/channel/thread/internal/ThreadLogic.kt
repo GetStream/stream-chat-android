@@ -82,7 +82,7 @@ internal class ThreadLogic(
         mutableState.setOldestInThread(
             messages.sortedBy { it.createdAt }
                 .firstOrNull()
-                ?: mutableState.oldestInThread.value
+                ?: mutableState.oldestInThread.value,
         )
     }
 
@@ -96,7 +96,7 @@ internal class ThreadLogic(
         when (event) {
             is MessageUpdatedEvent -> {
                 event.message.copy(
-                    replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId }
+                    replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId },
                 ).let(::upsertMessage)
             }
             is NewMessageEvent,

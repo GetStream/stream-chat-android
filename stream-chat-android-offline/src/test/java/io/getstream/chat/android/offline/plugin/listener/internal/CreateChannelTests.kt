@@ -69,7 +69,7 @@ internal class CreateChannelTests {
                         this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
             )
         }
 
@@ -104,7 +104,7 @@ internal class CreateChannelTests {
                         this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.IN_PROGRESS
-                }
+                },
             )
         }
 
@@ -187,7 +187,7 @@ internal class CreateChannelTests {
                         this.id == channelId &&
                         this.cid == cid &&
                         syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
             )
         }
 
@@ -221,7 +221,7 @@ internal class CreateChannelTests {
                         this.id == channelId &&
                         this.cid == cid &&
                         syncStatus == SyncStatus.FAILED_PERMANENTLY
-                }
+                },
             )
         }
 
@@ -288,7 +288,7 @@ internal class CreateChannelTests {
             return CreateChannelListenerDatabase(
                 clientState,
                 repositoryFacade,
-                repositoryFacade
+                repositoryFacade,
             )
         }
     }

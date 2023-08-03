@@ -37,5 +37,5 @@ internal fun ClientScope(): ClientScope = ClientScopeImpl()
 private class ClientScopeImpl :
     ClientScope,
     CoroutineScope by CoroutineScope(
-        SupervisorJob() + DispatcherProvider.IO + SharedCalls()
+        SupervisorJob() + DispatcherProvider.IO + SharedCalls(),
     )

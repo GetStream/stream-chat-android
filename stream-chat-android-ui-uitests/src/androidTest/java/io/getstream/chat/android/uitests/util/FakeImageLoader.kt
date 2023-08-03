@@ -79,13 +79,13 @@ class FakeImageLoader(
             SuccessResult(
                 drawable = drawable,
                 request = request,
-                dataSource = DataSource.MEMORY_CACHE
+                dataSource = DataSource.MEMORY_CACHE,
             )
         } else {
             ErrorResult(
                 drawable = null,
                 request = request,
-                throwable = Exception()
+                throwable = Exception(),
             )
         }
     }
@@ -99,7 +99,7 @@ class FakeImageLoader(
 
         return ContextCompat.getDrawable(
             context,
-            userAvatars[avatarUrl] ?: return null
+            userAvatars[avatarUrl] ?: return null,
         )!!.apply {
             // Workaround for an issue with black background behind clipped images
             (this as BitmapDrawable).bitmap.setHasAlpha(true)

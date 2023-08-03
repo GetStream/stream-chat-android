@@ -117,7 +117,7 @@ internal class AttachmentHelperTests {
         fun nonValidUrls() = listOf(
             "someNotValidUrl",
             "https://????.com",
-            "www.someDomainWithoutProtocol.com"
+            "www.someDomainWithoutProtocol.com",
         )
 
         @JvmStatic

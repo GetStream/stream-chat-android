@@ -70,7 +70,7 @@ internal abstract class BaseUiTest {
                 backgroundSyncEnabled = false,
                 userPresence = false,
             ),
-            appContext = context
+            appContext = context,
         )
 
         ChatClient.Builder("hrwwzsgrzapv", context)
@@ -94,7 +94,7 @@ internal abstract class BaseUiTest {
                                 this@BaseUiTest.webSocket = webSocket
                                 webSocket.send(readFileContents(WS_HEALTH_CHECK))
                             }
-                        }
+                        },
                     )
                 } else if (path.startsWith("/channels?")) {
                     okResponse(readFileContents(HTTP_CHANNELS))

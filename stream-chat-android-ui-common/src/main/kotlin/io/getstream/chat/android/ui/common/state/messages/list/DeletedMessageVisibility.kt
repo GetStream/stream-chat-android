@@ -37,5 +37,5 @@ public enum class DeletedMessageVisibility {
      * All deleted messages are visible, regardless of the
      * user who authored them.
      */
-    ALWAYS_VISIBLE
+    ALWAYS_VISIBLE,
 }

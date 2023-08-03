@@ -82,7 +82,7 @@ internal class ValidationKtTest {
             Arguments.of(
                 it.first,
                 it.second::class,
-                it.second.message
+                it.second.message,
             )
         }
 

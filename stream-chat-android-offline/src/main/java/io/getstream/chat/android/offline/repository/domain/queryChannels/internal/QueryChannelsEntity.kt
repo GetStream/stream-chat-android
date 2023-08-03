@@ -28,7 +28,7 @@ internal data class QueryChannelsEntity(
     var id: String,
     val filter: FilterObject,
     val querySort: QuerySorter<Channel>,
-    val cids: List<String>
+    val cids: List<String>,
 )
 
 internal const val QUERY_CHANNELS_ENTITY_TABLE_NAME = "stream_channel_query"

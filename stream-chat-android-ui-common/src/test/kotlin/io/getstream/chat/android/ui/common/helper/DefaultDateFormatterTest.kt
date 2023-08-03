@@ -46,7 +46,7 @@ internal class DefaultDateFormatterTest {
     @Test
     fun `Date formatting is correct`(@TestParameter testCase: TestCase) {
         val formatter: DateFormatter = DefaultDateFormatter(
-            TestDateContext(testCase.now.toDate(), testCase.is24Hour, testCase.dateTimePattern)
+            TestDateContext(testCase.now.toDate(), testCase.is24Hour, testCase.dateTimePattern),
         )
 
         val formattedDate = formatter.formatDate(testCase.dateToFormat?.toDate())

@@ -47,7 +47,7 @@ public fun ChannelMembers(
             .fillMaxWidth()
             .padding(vertical = 24.dp),
         horizontalArrangement = Arrangement.Center,
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
     ) {
         items(members) { member ->
             ChannelMembersItem(

@@ -184,8 +184,8 @@ internal open class BaseChatModule(
                 TokenAuthInterceptor(
                     tokenManager,
                     parser,
-                    getAnonymousProvider(config, isAnonymousApi)
-                )
+                    getAnonymousProvider(config, isAnonymousApi),
+                ),
             )
             .apply {
                 if (config.loggerConfig.level != ChatLogLevel.NOTHING) {
@@ -197,7 +197,7 @@ internal open class BaseChatModule(
                                     StreamLog.i("Chat:CURL") { message }
                                 }
                             },
-                        )
+                        ),
                     )
                 }
             }
@@ -264,7 +264,7 @@ internal open class BaseChatModule(
 
             if (anon && auth) {
                 throw IllegalStateException(
-                    "Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both"
+                    "Api class must be annotated with either @AnonymousApi or @AuthenticatedApi, and not both",
                 )
             }
 

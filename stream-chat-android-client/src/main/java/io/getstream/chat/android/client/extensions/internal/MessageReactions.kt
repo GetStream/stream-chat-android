@@ -30,7 +30,8 @@ public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = fa
             latestReactions = latestReactions + reaction,
             ownReactions = ownReactions + reaction,
             reactionCounts = reactionCounts + (reaction.type to ((reactionCounts[reaction.type] ?: 0) + 1)),
-            reactionScores = reactionScores + (reaction.type to ((reactionScores[reaction.type] ?: 0) + reaction.score))
+            reactionScores = reactionScores +
+                (reaction.type to ((reactionScores[reaction.type] ?: 0) + reaction.score)),
         )
     }
 }

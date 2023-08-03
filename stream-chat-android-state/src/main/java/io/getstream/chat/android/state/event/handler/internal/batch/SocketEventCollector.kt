@@ -83,7 +83,7 @@ internal class SocketEventCollector(
                 mutex.withLock {
                     doFire()
                 }
-            }
+            },
         )
     }
 
@@ -107,7 +107,7 @@ internal class SocketEventCollector(
         postponed.clear()
         timeoutJob.reset()
         fireEvent(
-            BatchEvent(sortedEvents = sortedEvents, isFromHistorySync = false)
+            BatchEvent(sortedEvents = sortedEvents, isFromHistorySync = false),
         )
     }
 

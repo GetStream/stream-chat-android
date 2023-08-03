@@ -153,7 +153,7 @@ internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : 
             pinIndicatorTextView.setTextStyle(style.pinnedMessageIndicatorTextStyle)
             pinIndicatorTextView.setStartDrawableWithSize(
                 style.pinnedMessageIndicatorIcon,
-                R.dimen.stream_ui_message_pin_indicator_icon_size
+                R.dimen.stream_ui_message_pin_indicator_icon_size,
             )
 
             root.setBackgroundColor(style.pinnedMessageBackgroundColor)

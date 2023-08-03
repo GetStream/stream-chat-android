@@ -59,14 +59,14 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
                 // ignoring fields that are not persisted on purpose
                 totalUnreadCount = 0,
                 unreadChannels = 0,
-                online = false
+                online = false,
             ),
             pinnedBy = randomUser(
                 // ignoring fields that are not persisted on purpose
                 totalUnreadCount = 0,
                 unreadChannels = 0,
-                online = false
-            )
+                online = false,
+            ),
         )
 
         repositoryFacade.insertMessages(listOf(message), cache = false)
@@ -84,13 +84,13 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
                 // ignoring fields that are not persisted on purpose
                 totalUnreadCount = 0,
                 unreadChannels = 0,
-                online = false
+                online = false,
             )
             val theirsReaction = randomReaction(
                 messageId = messageId,
                 user = theirsUser,
                 userId = theirsUser.id,
-                deletedAt = null
+                deletedAt = null,
 
             )
             val message = randomMessage(
@@ -116,7 +116,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
                 messageId = messageId,
                 user = currentUser,
                 userId = currentUser.id,
-                deletedAt = Date()
+                deletedAt = Date(),
 
             )
             val message = randomMessage(

@@ -43,7 +43,7 @@ class ChannelsActivity : AppCompatActivity() {
                     onItemClick = { channel ->
                         startActivity(MessagesActivity.createIntent(this, channel.cid))
                     },
-                    onBackPressed = { finish() }
+                    onBackPressed = { finish() },
                 )
             }
         }

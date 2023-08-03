@@ -40,7 +40,7 @@ internal fun getAvatarPositionOffset(
     return when (userPosition) {
         0 -> DpOffset(
             dimens.groupAvatarInitialsXOffset,
-            dimens.groupAvatarInitialsYOffset
+            dimens.groupAvatarInitialsYOffset,
         )
         1 -> {
             if (memberCount == 3) {
@@ -48,17 +48,17 @@ internal fun getAvatarPositionOffset(
             } else {
                 DpOffset(
                     -dimens.groupAvatarInitialsXOffset,
-                    dimens.groupAvatarInitialsYOffset
+                    dimens.groupAvatarInitialsYOffset,
                 )
             }
         }
         2 -> DpOffset(
             dimens.groupAvatarInitialsXOffset,
-            -dimens.groupAvatarInitialsYOffset
+            -dimens.groupAvatarInitialsYOffset,
         )
         LastIndexInAvatarGroup -> DpOffset(
             -dimens.groupAvatarInitialsXOffset,
-            -dimens.groupAvatarInitialsYOffset
+            -dimens.groupAvatarInitialsYOffset,
         )
         else -> center
     }

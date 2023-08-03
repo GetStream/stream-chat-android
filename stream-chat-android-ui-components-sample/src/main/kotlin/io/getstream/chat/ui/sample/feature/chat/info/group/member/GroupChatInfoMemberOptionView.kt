@@ -38,7 +38,7 @@ class GroupChatInfoMemberOptionView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }

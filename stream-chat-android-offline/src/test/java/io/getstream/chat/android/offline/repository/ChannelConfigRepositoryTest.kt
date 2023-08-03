@@ -63,7 +63,7 @@ internal class ChannelConfigRepositoryTest {
             argThat<ChannelConfigEntity> {
                 channelConfigInnerEntity.channelType == "messaging" &&
                     channelConfigInnerEntity.name == "configName"
-            }
+            },
         )
     }
 
@@ -95,7 +95,7 @@ internal class ChannelConfigRepositoryTest {
                         it.channelConfigInnerEntity.channelType == "messaging2" &&
                             it.channelConfigInnerEntity.name == "configName2"
                     }
-            }
+            },
         )
     }
 

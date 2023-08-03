@@ -31,7 +31,7 @@ internal class PushTokenUpdateHandler(context: Context) {
 
     private val prefs: SharedPreferences = context.applicationContext.getSharedPreferences(
         PREFS_NAME,
-        Context.MODE_PRIVATE
+        Context.MODE_PRIVATE,
     )
 
     private var userPushToken: UserPushToken
@@ -48,7 +48,7 @@ internal class PushTokenUpdateHandler(context: Context) {
                 userId = prefs.getNonNullString(KEY_USER_ID, ""),
                 token = prefs.getNonNullString(KEY_TOKEN, ""),
                 pushProvider = prefs.getNonNullString(KEY_PUSH_PROVIDER, ""),
-                providerName = prefs.getString(KEY_PUSH_PROVIDER_NAME, null)
+                providerName = prefs.getString(KEY_PUSH_PROVIDER_NAME, null),
             )
         }
 

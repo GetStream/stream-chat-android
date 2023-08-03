@@ -51,7 +51,7 @@ class AddGroupChannelFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentAddGroupChannelBinding.inflate(inflater, container, false)
         return binding.root
@@ -69,7 +69,7 @@ class AddGroupChannelFragment : Fragment() {
                     sharedMembersViewModel.setMembers(emptyList())
                     findNavController().navigateUp()
                 }
-            }
+            },
         )
     }
 

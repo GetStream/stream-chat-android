@@ -59,7 +59,7 @@ public class ChannelViewModelFactory(
                 memberLimit = memberLimit,
                 chatEventHandlerFactory = chatEventHandlerFactory,
             )
-        }
+        },
     )
 
     /**
@@ -69,7 +69,7 @@ public class ChannelViewModelFactory(
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException(
                 "MessageListViewModelFactory can only create instances of the " +
-                    "following classes: ${factories.keys.joinToString { it.simpleName }}"
+                    "following classes: ${factories.keys.joinToString { it.simpleName }}",
             )
 
         @Suppress("UNCHECKED_CAST")

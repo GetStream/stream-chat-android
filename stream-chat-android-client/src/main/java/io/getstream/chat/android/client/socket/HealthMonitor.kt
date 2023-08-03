@@ -141,7 +141,7 @@ internal class HealthMonitor(
 
     private fun CoroutineScope.launchDelayed(
         delayMilliseconds: Long,
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ): Job = launch {
         delay(delayMilliseconds)
         block()
@@ -158,7 +158,7 @@ internal class HealthMonitor(
             val max = min(500 + consecutiveFailures * 2000, 25000)
             val min = min(
                 max(250, (consecutiveFailures - 1) * 2000),
-                25000
+                25000,
             )
             return floor(Math.random() * (max - min) + min).toLong()
         }

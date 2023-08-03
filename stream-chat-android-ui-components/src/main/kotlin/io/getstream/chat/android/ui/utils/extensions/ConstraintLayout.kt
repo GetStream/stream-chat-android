@@ -53,7 +53,7 @@ public fun ConstraintSet.horizontalChainInParent(vararg views: View) {
         ConstraintSet.RIGHT,
         views.map(View::getId).toIntArray(),
         null,
-        ConstraintSet.CHAIN_SPREAD
+        ConstraintSet.CHAIN_SPREAD,
     )
 }
 
@@ -66,6 +66,6 @@ public fun ConstraintSet.verticalChainInParent(vararg views: View) {
         ConstraintSet.BOTTOM,
         views.map(View::getId).toIntArray(),
         null,
-        ConstraintSet.CHAIN_SPREAD
+        ConstraintSet.CHAIN_SPREAD,
     )
 }

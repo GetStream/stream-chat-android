@@ -128,7 +128,7 @@ public fun MessageItem(
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
             messageItem = it,
-            onReactionsClick = onReactionsClick
+            onReactionsClick = onReactionsClick,
         )
     },
     centerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -157,7 +157,7 @@ public fun MessageItem(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
             onClick = { if (message.isThreadStart()) onThreadClick(message) },
-            onLongClick = { if (!message.isUploading()) onLongItemClick(message) }
+            onLongClick = { if (!message.isUploading()) onLongItemClick(message) },
         )
     }
 
@@ -165,16 +165,20 @@ public fun MessageItem(
         if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else Color.Transparent
     val shouldAnimateBackground = !message.pinned && focusState != null
 
-    val color = if (shouldAnimateBackground) animateColorAsState(
-        targetValue = backgroundColor,
-        animationSpec = tween(
-            durationMillis = if (focusState is MessageFocused) {
-                AnimationConstants.DefaultDurationMillis
-            } else {
-                HighlightFadeOutDurationMillis
-            }
-        )
-    ).value else backgroundColor
+    val color = if (shouldAnimateBackground) {
+        animateColorAsState(
+            targetValue = backgroundColor,
+            animationSpec = tween(
+                durationMillis = if (focusState is MessageFocused) {
+                    AnimationConstants.DefaultDurationMillis
+                } else {
+                    HighlightFadeOutDurationMillis
+                },
+            ),
+        ).value
+    } else {
+        backgroundColor
+    }
 
     val messageAlignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
     val description = stringResource(id = R.string.stream_compose_cd_message_item)
@@ -185,14 +189,13 @@ public fun MessageItem(
             .wrapContentHeight()
             .background(color = color)
             .semantics { contentDescription = description },
-        contentAlignment = messageAlignment.itemAlignment
+        contentAlignment = messageAlignment.itemAlignment,
     ) {
         Row(
             modifier
                 .widthIn(max = 300.dp)
-                .then(clickModifier)
+                .then(clickModifier),
         ) {
-
             leadingContent(messageItem)
 
             Column(horizontalAlignment = messageAlignment.contentAlignment) {
@@ -235,7 +238,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
             modifier = modifier,
             user = messageItem.message.user,
             textStyle = ChatTheme.typography.captionBold,
-            showOnlineIndicator = false
+            showOnlineIndicator = false,
         )
     } else {
         Spacer(modifier = modifier)
@@ -267,11 +270,13 @@ internal fun DefaultMessageItemHeaderContent(
 
         val pinnedByText = if (pinnedByUser != null) {
             stringResource(id = R.string.stream_compose_pinned_to_channel_by, pinnedByUser)
-        } else null
+        } else {
+            null
+        }
 
         MessageHeaderLabel(
             painter = painterResource(id = R.drawable.stream_compose_ic_message_pinned),
-            text = pinnedByText
+            text = pinnedByText,
         )
     }
 
@@ -284,7 +289,7 @@ internal fun DefaultMessageItemHeaderContent(
 
         MessageHeaderLabel(
             painter = painterResource(id = R.drawable.stream_compose_ic_thread),
-            text = stringResource(alsoSendToChannelTextRes)
+            text = stringResource(alsoSendToChannelTextRes),
         )
     }
 
@@ -301,7 +306,7 @@ internal fun DefaultMessageItemHeaderContent(
                 val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(
                     painter = reactionIcon.getPainter(isSelected),
-                    type = type
+                    type = type,
                 )
             }
             ?.let { options ->
@@ -309,12 +314,12 @@ internal fun DefaultMessageItemHeaderContent(
                     modifier = Modifier
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(bounded = false)
+                            indication = rememberRipple(bounded = false),
                         ) {
                             onReactionsClick(message)
                         }
                         .padding(horizontal = 4.dp, vertical = 2.dp),
-                    options = options
+                    options = options,
                 )
             }
     }
@@ -339,7 +344,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
         message.isUploading() -> {
             UploadingFooter(
                 modifier = Modifier.align(End),
-                message = message
+                message = message,
             )
         }
         message.isDeleted() &&
@@ -401,7 +406,7 @@ internal fun DefaultMessageItemCenterContent(
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     } else {
         RegularMessageContent(
@@ -410,7 +415,7 @@ internal fun DefaultMessageItemCenterContent(
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     }
 }
@@ -443,7 +448,7 @@ internal fun EmojiMessageContent(
             onLongItemClick = onLongItemClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     } else {
         Box(modifier = modifier) {
@@ -453,7 +458,7 @@ internal fun EmojiMessageContent(
                 onLongItemClick = onLongItemClick,
                 onGiphyActionClick = onGiphyActionClick,
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                onQuotedMessageClick = onQuotedMessageClick
+                onQuotedMessageClick = onQuotedMessageClick,
             )
 
             Icon(
@@ -462,7 +467,7 @@ internal fun EmojiMessageContent(
                     .align(BottomEnd),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent
+                tint = ChatTheme.colors.errorAccent,
             )
         }
     }
@@ -523,9 +528,9 @@ internal fun RegularMessageContent(
                     onLongItemClick = onLongItemClick,
                     onGiphyActionClick = onGiphyActionClick,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                    onQuotedMessageClick = onQuotedMessageClick
+                    onQuotedMessageClick = onQuotedMessageClick,
                 )
-            }
+            },
         )
     } else {
         Box(modifier = modifier) {
@@ -540,9 +545,9 @@ internal fun RegularMessageContent(
                         onLongItemClick = onLongItemClick,
                         onGiphyActionClick = onGiphyActionClick,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-                        onQuotedMessageClick = onQuotedMessageClick
+                        onQuotedMessageClick = onQuotedMessageClick,
                     )
-                }
+                },
             )
 
             Icon(
@@ -551,7 +556,7 @@ internal fun RegularMessageContent(
                     .align(BottomEnd),
                 painter = painterResource(id = R.drawable.stream_compose_ic_error),
                 contentDescription = null,
-                tint = ChatTheme.colors.errorAccent
+                tint = ChatTheme.colors.errorAccent,
             )
         }
     }
@@ -581,13 +586,13 @@ internal fun DefaultMessageTextContent(
                 currentUser = currentUser,
                 replyMessage = message,
                 onLongItemClick = { onLongItemClick(message) },
-                onQuotedMessageClick = onQuotedMessageClick
+                onQuotedMessageClick = onQuotedMessageClick,
             )
         }
         MessageText(
             message = message,
             currentUser = currentUser,
-            onLongItemClick = onLongItemClick
+            onLongItemClick = onLongItemClick,
         )
     }
 }

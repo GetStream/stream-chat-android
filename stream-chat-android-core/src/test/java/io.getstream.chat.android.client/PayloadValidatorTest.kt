@@ -28,7 +28,7 @@ internal class PayloadValidatorTest {
     @MethodSource("isFromStreamServerArguments")
     fun `PayloadValidator should verify if payload comes from Stream Server or not`(
         payload: Map<String, Any?>,
-        expectedResult: Boolean
+        expectedResult: Boolean,
     ) {
         PayloadValidator.isFromStreamServer(payload) `should be` expectedResult
     }
@@ -38,7 +38,7 @@ internal class PayloadValidatorTest {
     @MethodSource("isValidNewMessageArguments")
     fun `PayloadValidator should verify if payload contains a valid New Message Payload`(
         payload: Map<String, Any?>,
-        expectedResult: Boolean
+        expectedResult: Boolean,
     ) {
         PayloadValidator.isValidNewMessage(payload) `should be` expectedResult
     }
@@ -63,9 +63,9 @@ internal class PayloadValidatorTest {
                 mapOf(
                     "version" to "v1",
                     "sender_server" to "stream.chat",
-                    randomString() to randomString()
+                    randomString() to randomString(),
                 ),
-                true
+                true,
             ),
         )
 
@@ -101,9 +101,9 @@ internal class PayloadValidatorTest {
                 mapOf(
                     "version" to randomString(),
                     "sender" to "stream.chat",
-                    randomString() to randomString()
+                    randomString() to randomString(),
                 ),
-                false
+                false,
             ),
         )
 
@@ -121,22 +121,14 @@ internal class PayloadValidatorTest {
                     "version" to "v1",
                     "channel_id" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
                     "version" to "v1",
                     "channel_id" to randomString(),
                 ),
-                false
-            ),
-            Arguments.of(
-                mapOf(
-                    "version" to "v1",
-                    "channel_id" to randomString(),
-                    "message_id" to randomString(),
-                ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -144,7 +136,15 @@ internal class PayloadValidatorTest {
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
                 ),
-                false
+                false,
+            ),
+            Arguments.of(
+                mapOf(
+                    "version" to "v1",
+                    "channel_id" to randomString(),
+                    "message_id" to randomString(),
+                ),
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -153,7 +153,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
                 ),
-                true
+                true,
             ),
             Arguments.of(
                 mapOf(
@@ -162,7 +162,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -171,7 +171,7 @@ internal class PayloadValidatorTest {
                     "message_id" to null,
                     "channel_type" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -180,7 +180,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to null,
                 ),
-                false
+                false,
             ),
         )
 
@@ -195,7 +195,7 @@ internal class PayloadValidatorTest {
                     "type" to "",
                     "channel_id" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -203,7 +203,7 @@ internal class PayloadValidatorTest {
                     "type" to "message.new",
                     "channel_id" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -212,7 +212,7 @@ internal class PayloadValidatorTest {
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -221,7 +221,7 @@ internal class PayloadValidatorTest {
                     "channel_id" to randomString(),
                     "message_id" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -231,7 +231,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -241,7 +241,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
                 ),
-                true
+                true,
             ),
             Arguments.of(
                 mapOf(
@@ -251,7 +251,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -261,7 +261,7 @@ internal class PayloadValidatorTest {
                     "message_id" to null,
                     "channel_type" to randomString(),
                 ),
-                false
+                false,
             ),
             Arguments.of(
                 mapOf(
@@ -271,7 +271,7 @@ internal class PayloadValidatorTest {
                     "message_id" to randomString(),
                     "channel_type" to null,
                 ),
-                false
+                false,
             ),
         )
     }

@@ -111,7 +111,7 @@ internal class EditReactionsBubbleDrawer(
             bubbleHeight.toFloat(),
             editReactionsViewStyle.bubbleRadius.toFloat(),
             editReactionsViewStyle.bubbleRadius.toFloat(),
-            paint
+            paint,
         )
     }
 
@@ -132,7 +132,7 @@ internal class EditReactionsBubbleDrawer(
             offset + bubbleTailPosition,
             largeTailBubbleInitialPosition() + editReactionsViewStyle.largeTailBubbleCyOffset.toFloat(),
             editReactionsViewStyle.largeTailBubbleRadius.toFloat(),
-            paint
+            paint,
         )
     }
 
@@ -176,7 +176,7 @@ internal class EditReactionsBubbleDrawer(
                 editReactionsViewStyle.largeTailBubbleRadius.toFloat() +
                 editReactionsViewStyle.smallTailBubbleCyOffset.toFloat(),
             editReactionsViewStyle.smallTailBubbleRadius.toFloat(),
-            paint
+            paint,
         )
     }
 

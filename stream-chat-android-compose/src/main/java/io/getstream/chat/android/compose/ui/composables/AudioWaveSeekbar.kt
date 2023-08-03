@@ -48,16 +48,15 @@ public fun AudioWaveVSeekbar(
             topLeft = Offset(
                 java.lang.Float.min(
                     java.lang.Float.max(progressWidth - trackerSize.width / 2, 0F),
-                    size.width - trackerSize.width
+                    size.width - trackerSize.width,
                 ),
-                0F
+                0F,
             ),
             size = trackerSize,
-            cornerRadius = CornerRadius(10F, 10F)
+            cornerRadius = CornerRadius(10F, 10F),
         )
     },
 ) {
-
     var progress by remember { mutableStateOf(0F) }
     var isDragging by remember { mutableStateOf(false) }
 
@@ -80,9 +79,9 @@ public fun AudioWaveVSeekbar(
                 },
                 onDragEnd = {
                     isDragging = false
-                }
+                },
             )
-        }
+        },
     ) {
         seekWidth = size.width
 
@@ -110,7 +109,7 @@ public fun AudioWaveVSeekbar(
                 color = color,
                 topLeft = barRect.topLeft,
                 size = barRect.size,
-                cornerRadius = CornerRadius(50F, 50F)
+                cornerRadius = CornerRadius(50F, 50F),
             )
         }
 

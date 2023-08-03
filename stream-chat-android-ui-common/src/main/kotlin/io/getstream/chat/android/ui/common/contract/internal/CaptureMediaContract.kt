@@ -48,7 +48,7 @@ public class CaptureMediaContract(private val mode: Mode) :
             .apply {
                 putExtra(
                     Intent.EXTRA_INITIAL_INTENTS,
-                    (intents - initialIntent).toTypedArray()
+                    (intents - initialIntent).toTypedArray(),
                 )
             }
     }
@@ -56,7 +56,7 @@ public class CaptureMediaContract(private val mode: Mode) :
     private fun getRecordVideoIntents(context: Context): List<Intent> =
         File(
             context.getExternalFilesDir(Environment.DIRECTORY_MOVIES) ?: context.cacheDir,
-            createFileName("STREAM_VID", "mp4")
+            createFileName("STREAM_VID", "mp4"),
         ).let {
             videoFile = it
             createIntentList(context, MediaStore.ACTION_VIDEO_CAPTURE, it)
@@ -65,7 +65,7 @@ public class CaptureMediaContract(private val mode: Mode) :
     private fun getTakePictureIntents(context: Context): List<Intent> =
         File(
             context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-            createFileName("STREAM_IMG", "jpg")
+            createFileName("STREAM_IMG", "jpg"),
         ).let {
             pictureFile = it
             createIntentList(context, MediaStore.ACTION_IMAGE_CAPTURE, it)
@@ -81,12 +81,12 @@ public class CaptureMediaContract(private val mode: Mode) :
     ): List<Intent> {
         val destinationUri = StreamFileUtil.getUriForFile(
             context,
-            destinationFile
+            destinationFile,
         )
         val actionIntent = Intent(action)
         return context.packageManager.queryIntentActivities(
             actionIntent,
-            PackageManager.MATCH_DEFAULT_ONLY
+            PackageManager.MATCH_DEFAULT_ONLY,
         ).map {
             Intent(actionIntent).apply {
                 putExtra(MediaStore.EXTRA_OUTPUT, destinationUri)
@@ -119,7 +119,7 @@ public class CaptureMediaContract(private val mode: Mode) :
             Mode.PHOTO -> R.string.stream_ui_message_composer_capture_media_take_photo
             Mode.VIDEO -> R.string.stream_ui_message_composer_capture_media_video
             Mode.PHOTO_AND_VIDEO -> R.string.stream_ui_message_composer_capture_media
-        }
+        },
     )
 }
 

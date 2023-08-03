@@ -94,7 +94,7 @@ public fun LinkAttachmentContent(
 
     val errorMessage = stringResource(
         id = R.string.stream_compose_message_list_error_cannot_open_link,
-        previewUrl
+        previewUrl,
     )
 
     Column(
@@ -120,8 +120,8 @@ public fun LinkAttachmentContent(
                             .show()
                     }
                 },
-                onLongClick = { onLongItemClick(message) }
-            )
+                onLongClick = { onLongItemClick(message) },
+            ),
     ) {
         val imagePreviewUrl = attachment.imagePreviewUrl
         if (imagePreviewUrl != null) {
@@ -152,7 +152,7 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
                 .clip(ChatTheme.shapes.attachment),
             painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         val authorName = attachment.authorName
@@ -170,10 +170,10 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
                     .widthIn(max = maxWidth / 2)
                     .background(
                         color = ChatTheme.colors.linkBackground,
-                        shape = ChatTheme.shapes.attachmentSiteLabel
+                        shape = ChatTheme.shapes.attachmentSiteLabel,
                     )
                     .padding(vertical = 6.dp, horizontal = 12.dp)
-                    .align(Alignment.BottomStart)
+                    .align(Alignment.BottomStart),
             )
         }
     }
@@ -196,13 +196,13 @@ private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLin
             start = 8.dp,
             end = 8.dp,
             bottom = 4.dp,
-            top = 2.dp
+            top = 2.dp,
         ),
         text = description,
         style = ChatTheme.typography.footnote,
         color = ChatTheme.colors.textHighEmphasis,
         maxLines = linkDescriptionMaxLines,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 
@@ -216,7 +216,7 @@ internal fun onLinkAttachmentContentClick(context: Context, url: String) {
     context.startActivity(
         Intent(
             Intent.ACTION_VIEW,
-            Uri.parse(url)
-        )
+            Uri.parse(url),
+        ),
     )
 }

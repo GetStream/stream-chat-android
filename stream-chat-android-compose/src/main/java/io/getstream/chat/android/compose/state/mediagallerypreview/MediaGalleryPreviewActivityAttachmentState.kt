@@ -66,7 +66,7 @@ internal fun Attachment.toMediaGalleryPreviewActivityAttachmentState(): MediaGal
         assetUrl = this.assetUrl,
         originalWidth = this.originalWidth,
         originalHeight = this.originalHeight,
-        type = this.type
+        type = this.type,
     )
 
 /**
@@ -80,5 +80,5 @@ internal fun MediaGalleryPreviewActivityAttachmentState.toAttachment(): Attachme
     assetUrl = this.assetUrl,
     originalWidth = this.originalWidth,
     originalHeight = this.originalHeight,
-    type = this.type
+    type = this.type,
 )

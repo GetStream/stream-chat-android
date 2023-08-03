@@ -38,7 +38,7 @@ internal class ChannelListListenerContainerImpl(
     }
 
     override var channelLongClickListener: ChannelLongClickListener by ListenerDelegate(
-        channelLongClickListener
+        channelLongClickListener,
     ) { realListener ->
         ChannelLongClickListener { channel ->
             realListener().onLongClick(channel)
@@ -52,7 +52,7 @@ internal class ChannelListListenerContainerImpl(
     }
 
     override var moreOptionsClickListener: ChannelClickListener by ListenerDelegate(
-        moreOptionsClickListener
+        moreOptionsClickListener,
     ) { realListener ->
         ChannelClickListener { channel ->
             realListener().onClick(channel)

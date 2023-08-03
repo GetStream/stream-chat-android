@@ -38,15 +38,15 @@ import io.getstream.chat.android.compose.ui.messages.list.MessagesLazyListState
 public fun rememberMessagesLazyListState(
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0,
-    messageOffsetHandler: MessagesLazyListState.MessageOffsetHandler = MessagesLazyListState.defaultOffsetHandler
+    messageOffsetHandler: MessagesLazyListState.MessageOffsetHandler = MessagesLazyListState.defaultOffsetHandler,
 ): MessagesLazyListState {
     return rememberSaveable(saver = MessagesLazyListState.Saver) {
         MessagesLazyListState(
             lazyListState = LazyListState(
                 firstVisibleItemIndex = initialFirstVisibleItemIndex,
-                firstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset
+                firstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
             ),
-            messageOffsetHandler = messageOffsetHandler
+            messageOffsetHandler = messageOffsetHandler,
         )
     }
 }
@@ -71,12 +71,12 @@ public fun rememberMessageListState(
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0,
     parentMessageId: String? = null,
-    messageOffsetHandler: MessagesLazyListState.MessageOffsetHandler = MessagesLazyListState.defaultOffsetHandler
+    messageOffsetHandler: MessagesLazyListState.MessageOffsetHandler = MessagesLazyListState.defaultOffsetHandler,
 ): MessagesLazyListState {
     val baseListState = rememberMessagesLazyListState(
         initialFirstVisibleItemIndex = initialFirstVisibleItemIndex,
         initialFirstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
-        messageOffsetHandler = messageOffsetHandler
+        messageOffsetHandler = messageOffsetHandler,
     )
 
     return if (parentMessageId != null) {

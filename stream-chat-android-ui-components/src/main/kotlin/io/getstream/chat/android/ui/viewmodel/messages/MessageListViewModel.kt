@@ -189,8 +189,8 @@ public class MessageListViewModel(
                     } else {
                         State.Result(
                             it.first.toMessageListItemWrapper(
-                                isInThread = it.second is MessageMode.MessageThread
-                            )
+                                isInThread = it.second is MessageMode.MessageThread,
+                            ),
                         )
                     }
                 }.asLiveData()
@@ -254,7 +254,7 @@ public class MessageListViewModel(
                 messageListController.banUser(
                     userId = event.user.id,
                     reason = event.reason,
-                    timeout = event.timeout
+                    timeout = event.timeout,
                 )
             }
             is Event.UnbanUser -> {
@@ -273,7 +273,7 @@ public class MessageListViewModel(
                             "Could not reply message: ${streamError.message}. " +
                                 "Cause: ${streamError.extractCause()}"
                         }
-                    }
+                    },
                 )
             }
             is Event.DownloadAttachment -> {
@@ -283,7 +283,7 @@ public class MessageListViewModel(
                             "Attachment download error: ${streamError.message}. " +
                                 "Cause: ${streamError.extractCause()}"
                         }
-                    }
+                    },
                 )
             }
             is Event.ShowMessage -> {

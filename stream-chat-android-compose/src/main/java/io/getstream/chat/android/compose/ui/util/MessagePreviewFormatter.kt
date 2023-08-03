@@ -61,7 +61,7 @@ public fun interface MessagePreviewFormatter {
                 messageTextStyle = typography.bodyBold,
                 senderNameTextStyle = typography.bodyBold,
                 attachmentTextFontStyle = typography.bodyItalic,
-                attachmentFactories = attachmentFactories
+                attachmentFactories = attachmentFactories,
             )
         }
     }
@@ -102,16 +102,16 @@ private class DefaultMessagePreviewFormatter(
                     appendSenderName(
                         message = message,
                         currentUser = currentUser,
-                        senderNameTextStyle = senderNameTextStyle
+                        senderNameTextStyle = senderNameTextStyle,
                     )
                     appendMessageText(
                         messageText = messageText,
-                        messageTextStyle = messageTextStyle
+                        messageTextStyle = messageTextStyle,
                     )
                     appendAttachmentText(
                         attachments = message.attachments,
                         attachmentFactories = attachmentFactories,
-                        attachmentTextStyle = attachmentTextFontStyle
+                        attachmentTextStyle = attachmentTextFontStyle,
                     )
                 }
             }
@@ -135,10 +135,10 @@ private class DefaultMessagePreviewFormatter(
                 SpanStyle(
                     fontStyle = senderNameTextStyle.fontStyle,
                     fontWeight = senderNameTextStyle.fontWeight,
-                    fontFamily = senderNameTextStyle.fontFamily
+                    fontFamily = senderNameTextStyle.fontFamily,
                 ),
                 start = 0,
-                end = sender.length
+                end = sender.length,
             )
         }
     }
@@ -157,10 +157,10 @@ private class DefaultMessagePreviewFormatter(
             addStyle(
                 SpanStyle(
                     fontStyle = messageTextStyle.fontStyle,
-                    fontFamily = messageTextStyle.fontFamily
+                    fontFamily = messageTextStyle.fontFamily,
                 ),
                 start = startIndex,
-                end = startIndex + messageText.length
+                end = startIndex + messageText.length,
             )
         }
     }
@@ -191,10 +191,10 @@ private class DefaultMessagePreviewFormatter(
                     addStyle(
                         SpanStyle(
                             fontStyle = attachmentTextStyle.fontStyle,
-                            fontFamily = attachmentTextStyle.fontFamily
+                            fontFamily = attachmentTextStyle.fontFamily,
                         ),
                         start = startIndex,
-                        end = startIndex + attachmentText.length
+                        end = startIndex + attachmentText.length,
                     )
                 }
         }

@@ -76,7 +76,7 @@ class LoginActivity : AppCompatActivity() {
     private fun LoginScreen() {
         Column(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -94,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
                 text = stringResource(R.string.login_screen_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -127,7 +127,7 @@ class LoginActivity : AppCompatActivity() {
                 .clickable(
                     onClick = { login(loginUser) },
                     indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -147,13 +147,13 @@ class LoginActivity : AppCompatActivity() {
                     text = loginUser.user.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
 
                 Text(
                     text = stringResource(id = R.string.login_user_subtitle),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
 
@@ -161,7 +161,7 @@ class LoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
     }
@@ -175,7 +175,7 @@ class LoginActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders)
+                .background(color = ChatTheme.colors.borders),
         )
     }
 
@@ -187,7 +187,7 @@ class LoginActivity : AppCompatActivity() {
     private fun login(loginUser: LoginUser) {
         ChatClient.instance().connectUser(
             user = loginUser.user,
-            token = loginUser.token
+            token = loginUser.token,
         ).enqueue()
 
         startActivity(Intent(this, CatalogActivity::class.java))

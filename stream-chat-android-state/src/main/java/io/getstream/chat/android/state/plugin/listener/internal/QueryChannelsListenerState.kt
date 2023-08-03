@@ -41,7 +41,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
  */
 internal class QueryChannelsListenerState(
     private val logicProvider: LogicRegistry,
-    private val queryingChannelsFree: MutableStateFlow<Boolean>
+    private val queryingChannelsFree: MutableStateFlow<Boolean>,
 ) : QueryChannelsListener {
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> {
@@ -68,7 +68,7 @@ internal class QueryChannelsListenerState(
                 channelLimit = limit,
                 channelOffset = offset,
                 messageLimit = messageLimit,
-                memberLimit = memberLimit
+                memberLimit = memberLimit,
             ).toAnyChannelPaginationRequest()
     }
 }

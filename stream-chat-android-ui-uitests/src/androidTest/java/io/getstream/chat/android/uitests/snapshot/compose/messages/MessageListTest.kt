@@ -45,11 +45,11 @@ class MessageListTest : ComposeScreenshotTest() {
                     MessageItemState(
                         message = TestData.message3(),
                         isMine = false,
-                        showMessageFooter = false
-                    )
+                        showMessageFooter = false,
+                    ),
                 ),
                 currentUser = TestData.user1(),
-            )
+            ),
         )
     }
 
@@ -64,23 +64,23 @@ class MessageListTest : ComposeScreenshotTest() {
                         message = TestData.message1(),
                         isMine = true,
                         showMessageFooter = true,
-                        isMessageRead = true
+                        isMessageRead = true,
                     ),
                     MessageItemState(
                         message = TestData.message2(),
                         isMine = true,
                         showMessageFooter = false,
-                        isMessageRead = true
+                        isMessageRead = true,
                     ),
                     MessageItemState(
                         message = TestData.message3(),
                         isMine = true,
                         showMessageFooter = false,
-                        isMessageRead = true
-                    )
+                        isMessageRead = true,
+                    ),
                 ),
                 currentUser = TestData.user1(),
-            )
+            ),
         )
     }
 }

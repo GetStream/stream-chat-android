@@ -25,11 +25,11 @@ public data class OrFilterObject internal constructor(val filterObjects: Set<Fil
 public data class NorFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
 public data class ContainsFilterObject internal constructor(
     val fieldName: String,
-    val value: Any
+    val value: Any,
 ) : FilterObject()
 public data class AutocompleteFilterObject internal constructor(
     val fieldName: String,
-    val value: String
+    val value: String,
 ) : FilterObject()
 public data class ExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
 public data class NotExistsFilterObject internal constructor(val fieldName: String) : FilterObject()
@@ -38,12 +38,12 @@ public data class NotEqualsFilterObject internal constructor(val fieldName: Stri
 public data class GreaterThanFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class GreaterThanOrEqualsFilterObject internal constructor(
     val fieldName: String,
-    val value: Any
+    val value: Any,
 ) : FilterObject()
 public data class LessThanFilterObject internal constructor(val fieldName: String, val value: Any) : FilterObject()
 public data class LessThanOrEqualsFilterObject internal constructor(
     val fieldName: String,
-    val value: Any
+    val value: Any,
 ) : FilterObject()
 public data class InFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()
 public data class NotInFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()

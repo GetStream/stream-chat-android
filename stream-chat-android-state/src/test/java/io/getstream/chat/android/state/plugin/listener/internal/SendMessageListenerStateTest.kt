@@ -62,12 +62,12 @@ internal class SendMessageListenerStateTest {
         verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
         )
         verify(threadLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
         )
     }
 
@@ -85,12 +85,12 @@ internal class SendMessageListenerStateTest {
         verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
         verify(threadLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 
@@ -110,12 +110,12 @@ internal class SendMessageListenerStateTest {
         verify(channelLogic, never()).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
         )
         verify(threadLogic, never()).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
         )
     }
 }

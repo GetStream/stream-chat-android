@@ -53,7 +53,7 @@ internal class GiphyAttachmentViewHolder(
     internal val binding: StreamUiItemGiphyAttachmentBinding = StreamUiItemGiphyAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 

@@ -46,7 +46,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var messageClickListener: MessageClickListener by ListenerDelegate(
-        messageClickListener
+        messageClickListener,
     ) { realListener ->
         MessageClickListener { message ->
             realListener().onMessageClick(message)
@@ -54,7 +54,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var messageLongClickListener: MessageLongClickListener by ListenerDelegate(
-        messageLongClickListener
+        messageLongClickListener,
     ) { realListener ->
         MessageLongClickListener { message ->
             realListener().onMessageLongClick(message)
@@ -62,7 +62,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var messageRetryListener: MessageRetryListener by ListenerDelegate(
-        messageRetryListener
+        messageRetryListener,
     ) { realListener ->
         MessageRetryListener { message ->
             realListener().onRetryMessage(message)
@@ -70,7 +70,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var threadClickListener: ThreadClickListener by ListenerDelegate(
-        threadClickListener
+        threadClickListener,
     ) { realListener ->
         ThreadClickListener { message ->
             realListener().onThreadClick(message)
@@ -78,7 +78,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var attachmentClickListener: AttachmentClickListener by ListenerDelegate(
-        attachmentClickListener
+        attachmentClickListener,
     ) { realListener ->
         AttachmentClickListener { message, attachment ->
             realListener().onAttachmentClick(message, attachment)
@@ -86,7 +86,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var attachmentDownloadClickListener: AttachmentDownloadClickListener by ListenerDelegate(
-        attachmentDownloadClickListener
+        attachmentDownloadClickListener,
     ) { realListener ->
         AttachmentDownloadClickListener { attachment ->
             realListener().onAttachmentDownloadClick(attachment)
@@ -94,7 +94,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var reactionViewClickListener: ReactionViewClickListener by ListenerDelegate(
-        reactionViewClickListener
+        reactionViewClickListener,
     ) { realListener ->
         ReactionViewClickListener { message ->
             realListener().onReactionViewClick(message)
@@ -102,7 +102,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var userClickListener: UserClickListener by ListenerDelegate(
-        userClickListener
+        userClickListener,
     ) { realListener ->
         UserClickListener { user ->
             realListener().onUserClick(user)
@@ -110,7 +110,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var giphySendListener: GiphySendListener by ListenerDelegate(
-        giphySendListener
+        giphySendListener,
     ) { realListener ->
         GiphySendListener { action ->
             realListener().onGiphySend(action)
@@ -118,7 +118,7 @@ internal class MessageListListenerContainerImpl(
     }
 
     override var linkClickListener: LinkClickListener by ListenerDelegate(
-        linkClickListener
+        linkClickListener,
     ) { realListener ->
         LinkClickListener { url ->
             realListener().onLinkClick(url)

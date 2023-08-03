@@ -56,7 +56,7 @@ internal fun initialsGradient(initials: String): Brush {
         listOf(
             Color(adjustColorBrightness(baseColor, GradientDarkerColorFactor)),
             Color(adjustColorBrightness(baseColor, GradientLighterColorFactor)),
-        )
+        ),
     )
 }
 
@@ -68,7 +68,7 @@ internal fun initialsGradient(initials: String): Brush {
 public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
     return this.scale(
         scaleX = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f,
-        scaleY = 1f
+        scaleY = 1f,
     )
 }
 
@@ -112,7 +112,7 @@ public fun rememberStreamImagePainter(
         onSuccess = onSuccess,
         onError = onError,
         onLoading = onLoading,
-        filterQuality = filterQuality
+        filterQuality = filterQuality,
     )
 }
 

@@ -47,7 +47,7 @@ class ComposeMessagesActivity : AppCompatActivity() {
                 MessagesScreen(
                     viewModelFactory = MessagesViewModelFactory(
                         context = this,
-                        channelId = channelId
+                        channelId = channelId,
                     ),
                     onBackPressed = ::finish,
                     // TODO add this and related entries to docs when documentation effort occurs

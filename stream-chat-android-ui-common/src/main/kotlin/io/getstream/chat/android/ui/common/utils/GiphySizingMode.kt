@@ -37,5 +37,5 @@ public enum class GiphySizingMode {
      * Setting this mode means that the container will respect
      * given width and height dimensions.
      */
-    FIXED_SIZE
+    FIXED_SIZE,
 }

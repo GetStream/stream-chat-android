@@ -47,7 +47,7 @@ public fun EditText.focusAndShowKeyboard() {
                         viewTreeObserver.removeOnWindowFocusChangeListener(this)
                     }
                 }
-            }
+            },
         )
     }
 }

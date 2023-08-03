@@ -57,7 +57,7 @@ public class EditReactionsView : RecyclerView {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
@@ -72,7 +72,7 @@ public class EditReactionsView : RecyclerView {
             ReactionItem(
                 type = type,
                 isMine = message.ownReactions.any { it.type == type },
-                reactionDrawable = reactionDrawable
+                reactionDrawable = reactionDrawable,
             )
         }
 
@@ -106,7 +106,7 @@ public class EditReactionsView : RecyclerView {
             isMyMessage = isMyMessage,
             isSingleReaction = true,
             messageAnchorPosition = messageAnchorPosition,
-            canvasBounds = canvasBounds
+            canvasBounds = canvasBounds,
         )
     }
 
@@ -130,7 +130,7 @@ public class EditReactionsView : RecyclerView {
             reactionsViewStyle.horizontalPadding,
             reactionsViewStyle.verticalPadding,
             reactionsViewStyle.horizontalPadding,
-            reactionsViewStyle.verticalPadding
+            reactionsViewStyle.verticalPadding,
         )
 
         layoutManager = GridLayoutManager(context, reactionsColumns)

@@ -59,7 +59,7 @@ internal class FileAttachmentsViewHolder(
     internal val binding: StreamUiItemFileAttachmentsBinding = StreamUiItemFileAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
@@ -145,7 +145,7 @@ internal class FileAttachmentsViewHolder(
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
-                onLinkClicked = listenerContainer.linkClickListener::onLinkClick
+                onLinkClicked = listenerContainer.linkClickListener::onLinkClick,
             )
         }
     }

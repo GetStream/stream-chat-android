@@ -89,7 +89,7 @@ public fun MessageInput(
                         currentUser = messageComposerState.currentUser,
                         replyMessage = null,
                         onLongItemClick = {},
-                        onQuotedMessageClick = {}
+                        onQuotedMessageClick = {},
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))
@@ -103,7 +103,7 @@ public fun MessageInput(
                             .fillMaxWidth()
                             .wrapContentHeight(),
                         attachments = attachments,
-                        onAttachmentRemoved = onAttachmentRemoved
+                        onAttachmentRemoved = onAttachmentRemoved,
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))
@@ -126,7 +126,7 @@ public fun MessageInput(
                     innerTrailingContent()
                 }
             }
-        }
+        },
     )
 }
 

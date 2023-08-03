@@ -69,7 +69,7 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }
@@ -154,7 +154,7 @@ private class MentionsViewHolder(
         binding.usernameTextView.setTextStyle(style.mentionSuggestionItemUsernameTextStyle)
         binding.mentionNameTextView.setTextStyle(style.mentionSuggestionItemMentionTextStyle)
         binding.mentionsIcon.setImageDrawable(
-            style.mentionSuggestionItemIconDrawable.applyTint(style.buttonIconDrawableTintColor)
+            style.mentionSuggestionItemIconDrawable.applyTint(style.buttonIconDrawableTintColor),
         )
     }
 

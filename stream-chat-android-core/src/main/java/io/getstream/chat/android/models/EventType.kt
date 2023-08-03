@@ -67,6 +67,7 @@ public object EventType {
     public const val CONNECTION_CONNECTING: String = "connection.connecting"
     public const val CONNECTION_DISCONNECTED: String = "connection.disconnected"
     public const val CONNECTION_ERROR: String = "connection.error"
+
     /**
      * Unknown
      */

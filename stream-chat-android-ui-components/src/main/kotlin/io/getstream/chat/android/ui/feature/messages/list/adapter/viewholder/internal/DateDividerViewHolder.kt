@@ -37,7 +37,7 @@ internal class DateDividerViewHolder(
     internal val binding: StreamUiItemDateDividerBinding = StreamUiItemDateDividerBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root, decorators) {
 
@@ -49,7 +49,7 @@ internal class DateDividerViewHolder(
                 data.date.time,
                 System.currentTimeMillis(),
                 DateUtils.DAY_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE
+                DateUtils.FORMAT_ABBREV_RELATIVE,
             )
 
         binding.dateLabel.setTextStyle(style.textStyleDateSeparator)

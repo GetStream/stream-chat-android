@@ -38,11 +38,15 @@ internal class BlockedRetrofit2Call<T>(
 ) : retrofit2.Call<T> {
 
     init {
-        if (value == null) requireNotNull(error) {
-            "BlockedRetrofit2Call should be initialized with an error or value not null"
+        if (value == null) {
+            requireNotNull(error) {
+                "BlockedRetrofit2Call should be initialized with an error or value not null"
+            }
         }
-        if (error == null) requireNotNull(value) {
-            "BlockedRetrofit2Call should be initialized with an error or value not null"
+        if (error == null) {
+            requireNotNull(value) {
+                "BlockedRetrofit2Call should be initialized with an error or value not null"
+            }
         }
         if (error != null && value != null) error("BlockedRetrofit2Call can't be initialized with a value and an error")
     }
@@ -76,8 +80,11 @@ internal class BlockedRetrofit2Call<T>(
 
     override fun execute(): Response<T> = runBlocking {
         run()
-        if (value != null) Response.success(value)
-        else throw error!!
+        if (value != null) {
+            Response.success(value)
+        } else {
+            throw error!!
+        }
     }
 
     override fun isExecuted(): Boolean = started.get()

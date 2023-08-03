@@ -35,7 +35,7 @@ internal object StreamRippleTheme : RippleTheme {
     override fun defaultColor(): Color {
         return RippleTheme.defaultRippleColor(
             contentColor = LocalContentColor.current,
-            lightTheme = !isSystemInDarkTheme()
+            lightTheme = !isSystemInDarkTheme(),
         )
     }
 
@@ -43,7 +43,7 @@ internal object StreamRippleTheme : RippleTheme {
     override fun rippleAlpha(): RippleAlpha {
         return RippleTheme.defaultRippleAlpha(
             contentColor = LocalContentColor.current,
-            lightTheme = !isSystemInDarkTheme()
+            lightTheme = !isSystemInDarkTheme(),
         )
     }
 }

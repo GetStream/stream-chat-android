@@ -42,8 +42,8 @@ import java.util.Date
     indices = [
         Index(
             value = ["messageId", "userId", "type"],
-            unique = true
-        ), Index(value = ["syncStatus"])
+            unique = true,
+        ), Index(value = ["syncStatus"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -51,9 +51,9 @@ import java.util.Date
             parentColumns = ["id"],
             childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE,
-            deferred = true
-        )
-    ]
+            deferred = true,
+        ),
+    ],
 )
 internal data class ReactionEntity(
     @ColumnInfo(index = true)

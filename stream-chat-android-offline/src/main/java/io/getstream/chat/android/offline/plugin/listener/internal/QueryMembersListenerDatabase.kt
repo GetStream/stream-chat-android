@@ -34,7 +34,7 @@ import io.getstream.result.Result
  */
 internal class QueryMembersListenerDatabase(
     private val userRepository: UserRepository,
-    private val channelRepository: ChannelRepository
+    private val channelRepository: ChannelRepository,
 ) : QueryMembersListener {
 
     override suspend fun onQueryMembersResult(

@@ -24,5 +24,5 @@ package io.getstream.chat.android.models
  */
 public data class MessageSyncDescription(
     val type: MessageSyncType,
-    val content: MessageSyncContent
+    val content: MessageSyncContent,
 )

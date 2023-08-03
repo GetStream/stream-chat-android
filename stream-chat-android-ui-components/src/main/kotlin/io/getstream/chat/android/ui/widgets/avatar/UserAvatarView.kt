@@ -78,13 +78,13 @@ public class UserAvatarView : ShapeableImageView {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
 
     public constructor(context: Context, avatarStyle: AvatarStyle) : super(
-        context.createStreamThemeWrapper()
+        context.createStreamThemeWrapper(),
     ) {
         setAvatarStyle(avatarStyle)
     }
@@ -97,7 +97,11 @@ public class UserAvatarView : ShapeableImageView {
     public fun setUser(user: User) {
         load(
             data = user.image.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
-            placeholderDrawable = AvatarPlaceholderDrawable(context, user.initials, avatarStyle.avatarInitialsTextStyle)
+            placeholderDrawable = AvatarPlaceholderDrawable(
+                context,
+                user.initials,
+                avatarStyle.avatarInitialsTextStyle,
+            ),
         )
         this.online = user.online
         invalidate()
@@ -208,7 +212,7 @@ public class UserAvatarView : ShapeableImageView {
                     height.toFloat() - borderOffset,
                     avatarStyle.borderRadius,
                     avatarStyle.borderRadius,
-                    borderPaint
+                    borderPaint,
                 )
             }
             else -> {
@@ -216,7 +220,7 @@ public class UserAvatarView : ShapeableImageView {
                     width / 2f,
                     height / 2f,
                     width / 2f - borderOffset,
-                    borderPaint
+                    borderPaint,
                 )
             }
         }

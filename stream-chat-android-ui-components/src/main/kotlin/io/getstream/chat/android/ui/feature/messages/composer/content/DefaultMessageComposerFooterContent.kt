@@ -56,7 +56,7 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }

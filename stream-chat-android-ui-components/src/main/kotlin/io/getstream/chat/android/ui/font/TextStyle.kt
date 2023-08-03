@@ -131,7 +131,7 @@ public data class TextStyle(
                 color = color,
                 hint = hint,
                 hintColor = hintColor,
-                defaultFont = defaultFont
+                defaultFont = defaultFont,
             )
         }
     }

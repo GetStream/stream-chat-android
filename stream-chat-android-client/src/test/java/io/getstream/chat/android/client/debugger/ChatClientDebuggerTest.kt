@@ -87,7 +87,7 @@ internal class ChatClientDebuggerTest {
             false,
             Mother.chatLoggerConfig(),
             false,
-            false
+            false,
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         api = mock()

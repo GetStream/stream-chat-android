@@ -28,5 +28,5 @@ public enum class AvatarShape(public val value: Int) {
     /**
      * Round rect cropped image.
      */
-    ROUND_RECT(1)
+    ROUND_RECT(1),
 }

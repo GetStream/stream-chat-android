@@ -22,5 +22,5 @@ import io.getstream.chat.android.models.UploadedFile
 internal fun UploadFileResponse.toUploadedFile() =
     UploadedFile(
         file = this.file,
-        thumbUrl = this.thumb_url
+        thumbUrl = this.thumb_url,
     )

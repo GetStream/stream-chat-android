@@ -42,7 +42,7 @@ class ChatInfoSharedGroupsViewHolder(
     private val binding: ChatInfoSharedGroupsItemBinding = ChatInfoSharedGroupsItemBinding.inflate(
         LayoutInflater.from(parent.context),
         parent,
-        false
+        false,
     ),
 ) : BaseChannelListItemViewHolder(binding.root) {
 
@@ -59,12 +59,12 @@ class ChatInfoSharedGroupsViewHolder(
             channelAvatarView.setChannel(channel)
             nameTextView.text = ChatUI.channelNameFormatter.formatChannelName(
                 channel = channel,
-                currentUser = ChatClient.instance().clientState.user.value
+                currentUser = ChatClient.instance().clientState.user.value,
             )
             membersCountTextView.text = itemView.context.resources.getQuantityString(
                 R.plurals.members_count_title,
                 channel.members.size,
-                channel.members.size
+                channel.members.size,
             )
         }
     }

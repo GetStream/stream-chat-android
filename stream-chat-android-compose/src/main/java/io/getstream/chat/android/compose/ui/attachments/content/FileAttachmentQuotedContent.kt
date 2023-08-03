@@ -62,6 +62,6 @@ public fun FileAttachmentQuotedContent(
             .size(size),
         painter = painter,
         contentDescription = null,
-        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit
+        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit,
     )
 }

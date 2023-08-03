@@ -49,7 +49,7 @@ public fun randomImageFile(): File = randomFile(extension = "jpg")
 
 public fun randomFiles(
     size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> File = { randomFile() }
+    creationFunction: (Int) -> File = { randomFile() },
 ): List<File> = (1..size).map(creationFunction)
 
 public fun randomDate(): Date = Date(positiveRandomLong())
@@ -62,7 +62,7 @@ public fun createDate(
     date: Int = positiveRandomInt(),
     hourOfDay: Int = 0,
     minute: Int = 0,
-    seconds: Int = 0
+    seconds: Int = 0,
 ): Date {
     val calendar = Calendar.getInstance()
     calendar.set(year, month, date, hourOfDay, minute, seconds)

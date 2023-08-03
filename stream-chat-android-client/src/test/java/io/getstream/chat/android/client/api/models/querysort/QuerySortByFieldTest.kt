@@ -62,25 +62,25 @@ internal class QuerySortByFieldTest {
             randomString().let {
                 Arguments.of(
                     QuerySortByField.ascByName<Channel>(it),
-                    QuerySortByField.ascByName<Channel>(it)
+                    QuerySortByField.ascByName<Channel>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
                     QuerySortByField.ascByName<BannedUsersSort>(it),
-                    QuerySortByField.ascByName<BannedUsersSort>(it)
+                    QuerySortByField.ascByName<BannedUsersSort>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
                     QuerySortByField.descByName<Channel>(it),
-                    QuerySortByField.descByName<Channel>(it)
+                    QuerySortByField.descByName<Channel>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
                     QuerySortByField.descByName<BannedUsersSort>(it),
-                    QuerySortByField.descByName<BannedUsersSort>(it)
+                    QuerySortByField.descByName<BannedUsersSort>(it),
                 )
             },
         )

@@ -71,7 +71,7 @@ internal class DoOnStartCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         sideEffect.`should be invoked`()
         blockedCall.isStarted() `should be equal to` true

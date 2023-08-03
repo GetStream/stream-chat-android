@@ -87,7 +87,7 @@ class MessagesActivity : BaseConnectedActivity() {
             channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
-            parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID)
+            parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
         )
     }
 
@@ -140,7 +140,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     MyCustomComposer()
-                }
+                },
             ) {
                 MessageList(
                     modifier = Modifier
@@ -167,7 +167,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             }
                             null -> Unit
                         }
-                    }
+                    },
                 )
             }
 
@@ -184,7 +184,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onDismiss = {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         attachmentsPickerViewModel.dismissAttachments()
-                    }
+                    },
                 )
             }
 
@@ -202,7 +202,7 @@ class MessagesActivity : BaseConnectedActivity() {
                                 selectedMessage = selectedMessage,
                                 currentUser = user,
                                 isInThread = listViewModel.isInThread,
-                                ownCapabilities = selectedMessageState.ownCapabilities
+                                ownCapabilities = selectedMessageState.ownCapabilities,
                             ),
                             message = selectedMessage,
                             ownCapabilities = selectedMessageState.ownCapabilities,
@@ -213,7 +213,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             onShowMoreReactionsSelected = {
                                 listViewModel.selectExtendedReactions(selectedMessage)
                             },
-                            onDismiss = { listViewModel.removeOverlay() }
+                            onDismiss = { listViewModel.removeOverlay() },
                         )
                     }
                     is SelectedMessageReactionsState -> {
@@ -233,7 +233,7 @@ class MessagesActivity : BaseConnectedActivity() {
                                 listViewModel.selectExtendedReactions(selectedMessage)
                             },
                             onDismiss = { listViewModel.removeOverlay() },
-                            ownCapabilities = selectedMessageState.ownCapabilities
+                            ownCapabilities = selectedMessageState.ownCapabilities,
                         )
                     }
                     is SelectedMessageReactionsPickerState -> {
@@ -248,7 +248,7 @@ class MessagesActivity : BaseConnectedActivity() {
                                 composerViewModel.performMessageAction(action)
                                 listViewModel.performMessageAction(action)
                             },
-                            onDismiss = { listViewModel.removeOverlay() }
+                            onDismiss = { listViewModel.removeOverlay() },
                         )
                     }
                     else -> Unit
@@ -278,17 +278,17 @@ class MessagesActivity : BaseConnectedActivity() {
                     label = {
                         Row(
                             Modifier.wrapContentWidth(),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
-                                contentDescription = null
+                                contentDescription = null,
                             )
 
                             Text(
                                 modifier = Modifier.padding(start = 4.dp),
                                 text = "Type something",
-                                color = ChatTheme.colors.textLowEmphasis
+                                color = ChatTheme.colors.textLowEmphasis,
                             )
                         }
                     },
@@ -298,25 +298,25 @@ class MessagesActivity : BaseConnectedActivity() {
                                 .size(24.dp)
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
-                                    indication = rememberRipple()
+                                    indication = rememberRipple(),
                                 ) {
                                     val state = composerViewModel.messageComposerState.value
 
                                     composerViewModel.sendMessage(
                                         composerViewModel.buildNewMessage(
                                             state.inputValue,
-                                            state.attachments
-                                        )
+                                            state.attachments,
+                                        ),
                                     )
                                 },
                             painter = painterResource(id = R.drawable.stream_compose_ic_send),
                             tint = ChatTheme.colors.primaryAccent,
-                            contentDescription = null
+                            contentDescription = null,
                         )
                     },
                 )
             },
-            trailingContent = { Spacer(modifier = Modifier.size(8.dp)) }
+            trailingContent = { Spacer(modifier = Modifier.size(8.dp)) },
         )
     }
 

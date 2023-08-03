@@ -52,7 +52,7 @@ internal class ChannelExtensionsTest {
                     // Dummy adapter because reflective serialization can't deal with platform types
                     override fun fromJson(reader: JsonReader): File? = null
                     override fun toJson(writer: JsonWriter, value: File?) = TODO("Not implemented")
-                }
+                },
             )
             .add(
                 Attachment.UploadState::class.java,
@@ -60,7 +60,7 @@ internal class ChannelExtensionsTest {
                     // Dummy adapter because reflective serialization can't deal with sealed classes
                     override fun fromJson(reader: JsonReader): Attachment.UploadState? = null
                     override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
-                }
+                },
             )
             .add(
                 MessageSyncContent::class.java,
@@ -68,7 +68,7 @@ internal class ChannelExtensionsTest {
                     // Dummy adapter because reflective serialization can't deal with sealed classes
                     override fun fromJson(reader: JsonReader): MessageSyncContent? = null
                     override fun toJson(writer: JsonWriter, value: MessageSyncContent?) = TODO("Not implemented")
-                }
+                },
             )
             .add(KotlinJsonAdapterFactory())
             .build()
@@ -103,7 +103,7 @@ internal class ChannelExtensionsTest {
         val result1 = listOf(
             firstChannel,
             secondChannel,
-            thirdChannel
+            thirdChannel,
         ).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
         result1.first() shouldBeEqualTo secondChannel
@@ -127,7 +127,7 @@ internal class ChannelExtensionsTest {
         val result1 = listOf(
             firstChannel,
             secondChannel,
-            thirdChannel
+            thirdChannel,
         ).applyPagination(queryPaginationRequest.toAnyChannelPaginationRequest())
 
         result1.first() shouldBeEqualTo firstChannel

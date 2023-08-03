@@ -65,7 +65,9 @@ internal class TypingEventPrunerTest {
 
         val typingEventPruner =
             TypingEventPruner(
-                channelId = channelId, coroutineScope = this, onUpdated = onTypingUpdateListenerMock
+                channelId = channelId,
+                coroutineScope = this,
+                onUpdated = onTypingUpdateListenerMock,
             )
 
         val typingStartEvent = randomTypingStartEvent()
@@ -104,13 +106,13 @@ internal class TypingEventPrunerTest {
                 mapOf(
                     Pair(
                         secondTypingStartEvent.user.id,
-                        secondTypingStartEvent
-                    )
+                        secondTypingStartEvent,
+                    ),
                 ),
                 TypingEvent(
                     channelId,
-                    listOf(secondTypingStartEvent.user)
-                )
+                    listOf(secondTypingStartEvent.user),
+                ),
             )
         }
 
@@ -128,7 +130,7 @@ internal class TypingEventPrunerTest {
                     channelId = channelId,
                     delayTimeMs = prunerDelay,
                     coroutineScope = this,
-                    onUpdated = onTypingUpdateListenerMock
+                    onUpdated = onTypingUpdateListenerMock,
                 )
 
             val firstTypingStartEvent = randomTypingStartEvent(user = randomUser(id = "User1"))
@@ -174,13 +176,13 @@ internal class TypingEventPrunerTest {
                 mapOf(
                     Pair(
                         secondTypingStartEvent.user.id,
-                        secondTypingStartEvent
-                    )
+                        secondTypingStartEvent,
+                    ),
                 ),
                 TypingEvent(
                     channelId,
-                    listOf(secondTypingStartEvent.user)
-                )
+                    listOf(secondTypingStartEvent.user),
+                ),
             )
 
             // Advance the virtual clock by slightly more than the added time

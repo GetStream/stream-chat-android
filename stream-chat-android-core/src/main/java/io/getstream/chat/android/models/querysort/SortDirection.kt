@@ -22,7 +22,8 @@ public enum class SortDirection(public val value: Int) {
     DESC(-1),
 
     /** Ascending sort order. */
-    ASC(1);
+    ASC(1),
+    ;
 
     public companion object {
         /**

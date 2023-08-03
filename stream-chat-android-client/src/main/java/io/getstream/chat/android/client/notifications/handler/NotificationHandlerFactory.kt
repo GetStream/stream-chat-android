@@ -66,7 +66,7 @@ public object NotificationHandlerFactory {
                     newMessageIntentFun,
                     notificationChannelFun,
                     userIconBuilder,
-                    permissionHandler
+                    permissionHandler,
                 )
             } else {
                 ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
@@ -107,10 +107,10 @@ public object NotificationHandlerFactory {
         val appContext = context.applicationContext
         return runCatching {
             Class.forName(
-                "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler"
+                "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler",
             ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
         }.getOrDefault(
-            DefaultNotificationPermissionHandler.createDefaultNotificationPermissionHandler(appContext as Application)
+            DefaultNotificationPermissionHandler.createDefaultNotificationPermissionHandler(appContext as Application),
         )
     }
 }

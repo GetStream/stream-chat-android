@@ -101,7 +101,7 @@ class MessagesActivity : AppCompatActivity() {
                 override fun handleOnBackPressed() {
                     backHandler()
                 }
-            }
+            },
         )
     }
 

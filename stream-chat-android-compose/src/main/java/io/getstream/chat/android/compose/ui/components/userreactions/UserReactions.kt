@@ -57,19 +57,19 @@ public fun UserReactions(
     val reactionCountText = LocalContext.current.resources.getQuantityString(
         R.plurals.stream_compose_message_reactions,
         reactionCount,
-        reactionCount
+        reactionCount,
     )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.background(ChatTheme.colors.barsBackground)
+        modifier = modifier.background(ChatTheme.colors.barsBackground),
     ) {
         Text(
             text = reactionCountText,
             style = ChatTheme.typography.title3Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -77,7 +77,7 @@ public fun UserReactions(
         if (reactionCount > 0) {
             BoxWithConstraints(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 val reactionItemWidth = ChatTheme.dimens.userReactionItemWidth
                 val maxColumns = maxOf((maxWidth / reactionItemWidth).toInt(), 1)
@@ -88,7 +88,7 @@ public fun UserReactions(
                     modifier = Modifier
                         .width(reactionGridWidth)
                         .align(Alignment.Center),
-                    columns = GridCells.Fixed(columns)
+                    columns = GridCells.Fixed(columns),
                 ) {
                     items(reactionCount) { index ->
                         itemContent(items[index])

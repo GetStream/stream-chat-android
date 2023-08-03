@@ -125,7 +125,7 @@ class GroupChatInfoViewModel(
             currentState.copy(
                 members = members,
                 shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size <= COLLAPSED_MEMBERS_COUNT,
-                membersToShowCount = members.size - COLLAPSED_MEMBERS_COUNT
+                membersToShowCount = members.size - COLLAPSED_MEMBERS_COUNT,
             )
     }
 

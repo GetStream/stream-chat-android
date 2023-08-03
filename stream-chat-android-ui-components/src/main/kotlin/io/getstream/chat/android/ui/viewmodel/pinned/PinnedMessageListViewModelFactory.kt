@@ -40,7 +40,9 @@ public class PinnedMessageListViewModelFactory(private val cid: String?) : ViewM
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    public class Builder @SinceKotlin("99999.9") constructor() {
+    public class Builder
+    @SinceKotlin("99999.9")
+    constructor() {
         private var cid: String? = null
 
         /**

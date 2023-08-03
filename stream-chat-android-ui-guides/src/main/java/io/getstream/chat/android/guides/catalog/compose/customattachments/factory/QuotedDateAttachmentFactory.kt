@@ -42,9 +42,9 @@ val quotedDateAttachmentFactory: AttachmentFactory = AttachmentFactory(
     content = @Composable { modifier, attachmentState ->
         QuotedDateAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState
+            attachmentState = attachmentState,
         )
-    }
+    },
 )
 
 /**
@@ -70,10 +70,10 @@ fun QuotedDateAttachmentContent(
             .padding(4.dp)
             .clip(ChatTheme.shapes.attachment)
             .background(ChatTheme.colors.infoAccent)
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 modifier = Modifier.size(16.dp),
@@ -86,7 +86,7 @@ fun QuotedDateAttachmentContent(
                 text = formattedDate,
                 style = ChatTheme.typography.body,
                 color = ChatTheme.colors.textHighEmphasis,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }

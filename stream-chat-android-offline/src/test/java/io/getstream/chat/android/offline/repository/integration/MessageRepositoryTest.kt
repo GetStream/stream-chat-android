@@ -46,8 +46,8 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
             val newAttachment3 = attachment3.copy(url = "newUrl3")
             repos.insertMessage(
                 message.copy(
-                    attachments = mutableListOf(newAttachment1, newAttachment2, newAttachment3)
-                )
+                    attachments = mutableListOf(newAttachment1, newAttachment2, newAttachment3),
+                ),
             )
 
             val messageFromDb = requireNotNull(repos.selectMessage(message.id))

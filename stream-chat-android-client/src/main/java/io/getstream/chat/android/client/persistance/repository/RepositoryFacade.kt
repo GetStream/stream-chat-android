@@ -141,7 +141,7 @@ public class RepositoryFacade private constructor(
             channels.flatMap { channel ->
                 channel.messages.map { it.enrichWithCid(channel.cid) }
             },
-            false
+            false,
         )
     }
 

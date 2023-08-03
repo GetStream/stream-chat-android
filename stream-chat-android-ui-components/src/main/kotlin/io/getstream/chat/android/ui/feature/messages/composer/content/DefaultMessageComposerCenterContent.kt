@@ -74,7 +74,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     private val attachmentsAdapter: AttachmentPreviewAdapter by lazy {
         AttachmentPreviewAdapter(
             factoryManager = ChatUI.attachmentPreviewFactoryManager,
-            style = style
+            style = style,
         ) { attachment ->
             attachmentRemovalListener(attachment)
         }
@@ -87,7 +87,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }
@@ -239,7 +239,7 @@ private class AttachmentPreviewAdapter(
             parentView = parentView,
             viewType = viewType,
             attachmentRemovalListener = attachmentRemovalListener,
-            style = style
+            style = style,
         )
     }
 

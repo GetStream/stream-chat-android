@@ -76,7 +76,7 @@ public fun FileUploadContent(
                         onClick = {
                             onItemClick(attachment, previewHandlers)
                         },
-                        onLongClick = { }
+                        onLongClick = { },
                     ),
                 attachment = attachment,
             )
@@ -98,14 +98,14 @@ public fun FileUploadItem(
     Surface(
         modifier = modifier,
         color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment
+        shape = ChatTheme.shapes.attachment,
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(vertical = 8.dp, horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             FileAttachmentImage(attachment = attachment)
 
@@ -113,14 +113,14 @@ public fun FileUploadItem(
                 modifier = Modifier
                     .padding(start = 16.dp, end = 8.dp),
                 horizontalAlignment = Alignment.Start,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = attachment.title ?: attachment.name ?: "",
                     style = ChatTheme.typography.bodyBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
 
                 when (val uploadState = attachment.uploadState) {
@@ -134,7 +134,7 @@ public fun FileUploadItem(
                         Text(
                             text = MediaStringUtil.convertFileSizeByteCount(attachment.upload?.length() ?: 0L),
                             style = ChatTheme.typography.footnote,
-                            color = ChatTheme.colors.textLowEmphasis
+                            color = ChatTheme.colors.textLowEmphasis,
                         )
                     }
                 }
@@ -167,7 +167,7 @@ private fun ProgressInfo(uploadedBytes: Long, totalBytes: Long) {
                 MediaStringUtil.convertFileSizeByteCount(totalBytes),
             ),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis
+            color = ChatTheme.colors.textLowEmphasis,
         )
     }
 }

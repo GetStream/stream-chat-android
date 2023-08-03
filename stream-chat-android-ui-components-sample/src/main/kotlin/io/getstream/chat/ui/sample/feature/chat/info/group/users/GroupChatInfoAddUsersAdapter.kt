@@ -34,7 +34,7 @@ class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdap
         override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
             return oldItem == newItem
         }
-    }
+    },
 ) {
 
     private var userClickListener: UserClickListener? = null

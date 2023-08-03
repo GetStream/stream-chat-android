@@ -234,7 +234,7 @@ internal class DatabaseMessageRepository(
         ownReactions = ownReactions
             .filter { it.deletedAt == null }
             .filter { currentUser == null || it.userId == currentUser.id },
-        latestReactions = latestReactions.filter { it.deletedAt == null }
+        latestReactions = latestReactions.filter { it.deletedAt == null },
     )
 
     private companion object {

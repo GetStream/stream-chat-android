@@ -157,14 +157,14 @@ internal class SyncManagerTest {
         whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
 
         whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-            Result.Success(listOf(mockedChatEvent))
+            Result.Success(listOf(mockedChatEvent)),
         )
         val connectingEvent = ConnectedEvent(
             type = "type",
             createdAt = createdAt,
             rawCreatedAt = rawCreatedAt,
             connectionId = randomString(),
-            me = randomUser()
+            me = randomUser(),
         )
 
         syncManager.onEvent(connectingEvent)
@@ -184,10 +184,10 @@ internal class SyncManagerTest {
         }
 
         whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(
-            Result.Success(listOf(mockedChatEvent))
+            Result.Success(listOf(mockedChatEvent)),
         )
         whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(
-            Result.Success(listOf(mockedChatEvent))
+            Result.Success(listOf(mockedChatEvent)),
         )
 
         val syncManager = buildSyncManager()
@@ -209,7 +209,7 @@ internal class SyncManagerTest {
             chatClient = chatClient,
             clientState = clientState,
             userPresence = true,
-            events = _syncEvents
+            events = _syncEvents,
         )
     }
 }

@@ -219,7 +219,7 @@ internal constructor(
     private val currentUserFetcher: CurrentUserFetcher,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
-    public val audioPlayer: AudioPlayer
+    public val audioPlayer: AudioPlayer,
 ) {
     private val logger by taggedLogger("Chat:Client")
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
@@ -293,11 +293,11 @@ internal constructor(
             plugin is P && plugin is DependencyResolver
         } as? DependencyResolver
             ?: throw IllegalStateException(
-                "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?"
+                "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?",
             )
         return resolver.resolveDependency(T::class)
             ?: throw IllegalStateException(
-                "Dependency '${T::class.qualifiedName}' was not resolved from plugin '${P::class.qualifiedName}'"
+                "Dependency '${T::class.qualifiedName}' was not resolved from plugin '${P::class.qualifiedName}'",
             )
     }
 
@@ -437,7 +437,7 @@ internal constructor(
                 Result.Failure(
                     Error.GenericError(
                         "The user_id provided on the JWT token doesn't match with the current user you try to connect",
-                    )
+                    ),
                 )
             }
 
@@ -462,7 +462,7 @@ internal constructor(
                         Result.Failure(
                             Error.GenericError(
                                 "User cannot be set until the previous one is disconnected.",
-                            )
+                            ),
                         )
                     }
 
@@ -479,7 +479,7 @@ internal constructor(
                                 Result.Failure(
                                     Error.GenericError(
                                         "Failed to connect user. Please check you haven't connected a user already.",
-                                    )
+                                    ),
                                 )
                             }
                     }
@@ -491,7 +491,7 @@ internal constructor(
                 Result.Failure(
                     Error.GenericError(
                         "Failed to connect user. Please check you don't have connected user already.",
-                    )
+                    ),
                 )
             }
         }.onErrorSuspend {
@@ -588,9 +588,8 @@ internal constructor(
         logger.d { "[connectUserSuspend] userId: '${user.id}', username: '${user.name}'" }
         return setUser(user, tokenProvider, timeoutMilliseconds).also { result ->
             logger.v {
-                "[connectUserSuspend] completed: ${
-                result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                }"
+                "[connectUserSuspend] " +
+                    "completed: ${result.stringify { "ConnectionData(connectionId=${it.connectionId})" }}"
             }
         }
     }
@@ -697,7 +696,7 @@ internal constructor(
             initializeClientWithUser(
                 User(
                     id = config.userId,
-                    name = config.userName
+                    name = config.userName,
                 ),
                 tokenProvider = CacheableTokenProvider(ConstantTokenProvider(config.userToken)),
                 isAnonymous = config.isAnonymous,
@@ -733,9 +732,8 @@ internal constructor(
                 timeoutMilliseconds,
             ).also { result ->
                 logger.v {
-                    "[connectAnonymousUser] completed: ${
-                    result.stringify { "ConnectionData(connectionId=${it.connectionId})" }
-                    }"
+                    "[connectAnonymousUser] " +
+                        "completed: ${result.stringify { "ConnectionData(connectionId=${it.connectionId})" }}"
                 }
             }
         }
@@ -812,7 +810,7 @@ internal constructor(
                         limit,
                         filter,
                         sort,
-                        members
+                        members,
                     )
                     logger.v { "[queryMembers] result: ${result.stringify { "Members(count=${it.size})" }}" }
                 }
@@ -1047,8 +1045,8 @@ internal constructor(
                 !isUserSet() -> Result.Failure(Error.GenericError("User is not set, can't fetch current user"))
                 isSocketConnected() -> Result.Failure(
                     Error.GenericError(
-                        "Socket is connected, can't fetch current user"
-                    )
+                        "Socket is connected, can't fetch current user",
+                    ),
                 )
                 else -> currentUserFetcher.fetch(getCurrentUser()!!)
             }
@@ -1077,7 +1075,7 @@ internal constructor(
                         userState.userOrError(),
                         userState is UserState.AnonymousUserSet,
                         true,
-                    )
+                    ),
                 )
 
                 else -> Result.Failure(Error.GenericError("Invalid user state $userState without user being set!"))
@@ -1129,7 +1127,7 @@ internal constructor(
                 if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     listener.onEvent(event)
                 }
-            }
+            },
         )
 
         lifecycleOwner.lifecycle.addObserver(
@@ -1137,7 +1135,7 @@ internal constructor(
                 override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
-            }
+            },
         )
 
         return disposable
@@ -1172,7 +1170,7 @@ internal constructor(
                 if (lifecycleOwner.lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     listener.onEvent(event)
                 }
-            }
+            },
         )
 
         lifecycleOwner.lifecycle.addObserver(
@@ -1180,7 +1178,7 @@ internal constructor(
                 override fun onDestroy(owner: LifecycleOwner) {
                     disposable.dispose()
                 }
-            }
+            },
         )
 
         return disposable
@@ -1615,7 +1613,7 @@ internal constructor(
 
         return api.getMessage(messageId)
             .doOnResult(
-                userScope
+                userScope,
             ) { result ->
                 plugins.forEach { listener ->
                     logger.v { "[getMessage] #doOnResult; plugin: ${listener::class.qualifiedName}" }
@@ -1761,7 +1759,7 @@ internal constructor(
         expirationDate?.let { set["pin_expires"] = it }
         return partialUpdateMessage(
             messageId = message.id,
-            set = set
+            set = set,
         )
     }
 
@@ -1782,8 +1780,8 @@ internal constructor(
             messageId = message.id,
             set = mapOf(
                 "pinned" to true,
-                "pin_expires" to calendar.time
-            )
+                "pin_expires" to calendar.time,
+            ),
         )
     }
 
@@ -1798,7 +1796,7 @@ internal constructor(
     public fun unpinMessage(message: Message): Call<Message> {
         return partialUpdateMessage(
             messageId = message.id,
-            set = mapOf("pinned" to false)
+            set = mapOf("pinned" to false),
         )
     }
 
@@ -1973,7 +1971,7 @@ internal constructor(
         return api.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            systemMessage = systemMessage
+            systemMessage = systemMessage,
         )
     }
 
@@ -2038,7 +2036,7 @@ internal constructor(
             channelType = channelType,
             channelId = channelId,
             set = set,
-            unset = unset
+            unset = unset,
         )
     }
 
@@ -2066,7 +2064,7 @@ internal constructor(
                 userScope,
                 Error.GenericError(
                     "You can't specify a value outside the range 1-$MAX_COOLDOWN_TIME_SECONDS for cooldown duration.",
-                )
+                ),
             )
         }
     }
@@ -2250,7 +2248,7 @@ internal constructor(
         channelType,
         channelId,
         memberIds,
-        systemMessage
+        systemMessage,
     )
 
     /**
@@ -2273,7 +2271,7 @@ internal constructor(
         channelType,
         channelId,
         memberIds,
-        systemMessage
+        systemMessage,
     )
 
     /**
@@ -2301,7 +2299,7 @@ internal constructor(
         return api.muteChannel(
             channelType = channelType,
             channelId = channelId,
-            expiration = expiration
+            expiration = expiration,
         )
     }
 
@@ -2394,7 +2392,7 @@ internal constructor(
         channelId = channelId,
         reason = reason,
         timeout = timeout,
-        shadow = false
+        shadow = false,
     ).toUnitCall()
 
     @CheckResult
@@ -2406,7 +2404,7 @@ internal constructor(
         targetId = targetId,
         channelType = channelType,
         channelId = channelId,
-        shadow = false
+        shadow = false,
     ).toUnitCall()
 
     @CheckResult
@@ -2422,7 +2420,7 @@ internal constructor(
         channelId = channelId,
         reason = reason,
         timeout = timeout,
-        shadow = true
+        shadow = true,
     ).toUnitCall()
 
     @CheckResult
@@ -2434,7 +2432,7 @@ internal constructor(
         targetId = targetId,
         channelType = channelType,
         channelId = channelId,
-        shadow = true
+        shadow = true,
     ).toUnitCall()
 
     @CheckResult
@@ -2643,7 +2641,7 @@ internal constructor(
             userScope,
             Error.GenericError(
                 "The string for data: $lastSyncAt could not be parsed for format: ${streamDateFormatter.datePattern}",
-            )
+            ),
         )
 
         return api.getSyncHistory(channelsIds, lastSyncAt)
@@ -2778,7 +2776,7 @@ internal constructor(
             channelType = channelType,
             channelId = channelId,
             callType = callType,
-            callId = callId
+            callId = callId,
         )
     }
 
@@ -3066,7 +3064,7 @@ internal constructor(
         @Deprecated(
             message = "It shouldn't be used outside of SDK code. Created for testing purposes",
             replaceWith = ReplaceWith("this.build()"),
-            level = DeprecationLevel.ERROR
+            level = DeprecationLevel.ERROR,
         )
         @SuppressWarnings("LongMethod")
         override fun internalBuild(): ChatClient {
@@ -3077,7 +3075,7 @@ internal constructor(
             instance?.run {
                 Log.e(
                     "Chat",
-                    "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]"
+                    "[ERROR] You have just re-initialized ChatClient, old configuration has been overridden [ERROR]",
                 )
             }
 
@@ -3095,7 +3093,7 @@ internal constructor(
                 warmUp = warmUp,
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,
-                debugRequests
+                debugRequests,
             )
             setupStreamLog()
 
@@ -3157,7 +3155,7 @@ internal constructor(
                     context = appContext,
                     networkType = uploadAttachmentsNetworkType,
                     clientState = clientState,
-                    scope = clientScope
+                    scope = clientScope,
                 )
             }
         }
@@ -3168,8 +3166,8 @@ internal constructor(
                 StreamLog.install(
                     CompositeStreamLogger(
                         AndroidStreamLogger(),
-                        StreamLoggerHandler(loggerHandler)
-                    )
+                        StreamLoggerHandler(loggerHandler),
+                    ),
                 )
             }
         }
@@ -3234,7 +3232,7 @@ internal constructor(
         public fun instance(): ChatClient {
             return instance
                 ?: throw IllegalStateException(
-                    "ChatClient.Builder::build() must be called before obtaining ChatClient instance"
+                    "ChatClient.Builder::build() must be called before obtaining ChatClient instance",
                 )
         }
 

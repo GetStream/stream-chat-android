@@ -161,11 +161,11 @@ public data class ScrollButtonViewStyle(
             val scrollButtonBadgeTextStyle = TextStyle.Builder(attrs)
                 .size(
                     R.styleable.MessageListView_streamUiScrollButtonBadgeTextSize,
-                    context.getDimension(R.dimen.stream_ui_scroll_button_unread_badge_text_size)
+                    context.getDimension(R.dimen.stream_ui_scroll_button_unread_badge_text_size),
                 )
                 .color(
                     R.styleable.MessageListView_streamUiScrollButtonBadgeTextColor,
-                    context.getColorCompat(R.color.stream_ui_literal_white)
+                    context.getColorCompat(R.color.stream_ui_literal_white),
                 )
                 .font(
                     R.styleable.MessageListView_streamUiScrollButtonBadgeFontAssets,
@@ -186,7 +186,7 @@ public data class ScrollButtonViewStyle(
                 scrollButtonBadgeIcon = scrollButtonBadgeIcon,
                 scrollButtonBadgeGravity = scrollButtonBadgeGravity,
                 scrollButtonBadgeElevation = scrollButtonBadgeElevation,
-                scrollButtonInternalMargin = scrollButtonInternalMargin
+                scrollButtonInternalMargin = scrollButtonInternalMargin,
             ).let(TransformStyle.scrollButtonStyleTransformer::transform)
         }
     }

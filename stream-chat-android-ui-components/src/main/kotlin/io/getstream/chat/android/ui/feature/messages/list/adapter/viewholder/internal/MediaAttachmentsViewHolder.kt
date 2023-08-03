@@ -56,7 +56,7 @@ internal class MediaAttachmentsViewHolder(
     internal val binding: StreamUiItemMessageMediaAttachmentBinding = StreamUiItemMessageMediaAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
@@ -141,7 +141,7 @@ internal class MediaAttachmentsViewHolder(
                 context.getString(
                     R.string.stream_ui_message_list_attachment_uploading,
                     completedAttachmentsCount,
-                    totalAttachmentsCount
+                    totalAttachmentsCount,
                 )
         }
     }
@@ -194,7 +194,7 @@ internal class MediaAttachmentsViewHolder(
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
-                onLinkClicked = container.linkClickListener::onLinkClick
+                onLinkClicked = container.linkClickListener::onLinkClick,
             )
         }
     }

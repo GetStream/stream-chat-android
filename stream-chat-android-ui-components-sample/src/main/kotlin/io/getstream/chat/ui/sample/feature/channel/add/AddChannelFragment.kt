@@ -89,7 +89,7 @@ class AddChannelFragment : Fragment() {
                 when (state) {
                     is AddChannelViewModel.State.InitializeChannel -> initializeChannel(state.cid)
                     is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
-                        AddChannelFragmentDirections.actionOpenChat(state.cid, null)
+                        AddChannelFragmentDirections.actionOpenChat(state.cid, null),
                     )
                     AddChannelViewModel.State.Loading,
                     is AddChannelViewModel.State.Result,
@@ -103,7 +103,7 @@ class AddChannelFragment : Fragment() {
                     when (it) {
                         is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel
                     }.let(::showToast)
-                }
+                },
             )
         }
         binding.addChannelView.apply {

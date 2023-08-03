@@ -61,35 +61,6 @@
     <ID>MaxLineLength:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:SharedAttachment.kt$SharedAttachment$AttachmentItem : SharedAttachment</ID>
-    <ID>PackageNaming:AddGroupChannelSelectNameFragment.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
-    <ID>PackageNaming:AddGroupChannelSelectNameMembersAdapter.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
-    <ID>PackageNaming:AddGroupChannelSelectNameViewModel.kt$package io.getstream.chat.ui.sample.feature.channel.add.group.select_name</ID>
-    <ID>PackageNaming:BaseMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:ComponentBrowserAvatarViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.avatarview</ID>
-    <ID>PackageNaming:ComponentBrowserChannelListHeaderViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.channel.list</ID>
-    <ID>PackageNaming:ComponentBrowserEditReactionsFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.reactions</ID>
-    <ID>PackageNaming:ComponentBrowserHomeFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.home</ID>
-    <ID>PackageNaming:ComponentBrowserMessagesHeaderViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.header</ID>
-    <ID>PackageNaming:ComponentBrowserSearchViewFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.search</ID>
-    <ID>PackageNaming:ComponentBrowserTypingIndicatorFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.typing</ID>
-    <ID>PackageNaming:ComponentBrowserUserReactionsFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.reactions</ID>
-    <ID>PackageNaming:ComponentBrowserViewReactionsFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.reactions</ID>
-    <ID>PackageNaming:CustomLoginFragment.kt$package io.getstream.chat.ui.sample.feature.custom_login</ID>
-    <ID>PackageNaming:CustomLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.custom_login</ID>
-    <ID>PackageNaming:DataProvider.kt$package io.getstream.chat.ui.sample.feature.component_browser.utils</ID>
-    <ID>PackageNaming:DateDividerComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:DeletedMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:GiphyMessageComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:MessageListComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages</ID>
-    <ID>PackageNaming:OnlyFileAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:PlainTextMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:RepliedMessagesComponentBrowserFragment.kt$package io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder</ID>
-    <ID>PackageNaming:UserLoginAdapter.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
-    <ID>PackageNaming:UserLoginFragment.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
-    <ID>PackageNaming:UserLoginViewModel.kt$package io.getstream.chat.ui.sample.feature.user_login</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>

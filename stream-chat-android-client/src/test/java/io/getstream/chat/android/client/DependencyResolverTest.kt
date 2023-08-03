@@ -71,7 +71,7 @@ public class DependencyResolverTest {
     @ParameterizedTest
     @MethodSource("initializationStatesArguments")
     public fun `Should throw an exception if user is not connected`(
-        initializationState: InitializationState
+        initializationState: InitializationState,
     ): TestResult = runTest {
         val client = Fixture()
             .with(initializationState)

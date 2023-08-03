@@ -71,7 +71,7 @@ public fun RunningWaveForm(
     barCornerRadius: CornerRadius = CornerRadius(barWidth.value / 2.5f, barWidth.value / 2.5f),
     barBrush: Brush = Brush.linearGradient(
         Pair(0f, ChatTheme.colors.primaryAccent),
-        Pair(1f, ChatTheme.colors.primaryAccent)
+        Pair(1f, ChatTheme.colors.primaryAccent),
     ),
 ) {
     val waveformData = remember(restartKey) {
@@ -113,7 +113,7 @@ public fun RunningWaveForm(
                 val barHeight = (size.height * (waveformItem.toFloat() / maxInputValue))
                     .coerceIn(
                         minimumValue = minBarHeightFloat,
-                        maximumValue = this.size.height
+                        maximumValue = this.size.height,
                     )
 
                 val xOffset = (barGap.value + barWidth.value) * index.toFloat()
@@ -123,7 +123,7 @@ public fun RunningWaveForm(
                     cornerRadius = barCornerRadius,
                     brush = barBrush,
                     topLeft = Offset(xOffset, yOffset),
-                    size = Size(width = barWidth.value, height = barHeight)
+                    size = Size(width = barWidth.value, height = barHeight),
                 )
             }
         }

@@ -57,60 +57,60 @@ public data class AvatarStyle(
             ).use {
                 val avatarBorderWidth = it.getDimensionPixelSize(
                     R.styleable.AvatarView_streamUiAvatarBorderWidth,
-                    context.getDimension(R.dimen.stream_ui_avatar_border_width)
+                    context.getDimension(R.dimen.stream_ui_avatar_border_width),
                 )
 
                 val avatarBorderColor = it.getColor(
                     R.styleable.AvatarView_streamUiAvatarBorderColor,
-                    context.getColorCompat(R.color.stream_ui_black)
+                    context.getColorCompat(R.color.stream_ui_black),
                 )
 
                 val avatarInitialsTextStyle = TextStyle.Builder(it)
                     .size(
                         R.styleable.AvatarView_streamUiAvatarTextSize,
-                        context.getDimension(R.dimen.stream_ui_avatar_initials)
+                        context.getDimension(R.dimen.stream_ui_avatar_initials),
                     )
                     .color(
                         R.styleable.AvatarView_streamUiAvatarTextColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_white),
                     )
                     .font(
                         R.styleable.AvatarView_streamUiAvatarTextFontAssets,
-                        R.styleable.AvatarView_streamUiAvatarTextFont
+                        R.styleable.AvatarView_streamUiAvatarTextFont,
                     )
                     .style(
                         R.styleable.AvatarView_streamUiAvatarTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
                 val groupAvatarInitialsTextStyle = TextStyle.Builder(it)
                     .size(
                         R.styleable.AvatarView_streamUiGroupAvatarTextSize,
-                        context.getDimension(R.dimen.stream_ui_group_avatar_initials)
+                        context.getDimension(R.dimen.stream_ui_group_avatar_initials),
                     )
                     .color(
                         R.styleable.AvatarView_streamUiGroupAvatarTextColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_white),
                     )
                     .font(
                         R.styleable.AvatarView_streamUiGroupAvatarTextFontAssets,
-                        R.styleable.AvatarView_streamUiGroupAvatarTextFont
+                        R.styleable.AvatarView_streamUiGroupAvatarTextFont,
                     )
                     .style(
                         R.styleable.AvatarView_streamUiGroupAvatarTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
                 val onlineIndicatorEnabled = it.getBoolean(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorEnabled,
-                    false
+                    false,
                 )
 
                 val onlineIndicatorPosition = it.getEnum(
                     R.styleable.AvatarView_streamUiAvatarOnlineIndicatorPosition,
-                    OnlineIndicatorPosition.TOP_END
+                    OnlineIndicatorPosition.TOP_END,
                 )
                 val onlineIndicatorColor =
                     it.getColor(R.styleable.AvatarView_streamUiAvatarOnlineIndicatorColor, Color.GREEN)
@@ -118,7 +118,7 @@ public data class AvatarStyle(
                 val onlineIndicatorBorderColor =
                     it.getColor(
                         R.styleable.AvatarView_streamUiAvatarOnlineIndicatorBorderColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_white),
                     )
 
                 val avatarShape =
@@ -127,7 +127,7 @@ public data class AvatarStyle(
                 val borderRadius =
                     it.getDimensionPixelSize(
                         R.styleable.AvatarView_streamUiAvatarBorderRadius,
-                        4.dpToPx()
+                        4.dpToPx(),
                     ).toFloat()
 
                 return AvatarStyle(

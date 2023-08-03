@@ -86,7 +86,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                     GroupChatInfoFragmentDirections.actionOpenChatInfo(
                         userData = userData,
                         cid = viewModel.state.value!!.directChannelCid,
-                    )
+                    ),
                 )
                 dismiss()
             }
@@ -105,7 +105,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         description = getString(
                             R.string.chat_group_info_user_remove_description,
                             user.name,
-                            channelName
+                            channelName,
                         ),
                         confirmText = getString(R.string.remove),
                         cancelText = getString(R.string.cancel),
@@ -151,7 +151,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                         dismiss()
                     }
                 }
-            }
+            },
         )
         viewModel.errorEvents.observe(
             viewLifecycleOwner,
@@ -159,7 +159,7 @@ class GroupChatInfoMemberOptionsDialogFragment : BottomSheetDialogFragment() {
                 when (it) {
                     is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member
                 }.let(::showToast)
-            }
+            },
         )
     }
 

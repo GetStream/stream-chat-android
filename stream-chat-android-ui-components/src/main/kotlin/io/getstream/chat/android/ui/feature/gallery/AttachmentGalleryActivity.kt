@@ -106,7 +106,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 parentId = currentItem.messageId,
                 cid = currentItem.cid,
                 userName = currentItem.user.name,
-                isMine = currentItem.isMine
+                isMine = currentItem.isMine,
             )
         }
     private var isFullScreen = false
@@ -141,7 +141,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             mediaClickListener = {
                 isFullScreen = !isFullScreen
                 if (isFullScreen) enterFullScreenMode() else exitFullScreenMode()
-            }
+            },
         )
         binding.galleryViewPager.adapter = adapter
         binding.galleryViewPager.setCurrentItem(initialIndex, false)
@@ -191,7 +191,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             shareMediaJob = lifecycleScope.launch(DispatcherProvider.Main) {
                 StreamImageLoader.instance().loadAsBitmap(
                     context = applicationContext,
-                    url = imageUrl
+                    url = imageUrl,
                 )?.let { bitmap ->
                     StreamFileUtil.writeImageToSharableFile(applicationContext, bitmap)
                 }?.let {
@@ -217,7 +217,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             val result = withContext(DispatcherProvider.IO) {
                 StreamFileUtil.writeFileToShareableFile(
                     context = applicationContext,
-                    attachment = attachment
+                    attachment = attachment,
                 )
             }
 
@@ -256,7 +256,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 },
                 getString(R.string.stream_ui_attachment_gallery_share),
             ),
-            null
+            null,
         )
     }
 
@@ -267,7 +267,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         Toast.makeText(
             applicationContext,
             applicationContext.getString(R.string.stream_ui_attachment_gallery_share_error),
-            Toast.LENGTH_SHORT
+            Toast.LENGTH_SHORT,
         ).show()
     }
 
@@ -291,7 +291,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 override fun onPageSelected(position: Int) {
                     onGalleryPageSelected(position)
                 }
-            }
+            },
         )
         onGalleryPageSelected(initialIndex)
     }
@@ -301,7 +301,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             binding.root,
             onPermissionGranted = {
                 setResultAndFinish(AttachmentOptionResult.Download(attachmentGalleryResultItem))
-            }
+            },
         )
     }
 
@@ -317,7 +317,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         binding.mediaInformationTextView.text = getString(
             R.string.stream_ui_attachment_gallery_count,
             position + 1,
-            attachmentGalleryItems.size
+            attachmentGalleryItems.size,
         )
 
         val currentItem = attachmentGalleryItems[position]
@@ -332,7 +332,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 createdAt.time,
                 System.currentTimeMillis(),
                 DateUtils.DAY_IN_MILLIS,
-                DateUtils.FORMAT_ABBREV_RELATIVE
+                DateUtils.FORMAT_ABBREV_RELATIVE,
             )
             .toString()
             .replaceFirstChar(Char::lowercase)
@@ -340,7 +340,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         return getString(
             R.string.stream_ui_attachment_gallery_date,
             relativeDay,
-            ChatUI.dateFormatter.formatTime(createdAt)
+            ChatUI.dateFormatter.formatTime(createdAt),
         )
     }
 
@@ -413,14 +413,14 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
             shareMediaButton.setImageDrawable(
                 ContextCompat.getDrawable(
                     applicationContext,
-                    R.drawable.stream_ui_ic_share
-                )
+                    R.drawable.stream_ui_ic_share,
+                ),
             )
 
             mediaInformationTextView.text = getString(
                 R.string.stream_ui_attachment_gallery_count,
                 galleryViewPager.currentItem + 1,
-                attachmentGalleryItems.size
+                attachmentGalleryItems.size,
             )
         }
     }
@@ -434,7 +434,7 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
                 null,
                 R.styleable.AttachmentOptionsView,
                 R.attr.streamUiAttachmentGalleryOptionsStyle,
-                R.style.StreamUi_AttachmentGallery_Options
+                R.style.StreamUi_AttachmentGallery_Options,
             ).use {
                 val style = AttachmentGalleryOptionsViewStyle(this, it)
                 replyOptionEnabled = style.replyOptionEnabled

@@ -64,7 +64,7 @@ internal class QueryChannelsLogic(
                 .also { channels ->
                     if (channels.isNotEmpty()) {
                         addChannels(channels)
-                        loadingPerPage(false, hasOffset,)
+                        loadingPerPage(false, hasOffset)
                     }
                 }
         }
@@ -315,7 +315,9 @@ internal class QueryChannelsLogic(
     internal suspend fun parseChatEventResult(chatEvent: ChatEvent): EventHandlingResult {
         val cachedChannel = if (chatEvent is CidEvent) {
             queryChannelsDatabaseLogic.selectChannelWithoutMessages(chatEvent.cid)
-        } else null
+        } else {
+            null
+        }
 
         return queryChannelsStateLogic.handleChatEvent(chatEvent, cachedChannel)
     }

@@ -121,7 +121,7 @@ public class SearchViewModel : ViewModel() {
             val currentState = _state.value!!
             val result = searchMessages(
                 query = currentState.query,
-                offset = currentState.results.size
+                offset = currentState.results.size,
             )
             when (result) {
                 is Result.Success -> handleSearchMessageSuccess(result.value)
@@ -140,7 +140,7 @@ public class SearchViewModel : ViewModel() {
             results = currentState.results + messages,
             isLoading = false,
             isLoadingMore = false,
-            canLoadMore = messages.size == QUERY_LIMIT
+            canLoadMore = messages.size == QUERY_LIMIT,
         )
     }
 

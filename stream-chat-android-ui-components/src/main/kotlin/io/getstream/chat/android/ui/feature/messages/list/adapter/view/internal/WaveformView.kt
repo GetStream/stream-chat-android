@@ -59,7 +59,7 @@ internal class WaveformView : LinearLayoutCompat {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     private val logger by taggedLogger("WaveformView")
@@ -76,7 +76,7 @@ internal class WaveformView : LinearLayoutCompat {
 
         val layoutParamsButton = LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
         )
 
         addView(slider, layoutParamsButton)

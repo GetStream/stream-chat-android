@@ -67,14 +67,14 @@ public fun ModeratedMessageDialog(
             message = message,
             moderatedMessageOptions = moderatedMessageOptions,
             onDialogOptionInteraction = onDialogOptionInteraction,
-            onDismissRequest = onDismissRequest
+            onDismissRequest = onDismissRequest,
         )
     },
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Column(
             modifier = modifier,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             dialogTitle()
 
@@ -108,7 +108,7 @@ internal fun DefaultModeratedDialogOptions(
         message = message,
         options = moderatedMessageOptions,
         onDismissRequest = onDismissRequest,
-        onDialogOptionInteraction = onDialogOptionInteraction
+        onDialogOptionInteraction = onDialogOptionInteraction,
     )
 }
 
@@ -132,7 +132,7 @@ internal fun DefaultModeratedMessageDialogTitle() {
         text = stringResource(id = R.string.stream_ui_moderation_dialog_title),
         textAlign = TextAlign.Center,
         style = ChatTheme.typography.title3,
-        color = ChatTheme.colors.textHighEmphasis
+        color = ChatTheme.colors.textHighEmphasis,
     )
 }
 
@@ -150,6 +150,6 @@ internal fun DefaultModeratedMessageDialogDescription() {
         text = stringResource(id = R.string.stream_ui_moderation_dialog_description),
         textAlign = TextAlign.Center,
         style = ChatTheme.typography.body,
-        color = ChatTheme.colors.textLowEmphasis
+        color = ChatTheme.colors.textLowEmphasis,
     )
 }

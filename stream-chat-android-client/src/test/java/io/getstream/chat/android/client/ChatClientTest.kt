@@ -98,7 +98,7 @@ internal class ChatClientTest {
             false,
             Mother.chatLoggerConfig(),
             false,
-            false
+            false,
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         api = mock()
@@ -134,7 +134,7 @@ internal class ChatClientTest {
             mutableClientState = Mother.mockedClientState(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
-            audioPlayer = mock()
+            audioPlayer = mock(),
         ).apply {
             connectUser(user, token).enqueue()
         }
@@ -271,8 +271,8 @@ internal class ChatClientTest {
                     statusCode = 400,
                     serverErrorCode = 4,
                     message = "channel_cids must contain at least 1 item",
-                )
-            )
+                ),
+            ),
         )
 
         /* When */
@@ -295,10 +295,10 @@ internal class ChatClientTest {
                         type = "type",
                         createdAt = date,
                         rawCreatedAt = rawDate,
-                        connectionId = "12345"
-                    )
-                )
-            )
+                        connectionId = "12345",
+                    ),
+                ),
+            ),
         )
 
         /* When */
@@ -311,9 +311,9 @@ internal class ChatClientTest {
                     type = "type",
                     createdAt = date,
                     rawCreatedAt = rawDate,
-                    connectionId = "12345"
-                )
-            )
+                    connectionId = "12345",
+                ),
+            ),
         )
     }
 }

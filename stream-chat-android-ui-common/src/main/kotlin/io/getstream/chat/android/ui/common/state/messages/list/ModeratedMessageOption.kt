@@ -56,5 +56,5 @@ public class CustomModerationOption(
 public fun defaultMessageModerationOptions(): List<ModeratedMessageOption> = listOf(
     SendAnyway,
     EditMessage,
-    DeleteMessage
+    DeleteMessage,
 )

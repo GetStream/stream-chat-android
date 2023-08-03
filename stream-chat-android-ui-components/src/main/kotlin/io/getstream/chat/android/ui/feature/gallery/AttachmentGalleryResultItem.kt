@@ -84,6 +84,6 @@ public fun Attachment.toAttachmentGalleryResultItem(
         imageUrl = this.imageUrl,
         assetUrl = this.assetUrl,
         name = this.name,
-        authorLink = authorLink
+        authorLink = authorLink,
     )
 }

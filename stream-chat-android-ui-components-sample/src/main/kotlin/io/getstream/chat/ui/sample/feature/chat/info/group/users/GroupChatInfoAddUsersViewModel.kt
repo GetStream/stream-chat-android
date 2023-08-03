@@ -128,7 +128,7 @@ class GroupChatInfoAddUsersViewModel(
         } else {
             Filters.and(
                 Filters.autocomplete("name", currentState.query),
-                Filters.nin("id", currentMembers.map { it.getUserId() })
+                Filters.nin("id", currentMembers.map { it.getUserId() }),
             )
         }
 
@@ -137,14 +137,14 @@ class GroupChatInfoAddUsersViewModel(
                 filter = filter,
                 offset = currentState.results.size,
                 limit = QUERY_LIMIT,
-            )
+            ),
         ).await()
 
         when (result) {
             is Result.Success -> _state.value = currentState.copy(
                 results = currentState.results + result.value,
                 isLoading = false,
-                canLoadMore = result.value.size == QUERY_LIMIT
+                canLoadMore = result.value.size == QUERY_LIMIT,
             )
             is Result.Failure -> _state.value = currentState.copy(
                 isLoading = false,

@@ -100,7 +100,7 @@ public data class ViewReactionsViewStyle(
                     .bubbleColorMine(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorMine)
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
                     .messageOptionsUserReactionBubbleOrientation(
-                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionOrientation
+                        R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionOrientation,
                     )
                     .build()
             }

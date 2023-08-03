@@ -66,7 +66,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                         Reaction(type = LOVE),
                     ),
                 ),
-                isMyMessage = true
+                isMyMessage = true,
             )
             viewReactionsView2.setMessage(
                 message = randomMessage().copy(
@@ -77,7 +77,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                         Reaction(type = LOVE),
                     ),
                 ),
-                isMyMessage = false
+                isMyMessage = false,
             )
             viewReactionsView3.setMessage(
                 message = randomMessage().copy(
@@ -86,7 +86,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                     ),
                     ownReactions = mutableListOf(),
                 ),
-                isMyMessage = true
+                isMyMessage = true,
             )
             viewReactionsView4.setMessage(
                 message = randomMessage().copy(
@@ -95,7 +95,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                     ),
                     ownReactions = mutableListOf(),
                 ),
-                isMyMessage = false
+                isMyMessage = false,
             )
             viewReactionsView5.setMessage(
                 message = randomMessage().copy(
@@ -103,14 +103,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                         LOVE to 10,
                         WUT to 20,
                         LOL to 20,
-                        THUMBS_UP to 20
+                        THUMBS_UP to 20,
                     ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
-                        Reaction(type = WUT)
+                        Reaction(type = WUT),
                     ),
                 ),
-                isMyMessage = true
+                isMyMessage = true,
             )
 
             val customReactions = if (reactions != null) {
@@ -120,7 +120,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                     LOVE to 10,
                     WUT to 20,
                     LOL to 20,
-                    THUMBS_UP to 20
+                    THUMBS_UP to 20,
                 )
             }
 
@@ -132,7 +132,7 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
                         Reaction(type = WUT),
                     ),
                 ),
-                isMyMessage = false
+                isMyMessage = false,
             )
         }
     }

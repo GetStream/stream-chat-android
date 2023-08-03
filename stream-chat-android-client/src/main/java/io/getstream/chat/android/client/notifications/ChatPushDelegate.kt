@@ -40,7 +40,7 @@ internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
                     channelId = payload.getValue("channel_id") as String,
                     messageId = payload.getValue("message_id") as String,
                     channelType = payload.getValue("channel_type") as String,
-                )
+                ),
             )
         }
 

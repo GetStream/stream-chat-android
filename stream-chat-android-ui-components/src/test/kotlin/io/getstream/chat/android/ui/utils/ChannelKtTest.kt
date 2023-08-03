@@ -36,7 +36,7 @@ internal class ChannelKtTest {
         randomUser.name `should be equal to` oneMemberChannel.getDisplayName(
             mock(),
             randomUser,
-            R.string.stream_ui_channel_list_untitled_channel
+            R.string.stream_ui_channel_list_untitled_channel,
         )
     }
 }

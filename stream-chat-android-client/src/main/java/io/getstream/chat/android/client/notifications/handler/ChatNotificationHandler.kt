@@ -47,7 +47,7 @@ internal class ChatNotificationHandler(
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(
             SHARED_PREFERENCES_NAME,
-            Context.MODE_PRIVATE
+            Context.MODE_PRIVATE,
         )
     }
     private val notificationManager: NotificationManager by lazy {
@@ -193,11 +193,11 @@ internal class ChatNotificationHandler(
             putInt(getNotificationIdKey(notificationId), notificationSummaryId)
             putStringSet(
                 KEY_NOTIFICATION_SUMMARY_IDS,
-                (getNotificationSummaryIds() + notificationSummaryId).map(Int::toString).toSet()
+                (getNotificationSummaryIds() + notificationSummaryId).map(Int::toString).toSet(),
             )
             putStringSet(
                 getNotificationSummaryIdKey(notificationSummaryId),
-                (getAssociatedNotificationIds(notificationSummaryId) + notificationId).map(Int::toString).toSet()
+                (getAssociatedNotificationIds(notificationSummaryId) + notificationId).map(Int::toString).toSet(),
             )
         }
     }
@@ -208,7 +208,7 @@ internal class ChatNotificationHandler(
             remove(getNotificationIdKey(notificationId))
             putStringSet(
                 getNotificationSummaryIdKey(notificationSummaryId),
-                (getAssociatedNotificationIds(notificationSummaryId) - notificationId).map(Int::toString).toSet()
+                (getAssociatedNotificationIds(notificationSummaryId) - notificationId).map(Int::toString).toSet(),
             )
         }
     }

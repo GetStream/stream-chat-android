@@ -53,9 +53,9 @@ class ChatInitializer(private val context: Context) {
                     messageId = message.id,
                     parentMessageId = message.parentId,
                     channelType = channel.type,
-                    channelId = channel.id
+                    channelId = channel.id,
                 )
-            }
+            },
         )
         val notificationConfig =
             NotificationConfig(
@@ -73,7 +73,7 @@ class ChatInitializer(private val context: Context) {
                         providerName = "Xiaomi",
                     ),
                 ),
-                requestPermissionOnAppLaunch = { true }
+                requestPermissionOnAppLaunch = { true },
             )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
@@ -84,7 +84,7 @@ class ChatInitializer(private val context: Context) {
                 backgroundSyncEnabled = true,
                 userPresence = true,
             ),
-            appContext = context
+            appContext = context,
         )
 
         val client = ChatClient.Builder(apiKey, context)

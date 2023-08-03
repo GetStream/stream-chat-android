@@ -51,7 +51,7 @@ public fun interface ChannelNameFormatter {
         public fun defaultFormatter(
             context: Context,
             @StringRes fallback: Int = R.string.stream_ui_channel_list_untitled_channel,
-            maxMembers: Int = 5
+            maxMembers: Int = 5,
         ): ChannelNameFormatter {
             return DefaultChannelNameFormatter(context, fallback, maxMembers)
         }

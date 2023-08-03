@@ -31,7 +31,7 @@ internal class ErrorMessageViewHolder(
     internal val binding: StreamUiItemErrorMessageBinding = StreamUiItemErrorMessageBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 

@@ -119,19 +119,19 @@ public data class MessagesLazyListState(
                 mapOf(
                     KeyFirstVisibleItemIndex to it.lazyListState.firstVisibleItemIndex,
                     KeyFirstVisibleItemScrollOffset to it.lazyListState.firstVisibleItemScrollOffset,
-                    KeyMessageOffsetHandler to it.messageOffsetHandler
+                    KeyMessageOffsetHandler to it.messageOffsetHandler,
                 )
             },
             restore = {
                 MessagesLazyListState(
                     LazyListState(
                         firstVisibleItemIndex = (it[KeyFirstVisibleItemIndex] as? Int) ?: 0,
-                        firstVisibleItemScrollOffset = (it[KeyFirstVisibleItemScrollOffset] as? Int) ?: 0
+                        firstVisibleItemScrollOffset = (it[KeyFirstVisibleItemScrollOffset] as? Int) ?: 0,
                     ),
                     messageOffsetHandler = (it[KeyMessageOffsetHandler] as? MessageOffsetHandler)
-                        ?: defaultOffsetHandler
+                        ?: defaultOffsetHandler,
                 )
-            }
+            },
         )
 
         /**

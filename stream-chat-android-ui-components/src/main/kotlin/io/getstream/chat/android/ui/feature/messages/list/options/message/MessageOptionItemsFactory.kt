@@ -125,28 +125,36 @@ public open class DefaultMessageOptionItemsFactory(
                     optionIcon = context.getDrawableCompat(style.retryIcon)!!,
                     messageAction = Resend(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.replyEnabled && isMessageSynced && canQuoteMessage) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_reply),
                     optionIcon = context.getDrawableCompat(style.replyIcon)!!,
                     messageAction = Reply(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.threadsEnabled && !isInThread && isMessageSynced && canThreadReply) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_thread_reply),
                     optionIcon = context.getDrawableCompat(style.threadReplyIcon)!!,
                     messageAction = ThreadReply(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.copyTextEnabled && (isTextOnlyMessage || hasLinks)) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_copy_message),
                     optionIcon = context.getDrawableCompat(style.copyIcon)!!,
                     messageAction = Copy(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.editMessageEnabled && ((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) &&
                 selectedMessage.command != AttachmentType.GIPHY
             ) {
@@ -155,14 +163,18 @@ public open class DefaultMessageOptionItemsFactory(
                     optionIcon = context.getDrawableCompat(style.editIcon)!!,
                     messageAction = Edit(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.flagEnabled && !isOwnMessage) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_flag_message),
                     optionIcon = context.getDrawableCompat(style.flagIcon)!!,
                     messageAction = Flag(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.pinMessageEnabled && isMessageSynced && canPinMessage) {
                 val (pinText, pinIcon) = if (selectedMessage.pinned) {
                     R.string.stream_ui_message_list_unpin_message to style.unpinIcon
@@ -175,7 +187,9 @@ public open class DefaultMessageOptionItemsFactory(
                     optionIcon = context.getDrawableCompat(pinIcon)!!,
                     messageAction = Pin(selectedMessage),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.deleteMessageEnabled && (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage))) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_delete_message),
@@ -183,7 +197,9 @@ public open class DefaultMessageOptionItemsFactory(
                     messageAction = Delete(selectedMessage),
                     isWarningItem = true,
                 )
-            } else null,
+            } else {
+                null
+            },
         )
     }
 }

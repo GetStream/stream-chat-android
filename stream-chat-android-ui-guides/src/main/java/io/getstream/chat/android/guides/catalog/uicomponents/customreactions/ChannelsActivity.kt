@@ -36,19 +36,19 @@ class ChannelsActivity : ChannelListActivity() {
         val reactions = mapOf(
             "thumbs_up" to SupportedReactions.ReactionDrawable(
                 inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_up)!!,
-                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_up_selected)!!
+                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_up_selected)!!,
             ),
             "thumbs_down" to SupportedReactions.ReactionDrawable(
                 inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_down)!!,
-                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_down_selected)!!
+                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_thumb_down_selected)!!,
             ),
             "mood_good" to SupportedReactions.ReactionDrawable(
                 inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_good)!!,
-                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_good_selected)!!
+                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_good_selected)!!,
             ),
             "mood_bad" to SupportedReactions.ReactionDrawable(
                 inactiveDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_bad)!!,
-                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_bad_selected)!!
+                activeDrawable = ContextCompat.getDrawable(this, R.drawable.ic_mood_bad_selected)!!,
             ),
         )
         ChatUI.supportedReactions = SupportedReactions(this, reactions)

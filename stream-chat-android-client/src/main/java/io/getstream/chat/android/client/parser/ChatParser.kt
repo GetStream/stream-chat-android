@@ -42,7 +42,7 @@ internal interface ChatParser {
             Result.Success(fromJson(raw, clazz))
         } catch (expected: Throwable) {
             Result.Failure(
-                Error.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected)
+                Error.ThrowableError("fromJsonOrError error parsing of $clazz into $raw", expected),
             )
         }
     }
@@ -108,13 +108,17 @@ internal interface ChatParser {
     private fun moreInfoTemplate(moreInfo: String): String {
         return if (moreInfo.isNotBlank()) {
             "\nMore information available at $moreInfo"
-        } else ""
+        } else {
+            ""
+        }
     }
 
     private fun buildDetailsTemplate(details: List<ErrorDetail>): String {
         return if (details.isNotEmpty()) {
             "\nError details: $details"
-        } else ""
+        } else {
+            ""
+        }
     }
 
     private fun ErrorResponse.extractCause(): Throwable? {
@@ -123,10 +127,10 @@ internal interface ChatParser {
                 details = details.map { detail ->
                     MessageModerationFailedException.Detail(
                         code = detail.code,
-                        messages = detail.messages
+                        messages = detail.messages,
                     )
                 },
-                message = message
+                message = message,
             )
         }
         return null

@@ -60,7 +60,7 @@ internal class ThreadStateLogic(private val mutableState: ThreadMutableState) {
     fun upsertMessages(messages: List<Message>) {
         val oldMessages = mutableState.rawMessage.value
         mutableState.upsertMessages(
-            messages.filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
+            messages.filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) },
         )
     }
 

@@ -104,94 +104,94 @@ public data class ChannelListViewStyle(
 
                 val moreOptionsEnabled = a.getBoolean(
                     R.styleable.ChannelListView_streamUiChannelOptionsEnabled,
-                    false
+                    false,
                 )
 
                 val deleteEnabled = a.getBoolean(
                     R.styleable.ChannelListView_streamUiChannelDeleteEnabled,
-                    true
+                    true,
                 )
 
                 val swipeEnabled = a.getBoolean(
                     R.styleable.ChannelListView_streamUiSwipeEnabled,
-                    true
+                    true,
                 )
 
                 val readCountEnabled = a.getBoolean(
                     R.styleable.ChannelListView_streamUiReadCountEnabled,
-                    true
+                    true,
                 )
 
                 val backgroundColor = a.getColor(
                     R.styleable.ChannelListView_streamUiChannelListBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val backgroundLayoutColor = a.getColor(
                     R.styleable.ChannelListView_streamUiBackgroundLayoutColor,
-                    context.getColorCompat(R.color.stream_ui_white_smoke)
+                    context.getColorCompat(R.color.stream_ui_white_smoke),
                 )
 
                 val channelTitleText = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelListView_streamUiChannelTitleTextSize,
-                        context.getDimension(R.dimen.stream_ui_channel_item_title)
+                        context.getDimension(R.dimen.stream_ui_channel_item_title),
                     )
                     .color(
                         R.styleable.ChannelListView_streamUiChannelTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.ChannelListView_streamUiChannelTitleFontAssets,
-                        R.styleable.ChannelListView_streamUiChannelTitleTextFont
+                        R.styleable.ChannelListView_streamUiChannelTitleTextFont,
                     )
                     .style(
                         R.styleable.ChannelListView_streamUiChannelTitleTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
                 val lastMessageText = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelListView_streamUiLastMessageTextSize,
-                        context.getDimension(R.dimen.stream_ui_channel_item_message)
+                        context.getDimension(R.dimen.stream_ui_channel_item_message),
                     )
                     .color(
                         R.styleable.ChannelListView_streamUiLastMessageTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.ChannelListView_streamUiLastMessageFontAssets,
-                        R.styleable.ChannelListView_streamUiLastMessageTextFont
+                        R.styleable.ChannelListView_streamUiLastMessageTextFont,
                     )
                     .style(
                         R.styleable.ChannelListView_streamUiLastMessageTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val lastMessageDateText = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelListView_streamUiLastMessageDateTextSize,
-                        context.getDimension(R.dimen.stream_ui_channel_item_message_date)
+                        context.getDimension(R.dimen.stream_ui_channel_item_message_date),
                     )
                     .color(
                         R.styleable.ChannelListView_streamUiLastMessageDateTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.ChannelListView_streamUiLastMessageDateFontAssets,
-                        R.styleable.ChannelListView_streamUiLastMessageDateTextFont
+                        R.styleable.ChannelListView_streamUiLastMessageDateTextFont,
                     )
                     .style(
                         R.styleable.ChannelListView_streamUiLastMessageDateTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val showChannelDeliveryStatusIndicator = a.getBoolean(
                     R.styleable.ChannelListView_streamUiShowChannelDeliveryStatusIndicator,
-                    true
+                    true,
                 )
 
                 val indicatorSentIcon = a.getDrawable(R.styleable.ChannelListView_streamUiIndicatorSentIcon)
@@ -206,39 +206,39 @@ public data class ChannelListViewStyle(
 
                 val foregroundLayoutColor = a.getColor(
                     R.styleable.ChannelListView_streamUiForegroundLayoutColor,
-                    context.getColorCompat(R.color.stream_ui_white_snow)
+                    context.getColorCompat(R.color.stream_ui_white_snow),
                 )
 
                 val unreadMessageCounterText = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelListView_streamUiUnreadMessageCounterTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.ChannelListView_streamUiUnreadMessageCounterTextColor,
-                        context.getColorCompat(R.color.stream_ui_literal_white)
+                        context.getColorCompat(R.color.stream_ui_literal_white),
                     )
                     .font(
                         R.styleable.ChannelListView_streamUiUnreadMessageCounterFontAssets,
-                        R.styleable.ChannelListView_streamUiUnreadMessageCounterTextFont
+                        R.styleable.ChannelListView_streamUiUnreadMessageCounterTextFont,
                     )
                     .style(
                         R.styleable.ChannelListView_streamUiUnreadMessageCounterTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val unreadMessageCounterBackgroundColor = a.getColor(
                     R.styleable.ChannelListView_streamUiUnreadMessageCounterBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_accent_red)
+                    context.getColorCompat(R.color.stream_ui_accent_red),
                 )
 
                 val mutedChannelIcon = a.getDrawable(
-                    R.styleable.ChannelListView_streamUiMutedChannelIcon
+                    R.styleable.ChannelListView_streamUiMutedChannelIcon,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mute_black)!!
 
                 val itemSeparator = a.getDrawable(
-                    R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable
+                    R.styleable.ChannelListView_streamUiChannelsItemSeparatorDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
                 val loadingView = a.getResourceId(

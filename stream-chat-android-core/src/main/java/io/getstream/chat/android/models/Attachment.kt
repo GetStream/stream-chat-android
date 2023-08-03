@@ -243,7 +243,7 @@ public data class Attachment(
             originalWidth = originalWidth,
             upload = upload,
             uploadState = uploadState,
-            extraData = extraData
+            extraData = extraData,
         )
     }
 }

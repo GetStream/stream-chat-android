@@ -77,7 +77,7 @@ internal class DeleteMessageListenerDatabase(
             val networkAvailable = clientState.isNetworkAvailable
             val messageToBeDeleted = message.copy(
                 deletedAt = Date(),
-                syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+                syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS,
             )
 
             userRepository.insertUsers(messageToBeDeleted.users())
@@ -96,7 +96,7 @@ internal class DeleteMessageListenerDatabase(
             is Result.Success -> {
                 messageRepository.insertMessage(
                     result.value.copy(syncStatus = SyncStatus.COMPLETED),
-                    true
+                    true,
                 )
             }
             is Result.Failure -> {

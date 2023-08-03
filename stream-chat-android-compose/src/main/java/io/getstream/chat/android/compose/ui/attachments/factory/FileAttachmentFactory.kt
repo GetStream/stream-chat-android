@@ -48,7 +48,7 @@ public fun FileAttachmentFactory(
         FileAttachmentPreviewContent(
             modifier = modifier,
             attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved
+            onAttachmentRemoved = onAttachmentRemoved,
         )
     },
     content = @Composable { modifier, state ->

@@ -58,7 +58,7 @@ internal fun MediaPreviewPlaceHolder(
 
 ) {
     val painter = painterResource(
-        id = R.drawable.stream_compose_ic_image_picker
+        id = R.drawable.stream_compose_ic_image_picker,
     )
 
     val imageModifier = Modifier.fillMaxSize(0.4f)
@@ -70,14 +70,14 @@ internal fun MediaPreviewPlaceHolder(
                     .padding(horizontal = 2.dp)
                     .fillMaxSize(progressIndicatorFillMaxSizePercentage),
                 strokeWidth = progressIndicatorStrokeWidth,
-                color = ChatTheme.colors.primaryAccent
+                color = ChatTheme.colors.primaryAccent,
             )
         }
         asyncImagePainterState is AsyncImagePainter.State.Error && isImage -> Icon(
             tint = placeholderIconTintColor,
             modifier = imageModifier,
             painter = painter,
-            contentDescription = null
+            contentDescription = null,
         )
         asyncImagePainterState is AsyncImagePainter.State.Success -> {}
         asyncImagePainterState is AsyncImagePainter.State.Empty && isImage -> {
@@ -85,7 +85,7 @@ internal fun MediaPreviewPlaceHolder(
                 tint = placeholderIconTintColor,
                 modifier = imageModifier,
                 painter = painter,
-                contentDescription = null
+                contentDescription = null,
             )
         }
     }

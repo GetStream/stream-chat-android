@@ -89,7 +89,7 @@ public fun MediaAttachmentFactory(
                 attachments = attachments,
                 onAttachmentRemoved = onAttachmentRemoved,
                 modifier = modifier,
-                previewItemOverlayContent = previewItemOverlayContent
+                previewItemOverlayContent = previewItemOverlayContent,
             )
         },
         content = @Composable { modifier, state ->
@@ -101,7 +101,7 @@ public fun MediaAttachmentFactory(
                 skipEnrichUrl = skipEnrichUrl,
                 onItemClick = onContentItemClick,
             )
-        }
+        },
     )
 
 /**
@@ -118,7 +118,7 @@ private fun DefaultItemOverlayContent() {
             .shadow(6.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
             .fillMaxWidth(0.25f)
-            .aspectRatio(1f)
+            .aspectRatio(1f),
     )
 }
 
@@ -134,6 +134,6 @@ internal fun DefaultPreviewItemOverlayContent() {
         modifier = Modifier
             .shadow(6.dp, shape = CircleShape)
             .background(color = Color.White, shape = CircleShape)
-            .fillMaxSize(0.25f)
+            .fillMaxSize(0.25f),
     )
 }

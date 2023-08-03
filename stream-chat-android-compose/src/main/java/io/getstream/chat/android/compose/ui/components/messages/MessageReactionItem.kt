@@ -38,7 +38,7 @@ public fun MessageReactionItem(
     Image(
         modifier = modifier,
         painter = option.painter,
-        contentDescription = null
+        contentDescription = null,
     )
 }
 

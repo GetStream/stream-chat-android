@@ -54,15 +54,15 @@ public fun MessageFooter(
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_footnote,
                 replyCount,
-                replyCount
-            )
+                replyCount,
+            ),
         )
     }
 
     if (messageItem.showMessageFooter) {
         Row(
             modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (!messageItem.isMine) {
                 Text(
@@ -73,14 +73,14 @@ public fun MessageFooter(
                     style = ChatTheme.typography.footnote,
                     overflow = TextOverflow.Ellipsis,
                     maxLines = 1,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             } else {
                 MessageReadStatusIcon(
                     modifier = Modifier.padding(end = 4.dp),
                     message = messageItem.message,
                     isMessageRead = messageItem.isMessageRead,
-                    readCount = messageItem.messageReadBy.size
+                    readCount = messageItem.messageReadBy.size,
                 )
             }
 

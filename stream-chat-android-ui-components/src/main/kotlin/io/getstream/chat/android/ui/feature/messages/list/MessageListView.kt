@@ -180,7 +180,7 @@ public class MessageListView : ConstraintLayout {
         FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
-            Gravity.CENTER
+            Gravity.CENTER,
         )
     }
 
@@ -267,7 +267,7 @@ public class MessageListView : ConstraintLayout {
     private var _attachmentReplyOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentReplyOptionHandler {
             throw IllegalStateException("onAttachmentReplyOptionClickHandler must be set")
-        }
+        },
     ) { realListener ->
         AttachmentGalleryActivity.AttachmentReplyOptionHandler { realListener().onClick(it) }
     }
@@ -275,7 +275,7 @@ public class MessageListView : ConstraintLayout {
     private var _attachmentShowInChatOptionClickHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentShowInChatOptionHandler {
             throw IllegalStateException("onAttachmentShowInChatOptionClickHandler must be set")
-        }
+        },
     ) { realListener ->
         AttachmentGalleryActivity.AttachmentShowInChatOptionHandler { realListener().onClick(it) }
     }
@@ -283,7 +283,7 @@ public class MessageListView : ConstraintLayout {
     private var _attachmentDownloadOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentDownloadOptionHandler { attachmentData ->
             defaultAttachmentDownloadClickListener.onAttachmentDownloadClick(attachmentData.toAttachment())
-        }
+        },
     ) { realListener ->
         AttachmentGalleryActivity.AttachmentDownloadOptionHandler { realListener().onClick(it) }
     }
@@ -291,7 +291,7 @@ public class MessageListView : ConstraintLayout {
     private var _attachmentDeleteOptionHandler by ListenerDelegate(
         initialValue = AttachmentGalleryActivity.AttachmentDeleteOptionHandler {
             throw IllegalStateException("onAttachmentDeleteOptionClickHandler must be set")
-        }
+        },
     ) { realListener ->
         AttachmentGalleryActivity.AttachmentDeleteOptionHandler { attachmentData ->
             realListener().onClick(attachmentData)
@@ -364,7 +364,7 @@ public class MessageListView : ConstraintLayout {
                         currentUser = ChatUI.currentUserProvider.getCurrentUser(),
                         isInThread = adapter.isThread || message.isThreadReply(),
                         ownCapabilities = ownCapabilities,
-                        style = viewStyle
+                        style = viewStyle,
                     )
 
                     showMessageOptionsDialog(fragmentManager, message, messageOptionItems)
@@ -483,7 +483,7 @@ public class MessageListView : ConstraintLayout {
                                 createdAt = message.getCreatedAtOrThrow(),
                                 messageId = message.id,
                                 cid = message.cid,
-                                isMine = message.user.isCurrentUser()
+                                isMine = message.user.isCurrentUser(),
                             )
                         }
                         val attachmentIndex = filteredAttachments.indexOf(attachment)
@@ -504,7 +504,7 @@ public class MessageListView : ConstraintLayout {
                 Toast.makeText(
                     context,
                     context.getString(R.string.stream_ui_message_list_download_started),
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_SHORT,
                 ).show()
                 ChatClient.instance().downloadAttachment(context, attachment)
             }
@@ -521,7 +521,7 @@ public class MessageListView : ConstraintLayout {
                     messageBackgroundFactory = messageBackgroundFactory,
                     attachmentFactoryManager = attachmentFactoryManager,
                     showAvatarPredicate = showAvatarPredicate,
-                    messageOptionItems = emptyList()
+                    messageOptionItems = emptyList(),
                 ).apply {
                     setReactionClickListener { message, reactionType ->
                         messageReactionHandler.onMessageReaction(message, reactionType)
@@ -574,7 +574,7 @@ public class MessageListView : ConstraintLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -631,7 +631,7 @@ public class MessageListView : ConstraintLayout {
         scrollHelper = MessageListScrollHelper(
             recyclerView = binding.chatMessagesRV,
             scrollButtonView = binding.scrollToBottomButton,
-            disableScrollWhenShowingDialog = messageListViewStyle?.disableScrollWhenShowingDialog ?: true
+            disableScrollWhenShowingDialog = messageListViewStyle?.disableScrollWhenShowingDialog ?: true,
         ) {
             lastMessageReadHandler.onLastMessageRead()
         }
@@ -642,7 +642,7 @@ public class MessageListView : ConstraintLayout {
             attributeSet,
             R.styleable.MessageListView,
             R.attr.streamUiMessageListStyle,
-            R.style.StreamUi_MessageList
+            R.style.StreamUi_MessageList,
         ).use { tArray ->
             tArray.getInteger(
                 R.styleable.MessageListView_streamUiLoadMoreThreshold,
@@ -1158,7 +1158,7 @@ public class MessageListView : ConstraintLayout {
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
-                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded
+                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
                     )
 
                     buffer.active()
@@ -1653,7 +1653,7 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface ReplyMessageClickListener {
         public fun onReplyClick(
-            replyTo: Message
+            replyTo: Message,
         )
     }
 

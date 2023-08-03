@@ -94,7 +94,7 @@ public fun Messages(
         DefaultMessagesHelperContent(
             messagesState = messagesState,
             messagesLazyListState = messagesLazyListState,
-            scrollToBottom = onScrollToBottom
+            scrollToBottom = onScrollToBottom,
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
@@ -123,7 +123,7 @@ public fun Messages(
 
                     val parentSize = IntSize(
                         width = it.width,
-                        height = it.height + paddingPixels
+                        height = it.height + paddingPixels,
                     )
                     messagesLazyListState.updateParentSize(parentSize)
                 },
@@ -131,9 +131,8 @@ public fun Messages(
             horizontalAlignment = Alignment.Start,
             verticalArrangement = threadMessagesStart.from(messagesState),
             reverseLayout = true,
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         ) {
-
             if (isLoadingMoreNewMessages && !startOfMessages) {
                 item {
                     loadingMoreContent()
@@ -144,7 +143,7 @@ public fun Messages(
                 messages,
                 key = { _, item ->
                     if (item is MessageItemState) item.message.id else item.toString()
-                }
+                },
             ) { index, item ->
                 val messageItemModifier =
                     if (item is MessageItemState && item.focusState == MessageFocused) {
@@ -261,7 +260,6 @@ internal fun BoxScope.DefaultMessagesHelperContent(
     }
 
     LaunchedEffect(newMessageState, focusedItemIndex, offset) {
-
         if (focusedItemIndex != -1 &&
             !lazyListState.isScrollInProgress
         ) {
@@ -275,7 +273,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
             firstVisibleItemIndex.value,
             newMessageState,
             areNewestMessagesLoaded,
-            lazyListState.isScrollInProgress
+            lazyListState.isScrollInProgress,
         ) || hasLoadedThread
 
         if (shouldScrollToBottom) {
@@ -301,7 +299,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
                         lazyListState.animateScrollToItem(0)
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -349,8 +347,11 @@ private fun isScrollToBottomButtonVisible(
     firstVisibleItemIndex: Int,
     areNewestMessagesLoaded: Boolean,
 ): Boolean {
-    return if (isInThread) isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex) else
+    return if (isInThread) {
+        isScrollToBottomButtonVisibleInThread(firstVisibleItemIndex)
+    } else {
         isScrollToBottomButtonVisibleInMessageList(firstVisibleItemIndex, areNewestMessagesLoaded)
+    }
 }
 
 /**
@@ -399,6 +400,6 @@ internal fun DefaultMessagesLoadingMoreIndicator() {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(8.dp)
+            .padding(8.dp),
     )
 }

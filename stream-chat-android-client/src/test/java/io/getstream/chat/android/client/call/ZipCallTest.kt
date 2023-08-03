@@ -133,7 +133,7 @@ internal class ZipCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedErrorResultA
-            }
+            },
         )
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true
@@ -155,7 +155,7 @@ internal class ZipCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedErrorResultB
-            }
+            },
         )
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true
@@ -177,7 +177,7 @@ internal class ZipCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedResult
-            }
+            },
         )
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true

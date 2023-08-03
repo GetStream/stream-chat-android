@@ -57,7 +57,7 @@ internal fun createMessage(
     deletedAt: Date? = randomDate(),
     user: User = createUser(),
     extraData: MutableMap<String, Any> = mutableMapOf(),
-    silent: Boolean = randomBoolean()
+    silent: Boolean = randomBoolean(),
 ): Message = Message(
     id = id,
     cid = cid,
@@ -79,7 +79,7 @@ internal fun createMessage(
     deletedAt = deletedAt,
     user = user,
     extraData = extraData,
-    silent = silent
+    silent = silent,
 )
 
 internal fun randomUser(
@@ -100,7 +100,7 @@ internal fun randomUser(
     mutes: List<Mute> = mutableListOf(),
     teams: List<String> = listOf(),
     channelMutes: List<ChannelMute> = emptyList(),
-    extraData: MutableMap<String, Any> = mutableMapOf()
+    extraData: MutableMap<String, Any> = mutableMapOf(),
 ): User = User(
     id = id,
     name = name,
@@ -119,7 +119,7 @@ internal fun randomUser(
     mutes = mutes,
     teams = teams,
     channelMutes = channelMutes,
-    extraData = extraData
+    extraData = extraData,
 )
 
 internal fun createUser(
@@ -140,7 +140,7 @@ internal fun createUser(
     mutes: List<Mute> = mutableListOf(),
     teams: List<String> = listOf(),
     channelMutes: List<ChannelMute> = emptyList(),
-    extraData: MutableMap<String, Any> = mutableMapOf()
+    extraData: MutableMap<String, Any> = mutableMapOf(),
 ): User = User(
     id = id,
     name = name,
@@ -159,7 +159,7 @@ internal fun createUser(
     mutes = mutes,
     teams = teams,
     channelMutes = channelMutes,
-    extraData = extraData
+    extraData = extraData,
 )
 
 internal fun createMember(
@@ -168,12 +168,12 @@ internal fun createMember(
     updatedAt: Date? = randomDate(),
     isInvited: Boolean = randomBoolean(),
     inviteAcceptedAt: Date? = randomDate(),
-    inviteRejectedAt: Date? = randomDate()
+    inviteRejectedAt: Date? = randomDate(),
 ): Member = Member(user, createdAt, updatedAt, isInvited, inviteAcceptedAt, inviteRejectedAt)
 
 internal fun createMembers(
     size: Int = positiveRandomInt(10),
-    creationFunction: (Int) -> Member = { createMember() }
+    creationFunction: (Int) -> Member = { createMember() },
 ): List<Member> = List(size, creationFunction)
 
 internal fun randomChannel(
@@ -217,7 +217,7 @@ internal fun randomChannel(
     unreadCount = unreadCount,
     team = team,
     hidden = hidden,
-    hiddenMessagesBefore = hiddenMessagesBefore
+    hiddenMessagesBefore = hiddenMessagesBefore,
 )
 
 internal fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =

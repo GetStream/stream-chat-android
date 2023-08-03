@@ -120,7 +120,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         MessageListItem.MessageItem(
             message,
             positions = listOf(MessagePosition.BOTTOM),
-            isMine = message.user.id == ChatUI.currentUserProvider.getCurrentUser()?.id
+            isMine = message.user.id == ChatUI.currentUserProvider.getCurrentUser()?.id,
         )
     }
 
@@ -235,7 +235,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 top = style.optionsOverlayEditReactionsMarginTop,
                 bottom = style.optionsOverlayEditReactionsMarginBottom,
                 start = style.optionsOverlayEditReactionsMarginStart,
-                end = style.optionsOverlayEditReactionsMarginEnd
+                end = style.optionsOverlayEditReactionsMarginEnd,
             )
             (params as? LinearLayout.LayoutParams)?.gravity = if (messageItem.isMine) Gravity.END else Gravity.START
         }
@@ -245,7 +245,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         messageListItemViewHolderFactory.withDecoratorProvider(messageOptionsDecoratorProvider) {
             viewHolder = it.createViewHolder(
                 binding.messageContainer,
-                MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactoryManager)
+                MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactoryManager),
             ).also { viewHolder ->
                 viewHolder.itemView.setOnClickListener {
                     dismiss()
@@ -254,8 +254,8 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     viewHolder.itemView,
                     FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.WRAP_CONTENT
-                    )
+                        FrameLayout.LayoutParams.WRAP_CONTENT,
+                    ),
                 )
                 viewHolder.bindListItem(messageItem)
             }
@@ -280,7 +280,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 top = style.optionsOverlayUserReactionsMarginTop,
                 bottom = style.optionsOverlayUserReactionsMarginBottom,
                 start = style.optionsOverlayUserReactionsMarginStart,
-                end = style.optionsOverlayUserReactionsMarginEnd
+                end = style.optionsOverlayUserReactionsMarginEnd,
             )
         }
     }
@@ -313,7 +313,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 top = style.optionsOverlayMessageOptionsMarginTop,
                 bottom = style.optionsOverlayMessageOptionsMarginBottom,
                 start = style.optionsOverlayMessageOptionsMarginStart,
-                end = style.optionsOverlayMessageOptionsMarginEnd
+                end = style.optionsOverlayMessageOptionsMarginEnd,
             )
         }
     }
@@ -337,7 +337,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         messageItem.isMine && isRtl -> rightAlignment
                         !messageItem.isMine && !isRtl -> rightAlignment
                         else -> leftAlignment
-                    }.toFloat()
+                    }.toFloat(),
                 )
             }
         }
@@ -397,7 +397,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         /**
          * Options dialog with user reactions.
          */
-        REACTION_OPTIONS
+        REACTION_OPTIONS,
     }
 
     public companion object {
@@ -447,7 +447,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     style.itemStyle,
                     style.replyMessageStyle,
                     messageBackgroundFactory,
-                    showAvatarPredicate
+                    showAvatarPredicate,
                 )
                 it.messageOptionItems = messageOptionItems
             }

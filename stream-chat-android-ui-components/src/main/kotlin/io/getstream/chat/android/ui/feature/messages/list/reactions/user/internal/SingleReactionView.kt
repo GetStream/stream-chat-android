@@ -47,7 +47,7 @@ internal class SingleReactionView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
@@ -70,7 +70,7 @@ internal class SingleReactionView : FrameLayout {
             canvas = canvas,
             bubbleWidth = width,
             isMyMessage = isMyMessage,
-            isOrientedTowardsStart = isOrientedTowardsStart
+            isOrientedTowardsStart = isOrientedTowardsStart,
         )
     }
 

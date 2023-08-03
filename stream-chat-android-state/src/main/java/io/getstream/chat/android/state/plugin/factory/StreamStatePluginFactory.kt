@@ -90,7 +90,7 @@ public class StreamStatePluginFactory(
             clientState.user,
             repositoryFacade.observeLatestUsers(),
             scope.coroutineContext.job,
-            scope
+            scope,
         )
 
         val isQueryingFree = MutableStateFlow(true)
@@ -103,7 +103,7 @@ public class StreamStatePluginFactory(
             repos = repositoryFacade,
             client = chatClient,
             coroutineScope = scope,
-            queryingChannelsFree = isQueryingFree
+            queryingChannelsFree = isQueryingFree,
         )
 
         chatClient.logicRegistry = logic
@@ -129,7 +129,7 @@ public class StreamStatePluginFactory(
             mutableGlobalState = mutableGlobalState,
             repos = repositoryFacade,
             syncedEvents = syncManager.syncedEvents,
-            sideEffect = syncManager::awaitSyncing
+            sideEffect = syncManager::awaitSyncing,
         )
 
         if (config.backgroundSyncEnabled) {
@@ -142,7 +142,7 @@ public class StreamStatePluginFactory(
             scope = scope,
             logicRegistry = logic,
             clientState = clientState,
-            repositoryFacade = repositoryFacade
+            repositoryFacade = repositoryFacade,
         )
 
         return StatePlugin(

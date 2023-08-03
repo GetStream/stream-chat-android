@@ -74,7 +74,7 @@ public data class MessageListHeaderViewStyle(
             ).use { a ->
                 val background = a.getColor(
                     R.styleable.MessageListHeaderView_streamUiMessageListHeaderBackground,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val showUserAvatar =
@@ -87,19 +87,19 @@ public data class MessageListHeaderViewStyle(
                 val titleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_large)
+                        context.getDimension(R.dimen.stream_ui_text_large),
                     )
                     .color(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleFontAssets,
-                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextFont
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextFont,
                     )
                     .style(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderTitleTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     ).build()
 
                 val showBackButton =
@@ -110,78 +110,78 @@ public data class MessageListHeaderViewStyle(
 
                 val backButtonBadgeBackgroundColor = a.getColor(
                     R.styleable.MessageListHeaderView_streamUiMessageListHeaderBackButtonBadgeBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_accent_red)
+                    context.getColorCompat(R.color.stream_ui_accent_red),
                 )
 
                 val offlineTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelFontAssets,
-                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextFont
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextFont,
                     )
                     .style(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderOfflineLabelTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val searchingForNetworkTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelFontAssets,
-                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextFont
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextFont,
                     )
                     .style(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkLabelTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val showSearchingForNetworkProgressBar = a.getBoolean(
                     R.styleable.MessageListHeaderView_streamUiMessageListHeaderShowSearchingForNetworkProgressBar,
-                    true
+                    true,
                 )
 
                 val searchingForNetworkProgressBarTint = a.getColorStateList(
-                    R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkProgressBarTint
+                    R.styleable.MessageListHeaderView_streamUiMessageListHeaderSearchingForNetworkProgressBarTint,
                 ) ?: ContextCompat.getColorStateList(context, R.color.stream_ui_accent_blue)!!
 
                 val onlineTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelFontAssets,
-                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextFont
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextFont,
                     )
                     .style(
                         R.styleable.MessageListHeaderView_streamUiMessageListHeaderDefaultLabelTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val separatorBackgroundDrawable =
                     a.getDrawable(
-                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSeparatorBackgroundDrawable
+                        R.styleable.MessageListHeaderView_streamUiMessageListHeaderSeparatorBackgroundDrawable,
                     )
 
                 return MessageListHeaderViewStyle(
@@ -197,7 +197,7 @@ public data class MessageListHeaderViewStyle(
                     backButtonBadgeBackgroundColor = backButtonBadgeBackgroundColor,
                     showSearchingForNetworkProgressBar = showSearchingForNetworkProgressBar,
                     searchingForNetworkProgressBarTint = searchingForNetworkProgressBarTint,
-                    separatorBackgroundDrawable = separatorBackgroundDrawable
+                    separatorBackgroundDrawable = separatorBackgroundDrawable,
                 ).let(TransformStyle.messageListHeaderStyleTransformer::transform)
             }
         }

@@ -46,7 +46,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context)
     }
@@ -82,7 +82,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
         when (attachment.type) {
             AttachmentType.FILE, AttachmentType.VIDEO, AttachmentType.AUDIO_RECORDING -> loadAttachmentThumb(attachment)
             AttachmentType.IMAGE -> showAttachmentThumb(
-                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing)
+                attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
             )
             AttachmentType.GIPHY -> showAttachmentThumb(attachment.thumbUrl)
             else -> showAttachmentThumb(attachment.image)
@@ -97,7 +97,7 @@ internal class DefaultQuotedAttachmentView : AppCompatImageView {
     private fun showAttachmentThumb(url: String?) {
         load(
             data = url,
-            transformation = StreamImageLoader.ImageTransformation.RoundedCorners(style.quotedImageRadius.toFloat())
+            transformation = StreamImageLoader.ImageTransformation.RoundedCorners(style.quotedImageRadius.toFloat()),
         )
     }
 

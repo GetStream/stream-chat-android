@@ -64,7 +64,7 @@ internal class ExtraDataValidatorTests {
             channelId = channelId,
             channelType = channelType,
             extraData = extraData,
-            updateMessage = updateMessage
+            updateMessage = updateMessage,
         ).await()
 
         /* Then */
@@ -88,7 +88,7 @@ internal class ExtraDataValidatorTests {
             channelId = channelId,
             channelType = channelType,
             set = set,
-            unset = unset
+            unset = unset,
         ).await()
 
         /* Then */
@@ -138,7 +138,7 @@ internal class ExtraDataValidatorTests {
         val users = listOf(user)
         val extraData: MutableMap<String, Any> = mutableMapOf(
             "cid" to "another-cid",
-            "updated_at" to "another-date"
+            "updated_at" to "another-date",
         )
         whenever(user.extraData) doReturn extraData
         whenever(chatApi.updateUsers(users)) doReturn users.asCall()
@@ -159,7 +159,7 @@ internal class ExtraDataValidatorTests {
         val user: User = mock()
         val set: MutableMap<String, Any> = mutableMapOf(
             "updated_at" to "another-date",
-            "created_at" to "another-date"
+            "created_at" to "another-date",
         )
         val unset = emptyList<String>()
         whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn user.asCall()

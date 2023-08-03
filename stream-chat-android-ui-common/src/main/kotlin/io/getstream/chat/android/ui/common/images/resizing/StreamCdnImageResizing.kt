@@ -55,7 +55,7 @@ public data class StreamCdnImageResizing(
             resizedWidthPercentage = 1f,
             resizedHeightPercentage = 1f,
             resizeMode = null,
-            cropMode = null
+            cropMode = null,
         )
     }
 }

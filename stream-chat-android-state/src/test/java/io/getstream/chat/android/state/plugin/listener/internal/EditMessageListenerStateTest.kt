@@ -66,12 +66,12 @@ internal class EditMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id
             },
-            any()
+            any(),
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id
-            }
+            },
         )
     }
 
@@ -98,12 +98,12 @@ internal class EditMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
-            any()
+            any(),
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
-            }
+            },
         )
     }
 
@@ -130,12 +130,12 @@ internal class EditMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            any()
+            any(),
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 
@@ -162,12 +162,12 @@ internal class EditMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            any()
+            any(),
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
         )
     }
 
@@ -194,12 +194,12 @@ internal class EditMessageListenerStateTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            any()
+            any(),
         )
         verify(threadStateLogic).upsertMessage(
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 }

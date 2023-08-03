@@ -49,8 +49,8 @@ public class MockRetrofitCall<T : Any>(
         pendingCallback.get()
             ?.onResult(
                 Result.Failure(
-                    Error.ThrowableError(message = "", cause = AsyncTestCallCanceledException())
-                )
+                    Error.ThrowableError(message = "", cause = AsyncTestCallCanceledException()),
+                ),
             )
         pendingCallback.set(null)
     }
@@ -70,7 +70,7 @@ public class MockRetrofitCall<T : Any>(
                 doWork()
                 logger.w { "[enqueue] work completed" }
                 callback.onResult(result)
-            }
+            },
         )
     }
 

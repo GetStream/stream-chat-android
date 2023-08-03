@@ -89,7 +89,7 @@ internal object ChannelDtoTestData {
                 description = "gif",
                 args = "empty",
                 set = "none",
-            )
+            ),
         ),
     )
 

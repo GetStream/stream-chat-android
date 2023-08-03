@@ -45,7 +45,7 @@ public enum class MessageOptionsUserReactionAlignment(public val value: Int) {
      * to the end of the avatar.
      */
     @Suppress("MagicNumber")
-    BY_USER_INVERTED(3)
+    BY_USER_INVERTED(3),
 }
 
 /**

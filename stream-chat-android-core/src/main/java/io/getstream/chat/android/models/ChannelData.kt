@@ -138,7 +138,7 @@ public data class ChannelData(
             ownCapabilities = ownCapabilities,
             membership = membership,
             cachedLatestMessages = cachedLatestMessages,
-            isInsideSearch = insideSearch
+            isInsideSearch = insideSearch,
         )
     }
 

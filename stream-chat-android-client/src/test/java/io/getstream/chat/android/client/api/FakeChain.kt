@@ -45,7 +45,6 @@ internal class FakeChain(vararg val response: FakeResponse) : Interceptor.Chain 
     }
 
     override fun proceed(request: Request): Response {
-
         val response = response[chainIndex]
 
         return Response.Builder()

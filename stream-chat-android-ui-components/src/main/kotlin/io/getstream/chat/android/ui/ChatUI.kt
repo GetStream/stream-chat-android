@@ -138,7 +138,7 @@ public object ChatUI {
     @JvmStatic
     public var quotedAttachmentFactoryManager: QuotedAttachmentFactoryManager by lazyVar {
         QuotedAttachmentFactoryManager(
-            listOf(DefaultQuotedAttachmentMessageFactory())
+            listOf(DefaultQuotedAttachmentMessageFactory()),
         )
     }
 

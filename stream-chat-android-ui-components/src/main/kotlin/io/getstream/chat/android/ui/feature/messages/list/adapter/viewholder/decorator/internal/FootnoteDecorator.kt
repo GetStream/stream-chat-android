@@ -161,7 +161,7 @@ internal class FootnoteDecorator(
             viewHolder.binding.footnote,
             viewHolder.binding.root,
             viewHolder.binding.cardView,
-            data
+            data,
         )
         with(viewHolder.binding.footnote) {
             applyGravity(data.isMine)
@@ -257,7 +257,7 @@ internal class FootnoteDecorator(
             data.isMine,
             data.message.replyCount,
             data.message.threadParticipants,
-            listViewStyle.itemStyle
+            listViewStyle.itemStyle,
         )
     }
 
@@ -312,9 +312,9 @@ internal class FootnoteDecorator(
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
             data.message.isGiphyNotEphemeral() && updatedAt != null -> footnoteView.showTime(
                 dateFormatter.formatTime(
-                    updatedAt
+                    updatedAt,
                 ),
-                listViewStyle.itemStyle
+                listViewStyle.itemStyle,
             )
             else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), listViewStyle.itemStyle)
         }
@@ -331,18 +331,24 @@ internal class FootnoteDecorator(
             else -> when (status) {
                 SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
                 SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> footnoteView.showStatusIndicator(
-                    listViewStyle.itemStyle.iconIndicatorPendingSync, NO_READS, readCountEnabled
+                    listViewStyle.itemStyle.iconIndicatorPendingSync,
+                    NO_READS,
+                    readCountEnabled,
                 )
                 SyncStatus.COMPLETED -> {
-                    if (data.isMessageRead) footnoteView.showStatusIndicator(
-                        listViewStyle.itemStyle.iconIndicatorRead,
-                        data.messageReadBy.size,
-                        readCountEnabled
-                    ) else footnoteView.showStatusIndicator(
-                        listViewStyle.itemStyle.iconIndicatorSent,
-                        NO_READS,
-                        readCountEnabled
-                    )
+                    if (data.isMessageRead) {
+                        footnoteView.showStatusIndicator(
+                            listViewStyle.itemStyle.iconIndicatorRead,
+                            data.messageReadBy.size,
+                            readCountEnabled,
+                        )
+                    } else {
+                        footnoteView.showStatusIndicator(
+                            listViewStyle.itemStyle.iconIndicatorSent,
+                            NO_READS,
+                            readCountEnabled,
+                        )
+                    }
                 }
             }
         }

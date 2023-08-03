@@ -46,8 +46,8 @@ internal data class MessageEntity(
         Index(value = ["cid", "createdAt"]),
         Index(value = ["syncStatus"]),
         Index(value = ["syncType"]),
-        Index(value = ["syncStatus", "syncType"])
-    ]
+        Index(value = ["syncStatus", "syncType"]),
+    ],
 )
 internal data class MessageInnerEntity(
     @PrimaryKey

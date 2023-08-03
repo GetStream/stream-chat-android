@@ -27,7 +27,7 @@ internal fun getColorList(
     arrayOf(
         intArrayOf(android.R.attr.state_enabled, -android.R.attr.state_selected),
         intArrayOf(android.R.attr.state_enabled, android.R.attr.state_selected),
-        intArrayOf(-android.R.attr.state_enabled)
+        intArrayOf(-android.R.attr.state_enabled),
     ),
-    intArrayOf(normalColor, selectedColor, disabledColor)
+    intArrayOf(normalColor, selectedColor, disabledColor),
 )

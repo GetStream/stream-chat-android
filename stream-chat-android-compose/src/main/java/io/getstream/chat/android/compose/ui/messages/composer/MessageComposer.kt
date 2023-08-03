@@ -150,25 +150,25 @@ public fun MessageComposer(
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
-            onCancelAction = onCancelAction
+            onCancelAction = onCancelAction,
         )
     },
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerFooterContent(
             messageComposerState = it,
-            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected
+            onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
         )
     },
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
-            onMentionSelected = onMentionSelected
+            onMentionSelected = onMentionSelected,
         )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
         DefaultCommandPopupContent(
             commandSuggestions = it,
-            onCommandSelected = onCommandSelected
+            onCommandSelected = onCommandSelected,
         )
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
@@ -176,7 +176,7 @@ public fun MessageComposer(
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
             onCommandsClick = onCommandsClick,
-            ownCapabilities = it.ownCapabilities
+            ownCapabilities = it.ownCapabilities,
         )
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(it.ownCapabilities) },
@@ -231,7 +231,7 @@ public fun MessageComposer(
         trailingContent = trailingContent,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
-        statefulStreamMediaRecorder = statefulStreamMediaRecorder
+        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
     )
 }
 
@@ -295,13 +295,13 @@ public fun MessageComposer(
     mentionPopupContent: @Composable (List<User>) -> Unit = {
         DefaultMentionPopupContent(
             mentionSuggestions = it,
-            onMentionSelected = onMentionSelected
+            onMentionSelected = onMentionSelected,
         )
     },
     commandPopupContent: @Composable (List<Command>) -> Unit = {
         DefaultCommandPopupContent(
             commandSuggestions = it,
-            onCommandSelected = onCommandSelected
+            onCommandSelected = onCommandSelected,
         )
     },
     integrations: @Composable RowScope.(MessageComposerState) -> Unit = {
@@ -309,7 +309,7 @@ public fun MessageComposer(
             messageInputState = it,
             onAttachmentsClick = onAttachmentsClick,
             onCommandsClick = onCommandsClick,
-            ownCapabilities = messageComposerState.ownCapabilities
+            ownCapabilities = messageComposerState.ownCapabilities,
         )
     },
     label: @Composable (MessageComposerState) -> Unit = { DefaultComposerLabel(messageComposerState.ownCapabilities) },
@@ -334,7 +334,7 @@ public fun MessageComposer(
             ownCapabilities = messageComposerState.ownCapabilities,
             isInEditMode = it.action is Edit,
             onRecordingSaved = onRecordingSaved,
-            statefulStreamMediaRecorder = statefulStreamMediaRecorder
+            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
         )
     },
 ) {
@@ -345,7 +345,7 @@ public fun MessageComposer(
 
     MessageInputValidationError(
         validationErrors = validationErrors,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
     )
 
     Surface(
@@ -358,14 +358,13 @@ public fun MessageComposer(
 
             Row(
                 Modifier.fillMaxWidth(),
-                verticalAlignment = Bottom
+                verticalAlignment = Bottom,
             ) {
-
                 if (activeAction !is Edit) {
                     integrations(messageComposerState)
                 } else {
                     Spacer(
-                        modifier = Modifier.size(16.dp)
+                        modifier = Modifier.size(16.dp),
                     )
                 }
 
@@ -414,7 +413,7 @@ public fun DefaultMessageComposerHeaderContent(
                 .fillMaxWidth()
                 .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
             activeAction = activeAction,
-            onCancelAction = onCancelAction
+            onCancelAction = onCancelAction,
         )
     }
 }
@@ -435,12 +434,12 @@ public fun DefaultMessageComposerFooterContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
                 checked = messageComposerState.alsoSendToChannel,
                 onCheckedChange = { onAlsoSendToChannelSelected(it) },
-                colors = CheckboxDefaults.colors(ChatTheme.colors.primaryAccent)
+                colors = CheckboxDefaults.colors(ChatTheme.colors.primaryAccent),
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -449,7 +448,7 @@ public fun DefaultMessageComposerFooterContent(
                 text = stringResource(R.string.stream_compose_message_composer_show_in_channel),
                 color = ChatTheme.colors.textLowEmphasis,
                 textAlign = TextAlign.Center,
-                style = ChatTheme.typography.body
+                style = ChatTheme.typography.body,
             )
         }
     }
@@ -468,7 +467,7 @@ internal fun DefaultMentionPopupContent(
 ) {
     MentionSuggestionList(
         users = mentionSuggestions,
-        onMentionSelected = { onMentionSelected(it) }
+        onMentionSelected = { onMentionSelected(it) },
     )
 }
 
@@ -485,7 +484,7 @@ internal fun DefaultCommandPopupContent(
 ) {
     CommandSuggestionList(
         commands = commandSuggestions,
-        onCommandSelected = { onCommandSelected(it) }
+        onCommandSelected = { onCommandSelected(it) },
     )
 }
 
@@ -524,7 +523,7 @@ internal fun DefaultComposerIntegrations(
             modifier = Modifier
                 .height(44.dp)
                 .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (canSendAttachments) {
                 IconButton(
@@ -543,7 +542,7 @@ internal fun DefaultComposerIntegrations(
                             },
                         )
                     },
-                    onClick = onAttachmentsClick
+                    onClick = onAttachmentsClick,
                 )
             }
 
@@ -568,7 +567,7 @@ internal fun DefaultComposerIntegrations(
                             tint = commandsButtonTint,
                         )
                     },
-                    onClick = onCommandsClick
+                    onClick = onCommandsClick,
                 )
             }
         }
@@ -594,7 +593,7 @@ internal fun DefaultComposerLabel(ownCapabilities: Set<String>) {
 
     Text(
         text = text,
-        color = ChatTheme.colors.textLowEmphasis
+        color = ChatTheme.colors.textLowEmphasis,
     )
 }
 
@@ -642,7 +641,6 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
             .padding(vertical = 8.dp)
             .weight(1f),
     ) {
-
         val amplitudeSample = statefulStreamMediaRecorder.latestMaxAmplitude.value
         val recordingDuration = statefulStreamMediaRecorder.activeRecordingDuration.value
 
@@ -660,7 +658,7 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier
-                .align(Alignment.CenterVertically)
+                .align(Alignment.CenterVertically),
         ) {
             Icon(
                 modifier = Modifier
@@ -669,14 +667,14 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
                 painter = painterResource(id = R.drawable.stream_compose_ic_circle),
                 tint = Color.Red,
                 // TODO add later
-                contentDescription = null
+                contentDescription = null,
             )
 
             Text(
                 modifier = Modifier.align(Alignment.CenterVertically),
                 text = recordingDurationFormatted,
                 style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
 
@@ -690,7 +688,7 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
             barGap = 2.dp,
             restartKey = true,
             newValueKey = amplitudeSample.key,
-            latestValue = amplitudeSample.value
+            latestValue = amplitudeSample.value,
         )
     }
 }
@@ -722,7 +720,6 @@ internal fun DefaultMessageComposerTrailingContent(
     onRecordingSaved: (Attachment) -> Unit,
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder?,
 ) {
-
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
@@ -733,14 +730,18 @@ internal fun DefaultMessageComposerTrailingContent(
 
     // TODO test permissions on lower APIs etc
     val storageAndRecordingPermissionState = rememberMultiplePermissionsState(
-        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
-            Manifest.permission.READ_MEDIA_AUDIO,
-            Manifest.permission.RECORD_AUDIO,
-        ) else listOf(
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
+        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(
+                Manifest.permission.READ_MEDIA_AUDIO,
+                Manifest.permission.RECORD_AUDIO,
+            )
+        } else {
+            listOf(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            )
+        },
     ) {
         // TODO should we track this or always ask?
         permissionsRequested = true
@@ -756,7 +757,7 @@ internal fun DefaultMessageComposerTrailingContent(
             modifier = Modifier
                 .height(44.dp)
                 .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             // TODO don't show if the own ability to send attachments isn't given
             if (statefulStreamMediaRecorder != null) {
@@ -767,7 +768,6 @@ internal fun DefaultMessageComposerTrailingContent(
                         .pointerInput(Unit) {
                             detectTapGestures(
                                 onLongPress = {
-
                                     /**
                                      * An internal function used to handle audio recording. It initiates the recording
                                      * and stops and saves the file once the appropriate gesture has been completed.
@@ -776,7 +776,7 @@ internal fun DefaultMessageComposerTrailingContent(
                                         awaitPointerEventScope {
                                             statefulStreamMediaRecorder.startAudioRecording(
                                                 context = context,
-                                                recordingName = "audio_recording_${Date()}"
+                                                recordingName = "audio_recording_${Date()}",
                                             )
 
                                             while (true) {
@@ -810,10 +810,10 @@ internal fun DefaultMessageComposerTrailingContent(
                                         }
                                         else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
                                     }
-                                }
+                                },
                             )
                         },
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     val layoutDirection = LocalLayoutDirection.current
 
@@ -826,7 +826,7 @@ internal fun DefaultMessageComposerTrailingContent(
                             ChatTheme.colors.primaryAccent
                         } else {
                             ChatTheme.colors.textLowEmphasis
-                        }
+                        },
                     )
                 }
             }
@@ -843,14 +843,14 @@ internal fun DefaultMessageComposerTrailingContent(
                     modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
                     painter = painterResource(id = R.drawable.stream_compose_ic_send),
                     contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                    tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis
+                    tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
                 )
             },
             onClick = {
                 if (isInputValid) {
                     onSendMessage(value, attachments)
                 }
-            }
+            },
         )
     }
 
@@ -875,19 +875,19 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
             is ValidationError.MessageLengthExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_message_length,
-                    firstValidationError.maxMessageLength
+                    firstValidationError.maxMessageLength,
                 )
             }
             is ValidationError.AttachmentCountExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_attachment_count,
-                    firstValidationError.maxAttachmentCount
+                    firstValidationError.maxAttachmentCount,
                 )
             }
             is ValidationError.AttachmentSizeExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_file_size,
-                    MediaStringUtil.convertFileSizeByteCount(firstValidationError.maxAttachmentSize)
+                    MediaStringUtil.convertFileSizeByteCount(firstValidationError.maxAttachmentSize),
                 )
             }
             is ValidationError.ContainsLinksWhenNotAllowed -> {
@@ -905,7 +905,7 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
                 snackbarHostState.showSnackbar(
                     message = errorMessage,
                     actionLabel = context.getString(R.string.stream_compose_ok),
-                    duration = SnackbarDuration.Indefinite
+                    duration = SnackbarDuration.Indefinite,
                 )
             } else {
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()

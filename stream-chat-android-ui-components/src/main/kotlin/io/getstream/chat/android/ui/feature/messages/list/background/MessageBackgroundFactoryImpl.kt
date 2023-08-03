@@ -122,7 +122,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
                 } else {
                     style.messageBackgroundColorMine ?: ContextCompat.getColor(
                         context,
-                        MESSAGE_CURRENT_USER_BACKGROUND
+                        MESSAGE_CURRENT_USER_BACKGROUND,
                     )
                 }
 
@@ -137,7 +137,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
                 } else {
                     style.messageBackgroundColorTheirs ?: ContextCompat.getColor(
                         context,
-                        MESSAGE_OTHER_USER_BACKGROUND
+                        MESSAGE_OTHER_USER_BACKGROUND,
                     )
                 }
 
@@ -155,7 +155,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
             DEFAULT_CORNER_RADIUS,
             SMALL_CARD_VIEW_CORNER_RADIUS,
             isMine = true,
-            isBottomPosition = true
+            isBottomPosition = true,
         )
             .let(::MaterialShapeDrawable)
             .apply {

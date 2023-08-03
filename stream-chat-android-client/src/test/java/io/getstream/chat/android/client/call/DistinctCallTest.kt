@@ -107,7 +107,6 @@ internal class DistinctCallTest {
 
     @Test
     fun `Canceled Call should only notify sync methods`() = runTest {
-
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }

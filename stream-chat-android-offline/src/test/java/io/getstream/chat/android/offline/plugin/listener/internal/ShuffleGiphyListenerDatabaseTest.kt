@@ -41,7 +41,7 @@ internal class ShuffleGiphyListenerDatabaseTest {
 
     private val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
         userRepository = userRepository,
-        messageRepository = messageRepository
+        messageRepository = messageRepository,
     )
 
     @BeforeEach

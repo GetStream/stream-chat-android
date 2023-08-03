@@ -31,7 +31,7 @@ internal class SystemMessageViewHolder(
     internal val binding: StreamUiItemSystemMessageBinding = StreamUiItemSystemMessageBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 

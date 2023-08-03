@@ -123,9 +123,9 @@ public fun MediaAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {},
-                onLongClick = { onLongItemClick(message) }
+                onLongClick = { onLongItemClick(message) },
             ),
-        horizontalArrangement = Arrangement.spacedBy(gridSpacing)
+        horizontalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
         val attachments = message.attachments.filter {
             !it.hasLink() && (it.isImage() || it.isVideo())
@@ -155,7 +155,7 @@ public fun MediaAttachmentContent(
                 onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                 onLongItemClick = onLongItemClick,
                 onContentItemClick = onItemClick,
-                itemOverlayContent = itemOverlayContent
+                itemOverlayContent = itemOverlayContent,
             )
         }
     }
@@ -215,14 +215,14 @@ internal fun SingleMediaAttachment(
                     ChatTheme.dimens.attachmentsContentVideoMaxHeight
                 } else {
                     ChatTheme.dimens.attachmentsContentImageMaxHeight
-                }
+                },
             )
             .width(
                 if (isVideo) {
                     ChatTheme.dimens.attachmentsContentVideoWidth
                 } else {
                     ChatTheme.dimens.attachmentsContentImageWidth
-                }
+                },
             )
             .aspectRatio(ratio ?: EqualDimensionsRatio),
         message = message,
@@ -274,13 +274,12 @@ internal fun RowScope.MultipleMediaAttachments(
     ) -> Unit,
     itemOverlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
-
     Column(
         modifier = Modifier
             .weight(1f, fill = false)
             .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
             .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
-        verticalArrangement = Arrangement.spacedBy(gridSpacing)
+        verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
         for (attachmentIndex in 0 until maximumNumberOfPreviewedItems step 2) {
             if (attachmentIndex < attachmentCount) {
@@ -304,7 +303,7 @@ internal fun RowScope.MultipleMediaAttachments(
             .weight(1f, fill = false)
             .width(ChatTheme.dimens.attachmentsContentGroupPreviewWidth / 2)
             .height(ChatTheme.dimens.attachmentsContentGroupPreviewHeight),
-        verticalArrangement = Arrangement.spacedBy(gridSpacing)
+        verticalArrangement = Arrangement.spacedBy(gridSpacing),
     ) {
         for (attachmentIndex in 1 until maximumNumberOfPreviewedItems step 2) {
             if (attachmentIndex < attachmentCount) {
@@ -322,14 +321,14 @@ internal fun RowScope.MultipleMediaAttachments(
                             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                             onLongItemClick = onLongItemClick,
                             onItemClick = onContentItemClick,
-                            overlayContent = itemOverlayContent
+                            overlayContent = itemOverlayContent,
                         )
 
                         if (!isUploading) {
                             MediaAttachmentShowMoreOverlay(
                                 mediaCount = attachmentCount,
                                 maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-                                modifier = Modifier.align(Alignment.Center)
+                                modifier = Modifier.align(Alignment.Center),
                             )
                         }
                     }
@@ -343,7 +342,7 @@ internal fun RowScope.MultipleMediaAttachments(
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onLongItemClick = onLongItemClick,
                         onItemClick = onContentItemClick,
-                        overlayContent = itemOverlayContent
+                        overlayContent = itemOverlayContent,
                     )
                 }
             }
@@ -415,12 +414,12 @@ internal fun MediaAttachmentContentItem(
         model = ImageRequest.Builder(LocalContext.current)
             .data(data)
             .setParameter(key = RetryHash, value = retryHash)
-            .build()
+            .build(),
     )
 
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(),
-        onResult = { result -> onMediaGalleryPreviewResult(result) }
+        onResult = { result -> onMediaGalleryPreviewResult(result) },
     )
 
     // Used to refresh the request for the current page
@@ -428,7 +427,7 @@ internal fun MediaAttachmentContentItem(
     onImageNeedsToReload(
         data = data,
         connectionState = connectionState,
-        asyncImagePainterState = painter.state
+        asyncImagePainterState = painter.state,
     ) {
         retryHash++
     }
@@ -457,13 +456,16 @@ internal fun MediaAttachmentContentItem(
                         onLongItemClick(message)
                     }
                 },
-                onLongClick = { onLongItemClick(message) }
+                onLongClick = { onLongItemClick(message) },
             ),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         val backgroundColor =
-            if (isImage) ChatTheme.colors.imageBackgroundMessageList
-            else ChatTheme.colors.videoBackgroundMessageList
+            if (isImage) {
+                ChatTheme.colors.imageBackgroundMessageList
+            } else {
+                ChatTheme.colors.videoBackgroundMessageList
+            }
 
         Image(
             modifier = modifier
@@ -471,7 +473,7 @@ internal fun MediaAttachmentContentItem(
                 .background(backgroundColor),
             painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         MediaPreviewPlaceHolder(
@@ -479,7 +481,7 @@ internal fun MediaAttachmentContentItem(
             progressIndicatorStrokeWidth = 3.dp,
             progressIndicatorFillMaxSizePercentage = 0.25f,
             isImage = isImage,
-            placeholderIconTintColor = ChatTheme.colors.disabled
+            placeholderIconTintColor = ChatTheme.colors.disabled,
         )
 
         if (painter.state !is AsyncImagePainter.State.Loading) {
@@ -503,7 +505,7 @@ internal fun PlayButton(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Image(
             modifier = Modifier
@@ -546,11 +548,11 @@ internal fun MediaAttachmentShowMoreOverlay(
                 .wrapContentSize(),
             text = stringResource(
                 id = R.string.stream_compose_remaining_media_attachments_count,
-                remainingMediaCount
+                remainingMediaCount,
             ),
             color = ChatTheme.colors.showMoreCountText,
             style = ChatTheme.typography.title1,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -587,6 +589,6 @@ internal fun onMediaAttachmentContentItemClick(
             videoThumbnailsEnabled = videoThumbnailsEnabled,
             streamCdnImageResizing = streamCdnImageResizing,
             skipEnrichUrl = skipEnrichUrl,
-        )
+        ),
     )
 }

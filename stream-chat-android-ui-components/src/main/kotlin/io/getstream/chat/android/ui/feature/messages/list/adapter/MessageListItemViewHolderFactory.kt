@@ -203,7 +203,7 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            markdown = textTransformer
+            markdown = textTransformer,
         )
     }
 
@@ -303,7 +303,7 @@ public open class MessageListItemViewHolderFactory {
             parentView,
             decoratorProvider.decorators,
             listenerContainer,
-            giphyViewHolderStyle
+            giphyViewHolderStyle,
         )
     }
 
@@ -378,7 +378,7 @@ public open class MessageListItemViewHolderFactory {
             decorators = decoratorProvider.decorators,
             listeners = listenerContainer,
             style = style,
-            messageTextTransformer = textTransformer
+            messageTextTransformer = textTransformer,
         )
     }
 }

@@ -39,5 +39,5 @@ public enum class OnlineIndicatorPosition {
     /**
      * The indicator is positioned at the bottom-end of the avatar.
      */
-    BOTTOM_END
+    BOTTOM_END,
 }

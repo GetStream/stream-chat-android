@@ -72,7 +72,7 @@ internal class SendMessageListenerDatabase(
         processedMessage.enrichWithCid(cid)
             .copy(
                 syncStatus = SyncStatus.COMPLETED,
-                syncDescription = null
+                syncDescription = null,
             )
             .also { message ->
                 userRepository.insertUsers(message.users())

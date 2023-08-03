@@ -52,7 +52,7 @@ internal fun MessagesScrollingOption(
     Box(
         modifier = modifier
             .padding(16.dp)
-            .wrapContentSize()
+            .wrapContentSize(),
     ) {
         Surface(
             onClick = onClick,
@@ -61,13 +61,13 @@ internal fun MessagesScrollingOption(
                 .size(48.dp),
             shape = CircleShape,
             elevation = 4.dp,
-            color = ChatTheme.colors.barsBackground
+            color = ChatTheme.colors.barsBackground,
         ) {
             Icon(
                 modifier = Modifier.padding(16.dp),
                 painter = painterResource(R.drawable.stream_compose_ic_arrow_down),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
 
@@ -76,13 +76,13 @@ internal fun MessagesScrollingOption(
                 modifier = Modifier
                     .align(Alignment.TopCenter),
                 shape = RoundedCornerShape(16.dp),
-                color = ChatTheme.colors.primaryAccent
+                color = ChatTheme.colors.primaryAccent,
             ) {
                 Text(
                     modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
                     text = unreadCount.toString(),
                     style = ChatTheme.typography.footnoteBold,
-                    color = Color.White
+                    color = Color.White,
                 )
             }
         }

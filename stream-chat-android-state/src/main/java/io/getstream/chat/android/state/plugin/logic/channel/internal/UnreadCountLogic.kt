@@ -58,8 +58,8 @@ internal class UnreadCountLogic(
     private val unreadTrigger: StateFlow<Boolean>,
     private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(
         bufferLimit = COUNT_BUFFER_LIMIT,
-        customTrigger = unreadTrigger
-    )
+        customTrigger = unreadTrigger,
+    ),
 ) {
 
     init {
@@ -102,7 +102,7 @@ internal class UnreadCountLogic(
             }
 
             else -> throw IllegalArgumentException(
-                "The event ${chatEvent.javaClass.simpleName} is not handled by UnreadCountLogic"
+                "The event ${chatEvent.javaClass.simpleName} is not handled by UnreadCountLogic",
             )
         }
     }
@@ -128,7 +128,7 @@ internal class UnreadCountLogic(
                     message.shouldIncrementUnreadCount(
                         currentUserId = currentUserId,
                         lastMessageAtDate = lastMessageSeenDate,
-                        isChannelMuted = globalState.isChannelMutedForCurrentUser(mutableState.cid)
+                        isChannelMuted = globalState.isChannelMutedForCurrentUser(mutableState.cid),
                     )
 
             val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH)

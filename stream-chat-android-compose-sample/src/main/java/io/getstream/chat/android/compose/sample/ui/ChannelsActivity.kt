@@ -71,7 +71,7 @@ class ChannelsActivity : BaseConnectedActivity() {
         ChannelViewModelFactory(
             ChatClient.instance(),
             QuerySortByField.descByName("last_updated"),
-            null
+            null,
         )
     }
 
@@ -101,7 +101,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                             ChatHelper.disconnectUser()
                             openUserLogin()
                         }
-                    }
+                    },
                 )
 
 //                MyCustomUiSimplified()
@@ -127,7 +127,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     currentUser = user,
                     connectionState = connectionState,
                 )
-            }
+            },
         ) {
             ChannelList(
                 modifier = Modifier.fillMaxSize(),
@@ -139,9 +139,9 @@ class ChannelsActivity : BaseConnectedActivity() {
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .height(0.5.dp)
-                            .background(color = ChatTheme.colors.textLowEmphasis)
+                            .background(color = ChatTheme.colors.textLowEmphasis),
                     )
-                }
+                },
             )
         }
     }
@@ -163,9 +163,9 @@ class ChannelsActivity : BaseConnectedActivity() {
                 Text(
                     text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                     style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
-            }
+            },
         )
     }
 
@@ -190,7 +190,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                 ChannelListHeader(
                     title = stringResource(id = R.string.app_name),
                     currentUser = user,
-                    connectionState = connectionState
+                    connectionState = connectionState,
                 )
 
                 SearchInput(
@@ -202,14 +202,14 @@ class ChannelsActivity : BaseConnectedActivity() {
                     onValueChange = {
                         query = it
                         listViewModel.setSearchQuery(it)
-                    }
+                    },
                 )
 
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = ::openMessages,
-                    onChannelLongClick = { listViewModel.selectChannel(it) }
+                    onChannelLongClick = { listViewModel.selectChannel(it) },
                 )
             }
 
@@ -226,7 +226,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     selectedChannel = selectedChannel,
                     currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) },
-                    onDismiss = { listViewModel.dismissChannelAction() }
+                    onDismiss = { listViewModel.dismissChannelAction() },
                 )
             }
         }
@@ -238,8 +238,8 @@ class ChannelsActivity : BaseConnectedActivity() {
                 context = this,
                 channelId = channel.cid,
                 messageId = null,
-                parentMessageId = null
-            )
+                parentMessageId = null,
+            ),
         )
     }
 

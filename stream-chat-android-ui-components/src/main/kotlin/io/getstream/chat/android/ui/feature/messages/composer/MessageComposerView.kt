@@ -268,7 +268,7 @@ public class MessageComposerView : ConstraintLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -282,7 +282,7 @@ public class MessageComposerView : ConstraintLayout {
         validationErrorRenderer = ValidationErrorRenderer(context, this)
         messageComposerContext = MessageComposerContext(
             MessageComposerViewStyle(context, attrs),
-            binding.asContentContainer()
+            binding.asContentContainer(),
         )
 
         setBackgroundColor(messageComposerContext.style.backgroundColor)
@@ -292,29 +292,29 @@ public class MessageComposerView : ConstraintLayout {
             DefaultMessageComposerLeadingContent(context).also {
                 it.attachmentsButtonClickListener = { attachmentsButtonClickListener() }
                 it.commandsButtonClickListener = { commandsButtonClickListener() }
-            }
+            },
         )
         setCenterContent(
             DefaultMessageComposerCenterContent(context).also {
                 it.textInputChangeListener = { text -> textInputChangeListener(text) }
                 it.attachmentRemovalListener = { attachment -> attachmentRemovalListener(attachment) }
-            }
+            },
         )
         setTrailingContent(
             DefaultMessageComposerTrailingContent(context).also {
                 it.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
                 it.recordAudioButtonTouchListener = { event -> audioRecordButtonTouchListener(event) }
-            }
+            },
         )
         setFooterContent(
             DefaultMessageComposerFooterContent(context).also {
                 it.alsoSendToChannelSelectionListener = { checked -> alsoSendToChannelSelectionListener(checked) }
-            }
+            },
         )
         setHeaderContent(
             DefaultMessageComposerHeaderContent(context).also {
                 it.dismissActionClickListener = { dismissActionClickListener() }
-            }
+            },
         )
         setCenterOverlapContent(
             DefaultMessageComposerOverlappingContent(context).also {
@@ -328,7 +328,7 @@ public class MessageComposerView : ConstraintLayout {
                 it.completeButtonClickListener = { audioCompleteButtonClickListener() }
                 it.sliderDragStartListener = { progress -> audioSliderDragStartListener(progress) }
                 it.sliderDragStopListener = { progress -> audioSliderDragStopListener(progress) }
-            }
+            },
         )
     }
 
@@ -375,7 +375,7 @@ public class MessageComposerView : ConstraintLayout {
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
-            Gravity.BOTTOM
+            Gravity.BOTTOM,
         ),
     ) where V : View, V : MessageComposerContent {
         binding.leadingContent.removeAllViews()
@@ -418,7 +418,7 @@ public class MessageComposerView : ConstraintLayout {
         layoutParams: FrameLayout.LayoutParams = FrameLayout.LayoutParams(
             FrameLayout.LayoutParams.WRAP_CONTENT,
             FrameLayout.LayoutParams.WRAP_CONTENT,
-            Gravity.BOTTOM
+            Gravity.BOTTOM,
         ),
     ) where V : View, V : MessageComposerContent {
         binding.trailingContent.removeAllViews()

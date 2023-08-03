@@ -78,7 +78,7 @@ internal class SendMessageListenerState(private val logic: LogicRegistry) : Send
         processedMessage.enrichWithCid(cid)
             .copy(
                 syncStatus = SyncStatus.COMPLETED,
-                syncDescription = null
+                syncDescription = null,
             )
             .also { message ->
                 logic.channelFromMessage(message)?.upsertMessage(message)

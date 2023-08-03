@@ -75,7 +75,7 @@ internal class ChannelListItemAdapter(
             readStateChanged = true,
             unreadCountChanged = true,
             extraDataChanged = true,
-            typingUsersChanged = true
+            typingUsersChanged = true,
         )
 
         val EMPTY_CHANNEL_LIST_ITEM_PAYLOAD_DIFF: ChannelListPayloadDiff = ChannelListPayloadDiff(
@@ -86,7 +86,7 @@ internal class ChannelListItemAdapter(
             readStateChanged = false,
             unreadCountChanged = false,
             extraDataChanged = false,
-            typingUsersChanged = false
+            typingUsersChanged = false,
         )
     }
 }

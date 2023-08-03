@@ -82,10 +82,10 @@ internal fun DefaultModeratedMessageOptionItem(
             .height(50.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple()
+                indication = rememberRipple(),
             ) {
                 onDialogOptionInteraction(message, option)
                 onDismissRequest()
-            }
+            },
     )
 }

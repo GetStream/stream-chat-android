@@ -38,6 +38,6 @@ public fun MessageListState.toMessageListItemWrapper(isInThread: Boolean): Messa
         hasNewMessages = newMessageState != null,
         isTyping = messagesList.firstOrNull { it is MessageListItem.TypingItem } != null,
         areNewestMessagesLoaded = endOfNewMessagesReached,
-        isThread = isInThread
+        isThread = isInThread,
     )
 }

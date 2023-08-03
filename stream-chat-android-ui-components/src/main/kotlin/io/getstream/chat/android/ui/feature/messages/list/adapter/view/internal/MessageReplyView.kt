@@ -61,7 +61,7 @@ internal class MessageReplyView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
@@ -137,7 +137,7 @@ internal class MessageReplyView : FrameLayout {
             REPLY_CORNER_RADIUS,
             0f,
             quotedMessage.isMine(ChatClient.instance().getCurrentUser()),
-            true
+            true,
         )
 
         binding.replyContainer.background = MaterialShapeDrawable(shapeAppearanceModel).apply {
@@ -166,7 +166,7 @@ internal class MessageReplyView : FrameLayout {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     setStrokeTint(
                         style?.messageStrokeColorTheirs
-                            ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
+                            ?: context.getColorCompat(R.color.stream_ui_grey_whisper),
                     )
                     strokeWidth = style?.messageStrokeWidthTheirs ?: DEFAULT_STROKE_WIDTH
                     val tintColor =
@@ -200,7 +200,7 @@ internal class MessageReplyView : FrameLayout {
                             .first { it.isAudioRecording() }
                             .extraData["duration"] as? Double
                         )
-                        ?.toInt() ?: 0
+                        ?.toInt() ?: 0,
                 )
         } else {
             binding.additionalInfo.isVisible = false

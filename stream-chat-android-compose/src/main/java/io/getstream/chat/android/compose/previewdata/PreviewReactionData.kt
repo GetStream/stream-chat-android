@@ -25,22 +25,22 @@ internal object PreviewReactionData {
 
     private val reaction1: Reaction = Reaction(
         type = "like",
-        user = PreviewUserData.user1
+        user = PreviewUserData.user1,
     )
 
     private val reaction2: Reaction = Reaction(
         type = "love",
-        user = PreviewUserData.user2
+        user = PreviewUserData.user2,
     )
 
     private val reaction3: Reaction = Reaction(
         type = "wow",
-        user = PreviewUserData.user3
+        user = PreviewUserData.user3,
     )
 
     private val reaction4: Reaction = Reaction(
         type = "sad",
-        user = PreviewUserData.user4
+        user = PreviewUserData.user4,
     )
 
     val oneReaction: List<Reaction> = listOf(reaction1)

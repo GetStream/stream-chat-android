@@ -47,7 +47,7 @@ public fun PinnedMessageListViewModel.bindView(view: PinnedMessageListView, life
         lifecycleOwner,
         EventObserver {
             view.showError()
-        }
+        },
     )
     view.setLoadMoreListener {
         this.loadMore()

@@ -35,7 +35,7 @@ internal class ThreadSeparatorViewHolder(
         StreamUiItemThreadDividerBinding.inflate(
             parent.streamThemeInflater,
             parent,
-            false
+            false,
         ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.ThreadSeparatorItem>(binding.root, decorators) {
 

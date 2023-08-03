@@ -83,7 +83,7 @@ public fun randomChannelVisibleEvent(
     cid = cid,
     channelType = channelType,
     channelId = channelId,
-    user = user
+    user = user,
 )
 
 public fun randomUserStartWatchingEvent(
@@ -121,7 +121,7 @@ public fun randomChannelDeletedEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        channel = channel
+        channel = channel,
     )
 }
 
@@ -167,7 +167,7 @@ public fun randomReactionNewEvent(
         channelType = channelType,
         channelId = channelId,
         message = message,
-        reaction = reaction
+        reaction = reaction,
     )
 }
 
@@ -230,7 +230,7 @@ public fun randomTypingStopEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        parentId = parentId
+        parentId = parentId,
     )
 }
 
@@ -251,7 +251,7 @@ public fun randomTypingStartEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        parentId = parentId
+        parentId = parentId,
     )
 }
 
@@ -272,7 +272,7 @@ public fun randomMemberAddedEvent(
         cid = cid,
         channelType = channelType,
         channelId = channelId,
-        member = member
+        member = member,
     )
 }
 
@@ -382,7 +382,7 @@ public fun randomUser(
     mutes = mutes,
     teams = teams,
     channelMutes = channelMutes,
-    extraData = extraData
+    extraData = extraData,
 )
 
 public fun randomMessage(
@@ -467,7 +467,7 @@ public fun randomChannelInfo(
     id = id,
     type = type,
     memberCount = memberCount,
-    name = name
+    name = name,
 )
 
 public fun randomChannel(
@@ -794,7 +794,7 @@ public fun randomNotificationMessageNewEvent(
         channel = channel,
         message = randomMessage(),
         totalUnreadCount = randomInt(),
-        unreadChannels = randomInt()
+        unreadChannels = randomInt(),
     )
 }
 
@@ -809,7 +809,7 @@ public fun randomMemberAddedEvent(cid: String = randomString()): MemberAddedEven
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
-        member = randomMember()
+        member = randomMember(),
     )
 }
 
@@ -824,6 +824,6 @@ public fun randomMemberRemovedEvent(cid: String = randomString(), member: Member
         cid = cid,
         channelType = randomString(),
         channelId = randomString(),
-        member = member
+        member = member,
     )
 }

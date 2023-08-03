@@ -92,11 +92,11 @@ public fun MessageText(
                     start = 12.dp,
                     end = 12.dp,
                     top = 8.dp,
-                    bottom = 8.dp
+                    bottom = 8.dp,
                 ),
             text = styledText,
             style = style,
-            onLongPress = { onLongItemClick(message) }
+            onLongPress = { onLongItemClick(message) },
         ) { position ->
             val targetUrl = annotations.firstOrNull {
                 position in it.start..it.end
@@ -106,8 +106,8 @@ public fun MessageText(
                 context.startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
-                        Uri.parse(targetUrl)
-                    )
+                        Uri.parse(targetUrl),
+                    ),
                 )
             }
         }
@@ -118,11 +118,11 @@ public fun MessageText(
             modifier = modifier
                 .padding(
                     horizontal = horizontalPadding,
-                    vertical = verticalPadding
+                    vertical = verticalPadding,
                 )
                 .clipToBounds(),
             text = styledText,
-            style = style
+            style = style,
         )
     }
 }
@@ -155,7 +155,7 @@ private fun ClickableText(
                 layoutResult.value?.let { layoutResult ->
                     onClick(layoutResult.getOffsetForPosition(pos))
                 }
-            }
+            },
         )
     }
 
@@ -169,7 +169,7 @@ private fun ClickableText(
         onTextLayout = {
             layoutResult.value = it
             onTextLayout(it)
-        }
+        },
     )
 }
 
@@ -180,7 +180,7 @@ private fun MessageTextPreview() {
         MessageText(
             message = Message(text = "Hello World!"),
             currentUser = null,
-            onLongItemClick = {}
+            onLongItemClick = {},
         )
     }
 }

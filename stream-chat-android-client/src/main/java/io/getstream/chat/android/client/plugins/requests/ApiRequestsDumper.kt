@@ -28,7 +28,7 @@ private const val NOT_FOUND_INT = -1
  * Class for analyse requests of the SDK. It can be use to understand how the SDK is calling the backend API.
  */
 internal class ApiRequestsDumper(
-    private val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault())
+    private val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()),
 ) : ApiRequestsAnalyser {
 
     private val requestsDataMap: MutableMap<String, MutableList<RequestData>> = mutableMapOf()

@@ -85,11 +85,11 @@ class MessagesActivity : AppCompatActivity() {
         setContent {
             ChatTheme(
                 attachmentFactories = customFactories + defaultFactories,
-                quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories
+                quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories,
             ) {
                 CustomMessagesScreen(
                     channelId = channelId,
-                    onBackPressed = { finish() }
+                    onBackPressed = { finish() },
                 )
             }
         }
@@ -142,14 +142,14 @@ class MessagesActivity : AppCompatActivity() {
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                             val attachment = Attachment(
                                 type = "date",
-                                extraData = mutableMapOf("payload" to payload)
+                                extraData = mutableMapOf("payload" to payload),
                             )
 
                             // 3
                             composerViewModel.addSelectedAttachments(listOf(attachment))
-                        }
+                        },
                     )
-                }
+                },
             ) {
                 MessageList(
                     modifier = Modifier
@@ -163,7 +163,7 @@ class MessagesActivity : AppCompatActivity() {
                     },
                     onLongItemClick = {
                         composerViewModel.performMessageAction(Reply(it))
-                    }
+                    },
                 )
             }
         }
@@ -199,7 +199,7 @@ class MessagesActivity : AppCompatActivity() {
                         Icon(
                             painter = painterResource(id = R.drawable.ic_calendar),
                             contentDescription = null,
-                            tint = ChatTheme.colors.textLowEmphasis
+                            tint = ChatTheme.colors.textLowEmphasis,
                         )
                     },
                     onClick = {
@@ -212,9 +212,9 @@ class MessagesActivity : AppCompatActivity() {
                                     onDateSelected(it)
                                 }
                             }
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 

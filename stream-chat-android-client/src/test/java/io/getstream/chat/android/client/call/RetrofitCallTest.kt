@@ -106,7 +106,7 @@ internal class RetrofitCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` true

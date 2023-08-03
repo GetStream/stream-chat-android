@@ -63,7 +63,7 @@ class AddChannelView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -97,7 +97,7 @@ class AddChannelView : FrameLayout {
                 binding.messageComposerView,
                 binding.emptyStateView,
                 loadingView,
-                isAddGroupChannel = isAddGroupChannel
+                isAddGroupChannel = isAddGroupChannel,
             )
         }
 
@@ -110,9 +110,9 @@ class AddChannelView : FrameLayout {
         binding.messageListView.setEmptyStateView(
             AddChannelEmptyMessageListViewBinding.inflate(
                 LayoutInflater.from(
-                    context
-                )
-            ).root
+                    context,
+                ),
+            ).root,
         )
     }
 

@@ -35,5 +35,5 @@ public enum class MediaRecorderState {
     /**
      * The media recorder is currently recording.
      */
-    RECORDING
+    RECORDING,
 }

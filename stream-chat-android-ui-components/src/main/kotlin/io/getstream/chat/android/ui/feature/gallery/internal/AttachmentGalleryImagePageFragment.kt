@@ -54,7 +54,7 @@ internal class AttachmentGalleryImagePageFragment : Fragment() {
                 onComplete = {
                     binding.placeHolderImageView.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.GONE
-                }
+                },
             )
 
             setOnClickListener {

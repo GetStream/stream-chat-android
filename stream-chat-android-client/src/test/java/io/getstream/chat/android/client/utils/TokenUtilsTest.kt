@@ -43,11 +43,11 @@ internal class TokenUtilsTest(
         fun data(): Collection<Array<Any?>> = listOf(
             arrayOf(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken",
-                "jc"
+                "jc",
             ),
             arrayOf(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidmlzaGFsIn0=.devtoken",
-                "vishal"
+                "vishal",
             ),
             arrayOf(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pbiJ9.devtoken",

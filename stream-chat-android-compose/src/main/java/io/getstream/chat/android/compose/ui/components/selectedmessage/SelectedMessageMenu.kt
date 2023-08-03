@@ -83,14 +83,14 @@ public fun SelectedMessageMenu(
                 reactionTypes = reactionTypes,
                 showMoreReactionsDrawableRes = showMoreReactionsIcon,
                 onMessageAction = onMessageAction,
-                showMoreReactionsIcon = onShowMoreReactionsSelected
+                showMoreReactionsIcon = onShowMoreReactionsSelected,
             )
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedMessageOptions(
             messageOptions = messageOptions,
-            onMessageAction = onMessageAction
+            onMessageAction = onMessageAction,
         )
     },
 ) {
@@ -100,7 +100,7 @@ public fun SelectedMessageMenu(
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        centerContent = centerContent
+        centerContent = centerContent,
     )
 }
 
@@ -131,8 +131,8 @@ internal fun DefaultSelectedMessageReactionOptions(
             onMessageAction(
                 React(
                     reaction = Reaction(messageId = message.id, type = it.type),
-                    message = message
-                )
+                    message = message,
+                ),
             )
         },
         onShowMoreReactionsSelected = showMoreReactionsIcon,
@@ -155,7 +155,7 @@ internal fun DefaultSelectedMessageOptions(
         options = messageOptions,
         onMessageOptionSelected = {
             onMessageAction(it.action)
-        }
+        },
     )
 }
 
@@ -170,7 +170,7 @@ private fun SelectedMessageMenuPreview() {
             selectedMessage = Message(),
             currentUser = User(),
             isInThread = false,
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
 
         SelectedMessageMenu(
@@ -178,7 +178,7 @@ private fun SelectedMessageMenuPreview() {
             messageOptions = messageOptionsStateList,
             onMessageAction = {},
             onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
     }
 }

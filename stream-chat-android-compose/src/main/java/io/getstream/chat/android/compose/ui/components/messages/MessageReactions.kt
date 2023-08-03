@@ -48,7 +48,7 @@ public fun MessageReactions(
                 .size(20.dp)
                 .padding(2.dp)
                 .align(Alignment.CenterVertically),
-            option = option
+            option = option,
         )
     },
 ) {
@@ -56,7 +56,7 @@ public fun MessageReactions(
         modifier = modifier
             .background(shape = RoundedCornerShape(16.dp), color = ChatTheme.colors.barsBackground)
             .padding(4.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         options.forEach { option ->
             itemContent(option)

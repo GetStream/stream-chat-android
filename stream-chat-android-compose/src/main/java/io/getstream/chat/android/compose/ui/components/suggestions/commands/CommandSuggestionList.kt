@@ -67,7 +67,7 @@ public fun CommandSuggestionList(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(40.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
                     modifier = Modifier
@@ -75,21 +75,21 @@ public fun CommandSuggestionList(
                         .size(24.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
                     tint = ChatTheme.colors.primaryAccent,
-                    contentDescription = null
+                    contentDescription = null,
                 )
                 Text(
                     text = stringResource(id = R.string.stream_compose_message_composer_instant_commands),
                     style = ChatTheme.typography.body,
                     maxLines = 1,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
-        }
+        },
     ) {
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(
                 items = commands,
-                key = Command::name
+                key = Command::name,
             ) { command ->
                 itemContent(command)
             }

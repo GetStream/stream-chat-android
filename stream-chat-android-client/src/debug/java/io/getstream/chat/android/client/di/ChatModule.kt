@@ -68,7 +68,7 @@ internal class ChatModule(
             timeout,
             config,
             parser,
-            isAnonymousApi
+            isAnonymousApi,
         ).addNetworkInterceptor(flipperInterceptor())
     }
 }

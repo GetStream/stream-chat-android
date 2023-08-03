@@ -149,7 +149,6 @@ public fun MessagesScreen(
     BackHandler(enabled = true, onBack = backAction)
 
     Box(modifier = Modifier.fillMaxSize()) {
-
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -189,12 +188,12 @@ public fun MessagesScreen(
                             message.copy(
                                 skipPushNotification = skipPushNotification,
                                 skipEnrichUrl = skipEnrichUrl,
-                            )
+                            ),
                         )
                     },
                     statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 )
-            }
+            },
         ) {
             val currentState = listViewModel.currentMessagesState
 
@@ -221,8 +220,8 @@ public fun MessagesScreen(
                                         message.copy(
                                             skipPushNotification = skipPushNotification,
                                             skipEnrichUrl = skipEnrichUrl,
-                                        )
-                                    )
+                                        ),
+                                    ),
                                 )
                             }
                         }
@@ -230,12 +229,12 @@ public fun MessagesScreen(
                         MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
                             listViewModel.scrollToMessage(
                                 messageId = result.messageId,
-                                parentMessageId = result.parentMessageId
+                                parentMessageId = result.parentMessageId,
                             )
                         }
                         null -> Unit
                     }
-                }
+                },
             )
         }
 
@@ -247,7 +246,7 @@ public fun MessagesScreen(
         )
         AttachmentsPickerMenu(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
-            composerViewModel = composerViewModel
+            composerViewModel = composerViewModel,
         )
         MessageModerationDialog(
             listViewModel = listViewModel,
@@ -326,7 +325,6 @@ private fun BoxScope.MessagesScreenMenus(
     skipPushNotification: Boolean,
     skipEnrichUrl: Boolean,
 ) {
-
     val user by listViewModel.user.collectAsState()
 
     val ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
@@ -337,7 +335,7 @@ private fun BoxScope.MessagesScreenMenus(
         selectedMessage = selectedMessage,
         currentUser = user,
         isInThread = isInThread,
-        ownCapabilities = ownCapabilities
+        ownCapabilities = ownCapabilities,
     )
 
     var messageOptions by remember {
@@ -351,7 +349,7 @@ private fun BoxScope.MessagesScreenMenus(
     AnimatedVisibility(
         visible = selectedMessageState is SelectedMessageOptionsState && selectedMessage.id.isNotEmpty(),
         enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
         SelectedMessageMenu(
             modifier = Modifier
@@ -359,12 +357,12 @@ private fun BoxScope.MessagesScreenMenus(
                 .animateEnterExit(
                     enter = slideInVertically(
                         initialOffsetY = { height -> height },
-                        animationSpec = tween()
+                        animationSpec = tween(),
                     ),
                     exit = slideOutVertically(
                         targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
-                    )
+                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
+                    ),
                 ),
             messageOptions = messageOptions,
             message = selectedMessage,
@@ -374,45 +372,7 @@ private fun BoxScope.MessagesScreenMenus(
                     action.message.copy(
                         skipPushNotification = skipPushNotification,
                         skipEnrichUrl = skipEnrichUrl,
-                    )
-                ).let {
-                    composerViewModel.performMessageAction(it)
-                    listViewModel.performMessageAction(it)
-                }
-            },
-            onShowMoreReactionsSelected = {
-                listViewModel.selectExtendedReactions(selectedMessage)
-            },
-            onDismiss = { listViewModel.removeOverlay() }
-        )
-    }
-
-    AnimatedVisibility(
-        visible = selectedMessageState is SelectedMessageReactionsState && selectedMessage.id.isNotEmpty(),
-        enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
-    ) {
-        SelectedReactionsMenu(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .animateEnterExit(
-                    enter = slideInVertically(
-                        initialOffsetY = { height -> height },
-                        animationSpec = tween()
                     ),
-                    exit = slideOutVertically(
-                        targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
-                    )
-                ),
-            currentUser = user,
-            message = selectedMessage,
-            onMessageAction = { action ->
-                action.updateMessage(
-                    action.message.copy(
-                        skipPushNotification = skipPushNotification,
-                        skipEnrichUrl = skipEnrichUrl,
-                    )
                 ).let {
                     composerViewModel.performMessageAction(it)
                     listViewModel.performMessageAction(it)
@@ -422,7 +382,45 @@ private fun BoxScope.MessagesScreenMenus(
                 listViewModel.selectExtendedReactions(selectedMessage)
             },
             onDismiss = { listViewModel.removeOverlay() },
-            ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf()
+        )
+    }
+
+    AnimatedVisibility(
+        visible = selectedMessageState is SelectedMessageReactionsState && selectedMessage.id.isNotEmpty(),
+        enter = fadeIn(),
+        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
+    ) {
+        SelectedReactionsMenu(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .animateEnterExit(
+                    enter = slideInVertically(
+                        initialOffsetY = { height -> height },
+                        animationSpec = tween(),
+                    ),
+                    exit = slideOutVertically(
+                        targetOffsetY = { height -> height },
+                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
+                    ),
+                ),
+            currentUser = user,
+            message = selectedMessage,
+            onMessageAction = { action ->
+                action.updateMessage(
+                    action.message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    ),
+                ).let {
+                    composerViewModel.performMessageAction(it)
+                    listViewModel.performMessageAction(it)
+                }
+            },
+            onShowMoreReactionsSelected = {
+                listViewModel.selectExtendedReactions(selectedMessage)
+            },
+            onDismiss = { listViewModel.removeOverlay() },
+            ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf(),
         )
     }
 }
@@ -452,11 +450,10 @@ private fun BoxScope.MessagesScreenReactionsPicker(
     skipPushNotification: Boolean,
     skipEnrichUrl: Boolean,
 ) {
-
     AnimatedVisibility(
         visible = selectedMessageState is SelectedMessageReactionsPickerState && selectedMessage.id.isNotEmpty(),
         enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+        exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
         ReactionsPicker(
             modifier = Modifier
@@ -466,12 +463,12 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                 .animateEnterExit(
                     enter = slideInVertically(
                         initialOffsetY = { height -> height },
-                        animationSpec = tween()
+                        animationSpec = tween(),
                     ),
                     exit = slideOutVertically(
                         targetOffsetY = { height -> height },
-                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
-                    )
+                        animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
+                    ),
                 ),
             message = selectedMessage,
             onMessageAction = { action ->
@@ -479,13 +476,13 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                     action.message.copy(
                         skipPushNotification = skipPushNotification,
                         skipEnrichUrl = skipEnrichUrl,
-                    )
+                    ),
                 ).let {
                     composerViewModel.performMessageAction(action)
                     listViewModel.performMessageAction(action)
                 }
             },
-            onDismiss = { listViewModel.removeOverlay() }
+            onDismiss = { listViewModel.removeOverlay() },
         )
     }
 }
@@ -505,13 +502,12 @@ private fun BoxScope.AttachmentsPickerMenu(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
-
     val isShowingAttachments = attachmentsPickerViewModel.isShowingAttachments
 
     AnimatedVisibility(
         visible = isShowingAttachments,
         enter = fadeIn(),
-        exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2))
+        exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
         AttachmentsPicker(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
@@ -521,12 +517,12 @@ private fun BoxScope.AttachmentsPickerMenu(
                 .animateEnterExit(
                     enter = slideInVertically(
                         initialOffsetY = { height -> height },
-                        animationSpec = tween()
+                        animationSpec = tween(),
                     ),
                     exit = slideOutVertically(
                         targetOffsetY = { height -> height },
-                        animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)
-                    )
+                        animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2),
+                    ),
                 ),
             onAttachmentsSelected = { attachments ->
                 attachmentsPickerViewModel.changeAttachmentState(false)
@@ -535,7 +531,7 @@ private fun BoxScope.AttachmentsPickerMenu(
             onDismiss = {
                 attachmentsPickerViewModel.changeAttachmentState(false)
                 attachmentsPickerViewModel.dismissAttachments()
-            }
+            },
         )
     }
 }
@@ -564,7 +560,7 @@ private fun MessageModerationDialog(
             message = selectedMessage,
             modifier = Modifier.background(
                 shape = MaterialTheme.shapes.medium,
-                color = ChatTheme.colors.inputBackground
+                color = ChatTheme.colors.inputBackground,
             ),
             onDismissRequest = { listViewModel.removeOverlay() },
             onDialogOptionInteraction = { message, action ->
@@ -576,14 +572,14 @@ private fun MessageModerationDialog(
                             message.copy(
                                 skipPushNotification = skipPushNotification,
                                 skipEnrichUrl = skipEnrichUrl,
-                            )
-                        )
+                            ),
+                        ),
                     )
                     else -> {
                         // Custom events
                     }
                 }
-            }
+            },
         )
     }
 }
@@ -597,7 +593,6 @@ private fun MessageModerationDialog(
  */
 @Composable
 private fun MessageDialogs(listViewModel: MessageListViewModel) {
-
     val messageActions = listViewModel.messageActions
 
     val deleteAction = messageActions.firstOrNull { it is Delete }
@@ -608,7 +603,7 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             title = stringResource(id = R.string.stream_compose_delete_message_title),
             message = stringResource(id = R.string.stream_compose_delete_message_text),
             onPositiveAction = { listViewModel.deleteMessage(deleteAction.message) },
-            onDismiss = { listViewModel.dismissMessageAction(deleteAction) }
+            onDismiss = { listViewModel.dismissMessageAction(deleteAction) },
         )
     }
 
@@ -620,7 +615,7 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             title = stringResource(id = R.string.stream_compose_flag_message_title),
             message = stringResource(id = R.string.stream_compose_flag_message_text),
             onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
-            onDismiss = { listViewModel.dismissMessageAction(flagAction) }
+            onDismiss = { listViewModel.dismissMessageAction(flagAction) },
         )
     }
 }

@@ -62,7 +62,7 @@ public fun ExtendedReactionsOptions(
     itemContent: @Composable LazyGridScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultExtendedReactionsItemContent(
             option = option,
-            onReactionOptionSelected = onReactionOptionSelected
+            onReactionOptionSelected = onReactionOptionSelected,
         )
     },
 ) {
@@ -70,7 +70,7 @@ public fun ExtendedReactionsOptions(
         val isSelected = ownReactions.any { ownReaction -> ownReaction.type == type }
         ReactionOptionItemState(
             painter = reactionIcon.getPainter(isSelected),
-            type = type
+            type = type,
         )
     }
 
@@ -100,9 +100,9 @@ internal fun DefaultExtendedReactionsItemContent(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false),
-                onClick = { onReactionOptionSelected(option) }
+                onClick = { onReactionOptionSelected(option) },
             ),
-        option = option
+        option = option,
     )
 }
 
@@ -116,7 +116,7 @@ internal fun ExtendedReactionOptionsPreview() {
     ChatTheme {
         ExtendedReactionsOptions(
             ownReactions = listOf(),
-            onReactionOptionSelected = {}
+            onReactionOptionSelected = {},
         )
     }
 }
@@ -133,10 +133,10 @@ internal fun ExtendedReactionOptionsWithOwnReactionPreview() {
             ownReactions = listOf(
                 Reaction(
                     messageId = "messageId",
-                    type = "haha"
-                )
+                    type = "haha",
+                ),
             ),
-            onReactionOptionSelected = {}
+            onReactionOptionSelected = {},
         )
     }
 }

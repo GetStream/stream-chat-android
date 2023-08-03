@@ -207,7 +207,6 @@ private fun <T> ChatClient.getStateOrNull(
 @CheckResult
 public fun ChatClient.setMessageForReply(cid: String, message: Message?): Call<Unit> {
     return CoroutineCall(inheritScope { Job(it) }) {
-
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
                 val (channelType, channelId) = cid.cidToTypeAndId()
@@ -245,7 +244,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
                 DownloadManager.Request(Uri.parse(url))
                     .setTitle(subPath)
                     .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, subPath)
-                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED),
             )
             Result.Success(Unit)
         } catch (exception: Exception) {
@@ -394,7 +393,7 @@ private suspend fun ChatClient.loadMessageByIdInternal(
             }
         }
         is Result.Failure -> Result.Failure(
-            Error.GenericError("Error while fetching messages from backend. Messages around id: $messageId")
+            Error.GenericError("Error while fetching messages from backend. Messages around id: $messageId"),
         )
     }
 }

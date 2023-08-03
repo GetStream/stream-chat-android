@@ -82,7 +82,7 @@ public fun InputField(
 
     val textFieldValue = textFieldValueState.copy(
         text = value,
-        selection = selection
+        selection = selection,
     )
 
     val description = stringResource(id = R.string.stream_compose_cd_message_input)
@@ -103,14 +103,14 @@ public fun InputField(
         },
         textStyle = ChatTheme.typography.body.copy(
             color = ChatTheme.colors.textHighEmphasis,
-            textDirection = TextDirection.Content
+            textDirection = TextDirection.Content,
         ),
         cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
         maxLines = maxLines,
         singleLine = maxLines == 1,
         enabled = enabled,
-        keyboardOptions = keyboardOptions
+        keyboardOptions = keyboardOptions,
     )
 }
 

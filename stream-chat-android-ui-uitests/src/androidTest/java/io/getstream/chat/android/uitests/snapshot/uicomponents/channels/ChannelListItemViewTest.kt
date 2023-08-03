@@ -54,11 +54,11 @@ class ChannelListItemViewTest : ScreenshotTest {
                 )
                 messages = listOf(
                     TestData.message1(),
-                    TestData.message2()
+                    TestData.message2(),
                 )
                 unreadCount = 2
                 lastMessageAt = TestData.date2()
-            }
+            },
         )
     }
 
@@ -72,11 +72,11 @@ class ChannelListItemViewTest : ScreenshotTest {
                 )
                 messages = listOf(
                     TestData.message1(),
-                    TestData.message2()
+                    TestData.message2(),
                 )
                 lastMessageAt = TestData.date2()
                 extraData["mutedChannel"] = true
-            }
+            },
         )
     }
 
@@ -88,7 +88,7 @@ class ChannelListItemViewTest : ScreenshotTest {
                     TestData.member1(),
                     TestData.member2(),
                 )
-            }
+            },
         )
     }
 
@@ -110,7 +110,7 @@ class ChannelListItemViewTest : ScreenshotTest {
             readStateChanged = true,
             unreadCountChanged = true,
             extraDataChanged = true,
-            typingUsersChanged = true
+            typingUsersChanged = true,
         )
     }
 }

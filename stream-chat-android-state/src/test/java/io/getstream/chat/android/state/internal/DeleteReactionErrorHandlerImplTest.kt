@@ -41,7 +41,7 @@ internal class DeleteReactionErrorHandlerImplTest {
             .onDeleteReactionError(
                 TestCall(Result.Success(randomMessage())),
                 null,
-                randomString()
+                randomString(),
             )
     }
 }

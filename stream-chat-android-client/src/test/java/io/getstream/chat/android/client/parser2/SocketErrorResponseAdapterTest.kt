@@ -29,7 +29,7 @@ internal class SocketErrorResponseAdapterTest {
     fun `Deserialize JSON socket error response`() {
         val error = parser.fromJson(
             SocketErrorResponseTestData.json,
-            SocketErrorResponse::class.java
+            SocketErrorResponse::class.java,
         )
         error `should be equal to` SocketErrorResponseTestData.socketErrorResponse
     }

@@ -110,7 +110,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
             val frameLayout = layoutInflater.inflate(
                 R.layout.stream_ui_dialog_attachment_tab,
                 binding.attachmentButtonsContainer,
-                false
+                false,
             ) as FrameLayout
 
             val checkedTextView = frameLayout.findViewById<CheckedTextView>(R.id.checkedTextView)
@@ -149,7 +149,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
             fragment = this,
             style = style,
             attachmentsPickerTabFactories = attachmentsPickerTabFactories,
-            attachmentsPickerTabListener = attachmentsPickerTabListener
+            attachmentsPickerTabListener = attachmentsPickerTabListener,
         )
         binding.attachmentPager.isUserInputEnabled = false
     }
@@ -224,7 +224,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
                 .defaultFactories(
                     mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
                     fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
-                    cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled
+                    cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,
                 ),
         ): AttachmentsPickerDialogFragment {
             return AttachmentsPickerDialogFragment().apply {

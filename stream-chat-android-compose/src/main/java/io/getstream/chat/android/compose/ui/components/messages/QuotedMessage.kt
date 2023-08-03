@@ -63,20 +63,20 @@ public fun QuotedMessage(
     leadingContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageLeadingContent(
             message = it,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {
         DefaultQuotedMessageCenterContent(
             message = it,
             replyMessage = replyMessage,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
     trailingContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageTrailingContent(
             message = it,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
 ) {
@@ -85,9 +85,9 @@ public fun QuotedMessage(
             interactionSource = MutableInteractionSource(),
             indication = null,
             onLongClick = { onLongItemClick(message) },
-            onClick = { onQuotedMessageClick(message) }
+            onClick = { onQuotedMessageClick(message) },
         ),
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         leadingContent(message)
 
@@ -166,6 +166,6 @@ public fun RowScope.DefaultQuotedMessageCenterContent(
         message = message,
         replyMessage = replyMessage,
         modifier = Modifier.weight(1f, fill = false),
-        currentUser = currentUser
+        currentUser = currentUser,
     )
 }

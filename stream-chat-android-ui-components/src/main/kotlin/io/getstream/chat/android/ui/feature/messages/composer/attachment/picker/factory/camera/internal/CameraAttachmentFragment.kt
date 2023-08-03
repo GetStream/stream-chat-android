@@ -123,7 +123,7 @@ internal class CameraAttachmentFragment : Fragment() {
             permissionChecker.checkCameraPermissions(
                 binding.root,
                 onPermissionDenied = ::onPermissionDenied,
-                onPermissionGranted = ::onPermissionGranted
+                onPermissionGranted = ::onPermissionGranted,
             )
             return
         }

@@ -33,7 +33,7 @@ internal class MessageComposerSuggestionsPopup(
 ) : PopupWindow(
     suggestionView,
     ViewGroup.LayoutParams.MATCH_PARENT,
-    ViewGroup.LayoutParams.WRAP_CONTENT
+    ViewGroup.LayoutParams.WRAP_CONTENT,
 ) {
     init {
         isOutsideTouchable = true
@@ -49,7 +49,7 @@ internal class MessageComposerSuggestionsPopup(
         val displayWidth = Resources.getSystem().displayMetrics.widthPixels
         suggestionView.measure(
             View.MeasureSpec.makeMeasureSpec(displayWidth, View.MeasureSpec.EXACTLY),
-            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
         )
 
         val popupWindowOffset = suggestionView.measuredHeight + anchorView.height

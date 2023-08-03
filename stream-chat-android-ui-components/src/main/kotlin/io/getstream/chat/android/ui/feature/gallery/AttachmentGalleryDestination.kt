@@ -56,7 +56,7 @@ public class AttachmentGalleryDestination(
     public fun register(activityResultRegistry: ActivityResultRegistry) {
         launcher = activityResultRegistry.register(
             "attachment_gallery_launcher#${hashCode()}",
-            AttachmentGalleryResultContract()
+            AttachmentGalleryResultContract(),
         ) { result ->
             when (result) {
                 is AttachmentGalleryActivity.AttachmentOptionResult.Reply -> {

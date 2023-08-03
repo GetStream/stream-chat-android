@@ -61,8 +61,8 @@ internal class ChannelsApiCallsTests {
             mock.api.queryChannel(
                 mock.channelType,
                 mock.channelId,
-                request
-            )
+                request,
+            ),
         ).thenReturn(RetroSuccess(response).toRetrofitCall())
 
         val result = client.queryChannel(mock.channelType, mock.channelId, request).await()
@@ -78,8 +78,8 @@ internal class ChannelsApiCallsTests {
             mock.api.queryChannel(
                 mock.channelType,
                 mock.channelId,
-                request
-            )
+                request,
+            ),
         ).thenReturn(RetroError<Channel>(mock.serverErrorCode).toRetrofitCall())
 
         val result =
@@ -94,7 +94,7 @@ internal class ChannelsApiCallsTests {
             mock.api.showChannel(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.showChannel(mock.channelType, mock.channelId).await()
@@ -108,7 +108,7 @@ internal class ChannelsApiCallsTests {
             mock.api.showChannel(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.showChannel(mock.channelType, mock.channelId).await()
@@ -124,7 +124,7 @@ internal class ChannelsApiCallsTests {
             mock.api.deleteChannel(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroSuccess(response).toRetrofitCall())
 
         val result = client.deleteChannel(mock.channelType, mock.channelId).await()
@@ -134,12 +134,11 @@ internal class ChannelsApiCallsTests {
 
     @Test
     fun deleteChannelError() = runTest {
-
         Mockito.`when`(
             mock.api.deleteChannel(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroError<Channel>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.deleteChannel(mock.channelType, mock.channelId).await()
@@ -154,7 +153,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 false,
-            )
+            ),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.hideChannel(mock.channelType, mock.channelId).await()
@@ -169,7 +168,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 false,
-            )
+            ),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.hideChannel(mock.channelType, mock.channelId).await()
@@ -188,8 +187,8 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 updateChannelData,
-                updateMessage
-            )
+                updateMessage,
+            ),
         ).thenReturn(RetroSuccess(responseChannel).toRetrofitCall())
 
         val result =
@@ -209,8 +208,8 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 updateChannelData,
-                updateMessage
-            )
+                updateMessage,
+            ),
         ).thenReturn(RetroError<Channel>(mock.serverErrorCode).toRetrofitCall())
 
         val result =
@@ -230,7 +229,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 acceptInviteMessage,
-            )
+            ),
         ).thenReturn(RetroSuccess(responseChannel).toRetrofitCall())
 
         val result =
@@ -248,7 +247,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 acceptInviteMessage,
-            )
+            ),
         ).thenReturn(RetroError<Channel>(mock.serverErrorCode).toRetrofitCall())
 
         val result =
@@ -265,7 +264,7 @@ internal class ChannelsApiCallsTests {
             mock.api.rejectInvite(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroSuccess(responseChannel).toRetrofitCall())
 
         val result =
@@ -280,7 +279,7 @@ internal class ChannelsApiCallsTests {
             mock.api.rejectInvite(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroError<Channel>(mock.serverErrorCode).toRetrofitCall())
 
         val result =
@@ -292,7 +291,7 @@ internal class ChannelsApiCallsTests {
     @Test
     fun markAllReadSuccess() = runTest {
         Mockito.`when`(
-            mock.api.markAllRead()
+            mock.api.markAllRead(),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.markAllRead().await()
@@ -303,7 +302,7 @@ internal class ChannelsApiCallsTests {
     @Test
     fun markAllReadError() = runTest {
         Mockito.`when`(
-            mock.api.markAllRead()
+            mock.api.markAllRead(),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.markAllRead().await()
@@ -320,7 +319,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 messageId,
-            )
+            ),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result =
@@ -338,7 +337,7 @@ internal class ChannelsApiCallsTests {
                 mock.channelType,
                 mock.channelId,
                 messageId,
-            )
+            ),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result =
@@ -356,11 +355,11 @@ internal class ChannelsApiCallsTests {
         val request = QueryChannelsRequest(
             Filters.eq("type", "messaging"),
             offset,
-            limit
+            limit,
         )
 
         Mockito.`when`(
-            mock.api.queryChannels(request)
+            mock.api.queryChannels(request),
         ).thenReturn(RetroSuccess(listOf(channel)).toRetrofitCall())
 
         val result = client.queryChannels(request).await()
@@ -376,11 +375,11 @@ internal class ChannelsApiCallsTests {
         val request = QueryChannelsRequest(
             Filters.eq("type", "messaging"),
             offset,
-            limit
+            limit,
         )
 
         Mockito.`when`(
-            mock.api.queryChannels(request)
+            mock.api.queryChannels(request),
         ).thenReturn(RetroError<List<Channel>>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.queryChannels(request).await()
@@ -394,7 +393,7 @@ internal class ChannelsApiCallsTests {
             mock.api.stopWatching(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.stopWatching(mock.channelType, mock.channelId).await()
@@ -408,7 +407,7 @@ internal class ChannelsApiCallsTests {
             mock.api.stopWatching(
                 mock.channelType,
                 mock.channelId,
-            )
+            ),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.stopWatching(mock.channelType, mock.channelId).await()
@@ -419,7 +418,7 @@ internal class ChannelsApiCallsTests {
     @Test
     fun `Given mute channel api call succeeds When muting a channel Should return a result with success`() = runTest {
         whenever(
-            mock.api.muteChannel(mock.channelType, mock.channelId, null)
+            mock.api.muteChannel(mock.channelType, mock.channelId, null),
         ) doReturn RetroSuccess(Unit).toRetrofitCall()
 
         val result = client.muteChannel(mock.channelType, mock.channelId).await()
@@ -430,7 +429,7 @@ internal class ChannelsApiCallsTests {
     @Test
     fun `Given unmute channel api call succeeds When unmuting a channel Should return a result with success`() = runTest {
         whenever(
-            mock.api.unmuteChannel(mock.channelType, mock.channelId)
+            mock.api.unmuteChannel(mock.channelType, mock.channelId),
         ) doReturn RetroSuccess(Unit).toRetrofitCall()
 
         val result = client.unmuteChannel(mock.channelType, mock.channelId).await()

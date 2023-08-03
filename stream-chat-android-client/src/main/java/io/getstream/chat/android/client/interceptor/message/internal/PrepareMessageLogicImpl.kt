@@ -33,7 +33,7 @@ import java.util.UUID
 
 internal class PrepareMessageLogicImpl(
     private val clientState: ClientState,
-    private val channelStateLogicProvider: ChannelStateLogicProvider?
+    private val channelStateLogicProvider: ChannelStateLogicProvider?,
 ) : PrepareMessageLogic {
 
     /**
@@ -71,7 +71,7 @@ internal class PrepareMessageLogicImpl(
                 attachments.any { it.uploadState is Attachment.UploadState.Idle } -> SyncStatus.AWAITING_ATTACHMENTS
                 clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
                 else -> SyncStatus.SYNC_NEEDED
-            }
+            },
         )
             .let { copiedMessage ->
                 copiedMessage.takeIf { it.cid.isBlank() }

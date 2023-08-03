@@ -112,7 +112,7 @@ class GroupChatInfoFragment : Fragment() {
                             args.cid,
                             it.channelName,
                             it.member.user,
-                            viewModel.state.value!!.ownCapabilities
+                            viewModel.state.value!!.ownCapabilities,
                         )
                             .show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
                     GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(
@@ -120,7 +120,7 @@ class GroupChatInfoFragment : Fragment() {
                         false,
                     )
                 }
-            }
+            },
         )
         viewModel.state.observe(viewLifecycleOwner) { state ->
             val members = if (state.shouldExpandMembers != false) {
@@ -139,7 +139,7 @@ class GroupChatInfoFragment : Fragment() {
                         ChatInfoItem.Option.SharedMedia,
                         ChatInfoItem.Option.SharedFiles,
                         ChatInfoItem.Option.LeaveGroup,
-                    )
+                    ),
             )
         }
         viewModel.errorEvents.observe(
@@ -150,7 +150,7 @@ class GroupChatInfoFragment : Fragment() {
                     is GroupChatInfoViewModel.ErrorEvent.MuteChannelError -> R.string.chat_group_info_error_mute_channel
                     is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel
                 }.let(::showToast)
-            }
+            },
         )
     }
 
@@ -159,22 +159,22 @@ class GroupChatInfoFragment : Fragment() {
             viewModel.onAction(
                 when (option) {
                     is ChatInfoItem.Option.Stateful.MuteChannel -> GroupChatInfoViewModel.Action.MuteChannelClicked(
-                        isChecked
+                        isChecked,
                     )
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
-                }
+                },
             )
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
                 ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid)
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
                 )
                 ChatInfoItem.Option.LeaveGroup -> {
                     val channelName = viewModel.state.value!!.channelName

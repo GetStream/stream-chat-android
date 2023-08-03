@@ -26,7 +26,7 @@ public data class QueryUsersRequest @JvmOverloads constructor(
     val offset: Int,
     val limit: Int,
     var querySort: QuerySorter<User> = QuerySortByField(),
-    var presence: Boolean = false
+    var presence: Boolean = false,
 ) {
     val sort: List<Map<String, Any>> = querySort.toDto()
 }

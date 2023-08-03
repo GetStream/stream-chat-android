@@ -55,7 +55,7 @@ public class ViewReactionsView : RecyclerView {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
@@ -69,7 +69,7 @@ public class ViewReactionsView : RecyclerView {
                 reactionsViewStyle.horizontalPadding,
                 reactionsViewStyle.verticalPadding,
                 reactionsViewStyle.horizontalPadding,
-                reactionsViewStyle.verticalPadding
+                reactionsViewStyle.verticalPadding,
             )
 
             commitCallback()
@@ -101,7 +101,7 @@ public class ViewReactionsView : RecyclerView {
             reactionsViewStyle.horizontalPadding,
             reactionsViewStyle.verticalPadding,
             reactionsViewStyle.horizontalPadding,
-            reactionsViewStyle.verticalPadding
+            reactionsViewStyle.verticalPadding,
         )
 
         adapter = ReactionsAdapter(reactionsViewStyle.itemSize) {
@@ -116,7 +116,7 @@ public class ViewReactionsView : RecyclerView {
                     ReactionItem(
                         type = type,
                         isMine = message.ownReactions.any { it.type == type },
-                        reactionDrawable = it
+                        reactionDrawable = it,
                     )
                 }
             }.sortedBy { if (isMyMessage) it.isMine else !it.isMine }

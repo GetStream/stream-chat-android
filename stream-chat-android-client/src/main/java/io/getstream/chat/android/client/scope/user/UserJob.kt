@@ -43,7 +43,8 @@ internal interface UserJob : CompletableJob {
  * Creates a user aware job object in an active state.
  */
 internal fun UserJob(parent: Job? = null, getUserId: () -> UserId?): UserJob = UserJobImpl(
-    SupervisorJob(parent), getUserId
+    SupervisorJob(parent),
+    getUserId,
 )
 
 /**
@@ -51,7 +52,7 @@ internal fun UserJob(parent: Job? = null, getUserId: () -> UserId?): UserJob = U
  */
 private class UserJobImpl(
     private val delegate: CompletableJob,
-    private val getUserId: () -> UserId?
+    private val getUserId: () -> UserId?,
 ) : CompletableJob by delegate, UserJob {
 
     private val logger by taggedLogger("Chat:UserJob")
@@ -121,7 +122,7 @@ private class UserJobImpl(
  */
 private class UserChildJob(
     val userId: UserId?,
-    private val delegate: ChildJob
+    private val delegate: ChildJob,
 ) : ChildJob by delegate {
     override fun toString(): String = "UserChildJob(userId='$userId')"
 }

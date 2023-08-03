@@ -76,7 +76,7 @@ public class MessageListHeaderViewModel(
             combine(
                 state.channelData,
                 state.members,
-                state.watcherCount
+                state.watcherCount,
             ) { _, _, _ ->
                 state.toChannel()
             }

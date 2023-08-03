@@ -52,28 +52,28 @@ class ComponentBrowserEditReactionsFragment : Fragment() {
         binding.apply {
             editReactionsView1.setMessage(
                 message = randomMessage().copy(ownReactions = mutableListOf()),
-                isMyMessage = true
+                isMyMessage = true,
             )
             editReactionsView2.setMessage(
                 message = randomMessage().copy(ownReactions = mutableListOf()),
-                isMyMessage = false
+                isMyMessage = false,
             )
             editReactionsView3.setMessage(
                 message = randomMessage().copy(
                     ownReactions = mutableListOf(
-                        Reaction(type = LOVE)
-                    )
+                        Reaction(type = LOVE),
+                    ),
                 ),
-                isMyMessage = true
+                isMyMessage = true,
             )
             editReactionsView4.setMessage(
                 message = randomMessage().copy(
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
-                        Reaction(type = WUT)
-                    )
+                        Reaction(type = WUT),
+                    ),
                 ),
-                isMyMessage = false
+                isMyMessage = false,
             )
         }
     }

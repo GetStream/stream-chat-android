@@ -119,7 +119,7 @@ public class ChannelListView : FrameLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs, defStyleAttr)
     }
@@ -173,7 +173,7 @@ public class ChannelListView : FrameLayout {
     override fun onSaveInstanceState(): Parcelable {
         return bundleOf(
             KEY_SUPER_STATE to super.onSaveInstanceState(),
-            KEY_SCROLL_STATE to layoutManager?.onSaveInstanceState()
+            KEY_SCROLL_STATE to layoutManager?.onSaveInstanceState(),
         )
     }
 
@@ -421,7 +421,7 @@ public class ChannelListView : FrameLayout {
             LayoutParams(
                 LayoutParams.WRAP_CONTENT,
                 LayoutParams.WRAP_CONTENT,
-                Gravity.CENTER
+                Gravity.CENTER,
             )
         }
 

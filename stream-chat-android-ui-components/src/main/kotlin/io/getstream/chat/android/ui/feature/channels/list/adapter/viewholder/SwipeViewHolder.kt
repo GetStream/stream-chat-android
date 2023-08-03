@@ -76,7 +76,6 @@ public abstract class SwipeViewHolder(itemView: View) : BaseChannelListItemViewH
             val rawY = event.rawY
 
             when (event.action) {
-
                 MotionEvent.ACTION_DOWN -> {
                     // store the starting x & y so we can calculate total deltas
                     startX = rawX

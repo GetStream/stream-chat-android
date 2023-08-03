@@ -212,7 +212,7 @@ public class MessageListController(
         .onEach { channel ->
             chatClient.dismissChannelNotifications(
                 channelType = channel.type,
-                channelId = channel.id
+                channelId = channel.id,
             )
         }
         .distinctUntilChanged()
@@ -381,7 +381,7 @@ public class MessageListController(
                             _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
                                 focusThreadMessage(
                                     threadMessageId = messageId,
-                                    parentMessageId = parentMessageId
+                                    parentMessageId = parentMessageId,
                                 )
                             }
                         }
@@ -407,7 +407,7 @@ public class MessageListController(
                 _messagePositionHandler,
                 typingUsers,
                 focusedMessage,
-                channelState.endOfNewerMessages
+                channelState.endOfNewerMessages,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -431,7 +431,7 @@ public class MessageListController(
                             messages = filterMessagesToShow(
                                 messages = state.messages,
                                 showSystemMessages = showSystemMessages,
-                                deletedMessageVisibility = deletedMessageVisibility
+                                deletedMessageVisibility = deletedMessageVisibility,
                             ),
                             isInThread = false,
                             reads = reads,
@@ -442,7 +442,7 @@ public class MessageListController(
                             typingUsers = typingUsers,
                             focusedMessage = focusedMessage,
                         ),
-                        endOfNewMessagesReached = endOfNewerMessages
+                        endOfNewMessagesReached = endOfNewerMessages,
                     )
                 }
             }.distinctUntilChanged()
@@ -453,7 +453,9 @@ public class MessageListController(
             if (_messageListState.value.messageItems.isEmpty() &&
                 !newState.endOfNewMessagesReached &&
                 messageId == null
-            ) return@onEach
+            ) {
+                return@onEach
+            }
 
             val newLastMessage =
                 newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageItemState }?.let {
@@ -518,7 +520,7 @@ public class MessageListController(
                 _messageFooterVisibilityState,
                 _messagePositionHandler,
                 typingUsers,
-                focusedMessage
+                focusedMessage,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -536,7 +538,7 @@ public class MessageListController(
                         messages = filterMessagesToShow(
                             messages = messages,
                             showSystemMessages = showSystemMessages,
-                            deletedMessageVisibility = deletedMessageVisibility
+                            deletedMessageVisibility = deletedMessageVisibility,
                         ),
                         isInThread = true,
                         reads = reads,
@@ -545,10 +547,10 @@ public class MessageListController(
                         messageFooterVisibility = messageFooterVisibility,
                         messagePositionHandler = messagePositionHandler,
                         typingUsers = typingUsers,
-                        focusedMessage = focusedMessage
+                        focusedMessage = focusedMessage,
                     ),
                     parentMessageId = threadId,
-                    endOfNewMessagesReached = true
+                    endOfNewMessagesReached = true,
                 )
             }.onFirst {
                 // Set the last message in the list of message items as the last loaded thread message
@@ -634,7 +636,7 @@ public class MessageListController(
                 previousMessage = previousMessage,
                 message = message,
                 nextMessage = nextMessage,
-                isAfterDateSeparator = shouldAddDateSeparator
+                isAfterDateSeparator = shouldAddDateSeparator,
             )
 
             val isLastMessageInGroup =
@@ -643,7 +645,7 @@ public class MessageListController(
             val shouldShowFooter = messageFooterVisibility.shouldShowMessageFooter(
                 message = message,
                 isLastMessageInGroup = isLastMessageInGroup,
-                nextMessage = nextMessage
+                nextMessage = nextMessage,
             )
 
             if (shouldAddDateSeparator) {
@@ -676,8 +678,8 @@ public class MessageListController(
                         deletedMessageVisibility = deletedMessageVisibility,
                         showMessageFooter = shouldShowFooter,
                         messageReadBy = messageReadBy,
-                        focusState = if (isMessageFocused) MessageFocused else null
-                    )
+                        focusState = if (isMessageFocused) MessageFocused else null,
+                    ),
                 )
             }
 
@@ -693,8 +695,8 @@ public class MessageListController(
                 groupedMessages.add(
                     ThreadDateSeparatorItemState(
                         date = message.createdAt ?: message.createdLocallyAt ?: Date(),
-                        replyCount = message.replyCount
-                    )
+                        replyCount = message.replyCount,
+                    ),
                 )
             }
         }
@@ -805,7 +807,9 @@ public class MessageListController(
         if (isInThread ||
             clientState.isOffline ||
             channelState.value?.endOfNewerMessages?.value == true
-        ) return
+        ) {
+            return
+        }
 
         chatClient.loadNewerMessages(cid, baseMessageId, messageLimit).enqueue()
     }
@@ -869,7 +873,7 @@ public class MessageListController(
             threadId = state.parentId,
             messages = state.messages,
             endOfOlderMessages = state.endOfOlderMessages,
-            reads = channelState.reads
+            reads = channelState.reads,
         )
     }
 
@@ -895,7 +899,7 @@ public class MessageListController(
             threadId = threadState.parentId,
             messages = threadState.messages,
             endOfOlderMessages = threadState.endOfOlderMessages,
-            reads = channelState.reads
+            reads = channelState.reads,
         )
     }
 
@@ -979,7 +983,7 @@ public class MessageListController(
         } else {
             focusThreadMessage(
                 threadMessageId = messageId,
-                parentMessageId = parentMessageId
+                parentMessageId = parentMessageId,
             )
         }
     }
@@ -1021,7 +1025,6 @@ public class MessageListController(
         parentMessageId: String,
     ) {
         scope.launch {
-
             val mode = _mode.value
             if (mode !is MessageMode.MessageThread || mode.parentMessage.id != parentMessageId) {
                 enterThreadSequential(parentMessageId)
@@ -1080,15 +1083,15 @@ public class MessageListController(
                 if (it.isModerationFailed(chatClient.getCurrentUser())) {
                     SelectedMessageFailedModerationState(
                         message = it,
-                        ownCapabilities = ownCapabilities.value
+                        ownCapabilities = ownCapabilities.value,
                     )
                 } else {
                     SelectedMessageOptionsState(
                         message = it,
-                        ownCapabilities = ownCapabilities.value
+                        ownCapabilities = ownCapabilities.value,
                     )
                 }
-            }
+            },
         )
     }
 
@@ -1102,8 +1105,8 @@ public class MessageListController(
             changeSelectMessageState(
                 SelectedMessageReactionsState(
                     message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
+                    ownCapabilities = ownCapabilities.value,
+                ),
             )
         }
     }
@@ -1118,8 +1121,8 @@ public class MessageListController(
             changeSelectMessageState(
                 SelectedMessageReactionsPickerState(
                     message = message,
-                    ownCapabilities = ownCapabilities.value
-                )
+                    ownCapabilities = ownCapabilities.value,
+                ),
             )
         }
     }
@@ -1220,7 +1223,7 @@ public class MessageListController(
                             "should be deleted in the database and it will be deleted in the backend when " +
                             "the SDK sync its information."
                     }
-                }
+                },
             )
     }
 
@@ -1252,7 +1255,7 @@ public class MessageListController(
                             "Could not mark cid: $channelId as read. Error message: ${error.message}. " +
                                 "Cause: ${error.extractCause()}"
                         }
-                    }
+                    },
                 )
             }
         }
@@ -1384,27 +1387,27 @@ public class MessageListController(
             chatClient.deleteReaction(
                 messageId = message.id,
                 reactionType = reaction.type,
-                cid = cid
+                cid = cid,
             ).enqueue(
                 onError = { error ->
                     logger.e {
                         "Could not delete reaction for message with id: ${reaction.messageId} " +
                             "Error: ${error.message}. Cause: ${error.extractCause()}"
                     }
-                }
+                },
             )
         } else {
             chatClient.sendReaction(
                 enforceUnique = enforceUniqueReactions,
                 reaction = reaction,
-                cid = cid
+                cid = cid,
             ).enqueue(
                 onError = { streamError ->
                     logger.e {
                         "Could not send reaction for message with id: ${reaction.messageId} " +
                             "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
                     }
-                }
+                },
             )
         }
     }
@@ -1563,7 +1566,7 @@ public class MessageListController(
     public fun removeAttachment(messageId: String, attachmentToBeDeleted: Attachment) {
         chatClient.loadMessageById(
             cid,
-            messageId
+            messageId,
         ).enqueue { result ->
             when (result) {
                 is Result.Success -> {
@@ -1582,7 +1585,7 @@ public class MessageListController(
                                 }
                                 else -> false
                             }
-                        }
+                        },
                     )
 
                     if (message.text.isBlank() && message.attachments.isEmpty()) {
@@ -1592,7 +1595,7 @@ public class MessageListController(
                                     "Could not remove the attachment and delete the remaining blank message" +
                                         ": ${streamError.message}. Cause: ${streamError.extractCause()}"
                                 }
-                            }
+                            },
                         )
                     } else {
                         chatClient.updateMessage(message).enqueue(
@@ -1601,7 +1604,7 @@ public class MessageListController(
                                     "Could not edit message to remove its attachments: ${streamError.message}. " +
                                         "Cause: ${streamError.extractCause()}"
                                 }
-                            }
+                            },
                         )
                     }
                 }

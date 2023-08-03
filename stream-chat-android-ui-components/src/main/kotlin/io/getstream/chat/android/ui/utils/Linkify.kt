@@ -86,12 +86,20 @@ public object Linkify {
     private fun addLinks(text: Spannable): Boolean {
         val links = mutableListOf<LinkSpec>()
         gatherLinks(
-            links, text, PatternsCompat.AUTOLINK_WEB_URL, arrayOf("http://", "https://", "rtsp://"),
-            Linkify.sUrlMatchFilter, null
+            links,
+            text,
+            PatternsCompat.AUTOLINK_WEB_URL,
+            arrayOf("http://", "https://", "rtsp://"),
+            Linkify.sUrlMatchFilter,
+            null,
         )
         gatherLinks(
-            links, text, PatternsCompat.AUTOLINK_EMAIL_ADDRESS, arrayOf("mailto:"),
-            null, null
+            links,
+            text,
+            PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
+            arrayOf("mailto:"),
+            null,
+            null,
         )
 
         pruneOverlaps(links, text)
@@ -184,7 +192,7 @@ public object Linkify {
             val spec = LinkSpec(
                 markwonAddedSpan = span,
                 start = text.getSpanStart(span),
-                end = text.getSpanEnd(span)
+                end = text.getSpanEnd(span),
             )
             links.add(spec)
         }

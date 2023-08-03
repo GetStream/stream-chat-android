@@ -131,7 +131,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
     private fun bindChannelInfo() {
         binding.channelMembersTextView.text = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
-            currentUser = ChatUI.currentUserProvider.getCurrentUser()
+            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
         )
         binding.channelMembersInfoTextView.text = channel.getMembersStatusText(requireContext())
 
@@ -159,7 +159,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                 val channelOptionTextView = requireContext().streamThemeInflater.inflate(
                     R.layout.stream_ui_channel_option_item,
                     binding.optionsContainer,
-                    false
+                    false,
                 ) as TextView
                 channelOptionTextView.text = option.optionText
                 channelOptionTextView.setStartDrawable(option.optionIcon)
@@ -172,7 +172,7 @@ internal class ChannelActionsDialogFragment : BottomSheetDialogFragment() {
                         style.warningItemTextStyle
                     } else {
                         style.itemTextStyle
-                    }
+                    },
                 )
 
                 binding.optionsContainer.addView(channelOptionTextView)

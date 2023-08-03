@@ -72,7 +72,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
                 MediaAttachmentPreviewViewHolder(
                     binding = binding,
                     attachmentRemovalListener = attachmentRemovalListener,
-                    style = style
+                    style = style,
                 )
             }
     }
@@ -115,7 +115,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
                 with(binding.playIconImageView) {
                     val iconDrawable =
                         style.messageInputVideoAttachmentIconDrawable.applyTint(
-                            style.messageInputVideoAttachmentIconDrawableTint
+                            style.messageInputVideoAttachmentIconDrawableTint,
                         )
 
                     setImageDrawable(iconDrawable)
@@ -123,7 +123,7 @@ public class MediaAttachmentPreviewFactory : AttachmentPreviewFactory {
                         style.messageInputVideoAttachmentIconDrawablePaddingStart,
                         style.messageInputVideoAttachmentIconDrawablePaddingTop,
                         style.messageInputVideoAttachmentIconDrawablePaddingEnd,
-                        style.messageInputVideoAttachmentIconDrawablePaddingBottom
+                        style.messageInputVideoAttachmentIconDrawablePaddingBottom,
                     )
                 }
             }

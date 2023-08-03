@@ -79,7 +79,7 @@ internal class ChannelListViewModelTest {
 
             state.last() shouldBeEqualTo ChannelListViewModel.State(
                 channels = listOf(),
-                isLoading = isLoading
+                isLoading = isLoading,
             )
         }
 
@@ -94,7 +94,7 @@ internal class ChannelListViewModelTest {
                 .givenChannelsQuery()
                 .givenChannelsState(
                     channelsStateData = ChannelsStateData.Result(channels),
-                    loading = isLoading
+                    loading = isLoading,
                 )
                 .givenChannelMutes()
                 .get()
@@ -103,7 +103,7 @@ internal class ChannelListViewModelTest {
 
             state.last() shouldBeEqualTo ChannelListViewModel.State(
                 channels = listOf(channel1, channel2),
-                isLoading = isLoading
+                isLoading = isLoading,
             )
         }
 
@@ -119,7 +119,7 @@ internal class ChannelListViewModelTest {
             .givenChannelsQuery()
             .givenChannelsState(
                 channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false
+                loading = false,
             )
             .givenChannelMutes()
             .givenLeaveChannel(listOf(user.id))
@@ -140,7 +140,7 @@ internal class ChannelListViewModelTest {
             .givenChannelsQuery()
             .givenChannelsState(
                 channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false
+                loading = false,
             )
             .givenChannelMutes()
             .givenDeleteChannel()
@@ -161,7 +161,7 @@ internal class ChannelListViewModelTest {
             .givenChannelsQuery()
             .givenChannelsState(
                 channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                loading = false
+                loading = false,
             )
             .givenChannelMutes()
             .givenHideChannel()
@@ -171,7 +171,7 @@ internal class ChannelListViewModelTest {
 
         verify(chatClient).hideChannel(
             channelType = channel1.type,
-            channelId = channel1.id
+            channelId = channel1.id,
         )
     }
 
@@ -193,7 +193,7 @@ internal class ChannelListViewModelTest {
                 .givenChannelsState(
                     channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
                     nextPageRequest = nextPageRequest,
-                    loading = false
+                    loading = false,
                 )
                 .givenChannelMutes()
                 .get()
@@ -221,7 +221,7 @@ internal class ChannelListViewModelTest {
                 .givenChannelsQuery()
                 .givenChannelsState(
                     channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
-                    loading = false
+                    loading = false,
                 )
                 .givenChannelMutes()
                 .get()
@@ -311,8 +311,8 @@ internal class ChannelListViewModelTest {
                 sort = initialSort,
                 filter = initialFilters,
                 chatEventHandlerFactory = ChatEventHandlerFactory(
-                    clientState = clientState
-                )
+                    clientState = clientState,
+                ),
             )
         }
     }
@@ -324,7 +324,7 @@ internal class ChannelListViewModelTest {
 
         private val queryFilter = Filters.and(
             Filters.eq("type", "messaging"),
-            Filters.`in`("members", "jc")
+            Filters.`in`("members", "jc"),
         )
         private val querySort = QuerySortByField.descByName<Channel>("last_updated")
 

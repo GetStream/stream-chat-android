@@ -142,7 +142,7 @@ public class ChannelClient internal constructor(
         return client.subscribeFor(
             lifecycleOwner,
             *eventTypes,
-            listener = filterRelevantEvents(listener)
+            listener = filterRelevantEvents(listener),
         )
     }
 
@@ -161,7 +161,7 @@ public class ChannelClient internal constructor(
         return client.subscribeFor(
             lifecycleOwner,
             *eventTypes,
-            listener = filterRelevantEvents(listener)
+            listener = filterRelevantEvents(listener),
         )
     }
 

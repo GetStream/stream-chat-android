@@ -136,7 +136,7 @@ internal class MediaAttachmentFragment : Fragment() {
             permissionChecker.checkMediaPermissions(
                 binding.root,
                 onPermissionDenied = ::onPermissionDenied,
-                onPermissionGranted = ::onPermissionGranted
+                onPermissionGranted = ::onPermissionGranted,
             )
             return
         }

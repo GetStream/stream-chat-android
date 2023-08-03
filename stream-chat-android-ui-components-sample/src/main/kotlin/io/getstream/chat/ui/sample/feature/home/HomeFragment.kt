@@ -47,7 +47,7 @@ import io.getstream.chat.ui.sample.feature.EXTRA_CHANNEL_ID
 import io.getstream.chat.ui.sample.feature.EXTRA_CHANNEL_TYPE
 import io.getstream.chat.ui.sample.feature.EXTRA_MESSAGE_ID
 import io.getstream.chat.ui.sample.feature.EXTRA_PARENT_MESSAGE_ID
-import io.getstream.chat.ui.sample.feature.user_login.UserLoginViewModel
+import io.getstream.chat.ui.sample.feature.userlogin.UserLoginViewModel
 import io.getstream.chat.ui.sample.util.extensions.useAdjustNothing
 
 class HomeFragment : Fragment() {
@@ -78,7 +78,7 @@ class HomeFragment : Fragment() {
         homeViewModel.state.observe(viewLifecycleOwner, ::renderState)
         homeViewModel.events.observe(
             viewLifecycleOwner,
-            EventObserver(::handleHomeEvents)
+            EventObserver(::handleHomeEvents),
         )
         binding.channelListHeaderView.apply {
             channelListHeaderViewModel.bindView(this, viewLifecycleOwner)
@@ -96,7 +96,7 @@ class HomeFragment : Fragment() {
                         Toast.makeText(
                             requireContext(),
                             "ApiRequestsAnalyser dumped all requests",
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
                 }
@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
                     R.id.action_to_userLoginFragment,
                     Bundle().apply {
                         this.putBoolean(UserLoginViewModel.EXTRA_SWITCH_USER, false)
-                    }
+                    },
                 )
             }
             HomeViewModel.UiEvent.NavigateToLoginScreenSwitchUser -> {
@@ -136,7 +136,7 @@ class HomeFragment : Fragment() {
                     R.id.action_to_userLoginFragment,
                     Bundle().apply {
                         this.putBoolean(UserLoginViewModel.EXTRA_SWITCH_USER, true)
-                    }
+                    },
                 )
             }
         }
@@ -154,7 +154,7 @@ class HomeFragment : Fragment() {
                 requireActivity().intent = null
 
                 findNavController().navigateSafely(
-                    HomeFragmentDirections.actionOpenChat(cid, messageId, parentMessageId)
+                    HomeFragmentDirections.actionOpenChat(cid, messageId, parentMessageId),
                 )
             }
         }
@@ -192,7 +192,7 @@ class HomeFragment : Fragment() {
     private fun setupNavigationDrawer() {
         AppBarConfiguration(
             setOf(R.id.directChatFragment, R.id.groupChatFragment),
-            binding.drawerLayout
+            binding.drawerLayout,
         )
         binding.navigationView.setupWithNavController(findNavController())
 

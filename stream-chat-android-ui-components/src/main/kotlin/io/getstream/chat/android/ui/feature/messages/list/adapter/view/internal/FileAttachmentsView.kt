@@ -75,7 +75,7 @@ internal class FileAttachmentsView : RecyclerView {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -165,7 +165,7 @@ private class FileAttachmentsAdapter(
                             attachmentClickListener,
                             attachmentLongClickListener,
                             attachmentDownloadClickListener,
-                            style
+                            style,
                         )
                     }
             else ->
@@ -177,7 +177,7 @@ private class FileAttachmentsAdapter(
                             attachmentClickListener,
                             attachmentLongClickListener,
                             attachmentDownloadClickListener,
-                            style
+                            style,
                         )
                     }
         }
@@ -319,7 +319,7 @@ private class GeneralFileAttachmentViewHolder(
             context.getString(
                 R.string.stream_ui_message_list_attachment_upload_progress,
                 MediaStringUtil.convertFileSizeByteCount(bytesRead),
-                totalValue
+                totalValue,
             )
     }
 
@@ -399,7 +399,6 @@ private class RecordingFileAttachmentViewHolder(
             val hash = attachment.hashCode()
             logger.d { "[onPlayButtonPress] hash: $hash, assetUrl: $assetUrl" }
             if (assetUrl != null) {
-
                 audioPlayer.play(assetUrl, hash)
             }
         }
@@ -415,7 +414,7 @@ private class RecordingFileAttachmentViewHolder(
             val hash = attachment.hashCode()
             audioPlayer.seekTo(
                 progressToDecimal(progress, attachment?.duration),
-                hash
+                hash,
             )
         })
     }
@@ -511,7 +510,7 @@ private class RecordingFileAttachmentViewHolder(
             context.getString(
                 R.string.stream_ui_message_list_attachment_upload_progress,
                 MediaStringUtil.convertFileSizeByteCount(bytesRead),
-                totalValue
+                totalValue,
             )
     }
 

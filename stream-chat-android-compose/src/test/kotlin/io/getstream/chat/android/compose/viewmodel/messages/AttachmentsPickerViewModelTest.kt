@@ -131,22 +131,22 @@ internal class AttachmentsPickerViewModelTest {
         private val imageAttachment1 = AttachmentMetaData(
             mimeType = "image/jpeg",
             title = "img_1.jpeg",
-            type = "image"
+            type = "image",
         )
         private val imageAttachment2 = AttachmentMetaData(
             mimeType = "image/png",
             title = "img_2.png",
-            type = "image"
+            type = "image",
         )
         private val fileAttachment1 = AttachmentMetaData(
             mimeType = "application/pdf",
             title = "pdf_1.pdf",
-            type = "file"
+            type = "file",
         )
         private val fileAttachment2 = AttachmentMetaData(
             mimeType = "application/pdf",
             title = "pdf_2.pdf",
-            type = "file"
+            type = "file",
         )
     }
 }

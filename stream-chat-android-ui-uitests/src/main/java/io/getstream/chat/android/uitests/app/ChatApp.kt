@@ -35,7 +35,7 @@ class ChatApp : Application() {
                 backgroundSyncEnabled = true,
                 userPresence = true,
             ),
-            appContext = this
+            appContext = this,
         )
 
         ChatClient.Builder("hrwwzsgrzapv", this)

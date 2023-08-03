@@ -39,7 +39,7 @@ class ChatInfoSharedFilesFragment : Fragment() {
     private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels {
         ChatInfoSharedAttachmentsViewModelFactory(
             args.cid!!,
-            ChatInfoSharedAttachmentsViewModel.AttachmentsType.FILES
+            ChatInfoSharedAttachmentsViewModel.AttachmentsType.FILES,
         )
     }
     private val adapter: ChatInfoSharedFilesAdapter = ChatInfoSharedFilesAdapter()

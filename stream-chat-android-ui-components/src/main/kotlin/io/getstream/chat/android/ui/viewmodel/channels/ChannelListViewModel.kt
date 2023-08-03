@@ -282,7 +282,7 @@ public class ChannelListViewModel(
                             "Error: ${error.message}. Cause: ${error.extractCause()}"
                     }
                     _errorEvents.postValue(Event(ErrorEvent.LeaveChannelError(error)))
-                }
+                },
             )
         }
     }
@@ -300,7 +300,7 @@ public class ChannelListViewModel(
                         "Error: ${error.message}. Cause: ${error.extractCause()}"
                 }
                 _errorEvents.postValue(Event(ErrorEvent.DeleteChannelError(error)))
-            }
+            },
         )
     }
 
@@ -312,7 +312,7 @@ public class ChannelListViewModel(
         chatClient.hideChannel(
             channelType = channelType,
             channelId = channelId,
-            clearHistory = false
+            clearHistory = false,
         ).enqueue(
             onError = { error ->
                 logger.e {
@@ -320,7 +320,7 @@ public class ChannelListViewModel(
                         "Error: ${error.message}. Cause: ${error.extractCause()}"
                 }
                 _errorEvents.postValue(Event(ErrorEvent.HideChannelError(error)))
-            }
+            },
         )
     }
 
@@ -334,7 +334,7 @@ public class ChannelListViewModel(
                     "Could not mark all messages as read. " +
                         "Error: ${streamError.message}. Cause: ${streamError.extractCause()}"
                 }
-            }
+            },
         )
     }
 
@@ -354,7 +354,7 @@ public class ChannelListViewModel(
                                 "Could not load more channels. Error: ${streamError.message}. " +
                                     "Cause: ${streamError.extractCause()}"
                             }
-                        }
+                        },
                     )
                 }
             }

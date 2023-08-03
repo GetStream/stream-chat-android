@@ -85,14 +85,14 @@ public fun SelectedReactionsMenu(
                 reactionTypes = reactionTypes,
                 showMoreReactionsIcon = showMoreReactionsIcon,
                 onMessageAction = onMessageAction,
-                onShowMoreReactionsSelected = onShowMoreReactionsSelected
+                onShowMoreReactionsSelected = onShowMoreReactionsSelected,
             )
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedReactionsCenterContent(
             message = message,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
 ) {
@@ -102,7 +102,7 @@ public fun SelectedReactionsMenu(
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        centerContent = centerContent
+        centerContent = centerContent,
     )
 }
 
@@ -133,12 +133,12 @@ internal fun DefaultSelectedReactionsHeaderContent(
             onMessageAction(
                 React(
                     reaction = Reaction(messageId = message.id, type = it.type),
-                    message = message
-                )
+                    message = message,
+                ),
             )
         },
         onShowMoreReactionsSelected = onShowMoreReactionsSelected,
-        ownReactions = message.ownReactions
+        ownReactions = message.ownReactions,
     )
 }
 
@@ -160,8 +160,8 @@ internal fun DefaultSelectedReactionsCenterContent(
             .padding(vertical = 16.dp),
         items = buildUserReactionItems(
             message = message,
-            currentUser = currentUser
-        )
+            currentUser = currentUser,
+        ),
     )
 }
 
@@ -188,7 +188,7 @@ private fun buildUserReactionItems(
             UserReactionItemState(
                 user = user,
                 painter = painter,
-                type = type
+                type = type,
             )
         }
 }
@@ -207,7 +207,7 @@ private fun OneSelectedReactionMenuPreview() {
             currentUser = PreviewUserData.user1,
             onMessageAction = {},
             onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
     }
 }
@@ -226,7 +226,7 @@ private fun ManySelectedReactionsMenuPreview() {
             currentUser = PreviewUserData.user1,
             onMessageAction = {},
             onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
     }
 }

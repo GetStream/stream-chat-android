@@ -44,7 +44,7 @@ public class StorageHelper {
         if (attachmentMetaData.file == null && attachmentMetaData.uri == null) {
             throw IllegalStateException(
                 "Unable to create cache file for attachment: $attachmentMetaData. " +
-                    "Either file or URI cannot be null."
+                    "Either file or URI cannot be null.",
             )
         }
         if (attachmentMetaData.file != null) {
@@ -86,14 +86,14 @@ public class StorageHelper {
             MediaStore.Files.FileColumns.DISPLAY_NAME,
             MediaStore.Files.FileColumns.MIME_TYPE,
             MediaStore.Files.FileColumns.SIZE,
-            MediaStore.Files.FileColumns.DURATION
+            MediaStore.Files.FileColumns.DURATION,
         )
         context.contentResolver.query(
             MediaStore.Files.getContentUri("external"),
             columns,
             selection,
             null,
-            "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
+            "${MediaStore.Files.FileColumns.DATE_ADDED} DESC",
         )?.use { cursor ->
             return mutableListOf<AttachmentMetaData>().apply {
                 while (cursor.moveToNext()) {
@@ -126,11 +126,15 @@ public class StorageHelper {
 
                         val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
                             cursor.getString(displayNameIndex)
-                        } else null
+                        } else {
+                            null
+                        }
 
                         val fileSize = if (fileSizeIndex != -1 && !cursor.isNull(fileSizeIndex)) {
                             cursor.getLong(fileSizeIndex)
-                        } else 0L
+                        } else {
+                            0L
+                        }
 
                         val mimeType = if (mimeTypeIndex != -1 && !cursor.isNull(mimeTypeIndex)) {
                             cursor.getString(mimeTypeIndex)
@@ -142,7 +146,7 @@ public class StorageHelper {
                             uri = uri,
                             type = getModelType(mimeType),
                             mimeType = mimeType,
-                            title = displayName
+                            title = displayName,
                         ).apply {
                             size = fileSize
                         }
@@ -163,23 +167,31 @@ public class StorageHelper {
 
         val displayName = if (displayNameIndex != -1 && !cursor.isNull(displayNameIndex)) {
             cursor.getString(displayNameIndex)
-        } else null
+        } else {
+            null
+        }
 
         val fileSize = if (fileSizeIndex != -1 && !cursor.isNull(fileSizeIndex)) {
             cursor.getLong(fileSizeIndex)
-        } else 0L
+        } else {
+            0L
+        }
 
         val mimeType = if (mimeTypeIndex != -1 && !cursor.isNull(mimeTypeIndex)) {
             cursor.getString(mimeTypeIndex)
-        } else null
+        } else {
+            null
+        }
 
         val duration = if (durationIndex != -1 && !cursor.isNull(fileSizeIndex)) {
             cursor.getLong(durationIndex)
-        } else 0L
+        } else {
+            0L
+        }
 
         return AttachmentMetaData(
             uri = getContentUri(mimeType, id),
-            mimeType = mimeType
+            mimeType = mimeType,
         ).apply {
             this.type = getModelType(mimeType)
             this.size = fileSize

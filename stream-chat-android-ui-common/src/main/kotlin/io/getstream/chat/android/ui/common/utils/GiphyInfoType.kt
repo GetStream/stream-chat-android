@@ -41,7 +41,7 @@ public enum class GiphyInfoType(public val value: String) {
      * Lower quality with a fixed height with width adjusted according to the aspect ratio
      * and played at a lower frame rate. Significantly lower size, but visually less appealing.
      */
-    FIXED_HEIGHT_DOWNSAMPLED("fixed_height_downsampled")
+    FIXED_HEIGHT_DOWNSAMPLED("fixed_height_downsampled"),
 }
 
 /**
@@ -71,7 +71,7 @@ public fun Attachment.giphyInfo(field: GiphyInfoType): GiphyInfo? {
         GiphyInfo(
             url = map["url"] ?: "",
             width = getGiphySize(map, "width", Utils.dpToPx(GIPHY_INFO_DEFAULT_WIDTH_DP)),
-            height = getGiphySize(map, "height", Utils.dpToPx(GIPHY_INFO_DEFAULT_HEIGHT_DP))
+            height = getGiphySize(map, "height", Utils.dpToPx(GIPHY_INFO_DEFAULT_HEIGHT_DP)),
         )
     }
 }

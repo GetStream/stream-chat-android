@@ -56,7 +56,7 @@ internal class SocketFactoryTest {
             org.mockito.kotlin.check {
                 it.url.toString() `should be equal to` expectedUrl
             },
-            any<WebSocketListener>()
+            any<WebSocketListener>(),
         )
     }
 
@@ -72,31 +72,31 @@ internal class SocketFactoryTest {
             randomUser(image = randomString(), name = randomString()).let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
-                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt",
                 )
             },
             randomUser().let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt",
                 )
             },
             User("anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&stream-auth-type=anonymous"
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&stream-auth-type=anonymous",
                 )
             },
             User("!anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&stream-auth-type=anonymous"
+                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&stream-auth-type=anonymous",
                 )
-            }
+            },
         )
 
         private fun buildMinimumUserJson(userId: String): String = encode(
-            defaultMap(userId, mapOf("id" to userId))
+            defaultMap(userId, mapOf("id" to userId)),
         )
 
         private fun buildFullUserJson(user: User, userId: String): String = encode(
@@ -111,7 +111,7 @@ internal class SocketFactoryTest {
                     "image" to user.image,
                     "name" to user.name,
                 ) + user.extraData,
-            )
+            ),
         )
 
         private fun defaultMap(userId: String, userDetails: Map<String, Any>): Map<String, Any> =
@@ -119,13 +119,13 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
-                "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders()
+                "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
             )
 
         private fun encode(map: Map<String, Any>): String =
             URLEncoder.encode(
                 chatParser.toJson(map),
-                StandardCharsets.UTF_8.name()
+                StandardCharsets.UTF_8.name(),
             )
     }
 }

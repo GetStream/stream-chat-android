@@ -90,14 +90,18 @@ internal open class DefaultChannelOptionItemsFactory(
                     optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_single_user)!!,
                     channelAction = ViewInfo(selectedChannel),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.leaveGroupEnabled && canLeaveChannel) {
                 ChannelOptionItem(
                     optionText = context.getString(R.string.stream_ui_channel_list_leave_channel),
                     optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_leave_group)!!,
                     channelAction = LeaveGroup(selectedChannel),
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.deleteConversationEnabled && canDeleteChannel) {
                 ChannelOptionItem(
                     optionText = context.getString(R.string.stream_ui_channel_list_delete_channel),
@@ -105,14 +109,18 @@ internal open class DefaultChannelOptionItemsFactory(
                     channelAction = DeleteConversation(selectedChannel),
                     isWarningItem = true,
                 )
-            } else null,
+            } else {
+                null
+            },
             if (style.cancelEnabled) {
                 ChannelOptionItem(
                     optionText = context.getString(R.string.stream_ui_channel_list_dismiss_dialog),
                     optionIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!,
                     channelAction = Cancel,
                 )
-            } else null,
+            } else {
+                null
+            },
         )
     }
 }

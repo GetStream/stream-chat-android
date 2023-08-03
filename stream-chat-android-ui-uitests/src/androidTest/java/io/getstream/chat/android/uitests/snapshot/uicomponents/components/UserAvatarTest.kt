@@ -33,7 +33,7 @@ class UserAvatarTest : UiComponentsScreenshotTest() {
     fun uerAvatarForUserWithoutImage() {
         renderUserAvatarView(
             user = TestData.user1().copy(image = ""),
-            onlineIndicatorEnabled = false
+            onlineIndicatorEnabled = false,
         )
     }
 
@@ -41,7 +41,7 @@ class UserAvatarTest : UiComponentsScreenshotTest() {
     fun uerAvatarForUserWithImage() {
         renderUserAvatarView(
             user = TestData.user1(),
-            onlineIndicatorEnabled = false
+            onlineIndicatorEnabled = false,
         )
     }
 
@@ -54,7 +54,7 @@ class UserAvatarTest : UiComponentsScreenshotTest() {
     fun uerAvatarForOnlineUserWithBottomEndIndicator() {
         renderUserAvatarView(
             user = TestData.user1(),
-            onlineIndicatorPosition = OnlineIndicatorPosition.BOTTOM_END
+            onlineIndicatorPosition = OnlineIndicatorPosition.BOTTOM_END,
         )
     }
 
@@ -62,7 +62,7 @@ class UserAvatarTest : UiComponentsScreenshotTest() {
     fun uerAvatarForOnlineUserWithTopStartIndicator() {
         renderUserAvatarView(
             user = TestData.user1(),
-            onlineIndicatorPosition = OnlineIndicatorPosition.TOP_START
+            onlineIndicatorPosition = OnlineIndicatorPosition.TOP_START,
         )
     }
 
@@ -70,7 +70,7 @@ class UserAvatarTest : UiComponentsScreenshotTest() {
     fun uerAvatarForOnlineUserWithBottomStartIndicator() {
         renderUserAvatarView(
             onlineIndicatorPosition = OnlineIndicatorPosition.BOTTOM_START,
-            user = TestData.user1()
+            user = TestData.user1(),
         )
     }
 

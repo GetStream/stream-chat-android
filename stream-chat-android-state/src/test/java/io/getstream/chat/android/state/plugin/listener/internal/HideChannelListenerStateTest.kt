@@ -57,7 +57,7 @@ internal class HideChannelListenerStateTest {
             Result.Failure(Error.GenericError("")),
             randomString(),
             randomString(),
-            randomBoolean()
+            randomBoolean(),
         )
 
         verify(stateLogic).toggleHidden(false)
@@ -69,7 +69,7 @@ internal class HideChannelListenerStateTest {
             Result.Success(Unit),
             randomString(),
             randomString(),
-            clearHistory = true
+            clearHistory = true,
         )
 
         verify(stateLogic, never()).toggleHidden(false)

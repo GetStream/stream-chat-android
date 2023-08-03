@@ -34,9 +34,10 @@ internal val moshi: Moshi = Moshi.Builder()
         PolymorphicJsonAdapterFactory.of(MessageSyncContentEntity::class.java, MessageSyncType.TYPE)
             .withSubtype(MessageSyncNoneEntity::class.java, MessageSyncType.NONE.alias)
             .withSubtype(
-                MessageAwaitingAttachmentsEntity::class.java, MessageSyncType.IN_PROGRESS_AWAIT_ATTACHMENTS.alias
+                MessageAwaitingAttachmentsEntity::class.java,
+                MessageSyncType.IN_PROGRESS_AWAIT_ATTACHMENTS.alias,
             )
-            .withSubtype(MessageModerationFailedEntity::class.java, MessageSyncType.FAILED_MODERATION.alias)
+            .withSubtype(MessageModerationFailedEntity::class.java, MessageSyncType.FAILED_MODERATION.alias),
     )
     .addAdapter(DateAdapter())
     .add(KotlinJsonAdapterFactory())

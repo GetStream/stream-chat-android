@@ -81,7 +81,7 @@ internal class EventBatchUpdate private constructor(
                     if (message.shouldIncrementUnreadCount(
                             currentUserId = currentUserId,
                             lastMessageAtDate = lastReadDate,
-                            isChannelMuted = globalState.isChannelMutedForCurrentUser(channel.cid)
+                            isChannelMuted = globalState.isChannelMutedForCurrentUser(channel.cid),
                         )
                     ) {
                         addChannel(channel.incrementUnreadCount(currentUserId, message.createdAt))
@@ -149,7 +149,7 @@ internal class EventBatchUpdate private constructor(
     }
 
     internal class Builder(
-        private val id: Int
+        private val id: Int,
     ) {
         private val channelsToFetch = mutableSetOf<String>()
         private val messagesToFetch = mutableSetOf<String>()
@@ -178,7 +178,7 @@ internal class EventBatchUpdate private constructor(
         suspend fun build(
             globalState: GlobalState,
             repos: RepositoryFacade,
-            currentUserId: String?
+            currentUserId: String?,
         ): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
@@ -197,7 +197,7 @@ internal class EventBatchUpdate private constructor(
                 repos,
                 channelMap.toMutableMap(),
                 messageMap.toMutableMap(),
-                users.associateBy(User::id).toMutableMap()
+                users.associateBy(User::id).toMutableMap(),
             )
         }
     }

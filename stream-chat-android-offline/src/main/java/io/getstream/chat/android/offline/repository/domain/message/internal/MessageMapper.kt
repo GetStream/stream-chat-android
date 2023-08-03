@@ -151,7 +151,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             pinned = pinned,
             pinnedAt = pinnedAt,
             pinExpires = pinExpires,
-            pinnedBy = pinnedByUserId?.let { getUser(it) }
+            pinnedBy = pinnedByUserId?.let { getUser(it) },
         )
     }
 }
@@ -194,6 +194,7 @@ private fun MessageEntity.buildMessageSyncDescription(): MessageSyncDescription?
         return null
     }
     return MessageSyncDescription(
-        syncType, syncContent.toModel()
+        syncType,
+        syncContent.toModel(),
     )
 }

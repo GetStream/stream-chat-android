@@ -237,9 +237,10 @@ internal class AudioRecordingController(
             isPlaying = playbackState == AudioState.PLAYING,
             playingProgress = when (playbackState) {
                 AudioState.PLAYING,
-                AudioState.PAUSE -> state.playingProgress
+                AudioState.PAUSE,
+                -> state.playingProgress
                 else -> 0f
-            }
+            },
         )
     }
 
@@ -320,9 +321,9 @@ internal class AudioRecordingController(
             this.recordingState.value = RecordingState.Complete(
                 state.attachment.copy(
                     extraData = state.attachment.extraData + mapOf(
-                        EXTRA_WAVEFORM_DATA to state.waveform
-                    )
-                )
+                        EXTRA_WAVEFORM_DATA to state.waveform,
+                    ),
+                ),
             )
             this.recordingState.value = RecordingState.Idle
             return
@@ -341,9 +342,9 @@ internal class AudioRecordingController(
             it.copy(
                 attachment = it.attachment.copy(
                     extraData = it.attachment.extraData + mapOf(
-                        EXTRA_WAVEFORM_DATA to normalized
-                    )
-                )
+                        EXTRA_WAVEFORM_DATA to normalized,
+                    ),
+                ),
             )
         }
         logger.d { "[completeRecording] complete from state: $state" }

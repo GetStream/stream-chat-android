@@ -76,10 +76,10 @@ public class SearchResultListView : ViewFlipper {
             addItemDecoration(
                 DividerItemDecoration(
                     context,
-                    LinearLayoutManager.VERTICAL
+                    LinearLayoutManager.VERTICAL,
                 ).apply {
                     setDrawable(AppCompatResources.getDrawable(context, R.drawable.stream_ui_divider)!!)
-                }
+                },
             )
             addOnScrollListener(scrollListener)
         }

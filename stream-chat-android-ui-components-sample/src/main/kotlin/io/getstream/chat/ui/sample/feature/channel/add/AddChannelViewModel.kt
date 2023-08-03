@@ -93,7 +93,7 @@ class AddChannelViewModel : ViewModel() {
         } else {
             createFilter(
                 Filters.autocomplete(FIELD_NAME, querySearch),
-                chatClient.clientState.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) }
+                chatClient.clientState.user.value?.id?.let { id -> Filters.ne(FIELD_ID, id) },
             )
         }
         return QueryUsersRequest(
@@ -101,7 +101,7 @@ class AddChannelViewModel : ViewModel() {
             offset = offset,
             limit = usersLimit,
             querySort = USERS_QUERY_SORT,
-            presence = userPresence
+            presence = userPresence,
         )
     }
 
@@ -116,7 +116,6 @@ class AddChannelViewModel : ViewModel() {
     private fun createChannel() {
         val client = requireNotNull(channelClient) { "Cannot create Channel without initializing ChannelClient" }
         viewModelScope.launch(Dispatchers.IO) {
-
             when (val result = client.update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).await()) {
                 is Result.Success -> _state.postValue(State.NavigateToChannel(result.value.cid))
                 is Result.Failure -> _errorEvents.postValue(EventWrapper(ErrorEvent.CreateChannelError))
@@ -136,7 +135,7 @@ class AddChannelViewModel : ViewModel() {
                 channelType = CHANNEL_MESSAGING_TYPE,
                 channelId = "",
                 memberIds = members.map(User::id) + currentUserId,
-                extraData = mapOf(CHANNEL_ARG_DRAFT to true)
+                extraData = mapOf(CHANNEL_ARG_DRAFT to true),
             ).await()
             if (result is Result.Success) {
                 val cid = result.value.cid

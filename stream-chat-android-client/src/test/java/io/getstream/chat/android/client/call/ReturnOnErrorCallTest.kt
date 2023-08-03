@@ -92,7 +92,7 @@ internal class ReturnOnErrorCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         spyOnError.`should not be invoked`()
         blockedCall.isStarted() `should be equal to` true
@@ -111,7 +111,7 @@ internal class ReturnOnErrorCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` onErrorResult
-            }
+            },
         )
         spyOnError `should be invoked with` error
         blockedCall.isStarted() `should be equal to` true

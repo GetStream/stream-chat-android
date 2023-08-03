@@ -68,7 +68,7 @@ internal class ReactionRepositoryTest {
         verify(reactionDao).insert(
             argThat {
                 this.messageId == messageId && this.userId == currentUser.id
-            }
+            },
         )
     }
 

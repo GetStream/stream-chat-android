@@ -38,7 +38,8 @@ internal class ThreadQueryListenerDatabaseTest {
     private val userRepository: UserRepository = mock()
 
     private val threadQueryListenerDatabase: ThreadQueryListenerDatabase = ThreadQueryListenerDatabase(
-        messageRepository, userRepository
+        messageRepository,
+        userRepository,
     )
 
     @Test

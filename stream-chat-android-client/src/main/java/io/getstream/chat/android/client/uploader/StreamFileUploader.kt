@@ -118,7 +118,7 @@ internal class StreamFileUploader(
         return retrofitCdnApi.deleteFile(
             channelType = channelType,
             channelId = channelId,
-            url = url
+            url = url,
         ).execute().toUnitResult()
     }
 
@@ -131,7 +131,7 @@ internal class StreamFileUploader(
         return retrofitCdnApi.deleteImage(
             channelType = channelType,
             channelId = channelId,
-            url = url
+            url = url,
         ).execute().toUnitResult()
     }
 }

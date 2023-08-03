@@ -322,7 +322,7 @@ internal class SyncManager(
                 logger.v { "[restoreActiveChannels] updatedCids.size: ${updatedCids.size}" }
                 updateActiveChannels(
                     recoverAll,
-                    updatedCids
+                    updatedCids,
                 )
             }
             is Result.Failure -> {
@@ -428,7 +428,7 @@ internal class SyncManager(
                 channel.type,
                 channel.id,
                 channel.members.map(UserEntity::getUserId),
-                channel.extraData
+                channel.extraData,
             ).await()
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }

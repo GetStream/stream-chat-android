@@ -111,7 +111,7 @@ internal class UploadAttachmentsIntegrationTests {
                 channelLogic,
                 messageRepository,
                 chatClient,
-                uploader!!
+                uploader!!,
             )
     }
 
@@ -173,7 +173,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelId),
                     same(file),
                     anyOrNull(),
-                )
+                ),
             ) doReturn TestCall(fileResult)
             whenever(
                 chatClient.sendImage(
@@ -181,7 +181,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelId),
                     same(file),
                     anyOrNull(),
-                )
+                ),
             ) doReturn TestCall(imageResult)
         }
     }
@@ -197,7 +197,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelId),
                     any(),
                     anyOrNull(),
-                )
+                ),
             ) doReturn TestCall(fileResult)
             whenever(
                 chatClient.sendImage(
@@ -205,7 +205,7 @@ internal class UploadAttachmentsIntegrationTests {
                     eq(channelId),
                     any(),
                     anyOrNull(),
-                )
+                ),
             ) doReturn TestCall(imageResult)
         }
     }

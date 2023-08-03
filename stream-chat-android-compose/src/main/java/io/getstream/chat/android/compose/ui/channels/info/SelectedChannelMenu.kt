@@ -74,14 +74,14 @@ public fun SelectedChannelMenu(
     channelOptions: List<ChannelOptionState> = buildDefaultChannelOptionsState(
         selectedChannel = selectedChannel,
         isMuted = isMuted,
-        ownCapabilities = selectedChannel.ownCapabilities
+        ownCapabilities = selectedChannel.ownCapabilities,
     ),
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedChannelMenuHeaderContent(
             selectedChannel = selectedChannel,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
@@ -97,7 +97,7 @@ public fun SelectedChannelMenu(
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        centerContent = centerContent
+        centerContent = centerContent,
     )
 }
 
@@ -128,7 +128,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         style = ChatTheme.typography.title3Bold,
         color = ChatTheme.colors.textHighEmphasis,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
     Text(
         modifier = Modifier.fillMaxWidth(),
@@ -176,7 +176,7 @@ private fun SelectedChannelMenuCenteredDialogPreview() {
                 isMuted = false,
                 currentUser = PreviewUserData.user1,
                 onChannelOptionClick = {},
-                onDismiss = {}
+                onDismiss = {},
             )
         }
     }
@@ -202,7 +202,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
                 isMuted = false,
                 currentUser = PreviewUserData.user1,
                 onChannelOptionClick = {},
-                onDismiss = {}
+                onDismiss = {},
             )
         }
     }

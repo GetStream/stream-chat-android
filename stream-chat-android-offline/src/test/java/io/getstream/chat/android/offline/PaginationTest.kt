@@ -52,100 +52,100 @@ internal class PaginationTest {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest(),
-                    it
+                    it,
                 )
             },
             listOf(randomChannel(type = "b"), randomChannel(type = "a")).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest(),
-                    it
+                    it,
                 )
             },
             listOf(randomChannel(type = "a"), randomChannel(type = "b")).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply { sort = QuerySortByField.ascByName("cid") },
-                    it
+                    it,
                 )
             },
             listOf(randomChannel(type = "b"), randomChannel(type = "a")).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply { sort = QuerySortByField.ascByName("cid") },
-                    it.reversed()
+                    it.reversed(),
                 )
             },
             listOf(randomChannel(type = "a"), randomChannel(type = "b")).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply { sort = QuerySortByField.descByName("cid") },
-                    it.reversed()
+                    it.reversed(),
                 )
             },
             listOf(randomChannel(type = "b"), randomChannel(type = "a")).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply { sort = QuerySortByField.descByName("cid") },
-                    it
+                    it,
                 )
             },
             listOf(
                 randomChannel(type = "a", id = "a"),
                 randomChannel(type = "b", id = "a"),
-                randomChannel(type = "b", id = "b")
+                randomChannel(type = "b", id = "b"),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.ascByName<Channel>("cid").ascByName("type")
                     },
-                    it
+                    it,
                 )
             },
             listOf(
                 randomChannel(type = "a", id = "a"),
                 randomChannel(type = "b", id = "b"),
-                randomChannel(type = "b", id = "a")
+                randomChannel(type = "b", id = "a"),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.ascByName<Channel>("cid").ascByName("type")
                     },
-                    listOf(it[0], it[2], it[1])
+                    listOf(it[0], it[2], it[1]),
                 )
             },
             listOf(
                 randomChannel(type = "a", id = "a"),
                 randomChannel(type = "b", id = "b"),
-                randomChannel(type = "b", id = "a")
+                randomChannel(type = "b", id = "a"),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.ascByName<Channel>("cid").descByName("type")
                     },
-                    listOf(it[0], it[2], it[1])
+                    listOf(it[0], it[2], it[1]),
                 )
             },
             listOf(
                 randomChannel(type = "a", id = "a"),
                 randomChannel(type = "b", id = "a"),
-                randomChannel(type = "b", id = "b")
+                randomChannel(type = "b", id = "b"),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.ascByName<Channel>("cid").descByName("type")
                     },
-                    it
+                    it,
                 )
             },
             listOf(
                 randomChannel(type = "a", id = "a"),
                 randomChannel(type = "b", id = "a"),
-                randomChannel(type = "b", id = "b")
+                randomChannel(type = "b", id = "b"),
             ).let {
                 Arguments.of(
                     it,
@@ -153,51 +153,51 @@ internal class PaginationTest {
                         sort =
                             QuerySortByField.ascByName<Channel>("cid").ascByName("SomeInvalidField").descByName("type")
                     },
-                    it
+                    it,
                 )
             },
             // last_updated is a computed field based on max(createdAt, lastMessageAt)
             listOf(
                 randomChannel(type = "c", createdAt = null, lastMessageAt = calendar(2020, 10, 2)),
                 randomChannel(type = "a", createdAt = calendar(2020, 10, 4), lastMessageAt = null),
-                randomChannel(type = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3))
+                randomChannel(type = "b", createdAt = calendar(2020, 10, 1), lastMessageAt = calendar(2020, 10, 3)),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.descByName("last_updated")
                     },
-                    listOf(it[1], it[2], it[0])
+                    listOf(it[1], it[2], it[0]),
                 )
             },
             // created_at should map to channel.createdAt
             listOf(
                 randomChannel(type = "c", createdAt = calendar(2020, 10, 2)),
                 randomChannel(type = "a", createdAt = calendar(2020, 10, 4)),
-                randomChannel(type = "b", createdAt = calendar(2020, 10, 3))
+                randomChannel(type = "b", createdAt = calendar(2020, 10, 3)),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.descByName("created_at")
                     },
-                    listOf(it[1], it[2], it[0])
+                    listOf(it[1], it[2], it[0]),
                 )
             },
             // last_message_at should map to channel.lastMessageAt
             listOf(
                 randomChannel(type = "c", lastMessageAt = calendar(2020, 10, 2)),
                 randomChannel(type = "a", lastMessageAt = calendar(2020, 10, 4)),
-                randomChannel(type = "b", lastMessageAt = calendar(2020, 10, 3))
+                randomChannel(type = "b", lastMessageAt = calendar(2020, 10, 3)),
             ).let {
                 Arguments.of(
                     it,
                     AnyChannelPaginationRequest().apply {
                         sort = QuerySortByField.descByName("last_message_at")
                     },
-                    listOf(it[1], it[2], it[0])
+                    listOf(it[1], it[2], it[0]),
                 )
-            }
+            },
         )
     }
 }

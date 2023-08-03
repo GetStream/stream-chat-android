@@ -49,7 +49,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
     private val style by lazy {
         AttachmentGalleryViewMediaStyle(
             context = requireContext().createStreamThemeWrapper(),
-            attrs = null
+            attrs = null,
         )
     }
 
@@ -187,7 +187,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
                 style.viewMediaPlayVideoIconPaddingStart,
                 style.viewMediaPlayVideoIconPaddingTop,
                 style.viewMediaPlayVideoIconPaddingEnd,
-                style.viewMediaPlayVideoIconPaddingBottom
+                style.viewMediaPlayVideoIconPaddingBottom,
             )
         }
     }
@@ -219,7 +219,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
                 Toast.makeText(
                     requireContext(),
                     requireContext().getString(R.string.stream_ui_attachment_gallery_video_display_error),
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_SHORT,
                 ).show()
                 true
             }

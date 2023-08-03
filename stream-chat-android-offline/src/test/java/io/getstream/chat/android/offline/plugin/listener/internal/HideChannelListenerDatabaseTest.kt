@@ -51,7 +51,7 @@ internal class HideChannelListenerDatabaseTest {
             result = Result.Success(Unit),
             channelType = type,
             channelId = id,
-            clearHistory = true
+            clearHistory = true,
         )
 
         verify(channelRepository).setHiddenForChannel(eq(cid), eq(true), any())
@@ -66,7 +66,7 @@ internal class HideChannelListenerDatabaseTest {
             result = Result.Success(Unit),
             channelType = type,
             channelId = id,
-            clearHistory = true
+            clearHistory = true,
         )
 
         verify(messageRepository).deleteChannelMessagesBefore(eq(cid), any())
@@ -81,7 +81,7 @@ internal class HideChannelListenerDatabaseTest {
             result = Result.Failure(Error.GenericError("")),
             channelType = type,
             channelId = id,
-            clearHistory = randomBoolean()
+            clearHistory = randomBoolean(),
         )
 
         verifyNoInteractions(messageRepository, channelRepository)

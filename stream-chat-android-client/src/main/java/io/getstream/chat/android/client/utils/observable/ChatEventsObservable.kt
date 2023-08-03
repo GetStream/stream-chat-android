@@ -94,7 +94,7 @@ internal class ChatEventsObservable(
         return addSubscription(
             SubscriptionImpl(filter, listener).apply {
                 afterEventDelivered = this::dispose
-            }
+            },
         )
     }
 
@@ -130,8 +130,8 @@ internal class ChatEventsObservable(
                     EventType.CONNECTION_DISCONNECTED,
                     createdAt = Date(),
                     disconnectCause = cause,
-                    rawCreatedAt = null
-                )
+                    rawCreatedAt = null,
+                ),
             )
         }
 
@@ -145,8 +145,8 @@ internal class ChatEventsObservable(
                     EventType.CONNECTION_ERROR,
                     createdAt = Date(),
                     error = error,
-                    rawCreatedAt = null
-                )
+                    rawCreatedAt = null,
+                ),
             )
         }
     }

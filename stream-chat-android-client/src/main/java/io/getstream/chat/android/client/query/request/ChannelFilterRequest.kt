@@ -34,7 +34,7 @@ public object ChannelFilterRequest {
     public suspend fun ChatClient.filterWithOffset(
         filter: FilterObject,
         offset: Int,
-        limit: Int
+        limit: Int,
     ): List<Channel> {
         val request = QueryChannelsRequest(
             filter = filter,

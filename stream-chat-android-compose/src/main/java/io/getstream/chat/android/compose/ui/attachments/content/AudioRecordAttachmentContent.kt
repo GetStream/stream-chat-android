@@ -57,7 +57,7 @@ import io.getstream.chat.android.ui.common.utils.DurationFormatter
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
     audioTrack: Attachment,
-    onPlayPress: (Attachment) -> Unit
+    onPlayPress: (Attachment) -> Unit,
 ) {
     val audioPlayer = ChatClient.instance().audioPlayer
 
@@ -91,14 +91,14 @@ public fun AudioRecordAttachmentContent(
             .padding(2.dp)
             .fillMaxWidth(),
         color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment
+        shape = ChatTheme.shapes.attachment,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Card(elevation = 2.dp, shape = CircleShape) {
                 IconButton(
@@ -107,7 +107,7 @@ public fun AudioRecordAttachmentContent(
                     },
                     modifier = Modifier
                         .width(36.dp)
-                        .height(36.dp)
+                        .height(36.dp),
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_play),
@@ -121,7 +121,7 @@ public fun AudioRecordAttachmentContent(
                 text = durationText,
                 modifier = Modifier
                     .fillMaxHeight()
-                    .padding(8.dp)
+                    .padding(8.dp),
             )
 
             Slider(

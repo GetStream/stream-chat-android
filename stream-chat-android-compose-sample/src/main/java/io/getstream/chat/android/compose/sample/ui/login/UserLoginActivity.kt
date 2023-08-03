@@ -85,7 +85,7 @@ class UserLoginActivity : AppCompatActivity() {
                             openChannels()
                         }
                     },
-                    onCustomLoginClick = ::openCustomLogin
+                    onCustomLoginClick = ::openCustomLogin,
                 )
             }
         }
@@ -98,7 +98,7 @@ class UserLoginActivity : AppCompatActivity() {
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -116,7 +116,7 @@ class UserLoginActivity : AppCompatActivity() {
                 text = stringResource(R.string.user_login_screen_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -125,7 +125,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.user_login_screen_subtitle),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Spacer(modifier = Modifier.height(28.dp))
@@ -138,7 +138,7 @@ class UserLoginActivity : AppCompatActivity() {
                 items(items = PredefinedUserCredentials.availableUsers) { userCredentials ->
                     UserLoginItem(
                         userCredentials = userCredentials,
-                        onItemClick = onUserItemClick
+                        onItemClick = onUserItemClick,
                     )
 
                     DividerItem()
@@ -153,7 +153,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.sdk_version_template, STREAM_CHAT_VERSION),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
     }
@@ -173,7 +173,7 @@ class UserLoginActivity : AppCompatActivity() {
                 .clickable(
                     onClick = { onItemClick(userCredentials) },
                     indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -193,13 +193,13 @@ class UserLoginActivity : AppCompatActivity() {
                     text = userCredentials.user.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
 
                 Text(
                     text = stringResource(id = R.string.user_login_user_subtitle),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
 
@@ -207,7 +207,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
     }
@@ -224,7 +224,7 @@ class UserLoginActivity : AppCompatActivity() {
                 .clickable(
                     onClick = { onItemClick() },
                     indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -244,19 +244,19 @@ class UserLoginActivity : AppCompatActivity() {
                     .wrapContentHeight()
                     .weight(1f)
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = stringResource(id = R.string.user_login_advanced_options),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
 
                 Text(
                     text = stringResource(id = R.string.user_login_custom_settings),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
 
@@ -264,7 +264,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
     }
@@ -275,7 +275,7 @@ class UserLoginActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders)
+                .background(color = ChatTheme.colors.borders),
         )
     }
 

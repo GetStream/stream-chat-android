@@ -86,7 +86,8 @@ public interface Plugin :
         filter: FilterObject,
         sort: QuerySorter<Member>,
         members: List<Member>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onDeleteReactionRequest(
@@ -94,7 +95,8 @@ public interface Plugin :
         messageId: String,
         reactionType: String,
         currentUser: User,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onDeleteReactionResult(
@@ -103,7 +105,8 @@ public interface Plugin :
         reactionType: String,
         currentUser: User,
         result: Result<Message>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> = Result.Success(Unit)
@@ -113,7 +116,8 @@ public interface Plugin :
         reaction: Reaction,
         enforceUnique: Boolean,
         currentUser: User,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onSendReactionResult(
@@ -122,7 +126,8 @@ public interface Plugin :
         enforceUnique: Boolean,
         currentUser: User,
         result: Result<Reaction>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override fun onSendReactionPrecondition(
@@ -138,14 +143,16 @@ public interface Plugin :
     override suspend fun onGetRepliesRequest(
         messageId: String,
         limit: Int,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onGetRepliesResult(
         result: Result<List<Message>>,
         messageId: String,
         limit: Int,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onGetRepliesMorePrecondition(
@@ -158,7 +165,8 @@ public interface Plugin :
         messageId: String,
         firstId: String,
         limit: Int,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onGetRepliesMoreResult(
@@ -166,24 +174,29 @@ public interface Plugin :
         messageId: String,
         firstId: String,
         limit: Int,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
-    override fun onGiphySendResult(cid: String, result: Result<Message>) { /* No-Op */
+    override fun onGiphySendResult(cid: String, result: Result<Message>) {
+        /* No-Op */
     }
 
-    override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) { /* No-Op */
+    override suspend fun onShuffleGiphyResult(cid: String, result: Result<Message>) {
+        /* No-Op */
     }
 
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> = Result.Success(Unit)
 
-    override suspend fun onMessageDeleteRequest(messageId: String) { /* No-Op */
+    override suspend fun onMessageDeleteRequest(messageId: String) {
+        /* No-Op */
     }
 
     override suspend fun onMessageDeleteResult(
         originalMessageId: String,
         result: Result<Message>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onMessageSendResult(
@@ -191,13 +204,16 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         message: Message,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
-    override suspend fun onMessageEditRequest(message: Message) { /* No-Op */
+    override suspend fun onMessageEditRequest(message: Message) {
+        /* No-Op */
     }
 
-    override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) { /* No-Op */
+    override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
+        /* No-Op */
     }
 
     override suspend fun onQueryChannelPrecondition(
@@ -210,7 +226,8 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onQueryChannelResult(
@@ -218,19 +235,22 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         request: QueryChannelRequest,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onQueryChannelsPrecondition(request: QueryChannelsRequest): Result<Unit> =
         Result.Success(Unit)
 
-    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) { /* No-Op */
+    override suspend fun onQueryChannelsRequest(request: QueryChannelsRequest) {
+        /* No-Op */
     }
 
     override suspend fun onQueryChannelsResult(
         result: Result<List<Channel>>,
         request: QueryChannelsRequest,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override fun onTypingEventPrecondition(
@@ -247,7 +267,8 @@ public interface Plugin :
         channelId: String,
         extraData: Map<Any, Any>,
         eventTime: Date,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override fun onTypingEventResult(
@@ -257,7 +278,8 @@ public interface Plugin :
         channelId: String,
         extraData: Map<Any, Any>,
         eventTime: Date,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onHideChannelPrecondition(
@@ -270,7 +292,8 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onHideChannelResult(
@@ -278,10 +301,12 @@ public interface Plugin :
         channelType: String,
         channelId: String,
         clearHistory: Boolean,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
-    override suspend fun onMarkAllReadRequest() { /* No-Op */
+    override suspend fun onMarkAllReadRequest() {
+        /* No-Op */
     }
 
     override suspend fun onChannelMarkReadPrecondition(
@@ -295,7 +320,8 @@ public interface Plugin :
         memberIds: List<String>,
         extraData: Map<String, Any>,
         currentUser: User,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override suspend fun onCreateChannelResult(
@@ -303,7 +329,8 @@ public interface Plugin :
         channelId: String,
         memberIds: List<String>,
         result: Result<Channel>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     override fun onCreateChannelPrecondition(
@@ -323,11 +350,13 @@ public interface Plugin :
     public override suspend fun onGetMessageResult(
         messageId: String,
         result: Result<Message>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 
     public override suspend fun onFetchCurrentUserResult(
         result: Result<User>,
-    ) { /* No-Op */
+    ) {
+        /* No-Op */
     }
 }

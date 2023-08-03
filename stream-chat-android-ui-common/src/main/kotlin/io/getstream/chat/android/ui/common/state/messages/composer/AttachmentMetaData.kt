@@ -44,7 +44,7 @@ public data class AttachmentMetaData(
     public constructor(attachment: Attachment) : this(
         type = attachment.type,
         mimeType = attachment.mimeType,
-        title = attachment.title
+        title = attachment.title,
     )
 
     public constructor(

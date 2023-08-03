@@ -73,7 +73,7 @@ internal object ShapeAppearanceModelFactory {
         .apply {
             setStroke(
                 STROKE_WIDTH_PX,
-                ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
+                ContextCompat.getColor(context, R.color.stream_ui_grey_whisper),
             )
             setTint(ContextCompat.getColor(context, R.color.stream_ui_white))
         }
@@ -85,7 +85,7 @@ internal object ShapeAppearanceModelFactory {
         .apply {
             setStroke(
                 STROKE_WIDTH_PX,
-                ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
+                ContextCompat.getColor(context, R.color.stream_ui_grey_whisper),
             )
             setTint(ContextCompat.getColor(context, R.color.stream_ui_white))
         }

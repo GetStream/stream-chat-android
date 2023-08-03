@@ -52,7 +52,7 @@ internal class CustomAttachmentsViewHolder(
     internal val binding: StreamUiItemCustomAttachmentsBinding = StreamUiItemCustomAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
@@ -135,7 +135,7 @@ internal class CustomAttachmentsViewHolder(
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
                     longClickTarget = messageContainer,
-                    onLinkClicked = container.linkClickListener::onLinkClick
+                    onLinkClicked = container.linkClickListener::onLinkClick,
                 )
             }
         }
@@ -149,7 +149,7 @@ internal class CustomAttachmentsViewHolder(
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
-                onLinkClicked = container.linkClickListener::onLinkClick
+                onLinkClicked = container.linkClickListener::onLinkClick,
             )
         }
     }

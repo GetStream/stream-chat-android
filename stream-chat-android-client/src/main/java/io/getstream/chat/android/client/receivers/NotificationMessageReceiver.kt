@@ -117,7 +117,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             return NotificationCompat.Action.Builder(
                 android.R.drawable.ic_menu_send,
                 context.getString(R.string.stream_chat_notification_reply),
-                createReplyPendingIntent(context, notificationId, channel)
+                createReplyPendingIntent(context, notificationId, channel),
             )
                 .addRemoteInput(remoteInput)
                 .setAllowGeneratedReplies(true)
@@ -187,7 +187,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             message = Message(
                 text = messageChars.toString(),
                 cid = (type to channelId).toCid(),
-            )
+            ),
         ).enqueue()
     }
 

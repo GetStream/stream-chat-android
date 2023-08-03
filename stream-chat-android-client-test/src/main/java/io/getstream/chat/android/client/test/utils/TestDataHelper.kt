@@ -278,7 +278,9 @@ public class TestDataHelper {
     }
 
     public val disconnectedEvent: DisconnectedEvent = DisconnectedEvent(
-        EventType.CONNECTION_DISCONNECTED, Date(), null
+        EventType.CONNECTION_DISCONNECTED,
+        Date(),
+        null,
     )
     public val newMessageEvent: NewMessageEvent by lazy {
         val createdAt = Date()
@@ -294,7 +296,7 @@ public class TestDataHelper {
             message1,
             1,
             0,
-            0
+            0,
         )
     }
 
@@ -312,7 +314,7 @@ public class TestDataHelper {
             message2Older,
             1,
             0,
-            0
+            0,
         )
     }
     public val newMessageFromUser2: NewMessageEvent by lazy {
@@ -329,7 +331,7 @@ public class TestDataHelper {
             messageFromUser2,
             1,
             0,
-            0
+            0,
         )
     }
 
@@ -346,7 +348,7 @@ public class TestDataHelper {
             channel1,
             message1WithoutChannelAndCid,
             0,
-            0
+            0,
         )
     }
 
@@ -361,7 +363,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            message1Updated
+            message1Updated,
         )
     }
 
@@ -377,7 +379,7 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             message = message1Deleted,
-            hardDelete = false
+            hardDelete = false,
         )
     }
 
@@ -393,7 +395,7 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             message = message1Deleted,
-            hardDelete = true
+            hardDelete = true,
         )
     }
 
@@ -408,7 +410,7 @@ public class TestDataHelper {
             1,
             channel1.type,
             channel1.id,
-            user1
+            user1,
         )
     }
     public val reactionEvent: ReactionNewEvent by lazy {
@@ -423,7 +425,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             reactionMessage1,
-            reaction1
+            reaction1,
         )
     }
     public val reactionEvent2: ReactionNewEvent by lazy {
@@ -438,7 +440,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             reactionMessage2,
-            reaction2
+            reaction2,
         )
     }
 
@@ -453,7 +455,7 @@ public class TestDataHelper {
             channel1Updated.type,
             channel1Updated.id,
             null,
-            channel1Updated
+            channel1Updated,
         )
     }
     public val channelUpdatedEvent2: ChannelUpdatedEvent by lazy {
@@ -467,7 +469,7 @@ public class TestDataHelper {
             channel5.type,
             channel5.id,
             null,
-            channel5
+            channel5,
         )
     }
 
@@ -482,7 +484,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            parentMessageId
+            parentMessageId,
         )
     }
     public val user3TypingStartedOld: TypingStartEvent by lazy {
@@ -496,7 +498,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            parentMessageId
+            parentMessageId,
         )
     }
 
@@ -511,7 +513,7 @@ public class TestDataHelper {
             channel2.type,
             channel2.id,
             user1,
-            false
+            false,
         )
     }
     public val channelVisibleEvent: ChannelVisibleEvent by lazy {
@@ -524,7 +526,7 @@ public class TestDataHelper {
             channel2.cid,
             channel2.type,
             channel2.id,
-            user1
+            user1,
         )
     }
 
@@ -539,7 +541,7 @@ public class TestDataHelper {
             channel2.cid,
             channel2.type,
             channel2.id,
-            parentMessageId
+            parentMessageId,
         )
     }
     public val user1TypingStop: TypingStopEvent by lazy {
@@ -553,7 +555,7 @@ public class TestDataHelper {
             channel2.cid,
             channel2.type,
             channel2.id,
-            parentMessageId
+            parentMessageId,
         )
     }
     public val readEvent: MessageReadEvent by lazy {
@@ -566,7 +568,7 @@ public class TestDataHelper {
             user1,
             channel1.cid,
             channel1.type,
-            channel1.id
+            channel1.id,
         )
     }
 
@@ -574,7 +576,10 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationMutesUpdatedEvent(
-            EventType.NOTIFICATION_MUTES_UPDATED, Date(), streamFormatter.format(createdAt), me1
+            EventType.NOTIFICATION_MUTES_UPDATED,
+            Date(),
+            streamFormatter.format(createdAt),
+            me1,
         )
     }
 
@@ -603,7 +608,7 @@ public class TestDataHelper {
             user1,
             channel2.cid,
             channel2.type,
-            channel2.id
+            channel2.id,
         )
     }
 
@@ -619,7 +624,7 @@ public class TestDataHelper {
             channel2.type,
             channel2.id,
             0,
-            0
+            0,
         )
     }
     public val user1Read: MessageReadEvent by lazy {
@@ -632,7 +637,7 @@ public class TestDataHelper {
             user1,
             channel2.cid,
             channel2.type,
-            channel2.id
+            channel2.id,
         )
     }
     public val memberAddedToChannelEvent: MemberAddedEvent by lazy {
@@ -646,7 +651,7 @@ public class TestDataHelper {
             channel1WithNewMember.cid,
             channel1WithNewMember.type,
             channel1WithNewMember.id,
-            member2
+            member2,
         )
     }
 
@@ -662,7 +667,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            member1
+            member1,
         )
     }
 
@@ -678,7 +683,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             channel1,
-            member1
+            member1,
         )
     }
 
@@ -696,7 +701,7 @@ public class TestDataHelper {
             channel1,
             member1,
             0,
-            0
+            0,
         )
     }
     public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent by lazy {
@@ -712,7 +717,7 @@ public class TestDataHelper {
             channel2,
             member2,
             0,
-            0
+            0,
         )
     }
 
@@ -730,7 +735,7 @@ public class TestDataHelper {
             channel3,
             member3,
             0,
-            0
+            0,
         )
     }
     public val user1UpdatedEvent: UserUpdatedEvent by lazy {
@@ -753,7 +758,7 @@ public class TestDataHelper {
             channel1.id,
             user1,
             null,
-            channel1
+            channel1,
         )
     }
     public val notificationChannelTruncated: NotificationChannelTruncatedEvent by lazy {
@@ -766,7 +771,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            channel1
+            channel1,
         )
     }
     public val channelDeletedEvent: ChannelDeletedEvent by lazy {
@@ -780,7 +785,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             channel1,
-            null
+            null,
         )
     }
 }

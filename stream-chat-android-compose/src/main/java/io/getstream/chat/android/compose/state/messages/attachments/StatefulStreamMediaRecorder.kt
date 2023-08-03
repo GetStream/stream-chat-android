@@ -116,7 +116,7 @@ public class StatefulStreamMediaRecorder(
             _onInfoState.value = StreamMediaRecorderState(
                 streamMediaRecorder = streamMediaRecorder,
                 what = what,
-                extra = extra
+                extra = extra,
             )
         }
 
@@ -130,7 +130,7 @@ public class StatefulStreamMediaRecorder(
             _onErrorState.value = StreamMediaRecorderState(
                 streamMediaRecorder = streamMediaRecorder,
                 what = what,
-                extra = extra
+                extra = extra,
             )
         }
 
@@ -173,7 +173,7 @@ public class StatefulStreamMediaRecorder(
     ): Result<File> =
         streamMediaRecorder.startAudioRecording(
             recordingName = recordingName,
-            override = override
+            override = override,
         )
 
     /**
@@ -190,7 +190,7 @@ public class StatefulStreamMediaRecorder(
         context: Context,
         recordingFile: File,
     ): Result<Unit> = streamMediaRecorder.startAudioRecording(
-        recordingFile = recordingFile
+        recordingFile = recordingFile,
     )
 
     /**

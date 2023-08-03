@@ -67,7 +67,7 @@ public class GiphyMediaAttachmentViewStyle(
                 attrs,
                 R.styleable.GiphyMediaAttachmentView,
                 R.attr.streamUiMessageListGiphyAttachmentStyle,
-                R.style.StreamUi_MessageList_GiphyMediaAttachment
+                R.style.StreamUi_MessageList_GiphyMediaAttachment,
             ).use { attributes ->
                 val progressIcon =
                     attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentProgressIcon)
@@ -79,7 +79,7 @@ public class GiphyMediaAttachmentViewStyle(
 
                 val imageBackgroundColor = attributes.getColor(
                     R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentImageBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_grey)
+                    context.getColorCompat(R.color.stream_ui_grey),
                 )
 
                 val placeholderIcon =
@@ -89,36 +89,36 @@ public class GiphyMediaAttachmentViewStyle(
                 val giphyType =
                     attributes.getEnum(
                         R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentGiphyType,
-                        GiphyInfoType.FIXED_HEIGHT
+                        GiphyInfoType.FIXED_HEIGHT,
                     )
 
                 val scaleType =
                     attributes.getEnum(
                         R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentScaleType,
-                        ImageView.ScaleType.FIT_CENTER
+                        ImageView.ScaleType.FIT_CENTER,
                     )
 
                 val sizingMode = attributes.getEnum(
                     R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentSizingMode,
-                    GiphySizingMode.ADAPTIVE
+                    GiphySizingMode.ADAPTIVE,
                 )
 
                 val width =
                     attributes.getLayoutDimension(
                         R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentWidth,
-                        ViewGroup.LayoutParams.MATCH_PARENT
+                        ViewGroup.LayoutParams.MATCH_PARENT,
                     )
 
                 val height =
                     attributes.getLayoutDimension(
                         R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentHeight,
-                        NO_GIVEN_HEIGHT
+                        NO_GIVEN_HEIGHT,
                     )
 
                 val dimensionRatio =
                     attributes.getFloat(
                         R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentDimensionRatio,
-                        SQUARE_DIMENSION_RATIO
+                        SQUARE_DIMENSION_RATIO,
                     )
 
                 return GiphyMediaAttachmentViewStyle(
@@ -131,7 +131,7 @@ public class GiphyMediaAttachmentViewStyle(
                     sizingMode = sizingMode,
                     width = width,
                     height = height,
-                    dimensionRatio = dimensionRatio
+                    dimensionRatio = dimensionRatio,
                 )
             }
         }

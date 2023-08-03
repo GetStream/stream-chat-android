@@ -62,7 +62,7 @@ public object PerformanceUtils {
 
             log(
                 "Task \"$taskName\" completed for $lastDuration seconds\n" +
-                    "The average duration for task \"$taskName\" is $avgDuration seconds"
+                    "The average duration for task \"$taskName\" is $avgDuration seconds",
             )
         }
     }
@@ -74,7 +74,7 @@ public object PerformanceUtils {
             return task().also {
                 doMeasureAndUpdateResult(
                     taskName,
-                    TaskEntry(name = taskName, lastStart = startTime, count = count)
+                    TaskEntry(name = taskName, lastStart = startTime, count = count),
                 )
             }
         }
@@ -86,7 +86,7 @@ public object PerformanceUtils {
         return task().also {
             doMeasureAndUpdateResult(
                 taskName,
-                TaskEntry(name = taskName, lastStart = startTime, count = count)
+                TaskEntry(name = taskName, lastStart = startTime, count = count),
             )
         }
     }

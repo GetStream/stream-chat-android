@@ -92,8 +92,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     cid,
                     mediaRecorder = mediaRecorder,
                     messageId = messageId,
-                    fileToUri = fileToUri
-                )
+                    fileToUri = fileToUri,
+                ),
             )
         },
         MessageListViewModel::class.java to {
@@ -115,7 +115,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     messagePositionHandler = messagePositionHandler,
                     showDateSeparatorInEmptyThread = showDateSeparatorInEmptyThread,
                 ),
-                chatClient = chatClient
+                chatClient = chatClient,
             )
         },
         MessageComposerViewModel::class.java to {
@@ -126,8 +126,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     mediaRecorder = mediaRecorder,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
-                    fileToUri = fileToUri
-                )
+                    fileToUri = fileToUri,
+                ),
             )
         },
     )
@@ -141,8 +141,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    public class Builder @SinceKotlin("99999.9") constructor(
-        private val context: Context
+    public class Builder
+    @SinceKotlin("99999.9")
+    constructor(
+        private val context: Context,
     ) {
         private var cid: String? = null
         private var messageId: String? = null

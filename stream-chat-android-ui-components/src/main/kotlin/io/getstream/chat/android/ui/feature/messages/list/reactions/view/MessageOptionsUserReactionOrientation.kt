@@ -44,7 +44,7 @@ public enum class MessageOptionsUserReactionOrientation(public val value: Int) {
      * Orients the reaction to the start of user avatar if the reaction is from the current user otherwise orients it
      * to the end of the avatar.
      */
-    BY_USER_INVERTED(3)
+    BY_USER_INVERTED(3),
 }
 
 /**

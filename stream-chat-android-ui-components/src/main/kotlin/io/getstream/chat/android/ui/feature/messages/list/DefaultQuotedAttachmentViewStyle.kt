@@ -53,7 +53,7 @@ public class DefaultQuotedAttachmentViewStyle(
                 fileAttachmentWidth = fileAttachmentWidth,
                 imageAttachmentHeight = imageAttachmentHeight,
                 imageAttachmentWidth = imageAttachmentWidth,
-                quotedImageRadius = quotedImageRadius
+                quotedImageRadius = quotedImageRadius,
             ).let(TransformStyle.defaultQuotedAttachmentViewStyleTransformer::transform)
         }
     }

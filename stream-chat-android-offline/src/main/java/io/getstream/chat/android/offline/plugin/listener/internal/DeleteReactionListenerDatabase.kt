@@ -88,7 +88,7 @@ internal class DeleteReactionListenerDatabase(
         reactionsRepository.selectUserReactionToMessage(
             reactionType = reactionType,
             messageId = messageId,
-            userId = currentUser.id
+            userId = currentUser.id,
         )?.let { cachedReaction ->
             reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
         }

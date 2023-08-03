@@ -46,10 +46,10 @@ public fun CancelIcon(
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
-                onClick = onClick
+                onClick = onClick,
             ),
         painter = painterResource(id = R.drawable.stream_compose_ic_close),
         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-        tint = ChatTheme.colors.appBackground
+        tint = ChatTheme.colors.appBackground,
     )
 }

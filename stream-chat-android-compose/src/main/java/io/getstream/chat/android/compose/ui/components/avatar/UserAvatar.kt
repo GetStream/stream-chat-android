@@ -74,7 +74,7 @@ public fun UserAvatar(
             shape = shape,
             contentDescription = contentDescription,
             onClick = onClick,
-            initialsAvatarOffset = initialsAvatarOffset
+            initialsAvatarOffset = initialsAvatarOffset,
         )
 
         if (showOnlineIndicator && user.online) {

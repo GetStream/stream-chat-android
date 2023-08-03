@@ -33,7 +33,7 @@ internal class RetrofitCallAdapterFactory private constructor(
     override fun get(
         returnType: Type,
         annotations: Array<out Annotation>,
-        retrofit: Retrofit
+        retrofit: Retrofit,
     ): CallAdapter<*, *>? {
         if (getRawType(returnType) != RetrofitCall::class.java) {
             return null

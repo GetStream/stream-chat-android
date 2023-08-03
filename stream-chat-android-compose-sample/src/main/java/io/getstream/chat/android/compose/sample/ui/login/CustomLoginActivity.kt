@@ -82,10 +82,10 @@ class CustomLoginActivity : AppCompatActivity() {
                             ChatHelper.connectUser(
                                 userCredentials = userCredentials,
                                 onSuccess = ::openChannels,
-                                onError = ::showError
+                                onError = ::showError,
                             )
                         }
-                    }
+                    },
                 )
             }
         }
@@ -104,7 +104,7 @@ class CustomLoginActivity : AppCompatActivity() {
                         .fillMaxSize()
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     var apiKeyText by remember { mutableStateOf("") }
                     var userIdText by remember { mutableStateOf("") }
@@ -152,19 +152,19 @@ class CustomLoginActivity : AppCompatActivity() {
                                         name = userNameText,
                                     ),
                                     token = userTokenText,
-                                )
+                                ),
                             )
-                        }
+                        },
                     )
 
                     Text(
                         modifier = Modifier.padding(16.dp),
                         text = stringResource(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_VERSION),
                         fontSize = 14.sp,
-                        color = ChatTheme.colors.textLowEmphasis
+                        color = ChatTheme.colors.textLowEmphasis,
                     )
                 }
-            }
+            },
         )
     }
 
@@ -176,7 +176,7 @@ class CustomLoginActivity : AppCompatActivity() {
             },
             navigationIcon = {
                 IconButton(
-                    onClick = onClick
+                    onClick = onClick,
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
@@ -186,7 +186,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 }
             },
             backgroundColor = Color.White,
-            elevation = 0.dp
+            elevation = 0.dp,
         )
     }
 
@@ -212,7 +212,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 focusedIndicatorColor = ChatTheme.colors.primaryAccent,
                 focusedLabelColor = ChatTheme.colors.primaryAccent,
                 unfocusedLabelColor = ChatTheme.colors.textLowEmphasis,
-            )
+            ),
         )
     }
 
@@ -231,12 +231,12 @@ class CustomLoginActivity : AppCompatActivity() {
                 backgroundColor = ChatTheme.colors.primaryAccent,
                 disabledBackgroundColor = ChatTheme.colors.disabled,
             ),
-            onClick = onClick
+            onClick = onClick,
         ) {
             Text(
                 text = stringResource(id = R.string.custom_login_button_text),
                 fontSize = 16.sp,
-                color = Color.White
+                color = Color.White,
             )
         }
     }

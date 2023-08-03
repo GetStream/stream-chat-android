@@ -205,7 +205,7 @@ public class DefaultStreamMediaRecorder(
                     recordingFile = it
                     initializeMediaRecorderForAudio(
                         context = context,
-                        recordingFile = it
+                        recordingFile = it,
                     )
                     requireNotNull(mediaRecorder)
                     mediaRecorder?.start()
@@ -222,8 +222,8 @@ public class DefaultStreamMediaRecorder(
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not start audio recording.",
-                    cause = exception
-                )
+                    cause = exception,
+                ),
             )
         }
     }
@@ -248,7 +248,7 @@ public class DefaultStreamMediaRecorder(
 
             initializeMediaRecorderForAudio(
                 context = context,
-                recordingFile = recordingFile
+                recordingFile = recordingFile,
             )
 
             requireNotNull(mediaRecorder)
@@ -264,8 +264,8 @@ public class DefaultStreamMediaRecorder(
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not start audio recording.",
-                    cause = exception
-                )
+                    cause = exception,
+                ),
             )
         }
     }
@@ -306,7 +306,7 @@ public class DefaultStreamMediaRecorder(
                 extraData = mapOf(
                     EXTRA_DURATION to durationInMs / 1000f,
                     EXTRA_WAVEFORM_DATA to sampleData,
-                )
+                ),
             )
             val recordedMedia = RecordedMedia(attachment = attachment, durationInMs = durationInMs)
             logger.v { "[stopRecording] succeed: $recordedMedia" }
@@ -317,8 +317,8 @@ public class DefaultStreamMediaRecorder(
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not Stop audio recording.",
-                    cause = exception
-                )
+                    cause = exception,
+                ),
             )
         }
     }
@@ -360,8 +360,8 @@ public class DefaultStreamMediaRecorder(
             Result.Failure(
                 Error.ThrowableError(
                     message = "Could not delete audio recording.",
-                    cause = exception
-                )
+                    cause = exception,
+                ),
             )
         }
     }
@@ -414,7 +414,9 @@ public class DefaultStreamMediaRecorder(
             while (mediaRecorderState == MediaRecorderState.RECORDING) {
                 val activeRecordingStartedAt = this@DefaultStreamMediaRecorder.activeRecordingStartedAt
                 val currentDuration =
-                    if (activeRecordingStartedAt != null) System.currentTimeMillis() - activeRecordingStartedAt else {
+                    if (activeRecordingStartedAt != null) {
+                        System.currentTimeMillis() - activeRecordingStartedAt
+                    } else {
                         0L
                     }
 
@@ -436,7 +438,7 @@ public class DefaultStreamMediaRecorder(
             onErrorListener.onError(
                 streamMediaRecorder = this,
                 what = what,
-                extra = extra
+                extra = extra,
             )
         }
     }
@@ -452,7 +454,7 @@ public class DefaultStreamMediaRecorder(
             onInfoListener.onInfo(
                 this,
                 what = what,
-                extra = extra
+                extra = extra,
             )
         }
     }

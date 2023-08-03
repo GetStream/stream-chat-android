@@ -69,19 +69,19 @@ internal class ValidationErrorRenderer(
                 is ValidationError.MessageLengthExceeded -> {
                     context.getString(
                         R.string.stream_ui_message_composer_error_message_length,
-                        currentValidationError.maxMessageLength
+                        currentValidationError.maxMessageLength,
                     )
                 }
                 is ValidationError.AttachmentCountExceeded -> {
                     context.getString(
                         R.string.stream_ui_message_composer_error_attachment_count,
-                        currentValidationError.maxAttachmentCount
+                        currentValidationError.maxAttachmentCount,
                     )
                 }
                 is ValidationError.AttachmentSizeExceeded -> {
                     context.getString(
                         R.string.stream_ui_message_composer_error_file_size,
-                        MediaStringUtil.convertFileSizeByteCount(currentValidationError.maxAttachmentSize)
+                        MediaStringUtil.convertFileSizeByteCount(currentValidationError.maxAttachmentSize),
                     )
                 }
                 is ValidationError.ContainsLinksWhenNotAllowed -> {

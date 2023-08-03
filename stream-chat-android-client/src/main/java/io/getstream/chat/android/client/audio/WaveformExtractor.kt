@@ -98,7 +98,7 @@ public class WaveformExtractor(
                                     0,
                                     0,
                                     0,
-                                    MediaCodec.BUFFER_FLAG_END_OF_STREAM
+                                    MediaCodec.BUFFER_FLAG_END_OF_STREAM,
                                 )
                                 inputEof = true
                             }
@@ -184,7 +184,7 @@ public class WaveformExtractor(
             val averageSquaredSample = squaredSampleSum / samplesPerPoint
             val rms = sqrt(averageSquaredSample)
             logger.v { "[rms] sample: $sample, averageSquaredSample: $averageSquaredSample, rms: $rms" }
-            sampleData.add(rms /** 5*/)
+            sampleData.add(rms)
             extractorCallBack.onProgress(this, progress)
             sampleCount = 0
             squaredSampleSum = 0.0f

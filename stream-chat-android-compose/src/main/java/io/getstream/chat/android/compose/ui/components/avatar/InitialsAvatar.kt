@@ -60,7 +60,7 @@ public fun InitialsAvatar(
         modifier.clickable(
             onClick = onClick,
             indication = rememberRipple(bounded = false),
-            interactionSource = remember { MutableInteractionSource() }
+            interactionSource = remember { MutableInteractionSource() },
         )
     } else {
         modifier
@@ -71,7 +71,7 @@ public fun InitialsAvatar(
     Box(
         modifier = clickableModifier
             .clip(shape)
-            .background(brush = initialsGradient)
+            .background(brush = initialsGradient),
     ) {
         Text(
             modifier = Modifier
@@ -79,7 +79,7 @@ public fun InitialsAvatar(
                 .offset(avatarOffset.x, avatarOffset.y),
             text = initials,
             style = textStyle,
-            color = Color.White
+            color = Color.White,
         )
     }
 }

@@ -87,7 +87,7 @@ public open class AttachmentDestination(
             Toast.makeText(
                 context,
                 context.getString(R.string.stream_ui_message_list_attachment_invalid_url),
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
             return
         }
@@ -110,7 +110,7 @@ public open class AttachmentDestination(
             Toast.makeText(
                 context,
                 context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
-                Toast.LENGTH_SHORT
+                Toast.LENGTH_SHORT,
             ).show()
             return
         }
@@ -139,7 +139,7 @@ public open class AttachmentDestination(
                 Toast.makeText(
                     context,
                     context.getString(R.string.stream_ui_message_list_attachment_invalid_mime_type, attachment.name),
-                    Toast.LENGTH_SHORT
+                    Toast.LENGTH_SHORT,
                 ).show()
             }
         }
@@ -181,7 +181,7 @@ public open class AttachmentDestination(
         StfalconImageViewer
             .Builder(context, imageUrls, ImageView::load)
             .withStartPosition(
-                if (attachmentIndex in imageUrls.indices) attachmentIndex else 0
+                if (attachmentIndex in imageUrls.indices) attachmentIndex else 0,
             )
             .show()
     }

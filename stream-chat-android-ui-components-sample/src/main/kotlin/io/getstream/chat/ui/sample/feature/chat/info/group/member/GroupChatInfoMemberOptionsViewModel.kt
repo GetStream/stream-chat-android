@@ -57,7 +57,7 @@ class GroupChatInfoMemberOptionsViewModel(
                     querySort = QuerySortByField.descByName("last_updated"),
                     messageLimit = 0,
                     limit = 1,
-                )
+                ),
             ).await()
 
             val directChannelCid = when (result) {

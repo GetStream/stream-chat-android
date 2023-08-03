@@ -29,7 +29,7 @@ import io.getstream.log.StreamLogger
  * A connection layer between [StreamLogger] and [ChatLoggerHandler].
  */
 internal class StreamLoggerHandler(
-    private val handler: ChatLoggerHandler?
+    private val handler: ChatLoggerHandler?,
 ) : StreamLogger {
 
     /**

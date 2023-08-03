@@ -42,8 +42,9 @@ public fun interface DateSeparatorHandler {
          *
          * @return The default normal list date separator handler.
          */
-        public fun getDefaultDateSeparatorHandler(separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold):
-            DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
+        public fun getDefaultDateSeparatorHandler(
+            separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold,
+        ): DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
             if (previousMessage == null) {
                 true
             } else {
@@ -56,8 +57,9 @@ public fun interface DateSeparatorHandler {
          *
          * @return The default thread date separator handler.
          */
-        public fun getDefaultThreadDateSeparatorHandler(separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold):
-            DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
+        public fun getDefaultThreadDateSeparatorHandler(
+            separatorTimeMillis: Long = DateSeparatorDefaultHourThreshold,
+        ): DateSeparatorHandler = DateSeparatorHandler { previousMessage, message ->
             if (previousMessage == null) {
                 false
             } else {

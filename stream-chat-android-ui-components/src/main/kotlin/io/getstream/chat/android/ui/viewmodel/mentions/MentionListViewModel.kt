@@ -121,7 +121,7 @@ public class MentionListViewModel : ViewModel() {
                 _state.value = currentState.copy(
                     results = currentState.results + messages,
                     isLoading = false,
-                    canLoadMore = messages.size == QUERY_LIMIT
+                    canLoadMore = messages.size == QUERY_LIMIT,
                 )
             }
             is Result.Failure -> {

@@ -88,7 +88,7 @@ private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentP
 private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
     error(
         "No LocalMessageOptionsUserReactionAlignment provided! Make sure to wrap all usages of Stream components " +
-            "in a ChatTheme."
+            "in a ChatTheme.",
     )
 }
 
@@ -99,19 +99,19 @@ private val LocalAttachmentsPickerTabFactories = compositionLocalOf<List<Attachm
 private val LocalVideoThumbnailsEnabled = compositionLocalOf<Boolean> {
     error(
         "No videoThumbnailsEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme."
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
 private val LocalStreamCdnImageResizing = compositionLocalOf<StreamCdnImageResizing> {
     error(
         "No StreamCdnImageResizing provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme."
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
 private val LocalReadCountEnabled = compositionLocalOf<Boolean> {
     error(
         "No readCountEnabled Boolean provided! " +
-            "Make sure to wrap all usages of Stream components in a ChatTheme."
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
 private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
@@ -173,7 +173,7 @@ public fun ChatTheme(
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
         context = LocalContext.current,
         typography = typography,
-        attachmentFactories = attachmentFactories
+        attachmentFactories = attachmentFactories,
     ),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),

@@ -68,7 +68,7 @@ public fun MessageOptions(
     itemContent: @Composable ColumnScope.(MessageOptionItemState) -> Unit = { option ->
         DefaultMessageOptionItem(
             option = option,
-            onMessageOptionSelected = onMessageOptionSelected
+            onMessageOptionSelected = onMessageOptionSelected,
         )
     },
 ) {
@@ -99,9 +99,9 @@ internal fun DefaultMessageOptionItem(
             .clickable(
                 onClick = { onMessageOptionSelected(option) },
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple()
+                indication = rememberRipple(),
             ),
-        option = option
+        option = option,
     )
 }
 
@@ -152,7 +152,9 @@ public fun defaultMessageOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (isMessageSynced && canQuoteMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_reply,
@@ -161,7 +163,9 @@ public fun defaultMessageOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (!isInThread && isMessageSynced && canThreadReply) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
@@ -170,7 +174,9 @@ public fun defaultMessageOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (isTextOnlyMessage || hasLinks) {
             MessageOptionItemState(
                 title = R.string.stream_compose_copy_message,
@@ -179,7 +185,9 @@ public fun defaultMessageOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
@@ -188,7 +196,9 @@ public fun defaultMessageOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (!isOwnMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_flag_message,
@@ -197,25 +207,31 @@ public fun defaultMessageOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (isMessageSynced && canPinMessage) {
             MessageOptionItemState(
                 title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
                 action = Pin(selectedMessage),
                 iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
                 iconColor = ChatTheme.colors.textLowEmphasis,
-                titleColor = ChatTheme.colors.textHighEmphasis
+                titleColor = ChatTheme.colors.textHighEmphasis,
             )
-        } else null,
+        } else {
+            null
+        },
         if (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
                 action = Delete(selectedMessage),
                 iconColor = ChatTheme.colors.errorAccent,
-                titleColor = ChatTheme.colors.errorAccent
+                titleColor = ChatTheme.colors.errorAccent,
             )
-        } else null,
+        } else {
+            null
+        },
     )
 }
 
@@ -274,14 +290,14 @@ private fun MessageOptionsPreview(
     ChatTheme {
         val selectedMMessage = PreviewMessageData.message1.copy(
             user = messageUser,
-            syncStatus = syncStatus
+            syncStatus = syncStatus,
         )
 
         val messageOptionsStateList = defaultMessageOptionsState(
             selectedMessage = selectedMMessage,
             currentUser = currentUser,
             isInThread = false,
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
 
         MessageOptions(options = messageOptionsStateList, onMessageOptionSelected = {})

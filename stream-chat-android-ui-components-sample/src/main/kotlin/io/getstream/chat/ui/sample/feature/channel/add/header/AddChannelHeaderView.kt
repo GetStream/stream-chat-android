@@ -50,7 +50,7 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }
@@ -70,7 +70,7 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
                 addView(
                     MemberItemView(context).apply {
                         render(member)
-                    }
+                    },
                 )
             }
             isVisible = members.isNotEmpty()
@@ -129,7 +129,7 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
         constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
             context,
             attrs,
-            defStyleAttr
+            defStyleAttr,
         )
 
         fun render(member: User) {

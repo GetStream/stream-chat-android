@@ -49,7 +49,7 @@ internal class MessagingStyleNotificationHandler(
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
     private val userIconBuilder: UserIconBuilder,
-    private val permissionHandler: NotificationPermissionHandler?
+    private val permissionHandler: NotificationPermissionHandler?,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -84,7 +84,7 @@ internal class MessagingStyleNotificationHandler(
             context,
             notificationId,
             newMessageIntent(message, channel),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         ChatClient.instance().launch {
             val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)

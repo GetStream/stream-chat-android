@@ -139,7 +139,7 @@ internal class DistinctChatApi(
             createdAtAfter,
             createdAtAfterOrEqual,
             createdAtBefore,
-            createdAtBeforeOrEqual
+            createdAtBeforeOrEqual,
         ).hashCode()
 
         StreamLog.d(TAG) { "[queryBannedUsers] uniqueKey: $uniqueKey" }
@@ -153,7 +153,7 @@ internal class DistinctChatApi(
                 createdAtAfter,
                 createdAtAfterOrEqual,
                 createdAtBefore,
-                createdAtBeforeOrEqual
+                createdAtBeforeOrEqual,
             )
         }
     }

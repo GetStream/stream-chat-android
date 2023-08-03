@@ -125,7 +125,7 @@ internal class MediaAttachmentAdapter(
                 binding.videoLengthTextView.isVisible = style.videoLengthTextVisible
                 binding.videoLogoImageView.isVisible = style.videoIconVisible
                 binding.videoLogoImageView.setImageDrawable(
-                    style.videoIconDrawable.applyTint(style.videoIconDrawableTint)
+                    style.videoIconDrawable.applyTint(style.videoIconDrawableTint),
                 )
                 binding.videoLengthTextView.setTextStyle(style.videoLengthTextStyle)
                 binding.videoLengthTextView.text = MediaStringUtil.convertVideoLength(attachment.videoLength)

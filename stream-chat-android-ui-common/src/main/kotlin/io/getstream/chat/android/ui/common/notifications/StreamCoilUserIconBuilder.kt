@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
  */
 @StreamHandsOff(
     reason = "This class shouldn't be renamed without verifying it works correctly on Chat Client Artifacts because " +
-        "we are using it by reflection"
+        "we are using it by reflection",
 )
 public class StreamCoilUserIconBuilder(private val context: Context) : UserIconBuilder {
     override suspend fun buildIcon(user: User): IconCompat? =

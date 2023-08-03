@@ -38,7 +38,7 @@ internal interface ReactionDao {
         "SELECT id FROM $REACTION_ENTITY_TABLE_NAME " +
             "WHERE syncStatus = :syncStatus " +
             "ORDER BY syncStatus ASC " +
-            "LIMIT :limit"
+            "LIMIT :limit",
     )
     suspend fun selectIdsSyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<Int>
 
@@ -46,7 +46,7 @@ internal interface ReactionDao {
         "SELECT * FROM stream_chat_reaction " +
             "WHERE syncStatus = :syncStatus " +
             "ORDER BY syncStatus ASC " +
-            "LIMIT :limit"
+            "LIMIT :limit",
     )
     suspend fun selectSyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<ReactionEntity>
 
@@ -54,14 +54,14 @@ internal interface ReactionDao {
         "SELECT * FROM $REACTION_ENTITY_TABLE_NAME " +
             "WHERE stream_chat_reaction.type = :reactionType " +
             "AND stream_chat_reaction.messageid = :messageId " +
-            "AND userId = :userId"
+            "AND userId = :userId",
     )
     suspend fun selectUserReactionToMessage(reactionType: String, messageId: String, userId: String): ReactionEntity?
 
     @Query(
         "SELECT * FROM $REACTION_ENTITY_TABLE_NAME " +
             "WHERE stream_chat_reaction.messageid = :messageId " +
-            "AND userId = :userId"
+            "AND userId = :userId",
     )
     suspend fun selectUserReactionsToMessage(messageId: String, userId: String): List<ReactionEntity>
 
@@ -69,7 +69,7 @@ internal interface ReactionDao {
         "UPDATE $REACTION_ENTITY_TABLE_NAME " +
             "SET deletedAt = :deletedAt " +
             "WHERE userId = :userId " +
-            "AND messageId = :messageId"
+            "AND messageId = :messageId",
     )
     suspend fun setDeleteAt(userId: String, messageId: String, deletedAt: Date)
 

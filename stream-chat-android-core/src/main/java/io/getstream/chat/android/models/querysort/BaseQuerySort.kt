@@ -63,7 +63,7 @@ public abstract class BaseQuerySort<T : Any> : QuerySorter<T> {
     public override fun toDto(): List<Map<String, Any>> = sortSpecifications.map { sortSpec ->
         listOf(
             QuerySorter.KEY_FIELD_NAME to sortSpec.sortAttribute.name,
-            QuerySorter.KEY_DIRECTION to sortSpec.sortDirection.value
+            QuerySorter.KEY_DIRECTION to sortSpec.sortDirection.value,
         ).toMap()
     }
 

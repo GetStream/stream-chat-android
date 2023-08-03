@@ -37,7 +37,7 @@ class ChatInfoSharedFilesAdapter : ListAdapter<SharedAttachment, BaseViewHolder<
         override fun areContentsTheSame(oldItem: SharedAttachment, newItem: SharedAttachment): Boolean {
             return oldItem == newItem
         }
-    }
+    },
 ) {
 
     private val dateFormat: DateFormat = SimpleDateFormat("MMM yyyy", Locale.getDefault())

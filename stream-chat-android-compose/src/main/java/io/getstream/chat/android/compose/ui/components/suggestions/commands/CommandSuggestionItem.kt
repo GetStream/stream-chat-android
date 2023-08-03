@@ -69,11 +69,11 @@ public fun CommandSuggestionItem(
             .clickable(
                 onClick = { onCommandSelected(command) },
                 indication = rememberRipple(),
-                interactionSource = remember { MutableInteractionSource() }
+                interactionSource = remember { MutableInteractionSource() },
             )
             .padding(
                 vertical = ChatTheme.dimens.commandSuggestionItemVerticalPadding,
-                horizontal = ChatTheme.dimens.commandSuggestionItemHorizontalPadding
+                horizontal = ChatTheme.dimens.commandSuggestionItemHorizontalPadding,
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -93,7 +93,7 @@ internal fun DefaultCommandSuggestionItemLeadingContent() {
             .padding(end = 8.dp)
             .size(ChatTheme.dimens.commandSuggestionItemIconSize),
         painter = painterResource(id = R.drawable.stream_compose_ic_giphy),
-        contentDescription = null
+        contentDescription = null,
     )
 }
 
@@ -111,21 +111,21 @@ internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
     val commandDescription = LocalContext.current.getString(
         R.string.stream_compose_message_composer_command_template,
         command.name,
-        command.args
+        command.args,
     )
 
     Row(
         modifier = modifier
             .weight(1f)
             .wrapContentHeight(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = command.name.replaceFirstChar(Char::uppercase),
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -135,7 +135,7 @@ internal fun RowScope.DefaultCommandSuggestionItemCenterContent(
             style = ChatTheme.typography.body,
             color = ChatTheme.colors.textLowEmphasis,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

@@ -62,7 +62,7 @@ internal class DatabaseChannelRepositoryTest {
         verify(channelDao).insert(
             argThat { channelEntity ->
                 channelEntity.lastMessageId == backendMessage.id
-            }
+            },
         )
     }
 
@@ -89,7 +89,7 @@ internal class DatabaseChannelRepositoryTest {
         verify(channelDao).insert(
             argThat { channelEntity ->
                 channelEntity.lastMessageId == dbLastMessageId
-            }
+            },
         )
     }
 
@@ -116,7 +116,7 @@ internal class DatabaseChannelRepositoryTest {
         verify(channelDao).insert(
             argThat { channelEntity ->
                 channelEntity.lastMessageId == dbLastMessageId
-            }
+            },
         )
     }
 }

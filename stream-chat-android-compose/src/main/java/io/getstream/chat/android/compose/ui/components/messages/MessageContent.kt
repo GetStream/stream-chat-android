@@ -61,7 +61,7 @@ public fun MessageContent(
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(
             message = message,
-            onGiphyActionClick = onGiphyActionClick
+            onGiphyActionClick = onGiphyActionClick,
         )
     },
     deletedMessageContent: @Composable () -> Unit = {
@@ -73,7 +73,7 @@ public fun MessageContent(
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
-            onQuotedMessageClick = onQuotedMessageClick
+            onQuotedMessageClick = onQuotedMessageClick,
         )
     },
 ) {
@@ -97,7 +97,7 @@ internal fun DefaultMessageGiphyContent(
 ) {
     GiphyMessageContent(
         message = message,
-        onGiphyActionClick = onGiphyActionClick
+        onGiphyActionClick = onGiphyActionClick,
     )
 }
 
@@ -116,11 +116,11 @@ internal fun DefaultMessageDeletedContent(
                 start = 12.dp,
                 end = 12.dp,
                 top = 8.dp,
-                bottom = 8.dp
+                bottom = 8.dp,
             ),
         text = stringResource(id = R.string.stream_compose_message_deleted),
         color = ChatTheme.colors.textLowEmphasis,
-        style = ChatTheme.typography.footnoteItalic
+        style = ChatTheme.typography.footnoteItalic,
     )
 }
 
@@ -152,7 +152,7 @@ internal fun DefaultMessageContent(
                 message = message,
                 currentUser = currentUser,
                 onLongItemClick = onLongItemClick,
-                onQuotedMessageClick = onQuotedMessageClick
+                onQuotedMessageClick = onQuotedMessageClick,
             )
         }
     }

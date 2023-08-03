@@ -51,7 +51,7 @@ public fun User.getLastSeenText(
         } else {
             context.getString(
                 userLastSeenResId,
-                DateUtils.getRelativeTimeSpanString(it.time).toString()
+                DateUtils.getRelativeTimeSpanString(it.time).toString(),
             )
         }
     } ?: ""

@@ -61,7 +61,7 @@ internal class AttachmentUrlValidatorTests {
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
         val newMessage = oldMessage.copy(
             attachments = mutableListOf(newAttachment),
-            updatedAt = Date(2000L)
+            updatedAt = Date(2000L),
         )
 
         val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
@@ -80,7 +80,7 @@ internal class AttachmentUrlValidatorTests {
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
         val newMessage = oldMessage.copy(
             attachments = mutableListOf(newAttachment),
-            updatedAt = Date(2000L)
+            updatedAt = Date(2000L),
         )
 
         val result = sut.updateValidAttachmentsUrl(listOf(newMessage), mapOf(oldMessage.id to oldMessage))
@@ -100,7 +100,7 @@ internal class AttachmentUrlValidatorTests {
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
         val newMessage = oldMessage.copy(
             attachments = mutableListOf(newAttachment),
-            updatedAt = Date(2000L)
+            updatedAt = Date(2000L),
         )
         whenever(attachmentHelper.hasValidImageUrl(oldAttachment)) doReturn false
 
@@ -117,7 +117,7 @@ internal class AttachmentUrlValidatorTests {
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment), updatedAt = Date(1000L))
         val newMessage = oldMessage.copy(
             attachments = listOf(oldAttachment.copy(imageUrl = "SomeNewUrl")),
-            updatedAt = Date(2000L)
+            updatedAt = Date(2000L),
         )
         whenever(attachmentHelper.hasValidImageUrl(oldAttachment)) doReturn true
 

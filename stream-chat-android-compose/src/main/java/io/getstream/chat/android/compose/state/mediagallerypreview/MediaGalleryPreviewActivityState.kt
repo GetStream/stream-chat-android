@@ -55,7 +55,7 @@ internal fun Message.toMediaGalleryPreviewActivityState(): MediaGalleryPreviewAc
         userId = this.user.id,
         userName = this.user.name,
         userImage = this.user.image,
-        attachments = this.attachments.map { it.toMediaGalleryPreviewActivityAttachmentState() }
+        attachments = this.attachments.map { it.toMediaGalleryPreviewActivityAttachmentState() },
     )
 
 /**
@@ -67,7 +67,7 @@ internal fun MediaGalleryPreviewActivityState.toMessage(): Message =
         user = User(
             id = this.userId,
             name = this.userName,
-            image = this.userImage
+            image = this.userImage,
         ),
-        attachments = this.attachments.map { it.toAttachment() }.toMutableList()
+        attachments = this.attachments.map { it.toAttachment() }.toMutableList(),
     )

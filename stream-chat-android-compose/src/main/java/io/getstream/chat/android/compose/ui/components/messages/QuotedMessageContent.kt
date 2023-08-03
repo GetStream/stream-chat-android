@@ -46,7 +46,7 @@ public fun QuotedMessageContent(
         DefaultQuotedMessageTextContent(
             message = it,
             replyMessage = replyMessage,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
 ) {
@@ -73,7 +73,7 @@ public fun QuotedMessageContent(
 
                 textContent(message)
             }
-        }
+        },
     )
 }
 
@@ -112,6 +112,6 @@ internal fun DefaultQuotedMessageTextContent(
     QuotedMessageText(
         message = message,
         replyMessage = replyMessage,
-        currentUser = currentUser
+        currentUser = currentUser,
     )
 }

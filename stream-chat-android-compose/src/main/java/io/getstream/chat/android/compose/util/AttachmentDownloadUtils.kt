@@ -46,7 +46,7 @@ import io.getstream.chat.android.uiutils.util.openSystemSettings
 internal fun attachmentDownloadState(): Pair<PermissionState, MutableState<Attachment?>> {
     var writePermissionRequested by rememberSaveable { mutableStateOf(false) }
     val writePermissionState = rememberPermissionState(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
     ) {
         writePermissionRequested = true
     }

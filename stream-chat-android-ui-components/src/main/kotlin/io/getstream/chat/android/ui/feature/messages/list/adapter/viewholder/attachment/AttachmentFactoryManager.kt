@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListLis
  */
 public class AttachmentFactoryManager(
     private val attachmentFactories: List<AttachmentFactory> = listOf(
-        UnsupportedAttachmentFactory()
+        UnsupportedAttachmentFactory(),
     ),
 ) {
     /**

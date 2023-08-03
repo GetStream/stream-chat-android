@@ -90,25 +90,25 @@ public data class SingleReactionViewStyle(
                 return if (a.indexCount != 0) {
                     Builder(a, context)
                         .bubbleBorderColorMine(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderColorMine
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderColorMine,
                         )
                         .bubbleBorderColorTheirs(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderColorTheirs
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderColorTheirs,
                         )
                         .bubbleBorderWidthMine(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderWidthMine
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderWidthMine,
                         )
                         .bubbleBorderWidthTheirs(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderWidthTheirs
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleBorderWidthTheirs,
                         )
                         .bubbleColorMine(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleColorMine
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleColorMine,
                         )
                         .bubbleColorTheirs(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleColorTheirs
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleColorTheirs,
                         )
                         .messageOptionsUserReactionBubbleOrientation(
-                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleOrientation
+                            R.styleable.SingleReactionView_streamUiSingleReactionBubbleOrientation,
                         )
                         .build()
                 } else {

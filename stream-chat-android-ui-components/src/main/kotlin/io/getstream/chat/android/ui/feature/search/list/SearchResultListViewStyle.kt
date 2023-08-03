@@ -62,7 +62,7 @@ public data class SearchResultListViewStyle(
                 val backgroundColor =
                     a.getColor(
                         R.styleable.SearchResultListView_streamUiSearchResultListBackground,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_white),
                     )
 
                 val searchInfoBarBackground =
@@ -71,19 +71,19 @@ public data class SearchResultListViewStyle(
                 val searchInfoBarTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarTextFontAssets,
-                        R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarTextFont
+                        R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarTextFont,
                     )
                     .style(
                         R.styleable.SearchResultListView_streamUiSearchResultListSearchInfoBarTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -93,19 +93,19 @@ public data class SearchResultListViewStyle(
                 val emptyStateTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextFontAssets,
-                        R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextFont
+                        R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextFont,
                     )
                     .style(
                         R.styleable.SearchResultListView_streamUiSearchResultListEmptyStateTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -116,57 +116,57 @@ public data class SearchResultListViewStyle(
                 val senderTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultListSenderNameTextSize,
-                        context.getDimension(R.dimen.stream_ui_channel_item_title)
+                        context.getDimension(R.dimen.stream_ui_channel_item_title),
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultListSenderNameTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultListSenderNameTextFontAssets,
-                        R.styleable.SearchResultListView_streamUiSearchResultListSenderNameTextFont
+                        R.styleable.SearchResultListView_streamUiSearchResultListSenderNameTextFont,
                     )
                     .style(
                         R.styleable.SearchResultListView_streamUiSearchResultListSenderNameTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val messageTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTextSize,
-                        context.getDimension(R.dimen.stream_ui_channel_item_message)
+                        context.getDimension(R.dimen.stream_ui_channel_item_message),
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTextFontAssets,
-                        R.styleable.SearchResultListView_streamUiSearchResultListMessageTextFont
+                        R.styleable.SearchResultListView_streamUiSearchResultListMessageTextFont,
                     )
                     .style(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val messageTimeTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTimeTextSize,
-                        context.getDimension(R.dimen.stream_ui_channel_item_message)
+                        context.getDimension(R.dimen.stream_ui_channel_item_message),
                     )
                     .color(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTimeTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTimeTextFontAssets,
-                        R.styleable.SearchResultListView_streamUiSearchResultListMessageTimeTextFont
+                        R.styleable.SearchResultListView_streamUiSearchResultListMessageTimeTextFont,
                     )
                     .style(
                         R.styleable.SearchResultListView_streamUiSearchResultListMessageTimeTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 

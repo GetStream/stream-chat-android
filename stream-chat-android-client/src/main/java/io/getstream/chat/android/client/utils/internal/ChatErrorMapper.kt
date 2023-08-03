@@ -33,8 +33,8 @@ public fun Error.toMessageSyncDescription(): MessageSyncDescription? {
             content = MessageModerationFailed(
                 violations = cause.details.map { detail ->
                     ModerationViolation(detail.code, detail.messages)
-                }
-            )
+                },
+            ),
         )
         else -> null
     }

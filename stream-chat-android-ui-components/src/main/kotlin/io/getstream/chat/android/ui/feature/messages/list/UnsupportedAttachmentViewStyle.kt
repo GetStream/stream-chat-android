@@ -51,44 +51,44 @@ public data class UnsupportedAttachmentViewStyle(
                 attrs,
                 R.styleable.UnsupportedAttachmentView,
                 R.attr.streamUiMessageListUnsupportedAttachmentStyle,
-                R.style.StreamUi_MessageList_UnsupportedAttachment
+                R.style.StreamUi_MessageList_UnsupportedAttachment,
             ).use { a ->
                 val backgroundColor = a.getColor(
                     R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val strokeColor = a.getColor(
                     R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentStrokeColor,
-                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    context.getColorCompat(R.color.stream_ui_grey_whisper),
                 )
 
                 val strokeWidth = a.getDimensionPixelSize(
                     R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentStrokeWidth,
-                    1.dpToPx()
+                    1.dpToPx(),
                 )
 
                 val cornerRadius = a.getDimensionPixelSize(
                     R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentCornerRadius,
-                    12.dpToPx()
+                    12.dpToPx(),
                 )
 
                 val titleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentTitleTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentTitleFontAssets,
-                        R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentTitleTextFont
+                        R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentTitleTextFont,
                     )
                     .style(
                         R.styleable.UnsupportedAttachmentView_streamUiUnsupportedAttachmentTitleTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 

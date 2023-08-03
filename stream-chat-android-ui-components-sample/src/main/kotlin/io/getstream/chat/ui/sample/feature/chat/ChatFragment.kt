@@ -105,7 +105,7 @@ class ChatFragment : Fragment() {
                     override fun handleOnBackPressed() {
                         messageListViewModel.onEvent(MessageListViewModel.Event.BackButtonPressed)
                     }
-                }
+                },
             )
         }
         binding.messagesHeaderView.setBackButtonClickListener {
@@ -132,13 +132,13 @@ class ChatFragment : Fragment() {
             EventObserver { event ->
                 when (event) {
                     is ChatViewModel.NavigationEvent.NavigateToChatInfo -> findNavController().navigateSafely(
-                        ChatFragmentDirections.actionChatFragmentToChatInfoFragment(event.cid)
+                        ChatFragmentDirections.actionChatFragmentToChatInfoFragment(event.cid),
                     )
                     is ChatViewModel.NavigationEvent.NavigateToGroupChatInfo -> findNavController().navigateSafely(
-                        ChatFragmentDirections.actionChatFragmentToGroupChatInfoFragment(event.cid)
+                        ChatFragmentDirections.actionChatFragmentToGroupChatInfoFragment(event.cid),
                     )
                 }
-            }
+            },
         )
     }
 
@@ -175,7 +175,7 @@ class ChatFragment : Fragment() {
         val calendar = Calendar.getInstance()
         messageListViewModel.apply {
             messageListViewModel.setDeletedMessageVisibility(
-                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER
+                deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER,
             )
             bindView(binding.messageListView, viewLifecycleOwner)
             setDateSeparatorHandler { previousMessage, message ->

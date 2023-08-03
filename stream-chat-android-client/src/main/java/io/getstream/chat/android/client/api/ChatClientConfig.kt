@@ -42,7 +42,7 @@ public class ChatClientConfig @JvmOverloads constructor(
     public val warmUp: Boolean,
     public val loggerConfig: ChatLoggerConfig,
     public var distinctApiCalls: Boolean = true,
-    public val debugRequests: Boolean
+    public val debugRequests: Boolean,
 ) {
     public var isAnonymous: Boolean = false
 }

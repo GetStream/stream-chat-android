@@ -49,7 +49,7 @@ public class PermissionChecker {
                     )
 
                     else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
+                },
             )
     }
 
@@ -65,7 +65,7 @@ public class PermissionChecker {
                     )
 
                     else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                }
+                },
             )
     }
 
@@ -73,7 +73,7 @@ public class PermissionChecker {
         return permissions.all { permission ->
             ContextCompat.checkSelfPermission(
                 context,
-                permission
+                permission,
             ) == PackageManager.PERMISSION_GRANTED
         }
     }
@@ -84,7 +84,7 @@ public class PermissionChecker {
 
     public fun isGrantedAudioRecordPermission(context: Context): Boolean =
         ContextCompat.checkSelfPermission(
-            context, Manifest.permission.RECORD_AUDIO
+            context, Manifest.permission.RECORD_AUDIO,
         ) == PackageManager.PERMISSION_GRANTED
 
     /**
@@ -114,7 +114,7 @@ public class PermissionChecker {
                 else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             },
             onPermissionDenied,
-            onPermissionGranted
+            onPermissionGranted,
         )
     }
 
@@ -135,7 +135,7 @@ public class PermissionChecker {
                 else -> listOf(Manifest.permission.READ_EXTERNAL_STORAGE)
             },
             onPermissionDenied,
-            onPermissionGranted
+            onPermissionGranted,
         )
     }
 
@@ -152,7 +152,7 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_composer_permission_setting_message),
             permissions,
             onPermissionDenied,
-            onPermissionGranted
+            onPermissionGranted,
         )
     }
 
@@ -181,7 +181,7 @@ public class PermissionChecker {
                 view.context.getString(R.string.stream_ui_message_composer_permission_setting_message),
                 listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                 onPermissionDenied,
-                onPermissionGranted
+                onPermissionGranted,
             )
         } else {
             onPermissionGranted()
@@ -200,7 +200,7 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_composer_permission_camera_message),
             listOf(Manifest.permission.CAMERA),
             onPermissionDenied,
-            onPermissionGranted
+            onPermissionGranted,
         )
     }
 
@@ -216,7 +216,7 @@ public class PermissionChecker {
             view.context.getString(R.string.stream_ui_message_composer_permission_audio_record_message),
             listOf(Manifest.permission.RECORD_AUDIO),
             onPermissionDenied,
-            onPermissionGranted
+            onPermissionGranted,
         )
     }
 

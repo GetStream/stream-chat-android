@@ -33,7 +33,7 @@ import io.getstream.result.Result
 */
 internal class ShuffleGiphyListenerDatabase(
     private val userRepository: UserRepository,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
 ) : ShuffleGiphyListener {
 
     /**

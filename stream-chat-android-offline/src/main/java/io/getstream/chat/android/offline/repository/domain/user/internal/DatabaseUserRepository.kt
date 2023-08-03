@@ -129,7 +129,7 @@ internal class DatabaseUserRepository(
             invisible = invisible,
             banned = banned,
             extraData = extraData,
-            mutes = mutes.map { mute -> mute.target.id }
+            mutes = mutes.map { mute -> mute.target.id },
         )
     }
 

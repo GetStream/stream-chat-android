@@ -37,7 +37,7 @@ public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory
             modifier = modifier
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
-            attachmentState = attachmentState
+            attachmentState = attachmentState,
         )
     },
 )

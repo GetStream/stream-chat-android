@@ -47,7 +47,7 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
         Dispatchers.setMain(dispatcher)
         DispatcherProvider.set(
             mainDispatcher = dispatcher,
-            ioDispatcher = dispatcher
+            ioDispatcher = dispatcher,
         )
         beforeAllCalled = true
     }

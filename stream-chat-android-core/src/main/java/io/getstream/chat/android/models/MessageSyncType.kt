@@ -38,7 +38,7 @@ public enum class MessageSyncType(
      */
     NONE(
         alias = "message.sync.none",
-        type = NONE_TYPE
+        type = NONE_TYPE,
     ),
 
     /**
@@ -48,7 +48,7 @@ public enum class MessageSyncType(
      */
     IN_PROGRESS_AWAIT_ATTACHMENTS(
         alias = "message.sync.in_progress.await_attachments",
-        type = IN_PROGRESS_AWAIT_ATTACHMENTS_TYPE
+        type = IN_PROGRESS_AWAIT_ATTACHMENTS_TYPE,
     ),
 
     /**
@@ -58,8 +58,9 @@ public enum class MessageSyncType(
      */
     FAILED_MODERATION(
         alias = "message.sync.failed.moderation",
-        type = FAILED_MODERATION_TYPE
-    );
+        type = FAILED_MODERATION_TYPE,
+    ),
+    ;
 
     public companion object {
         private val map = MessageSyncType.values().associateBy(MessageSyncType::type)

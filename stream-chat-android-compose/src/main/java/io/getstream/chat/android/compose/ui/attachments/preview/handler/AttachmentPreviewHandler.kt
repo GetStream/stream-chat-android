@@ -50,7 +50,7 @@ public interface AttachmentPreviewHandler {
             return listOf(
                 MediaAttachmentPreviewHandler(context),
                 DocumentAttachmentPreviewHandler(context),
-                UrlAttachmentPreviewHandler(context)
+                UrlAttachmentPreviewHandler(context),
             )
         }
     }

@@ -74,7 +74,9 @@ internal class QueryMembersErrorHandlerImpl(
                     .let { members ->
                         if (clampedLimit > 0) {
                             members.take(clampedLimit)
-                        } else members
+                        } else {
+                            members
+                        }
                     }
                 Result.Success(membersFromDatabase)
             }

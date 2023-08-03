@@ -48,7 +48,6 @@ internal class TypingEventsTest {
 
     @Test
     fun `When typing events are disabled Should not pass precondition`() = runTest {
-
         val (sut, _) = Fixture(testCoroutines.scope, randomUser())
             .givenTypingEventsDisabled(channelType, channelId)
             .get()
@@ -58,7 +57,7 @@ internal class TypingEventsTest {
             channelType,
             channelId,
             emptyMap(),
-            Date()
+            Date(),
         ) shouldBeInstanceOf Result.Failure::class
     }
 
@@ -76,7 +75,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                eventTime
+                eventTime,
             ) shouldBeInstanceOf Result.Success::class
 
             sut.onTypingEventRequest(EventType.TYPING_START, channelType, channelId, emptyMap(), eventTime)
@@ -87,7 +86,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                Date()
+                Date(),
             ) shouldBeInstanceOf Result.Failure::class
 
             Thread.sleep(3001)
@@ -97,7 +96,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                Date()
+                Date(),
             ) shouldBeInstanceOf Result.Success::class
         }
 
@@ -113,7 +112,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                Date()
+                Date(),
             ) shouldBeInstanceOf Result.Failure::class
         }
 
@@ -129,7 +128,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                Date()
+                Date(),
             )
 
             sut.onTypingEventPrecondition(
@@ -137,7 +136,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                Date()
+                Date(),
             ) shouldBeInstanceOf Result.Success::class
 
             sut.onTypingEventRequest(
@@ -145,7 +144,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                Date()
+                Date(),
             )
         }
 
@@ -162,7 +161,7 @@ internal class TypingEventsTest {
                 channelType,
                 channelId,
                 emptyMap(),
-                eventTime
+                eventTime,
             )
 
             stateRegistry.mutableChannel(channelType, channelId).lastStartTypingEvent `should be equal to` eventTime
@@ -180,8 +179,8 @@ internal class TypingEventsTest {
             val channelState = stateRegistry.mutableChannel(channelType, channelId)
             channelState.setChannelConfig(
                 channelState.channelConfig.value.copy(
-                    typingEventsEnabled = false
-                )
+                    typingEventsEnabled = false,
+                ),
             )
             return this
         }
@@ -190,8 +189,8 @@ internal class TypingEventsTest {
             val channelState = stateRegistry.mutableChannel(channelType, channelId)
             channelState.setChannelConfig(
                 channelState.channelConfig.value.copy(
-                    typingEventsEnabled = true
-                )
+                    typingEventsEnabled = true,
+                ),
             )
             return this
         }

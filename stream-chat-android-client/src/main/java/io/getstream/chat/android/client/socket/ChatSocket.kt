@@ -58,7 +58,7 @@ internal open class ChatSocket(
     private val healthMonitor = HealthMonitor(
         userScope = userScope,
         checkCallback = { (chatSocketStateService.currentState as? State.Connected)?.event?.let(::sendEvent) },
-        reconnectCallback = { chatSocketStateService.onWebSocketEventLost() }
+        reconnectCallback = { chatSocketStateService.onWebSocketEventLost() },
     )
     private val lifecycleHandler = object : LifecycleHandler {
         override suspend fun resume() { chatSocketStateService.onResume() }
@@ -162,7 +162,7 @@ internal open class ChatSocket(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)
                 false -> SocketFactory.ConnectionConf.UserConnectionConf(wssUrl, apiKey, user)
-            }
+            },
         )
     }
 
@@ -297,7 +297,8 @@ internal open class ChatSocket(
     private val State.Disconnected.cause
         get() = when (this) {
             is State.Disconnected.DisconnectedByRequest,
-            is State.Disconnected.Stopped -> DisconnectCause.ConnectionReleased
+            is State.Disconnected.Stopped,
+            -> DisconnectCause.ConnectionReleased
             is State.Disconnected.NetworkDisconnected -> DisconnectCause.NetworkNotAvailable
             is State.Disconnected.DisconnectedPermanently -> DisconnectCause.UnrecoverableError(error)
             is State.Disconnected.DisconnectedTemporarily -> DisconnectCause.Error(error)

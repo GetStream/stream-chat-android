@@ -44,7 +44,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     private val factory: ChatInfoSharedAttachmentsViewModelFactory by lazy {
         ChatInfoSharedAttachmentsViewModelFactory(
             args.cid!!,
-            ChatInfoSharedAttachmentsViewModel.AttachmentsType.MEDIA
+            ChatInfoSharedAttachmentsViewModel.AttachmentsType.MEDIA,
         )
     }
     private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels { factory }
@@ -126,7 +126,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
                                 createdAt = it.createdAt,
                                 messageId = it.message.id,
                                 cid = it.message.cid,
-                                isMine = it.message.user.id == user?.id
+                                isMine = it.message.user.id == user?.id,
                             )
                         } else {
                             null

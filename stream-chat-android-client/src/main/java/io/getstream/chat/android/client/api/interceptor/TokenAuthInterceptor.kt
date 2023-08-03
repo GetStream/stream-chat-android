@@ -68,7 +68,7 @@ internal class TokenAuthInterceptor internal constructor(
                 "${ChatErrorCode.INVALID_TOKEN.description}: '$token'",
                 ChatErrorCode.INVALID_TOKEN.code,
                 -1,
-                e
+                e,
             )
         }
     }

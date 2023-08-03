@@ -83,7 +83,7 @@ internal class CustomObjectFilteringTest {
         fun neutralFilterArguments() = listOf(
             List(10) { randomChannel() }.let { expectedList ->
                 Arguments.of(expectedList, NeutralFilterObject, expectedList)
-            }
+            },
         )
 
         @JvmStatic
@@ -92,35 +92,35 @@ internal class CustomObjectFilteringTest {
                 List(positiveRandomInt(10)) {
                     randomChannel(
                         id = "!members${randomString()}",
-                        members = memberList
+                        members = memberList,
                     )
                 }.let { expectedList ->
                     Arguments.of(
                         expectedList + List(10) { randomChannel() },
                         Filters.distinct(memberList.map { it.user.id }),
-                        expectedList
+                        expectedList,
                     )
                 },
                 List(positiveRandomInt(10)) {
                     randomChannel(
                         id = "!members${randomString()}",
-                        members = memberList
+                        members = memberList,
                     )
                 }.let { expectedList ->
                     Arguments.of(
                         expectedList + List(10) {
                             randomChannel(
-                                members = memberList
+                                members = memberList,
                             )
                         },
                         Filters.distinct(memberList.map { it.user.id }),
-                        expectedList
+                        expectedList,
                     )
                 },
                 List(positiveRandomInt(10)) {
                     randomChannel(
                         id = "!membersaaa",
-                        members = memberList
+                        members = memberList,
                     )
                 }.let { expectedList ->
                     Arguments.of(
@@ -130,26 +130,26 @@ internal class CustomObjectFilteringTest {
                             )
                         },
                         Filters.distinct(memberList.map { it.user.id }),
-                        expectedList
+                        expectedList,
                     )
                 },
                 List(positiveRandomInt(10)) {
                     randomChannel(
                         id = "!membersa",
-                        members = memberList
+                        members = memberList,
                     )
                 }.let { expectedList ->
                     Arguments.of(
                         expectedList + List(10) {
                             randomChannel(
                                 id = "!membersa",
-                                members = memberList.drop(positiveRandomInt(memberList.size))
+                                members = memberList.drop(positiveRandomInt(memberList.size)),
                             )
                         },
                         Filters.distinct(memberList.map { it.user.id }),
-                        expectedList
+                        expectedList,
                     )
-                }
+                },
             )
         }
 
@@ -173,8 +173,8 @@ internal class CustomObjectFilteringTest {
             List(positiveRandomInt(10)) {
                 randomChannel(
                     extraData = mapOf(
-                        "someField" to (List(positiveRandomInt(10)) { randomLong() } + longQuery).shuffled()
-                    )
+                        "someField" to (List(positiveRandomInt(10)) { randomLong() } + longQuery).shuffled(),
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -186,8 +186,8 @@ internal class CustomObjectFilteringTest {
             List(positiveRandomInt(10)) {
                 randomChannel(
                     extraData = mapOf(
-                        "someField" to (List(positiveRandomInt(10)) { randomString() } + stringQuery).shuffled()
-                    )
+                        "someField" to (List(positiveRandomInt(10)) { randomString() } + stringQuery).shuffled(),
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -199,8 +199,8 @@ internal class CustomObjectFilteringTest {
             List(positiveRandomInt(10)) {
                 randomChannel(
                     extraData = mapOf(
-                        "someField" to (List(positiveRandomInt(10)) { randomInt() } + intQuery).shuffled()
-                    )
+                        "someField" to (List(positiveRandomInt(10)) { randomInt() } + intQuery).shuffled(),
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -221,14 +221,14 @@ internal class CustomObjectFilteringTest {
                     Filters.autocomplete("type", stringQuery),
                     expectedList,
                 )
-            }
+            },
         )
 
         @JvmStatic
         fun existsFilterArguments() = listOf(
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to longQuery)
+                    extraData = mapOf("someField" to longQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -239,7 +239,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to stringQuery)
+                    extraData = mapOf("someField" to stringQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -250,7 +250,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to intQuery)
+                    extraData = mapOf("someField" to intQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -268,7 +268,7 @@ internal class CustomObjectFilteringTest {
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to longQuery)
+                                extraData = mapOf("someField" to longQuery),
                             )
                         }
                         ).shuffled(),
@@ -281,7 +281,7 @@ internal class CustomObjectFilteringTest {
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to stringQuery)
+                                extraData = mapOf("someField" to stringQuery),
                             )
                         }
                         ).shuffled(),
@@ -294,7 +294,7 @@ internal class CustomObjectFilteringTest {
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to intQuery)
+                                extraData = mapOf("someField" to intQuery),
                             )
                         }
                         ).shuffled(),
@@ -312,7 +312,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", doubleValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
@@ -321,7 +321,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", floatValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
@@ -330,7 +330,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", longValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
@@ -339,7 +339,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", intValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
@@ -348,7 +348,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", charValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
@@ -357,7 +357,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", shortValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(extraData = mapOf("someField" to 2.0)) }
@@ -366,7 +366,7 @@ internal class CustomObjectFilteringTest {
                     Arguments.of(
                         (expectedList + List(10) { randomChannel() }).shuffled(),
                         Filters.eq("someField", byteValue),
-                        expectedList
+                        expectedList,
                     )
                 },
             List(positiveRandomInt(10)) { randomChannel(type = stringQuery) }.let { expectedList ->
@@ -383,8 +383,8 @@ internal class CustomObjectFilteringTest {
                             randomChannel(
                                 watcherCount = randomIntBetween(
                                     intQuery + 1,
-                                    Int.MAX_VALUE - 1
-                                )
+                                    Int.MAX_VALUE - 1,
+                                ),
                             )
                         }
                         ).shuffled(),
@@ -399,8 +399,8 @@ internal class CustomObjectFilteringTest {
                             randomChannel(
                                 watcherCount = randomIntBetween(
                                     intQuery + 1,
-                                    Int.MAX_VALUE - 1
-                                )
+                                    Int.MAX_VALUE - 1,
+                                ),
                             )
                         }
                         ).shuffled(),
@@ -415,8 +415,8 @@ internal class CustomObjectFilteringTest {
                             randomChannel(
                                 watcherCount = randomIntBetween(
                                     Int.MIN_VALUE,
-                                    intQuery - 1
-                                )
+                                    intQuery - 1,
+                                ),
                             )
                         }
                         ).shuffled(),
@@ -431,8 +431,8 @@ internal class CustomObjectFilteringTest {
                             randomChannel(
                                 watcherCount = randomIntBetween(
                                     Int.MIN_VALUE,
-                                    intQuery - 1
-                                )
+                                    intQuery - 1,
+                                ),
                             )
                         }
                         ).shuffled(),
@@ -442,14 +442,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to longQuery)
+                    extraData = mapOf("someField" to longQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(10) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1)),
                             )
                         }
                         ).shuffled(),
@@ -459,14 +459,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to longQuery)
+                    extraData = mapOf("someField" to longQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(10) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1)),
                             )
                         }
                         ).shuffled(),
@@ -476,14 +476,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to longQuery)
+                    extraData = mapOf("someField" to longQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(10) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1))
+                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1)),
                             )
                         }
                         ).shuffled(),
@@ -493,14 +493,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to longQuery)
+                    extraData = mapOf("someField" to longQuery),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(10) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1))
+                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1)),
                             )
                         }
                         )
@@ -524,8 +524,8 @@ internal class CustomObjectFilteringTest {
                 randomChannel(
                     watcherCount = randomIntBetween(
                         intQuery + 1,
-                        Int.MAX_VALUE - 1
-                    )
+                        Int.MAX_VALUE - 1,
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -538,8 +538,8 @@ internal class CustomObjectFilteringTest {
                 randomChannel(
                     watcherCount = randomIntBetween(
                         intQuery + 1,
-                        Int.MAX_VALUE - 1
-                    )
+                        Int.MAX_VALUE - 1,
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -552,8 +552,8 @@ internal class CustomObjectFilteringTest {
                 randomChannel(
                     watcherCount = randomIntBetween(
                         Int.MIN_VALUE,
-                        intQuery - 1
-                    )
+                        intQuery - 1,
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -566,8 +566,8 @@ internal class CustomObjectFilteringTest {
                 randomChannel(
                     watcherCount = randomIntBetween(
                         Int.MIN_VALUE,
-                        intQuery - 1
-                    )
+                        intQuery - 1,
+                    ),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -578,14 +578,14 @@ internal class CustomObjectFilteringTest {
             },
             List(10) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1))
+                    extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to longQuery)
+                                extraData = mapOf("someField" to longQuery),
                             )
                         }
                         ).shuffled(),
@@ -595,14 +595,14 @@ internal class CustomObjectFilteringTest {
             },
             List(10) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1))
+                    extraData = mapOf("someField" to randomLongBetween(longQuery + 1, Long.MAX_VALUE - 1)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to longQuery)
+                                extraData = mapOf("someField" to longQuery),
                             )
                         }
                         ).shuffled(),
@@ -612,14 +612,14 @@ internal class CustomObjectFilteringTest {
             },
             List(10) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1))
+                    extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to longQuery)
+                                extraData = mapOf("someField" to longQuery),
                             )
                         }
                         ).shuffled(),
@@ -629,14 +629,14 @@ internal class CustomObjectFilteringTest {
             },
             List(10) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1))
+                    extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, longQuery - 1)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to longQuery)
+                                extraData = mapOf("someField" to longQuery),
                             )
                         }
                         )
@@ -651,14 +651,14 @@ internal class CustomObjectFilteringTest {
         fun greaterThanFilterArguments() = listOf(
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomIntBetween(Int.MIN_VALUE, -100))
+                                extraData = mapOf("someField" to randomIntBetween(Int.MIN_VALUE, -100)),
                             )
                         }
                         ),
@@ -668,14 +668,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, -100))
+                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, -100)),
                             )
                         }
                         ),
@@ -685,14 +685,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "b${randomString()}")
+                    extraData = mapOf("someField" to "b${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to "aa${randomString()}")
+                                extraData = mapOf("someField" to "aa${randomString()}"),
                             )
                         }
                         ),
@@ -702,7 +702,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -713,7 +713,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -724,7 +724,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "b${randomString()}")
+                    extraData = mapOf("someField" to "b${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -739,14 +739,14 @@ internal class CustomObjectFilteringTest {
         fun greaterThanOrEqualsFilterArguments() = listOf(
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomIntBetween(Int.MIN_VALUE, -100))
+                                extraData = mapOf("someField" to randomIntBetween(Int.MIN_VALUE, -100)),
                             )
                         }
                         ),
@@ -757,17 +757,17 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                        extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to -80)
+                    extraData = mapOf("someField" to -80),
                 )
                 ).let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomIntBetween(Int.MIN_VALUE, -100))
+                                extraData = mapOf("someField" to randomIntBetween(Int.MIN_VALUE, -100)),
                             )
                         }
                         ),
@@ -777,14 +777,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, -100))
+                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, -100)),
                             )
                         }
                         ),
@@ -795,17 +795,17 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                        extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to -80L)
+                    extraData = mapOf("someField" to -80L),
                 )
                 ).let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, -100))
+                                extraData = mapOf("someField" to randomLongBetween(Long.MIN_VALUE, -100)),
                             )
                         }
                         ),
@@ -815,14 +815,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "b${randomString()}")
+                    extraData = mapOf("someField" to "b${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to "aa${randomString()}")
+                                extraData = mapOf("someField" to "aa${randomString()}"),
                             )
                         }
                         ),
@@ -833,17 +833,17 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to "b${randomString()}")
+                        extraData = mapOf("someField" to "b${randomString()}"),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to "ab")
+                    extraData = mapOf("someField" to "ab"),
                 )
                 ).let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to "aa${randomString()}")
+                                extraData = mapOf("someField" to "aa${randomString()}"),
                             )
                         }
                         ),
@@ -853,7 +853,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -865,10 +865,10 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                        extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to -80)
+                    extraData = mapOf("someField" to -80),
                 )
                 ).let { expectedList ->
                 Arguments.of(
@@ -879,7 +879,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -891,10 +891,10 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                        extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to -80L)
+                    extraData = mapOf("someField" to -80L),
                 )
                 ).let { expectedList ->
                 Arguments.of(
@@ -905,7 +905,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "b${randomString()}")
+                    extraData = mapOf("someField" to "b${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -917,10 +917,10 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to "b${randomString()}")
+                        extraData = mapOf("someField" to "b${randomString()}"),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to "ab")
+                    extraData = mapOf("someField" to "ab"),
                 )
                 ).let { expectedList ->
                 Arguments.of(
@@ -935,14 +935,14 @@ internal class CustomObjectFilteringTest {
         fun lessThanFilterArguments() = listOf(
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomIntBetween(320, Int.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomIntBetween(320, Int.MAX_VALUE - 1)),
                             )
                         }
                         ),
@@ -952,14 +952,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(320, Long.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomLongBetween(320, Long.MAX_VALUE - 1)),
                             )
                         }
                         ),
@@ -969,14 +969,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "a${randomString()}")
+                    extraData = mapOf("someField" to "a${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to "bb${randomString()}")
+                                extraData = mapOf("someField" to "bb${randomString()}"),
                             )
                         }
                         ),
@@ -986,7 +986,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -997,7 +997,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -1008,7 +1008,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "a${randomString()}")
+                    extraData = mapOf("someField" to "a${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -1023,14 +1023,14 @@ internal class CustomObjectFilteringTest {
         fun lessThanOrEqualsFilterArguments() = listOf(
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomIntBetween(320, Int.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomIntBetween(320, Int.MAX_VALUE - 1)),
                             )
                         }
                         ),
@@ -1041,17 +1041,17 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                        extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to 300)
+                    extraData = mapOf("someField" to 300),
                 )
                 ).let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomIntBetween(320, Int.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomIntBetween(320, Int.MAX_VALUE - 1)),
                             )
                         }
                         ),
@@ -1061,14 +1061,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(320, Long.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomLongBetween(320, Long.MAX_VALUE - 1)),
                             )
                         }
                         ),
@@ -1079,17 +1079,17 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                        extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to 300L)
+                    extraData = mapOf("someField" to 300L),
                 )
                 ).let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to randomLongBetween(320, Long.MAX_VALUE - 1))
+                                extraData = mapOf("someField" to randomLongBetween(320, Long.MAX_VALUE - 1)),
                             )
                         }
                         ),
@@ -1099,14 +1099,14 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "a${randomString()}")
+                    extraData = mapOf("someField" to "a${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to "bb${randomString()}")
+                                extraData = mapOf("someField" to "bb${randomString()}"),
                             )
                         }
                         ),
@@ -1117,17 +1117,17 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to "a${randomString()}")
+                        extraData = mapOf("someField" to "a${randomString()}"),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to "ba")
+                    extraData = mapOf("someField" to "ba"),
                 )
                 ).let { expectedList ->
                 Arguments.of(
                     (
                         expectedList + List(positiveRandomInt(10)) {
                             randomChannel(
-                                extraData = mapOf("someField" to "bb${randomString()}")
+                                extraData = mapOf("someField" to "bb${randomString()}"),
                             )
                         }
                         ),
@@ -1137,7 +1137,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                    extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -1149,10 +1149,10 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomIntBetween(-80, 300))
+                        extraData = mapOf("someField" to randomIntBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to 300)
+                    extraData = mapOf("someField" to 300),
                 )
                 ).let { expectedList ->
                 Arguments.of(
@@ -1163,7 +1163,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                    extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -1175,10 +1175,10 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to randomLongBetween(-80, 300))
+                        extraData = mapOf("someField" to randomLongBetween(-80, 300)),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to 300L)
+                    extraData = mapOf("someField" to 300L),
                 )
                 ).let { expectedList ->
                 Arguments.of(
@@ -1189,7 +1189,7 @@ internal class CustomObjectFilteringTest {
             },
             List(positiveRandomInt(10)) {
                 randomChannel(
-                    extraData = mapOf("someField" to "a${randomString()}")
+                    extraData = mapOf("someField" to "a${randomString()}"),
                 )
             }.let { expectedList ->
                 Arguments.of(
@@ -1201,10 +1201,10 @@ internal class CustomObjectFilteringTest {
             (
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to "a${randomString()}")
+                        extraData = mapOf("someField" to "a${randomString()}"),
                     )
                 } + randomChannel(
-                    extraData = mapOf("someField" to "ba")
+                    extraData = mapOf("someField" to "ba"),
                 )
                 ).let { expectedList ->
                 Arguments.of(
@@ -1221,30 +1221,30 @@ internal class CustomObjectFilteringTest {
             listOf(
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to intList.random())
+                        extraData = mapOf("someField" to intList.random()),
                     )
                 }.let { expectedList ->
                     Arguments.of(
                         (
                             expectedList + List(positiveRandomInt(10)) {
                                 randomChannel(
-                                    extraData = mapOf("someField" to notIntList.random())
+                                    extraData = mapOf("someField" to notIntList.random()),
                                 )
                             }
                             ).shuffled(),
                         Filters.`in`("someField", intList),
-                        expectedList
+                        expectedList,
                     )
                 },
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to intList.random())
+                        extraData = mapOf("someField" to intList.random()),
                     )
                 }.let { expectedList ->
                     Arguments.of(
                         (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
                         Filters.`in`("someField", intList),
-                        expectedList
+                        expectedList,
                     )
                 },
             )
@@ -1254,30 +1254,30 @@ internal class CustomObjectFilteringTest {
                 listOf(
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to longList.random())
+                            extraData = mapOf("someField" to longList.random()),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to notLongList.random())
+                                        extraData = mapOf("someField" to notLongList.random()),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.`in`("someField", longList),
-                            expectedList
+                            expectedList,
                         )
                     },
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to longList.random())
+                            extraData = mapOf("someField" to longList.random()),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
                             Filters.`in`("someField", longList),
-                            expectedList
+                            expectedList,
                         )
                     },
                 )
@@ -1287,30 +1287,30 @@ internal class CustomObjectFilteringTest {
                 listOf(
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to stringList.random())
+                            extraData = mapOf("someField" to stringList.random()),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to notStringList.random())
+                                        extraData = mapOf("someField" to notStringList.random()),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.`in`("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to stringList.random())
+                            extraData = mapOf("someField" to stringList.random()),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
                             Filters.`in`("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                 )
@@ -1319,7 +1319,7 @@ internal class CustomObjectFilteringTest {
                 .let { members ->
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()
+                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled(),
                         )
                     }.let { expectedList ->
                         Arguments.of(
@@ -1334,30 +1334,30 @@ internal class CustomObjectFilteringTest {
                 listOf(
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to listOf(stringList.random(), notStringList.random()))
+                            extraData = mapOf("someField" to listOf(stringList.random(), notStringList.random())),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to listOf(notStringList.random()))
+                                        extraData = mapOf("someField" to listOf(notStringList.random())),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.`in`("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to listOf(stringList.random(), notStringList.random()))
+                            extraData = mapOf("someField" to listOf(stringList.random(), notStringList.random())),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (expectedList + List(positiveRandomInt(10)) { randomChannel() }).shuffled(),
                             Filters.`in`("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                 )
@@ -1369,19 +1369,19 @@ internal class CustomObjectFilteringTest {
             listOf(
                 List(positiveRandomInt(10)) {
                     randomChannel(
-                        extraData = mapOf("someField" to notIntList.random())
+                        extraData = mapOf("someField" to notIntList.random()),
                     )
                 }.let { expectedList ->
                     Arguments.of(
                         (
                             expectedList + List(positiveRandomInt(10)) {
                                 randomChannel(
-                                    extraData = mapOf("someField" to intList.random())
+                                    extraData = mapOf("someField" to intList.random()),
                                 )
                             }
                             ).shuffled(),
                         Filters.nin("someField", intList),
-                        expectedList
+                        expectedList,
                     )
                 },
                 List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
@@ -1389,12 +1389,12 @@ internal class CustomObjectFilteringTest {
                         (
                             expectedList + List(positiveRandomInt(10)) {
                                 randomChannel(
-                                    extraData = mapOf("someField" to intList.random())
+                                    extraData = mapOf("someField" to intList.random()),
                                 )
                             }
                             ).shuffled(),
                         Filters.nin("someField", intList),
-                        expectedList
+                        expectedList,
                     )
                 },
             )
@@ -1404,19 +1404,19 @@ internal class CustomObjectFilteringTest {
                 listOf(
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to notLongList.random())
+                            extraData = mapOf("someField" to notLongList.random()),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to longList.random())
+                                        extraData = mapOf("someField" to longList.random()),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.nin("someField", longList),
-                            expectedList
+                            expectedList,
                         )
                     },
                     List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
@@ -1424,12 +1424,12 @@ internal class CustomObjectFilteringTest {
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to longList.random())
+                                        extraData = mapOf("someField" to longList.random()),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.nin("someField", longList),
-                            expectedList
+                            expectedList,
                         )
                     },
                 )
@@ -1439,19 +1439,19 @@ internal class CustomObjectFilteringTest {
                 listOf(
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to notStringList.random())
+                            extraData = mapOf("someField" to notStringList.random()),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to stringList.random())
+                                        extraData = mapOf("someField" to stringList.random()),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.nin("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                     List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
@@ -1459,12 +1459,12 @@ internal class CustomObjectFilteringTest {
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to stringList.random())
+                                        extraData = mapOf("someField" to stringList.random()),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.nin("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                 )
@@ -1477,7 +1477,7 @@ internal class CustomObjectFilteringTest {
                                 .map { randomMember(user = randomUser(id = it)) }.let { members ->
                                     List(positiveRandomInt(10)) {
                                         randomChannel(
-                                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()
+                                            members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled(),
                                         )
                                     }
                                 }
@@ -1491,19 +1491,19 @@ internal class CustomObjectFilteringTest {
                 listOf(
                     List(positiveRandomInt(10)) {
                         randomChannel(
-                            extraData = mapOf("someField" to listOf(notStringList.random()))
+                            extraData = mapOf("someField" to listOf(notStringList.random())),
                         )
                     }.let { expectedList ->
                         Arguments.of(
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to listOf(stringList.random()))
+                                        extraData = mapOf("someField" to listOf(stringList.random())),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.nin("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                     List(positiveRandomInt(10)) { randomChannel() }.let { expectedList ->
@@ -1511,12 +1511,12 @@ internal class CustomObjectFilteringTest {
                             (
                                 expectedList + List(positiveRandomInt(10)) {
                                     randomChannel(
-                                        extraData = mapOf("someField" to listOf(stringList.random()))
+                                        extraData = mapOf("someField" to listOf(stringList.random())),
                                     )
                                 }
                                 ).shuffled(),
                             Filters.nin("someField", stringList),
-                            expectedList
+                            expectedList,
                         )
                     },
                 )
@@ -1538,7 +1538,7 @@ internal class CustomObjectFilteringTest {
                         Filters.greaterThan("type", "0"),
                         Filters.contains("Something", 2),
                     ),
-                    expectedList
+                    expectedList,
                 ),
             )
         }
@@ -1547,9 +1547,9 @@ internal class CustomObjectFilteringTest {
         fun norFilterArguments() = List(positiveRandomInt(10)) {
             randomChannel(
                 syncStatus = randomSyncStatus(
-                    listOf(SyncStatus.FAILED_PERMANENTLY, SyncStatus.IN_PROGRESS)
+                    listOf(SyncStatus.FAILED_PERMANENTLY, SyncStatus.IN_PROGRESS),
                 ),
-                type = "a${randomString()}"
+                type = "a${randomString()}",
             )
         }.let { expectedList ->
             listOf(
@@ -1559,7 +1559,7 @@ internal class CustomObjectFilteringTest {
                             randomChannel(
                                 syncStatus = SyncStatus.FAILED_PERMANENTLY,
                                 type = "c${randomString()}",
-                                extraData = mapOf("Something" to listOf(1, 2, 3))
+                                extraData = mapOf("Something" to listOf(1, 2, 3)),
                             )
                         }
                         ).shuffled(),
@@ -1568,7 +1568,7 @@ internal class CustomObjectFilteringTest {
                         Filters.greaterThan("type", "b"),
                         Filters.contains("Something", 2),
                     ),
-                    expectedList
+                    expectedList,
                 ),
                 Arguments.of(
                     expectedList,
@@ -1576,10 +1576,10 @@ internal class CustomObjectFilteringTest {
                         Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
                         Filters.greaterThan("type", "b"),
                         Filters.contains("Something", 2),
-                        NeutralFilterObject
+                        NeutralFilterObject,
                     ),
                     emptyList<Channel>(),
-                )
+                ),
             )
         }
 
@@ -1587,10 +1587,10 @@ internal class CustomObjectFilteringTest {
         fun orFilterArguments() = List(positiveRandomInt(10)) {
             randomChannel(
                 syncStatus = randomSyncStatus(
-                    listOf(SyncStatus.SYNC_NEEDED, SyncStatus.COMPLETED)
+                    listOf(SyncStatus.SYNC_NEEDED, SyncStatus.COMPLETED),
                 ),
                 type = "b${randomString()}",
-                extraData = mapOf("Something" to listOf(1, 2, 3))
+                extraData = mapOf("Something" to listOf(1, 2, 3)),
             )
         }.let { expectedList ->
             listOf(
@@ -1601,8 +1601,8 @@ internal class CustomObjectFilteringTest {
                                 syncStatus = randomSyncStatus(
                                     listOf(
                                         SyncStatus.FAILED_PERMANENTLY,
-                                        SyncStatus.IN_PROGRESS
-                                    )
+                                        SyncStatus.IN_PROGRESS,
+                                    ),
                                 ),
                                 type = "a${randomString()}",
                             )
@@ -1613,7 +1613,7 @@ internal class CustomObjectFilteringTest {
                         Filters.greaterThan("type", "b"),
                         Filters.contains("Something", 2),
                     ),
-                    expectedList
+                    expectedList,
                 ),
                 (expectedList + List(10) { randomChannel() }).shuffled().let {
                     Arguments.of(
@@ -1622,9 +1622,9 @@ internal class CustomObjectFilteringTest {
                             Filters.greaterThan("syncStatus", SyncStatus.COMPLETED),
                             Filters.greaterThan("type", "0"),
                             Filters.contains("Something", 2),
-                            NeutralFilterObject
+                            NeutralFilterObject,
                         ),
-                        it
+                        it,
                     )
                 },
             )

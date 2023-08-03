@@ -69,7 +69,7 @@ public data class StreamShapes(
             suggestionList = RoundedCornerShape(16.dp),
             attachmentSiteLabel = RoundedCornerShape(topEnd = 14.dp),
             header = RectangleShape,
-            quotedAttachment = RoundedCornerShape(4.dp)
+            quotedAttachment = RoundedCornerShape(4.dp),
         )
     }
 }

@@ -33,10 +33,10 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Mess
             parentColumns = ["id"],
             childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE,
-            deferred = true
-        )
+            deferred = true,
+        ),
     ],
-    indices = [Index("messageId")]
+    indices = [Index("messageId")],
 )
 internal data class AttachmentEntity(
     @ColumnInfo(index = true)

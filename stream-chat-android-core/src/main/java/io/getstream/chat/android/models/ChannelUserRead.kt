@@ -31,5 +31,5 @@ public data class ChannelUserRead(
     override val user: User,
     val lastRead: Date? = null,
     val unreadMessages: Int = 0,
-    val lastMessageSeenDate: Date? = null
+    val lastMessageSeenDate: Date? = null,
 ) : UserEntity

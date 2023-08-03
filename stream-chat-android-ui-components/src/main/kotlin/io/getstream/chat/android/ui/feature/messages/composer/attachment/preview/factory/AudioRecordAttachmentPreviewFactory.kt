@@ -157,12 +157,13 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
             }, { progress ->
                 audioPlayer.seekTo(
                     progressToDecimal(progress, attachment.duration),
-                    attachment.hashCode()
+                    attachment.hashCode(),
                 )
             })
         }
     }
 }
+
 @Suppress("MagicNumber")
 private fun progressToDecimal(progress: Int, totalDuration: Float?): Int =
     (progress * (totalDuration ?: NULL_DURATION) / 100).toInt()

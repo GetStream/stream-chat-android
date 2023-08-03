@@ -226,7 +226,7 @@ internal class QueryChannelsStateLogic(
                 channel.copy(
                     members = channel.members.map { member ->
                         member.copy(user = member.user.takeUnless { it.id == userId } ?: newUser)
-                    }
+                    },
                 )
             }
 

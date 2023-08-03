@@ -48,7 +48,7 @@ public data class FileAttachmentViewStyle(
                 attrs,
                 R.styleable.FileAttachmentView,
                 R.attr.streamUiMessageListFileAttachmentStyle,
-                R.style.StreamUi_MessageList_FileAttachment
+                R.style.StreamUi_MessageList_FileAttachment,
             ).use { a ->
                 val progressBarDrawable =
                     a.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentProgressBarDrawable)
@@ -56,7 +56,7 @@ public data class FileAttachmentViewStyle(
 
                 val backgroundColor = a.getColor(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val actionIcon = a.getDrawable(R.styleable.FileAttachmentView_streamUiFileAttachmentActionButton)
@@ -65,38 +65,38 @@ public data class FileAttachmentViewStyle(
                 val titleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentTitleFontAssets,
-                        R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextFont
+                        R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextFont,
                     )
                     .style(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentTitleTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val fileSizeTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeFontAssets,
-                        R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeTextFont
+                        R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeTextFont,
                     )
                     .style(
                         R.styleable.FileAttachmentView_streamUiFileAttachmentFileSizeTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -106,17 +106,17 @@ public data class FileAttachmentViewStyle(
 
                 val strokeColor = a.getColor(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentStrokeColor,
-                    context.getColorCompat(R.color.stream_ui_grey_whisper)
+                    context.getColorCompat(R.color.stream_ui_grey_whisper),
                 )
 
                 val strokeWidth = a.getDimensionPixelSize(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentStrokeWidth,
-                    1.dpToPx()
+                    1.dpToPx(),
                 )
 
                 val cornerRadius = a.getDimensionPixelSize(
                     R.styleable.FileAttachmentView_streamUiFileAttachmentCornerRadius,
-                    12.dpToPx()
+                    12.dpToPx(),
                 )
 
                 return FileAttachmentViewStyle(

@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemChannelMemberBinding
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class ChannelMembersAdapter(
-    private val onMemberClicked: (Member) -> Unit
+    private val onMemberClicked: (Member) -> Unit,
 ) : ListAdapter<Member, ChannelMembersAdapter.ChannelMemberViewHolder>(ChannelMembersDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChannelMemberViewHolder {
@@ -50,7 +50,7 @@ internal class ChannelMembersAdapter(
 
     class ChannelMemberViewHolder(
         private val binding: StreamUiItemChannelMemberBinding,
-        private val onMemberClicked: (Member) -> Unit
+        private val onMemberClicked: (Member) -> Unit,
     ) : RecyclerView.ViewHolder(binding.root) {
         lateinit var member: Member
 

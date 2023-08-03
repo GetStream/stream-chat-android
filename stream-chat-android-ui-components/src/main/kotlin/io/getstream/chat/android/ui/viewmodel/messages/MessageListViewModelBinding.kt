@@ -50,7 +50,6 @@ public fun MessageListViewModel.bindView(
     view: MessageListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-
     deletedMessageVisibility.observe(lifecycleOwner) {
         view.setDeletedMessageVisibility(it)
     }
@@ -84,7 +83,7 @@ public fun MessageListViewModel.bindView(
             MessageListViewModel.Event.ShowMessage(
                 messageId = replyTo.id,
                 parentMessageId = replyTo.parentId,
-            )
+            ),
         )
     }
     view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
@@ -124,21 +123,21 @@ public fun MessageListViewModel.bindView(
             MessageListViewModel.Event.ShowMessage(
                 messageId = result.messageId,
                 parentMessageId = result.parentId,
-            )
+            ),
         )
     }
     view.setAttachmentDeleteOptionClickHandler { result ->
         onEvent(
             MessageListViewModel.Event.RemoveAttachment(
                 result.messageId,
-                result.toAttachment()
-            )
+                result.toAttachment(),
+            ),
         )
     }
     errorEvents.observe(
         lifecycleOwner,
         EventObserver {
             view.showError(it)
-        }
+        },
     )
 }

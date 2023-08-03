@@ -112,7 +112,7 @@ internal class SingleReactionViewBubbleDrawer(
                 viewReactionsViewStyle.bubbleHeight.toFloat(),
                 viewReactionsViewStyle.bubbleRadius.toFloat(),
                 viewReactionsViewStyle.bubbleRadius.toFloat(),
-                Path.Direction.CW
+                Path.Direction.CW,
             )
         }
     }
@@ -142,7 +142,7 @@ internal class SingleReactionViewBubbleDrawer(
                 positionBubble(isRtl, viewReactionsViewStyle.largeTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.largeTailBubbleCy.toFloat(),
                 viewReactionsViewStyle.largeTailBubbleRadius.toFloat(),
-                Path.Direction.CW
+                Path.Direction.CW,
             )
         }
     }
@@ -158,7 +158,7 @@ internal class SingleReactionViewBubbleDrawer(
                 positionBubble(isRtl, viewReactionsViewStyle.smallTailBubbleOffset.toFloat()),
                 viewReactionsViewStyle.smallTailBubbleCy.toFloat(),
                 viewReactionsViewStyle.smallTailBubbleRadius.toFloat() - getStrokeOffset(),
-                Path.Direction.CW
+                Path.Direction.CW,
             )
         }
     }

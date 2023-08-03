@@ -89,37 +89,37 @@ public data class MediaAttachmentViewStyle(
                 attrs,
                 R.styleable.MediaAttachmentView,
                 R.attr.streamUiMessageListMediaAttachmentStyle,
-                R.style.StreamUi_MessageList_MediaAttachment
+                R.style.StreamUi_MessageList_MediaAttachment,
             ).use { a ->
                 val progressIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentProgressIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)!!
 
                 val mediaPreviewBackgroundColor = a.getColor(
                     R.styleable.MediaAttachmentView_streamUiMediaAttachmentMediaPreviewBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_message_list_image_attachment_background)
+                    context.getColorCompat(R.color.stream_ui_message_list_image_attachment_background),
                 )
 
                 val moreCountOverlayColor = a.getColor(
                     R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountOverlayColor,
-                    context.getColorCompat(R.color.stream_ui_overlay)
+                    context.getColorCompat(R.color.stream_ui_overlay),
                 )
 
                 val moreCountTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextSize,
-                        context.getDimension(R.dimen.stream_ui_message_image_attachment_more_count_text_size)
+                        context.getDimension(R.dimen.stream_ui_message_image_attachment_more_count_text_size),
                     )
                     .color(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextColor,
-                        context.getColorCompat(R.color.stream_ui_literal_white)
+                        context.getColorCompat(R.color.stream_ui_literal_white),
                     )
                     .font(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountFontAssets,
-                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextFont
+                        R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextFont,
                     )
                     .style(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentMoreCountTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -128,56 +128,56 @@ public data class MediaAttachmentViewStyle(
                         ?: context.getDrawableCompat(R.drawable.stream_ui_picture_placeholder)!!
 
                 val placeholderIconTint = a.getColorOrNull(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIconTint
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlaceHolderIconTint,
                 )
 
                 val playVideoIcon = a.getDrawable(R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIcon)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
 
                 val playVideoIconTint = a.getColorOrNull(
-                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconTint
+                    R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconTint,
                 )
 
                 val playVideoIconBackgroundColor =
                     a.getColor(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconBackgroundColor,
-                        context.getColorCompat(R.color.stream_ui_literal_white)
+                        context.getColorCompat(R.color.stream_ui_literal_white),
                     )
 
                 val playVideoIconCornerRadius =
                     a.getDimension(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconCornerRadius,
-                        0f
+                        0f,
                     )
 
                 val playVideoIconElevation =
                     a.getDimension(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconElevation,
-                        0f
+                        0f,
                     )
 
                 val playVideoIconPaddingTop =
                     a.getDimensionPixelSize(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingTop,
-                        0
+                        0,
                     )
 
                 val playVideoIconPaddingBottom =
                     a.getDimensionPixelSize(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingBottom,
-                        0
+                        0,
                     )
 
                 val playVideoIconPaddingStart =
                     a.getDimensionPixelSize(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingStart,
-                        0
+                        0,
                     )
 
                 val playVideoIconPaddingEnd =
                     a.getDimensionPixelSize(
                         R.styleable.MediaAttachmentView_streamUiMediaAttachmentPlayVideoIconPaddingEnd,
-                        0
+                        0,
                     )
 
                 val playVideoIconPadding =
@@ -200,7 +200,7 @@ public data class MediaAttachmentViewStyle(
                     playVideoIconPaddingBottom = playVideoIconPadding ?: playVideoIconPaddingBottom,
                     playVideoIconPaddingStart = playVideoIconPadding ?: playVideoIconPaddingStart,
                     playVideoIconPaddingEnd = playVideoIconPadding ?: playVideoIconPaddingEnd,
-                    playVideoIconCornerRadius = playVideoIconCornerRadius
+                    playVideoIconCornerRadius = playVideoIconCornerRadius,
                 ).let(TransformStyle.mediaAttachmentStyleTransformer::transform)
             }
         }

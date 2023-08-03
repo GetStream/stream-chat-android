@@ -77,7 +77,7 @@ public open class MessageListActivity : AppCompatActivity() {
             context: Context,
             cid: String,
             messageId: String? = null,
-            activityClass: Class<out MessageListActivity> = MessageListActivity::class.java
+            activityClass: Class<out MessageListActivity> = MessageListActivity::class.java,
         ): Intent {
             return Intent(context, activityClass).apply {
                 putExtra(EXTRA_CID, cid)

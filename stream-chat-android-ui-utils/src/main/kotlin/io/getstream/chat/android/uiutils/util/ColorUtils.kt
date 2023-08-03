@@ -35,7 +35,7 @@ public fun adjustColorBrightness(color: Int, factor: Float): Int {
         a,
         r.coerceAtMost(MAX_COLOR_COMPONENT_VALUE),
         g.coerceAtMost(MAX_COLOR_COMPONENT_VALUE),
-        b.coerceAtMost(MAX_COLOR_COMPONENT_VALUE)
+        b.coerceAtMost(MAX_COLOR_COMPONENT_VALUE),
     )
 }
 

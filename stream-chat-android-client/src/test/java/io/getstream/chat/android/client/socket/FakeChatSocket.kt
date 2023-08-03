@@ -79,7 +79,7 @@ internal class FakeChatSocket private constructor(
             apiKey: String = randomString(),
             wssUrl: String = randomString(),
             tokenManager: TokenManager = FakeTokenManager(randomString()),
-            networkStateProvider: NetworkStateProvider = mock()
+            networkStateProvider: NetworkStateProvider = mock(),
         ): FakeChatSocket {
             var webSocketListener: WebSocketListener? = null
             val parser: ChatParser = mock()
@@ -97,7 +97,7 @@ internal class FakeChatSocket private constructor(
                 socketFactory,
                 userScope,
                 lifecycleObserver,
-                networkStateProvider
+                networkStateProvider,
             ) { webSocketListener!! }
         }
     }

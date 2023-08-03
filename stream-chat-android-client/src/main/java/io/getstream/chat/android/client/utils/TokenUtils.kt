@@ -33,7 +33,7 @@ internal object TokenUtils {
                 ?.split(".")
                 ?.getOrNull(1)
                 ?.let { String(Base64.decode(it.toByteArray(StandardCharsets.UTF_8), Base64.NO_WRAP)) }
-                ?: ""
+                ?: "",
         ).optString("user_id")
     } catch (e: JSONException) {
         logger.e(e) { "Unable to obtain userId from JWT Token Payload" }

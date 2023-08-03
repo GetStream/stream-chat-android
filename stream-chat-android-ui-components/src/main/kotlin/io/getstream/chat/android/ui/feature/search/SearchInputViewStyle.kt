@@ -68,17 +68,17 @@ public data class SearchInputViewStyle(
 
                 val containerBackground = a.getColor(
                     R.styleable.SearchInputView_streamUiSearchInputViewContainerBackground,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val textColor = a.getColor(
                     R.styleable.SearchInputView_streamUiSearchInputViewTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary),
                 )
 
                 val hintColor = a.getColor(
                     R.styleable.SearchInputView_streamUiSearchInputViewHintColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary),
                 )
 
                 val hintText = a.getText(R.styleable.SearchInputView_streamUiSearchInputViewHintText)?.toString()
@@ -86,12 +86,12 @@ public data class SearchInputViewStyle(
 
                 val textSize = a.getDimensionPixelSize(
                     R.styleable.SearchInputView_streamUiSearchInputViewTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
+                    context.getDimension(R.dimen.stream_ui_text_medium),
                 )
 
                 val searchInputHeight = a.getDimensionPixelSize(
                     R.styleable.SearchInputView_streamUiSearchInputViewHeight,
-                    context.getDimension(R.dimen.stream_ui_search_input_height)
+                    context.getDimension(R.dimen.stream_ui_search_input_height),
                 )
 
                 return SearchInputViewStyle(
@@ -103,7 +103,7 @@ public data class SearchInputViewStyle(
                     hintColor = hintColor,
                     hintText = hintText,
                     textSize = textSize,
-                    searchInputHeight = searchInputHeight
+                    searchInputHeight = searchInputHeight,
                 ).let(TransformStyle.searchInputViewStyleTransformer::transform)
             }
         }

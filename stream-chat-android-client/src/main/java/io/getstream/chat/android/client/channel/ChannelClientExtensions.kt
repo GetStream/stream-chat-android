@@ -26,13 +26,13 @@ import kotlin.reflect.KClass
  * Subscribes to events of type [T] in the channel.
  */
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
-    listener: ChatEventListener<T>
+    listener: ChatEventListener<T>,
 ): Disposable {
     return this.subscribeFor(
         T::class.java,
         listener = { event ->
             listener.onEvent(event as T)
-        }
+        },
     )
 }
 
@@ -43,14 +43,14 @@ public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
  */
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
-    listener: ChatEventListener<T>
+    listener: ChatEventListener<T>,
 ): Disposable {
     return this.subscribeFor(
         lifecycleOwner,
         T::class.java,
         listener = { event ->
             listener.onEvent(event as T)
-        }
+        },
     )
 }
 
@@ -59,7 +59,7 @@ public inline fun <reified T : ChatEvent> ChannelClient.subscribeFor(
  */
 public fun ChannelClient.subscribeFor(
     vararg eventTypes: KClass<out ChatEvent>,
-    listener: ChatEventListener<ChatEvent>
+    listener: ChatEventListener<ChatEvent>,
 ): Disposable {
     return subscribeFor(eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
 }
@@ -72,7 +72,7 @@ public fun ChannelClient.subscribeFor(
 public fun ChannelClient.subscribeFor(
     lifecycleOwner: LifecycleOwner,
     vararg eventTypes: KClass<out ChatEvent>,
-    listener: ChatEventListener<ChatEvent>
+    listener: ChatEventListener<ChatEvent>,
 ): Disposable {
     return subscribeFor(lifecycleOwner, eventTypes = eventTypes.map { it.java }.toTypedArray(), listener = listener)
 }
@@ -81,7 +81,7 @@ public fun ChannelClient.subscribeFor(
  * Subscribes for the next channel event of type [T].
  */
 public inline fun <reified T : ChatEvent> ChannelClient.subscribeForSingle(
-    listener: ChatEventListener<T>
+    listener: ChatEventListener<T>,
 ): Disposable {
     return this.subscribeForSingle(T::class.java, listener)
 }

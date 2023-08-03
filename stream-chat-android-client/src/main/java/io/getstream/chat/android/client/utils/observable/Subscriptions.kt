@@ -32,7 +32,7 @@ internal interface EventSubscription : Disposable {
 
 internal open class SubscriptionImpl(
     private val filter: (ChatEvent) -> Boolean,
-    listener: ChatEventListener<ChatEvent>
+    listener: ChatEventListener<ChatEvent>,
 ) : EventSubscription {
 
     private var listener: ChatEventListener<ChatEvent>? = listener

@@ -43,5 +43,5 @@ internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) ->
     deletedAt = deletedAt,
     syncStatus = syncStatus,
     userId = userId,
-    enforceUnique = enforceUnique
+    enforceUnique = enforceUnique,
 )
