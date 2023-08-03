@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomString
@@ -69,7 +69,7 @@ internal class SocketFactoryTest {
         @JvmStatic
         @Suppress("MaxLineLength")
         fun arguments() = listOf(
-            randomUser().copy(image = randomString(), name = randomString()).let {
+            randomUser(image = randomString(), name = randomString()).let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
                     "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"

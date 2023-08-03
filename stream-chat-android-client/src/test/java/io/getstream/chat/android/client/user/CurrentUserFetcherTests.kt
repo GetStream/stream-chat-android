@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.user
 
 import io.getstream.chat.android.client.Mother.randomConnectedEvent
-import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
@@ -29,6 +28,7 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.StreamWebSocket
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.randomBoolean
 import io.getstream.chat.android.test.randomString

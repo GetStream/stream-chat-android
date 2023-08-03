@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.test.randomAttachment
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.models.Attachment
 import org.amshove.kluent.shouldBeEqualTo
@@ -41,7 +41,7 @@ internal class AttachmentHelperTests {
 
     @Test
     fun `When has valid image url If attachment has null url Should return false`() {
-        val attachment = Mother.randomAttachment().copy(imageUrl = null)
+        val attachment = randomAttachment(imageUrl = null)
 
         val result = sut.hasValidImageUrl(attachment)
 
@@ -52,7 +52,7 @@ internal class AttachmentHelperTests {
     @ParameterizedTest
     @MethodSource("nonValidUrls")
     fun `When has valid image url if attachment url is not valid Should return false`(notValidUrl: String) {
-        val attachment = Mother.randomAttachment().copy(imageUrl = notValidUrl)
+        val attachment = randomAttachment().copy(imageUrl = notValidUrl)
 
         val result = sut.hasValidImageUrl(attachment)
 
@@ -61,7 +61,7 @@ internal class AttachmentHelperTests {
 
     @Test
     fun `When has valid image url if attachment url is valid without Expires Should return true`() {
-        val attachment = Mother.randomAttachment().copy(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg")
+        val attachment = randomAttachment().copy(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg")
 
         val result = sut.hasValidImageUrl(attachment)
 
@@ -71,7 +71,7 @@ internal class AttachmentHelperTests {
     @Test
     fun `When has valid image url if attachment url is valid with Expires and failed to parse timestamp Should return false`() {
         val attachment =
-            Mother.randomAttachment().copy(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=xxTTee")
+            randomAttachment(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=xxTTee")
 
         val result = sut.hasValidImageUrl(attachment)
 
@@ -84,7 +84,7 @@ internal class AttachmentHelperTests {
         val timeStamp = currentTime + 100L
         whenever(timeProvider.provideCurrentTimeInSeconds()) doReturn currentTime
         val attachment =
-            Mother.randomAttachment().copy(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp")
+            randomAttachment(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp")
 
         val result = sut.hasValidImageUrl(attachment)
 
@@ -97,7 +97,7 @@ internal class AttachmentHelperTests {
         val timeStamp = currentTime - 100L
         whenever(timeProvider.provideCurrentTimeInSeconds()) doReturn currentTime
         val attachment =
-            Mother.randomAttachment().copy(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp")
+            randomAttachment(imageUrl = "https://www.someDomain.com/some-resource-id1.jpg?Expires=$timeStamp")
 
         val result = sut.hasValidImageUrl(attachment)
 

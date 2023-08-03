@@ -25,7 +25,6 @@ dependencies {
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesTest
-    implementation Dependencies.kfixture
 
     // Google libs
     implementation Dependencies.androidxActivityKtx

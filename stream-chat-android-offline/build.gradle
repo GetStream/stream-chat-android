@@ -100,7 +100,6 @@ dependencies {
 
     testImplementation Dependencies.robolectric
 
-    testImplementation Dependencies.kfixture
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin

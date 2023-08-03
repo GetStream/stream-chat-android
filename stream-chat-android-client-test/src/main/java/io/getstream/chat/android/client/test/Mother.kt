@@ -65,6 +65,7 @@ import io.getstream.chat.android.test.randomFile
 import io.getstream.chat.android.test.randomInt
 import io.getstream.chat.android.test.randomIntBetween
 import io.getstream.chat.android.test.randomString
+import java.io.File
 import java.util.Date
 
 private val streamFormatter = StreamDateFormatter()
@@ -564,33 +565,55 @@ public fun randomReaction(
 public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
     (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
 
-public fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
+public fun randomAttachment(
+    authorName: String? = randomString(),
+    authorLink: String? = randomString(),
+    titleLink: String? = randomString(),
+    thumbUrl: String? = randomString(),
+    imageUrl: String? = randomString(),
+    assetUrl: String? = randomString(),
+    ogUrl: String? = randomString(),
+    mimeType: String? = randomString(),
+    fileSize: Int = randomIntBetween(
+        min = 1 * 1024 * 1024,
+        max = 100 * 1024 * 1024,
+    ),
+    title: String? = randomString(),
+    text: String? = randomString(),
+    type: String? = randomString(),
+    image: String? = randomString(),
+    url: String? = randomString(),
+    name: String? = randomString(),
+    fallback: String? = randomString(),
+    originalHeight: Int? = randomInt(),
+    originalWidth: Int? = randomInt(),
+    upload: File? = randomFile(),
+    uploadState: Attachment.UploadState? = Attachment.UploadState.Success,
+    extraData: Map<String, Any> = randomExtraData(),
+): Attachment {
     return Attachment(
-        authorName = randomString(),
-        authorLink = randomString(),
-        titleLink = randomString(),
-        thumbUrl = randomString(),
-        imageUrl = randomString(),
-        assetUrl = randomString(),
-        ogUrl = randomString(),
-        mimeType = randomString(),
-        fileSize = randomIntBetween(
-            min = 1 * 1024 * 1024,
-            max = 100 * 1024 * 1024
-        ),
-        title = randomString(),
-        text = randomString(),
-        type = randomString(),
-        image = randomString(),
-        url = randomString(),
-        name = randomString(),
-        fallback = randomString(),
-        originalHeight = randomInt(),
-        originalWidth = randomInt(),
-        upload = randomFile(),
-        uploadState = Attachment.UploadState.Success,
-        extraData = randomExtraData()
-    ).apply(attachmentBuilder)
+        authorName = authorName,
+        authorLink = authorLink,
+        titleLink = titleLink,
+        thumbUrl = thumbUrl,
+        imageUrl = imageUrl,
+        assetUrl = assetUrl,
+        ogUrl = ogUrl,
+        mimeType = mimeType,
+        fileSize = fileSize,
+        title = title,
+        text = text,
+        type = type,
+        image = image,
+        url = url,
+        name = name,
+        fallback = fallback,
+        originalHeight = originalHeight,
+        originalWidth = originalWidth,
+        upload = upload,
+        uploadState = uploadState,
+        extraData = extraData,
+    )
 }
 
 public fun randomChannelUpdatedEvent(

@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.interceptor.message.internal
 
-import io.getstream.chat.android.client.Mother.randomAttachment
-import io.getstream.chat.android.client.Mother.randomUser
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomAttachment
 import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.test.randomFile
@@ -47,7 +47,7 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {
-        val attachment: Attachment = randomAttachment().copy(upload = randomFile())
+        val attachment: Attachment = randomAttachment(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
             syncStatus = SyncStatus.SYNC_NEEDED

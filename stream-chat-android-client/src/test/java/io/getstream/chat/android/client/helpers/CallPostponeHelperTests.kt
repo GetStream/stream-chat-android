@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
+import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
@@ -55,7 +55,7 @@ internal class CallPostponeHelperTests {
     @Test
     fun `Given connected state When query channels Should return channels from api`() = runTest {
         val sut = buildCallPostponeHelper(timeout = 5000L, delayTime = 0L)
-        val expectedResult = List(positiveRandomInt(10)) { Mother.randomChannel() }
+        val expectedResult = List(positiveRandomInt(10)) { randomChannel() }
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
 
@@ -79,7 +79,7 @@ internal class CallPostponeHelperTests {
     @Test
     fun `Given short connection process When query channel Should return channel from api`() = runTest {
         val sut = buildCallPostponeHelper(timeout = 5_000L, delayTime = 800L)
-        val expectedResult = Mother.randomChannel()
+        val expectedResult = randomChannel()
         val queryChannelCallMock = mock<() -> Call<Channel>>()
         whenever(queryChannelCallMock.invoke()) doReturn expectedResult.asCall()
 

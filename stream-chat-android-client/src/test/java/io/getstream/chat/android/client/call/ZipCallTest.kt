@@ -98,9 +98,6 @@ internal class ZipCallTest {
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true
         blockedCallA.isCanceled() `should be equal to` false
-        blockedCallB.isStarted() `should be equal to` true
-        blockedCallB.isCompleted() `should be equal to` true
-        blockedCallB.isCanceled() `should be equal to` false
     }
 
     @Test

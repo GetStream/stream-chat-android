@@ -49,7 +49,6 @@ object Versions {
     internal const val JUNIT4 = "4.13.2"
     internal const val JUNIT5 = "5.10.0"
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
-    internal const val KFIXTURE = "0.2.0"
     internal const val KLUENT = "1.73"
     internal const val KOTLIN = "1.8.20"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.12.1"
@@ -160,7 +159,6 @@ object Dependencies {
     const val junitVintageEngine = "org.junit.vintage:junit-vintage-engine:${Versions.JUNIT5}"
     const val keyboardVisibilityEvent =
         "net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:${Versions.KEYBOARD_VISIBILITY_EVENT}"
-    const val kfixture = "com.flextrade.jfixture:kfixture:${Versions.KFIXTURE}"
     const val kluent = "org.amshove.kluent:kluent:${Versions.KLUENT}"
     const val kotlinBinaryValidator =
         "org.jetbrains.kotlinx:binary-compatibility-validator:${Versions.KOTLIN_BINARY_VALIDATOR}"
