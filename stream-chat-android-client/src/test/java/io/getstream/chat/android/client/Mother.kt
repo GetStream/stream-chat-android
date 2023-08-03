@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client
 
-import com.flextrade.jfixture.JFixture
-import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
@@ -28,13 +26,10 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
-import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.InitializationState
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.randomBoolean
@@ -48,30 +43,7 @@ import java.util.Date
 import java.util.UUID
 
 internal object Mother {
-    private val fixture: JFixture
-        get() = JFixture()
-
     private val streamDateFormatter = StreamDateFormatter()
-
-    fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
-        return KFixture(fixture) {
-            sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        } <Attachment>().apply(attachmentBuilder)
-    }
-
-    fun randomChannel(channelBuilder: Channel.() -> Unit = { }): Channel {
-        return KFixture(fixture) {
-            sameInstance(Mute::class.java, mock())
-            sameInstance(Message::class.java, mock())
-            sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        } <Channel>().apply(channelBuilder)
-    }
-
-    fun randomUser(userBuilder: User.() -> Unit = { }): User {
-        return KFixture(fixture) {
-            sameInstance(Mute::class.java, mock())
-        } <User>().apply(userBuilder)
-    }
 
     fun randomString(): String = UUID.randomUUID().toString()
 
@@ -86,11 +58,18 @@ internal object Mother {
             providerName = providerName,
         )
 
-    fun randomUserPresenceChangedEvent(user: User = randomUser()): UserPresenceChangedEvent {
-        return KFixture(fixture) {
-            sameInstance(User::class.java, user)
-        }()
-    }
+    fun randomUserPresenceChangedEvent(
+        type: String = randomString(),
+        createdAt: Date = randomDate(),
+        rawCreatedAt: String = randomString(),
+        user: User = randomUser(),
+    ): UserPresenceChangedEvent =
+        UserPresenceChangedEvent(
+            type = type,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            user = user,
+        )
 
     fun randomUserConnectionConf(
         endpoint: String = randomString(),

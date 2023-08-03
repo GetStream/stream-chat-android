@@ -96,7 +96,6 @@ dependencies {
 
     testImplementation Dependencies.json
     testImplementation Dependencies.kluent
-    testImplementation Dependencies.kfixture
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
     testImplementation Dependencies.okhttpMockWebserver

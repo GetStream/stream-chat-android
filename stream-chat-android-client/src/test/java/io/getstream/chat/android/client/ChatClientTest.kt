@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.FakeChatSocket
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -78,7 +79,7 @@ internal class ChatClientTest {
     lateinit var result: MutableList<ChatEvent>
     val token = randomString()
     val userId = randomString()
-    val user = Mother.randomUser().copy(id = userId)
+    val user = randomUser(id = userId)
     val tokenUtils: TokenUtils = mock()
     var pluginFactories: List<PluginFactory> = emptyList()
     var errorHandlerFactories: List<ErrorHandlerFactory> = emptyList()
@@ -255,7 +256,7 @@ internal class ChatClientTest {
             name = "updateUserName",
         )
 
-        fakeChatSocket.mockEventReceived(Mother.randomUserPresenceChangedEvent(updateUser))
+        fakeChatSocket.mockEventReceived(Mother.randomUserPresenceChangedEvent(user = updateUser))
 
         client.getCurrentUser() shouldBeEqualTo updateUser
     }

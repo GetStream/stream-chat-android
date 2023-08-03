@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.chatclient
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
@@ -117,10 +116,6 @@ internal class WhenFetchCurrentUser : BaseChatClientTest() {
 
         fun givenUserSetState(user: User) = apply {
             whenever(userStateService.state) doReturn UserState.UserSet(user)
-        }
-
-        fun givenAnonymousUserSetState() = apply {
-            whenever(userStateService.state) doReturn UserState.AnonymousUserSet(Mother.randomUser())
         }
 
         suspend fun givenFetchedCurrentUser(user: User) = apply {

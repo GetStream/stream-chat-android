@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.offline.repository
 
-import com.flextrade.jfixture.JFixture
-import com.flextrade.kfixture.KFixture
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.test.randomChannelConfig
 import io.getstream.chat.android.client.test.randomConfig
@@ -26,6 +24,10 @@ import io.getstream.chat.android.offline.repository.domain.channelconfig.interna
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigInnerEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
 import io.getstream.chat.android.test.TestCoroutineRule
+import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.test.randomDate
+import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -121,11 +123,29 @@ internal class ChannelConfigRepositoryTest {
 
     private fun createChannelConfigEntity(type: String, name: String): ChannelConfigEntity {
         return ChannelConfigEntity(
-            KFixture(JFixture())<ChannelConfigInnerEntity>().copy(
+            ChannelConfigInnerEntity(
                 channelType = type,
-                name = name
+                name = name,
+                createdAt = randomDate(),
+                updatedAt = randomDate(),
+                automod = randomString(),
+                automodBehavior = randomString(),
+                blocklistBehavior = randomString(),
+                customEventsEnabled = randomBoolean(),
+                isConnectEvents = randomBoolean(),
+                isMutes = randomBoolean(),
+                isReactionsEnabled = randomBoolean(),
+                isReadEvents = randomBoolean(),
+                isSearch = randomBoolean(),
+                isThreadEnabled = randomBoolean(),
+                isTypingEvents = randomBoolean(),
+                maxMessageLength = randomInt(),
+                messageRetention = randomString(),
+                pushNotificationsEnabled = randomBoolean(),
+                uploadsEnabled = randomBoolean(),
+                urlEnrichmentEnabled = randomBoolean(),
             ),
-            emptyList()
+            emptyList(),
         )
     }
 }

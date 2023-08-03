@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
@@ -27,7 +27,7 @@ internal class UserStateServiceTests {
 
     @Test
     fun `Given user not set state When set user Should move to user set state`() = runTest {
-        val user = Mother.randomUser()
+        val user = randomUser()
         val sut = Fixture().please()
 
         sut.onSetUser(user, false)
@@ -38,8 +38,8 @@ internal class UserStateServiceTests {
 
     @Test
     fun `Given user set state When user updated Should update value in state`() = runTest {
-        val user1 = Mother.randomUser()
-        val user2 = Mother.randomUser()
+        val user1 = randomUser()
+        val user2 = randomUser()
         val sut = Fixture().givenUserSetState(user1).please()
 
         sut.onUserUpdated(user2)
@@ -124,7 +124,7 @@ internal class UserStateServiceTests {
 
     @Test
     fun `Given anonymous user state User should be able to be updated`() = runTest {
-        val user = Mother.randomUser()
+        val user = randomUser()
         val sut = Fixture().givenAnonymousUserState(user).please()
 
         sut.onUserUpdated(user)
@@ -135,13 +135,13 @@ internal class UserStateServiceTests {
     private class Fixture {
         private val userStateService = UserStateService()
 
-        suspend fun givenUserSetState(user: User = Mother.randomUser()) = apply {
+        suspend fun givenUserSetState(user: User = randomUser()) = apply {
             userStateService.onSetUser(user, false)
         }
 
         suspend fun givenAnonymousPendingState() = apply { userStateService.onSetUser(User(id = "!anon"), true) }
 
-        suspend fun givenAnonymousUserState(user: User = Mother.randomUser()) = apply {
+        suspend fun givenAnonymousUserState(user: User = randomUser()) = apply {
             givenAnonymousPendingState()
             userStateService.onUserUpdated(user)
         }
