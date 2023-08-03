@@ -180,18 +180,18 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private val factory by lazy {
         val messageId = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             intent?.getParcelableExtra(
-                KeyMediaGalleryPreviewActivityState, MediaGalleryPreviewActivityState::class.java
+                KeyMediaGalleryPreviewActivityState, MediaGalleryPreviewActivityState::class.java,
             )?.messageId
         } else {
             intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
-                KeyMediaGalleryPreviewActivityState
+                KeyMediaGalleryPreviewActivityState,
             )?.messageId
         } ?: ""
 
         MediaGalleryPreviewViewModelFactory(
             chatClient = ChatClient.instance(),
             messageId = messageId,
-            skipEnrichUrl = intent?.getBooleanExtra(KeySkipEnrichUrl, false) ?: false
+            skipEnrichUrl = intent?.getBooleanExtra(KeySkipEnrichUrl, false) ?: false,
         )
     }
 
@@ -213,7 +213,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mediaGalleryPreviewActivityState = intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
-            KeyMediaGalleryPreviewActivityState
+            KeyMediaGalleryPreviewActivityState,
         )
         val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
         val streamCdnImageResizing = intent?.createStreamCdnImageResizing()
@@ -223,8 +223,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
             val message = mediaGalleryPreviewActivityState?.toMessage()
 
-            if (message != null)
+            if (message != null) {
                 mediaGalleryPreviewViewModel.message = message
+            }
         }
 
         val attachmentPosition = intent?.getIntExtra(KeyAttachmentPosition, 0) ?: 0
@@ -236,7 +237,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         setContent {
             ChatTheme(
                 videoThumbnailsEnabled = videoThumbnailsEnabled,
-                streamCdnImageResizing = streamCdnImageResizing
+                streamCdnImageResizing = streamCdnImageResizing,
             ) {
                 SetupSystemUI()
 
@@ -265,7 +266,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         SideEffect {
             systemUiController.setSystemBarsColor(
                 color = systemBarsColor,
-                darkIcons = useDarkIcons
+                darkIcons = useDarkIcons,
             )
         }
     }
@@ -285,7 +286,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         message: Message,
         initialAttachmentPosition: Int,
     ) {
-
         // Filters out any link attachments. Pass this value along to all children
         // Composables that read message attachments to prevent inconsistent state.
         val filteredAttachments = message.attachments.filter { attachment ->
@@ -310,12 +310,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             Surface(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .padding(contentPadding)
+                                    .padding(contentPadding),
                             ) {
                                 MediaPreviewContent(pagerState, filteredAttachments) {
                                     coroutineScope.launch {
                                         scaffoldState.snackbarHostState.showSnackbar(
-                                            message = getString(R.string.stream_ui_message_list_video_display_error)
+                                            message = getString(R.string.stream_ui_message_list_video_display_error),
                                         )
                                     }
                                 }
@@ -331,7 +331,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 ),
                                 message = getString(
                                     R.string.stream_compose_media_gallery_share_large_file_prompt_message,
-                                    (promptedAttachment.fileSize.toFloat() / (1024 * 1024))
+                                    (promptedAttachment.fileSize.toFloat() / (1024 * 1024)),
                                 ),
                                 onPositiveAction = {
                                     shareAttachment(promptedAttachment)
@@ -339,7 +339,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 },
                                 onDismiss = {
                                     mediaGalleryPreviewViewModel.promptedAttachment = null
-                                }
+                                },
                             )
                         }
                     }
@@ -348,13 +348,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     if (message.id.isNotEmpty()) {
                         MediaGalleryPreviewBottomBar(filteredAttachments, pagerState)
                     }
-                }
+                },
             )
 
             AnimatedVisibility(
                 visible = mediaGalleryPreviewViewModel.isShowingOptions,
                 enter = fadeIn(),
-                exit = fadeOut()
+                exit = fadeOut(),
             ) {
                 MediaGalleryPreviewOptions(
                     options = defaultMediaOptions(message = message),
@@ -362,8 +362,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     attachments = filteredAttachments,
                     modifier = Modifier.animateEnterExit(
                         enter = slideInVertically(),
-                        exit = slideOutVertically()
-                    )
+                        exit = slideOutVertically(),
+                    ),
                 )
             }
 
@@ -371,15 +371,15 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 AnimatedVisibility(
                     visible = mediaGalleryPreviewViewModel.isShowingGallery,
                     enter = fadeIn(),
-                    exit = fadeOut()
+                    exit = fadeOut(),
                 ) {
                     MediaGallery(
                         pagerState = pagerState,
                         attachments = filteredAttachments,
                         modifier = Modifier.animateEnterExit(
                             enter = slideInVertically(initialOffsetY = { height -> height / 2 }),
-                            exit = slideOutVertically(targetOffsetY = { height -> height / 2 })
-                        )
+                            exit = slideOutVertically(targetOffsetY = { height -> height / 2 }),
+                        ),
                     )
                 }
             }
@@ -398,13 +398,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .height(56.dp),
             elevation = 4.dp,
-            color = ChatTheme.colors.barsBackground
+            color = ChatTheme.colors.barsBackground,
         ) {
             Row(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 IconButton(onClick = ::finish) {
                     Icon(
@@ -416,12 +416,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 MediaGalleryPreviewHeaderTitle(
                     modifier = Modifier.weight(8f),
-                    message = message
+                    message = message,
                 )
 
                 MediaGalleryPreviewOptionsToggle(
                     modifier = Modifier.weight(1f),
-                    message = message
+                    message = message,
                 )
             }
         }
@@ -450,16 +450,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 is ConnectionState.Connected -> Text(
                     text = message.user.name,
                     style = textStyle,
-                    color = textColor
+                    color = textColor,
                 )
                 is ConnectionState.Connecting -> NetworkLoadingIndicator(
                     textStyle = textStyle,
-                    textColor = textColor
+                    textColor = textColor,
                 )
                 is ConnectionState.Offline -> Text(
                     text = getString(R.string.stream_compose_disconnected),
                     style = textStyle,
-                    color = textColor
+                    color = textColor,
                 )
             }
 
@@ -484,11 +484,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false),
                     onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = true) },
-                    enabled = message.id.isNotEmpty()
+                    enabled = message.id.isNotEmpty(),
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
             contentDescription = stringResource(R.string.stream_compose_image_options),
-            tint = if (message.id.isNotEmpty()) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled
+            tint = if (message.id.isNotEmpty()) ChatTheme.colors.textHighEmphasis else ChatTheme.colors.disabled,
         )
     }
 
@@ -515,8 +515,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false) }
-                )
+                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false) },
+                ),
         ) {
             Surface(
                 modifier = modifier
@@ -526,14 +526,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .align(Alignment.TopEnd),
                 shape = RoundedCornerShape(16.dp),
                 elevation = 4.dp,
-                color = ChatTheme.colors.barsBackground
+                color = ChatTheme.colors.barsBackground,
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     options.forEachIndexed { index, option ->
                         MediaGalleryPreviewOptionItem(
                             mediaGalleryPreviewOption = option,
                             pagerState = pagerState,
-                            attachments = attachments
+                            attachments = attachments,
                         )
 
                         if (index != options.lastIndex) {
@@ -541,7 +541,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(0.5.dp)
-                                    .background(ChatTheme.colors.borders)
+                                    .background(ChatTheme.colors.borders),
                             )
                         }
                     }
@@ -564,7 +564,6 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         pagerState: PagerState,
         attachments: List<Attachment>,
     ) {
-
         val (writePermissionState, downloadPayload) = attachmentDownloadState()
         val context = LocalContext.current
 
@@ -585,12 +584,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             currentPage = pagerState.currentPage,
                             writePermissionState = writePermissionState,
                             downloadPayload = downloadPayload,
-                            attachments = attachments
+                            attachments = attachments,
                         )
                     },
-                    enabled = mediaGalleryPreviewOption.isEnabled
+                    enabled = mediaGalleryPreviewOption.isEnabled,
                 ),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Spacer(modifier = Modifier.width(8.dp))
 
@@ -599,7 +598,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .size(18.dp),
                 painter = mediaGalleryPreviewOption.iconPainter,
                 tint = mediaGalleryPreviewOption.iconColor,
-                contentDescription = mediaGalleryPreviewOption.title
+                contentDescription = mediaGalleryPreviewOption.title,
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -608,7 +607,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 text = mediaGalleryPreviewOption.title,
                 color = mediaGalleryPreviewOption.titleColor,
                 style = ChatTheme.typography.bodyBold,
-                fontSize = 12.sp
+                fontSize = 12.sp,
             )
         }
     }
@@ -640,8 +639,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     MediaGalleryPreviewResult(
                         messageId = message.id,
                         parentMessageId = message.parentId,
-                        resultType = MediaGalleryPreviewResultType.SHOW_IN_CHAT
-                    )
+                        resultType = MediaGalleryPreviewResultType.SHOW_IN_CHAT,
+                    ),
                 )
             }
             is Reply -> {
@@ -649,8 +648,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     MediaGalleryPreviewResult(
                         messageId = message.id,
                         parentMessageId = message.parentId,
-                        resultType = MediaGalleryPreviewResultType.QUOTE
-                    )
+                        resultType = MediaGalleryPreviewResultType.QUOTE,
+                    ),
                 )
             }
             is Delete -> mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(attachments[currentPage])
@@ -659,7 +658,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     context = context,
                     payload = attachments[currentPage],
                     permissionState = writePermissionState,
-                    downloadPayload = downloadPayload
+                    downloadPayload = downloadPayload,
                 )
             }
         }
@@ -708,7 +707,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     attachment = attachments[page],
                     pagerState = pagerState,
                     page = page,
-                    onPlaybackError = onPlaybackError
+                    onPlaybackError = onPlaybackError,
                 )
             }
         }
@@ -729,9 +728,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     ) {
         BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
-
             // Used as a workaround for Coil's lack of a retry policy.
             // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
             var retryHash by remember {
@@ -745,7 +743,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         .data(data)
                         .crossfade(true)
                         .setParameter(key = RetryHash, value = retryHash)
-                        .build()
+                        .build(),
                 )
 
             val density = LocalDensity.current
@@ -762,7 +760,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             onImageNeedsToReload(
                 data = data,
                 connectionState = mediaGalleryPreviewViewModel.connectionState,
-                asyncImagePainterState = painter.state
+                asyncImagePainterState = painter.state,
             ) {
                 retryHash++
             }
@@ -778,13 +776,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
             Box(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 MediaPreviewPlaceHolder(
                     asyncImagePainterState = painter.state,
                     isImage = attachment.isImage(),
                     progressIndicatorStrokeWidth = 6.dp,
-                    progressIndicatorFillMaxSizePercentage = 0.2f
+                    progressIndicatorFillMaxSizePercentage = 0.2f,
                 )
 
                 Image(
@@ -793,7 +791,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             scaleY = scale,
                             scaleX = scale,
                             translationX = translation.x,
-                            translationY = translation.y
+                            translationY = translation.y,
                         )
                         .onGloballyPositioned {
                             imageSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
@@ -811,7 +809,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                         val maxTranslation = calculateMaxOffset(
                                             imageSize = imageSize,
                                             scale = currentScale,
-                                            parentSize = parentSize
+                                            parentSize = parentSize,
                                         )
 
                                         val offset = event.calculatePan()
@@ -820,13 +818,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                                         translation = Offset(
                                             newTranslationX.coerceIn(-maxTranslation.x, maxTranslation.x),
-                                            newTranslationY.coerceIn(-maxTranslation.y, maxTranslation.y)
+                                            newTranslationY.coerceIn(-maxTranslation.y, maxTranslation.y),
                                         )
 
                                         if (abs(newTranslationX) < calculateMaxOffsetPerAxis(
                                                 imageSize.width,
                                                 currentScale,
-                                                parentSize.width
+                                                parentSize.width,
                                             ) || zoom != DefaultZoomScale
                                         ) {
                                             event.changes.forEach { it.consume() }
@@ -859,7 +857,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             }
                         },
                     painter = painter,
-                    contentDescription = null
+                    contentDescription = null,
                 )
 
                 Log.d("isCurrentPage", "${page != pagerState.currentPage}")
@@ -918,11 +916,10 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         }
 
         val contentView = remember {
-
             val frameLayout = FrameLayout(context).apply {
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                 )
             }
             videoView.apply {
@@ -948,7 +945,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                 ).apply {
                     gravity = Gravity.CENTER
                 }
@@ -978,7 +975,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 ) {
                     Image(
                         modifier = Modifier
@@ -997,7 +994,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             }
                             .fillMaxSize()
                             .background(color = Color.Black),
-                        painter = painter, contentDescription = null
+                        painter = painter,
+                        contentDescription = null,
                     )
 
                     if (shouldShowPlayButton) {
@@ -1007,9 +1005,9 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 .background(color = Color.White, shape = CircleShape)
                                 .size(
                                     width = 42.dp,
-                                    height = 42.dp
+                                    height = 42.dp,
                                 ),
-                            contentDescription = getString(R.string.stream_compose_cd_play_button)
+                            contentDescription = getString(R.string.stream_compose_cd_play_button),
                         )
                     }
                 }
@@ -1080,12 +1078,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .fillMaxWidth()
                 .height(56.dp),
             elevation = 4.dp,
-            color = ChatTheme.colors.barsBackground
+            color = ChatTheme.colors.barsBackground,
         ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 8.dp),
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
@@ -1100,7 +1098,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             attachment.fileSize >= MaxUnpromptedFileSize -> {
                                 val result = StreamFileUtil.getFileFromCache(
                                     context = applicationContext,
-                                    attachment = attachment
+                                    attachment = attachment,
                                 )
 
                                 when (result) {
@@ -1114,9 +1112,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             else -> shareAttachment(attachment)
                         }
                     },
-                    enabled = mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected
+                    enabled = mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected,
                 ) {
-
                     val shareIcon = if (!mediaGalleryPreviewViewModel.isSharingInProgress) {
                         R.drawable.stream_compose_ic_share
                     } else {
@@ -1136,7 +1133,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 Row(
                     modifier = Modifier.align(Alignment.Center),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     if (mediaGalleryPreviewViewModel.isSharingInProgress) {
                         CircularProgressIndicator(
@@ -1152,7 +1149,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         stringResource(
                             id = R.string.stream_compose_image_order,
                             pagerState.currentPage + 1,
-                            attachmentCount
+                            attachmentCount,
                         )
                     } else {
                         stringResource(id = R.string.stream_compose_media_gallery_preview_preparing)
@@ -1161,13 +1158,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     Text(
                         text = text,
                         style = ChatTheme.typography.title3Bold,
-                        color = ChatTheme.colors.textHighEmphasis
+                        color = ChatTheme.colors.textHighEmphasis,
                     )
                 }
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = true) }
+                    onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = true) },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
@@ -1210,7 +1207,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_reply),
                 iconColor = ChatTheme.colors.textHighEmphasis,
                 action = Reply(message),
-                isEnabled = true
+                isEnabled = true,
             ),
             MediaGalleryPreviewOption(
                 title = stringResource(id = R.string.stream_compose_media_gallery_preview_show_in_chat),
@@ -1218,7 +1215,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_show_in_chat),
                 iconColor = ChatTheme.colors.textHighEmphasis,
                 action = ShowInChat(message),
-                isEnabled = true
+                isEnabled = true,
             ),
             MediaGalleryPreviewOption(
                 title = stringResource(id = R.string.stream_compose_media_gallery_preview_save_image),
@@ -1226,8 +1223,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_download),
                 iconColor = saveMediaColor,
                 action = SaveMedia(message),
-                isEnabled = isChatConnected
-            )
+                isEnabled = isChatConnected,
+            ),
         )
 
         if (message.user.id == user?.id) {
@@ -1245,8 +1242,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                     iconColor = deleteColor,
                     action = Delete(message),
-                    isEnabled = isChatConnected
-                )
+                    isEnabled = isChatConnected,
+                ),
             )
         }
 
@@ -1281,13 +1278,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         if (attachmentUrl != null) {
             StreamImageLoader.instance().loadAsBitmap(
                 context = applicationContext,
-                url = attachmentUrl
+                url = attachmentUrl,
             )?.let {
                 val imageUri = StreamFileUtil.writeImageToSharableFile(applicationContext, it)
 
                 shareAttachment(
                     mediaUri = imageUri,
-                    attachmentType = attachment.type
+                    attachmentType = attachment.type,
                 )
             }
         } else {
@@ -1303,7 +1300,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         Toast.makeText(
             applicationContext,
             applicationContext.getString(R.string.stream_compose_media_gallery_preview_could_not_share_attachment),
-            Toast.LENGTH_SHORT
+            Toast.LENGTH_SHORT,
         ).show()
     }
 
@@ -1343,7 +1340,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 },
                 getString(R.string.stream_compose_attachment_gallery_share),
             ),
-            null
+            null,
         )
     }
 
@@ -1356,7 +1353,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         val result = withContext(DispatcherProvider.IO) {
             StreamFileUtil.writeFileToShareableFile(
                 context = applicationContext,
-                attachment = attachment
+                attachment = attachment,
             )
         }
 
@@ -1393,8 +1390,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false) }
-                )
+                    onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false) },
+                ),
         ) {
             Surface(
                 modifier = modifier
@@ -1404,14 +1401,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = {}
+                        onClick = {},
                     ),
                 shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                 elevation = 4.dp,
-                color = ChatTheme.colors.barsBackground
+                color = ChatTheme.colors.barsBackground,
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
-
                     MediaGalleryHeader()
 
                     LazyVerticalGrid(
@@ -1420,7 +1416,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             itemsIndexed(attachments) { index, attachment ->
                                 MediaGalleryItem(index, attachment, message.user, pagerState)
                             }
-                        }
+                        },
                     )
                 }
             }
@@ -1440,18 +1436,18 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .clickable(
                         indication = rememberRipple(),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false) }
+                        onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false) },
                     ),
                 painter = painterResource(id = R.drawable.stream_compose_ic_close),
                 contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                tint = ChatTheme.colors.textHighEmphasis
+                tint = ChatTheme.colors.textHighEmphasis,
             )
 
             Text(
                 modifier = Modifier.align(Alignment.Center),
                 text = stringResource(R.string.stream_compose_image_preview_photos),
                 style = ChatTheme.typography.title3Bold,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
     }
@@ -1492,7 +1488,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         pagerState.animateScrollToPage(index)
                     }
                 },
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             val data =
                 if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
@@ -1505,7 +1501,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(data)
                     .setParameter(RetryHash, retryHash.toString())
-                    .build()
+                    .build(),
             )
 
             // Used to refresh the request for the current page
@@ -1513,13 +1509,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             onImageNeedsToReload(
                 data = data,
                 connectionState = mediaGalleryPreviewViewModel.connectionState,
-                asyncImagePainterState = painter.state
+                asyncImagePainterState = painter.state,
             ) {
                 retryHash++
             }
 
-            val backgroundColor = if (isImage) ChatTheme.colors.imageBackgroundMediaGalleryPicker
-            else ChatTheme.colors.videoBackgroundMediaGalleryPicker
+            val backgroundColor = if (isImage) {
+                ChatTheme.colors.imageBackgroundMediaGalleryPicker
+            } else {
+                ChatTheme.colors.videoBackgroundMediaGalleryPicker
+            }
 
             Image(
                 modifier = Modifier
@@ -1528,14 +1527,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .background(color = backgroundColor),
                 painter = painter,
                 contentDescription = null,
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
             )
 
             MediaPreviewPlaceHolder(
                 asyncImagePainterState = painter.state,
                 isImage = isImage,
                 progressIndicatorStrokeWidth = 3.dp,
-                progressIndicatorFillMaxSizePercentage = 0.3f
+                progressIndicatorFillMaxSizePercentage = 0.3f,
             )
 
             Avatar(
@@ -1546,14 +1545,14 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .border(
                         width = 1.dp,
                         color = Color.White,
-                        shape = ChatTheme.shapes.avatar
+                        shape = ChatTheme.shapes.avatar,
                     )
                     .shadow(
                         elevation = 4.dp,
-                        shape = ChatTheme.shapes.avatar
+                        shape = ChatTheme.shapes.avatar,
                     ),
                 imageUrl = user.image,
-                initials = user.initials
+                initials = user.initials,
             )
 
             if (isVideo && painter.state !is AsyncImagePainter.State.Loading) {
@@ -1562,7 +1561,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                         .shadow(6.dp, shape = CircleShape)
                         .background(color = Color.White, shape = CircleShape)
                         .fillMaxSize(0.2f),
-                    contentDescription = getString(R.string.stream_compose_cd_play_button)
+                    contentDescription = getString(R.string.stream_compose_cd_play_button),
                 )
             }
         }

@@ -46,7 +46,7 @@ internal interface RetrofitCdnApi {
         @Path("type") channelType: String,
         @Path("id") channelId: String,
         @Part file: MultipartBody.Part,
-        @Tag progressCallback: ProgressCallback?
+        @Tag progressCallback: ProgressCallback?,
     ): RetrofitCall<UploadFileResponse>
 
     @DELETE("/channels/{type}/{id}/file")

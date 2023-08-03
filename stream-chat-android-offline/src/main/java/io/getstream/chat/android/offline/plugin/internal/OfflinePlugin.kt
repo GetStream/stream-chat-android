@@ -94,10 +94,12 @@ internal class OfflinePlugin(
 
     override val errorHandler: ErrorHandler? = null
 
-    override fun onUserSet(user: User) { /* No-Op */
+    override fun onUserSet(user: User) {
+        /* No-Op */
     }
 
-    override fun onUserDisconnected() { /* No-Op */
+    override fun onUserDisconnected() {
+        /* No-Op */
     }
 
     @Suppress("UNCHECKED_CAST")

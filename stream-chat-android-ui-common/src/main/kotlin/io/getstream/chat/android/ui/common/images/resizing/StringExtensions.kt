@@ -34,7 +34,7 @@ public fun String.applyStreamCdnImageResizingIfEnabled(streamCdnImageResizing: S
             resizedHeightPercentage = streamCdnImageResizing.resizedWidthPercentage,
             resizedWidthPercentage = streamCdnImageResizing.resizedHeightPercentage,
             resizeMode = streamCdnImageResizing.resizeMode,
-            cropMode = streamCdnImageResizing.cropMode
+            cropMode = streamCdnImageResizing.cropMode,
         )
     } else {
         this

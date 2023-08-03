@@ -56,7 +56,7 @@ public fun UserReactionItem(
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         val isMine = user.id == ChatClient.instance().getCurrentUser()?.id
         val isStartAlignment = ChatTheme.messageOptionsUserReactionAlignment.isStartAlignment(isMine)
@@ -66,7 +66,7 @@ public fun UserReactionItem(
             UserAvatar(
                 user = user,
                 showOnlineIndicator = false,
-                modifier = Modifier.size(ChatTheme.dimens.userReactionItemAvatarSize)
+                modifier = Modifier.size(ChatTheme.dimens.userReactionItemAvatarSize),
             )
 
             Image(

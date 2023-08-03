@@ -51,7 +51,7 @@ internal class StreamWebSocket(
                         chatErrorCode = ChatErrorCode.SOCKET_FAILURE,
                         cause = t,
                     ),
-                )
+                ),
             )
         }
 

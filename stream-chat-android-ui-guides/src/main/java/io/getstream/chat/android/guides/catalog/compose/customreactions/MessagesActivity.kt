@@ -48,7 +48,7 @@ class MessagesActivity : AppCompatActivity() {
                         channelId = channelId,
                     ),
                     onBackPressed = { finish() },
-                    onHeaderTitleClick = {}
+                    onHeaderTitleClick = {},
                 )
             }
         }
@@ -76,19 +76,19 @@ class CustomReactionIconFactory : ReactionIconFactory {
         return when (type) {
             THUMBS_UP -> ReactionIcon(
                 painter = painterResource(R.drawable.ic_thumb_up),
-                selectedPainter = painterResource(R.drawable.ic_thumb_up_selected)
+                selectedPainter = painterResource(R.drawable.ic_thumb_up_selected),
             )
             THUMBS_DOWN -> ReactionIcon(
                 painter = painterResource(R.drawable.ic_thumb_down),
-                selectedPainter = painterResource(R.drawable.ic_thumb_down_selected)
+                selectedPainter = painterResource(R.drawable.ic_thumb_down_selected),
             )
             MOOD_GOOD -> ReactionIcon(
                 painter = painterResource(R.drawable.ic_mood_good),
-                selectedPainter = painterResource(R.drawable.ic_mood_good_selected)
+                selectedPainter = painterResource(R.drawable.ic_mood_good_selected),
             )
             MOOD_BAD -> ReactionIcon(
                 painter = painterResource(R.drawable.ic_mood_bad),
-                selectedPainter = painterResource(R.drawable.ic_mood_bad_selected)
+                selectedPainter = painterResource(R.drawable.ic_mood_bad_selected),
             )
             else -> throw IllegalArgumentException("Unsupported reaction type")
         }
@@ -109,7 +109,7 @@ class CustomReactionIconFactory : ReactionIconFactory {
             THUMBS_UP,
             THUMBS_DOWN,
             MOOD_GOOD,
-            MOOD_BAD
+            MOOD_BAD,
         )
     }
 }

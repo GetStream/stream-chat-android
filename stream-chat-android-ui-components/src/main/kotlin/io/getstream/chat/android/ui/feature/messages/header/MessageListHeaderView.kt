@@ -49,7 +49,7 @@ public class MessageListHeaderView : FrameLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -93,7 +93,7 @@ public class MessageListHeaderView : FrameLayout {
         reduceHeaderState(
             isTitleEnabled = true,
             normalModeTitle = title,
-            threadModeSubtitle = context.getString(R.string.stream_ui_message_list_header_thread_subtitle, title)
+            threadModeSubtitle = context.getString(R.string.stream_ui_message_list_header_thread_subtitle, title),
         )
     }
 
@@ -243,7 +243,7 @@ public class MessageListHeaderView : FrameLayout {
             normalModeSubtitle = normalModeSubtitle,
             threadModeSubtitle = threadModeSubtitle,
             typingUsers = typingUsers,
-            onlineState = onlineState
+            onlineState = onlineState,
         )
         renderHeaderState()
     }
@@ -320,7 +320,7 @@ public class MessageListHeaderView : FrameLayout {
         NONE,
         ONLINE,
         CONNECTING,
-        OFFLINE
+        OFFLINE,
     }
 
     public fun interface OnClickListener {
@@ -338,7 +338,7 @@ public class MessageListHeaderView : FrameLayout {
                 normalModeSubtitle = String.EMPTY,
                 threadModeSubtitle = String.EMPTY,
                 typingUsers = emptyList(),
-                onlineState = OnlineState.NONE
+                onlineState = OnlineState.NONE,
             )
         }
     }

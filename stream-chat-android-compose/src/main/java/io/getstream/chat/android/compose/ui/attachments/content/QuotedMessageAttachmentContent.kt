@@ -56,11 +56,11 @@ public fun QuotedMessageAttachmentContent(
     val attachmentState = AttachmentState(
         message = message,
         onLongItemClick = onLongItemClick,
-        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult
+        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
     )
 
     quoteAttachmentFactory?.content?.invoke(
         modifier = modifier,
-        attachmentState = attachmentState
+        attachmentState = attachmentState,
     )
 }

@@ -35,7 +35,7 @@ internal class AboveAnchorPopupPositionProvider : PopupPositionProvider {
     ): IntOffset {
         return IntOffset(
             x = 0,
-            y = anchorBounds.top - popupContentSize.height
+            y = anchorBounds.top - popupContentSize.height,
         )
     }
 }

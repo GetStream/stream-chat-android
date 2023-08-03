@@ -194,7 +194,7 @@ internal class DatabaseChannelRepository(
         selectChannelWithoutMessages(cid)?.also { channel ->
             val messageCreatedAt = checkNotNull(
                 lastMessage.createdAt
-                    ?: lastMessage.createdLocallyAt
+                    ?: lastMessage.createdLocallyAt,
             ) { "created at cant be null, be sure to set message.createdAt" }
 
             val oldLastMessage = channel.lastMessage
@@ -211,7 +211,7 @@ internal class DatabaseChannelRepository(
                     channel.copy(
                         lastMessageAt = messageCreatedAt,
                         messages = listOf(lastMessage),
-                    )
+                    ),
                 )
             }
         }

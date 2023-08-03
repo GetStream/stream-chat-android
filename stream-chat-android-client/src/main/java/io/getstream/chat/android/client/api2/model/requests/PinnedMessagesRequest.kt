@@ -79,47 +79,63 @@ internal data class PinnedMessagesRequest(
                     pinned_at_around = pagination.date,
                     sort = sort.toDto(),
                 )
-                is PinnedMessagesPagination.BeforeDate -> if (pagination.inclusive) PinnedMessagesRequest(
-                    limit = limit,
-                    pinned_at_before_or_equal = pagination.date,
-                    sort = sort.toDto(),
-                ) else PinnedMessagesRequest(
-                    limit = limit,
-                    pinned_at_before = pagination.date,
-                    sort = sort.toDto(),
-                )
-                is PinnedMessagesPagination.AfterDate -> if (pagination.inclusive) PinnedMessagesRequest(
-                    limit = limit,
-                    pinned_at_after_or_equal = pagination.date,
-                    sort = sort.toDto(),
-                ) else PinnedMessagesRequest(
-                    limit = limit,
-                    pinned_at_after = pagination.date,
-                    sort = sort.toDto(),
-                )
+                is PinnedMessagesPagination.BeforeDate -> if (pagination.inclusive) {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        pinned_at_before_or_equal = pagination.date,
+                        sort = sort.toDto(),
+                    )
+                } else {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        pinned_at_before = pagination.date,
+                        sort = sort.toDto(),
+                    )
+                }
+                is PinnedMessagesPagination.AfterDate -> if (pagination.inclusive) {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        pinned_at_after_or_equal = pagination.date,
+                        sort = sort.toDto(),
+                    )
+                } else {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        pinned_at_after = pagination.date,
+                        sort = sort.toDto(),
+                    )
+                }
                 is PinnedMessagesPagination.AroundMessage -> PinnedMessagesRequest(
                     limit = limit,
                     id_around = pagination.messageId,
                     sort = sort.toDto(),
                 )
-                is PinnedMessagesPagination.BeforeMessage -> if (pagination.inclusive) PinnedMessagesRequest(
-                    limit = limit,
-                    id_lte = pagination.messageId,
-                    sort = sort.toDto(),
-                ) else PinnedMessagesRequest(
-                    limit = limit,
-                    id_lt = pagination.messageId,
-                    sort = sort.toDto(),
-                )
-                is PinnedMessagesPagination.AfterMessage -> if (pagination.inclusive) PinnedMessagesRequest(
-                    limit = limit,
-                    id_gte = pagination.messageId,
-                    sort = sort.toDto(),
-                ) else PinnedMessagesRequest(
-                    limit = limit,
-                    id_gt = pagination.messageId,
-                    sort = sort.toDto(),
-                )
+                is PinnedMessagesPagination.BeforeMessage -> if (pagination.inclusive) {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        id_lte = pagination.messageId,
+                        sort = sort.toDto(),
+                    )
+                } else {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        id_lt = pagination.messageId,
+                        sort = sort.toDto(),
+                    )
+                }
+                is PinnedMessagesPagination.AfterMessage -> if (pagination.inclusive) {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        id_gte = pagination.messageId,
+                        sort = sort.toDto(),
+                    )
+                } else {
+                    PinnedMessagesRequest(
+                        limit = limit,
+                        id_gt = pagination.messageId,
+                        sort = sort.toDto(),
+                    )
+                }
             }
         }
     }

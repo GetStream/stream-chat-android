@@ -124,7 +124,7 @@ public data class EditReactionsViewStyle(
                 smallTailBubbleRadius = smallTailBubbleRadius,
                 smallTailBubbleOffset = smallTailBubbleOffset,
                 reactionsColumn = reactionsColumn,
-                verticalPadding = verticalPadding
+                verticalPadding = verticalPadding,
             ).let(TransformStyle.editReactionsStyleTransformer::transform)
         }
     }

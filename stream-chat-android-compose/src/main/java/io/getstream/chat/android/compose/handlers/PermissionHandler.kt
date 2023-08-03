@@ -110,9 +110,11 @@ public class DownloadPermissionHandler(
     @Composable
     public fun ObservePermissionChanges() {
         LaunchedEffect(key1 = permissionState.status.isGranted) {
-            if (permissionState.status.isGranted) lastPayload?.let {
-                onPermissionGranted(it)
-                lastPayload = null
+            if (permissionState.status.isGranted) {
+                lastPayload?.let {
+                    onPermissionGranted(it)
+                    lastPayload = null
+                }
             }
         }
     }

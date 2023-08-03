@@ -69,10 +69,13 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
     private lateinit var channelLogic: ChannelLogic
     private val channelMutableState: ChannelMutableState = ChannelMutableState(
-        "type1", channelId, testCoroutines.scope, userFlow,
+        "type1",
+        channelId,
+        testCoroutines.scope,
+        userFlow,
         MutableStateFlow(
-            mapOf(currentUser.id to currentUser)
-        )
+            mapOf(currentUser.id to currentUser),
+        ),
     )
     private val channelStateLogic: ChannelStateLogic = mock {
         on(it.writeChannelState()) doReturn channelMutableState
@@ -103,7 +106,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             id = "thisId",
             createdAt = newDate,
             silent = false,
-            showInChannel = true
+            showInChannel = true,
         )
 
         whenever(attachmentUrlValidator.updateValidAttachmentsUrl(any(), any())) doReturn listOf(newMessage)
@@ -125,7 +128,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             id = messageId,
             user = User(id = "otherUserId"),
             silent = false,
-            showInChannel = true
+            showInChannel = true,
         )
         channelLogic.upsertMessages(listOf(message))
 

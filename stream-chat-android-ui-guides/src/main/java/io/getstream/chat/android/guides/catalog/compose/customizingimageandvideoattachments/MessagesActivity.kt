@@ -41,7 +41,7 @@ class MessagesActivity : ComponentActivity() {
     private val messagesViewModelFactory by lazy {
         MessagesViewModelFactory(
             context = this,
-            requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
+            requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
         )
     }
 
@@ -67,7 +67,7 @@ class MessagesActivity : ComponentActivity() {
             ChatTheme(attachmentFactories = attachmentFactories) {
                 MessagesScreen(
                     viewModelFactory = messagesViewModelFactory,
-                    onBackPressed = { finish() }
+                    onBackPressed = { finish() },
                 )
             }
         }

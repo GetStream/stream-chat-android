@@ -37,7 +37,7 @@ public interface HideChannelListener {
     public suspend fun onHideChannelPrecondition(
         channelType: String,
         channelId: String,
-        clearHistory: Boolean
+        clearHistory: Boolean,
     ): Result<Unit>
 
     /**
@@ -50,7 +50,7 @@ public interface HideChannelListener {
     public suspend fun onHideChannelRequest(
         channelType: String,
         channelId: String,
-        clearHistory: Boolean
+        clearHistory: Boolean,
     )
 
     /**

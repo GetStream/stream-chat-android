@@ -79,7 +79,7 @@ class ChatInfoViewModel(
                 _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
                     _state.value = _state.value?.copy(
                         createdBy = channelData.createdBy,
-                        canDeleteChannel = channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
+                        canDeleteChannel = channelData.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL),
                     )
                 }
                 // Currently, we don't receive any event when channel member is banned/shadow banned, so
@@ -89,7 +89,7 @@ class ChatInfoViewModel(
                         offset = 0,
                         limit = 1,
                         filter = clientState.user.value?.id?.let { Filters.ne("id", it) } ?: Filters.neutral(),
-                        sort = QuerySortByField()
+                        sort = QuerySortByField(),
                     ).await()
 
                 when (result) {
@@ -99,7 +99,7 @@ class ChatInfoViewModel(
                         _state.value = _state.value!!.copy(
                             member = member,
                             isMemberBlocked = member?.shadowBanned ?: false,
-                            loading = false
+                            loading = false,
                         )
                     }
                     is Result.Failure -> _state.value = _state.value!!.copy(loading = false)
@@ -152,7 +152,7 @@ class ChatInfoViewModel(
                 channelClient.shadowBanUser(
                     targetId = currentState.member.getUserId(),
                     reason = null,
-                    timeout = null
+                    timeout = null,
                 ).await()
             } else {
                 channelClient.removeShadowBan(currentState.member.getUserId()).await()

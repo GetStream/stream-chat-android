@@ -85,7 +85,7 @@ public fun String.getStreamCdnHostedImageDimensions(): StreamCdnOriginalImageDim
         if (height != null && width != null) {
             StreamCdnOriginalImageDimensions(
                 originalWidth = width,
-                originalHeight = height
+                originalHeight = height,
             )
         } else {
             null
@@ -118,7 +118,6 @@ public fun String.createResizedStreamCdnImageUrl(
     val streamCdnImageDimensions = this.getStreamCdnHostedImageDimensions()
 
     return if (streamCdnImageDimensions != null) {
-
         val imageLinkUri = this.toUri()
 
         if (imageLinkUri.wasImagePreviouslyResized()) {
@@ -137,19 +136,19 @@ public fun String.createResizedStreamCdnImageUrl(
             .buildUpon()
             .appendValueAsQueryParameterIfNotNull(
                 key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_WIDTH,
-                value = resizedWidth
+                value = resizedWidth,
             )
             .appendValueAsQueryParameterIfNotNull(
                 key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT,
-                value = resizedHeight
+                value = resizedHeight,
             )
             .appendValueAsQueryParameterIfNotNull(
                 key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE,
-                value = resizeMode?.queryParameterName
+                value = resizeMode?.queryParameterName,
             )
             .appendValueAsQueryParameterIfNotNull(
                 key = StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE,
-                value = cropMode?.queryParameterName
+                value = cropMode?.queryParameterName,
             )
             .build()
             .toString()
@@ -180,7 +179,7 @@ private fun Uri.wasImagePreviouslyResized(): Boolean =
             StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZED_HEIGHT,
             StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_RESIZE_MODE,
             StreamCdnResizeImageQueryParameterKeys.QUERY_PARAMETER_KEY_CROP_MODE,
-        )
+        ),
     ).isNotEmpty()
 
 /**

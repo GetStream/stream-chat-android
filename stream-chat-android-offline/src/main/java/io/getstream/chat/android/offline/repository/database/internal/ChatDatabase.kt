@@ -69,7 +69,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         SyncStateEntity::class,
     ],
     version = 65,
-    exportSchema = false
+    exportSchema = false,
 )
 @TypeConverters(
     FilterObjectConverter::class,
@@ -82,7 +82,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
     MessageSyncDescriptionConverter::class,
     MessageSyncTypeConverter::class,
     DateConverter::class,
-    MemberConverter::class
+    MemberConverter::class,
 )
 internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsDao(): QueryChannelsDao
@@ -105,14 +105,14 @@ internal abstract class ChatDatabase : RoomDatabase() {
                     val db = Room.databaseBuilder(
                         context.applicationContext,
                         ChatDatabase::class.java,
-                        "stream_chat_database_$userId"
+                        "stream_chat_database_$userId",
                     ).fallbackToDestructiveMigration()
                         .addCallback(
                             object : Callback() {
                                 override fun onOpen(db: SupportSQLiteDatabase) {
                                     db.execSQL("PRAGMA synchronous = 1")
                                 }
-                            }
+                            },
                         )
                         .build()
                     INSTANCES[userId] = db

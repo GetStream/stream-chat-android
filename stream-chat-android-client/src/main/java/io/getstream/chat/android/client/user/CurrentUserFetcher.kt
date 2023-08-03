@@ -90,7 +90,7 @@ internal class CurrentUserFetcher(
 
     private fun ChatErrorCode.toNetworkError() = Error.NetworkError(
         message = description,
-        serverErrorCode = code
+        serverErrorCode = code,
     )
 
     private companion object {

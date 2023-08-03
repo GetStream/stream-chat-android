@@ -45,5 +45,5 @@ public enum class StreamCdnResizeImageMode(public val queryParameterName: String
     /**
      * Ignore the aspect ratio, and resize the image to the given height and width.
      */
-    SCALE("scale")
+    SCALE("scale"),
 }

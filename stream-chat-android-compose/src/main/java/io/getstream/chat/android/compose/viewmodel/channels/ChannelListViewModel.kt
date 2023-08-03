@@ -74,7 +74,7 @@ public class ChannelListViewModel(
     private val channelLimit: Int = DEFAULT_CHANNEL_LIMIT,
     private val memberLimit: Int = DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = DEFAULT_MESSAGE_LIMIT,
-    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState)
+    private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
 ) : ViewModel() {
 
     /**
@@ -222,10 +222,10 @@ public class ChannelListViewModel(
                 Filters.or(
                     Filters.and(
                         Filters.autocomplete("member.user.name", searchQuery),
-                        Filters.notExists("name")
+                        Filters.notExists("name"),
                     ),
-                    Filters.autocomplete("name", searchQuery)
-                )
+                    Filters.autocomplete("name", searchQuery),
+                ),
             )
         } else {
             filter
@@ -248,7 +248,7 @@ public class ChannelListViewModel(
                         ChannelsStateData.Loading,
                         -> channelsState.copy(
                             isLoading = true,
-                            searchQuery = searchQuery
+                            searchQuery = searchQuery,
                         ).also {
                             logger.d { "Loading state for query" }
                         }
@@ -257,7 +257,7 @@ public class ChannelListViewModel(
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = emptyList(),
-                                searchQuery = searchQuery
+                                searchQuery = searchQuery,
                             )
                         }
                         is ChannelsStateData.Result -> {
@@ -267,7 +267,7 @@ public class ChannelListViewModel(
                                 channelItems = createChannelItems(state.channels, channelMutes),
                                 isLoadingMore = false,
                                 endOfChannels = queryChannelsState.endOfChannels.value,
-                                searchQuery = searchQuery
+                                searchQuery = searchQuery,
                             )
                         }
                     }
@@ -323,7 +323,7 @@ public class ChannelListViewModel(
         if (chatClient.clientState.isOffline) return
         val currentConfig = QueryConfig(
             filters = filterFlow.value ?: return,
-            querySort = querySortFlow.value
+            querySort = querySortFlow.value,
         )
 
         channelsState = channelsState.copy(isLoadingMore = true)
@@ -332,7 +332,7 @@ public class ChannelListViewModel(
 
         currentQuery?.copy(
             filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
-            querySort = currentConfig.querySort
+            querySort = currentConfig.querySort,
         )?.let { queryChannelsRequest ->
             chatClient.queryChannels(queryChannelsRequest).enqueue()
         }

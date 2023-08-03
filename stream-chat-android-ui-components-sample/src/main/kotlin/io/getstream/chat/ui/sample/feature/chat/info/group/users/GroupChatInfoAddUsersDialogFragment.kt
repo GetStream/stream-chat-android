@@ -93,7 +93,7 @@ class GroupChatInfoAddUsersDialogFragment : DialogFragment() {
                 when (it) {
                     is GroupChatInfoAddUsersViewModel.ErrorEvent.AddMemberError -> R.string.chat_group_info_error_add_member
                 }.let(::showToast)
-            }
+            },
         )
 
         adapter.setUserClickListener { user ->

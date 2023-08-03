@@ -69,7 +69,7 @@ public fun Channels(
             modifier = Modifier.fillMaxSize(),
             state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         ) {
             item {
                 DummyFirstChannelItem()
@@ -77,7 +77,7 @@ public fun Channels(
 
             items(
                 items = channelItems,
-                key = { it.channel.cid }
+                key = { it.channel.cid },
             ) { item ->
                 itemContent(item)
 
@@ -120,6 +120,6 @@ private fun DummyFirstChannelItem() {
     Box(
         modifier = Modifier
             .height(1.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     )
 }

@@ -15,6 +15,7 @@
  */
 
 @file:Suppress("TooManyFunctions")
+
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.ChannelDeletedEventDto
@@ -506,7 +507,7 @@ private fun NotificationRemovedFromChannelEventDto.toDomain(): NotificationRemov
         channelType = channel_type,
         channelId = channel_id,
         channel = channel.toDomain(),
-        member = member.toDomain()
+        member = member.toDomain(),
     )
 }
 

@@ -43,7 +43,7 @@ internal class TypingIndicatorAnimationView : AppCompatImageView {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     init {
@@ -99,7 +99,7 @@ private class TypingDrawable(context: Context) : Drawable() {
                 calculateCx(dotIndex),
                 dotRadiusPx,
                 dotRadiusPx,
-                paint
+                paint,
             )
         }
         invalidateSelf()

@@ -88,7 +88,7 @@ internal class SendReactionListenerState(
                 message.updateReactionSyncStatus(
                     originReaction = reaction,
                     result = result,
-                )
+                ),
             )
         }
 
@@ -151,6 +151,6 @@ internal class SendReactionListenerState(
                 result.value.isPermanent() -> SyncStatus.FAILED_PERMANENTLY
                 else -> SyncStatus.SYNC_NEEDED
             }
-        }
+        },
     )
 }

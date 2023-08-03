@@ -64,7 +64,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : SwipeViewHolder(binding.root) {
     private val currentUser = ChatUI.currentUserProvider.getCurrentUser()
@@ -107,7 +107,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                     setOnLongClickListener {
                         if (!swiping) {
                             channelLongClickListener.onLongClick(channel)
-                        } else true // consume if we're swiping
+                        } else {
+                            true // consume if we're swiping
+                        }
                     }
                     doOnNextLayout {
                         setSwipeListener(root, swipeListener)
@@ -237,7 +239,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
         channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
-            currentUser = ChatUI.currentUserProvider.getCurrentUser()
+            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
         )
     }
 
@@ -258,7 +260,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         lastMessageLabel.text = ChatUI.messagePreviewFormatter.formatMessagePreview(
             channel = channel,
             message = lastMessage,
-            currentUser = ChatUI.currentUserProvider.getCurrentUser()
+            currentUser = ChatUI.currentUserProvider.getCurrentUser(),
         )
         lastMessageTimeLabel.text = ChatUI.dateFormatter.formatDate(lastMessage.getCreatedAtOrThrow())
     }
@@ -300,7 +302,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         val messageRequiresSync = lastMessage.syncStatus in setOf(
             SyncStatus.IN_PROGRESS,
             SyncStatus.SYNC_NEEDED,
-            SyncStatus.AWAITING_ATTACHMENTS
+            SyncStatus.AWAITING_ATTACHMENTS,
         )
 
         val readCount = channel.readCount(lastMessage)

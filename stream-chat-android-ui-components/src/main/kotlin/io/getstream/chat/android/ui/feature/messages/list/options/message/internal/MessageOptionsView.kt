@@ -48,7 +48,7 @@ internal class MessageOptionsView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     /**
@@ -77,7 +77,7 @@ internal class MessageOptionsView : FrameLayout {
             val messageOptionTextView = inflater.inflate(
                 R.layout.stream_ui_message_option_item,
                 this,
-                false
+                false,
             ) as TextView
 
             messageOptionTextView.text = option.optionText

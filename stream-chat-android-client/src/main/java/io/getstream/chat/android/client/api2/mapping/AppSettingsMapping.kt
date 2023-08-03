@@ -25,7 +25,7 @@ import io.getstream.chat.android.models.FileUploadConfig
 
 internal fun AppSettingsResponse.toDomain(): AppSettings {
     return AppSettings(
-        app = app.toDomain()
+        app = app.toDomain(),
     )
 }
 

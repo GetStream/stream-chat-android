@@ -63,13 +63,13 @@ public fun MediaAttachmentPreviewContent(
     LazyRow(
         modifier = modifier.clip(ChatTheme.shapes.attachment),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
         items(attachments) { image ->
             MediaAttachmentPreviewItem(
                 mediaAttachment = image,
                 onAttachmentRemoved = onAttachmentRemoved,
-                overlayContent = previewItemOverlayContent
+                overlayContent = previewItemOverlayContent,
             )
         }
     }
@@ -95,13 +95,13 @@ private fun MediaAttachmentPreviewItem(
         modifier = Modifier
             .size(MediaAttachmentPreviewItemSize.dp)
             .clip(RoundedCornerShape(16.dp)),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
             painter = painter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         overlayContent(mediaAttachment.type)
@@ -110,7 +110,7 @@ private fun MediaAttachmentPreviewItem(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(4.dp),
-            onClick = { onAttachmentRemoved(mediaAttachment) }
+            onClick = { onAttachmentRemoved(mediaAttachment) },
         )
     }
 }

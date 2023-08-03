@@ -53,7 +53,7 @@ internal class SendReactionListenerDatabaseTest {
         clientState = clientState,
         reactionsRepository = reactionsRepository,
         messageRepository = messageRepository,
-        userRepository = userRepository
+        userRepository = userRepository,
     )
 
     @Test
@@ -68,7 +68,7 @@ internal class SendReactionListenerDatabaseTest {
         verify(reactionsRepository).insertReaction(
             argThat { reaction ->
                 reaction.messageId == testReaction.messageId
-            }
+            },
         )
 
         verify(userRepository).insertUser(testReaction.user!!)
@@ -81,7 +81,7 @@ internal class SendReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
                 }
             },
-            any()
+            any(),
         )
     }
 
@@ -97,7 +97,7 @@ internal class SendReactionListenerDatabaseTest {
         verify(reactionsRepository).insertReaction(
             argThat { reaction ->
                 reaction.messageId == testReaction.messageId
-            }
+            },
         )
 
         verify(userRepository).insertUser(testReaction.user!!)
@@ -110,7 +110,7 @@ internal class SendReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.SYNC_NEEDED
                 }
             },
-            any()
+            any(),
         )
     }
 
@@ -124,7 +124,7 @@ internal class SendReactionListenerDatabaseTest {
             testReaction,
             false,
             currentUser,
-            Result.Success(testReaction)
+            Result.Success(testReaction),
         )
 
         verify(reactionsRepository).insertReaction(testReaction.copy(syncStatus = SyncStatus.COMPLETED))
@@ -140,7 +140,7 @@ internal class SendReactionListenerDatabaseTest {
             testReaction,
             false,
             currentUser,
-            Result.Failure(Error.GenericError(""))
+            Result.Failure(Error.GenericError("")),
         )
 
         verify(reactionsRepository).insertReaction(testReaction.copy(syncStatus = SyncStatus.SYNC_NEEDED))

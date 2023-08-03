@@ -91,13 +91,17 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     ) {
         var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
         val storagePermissionState = rememberMultiplePermissionsState(
-            permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.READ_MEDIA_AUDIO,
-            ) else listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
+            permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                listOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                )
+            } else {
+                listOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                )
+            },
         ) {
             storagePermissionRequested = true
         }
@@ -120,12 +124,12 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                             Toast.makeText(
                                 context,
                                 R.string.stream_compose_message_composer_file_not_supported,
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT,
                             ).show()
                         }
 
                         onAttachmentsSubmitted(attachments)
-                    }
+                    },
                 )
             }
             else -> {
@@ -139,7 +143,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         LaunchedEffect(storagePermissionState.allPermissionsGranted) {
             if (storagePermissionState.allPermissionsGranted) {
                 onAttachmentsChanged(
-                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) }
+                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) },
                 )
             }
         }

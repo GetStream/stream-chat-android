@@ -144,7 +144,7 @@ internal class ChannelLogic(
         return runChannelQuery(
             QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
                 shouldRefresh = true
-            }
+            },
         )
     }
 
@@ -209,7 +209,7 @@ internal class ChannelLogic(
                     messageLimit = request.messagesLimit(),
                     scrollUpdate = request.isFilteringMessages() && !request.isFilteringAroundIdMessages(),
                     shouldRefreshMessages = request.shouldRefresh,
-                    isChannelsStateUpdate = true
+                    isChannelsStateUpdate = true,
                 )
             }
         }
@@ -231,7 +231,7 @@ internal class ChannelLogic(
             shouldRefreshMessages = shouldRefreshMessages,
             scrollUpdate = scrollUpdate,
             isNotificationUpdate = isNotificationUpdate,
-            isChannelsStateUpdate = isChannelsStateUpdate
+            isChannelsStateUpdate = isChannelsStateUpdate,
         )
     }
 
@@ -264,7 +264,7 @@ internal class ChannelLogic(
             shouldRefreshMessages,
             scrollUpdate,
             isNotificationUpdate,
-            isChannelsStateUpdate = isChannelsStateUpdate
+            isChannelsStateUpdate = isChannelsStateUpdate,
         )
     }
 
@@ -443,7 +443,7 @@ internal class ChannelLogic(
             }
             is MessageUpdatedEvent -> {
                 event.message.copy(
-                    replyTo = mutableState.messageList.value.firstOrNull { it.id == event.message.replyMessageId }
+                    replyTo = mutableState.messageList.value.firstOrNull { it.id == event.message.replyMessageId },
                 ).let(::upsertEventMessage)
 
                 channelStateLogic.toggleHidden(false)
@@ -553,14 +553,14 @@ internal class ChannelLogic(
                 channelStateLogic.updateMemberBanned(
                     memberUserId = event.user.id,
                     banned = true,
-                    shadow = event.shadow
+                    shadow = event.shadow,
                 )
             }
             is ChannelUserUnbannedEvent -> {
                 channelStateLogic.updateMemberBanned(
                     memberUserId = event.user.id,
                     banned = false,
-                    shadow = false
+                    shadow = false,
                 )
             }
             is NotificationChannelDeletedEvent,

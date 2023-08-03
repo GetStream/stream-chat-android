@@ -270,7 +270,7 @@ public data class Channel(
             membership = membership,
             cachedLatestMessages = cachedLatestMessages,
             isInsideSearch = isInsideSearch,
-            extraData = extraData
+            extraData = extraData,
         )
     }
 }

@@ -118,7 +118,7 @@ class MessagesActivity : AppCompatActivity() {
                         val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
                         val attachment = Attachment(
                             type = "date",
-                            extraData = mutableMapOf("payload" to payload)
+                            extraData = mutableMapOf("payload" to payload),
                         )
                         messageComposerViewModel.addSelectedAttachments(listOf(attachment))
                     }
@@ -126,7 +126,7 @@ class MessagesActivity : AppCompatActivity() {
                     // Show the date picker dialog at the click of the calendar button
                     datePickerDialog.show(supportFragmentManager, null)
                 }
-            }
+            },
         )
     }
 
@@ -148,7 +148,7 @@ class MessagesActivity : AppCompatActivity() {
         constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
             context,
             attrs,
-            defStyleAttr
+            defStyleAttr,
         ) {
             binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this)
             binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener() }

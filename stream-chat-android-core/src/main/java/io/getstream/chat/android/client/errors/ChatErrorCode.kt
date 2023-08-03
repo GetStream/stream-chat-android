@@ -54,7 +54,7 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
     UNDEFINED_TOKEN(UNDEFINED_TOKEN_ERROR_CODE, "No defined token. Check if client.setUser was called and finished"),
     UNABLE_TO_PARSE_SOCKET_EVENT(
         UNABLE_TO_PARSE_SOCKET_EVENT_ERROR_CODE,
-        "Socket event payload either invalid or null"
+        "Socket event payload either invalid or null",
     ),
     NO_ERROR_BODY(NO_ERROR_BODY_ERROR_CODE, "No error body. See http status code"),
 
@@ -66,7 +66,8 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
     TOKEN_DATE_INCORRECT(TOKEN_DATE_INCORRECT_ERROR_CODE, "Unauthenticated, token date incorrect"),
     TOKEN_SIGNATURE_INCORRECT(TOKEN_SIGNATURE_INCORRECT_ERROR_CODE, "Unauthenticated, token signature invalid"),
     API_KEY_NOT_FOUND(API_KEY_NOT_FOUND_ERROR_CODE, "Api key is not found, verify it if it's correct or was created."),
-    MESSAGE_MODERATION_FAILED(MESSAGE_MODERATION_FAILED_ERROR_CODE, "Message moderation failed.");
+    MESSAGE_MODERATION_FAILED(MESSAGE_MODERATION_FAILED_ERROR_CODE, "Message moderation failed."),
+    ;
 
     public companion object {
         private val authenticationErrors = setOf(

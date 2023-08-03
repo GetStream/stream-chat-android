@@ -47,20 +47,20 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
             .padding(2.dp)
             .fillMaxWidth(),
         color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment
+        shape = ChatTheme.shapes.attachment,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 modifier = Modifier.size(height = 40.dp, width = 35.dp),
                 painter = painterResource(id = R.drawable.stream_compose_ic_file_generic),
                 contentDescription = null,
-                contentScale = ContentScale.Fit
+                contentScale = ContentScale.Fit,
             )
 
             Text(
@@ -70,7 +70,7 @@ public fun UnsupportedAttachmentContent(modifier: Modifier = Modifier) {
                 text = stringResource(id = R.string.stream_compose_message_list_unsupported_attachment),
                 style = ChatTheme.typography.bodyBold,
                 overflow = TextOverflow.Ellipsis,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
     }

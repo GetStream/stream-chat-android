@@ -27,7 +27,6 @@ internal class EventsConsumer(val expected: List<Class<out ChatEvent>>) {
     }
 
     fun isReceived(): Boolean {
-
         expected.forEach { expectedType ->
             received.forEach { event ->
                 if (expectedType.isInstance(event)) {

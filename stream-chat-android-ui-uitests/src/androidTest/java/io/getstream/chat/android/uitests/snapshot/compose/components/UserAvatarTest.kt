@@ -33,7 +33,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             user = TestData.user1().copy(image = ""),
             showOnlineIndicator = false,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
         )
     }
 
@@ -43,7 +43,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = false,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
         )
     }
 
@@ -53,7 +53,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
         )
     }
 
@@ -63,7 +63,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomEnd,
         )
     }
 
@@ -73,7 +73,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopStart
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopStart,
         )
     }
 
@@ -83,7 +83,7 @@ class UserAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomStart
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomStart,
         )
     }
 }

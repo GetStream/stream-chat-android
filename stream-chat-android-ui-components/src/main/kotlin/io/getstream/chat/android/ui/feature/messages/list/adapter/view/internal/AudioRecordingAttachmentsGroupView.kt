@@ -104,7 +104,10 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             attachment.waveformData?.let(::setWaveBars)
         }.let { playerView ->
             setOnClickListener { attachmentClickListener?.onAttachmentClick(attachment) }
-            setOnLongClickListener { attachmentLongClickListener?.onAttachmentLongClick(); true }
+            setOnLongClickListener {
+                attachmentLongClickListener?.onAttachmentLongClick()
+                true
+            }
 
             addView(playerView)
 
@@ -179,7 +182,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
         }, { progress ->
             audioPlayer.seekTo(
                 progressToDecimal(progress, attachment.extraData["duration"] as? Double),
-                attachment.hashCode()
+                attachment.hashCode(),
             )
         })
     }

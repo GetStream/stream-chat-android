@@ -82,10 +82,12 @@ public fun SearchInput(
                         contentDescription = stringResource(id = R.string.stream_compose_search_input_cancel),
                         tint = ChatTheme.colors.textLowEmphasis,
                     )
-                }
+                },
             )
         }
-    } else null
+    } else {
+        null
+    }
 
     InputField(
         modifier = modifier
@@ -103,7 +105,7 @@ public fun SearchInput(
         decorationBox = { innerTextField ->
             Row(
                 Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 leadingIcon()
 
@@ -119,7 +121,7 @@ public fun SearchInput(
             }
         },
         maxLines = 1,
-        innerPadding = PaddingValues(4.dp)
+        innerPadding = PaddingValues(4.dp),
     )
 }
 

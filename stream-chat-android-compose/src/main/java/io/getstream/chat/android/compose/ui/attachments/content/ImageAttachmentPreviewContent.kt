@@ -53,7 +53,7 @@ public fun ImageAttachmentPreviewContent(
     LazyRow(
         modifier = modifier.clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
         items(attachments) { image ->
             val painter = rememberStreamImagePainter(data = image.upload ?: image.imagePreviewUrl)
@@ -61,20 +61,20 @@ public fun ImageAttachmentPreviewContent(
             Box(
                 modifier = Modifier
                     .size(95.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp)),
             ) {
                 Image(
                     modifier = Modifier.fillMaxSize(),
                     painter = painter,
                     contentDescription = null,
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
                 )
 
                 CancelIcon(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(4.dp),
-                    onClick = { onAttachmentRemoved(image) }
+                    onClick = { onAttachmentRemoved(image) },
                 )
             }
         }

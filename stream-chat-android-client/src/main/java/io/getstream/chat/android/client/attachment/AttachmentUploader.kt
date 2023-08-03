@@ -65,7 +65,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 progressCallback = progressCallback,
                 attachment = attachment,
                 mimeType = mimeType,
-                attachmentType = attachmentType
+                attachmentType = attachmentType,
             )
         } else {
             logger.d { "[uploadAttachment] #uploader; uploading ${attachment.uploadId} as file" }
@@ -76,7 +76,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 progressCallback = progressCallback,
                 attachment = attachment,
                 mimeType = mimeType,
-                attachmentType = attachmentType
+                attachmentType = attachmentType,
             )
         }
     }
@@ -125,14 +125,14 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
 
                 onSuccessfulUpload(
                     augmentedAttachment = augmentedAttachment,
-                    progressCallback = progressCallback
+                    progressCallback = progressCallback,
                 )
             }
             is Result.Failure -> {
                 onFailedUpload(
                     attachment = attachment,
                     result = result,
-                    progressCallback = progressCallback
+                    progressCallback = progressCallback,
                 )
             }
         }
@@ -177,19 +177,19 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                     mimeType = mimeType,
                     attachmentType = attachmentType,
                     url = result.value.file,
-                    thumbUrl = result.value.thumbUrl
+                    thumbUrl = result.value.thumbUrl,
                 )
 
                 onSuccessfulUpload(
                     augmentedAttachment = augmentedAttachment,
-                    progressCallback = progressCallback
+                    progressCallback = progressCallback,
                 )
             }
             is Result.Failure -> {
                 onFailedUpload(
                     attachment = attachment,
                     result = result,
-                    progressCallback = progressCallback
+                    progressCallback = progressCallback,
                 )
             }
         }
@@ -272,7 +272,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             assetUrl = when (attachmentType) {
                 AttachmentType.IMAGE -> assetUrl
                 else -> url
-            }
+            },
         )
     }
 
@@ -290,7 +290,8 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
     private enum class AttachmentType(private val value: String) {
         IMAGE("image"),
         VIDEO("video"),
-        FILE("file");
+        FILE("file"),
+        ;
 
         override fun toString(): String {
             return value

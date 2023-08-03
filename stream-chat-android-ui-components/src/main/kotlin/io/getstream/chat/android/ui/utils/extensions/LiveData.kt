@@ -45,7 +45,7 @@ internal fun <T, K, R> LiveData<T>.combineWith(
 internal fun <T, S> MediatorLiveData<T>.addFlow(
     context: CoroutineContext = EmptyCoroutineContext,
     source: Flow<S>,
-    onChanged: Observer<in S>
+    onChanged: Observer<in S>,
 ) {
     source.asLiveData(context).also { liveData ->
         addSource(liveData, onChanged)

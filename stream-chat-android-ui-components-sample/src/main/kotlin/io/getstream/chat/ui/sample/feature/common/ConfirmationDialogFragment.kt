@@ -149,7 +149,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             description = context.getString(R.string.message_flagged_description),
             confirmText = context.getString(R.string.ok),
             cancelText = context.getString(R.string.ok),
-            hasConfirmButton = false
+            hasConfirmButton = false,
         )
 
         fun newInstance(

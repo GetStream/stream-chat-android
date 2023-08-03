@@ -41,12 +41,12 @@ public fun ModeratedMessageOptionItem(
     Divider(color = ChatTheme.colors.borders)
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(id = option.text),
             style = ChatTheme.typography.body,
-            color = ChatTheme.colors.primaryAccent
+            color = ChatTheme.colors.primaryAccent,
         )
     }
 }

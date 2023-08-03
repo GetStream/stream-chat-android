@@ -51,9 +51,9 @@ internal class UploadAttachmentsAndroidWorker(
             channelId = channelId,
             channelStateLogic = chatClient.logicRegistry?.channelStateLogic(channelType, channelId),
             messageRepository = repositoryFacade,
-            chatClient = chatClient
+            chatClient = chatClient,
         ).uploadAttachmentsForMessage(
-            messageId
+            messageId,
         ).let { result ->
             when (result) {
                 is io.getstream.result.Result.Success -> {
@@ -89,7 +89,7 @@ internal class UploadAttachmentsAndroidWorker(
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
                         DATA_MESSAGE_ID to messageId,
-                    )
+                    ),
                 )
                 .build()
 
@@ -100,7 +100,7 @@ internal class UploadAttachmentsAndroidWorker(
             WorkManager.getInstance(context).enqueueUniqueWork(
                 "$channelId$messageId",
                 ExistingWorkPolicy.KEEP,
-                uploadAttachmentsWorkRequest
+                uploadAttachmentsWorkRequest,
             )
             return uploadAttachmentsWorkRequest.id
         }

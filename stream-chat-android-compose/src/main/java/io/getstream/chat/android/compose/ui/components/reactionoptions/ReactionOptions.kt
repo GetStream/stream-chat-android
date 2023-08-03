@@ -67,7 +67,7 @@ public fun ReactionOptions(
     itemContent: @Composable RowScope.(ReactionOptionItemState) -> Unit = { option ->
         DefaultReactionOptionItem(
             option = option,
-            onReactionOptionSelected = onReactionOptionSelected
+            onReactionOptionSelected = onReactionOptionSelected,
         )
     },
 ) {
@@ -76,13 +76,13 @@ public fun ReactionOptions(
         val painter = reactionIcon.getPainter(isSelected)
         ReactionOptionItemState(
             painter = painter,
-            type = type
+            type = type,
         )
     }
 
     Row(
         modifier = modifier,
-        horizontalArrangement = horizontalArrangement
+        horizontalArrangement = horizontalArrangement,
     ) {
         options.take(numberOfReactionsShown).forEach { option ->
             key(option.type) {
@@ -95,7 +95,7 @@ public fun ReactionOptions(
                 modifier = Modifier.clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false),
-                    onClick = { onShowMoreReactionsSelected() }
+                    onClick = { onShowMoreReactionsSelected() },
                 ),
                 painter = painterResource(id = showMoreReactionsIcon),
                 contentDescription = LocalContext.current.getString(R.string.stream_compose_show_more_reactions),
@@ -123,9 +123,9 @@ internal fun DefaultReactionOptionItem(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(bounded = false),
-                onClick = { onReactionOptionSelected(option) }
+                onClick = { onReactionOptionSelected(option) },
             ),
-        option = option
+        option = option,
     )
 }
 
@@ -145,7 +145,7 @@ private fun ReactionOptionsPreview() {
             ReactionOptions(
                 ownReactions = listOf(Reaction(reactionType)),
                 onReactionOptionSelected = {},
-                onShowMoreReactionsSelected = {}
+                onShowMoreReactionsSelected = {},
             )
         }
     }

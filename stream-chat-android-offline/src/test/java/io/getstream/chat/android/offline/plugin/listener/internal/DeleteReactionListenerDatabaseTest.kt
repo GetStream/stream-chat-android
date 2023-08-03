@@ -46,7 +46,9 @@ internal class DeleteReactionListenerDatabaseTest {
     private val messageRepository = mock<MessageRepository>()
 
     private val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
-        clientState, reactionRepository, messageRepository
+        clientState,
+        reactionRepository,
+        messageRepository,
     )
 
     @Test
@@ -57,13 +59,13 @@ internal class DeleteReactionListenerDatabaseTest {
             randomCID(),
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         verify(reactionRepository).insertReaction(
             argThat { reaction ->
                 reaction.deletedAt != null && reaction.syncStatus == SyncStatus.IN_PROGRESS
-            }
+            },
         )
 
         whenever(clientState.isNetworkAvailable) doReturn false
@@ -72,13 +74,13 @@ internal class DeleteReactionListenerDatabaseTest {
             randomCID(),
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         verify(reactionRepository).insertReaction(
             argThat { reaction ->
                 reaction.deletedAt != null && reaction.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 
@@ -87,7 +89,7 @@ internal class DeleteReactionListenerDatabaseTest {
         val testUser = randomUser()
         val testReaction = randomReaction(
             user = testUser,
-            userId = testUser.id
+            userId = testUser.id,
         )
         val testMessage = randomMessage(
             latestReactions = mutableListOf(testReaction),
@@ -102,7 +104,7 @@ internal class DeleteReactionListenerDatabaseTest {
             cid = randomCID(),
             messageId = testMessage.id,
             reactionType = testReaction.type,
-            currentUser = testUser
+            currentUser = testUser,
         )
 
         verify(messageRepository).insertMessage(
@@ -111,7 +113,7 @@ internal class DeleteReactionListenerDatabaseTest {
                     message.ownReactions.isEmpty() &&
                     message.latestReactions.isEmpty()
             },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -122,7 +124,7 @@ internal class DeleteReactionListenerDatabaseTest {
             val testReaction = randomReaction(
                 user = testUser,
                 userId = testUser.id,
-                syncStatus = SyncStatus.SYNC_NEEDED
+                syncStatus = SyncStatus.SYNC_NEEDED,
             )
             val testMessage = randomMessage(
                 latestReactions = mutableListOf(testReaction),
@@ -137,7 +139,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.Success(testMessage)
+                Result.Success(testMessage),
             )
 
             verify(reactionRepository).insertReaction(
@@ -145,7 +147,7 @@ internal class DeleteReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId &&
                         reaction.userId == testReaction.userId &&
                         reaction.syncStatus == SyncStatus.COMPLETED
-                }
+                },
             )
         }
 
@@ -156,7 +158,7 @@ internal class DeleteReactionListenerDatabaseTest {
             val testReaction = randomReaction(
                 user = testUser,
                 userId = testUser.id,
-                syncStatus = SyncStatus.IN_PROGRESS
+                syncStatus = SyncStatus.IN_PROGRESS,
             )
             val testMessage = randomMessage(
                 latestReactions = mutableListOf(testReaction),
@@ -171,7 +173,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.Failure(Error.GenericError(""))
+                Result.Failure(Error.GenericError("")),
             )
 
             verify(reactionRepository).insertReaction(
@@ -179,7 +181,7 @@ internal class DeleteReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId &&
                         reaction.userId == testReaction.userId &&
                         reaction.syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
             )
         }
 }

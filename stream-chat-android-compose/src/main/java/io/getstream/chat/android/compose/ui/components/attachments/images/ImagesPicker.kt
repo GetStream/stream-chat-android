@@ -78,14 +78,14 @@ public fun ImagesPicker(
     itemContent: @Composable (AttachmentPickerItemState) -> Unit = { imageItem ->
         DefaultImagesPickerItem(
             imageItem = imageItem,
-            onImageSelected = onImageSelected
+            onImageSelected = onImageSelected,
         )
     },
 ) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
-        contentPadding = PaddingValues(1.dp)
+        contentPadding = PaddingValues(1.dp),
     ) {
         items(images) { imageItem -> itemContent(imageItem) }
     }
@@ -122,8 +122,8 @@ internal fun DefaultImagesPickerItem(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(),
-                onClick = { onImageSelected(imageItem) }
-            )
+                onClick = { onImageSelected(imageItem) },
+            ),
     ) {
         AsyncImage(
             model = imageRequest,
@@ -132,7 +132,7 @@ internal fun DefaultImagesPickerItem(
             contentDescription = null,
             contentScale = ContentScale.Crop,
             onSuccess = {
-            }
+            },
         )
 
         if (imageItem.isSelected) {
@@ -141,13 +141,13 @@ internal fun DefaultImagesPickerItem(
                     .align(Alignment.TopEnd)
                     .padding(4.dp)
                     .size(24.dp)
-                    .background(shape = CircleShape, color = ChatTheme.colors.overlayDark)
+                    .background(shape = CircleShape, color = ChatTheme.colors.overlayDark),
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
                     contentDescription = null,
-                    tint = ChatTheme.colors.appBackground
+                    tint = ChatTheme.colors.appBackground,
                 )
             }
         }
@@ -178,17 +178,16 @@ private fun BoxScope.VideoThumbnailOverlay(
             .border(
                 width = 1.dp,
                 color = ChatTheme.colors.borders,
-                shape = overlayShape
+                shape = overlayShape,
             )
             .background(
                 shape = overlayShape,
-                color = ChatTheme.colors.barsBackground
+                color = ChatTheme.colors.barsBackground,
             )
             .align(Alignment.BottomCenter)
             .padding(vertical = 2.dp, horizontal = 6.dp),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
-
         Icon(
             modifier = Modifier
                 .size(16.dp)
@@ -197,7 +196,7 @@ private fun BoxScope.VideoThumbnailOverlay(
                 .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.stream_compose_ic_video),
             contentDescription = null,
-            tint = ChatTheme.colors.textHighEmphasis
+            tint = ChatTheme.colors.textHighEmphasis,
         )
 
         Text(
@@ -206,7 +205,7 @@ private fun BoxScope.VideoThumbnailOverlay(
                 .align(Alignment.CenterVertically),
             text = MediaStringUtil.convertVideoLength(videoLength),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textHighEmphasis,
         )
     }
 }

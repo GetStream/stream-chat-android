@@ -75,7 +75,7 @@ public data class MediaAttachmentGridViewStyle(
                 attrs,
                 R.styleable.MediaAttachmentGridView,
                 R.attr.streamUiMediaAttachmentGridViewStyle,
-                R.style.StreamUi_MediaAttachmentGridView
+                R.style.StreamUi_MediaAttachmentGridView,
             ).let { styledAttributes ->
                 val style = MediaAttachmentGridViewStyle(context, styledAttributes)
                 styledAttributes.recycle()
@@ -84,61 +84,60 @@ public data class MediaAttachmentGridViewStyle(
         }
 
         operator fun invoke(context: Context, it: TypedArray): MediaAttachmentGridViewStyle {
-
             val showUserAvatars =
                 it.getBoolean(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewShowUserAvatars,
-                    true
+                    true,
                 )
 
             val playVideoButtonIcon = it.getDrawable(
-                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoButtonIcon
+                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoButtonIcon,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
 
             val playVideoIconTint = it.getColorOrNull(
-                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconTint
+                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconTint,
             )
 
             val playVideoIconBackgroundColor =
                 it.getColor(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_literal_white)
+                    context.getColorCompat(R.color.stream_ui_literal_white),
                 )
 
             val playVideoIconCornerRadius =
                 it.getDimension(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconCornerRadius,
-                    0f
+                    0f,
                 )
 
             val playVideoIconElevation =
                 it.getDimension(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconElevation,
-                    0f
+                    0f,
                 )
 
             val playVideoIconPaddingTop =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingTop,
-                    0
+                    0,
                 )
 
             val playVideoIconPaddingBottom =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingBottom,
-                    0
+                    0,
                 )
 
             val playVideoIconPaddingStart =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingStart,
-                    0
+                    0,
                 )
 
             val playVideoIconPaddingEnd =
                 it.getDimensionPixelSize(
                     R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewPlayVideoIconPaddingEnd,
-                    0
+                    0,
                 )
 
             val playVideoIconPadding =
@@ -147,10 +146,10 @@ public data class MediaAttachmentGridViewStyle(
                 )?.toInt()
 
             val imagePlaceholder = it.getDrawable(
-                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewImagePlaceholder
+                R.styleable.MediaAttachmentGridView_streamUiMediaAttachmentGridViewImagePlaceholder,
             ) ?: ContextCompat.getDrawable(
                 context,
-                R.drawable.stream_ui_picture_placeholder
+                R.drawable.stream_ui_picture_placeholder,
             )
 
             return MediaAttachmentGridViewStyle(

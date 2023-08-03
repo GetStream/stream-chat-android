@@ -39,12 +39,12 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
             isVideo() && ChatUI.videoThumbnailsEnabled && !thumbUrl.isNullOrBlank() ->
                 load(
                     data = thumbUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
-                    transformation = FILE_THUMB_TRANSFORMATION
+                    transformation = FILE_THUMB_TRANSFORMATION,
                 )
             isImage() && !imageUrl.isNullOrBlank() ->
                 load(
                     data = imageUrl?.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
-                    transformation = FILE_THUMB_TRANSFORMATION
+                    transformation = FILE_THUMB_TRANSFORMATION,
                 )
             else -> {
                 // The mime type, or a best guess based on the extension
@@ -55,7 +55,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: Attachment): Disposable {
                 if (actualMimeType?.startsWith("image") == true && attachment.upload != null) {
                     load(
                         data = StreamFileUtil.getUriForFile(context, attachment.upload!!),
-                        transformation = FILE_THUMB_TRANSFORMATION
+                        transformation = FILE_THUMB_TRANSFORMATION,
                     )
                 } else {
                     load(data = ChatUI.mimeTypeIconProvider.getIconRes(actualMimeType))
@@ -70,7 +70,7 @@ internal fun ImageView.loadAttachmentThumb(attachment: AttachmentMetaData): Disp
         when (type) {
             AttachmentType.VIDEO -> loadVideoThumbnail(
                 uri = uri,
-                transformation = FILE_THUMB_TRANSFORMATION
+                transformation = FILE_THUMB_TRANSFORMATION,
             )
             AttachmentType.IMAGE -> load(data = uri, transformation = FILE_THUMB_TRANSFORMATION)
             else -> load(data = ChatUI.mimeTypeIconProvider.getIconRes(mimeType))

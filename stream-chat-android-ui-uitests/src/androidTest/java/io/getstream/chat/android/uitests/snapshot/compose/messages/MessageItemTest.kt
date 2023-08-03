@@ -32,7 +32,7 @@ class MessageItemTest : ComposeScreenshotTest() {
                 isMine = false,
                 showMessageFooter = true,
             ),
-            onLongItemClick = {}
+            onLongItemClick = {},
         )
     }
 
@@ -44,7 +44,7 @@ class MessageItemTest : ComposeScreenshotTest() {
                 isMine = true,
                 showMessageFooter = true,
             ),
-            onLongItemClick = {}
+            onLongItemClick = {},
         )
     }
 
@@ -55,7 +55,7 @@ class MessageItemTest : ComposeScreenshotTest() {
                 message = TestData.message1(),
                 isMine = true,
                 isMessageRead = true,
-                showMessageFooter = true
+                showMessageFooter = true,
             ),
             onLongItemClick = {},
         )

@@ -31,5 +31,5 @@ public interface MessageComposerContentContainer : Iterable<MessageComposerConte
 }
 
 public fun MessageComposerContentContainer.findRecordAudioButton(): View? = findViewByKey(
-    MessageComposerContent.RECORD_AUDIO_BUTTON
+    MessageComposerContent.RECORD_AUDIO_BUTTON,
 )

@@ -48,7 +48,7 @@ internal class StringExtensionsKtTest {
 
         val originalUrl = createStreamCdnImageLink(
             originalWidth = originalWidth,
-            originalHeight = originalHeight
+            originalHeight = originalHeight,
         )
 
         val dimensions = originalUrl.getStreamCdnHostedImageDimensions()
@@ -70,7 +70,7 @@ internal class StringExtensionsKtTest {
             resizedWidthPercentage = resizeWidthPercentage,
             resizedHeightPercentage = resizeHeightPercentage,
             resizeMode = resizeMode,
-            cropMode = cropMode
+            cropMode = cropMode,
         )
 
         val originalUri = originalUrl.toUri()
@@ -95,7 +95,7 @@ internal class StringExtensionsKtTest {
             resizedWidthPercentage = resizeWidthPercentage,
             resizedHeightPercentage = resizeHeightPercentage,
             resizeMode = resizeMode,
-            cropMode = cropMode
+            cropMode = cropMode,
         )
 
         val resizedUri = resizedUrl.toUri()
@@ -126,14 +126,14 @@ internal class StringExtensionsKtTest {
             resizedWidthPercentage = resizeWidthPercentage,
             resizedHeightPercentage = resizeHeightPercentage,
             resizeMode = resizeMode,
-            cropMode = cropMode
+            cropMode = cropMode,
         )
 
         val twiceResizedUrl = resizedUrl.createResizedStreamCdnImageUrl(
             resizedWidthPercentage = resizeWidthPercentage,
             resizedHeightPercentage = resizeHeightPercentage,
             resizeMode = resizeMode,
-            cropMode = cropMode
+            cropMode = cropMode,
         )
 
         val twiceResizedUri = twiceResizedUrl.toUri()

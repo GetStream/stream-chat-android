@@ -50,12 +50,12 @@ public fun MentionSuggestionList(
     SuggestionList(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
+            .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight),
     ) {
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(
                 items = users,
-                key = User::id
+                key = User::id,
             ) { user ->
                 itemContent(user)
             }

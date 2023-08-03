@@ -41,6 +41,6 @@ internal fun ViewReactionsViewStyle.toSingleReactionViewStyle(): SingleReactionV
         smallTailBubbleCy = smallTailBubbleCy,
         smallTailBubbleRadius = smallTailBubbleRadius,
         smallTailBubbleOffset = smallTailBubbleOffset,
-        reactionOrientation = messageOptionsUserReactionOrientation
+        reactionOrientation = messageOptionsUserReactionOrientation,
     )
 }

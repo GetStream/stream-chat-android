@@ -51,7 +51,7 @@ public class UserReactionsView : FrameLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     init {
@@ -80,7 +80,7 @@ public class UserReactionsView : FrameLayout {
         binding.userReactionsTitleTextView.text = context.resources.getQuantityString(
             R.plurals.stream_ui_message_list_message_reactions,
             reactionCount,
-            reactionCount
+            reactionCount,
         )
     }
 
@@ -93,7 +93,7 @@ public class UserReactionsView : FrameLayout {
                     user = user,
                     reaction = it,
                     isMine = user.id == currentUser.id,
-                    reactionDrawable = reactionDrawable
+                    reactionDrawable = reactionDrawable,
                 )
             } else {
                 null

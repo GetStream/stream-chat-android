@@ -42,10 +42,10 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member2(),
                             )
                             messages = listOf(
-                                TestData.message1()
+                                TestData.message1(),
                             )
                             lastMessageAt = TestData.date1()
-                        }
+                        },
                     ),
                     ChannelItemState(
                         channel = TestData.channel2().apply {
@@ -54,10 +54,10 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member3(),
                             )
                             messages = listOf(
-                                TestData.message2()
+                                TestData.message2(),
                             )
                             lastMessageAt = TestData.date2()
-                        }
+                        },
                     ),
                     ChannelItemState(
                         channel = TestData.channel3().apply {
@@ -66,10 +66,10 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member4(),
                             )
                             messages = listOf(
-                                TestData.message3()
+                                TestData.message3(),
                             )
                             lastMessageAt = TestData.date3()
-                        }
+                        },
                     ),
                     ChannelItemState(
                         channel = TestData.channel4().apply {
@@ -78,14 +78,14 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member5(),
                             )
                             messages = listOf(
-                                TestData.message4()
+                                TestData.message4(),
                             )
                             lastMessageAt = TestData.date4()
-                        }
+                        },
                     ),
-                )
+                ),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 
@@ -96,9 +96,9 @@ class ChannelListTest : ComposeScreenshotTest() {
             channelsState = ChannelsState(
                 isLoading = false,
                 isLoadingMore = false,
-                channelItems = emptyList()
+                channelItems = emptyList(),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 
@@ -117,10 +117,10 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member2(),
                             )
                             messages = listOf(
-                                TestData.message1()
+                                TestData.message1(),
                             )
                             lastMessageAt = TestData.date1()
-                        }
+                        },
                     ),
                     ChannelItemState(
                         channel = TestData.channel2().apply {
@@ -129,10 +129,10 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member3(),
                             )
                             messages = listOf(
-                                TestData.message2()
+                                TestData.message2(),
                             )
                             lastMessageAt = TestData.date2()
-                        }
+                        },
                     ),
                     ChannelItemState(
                         channel = TestData.channel3().apply {
@@ -141,10 +141,10 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member4(),
                             )
                             messages = listOf(
-                                TestData.message3()
+                                TestData.message3(),
                             )
                             lastMessageAt = TestData.date3()
-                        }
+                        },
                     ),
                     ChannelItemState(
                         channel = TestData.channel4().apply {
@@ -153,14 +153,14 @@ class ChannelListTest : ComposeScreenshotTest() {
                                 TestData.member5(),
                             )
                             messages = listOf(
-                                TestData.message4()
+                                TestData.message4(),
                             )
                             lastMessageAt = TestData.date4()
-                        }
+                        },
                     ),
-                )
+                ),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 
@@ -170,9 +170,9 @@ class ChannelListTest : ComposeScreenshotTest() {
             modifier = Modifier.fillMaxSize(),
             channelsState = ChannelsState(
                 isLoading = true,
-                channelItems = emptyList()
+                channelItems = emptyList(),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 }

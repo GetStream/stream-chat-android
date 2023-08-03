@@ -79,7 +79,7 @@ internal class TotalUnreadCountTest {
         val newMessageEventWithUnread = data.newMessageEvent.copy(
             cid = channelWithReadCapability.cid,
             totalUnreadCount = 5,
-            unreadChannels = 2
+            unreadChannels = 2,
         )
 
         sut.handleEvents(newMessageEventWithUnread)
@@ -100,7 +100,7 @@ internal class TotalUnreadCountTest {
         val markReadEventWithUnread = data.user1ReadNotification.copy(
             cid = channelWithReadCapability.cid,
             totalUnreadCount = 0,
-            unreadChannels = 0
+            unreadChannels = 0,
         )
         sut.handleEvents(markReadEventWithUnread)
 
@@ -142,7 +142,7 @@ internal class TotalUnreadCountTest {
             mutableGlobalState = mutableGlobalState,
             repos = repos,
             sideEffect = sideEffect,
-            syncedEvents = syncedEvents
+            syncedEvents = syncedEvents,
         )
 
         fun givenMockedRepositories(): Fixture {

@@ -65,14 +65,14 @@ public fun ChannelOptions(
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight()
+            .wrapContentHeight(),
     ) {
         items(options) { option ->
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(0.5.dp)
-                    .background(color = ChatTheme.colors.borders)
+                    .background(color = ChatTheme.colors.borders),
             )
 
             ChannelOptionsItem(
@@ -85,10 +85,10 @@ public fun ChannelOptions(
                             .padding(16.dp),
                         painter = option.iconPainter,
                         tint = option.iconColor,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 },
-                onClick = { onChannelOptionClick(option.action) }
+                onClick = { onChannelOptionClick(option.action) },
             )
         }
     }
@@ -117,7 +117,7 @@ public fun buildDefaultChannelOptionsState(
             titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_person),
             iconColor = ChatTheme.colors.textLowEmphasis,
-            action = ViewInfo(selectedChannel)
+            action = ViewInfo(selectedChannel),
         ),
         if (canLeaveChannel) {
             ChannelOptionState(
@@ -125,16 +125,18 @@ public fun buildDefaultChannelOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_person_remove),
                 iconColor = ChatTheme.colors.textLowEmphasis,
-                action = LeaveGroup(selectedChannel)
+                action = LeaveGroup(selectedChannel),
             )
-        } else null,
+        } else {
+            null
+        },
         if (isMuted) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_channel),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_unmute),
                 iconColor = ChatTheme.colors.textLowEmphasis,
-                action = UnmuteChannel(selectedChannel)
+                action = UnmuteChannel(selectedChannel),
             )
         } else {
             ChannelOptionState(
@@ -142,7 +144,7 @@ public fun buildDefaultChannelOptionsState(
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_mute),
                 iconColor = ChatTheme.colors.textLowEmphasis,
-                action = MuteChannel(selectedChannel)
+                action = MuteChannel(selectedChannel),
             )
         },
         if (canDeleteChannel) {
@@ -151,16 +153,18 @@ public fun buildDefaultChannelOptionsState(
                 titleColor = ChatTheme.colors.errorAccent,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_delete),
                 iconColor = ChatTheme.colors.errorAccent,
-                action = DeleteConversation(selectedChannel)
+                action = DeleteConversation(selectedChannel),
             )
-        } else null,
+        } else {
+            null
+        },
         ChannelOptionState(
             title = stringResource(id = R.string.stream_compose_selected_channel_menu_dismiss),
             titleColor = ChatTheme.colors.textHighEmphasis,
             iconPainter = painterResource(id = R.drawable.stream_compose_ic_clear),
             iconColor = ChatTheme.colors.textLowEmphasis,
             action = Cancel,
-        )
+        ),
     )
 }
 
@@ -177,9 +181,9 @@ private fun ChannelOptionsPreview() {
             options = buildDefaultChannelOptionsState(
                 selectedChannel = PreviewChannelData.channelWithMessages,
                 isMuted = false,
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             ),
-            onChannelOptionClick = {}
+            onChannelOptionClick = {},
         )
     }
 }

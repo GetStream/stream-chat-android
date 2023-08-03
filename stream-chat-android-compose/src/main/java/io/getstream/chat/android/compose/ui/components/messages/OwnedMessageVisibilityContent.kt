@@ -46,25 +46,25 @@ public fun OwnedMessageVisibilityContent(
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier
                 .padding(end = 4.dp)
                 .size(12.dp),
             painter = painterResource(id = R.drawable.stream_compose_ic_visible_to_you),
-            contentDescription = null
+            contentDescription = null,
         )
 
         Text(
             text = stringResource(id = R.string.stream_compose_only_visible_to_you),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Timestamp(
             modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
-            date = message.updatedAt ?: message.createdAt ?: Date()
+            date = message.updatedAt ?: message.createdAt ?: Date(),
         )
     }
 }

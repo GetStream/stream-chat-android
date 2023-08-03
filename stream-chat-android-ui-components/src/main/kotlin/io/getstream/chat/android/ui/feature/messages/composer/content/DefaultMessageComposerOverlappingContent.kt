@@ -76,7 +76,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         context,
         attrs,
         defStyleAttr,
-        defStyleRes
+        defStyleRes,
     )
 
     public var recordButtonHoldListener: () -> Unit = {}
@@ -196,8 +196,8 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding.recordingSlider.setTextStyle(style.audioRecordingSlideToCancelTextStyle)
         binding.recordingSlider.setStartDrawable(
             style.audioRecordingSlideToCancelStartDrawable.applyTint(
-                style.audioRecordingSlideToCancelStartDrawableTint
-            )
+                style.audioRecordingSlideToCancelStartDrawableTint,
+            ),
         )
     }
 
@@ -352,7 +352,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
             when (state.isPlaying) {
                 true -> R.drawable.stream_ui_ic_pause
                 else -> R.drawable.stream_ui_ic_play
-            }
+            },
         )
         binding.recordingPlayback.setImageColorRes(R.color.stream_ui_accent_blue)
         binding.recordingPlayback.isClickable = true
@@ -379,7 +379,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    @Suppress("ReturnCount")
+    @Suppress("ReturnCount", "LongMethod")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val state = _state
         val action = event.actionMasked
@@ -409,7 +409,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                         ?: error("recordAudioButton not found")
                 recordAudioButton.getRectInWindow(micOrigRect)
 
-                logger.w { "[onTouchEvent] centerContentHeight: $centerContentHeight, ${displayMetrics().density}, ${displayMetrics().widthPixels}" }
+                logger.w {
+                    "[onTouchEvent] centerContentHeight: $centerContentHeight, ${displayMetrics().density}, " +
+                        "${displayMetrics().widthPixels}"
+                }
                 baseTouch[0] = x
                 baseTouch[1] = y
                 holdStartTime = SystemClock.elapsedRealtime()
@@ -493,15 +496,17 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         }
         logger.d { "[showMicPopup] micOrigRect: $micOrigRect" }
         val micContent = LayoutInflater.from(context).inflate(
-            R.layout.stream_ui_message_composer_default_center_overlap_floating_mic, this, false
+            R.layout.stream_ui_message_composer_default_center_overlap_floating_mic,
+            this,
+            false,
         ).also { imageView ->
             (imageView as ImageView).apply {
                 val iconDrawable = style.audioRecordingFloatingButtonIconDrawable.applyTint(
-                    style.audioRecordingFloatingButtonIconDrawableTint
+                    style.audioRecordingFloatingButtonIconDrawableTint,
                 )
                 setImageDrawable(iconDrawable)
                 val bgDrawable = style.audioRecordingFloatingButtonBackgroundDrawable.applyTint(
-                    style.audioRecordingFloatingButtonBackgroundDrawableTint
+                    style.audioRecordingFloatingButtonBackgroundDrawableTint,
                 )
                 background = bgDrawable
             }
@@ -543,11 +548,13 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         }
         logger.d { "[showLockPopup] micBaseRect: $micBaseRect" }
         val lockContent = LayoutInflater.from(context).inflate(
-            R.layout.stream_ui_message_composer_default_center_overlap_floating_lock, this, false
+            R.layout.stream_ui_message_composer_default_center_overlap_floating_lock,
+            this,
+            false,
         ).also { imageView ->
             (imageView as ImageView).apply {
                 val iconDrawable = style.audioRecordingFloatingLockIconDrawable.applyTint(
-                    style.audioRecordingFloatingLockIconDrawableTint
+                    style.audioRecordingFloatingLockIconDrawableTint,
                 )
                 setImageDrawable(iconDrawable)
             }
@@ -591,11 +598,13 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         }
         logger.d { "[showLockedPopup] micBaseRect: $micBaseRect" }
         val lockContent = LayoutInflater.from(context).inflate(
-            R.layout.stream_ui_message_composer_default_center_overlap_floating_locked, this, false
+            R.layout.stream_ui_message_composer_default_center_overlap_floating_locked,
+            this,
+            false,
         ).also { imageView ->
             (imageView as ImageView).apply {
                 val iconDrawable = style.audioRecordingFloatingLockedIconDrawable.applyTint(
-                    style.audioRecordingFloatingLockedIconDrawableTint
+                    style.audioRecordingFloatingLockedIconDrawableTint,
                 )
                 setImageDrawable(iconDrawable)
             }
@@ -622,13 +631,15 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
 
     private fun showHoldPopup() {
         val holdContent = LayoutInflater.from(context).inflate(
-            R.layout.stream_ui_message_composer_default_center_overlap_floating_hold, this, false
+            R.layout.stream_ui_message_composer_default_center_overlap_floating_hold,
+            this,
+            false,
         ).also {
             it.findViewById<TextView>(R.id.holdToRecordText).apply {
                 text = style.audioRecordingHoldToRecordText
                 setTextStyle(style.audioRecordingHoldToRecordTextStyle)
                 background = style.audioRecordingHoldToRecordBackgroundDrawable.applyTint(
-                    style.audioRecordingHoldToRecordBackgroundDrawableTint
+                    style.audioRecordingHoldToRecordBackgroundDrawableTint,
                 )
             }
         }

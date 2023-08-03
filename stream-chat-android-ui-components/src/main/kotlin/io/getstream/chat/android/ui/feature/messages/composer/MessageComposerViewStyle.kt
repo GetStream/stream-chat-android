@@ -283,87 +283,87 @@ public data class MessageComposerViewStyle(
                 }
 
                 val buttonIconDrawableTintColor = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerIconDrawableTintColor
+                    R.styleable.MessageComposerView_streamUiMessageComposerIconDrawableTintColor,
                 )
 
                 val dividerBackgroundDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerDividerBackgroundDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
 
                 /**
                  * Command suggestions content
                  */
                 val commandSuggestionsTitleText = a.getString(
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleText
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleText,
                 ) ?: context.getString(R.string.stream_ui_message_composer_instant_commands)
 
                 val commandSuggestionsTitleTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val commandSuggestionsTitleIconDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_blue)!!
 
                 val commandSuggestionsBackgroundColor = a.getColor(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val commandSuggestionItemCommandNameTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandNameTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val commandSuggestionItemCommandDescriptionText = a.getString(
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionText
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionText,
                 ) ?: context.getString(R.string.stream_ui_message_composer_command_template)
 
                 val commandSuggestionItemCommandDescriptionTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -372,53 +372,53 @@ public data class MessageComposerViewStyle(
                  */
                 val mentionSuggestionsBackgroundColor = a.getColor(
                     R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionsBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val mentionSuggestionItemIconDrawable: Drawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
 
                 val mentionSuggestionItemUsernameTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable
                             .MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemUsernameTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val mentionSuggestionItemMentionText = a.getString(
-                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionText
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionText,
                 ) ?: context.getString(R.string.stream_ui_message_composer_mention_template)
 
                 val mentionSuggestionItemMentionTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemMentionTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -427,89 +427,89 @@ public data class MessageComposerViewStyle(
                  */
                 val messageInputCommandsHandlingEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsHandlingEnabled,
-                    true
+                    true,
                 )
 
                 val messageInputMentionsHandlingEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerMentionsHandlingEnabled,
-                    true
+                    true,
                 )
 
                 val messageInputTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextSize,
-                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input)
+                        context.resources.getDimensionPixelSize(R.dimen.stream_ui_text_size_input),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .hint(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputHintText,
-                        context.getString(R.string.stream_ui_message_composer_hint_normal)
+                        context.getString(R.string.stream_ui_message_composer_hint_normal),
                     )
                     .hintColor(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputHintColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_hint)
+                        context.getColorCompat(R.color.stream_ui_text_color_hint),
                     )
                     .build()
 
                 val messageInputBackgroundDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputBackgroundDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputBackgroundDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_shape_edit_text_round)!!
 
                 val messageInputCursorDrawable: Drawable? = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCursorDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCursorDrawable,
                 )
 
                 val messageInputScrollbarEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerScrollbarEnabled,
-                    false
+                    false,
                 )
                 val messageInputScrollbarFadingEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerScrollbarFadingEnabled,
-                    false
+                    false,
                 )
 
                 val messageInputMaxLines = a.getInt(
                     R.styleable.MessageComposerView_streamUiMessageComposerMessageInputMaxLines,
-                    7
+                    7,
                 )
 
                 val messageInputCannotSendHintText = a.getString(
-                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCannotSendHintText
+                    R.styleable.MessageComposerView_streamUiMessageComposerMessageInputCannotSendHintText,
                 ) ?: context.getString(R.string.stream_ui_message_composer_hint_cannot_send_message)
 
                 /**
                  * Center overlap content
                  */
                 val audioRecordingHoldToRecordText = a.getString(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordText
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordText,
                 ) ?: context.getString(R.string.stream_ui_message_composer_hold_to_record)
                 val audioRecordingHoldToRecordTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextColor,
-                        context.getColorCompat(R.color.stream_ui_white_snow)
+                        context.getColorCompat(R.color.stream_ui_white_snow),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
                 val audioRecordingHoldToRecordBackgroundDrawable = a.getDrawableCompat(
@@ -518,28 +518,28 @@ public data class MessageComposerViewStyle(
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_message_composer_audio_record_hold_background)!!
 
                 val audioRecordingHoldToRecordBackgroundDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint,
                 )
 
                 val audioRecordingSlideToCancelText = a.getString(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelText
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelText,
                 ) ?: context.getString(R.string.stream_ui_message_composer_slide_to_cancel)
                 val audioRecordingSlideToCancelTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
                 val audioRecordingSlideToCancelStartDrawable = a.getDrawableCompat(
@@ -548,38 +548,38 @@ public data class MessageComposerViewStyle(
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_arrow_left)!!
 
                 val audioRecordingSlideToCancelStartDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelStartDrawableTint
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingSlideToCancelStartDrawableTint,
                 )
                 val audioRecordingFloatingButtonIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!
                 val audioRecordingFloatingButtonIconDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonIconDrawableTint
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonIconDrawableTint,
                 )
 
                 val audioRecordingFloatingButtonBackgroundDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_message_composer_audio_record_mic_background)!!
                 val audioRecordingFloatingButtonBackgroundDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint,
                 )
 
                 val audioRecordingFloatingLockIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic_lock)!!
                 val audioRecordingFloatingLockIconDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint,
                 )
 
                 val audioRecordingFloatingLockedIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic_locked)!!
                 val audioRecordingFloatingLockedIconDrawableTint = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint,
                 )
 
                 /**
@@ -587,30 +587,30 @@ public data class MessageComposerViewStyle(
                  */
                 val attachmentsButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonVisible,
-                    true
+                    true,
                 )
 
                 val attachmentsButtonIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
 
                 val attachmentsButtonRippleColor = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonRippleColor
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonRippleColor,
                 )
 
                 val commandsButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonVisible,
-                    true
+                    true,
                 )
 
                 val commandsButtonIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
 
                 val commandsButtonRippleColor = a.getColorOrNull(
-                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonRippleColor
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonRippleColor,
                 )
 
                 /**
@@ -618,33 +618,33 @@ public data class MessageComposerViewStyle(
                  */
                 val alsoSendToChannelCheckboxVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxVisible,
-                    true
+                    true,
                 )
 
                 val alsoSendToChannelCheckboxDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxDrawable,
                 )
 
                 val alsoSendToChannelCheckboxText: String = a.getText(
-                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxText
+                    R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxText,
                 )?.toString() ?: context.getString(R.string.stream_ui_message_composer_send_to_channel)
 
                 val alsoSendToChannelCheckboxTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerAlsoSendToChannelCheckboxTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
@@ -652,23 +652,23 @@ public data class MessageComposerViewStyle(
                  * Header content
                  */
                 val editModeText: String = a.getText(
-                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeText
+                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeText,
                 )?.toString() ?: context.getString(R.string.stream_ui_message_composer_mode_edit)
 
                 val editModeIconDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerEditModeIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_edit)!!
 
                 val replyModeText: String = a.getText(
-                    R.styleable.MessageComposerView_streamUiMessageComposerReplyModeText
+                    R.styleable.MessageComposerView_streamUiMessageComposerReplyModeText,
                 )?.toString() ?: context.getString(R.string.stream_ui_message_composer_mode_reply)
 
                 val replyModeIconDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerReplyModeIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerReplyModeIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left_grey)!!
 
                 val dismissModeIconDrawable = a.getDrawable(
-                    R.styleable.MessageComposerView_streamUiMessageComposerDismissModeIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerDismissModeIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_clear)!!
 
                 /**
@@ -676,47 +676,47 @@ public data class MessageComposerViewStyle(
                  */
                 val sendMessageButtonEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonEnabled,
-                    true
+                    true,
                 )
 
                 val sendMessageButtonIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
 
                 val audioRecordingButtonEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonEnabled,
-                    true
+                    true,
                 )
                 val audioRecordingButtonVisible = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonVisible,
-                    false
+                    false,
                 )
                 val audioRecordingButtonPreferred = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPreferred,
-                    false
+                    false,
                 )
                 val audioRecordingButtonIconDrawable = a.getDrawableCompat(
                     context,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonIconDrawable
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!
 
                 val cooldownTimerTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_large)
+                        context.getDimension(R.dimen.stream_ui_text_large),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextColor,
-                        context.getColorCompat(R.color.stream_ui_literal_white)
+                        context.getColorCompat(R.color.stream_ui_literal_white),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextFontAssets,
-                        R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextFont
+                        R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextFont,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerCooldownTimerTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
@@ -727,17 +727,17 @@ public data class MessageComposerViewStyle(
                 val messageInputInputType = a.getInt(
                     R.styleable.MessageComposerView_android_inputType,
                     InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_FLAG_MULTI_LINE or
-                        InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+                        InputType.TYPE_TEXT_FLAG_CAP_SENTENCES,
                 )
 
                 val messageInputShowReplyView = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerShowMessageReplyView,
-                    true
+                    true,
                 )
 
                 val messageInputVideoAttachmentIconDrawable =
                     a.getDrawable(
-                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable
+                        R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawable,
                     )
                         ?: ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_play)!!
 
@@ -750,37 +750,37 @@ public data class MessageComposerViewStyle(
                 val messageInputVideoAttachmentIconCornerRadius =
                     a.getDimension(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoCornerRadius,
-                        20.dpToPxPrecise()
+                        20.dpToPxPrecise(),
                     )
 
                 val messageInputVideoAttachmentIconElevation =
                     a.getDimension(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconElevation,
-                        0f
+                        0f,
                     )
 
                 val messageInputVideoAttachmentIconDrawablePaddingTop =
                     a.getDimensionPixelSize(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingTop,
-                        0
+                        0,
                     )
 
                 val messageInputVideoAttachmentIconDrawablePaddingBottom =
                     a.getDimensionPixelSize(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingBottom,
-                        0
+                        0,
                     )
 
                 val messageInputVideoAttachmentIconDrawablePaddingStart =
                     a.getDimensionPixelSize(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingStart,
-                        0
+                        0,
                     )
 
                 val messageInputVideoAttachmentIconDrawablePaddingEnd =
                     a.getDimensionPixelSize(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageInputVideoAttachmentIconDrawablePaddingEnd,
-                        0
+                        0,
                     )
 
                 val messageInputVideoAttachmentIconDrawablePadding =
@@ -793,71 +793,71 @@ public data class MessageComposerViewStyle(
                 val messageReplyBackgroundColor: Int =
                     a.getColor(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyBackgroundColor,
-                        context.getColorCompat(R.color.stream_ui_white)
+                        context.getColorCompat(R.color.stream_ui_white),
                     )
 
                 val messageReplyTextStyleMine: TextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextSizeMine,
-                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE)
+                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextColorMine,
-                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR)
+                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextFontAssetsMine,
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleMine,
-                        mediumTypeface
+                        mediumTypeface,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleMine,
-                        MessageReplyStyle.DEFAULT_TEXT_STYLE
+                        MessageReplyStyle.DEFAULT_TEXT_STYLE,
                     )
                     .build()
 
                 val messageReplyMessageBackgroundStrokeColorMine: Int =
                     a.getColor(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeColorMine,
-                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro),
                     )
 
                 val messageReplyMessageBackgroundStrokeWidthMine: Float =
                     a.getDimension(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeWidthMine,
-                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH
+                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH,
                     )
 
                 val messageReplyTextStyleTheirs: TextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextSizeTheirs,
-                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE)
+                        context.getDimension(MessageReplyStyle.DEFAULT_TEXT_SIZE),
                     )
                     .color(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextColorTheirs,
-                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR)
+                        context.getColorCompat(MessageReplyStyle.DEFAULT_TEXT_COLOR),
                     )
                     .font(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextFontAssetsTheirs,
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleTheirs,
-                        mediumTypeface
+                        mediumTypeface,
                     )
                     .style(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyTextStyleTheirs,
-                        MessageReplyStyle.DEFAULT_TEXT_STYLE
+                        MessageReplyStyle.DEFAULT_TEXT_STYLE,
                     )
                     .build()
 
                 val messageReplyMessageBackgroundStrokeColorTheirs: Int =
                     a.getColor(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeColorTheirs,
-                        context.getColorCompat(R.color.stream_ui_grey_gainsboro)
+                        context.getColorCompat(R.color.stream_ui_grey_gainsboro),
                     )
 
                 val messageReplyMessageBackgroundStrokeWidthTheirs: Float =
                     a.getDimension(
                         R.styleable.MessageComposerView_streamUiMessageComposerMessageReplyStrokeWidthTheirs,
-                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH
+                        DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH,
                     )
 
                 return MessageComposerViewStyle(
@@ -963,35 +963,35 @@ public data class MessageComposerViewStyle(
         private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle {
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
-                context.getColorCompat(R.color.stream_ui_white_smoke)
+                context.getColorCompat(R.color.stream_ui_white_smoke),
             )
 
             val allowAccessButtonTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_large)
+                    context.getDimension(R.dimen.stream_ui_text_large),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextColor,
-                    context.getColorCompat(R.color.stream_ui_accent_blue)
+                    context.getColorCompat(R.color.stream_ui_accent_blue),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessButtonTextStyle,
-                    Typeface.BOLD
+                    Typeface.BOLD,
                 )
                 .build()
 
             val submitAttachmentsButtonIconDrawable = a.getDrawableCompat(
                 context,
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSubmitAttachmentsButtonIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_next)!!
 
             val attachmentTabToggleButtonStateList = a.getColorStateList(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAttachmentTabToggleButtonStateList
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAttachmentTabToggleButtonStateList,
             ) ?: context.getColorStateListCompat(R.color.stream_ui_attachment_tab_button)
 
             /**
@@ -999,77 +999,77 @@ public data class MessageComposerViewStyle(
              */
             val mediaAttachmentsTabEnabled = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabEnabled,
-                true
+                true,
             )
 
             val mediaAttachmentsTabIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentsTabIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
             val allowAccessToMediaButtonText = a.getText(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMediaButtonText
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMediaButtonText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_gallery_access)
 
             val allowAccessToMediaIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMediaIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToMediaIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_media)!!
 
             val videoLengthTextVisible = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextVisible,
-                true
+                true,
             )
 
             val videoLengthTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_small)
+                    context.getDimension(R.dimen.stream_ui_text_small),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextColor,
-                    context.getColorCompat(R.color.stream_ui_black)
+                    context.getColorCompat(R.color.stream_ui_black),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoLengthTextStyle,
-                    Typeface.NORMAL
+                    Typeface.NORMAL,
                 )
                 .build()
 
             val videoIconVisible = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconVisible,
-                true
+                true,
             )
 
             val videoIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_video)!!
 
             val videoIconDrawableTint =
                 a.getColorOrNull(R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerVideoIconDrawableTint)
 
             val mediaAttachmentNoMediaText = a.getString(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaText
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaText,
             ) ?: context.getString(R.string.stream_ui_message_composer_no_files)
 
             val mediaAttachmentNoMediaTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_large)
+                    context.getDimension(R.dimen.stream_ui_text_large),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerMediaAttachmentNoMediaTextStyle,
-                    Typeface.NORMAL
+                    Typeface.NORMAL,
                 )
                 .build()
 
@@ -1078,120 +1078,120 @@ public data class MessageComposerViewStyle(
              */
             val fileAttachmentsTabEnabled = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsTabEnabled,
-                true
+                true,
             )
 
             val fileAttachmentsTabIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsTabIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsTabIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
             val allowAccessToFilesButtonText = a.getText(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesButtonText
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesButtonText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_files_access)
 
             val allowAccessToFilesIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToFilesIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_file)!!
 
             val recentFilesText = a.getText(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesText
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_recent_files)
 
             val recentFilesTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextSize,
-                    context.getDimension(R.dimen.stream_ui_spacing_medium)
+                    context.getDimension(R.dimen.stream_ui_spacing_medium),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextColor,
-                    context.getColorCompat(R.color.stream_ui_black)
+                    context.getColorCompat(R.color.stream_ui_black),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerRecentFilesTextStyle,
-                    Typeface.BOLD
+                    Typeface.BOLD,
                 )
                 .build()
 
             val fileManagerIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileManagerIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileManagerIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
 
             val fileAttachmentsNoFilesText = a.getString(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesText
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesText,
             ) ?: context.getString(R.string.stream_ui_message_composer_no_files)
 
             val fileAttachmentsNoFilesTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_large)
+                    context.getDimension(R.dimen.stream_ui_text_large),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentsNoFilesTextStyle,
-                    Typeface.NORMAL
+                    Typeface.NORMAL,
                 )
                 .build()
 
             val fileAttachmentItemNameTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
+                    context.getDimension(R.dimen.stream_ui_text_medium),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextColor,
-                    context.getColorCompat(R.color.stream_ui_black)
+                    context.getColorCompat(R.color.stream_ui_black),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemNameTextStyle,
-                    Typeface.BOLD
+                    Typeface.BOLD,
                 )
                 .build()
 
             val fileAttachmentItemSizeTextStyle = TextStyle.Builder(a)
                 .size(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_small)
+                    context.getDimension(R.dimen.stream_ui_text_small),
                 )
                 .color(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                    context.getColorCompat(R.color.stream_ui_text_color_secondary),
                 )
                 .font(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFontAssets,
-                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFont
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextFont,
                 )
                 .style(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemSizeTextStyle,
-                    Typeface.BOLD
+                    Typeface.BOLD,
                 )
                 .build()
 
             val fileAttachmentItemCheckboxSelectedDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxSelectedDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_circle_blue)!!
 
             val fileAttachmentItemCheckboxDeselectedDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxDeselectedDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_file_manager)!!
 
             val fileAttachmentItemCheckboxTextColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerFileAttachmentItemCheckboxTextColor,
-                context.getColorCompat(R.color.stream_ui_literal_white)
+                context.getColorCompat(R.color.stream_ui_literal_white),
             )
 
             /**
@@ -1199,19 +1199,19 @@ public data class MessageComposerViewStyle(
              */
             val cameraAttachmentsTabEnabled = a.getBoolean(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabEnabled,
-                true
+                true,
             )
 
             val cameraAttachmentsTabIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
             val allowAccessToCameraButtonText = a.getText(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_camera_access)
 
             val allowAccessToCameraIconDrawable = a.getDrawable(
-                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
             val pickerMediaMode = a.getEnum(

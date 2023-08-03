@@ -45,7 +45,7 @@ internal class ChannelRepositoryImplTest {
         DatabaseChannelRepository(
             channelDao,
             { randomUser() },
-            { randomMessage() }
+            { randomMessage() },
         )
 
     @Test
@@ -60,7 +60,7 @@ internal class ChannelRepositoryImplTest {
             argThat { channelEntity ->
                 channelEntity.lastMessageAt == lastMessage.createdAt &&
                     channelEntity.lastMessageId == lastMessage.id
-            }
+            },
         )
     }
 
@@ -79,7 +79,7 @@ internal class ChannelRepositoryImplTest {
             argThat { channelEntity ->
                 channelEntity.lastMessageAt == after &&
                     channelEntity.lastMessageId == newLastMessage.id
-            }
+            },
         )
     }
 

@@ -72,7 +72,7 @@ internal class DoOnResultCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         consumer `should be invoked with` validResult
         blockedCall.isStarted() `should be equal to` true

@@ -45,7 +45,7 @@ class SelectedChannelMenuTest : ComposeScreenshotTest() {
                 isMuted = false,
                 currentUser = TestData.user1(),
                 onChannelOptionClick = {},
-                onDismiss = {}
+                onDismiss = {},
             )
         }
     }

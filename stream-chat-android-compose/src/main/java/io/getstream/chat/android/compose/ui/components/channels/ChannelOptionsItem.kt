@@ -63,17 +63,17 @@ internal fun ChannelOptionsItem(
             .clickable(
                 onClick = onClick,
                 indication = rememberRipple(),
-                interactionSource = remember { MutableInteractionSource() }
+                interactionSource = remember { MutableInteractionSource() },
             ),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start
+        horizontalArrangement = Arrangement.Start,
     ) {
         leadingIcon()
 
         Text(
             text = title,
             style = ChatTheme.typography.bodyBold,
-            color = titleColor
+            color = titleColor,
         )
     }
 }
@@ -97,10 +97,10 @@ private fun ChannelOptionsItemPreview() {
                         .padding(16.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_person),
                     tint = ChatTheme.colors.textLowEmphasis,
-                    contentDescription = null
+                    contentDescription = null,
                 )
             },
-            onClick = {}
+            onClick = {},
         )
     }
 }

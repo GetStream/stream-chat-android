@@ -104,7 +104,7 @@ internal class MessageListViewModelTest {
                 isTyping = false,
                 isThread = false,
                 areNewestMessagesLoaded = true,
-            )
+            ),
         )
 
         state.last() shouldBeEqualTo expectedState
@@ -184,7 +184,7 @@ internal class MessageListViewModelTest {
             MessageListViewModel.Event.MessageReaction(
                 message = message1,
                 reactionType = reaction1.type,
-            )
+            ),
         )
 
         verify(chatClient).sendReaction(reaction = reaction1, enforceUnique = true, CID)
@@ -209,20 +209,20 @@ internal class MessageListViewModelTest {
                 MessageListViewModel.Event.MessageReaction(
                     message = messageWithOwnReaction,
                     reactionType = reaction1.type,
-                )
+                ),
             )
 
             verify(chatClient).deleteReaction(
                 messageId = messageWithOwnReaction.id,
                 reactionType = reaction1.type,
-                cid = CID
+                cid = CID,
             )
         }
 
     private class Fixture(
         private val chatClient: ChatClient = MockChatClientBuilder().build(),
         private val channelId: String = CID,
-        statePluginConfig: StatePluginConfig = StatePluginConfig()
+        statePluginConfig: StatePluginConfig = StatePluginConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
@@ -268,7 +268,7 @@ internal class MessageListViewModelTest {
                 id = CHANNEL_ID,
             ),
             messageState: MessagesState = MessagesState.Result(
-                messages = emptyList()
+                messages = emptyList(),
             ),
             messages: List<Message> = listOf(),
         ) = apply {
@@ -300,8 +300,8 @@ internal class MessageListViewModelTest {
                 MessageListController(
                     chatClient = chatClient,
                     cid = channelId,
-                    clipboardHandler = mock()
-                )
+                    clipboardHandler = mock(),
+                ),
 
             )
         }
@@ -364,7 +364,7 @@ internal class MessageListViewModelTest {
                     message = message,
                     showMessageFooter = index == this.size - 1,
                     positions = listOf(position),
-                    isMessageRead = false
+                    isMessageRead = false,
                 )
             }
         }

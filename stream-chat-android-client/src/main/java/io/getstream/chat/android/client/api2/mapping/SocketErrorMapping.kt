@@ -23,7 +23,7 @@ import io.getstream.chat.android.client.socket.SocketErrorMessage
 
 internal fun SocketErrorResponse.toDomain(): SocketErrorMessage {
     return SocketErrorMessage(
-        error = error?.toDomain()
+        error = error?.toDomain(),
     )
 }
 
@@ -45,6 +45,6 @@ internal fun SocketErrorResponse.ErrorResponse.ErrorDetail.toDomain(): ErrorDeta
     val dto = this
     return ErrorDetail(
         code = dto.code,
-        messages = dto.messages
+        messages = dto.messages,
     )
 }

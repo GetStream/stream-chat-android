@@ -55,7 +55,7 @@ public fun MessageOptionItem(
     Row(
         modifier = modifier,
         verticalAlignment = verticalAlignment,
-        horizontalArrangement = horizontalArrangement
+        horizontalArrangement = horizontalArrangement,
     ) {
         Icon(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -67,7 +67,7 @@ public fun MessageOptionItem(
         Text(
             text = title,
             style = ChatTheme.typography.body,
-            color = option.titleColor
+            color = option.titleColor,
         )
     }
 }
@@ -89,7 +89,7 @@ private fun MessageOptionItemPreview() {
 
         MessageOptionItem(
             modifier = Modifier.fillMaxWidth(),
-            option = option
+            option = option,
         )
     }
 }

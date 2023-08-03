@@ -32,7 +32,7 @@ internal object PreviewChannelData {
         members = listOf(
             Member(user = PreviewUserData.user1),
             Member(user = PreviewUserData.user2),
-        )
+        ),
     )
 
     val channelWithOneUser: Channel = Channel(
@@ -40,7 +40,7 @@ internal object PreviewChannelData {
         id = "channelId2",
         members = listOf(
             Member(user = PreviewUserData.user1),
-        )
+        ),
     )
 
     val channelWithOnlineUser: Channel = Channel(
@@ -83,7 +83,7 @@ internal object PreviewChannelData {
         ),
         messages = listOf(
             PreviewMessageData.message1,
-            PreviewMessageData.message2
+            PreviewMessageData.message2,
         ),
         unreadCount = 2,
         lastMessageAt = Date(),

@@ -49,7 +49,7 @@ internal fun buildAnnotatedMessageText(text: String, color: Color): AnnotatedStr
                 color = color,
             ),
             start = 0,
-            end = text.length
+            end = text.length,
         )
 
         // Then for each available link in the text, we add a different style, to represent the links,
@@ -78,7 +78,7 @@ private fun AnnotatedString.Builder.linkify(
     pattern: Pattern,
     matchFilter: Linkify.MatchFilter? = null,
     schemes: List<String>,
-    linkColor: Color
+    linkColor: Color,
 ) {
     @SuppressLint("RestrictedApi")
     val matcher = pattern.matcher(text)

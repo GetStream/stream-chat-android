@@ -58,13 +58,13 @@ internal class AttachmentFilterTest {
             AttachmentMetaData(
                 mimeType = "image/jpeg",
                 title = "IMG_123.jpeg",
-                type = "image"
+                type = "image",
             ),
             AttachmentMetaData(
                 mimeType = "video/mp4",
                 title = "VID_123.mp4",
-                type = "file"
-            )
+                type = "file",
+            ),
         )
 
         @JvmStatic
@@ -73,36 +73,36 @@ internal class AttachmentFilterTest {
                 AttachmentFilterTestData(
                     fileUploadConfig = fileUploadConfig(),
                     imageUploadConfig = fileUploadConfig(),
-                    expectedAttachmentCount = 2
-                )
+                    expectedAttachmentCount = 2,
+                ),
             ),
             Arguments.of(
                 AttachmentFilterTestData(
                     fileUploadConfig = fileUploadConfig(allowedFileExtensions = listOf(".mp4")),
                     imageUploadConfig = fileUploadConfig(allowedFileExtensions = listOf(".jpeg")),
-                    expectedAttachmentCount = 2
-                )
+                    expectedAttachmentCount = 2,
+                ),
             ),
             Arguments.of(
                 AttachmentFilterTestData(
                     fileUploadConfig = fileUploadConfig(blockedFileExtensions = listOf(".mp4")),
                     imageUploadConfig = fileUploadConfig(blockedFileExtensions = listOf(".jpeg")),
-                    expectedAttachmentCount = 0
-                )
+                    expectedAttachmentCount = 0,
+                ),
             ),
             Arguments.of(
                 AttachmentFilterTestData(
                     fileUploadConfig = fileUploadConfig(allowedMimeTypes = listOf("video/mp4")),
                     imageUploadConfig = fileUploadConfig(allowedMimeTypes = listOf("image/jpeg")),
-                    expectedAttachmentCount = 2
-                )
+                    expectedAttachmentCount = 2,
+                ),
             ),
             Arguments.of(
                 AttachmentFilterTestData(
                     fileUploadConfig = fileUploadConfig(blockedMimeTypes = listOf("video/mp4")),
                     imageUploadConfig = fileUploadConfig(blockedMimeTypes = listOf("image/jpeg")),
-                    expectedAttachmentCount = 0
-                )
+                    expectedAttachmentCount = 0,
+                ),
             ),
         )
 

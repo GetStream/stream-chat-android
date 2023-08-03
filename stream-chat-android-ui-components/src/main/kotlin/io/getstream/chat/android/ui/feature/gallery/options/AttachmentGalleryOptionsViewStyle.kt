@@ -67,7 +67,7 @@ public data class AttachmentGalleryOptionsViewStyle(
                 attrs,
                 R.styleable.AttachmentOptionsView,
                 R.attr.streamUiAttachmentGalleryOptionsStyle,
-                R.style.StreamUi_AttachmentGallery_Options
+                R.style.StreamUi_AttachmentGallery_Options,
             ).use {
                 return AttachmentGalleryOptionsViewStyle(context, it)
             }
@@ -77,49 +77,49 @@ public data class AttachmentGalleryOptionsViewStyle(
             val optionTextStyle = TextStyle.Builder(it)
                 .size(
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
+                    context.getDimension(R.dimen.stream_ui_text_medium),
                 )
                 .color(
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary),
                 )
                 .font(
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextFontAssets,
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextFont,
-                    ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
+                    ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT,
                 )
                 .style(
                     R.styleable.AttachmentOptionsView_streamUiAttachmentOptionTextStyle,
-                    Typeface.NORMAL
+                    Typeface.NORMAL,
                 )
                 .build()
 
             val backgroundColor = it.getColor(
                 R.styleable.AttachmentOptionsView_streamUiAttachmentOptionsBackgroundColor,
-                context.getColorCompat(R.color.stream_ui_white_snow)
+                context.getColorCompat(R.color.stream_ui_white_snow),
             )
 
             val replyOptionEnabled = it.getBoolean(
                 R.styleable.AttachmentOptionsView_streamUiAttachmentReplyEnabled,
-                true
+                true,
             )
 
             val replyOptionDrawable = it.getDrawable(
-                R.styleable.AttachmentOptionsView_streamUiReplyIcon
+                R.styleable.AttachmentOptionsView_streamUiReplyIcon,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_arrow_curve_left_grey)!!
 
             val showInChatOptionEnabled = it.getBoolean(
                 R.styleable.AttachmentOptionsView_streamUiShowInChatEnabled,
-                true
+                true,
             )
 
             val showInChatOptionDrawable = it.getDrawable(
-                R.styleable.AttachmentOptionsView_streamUiShowInChatIcon
+                R.styleable.AttachmentOptionsView_streamUiShowInChatIcon,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_show_in_chat)!!
 
             val saveMediaOptionEnabled = it.getBoolean(
                 R.styleable.AttachmentOptionsView_streamUiSaveMediaEnabled,
-                true
+                true,
             )
 
             val saveMediaOptionDrawable = it.getDrawable(
@@ -128,7 +128,7 @@ public data class AttachmentGalleryOptionsViewStyle(
 
             val deleteOptionEnabled = it.getBoolean(
                 R.styleable.AttachmentOptionsView_streamUiDeleteEnabled,
-                true
+                true,
             )
 
             val deleteOptionDrawable = it.getDrawable(
@@ -137,7 +137,7 @@ public data class AttachmentGalleryOptionsViewStyle(
 
             val deleteOptionTextColor = it.getColor(
                 R.styleable.AttachmentOptionsView_streamUiDeleteTextTint,
-                context.getColorCompat(R.color.stream_ui_accent_red)
+                context.getColorCompat(R.color.stream_ui_accent_red),
             )
 
             return AttachmentGalleryOptionsViewStyle(

@@ -63,7 +63,7 @@ internal class DeleteMessageListenerStateTest {
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn true
@@ -75,7 +75,7 @@ internal class DeleteMessageListenerStateTest {
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
-            }
+            },
         )
     }
 
@@ -83,7 +83,7 @@ internal class DeleteMessageListenerStateTest {
     fun `when internet is not available, the message should be updated as sync needed before the request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.IN_PROGRESS
+            syncStatus = SyncStatus.IN_PROGRESS,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn false
@@ -95,7 +95,7 @@ internal class DeleteMessageListenerStateTest {
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 
@@ -103,7 +103,7 @@ internal class DeleteMessageListenerStateTest {
     fun `when request is successful, the message should be updated as completed after request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.IN_PROGRESS
+            syncStatus = SyncStatus.IN_PROGRESS,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn true
@@ -115,7 +115,7 @@ internal class DeleteMessageListenerStateTest {
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
-            }
+            },
         )
     }
 
@@ -123,7 +123,7 @@ internal class DeleteMessageListenerStateTest {
     fun `when request fails, the message should be updated as sync needed after request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.IN_PROGRESS
+            syncStatus = SyncStatus.IN_PROGRESS,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn true
@@ -135,7 +135,7 @@ internal class DeleteMessageListenerStateTest {
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 }

@@ -57,9 +57,9 @@ internal data class ChannelConfigInnerEntity(
             parentColumns = ["channelType"],
             childColumns = ["channelType"],
             onDelete = ForeignKey.CASCADE,
-            onUpdate = ForeignKey.CASCADE
-        )
-    ]
+            onUpdate = ForeignKey.CASCADE,
+        ),
+    ],
 )
 internal data class CommandInnerEntity(
     val name: String,

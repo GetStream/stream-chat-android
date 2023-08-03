@@ -200,7 +200,7 @@ internal class EventDtoAdapter(
                     type = type ?: EventType.UNKNOWN,
                     created_at = moshi.adapter(ExactDate::class.java).fromJsonValue(map["created_at"])!!,
                     user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
-                    rawData = map
+                    rawData = map,
                 )
         }
 

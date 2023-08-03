@@ -128,8 +128,8 @@ internal class CreateChannelListenerDatabase(
                                 SyncStatus.FAILED_PERMANENTLY
                             } else {
                                 SyncStatus.SYNC_NEEDED
-                            }
-                        )
+                            },
+                        ),
                     )
                 }
             }

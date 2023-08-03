@@ -81,7 +81,7 @@ internal class MessageListControllerTests {
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(
-                typingUsers = listOf(user2)
+                typingUsers = listOf(user2),
             )
             .get()
 
@@ -89,8 +89,8 @@ internal class MessageListControllerTests {
             currentUser = user1,
             endOfNewMessagesReached = true,
             messageItems = listOf(
-                TypingItemState(listOf(user2))
-            )
+                TypingItemState(listOf(user2)),
+            ),
         )
 
         controller.messageListState.value `should be equal to` expectedResult
@@ -104,7 +104,7 @@ internal class MessageListControllerTests {
             .givenChannelQuery()
             .givenChannelState(
                 messageState = messageState,
-                typingUsers = listOf(user2)
+                typingUsers = listOf(user2),
             )
             .get(dateSeparatorHandler = { _, _ -> false })
 
@@ -292,7 +292,7 @@ internal class MessageListControllerTests {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
-        statePluginConfig: StatePluginConfig = StatePluginConfig()
+        statePluginConfig: StatePluginConfig = StatePluginConfig(),
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -322,7 +322,7 @@ internal class MessageListControllerTests {
                 id = CHANNEL_ID,
             ),
             messageState: MessagesState = MessagesState.Result(
-                messages = emptyList()
+                messages = emptyList(),
             ),
             typingUsers: List<User> = listOf(),
         ) = apply {
@@ -354,7 +354,7 @@ internal class MessageListControllerTests {
                 chatClient = chatClient,
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
-                deletedMessageVisibility = deletedMessageVisibility
+                deletedMessageVisibility = deletedMessageVisibility,
             )
         }
     }

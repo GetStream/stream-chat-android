@@ -47,14 +47,14 @@ public fun MessageThreadFooter(
                 modifier = Modifier
                     .padding(end = 4.dp),
                 participants = participants,
-                alignment = messageAlignment
+                alignment = messageAlignment,
             )
         }
 
         Text(
             text = text,
             style = ChatTheme.typography.footnoteBold,
-            color = ChatTheme.colors.primaryAccent
+            color = ChatTheme.colors.primaryAccent,
         )
 
         if (messageAlignment == MessageAlignment.End) {
@@ -62,7 +62,7 @@ public fun MessageThreadFooter(
                 modifier = Modifier
                     .padding(start = 4.dp),
                 participants = participants,
-                alignment = messageAlignment
+                alignment = messageAlignment,
             )
         }
     }

@@ -106,7 +106,7 @@ public fun MessageListHeader(
             typingUsers = typingUsers,
             messageMode = messageMode,
             onHeaderTitleClick = onHeaderTitleClick,
-            connectionState = connectionState
+            connectionState = connectionState,
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
@@ -121,7 +121,7 @@ public fun MessageListHeader(
         modifier = modifier.fillMaxWidth(),
         elevation = elevation,
         color = color,
-        shape = shape
+        shape = shape,
     ) {
         Row(
             modifier = Modifier
@@ -129,7 +129,6 @@ public fun MessageListHeader(
                 .padding(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
             leadingContent()
 
             centerContent()
@@ -186,7 +185,7 @@ public fun DefaultMessageListHeaderCenterContent(
         MessageMode.Normal -> channel.getMembersStatusText(LocalContext.current, currentUser)
         is MessageMode.MessageThread -> stringResource(
             R.string.stream_compose_thread_subtitle,
-            ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser)
+            ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
         )
     }
 
@@ -196,10 +195,10 @@ public fun DefaultMessageListHeaderCenterContent(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
-                onClick = { onHeaderTitleClick(channel) }
+                onClick = { onHeaderTitleClick(channel) },
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = title,
@@ -213,7 +212,7 @@ public fun DefaultMessageListHeaderCenterContent(
             is ConnectionState.Connected -> {
                 DefaultMessageListHeaderSubtitle(
                     subtitle = subtitle,
-                    typingUsers = typingUsers
+                    typingUsers = typingUsers,
                 )
             }
             is ConnectionState.Connecting -> {
@@ -221,7 +220,7 @@ public fun DefaultMessageListHeaderCenterContent(
                     modifier = Modifier.wrapContentHeight(),
                     spinnerSize = 12.dp,
                     textColor = ChatTheme.colors.textLowEmphasis,
-                    textStyle = ChatTheme.typography.footnote
+                    textStyle = ChatTheme.typography.footnote,
                 )
             }
             is ConnectionState.Offline -> {
@@ -270,7 +269,7 @@ internal fun DefaultMessageListHeaderSubtitle(
                 R.plurals.stream_compose_message_list_header_typing_users,
                 typingUsers.size,
                 typingUsers.first().name,
-                typingUsers.size - 1
+                typingUsers.size - 1,
             )
 
             TypingIndicator()
@@ -333,7 +332,7 @@ private fun MessageListHeaderConnectingPreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Connecting
+            connectionState = ConnectionState.Connecting,
         )
     }
 }
@@ -348,7 +347,7 @@ private fun MessageListHeaderOfflinePreview() {
                 .wrapContentHeight(),
             channel = PreviewChannelData.channelWithImage,
             currentUser = PreviewUserData.user1,
-            connectionState = ConnectionState.Offline
+            connectionState = ConnectionState.Offline,
         )
     }
 }

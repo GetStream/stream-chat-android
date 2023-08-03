@@ -45,7 +45,7 @@ public fun MentionListViewModel.bindView(view: MentionListView, lifecycleOwner: 
         lifecycleOwner,
         EventObserver {
             view.showError()
-        }
+        },
     )
     view.setLoadMoreListener {
         this.loadMore()

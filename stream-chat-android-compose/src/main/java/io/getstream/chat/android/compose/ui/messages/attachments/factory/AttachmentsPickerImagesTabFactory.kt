@@ -94,12 +94,16 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
         val storagePermissionState =
             rememberMultiplePermissionsState(
-                permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
-                    Manifest.permission.READ_MEDIA_IMAGES,
-                    Manifest.permission.READ_MEDIA_VIDEO,
-                ) else listOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE
-                )
+                permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    listOf(
+                        Manifest.permission.READ_MEDIA_IMAGES,
+                        Manifest.permission.READ_MEDIA_VIDEO,
+                    )
+                } else {
+                    listOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                    )
+                },
             ) {
                 storagePermissionRequested = true
             }
@@ -115,10 +119,10 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
                         top = 16.dp,
                         start = 2.dp,
                         end = 2.dp,
-                        bottom = 2.dp
+                        bottom = 2.dp,
                     ),
                     images = attachments,
-                    onImageSelected = onAttachmentItemSelected
+                    onImageSelected = onAttachmentItemSelected,
                 )
             }
             else -> {
@@ -132,7 +136,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
         LaunchedEffect(storagePermissionState.allPermissionsGranted) {
             if (storagePermissionState.allPermissionsGranted) {
                 onAttachmentsChanged(
-                    storageHelper.getMedia().map { AttachmentPickerItemState(it, false) }
+                    storageHelper.getMedia().map { AttachmentPickerItemState(it, false) },
                 )
             }
         }

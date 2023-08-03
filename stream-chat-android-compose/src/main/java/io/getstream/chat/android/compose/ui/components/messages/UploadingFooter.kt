@@ -45,16 +45,18 @@ public fun UploadingFooter(
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.End
+        horizontalAlignment = Alignment.End,
     ) {
         OwnedMessageVisibilityContent(message = message)
 
         Text(
             text = stringResource(
-                id = R.string.stream_compose_upload_file_count, uploadedCount + 1, totalCount
+                id = R.string.stream_compose_upload_file_count,
+                uploadedCount + 1,
+                totalCount,
             ),
             style = ChatTheme.typography.body,
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
         )
     }
 }

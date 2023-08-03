@@ -54,7 +54,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
             is MessageListItem.LoadingMoreIndicatorItem -> true
             is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(
-                User::id
+                User::id,
             )
             is MessageListItem.ThreadPlaceholderItem -> true
         }

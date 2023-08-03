@@ -189,7 +189,7 @@ internal class ReactionsDecorator(private val style: MessageListItemStyle) : Bas
                         rootConstraintLayout,
                         reactionsSpace,
                         reactionsView,
-                        data
+                        data,
                     )
 
                     updateOffset(contentView, reactionsSpace, data, dynamicOffset)

@@ -61,7 +61,7 @@ internal fun Call<Channel>.onCreateChannelError(
             channelId = channelId,
             channelType = channelType,
             memberIds = memberIds,
-            extraData = extraData
+            extraData = extraData,
         )
     }
 }

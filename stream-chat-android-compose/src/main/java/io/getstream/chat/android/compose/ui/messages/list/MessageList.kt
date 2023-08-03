@@ -92,14 +92,14 @@ public fun MessageList(
     onQuotedMessageClick: (Message) -> Unit = { message ->
         viewModel.scrollToMessage(
             messageId = message.id,
-            parentMessageId = message.parentId
+            parentMessageId = message.parentId,
         )
     },
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
                 messageId = it.messageId,
-                parentMessageId = it.parentMessageId
+                parentMessageId = it.parentMessageId,
             )
         }
     },
@@ -201,13 +201,13 @@ internal fun DefaultMessageListLoadingIndicator(modifier: Modifier) {
 internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
     Box(
         modifier = modifier.background(color = ChatTheme.colors.appBackground),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(R.string.stream_compose_message_list_empty_messages),
             style = ChatTheme.typography.body,
             color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }
@@ -268,7 +268,7 @@ public fun MessageList(
         DefaultMessagesHelperContent(
             messagesState = currentState,
             messagesLazyListState = messagesLazyListState,
-            scrollToBottom = onScrollToBottom
+            scrollToBottom = onScrollToBottom,
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },

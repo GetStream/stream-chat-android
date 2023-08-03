@@ -53,10 +53,11 @@ internal class LoadNotificationDataWorker(
             val client: ChatClient = ChatClient.instance()
             val getMessage = client.getMessage(messageId)
             val getChannel = client.queryChannel(
-                channelType, channelId,
+                channelType,
+                channelId,
                 QueryChannelRequest().apply {
                     isNotificationUpdate = true
-                }
+                },
             )
 
             val result = getChannel.zipWith(getMessage).await()
@@ -140,8 +141,8 @@ internal class LoadNotificationDataWorker(
                     workDataOf(
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
-                        DATA_MESSAGE_ID to messageId
-                    )
+                        DATA_MESSAGE_ID to messageId,
+                    ),
                 )
                 .build()
 

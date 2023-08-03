@@ -40,7 +40,7 @@ internal object SocketErrorResponseTestData {
             message = "JWTAuth error: signature is not valid. " +
                 "Make sure the token is created using the secret for API key \"ax5us4v6xemh\"",
             StatusCode = 401,
-            duration = ""
-        )
+            duration = "",
+        ),
     )
 }

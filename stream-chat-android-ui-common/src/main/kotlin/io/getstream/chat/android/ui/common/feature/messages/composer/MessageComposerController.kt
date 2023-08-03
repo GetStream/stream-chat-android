@@ -118,7 +118,11 @@ public class MessageComposerController(
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
     private val audioRecordingController = AudioRecordingController(
-        channelId, chatClient.audioPlayer, mediaRecorder, fileToUri, scope
+        channelId,
+        chatClient.audioPlayer,
+        mediaRecorder,
+        fileToUri,
+        scope,
     )
 
     /**
@@ -129,7 +133,7 @@ public class MessageComposerController(
     public var typingUpdatesBuffer: TypingUpdatesBuffer = DefaultTypingUpdatesBuffer(
         onTypingStarted = ::sendKeystrokeEvent,
         onTypingStopped = ::sendStopTypingEvent,
-        coroutineScope = scope
+        coroutineScope = scope,
     )
 
     /**
@@ -153,7 +157,7 @@ public class MessageComposerController(
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
-            initialValue = setOf()
+            initialValue = setOf(),
         )
 
     /**
@@ -169,7 +173,7 @@ public class MessageComposerController(
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
-            initialValue = false
+            initialValue = false,
         )
 
     /**
@@ -185,7 +189,7 @@ public class MessageComposerController(
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
-            initialValue = false
+            initialValue = false,
         )
 
     /**
@@ -201,7 +205,7 @@ public class MessageComposerController(
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
-            initialValue = false
+            initialValue = false,
         )
 
     /**
@@ -583,7 +587,7 @@ public class MessageComposerController(
             activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),
-                mentionedUsersIds = mentions
+                mentionedUsersIds = mentions,
             )
         } else {
             Message(
@@ -592,7 +596,7 @@ public class MessageComposerController(
                 parentId = parentMessageId,
                 replyMessageId = replyMessageId,
                 attachments = attachments.toMutableList(),
-                mentionedUsersIds = mentions
+                mentionedUsersIds = mentions,
             )
         }
     }
@@ -650,8 +654,8 @@ public class MessageComposerController(
                 add(
                     ValidationError.MessageLengthExceeded(
                         messageLength = messageLength,
-                        maxMessageLength = maxMessageLength
-                    )
+                        maxMessageLength = maxMessageLength,
+                    ),
                 )
             }
 
@@ -660,8 +664,8 @@ public class MessageComposerController(
                 add(
                     ValidationError.AttachmentCountExceeded(
                         attachmentCount = attachmentCount,
-                        maxAttachmentCount = maxAttachmentCount
-                    )
+                        maxAttachmentCount = maxAttachmentCount,
+                    ),
                 )
             }
 
@@ -671,13 +675,13 @@ public class MessageComposerController(
                 add(
                     ValidationError.AttachmentSizeExceeded(
                         attachments = attachments,
-                        maxAttachmentSize = maxAttachmentSize
-                    )
+                        maxAttachmentSize = maxAttachmentSize,
+                    ),
                 )
             }
             if (!canSendLinks.value && message.containsLinks()) {
                 add(
-                    ValidationError.ContainsLinksWhenNotAllowed
+                    ValidationError.ContainsLinksWhenNotAllowed,
                 )
             }
         }
@@ -789,7 +793,7 @@ public class MessageComposerController(
                     queryMembersByUserNameContains(
                         channelType = channelType,
                         channelId = channelId,
-                        contains = userNameContains
+                        contains = userNameContains,
                     )
                 }
                 else -> emptyList()
@@ -825,10 +829,10 @@ public class MessageComposerController(
             limit = queryMembersMemberLimit,
             filter = Filters.autocomplete(
                 fieldName = "name",
-                value = contains
+                value = contains,
             ),
             sort = QuerySortByField(),
-            members = listOf()
+            members = listOf(),
         ).await()
 
         return when (result) {

@@ -46,7 +46,10 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.Failure(Error.GenericError(message = ""))
         }
         var isNetworkApiCalled = false
-        val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()
+        val sut = Fixture().givenPlugin(plugin).givenChannelResponse {
+            isNetworkApiCalled = true
+            mock()
+        }.get()
 
         val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).await()
 
@@ -60,7 +63,10 @@ internal class WhenQueryChannel : BaseChatClientTest() {
             onBlocking { it.onQueryChannelPrecondition(any(), any(), any()) } doReturn Result.Success(Unit)
         }
         var isNetworkApiCalled = false
-        val sut = Fixture().givenPlugin(plugin).givenChannelResponse { isNetworkApiCalled = true; mock() }.get()
+        val sut = Fixture().givenPlugin(plugin).givenChannelResponse {
+            isNetworkApiCalled = true
+            mock()
+        }.get()
 
         val result = sut.queryChannel("channelType", "channelId", QueryChannelRequest()).await()
 

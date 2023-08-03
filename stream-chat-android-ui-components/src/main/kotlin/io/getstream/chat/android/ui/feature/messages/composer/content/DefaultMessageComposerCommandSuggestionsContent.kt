@@ -69,7 +69,7 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }
@@ -96,7 +96,7 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
         binding.commandsTitleTextView.text = style.commandSuggestionsTitleText
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(
-            style.commandSuggestionsTitleIconDrawable.applyTint(style.buttonIconDrawableTintColor)
+            style.commandSuggestionsTitleIconDrawable.applyTint(style.buttonIconDrawableTintColor),
         )
     }
 

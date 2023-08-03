@@ -41,7 +41,7 @@ val customMediaAttachmentFactory = MediaAttachmentFactory(
                     .padding(2.dp)
                     .background(
                         color = Color(red = 256, blue = 256, green = 256, alpha = 220),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     )
                     .fillMaxWidth(0.3f)
                     .aspectRatio(1.20f),
@@ -56,11 +56,11 @@ val customMediaAttachmentFactory = MediaAttachmentFactory(
                     .padding(2.dp)
                     .background(
                         color = Color(red = 256, blue = 256, green = 256, alpha = 220),
-                        shape = RoundedCornerShape(8.dp)
+                        shape = RoundedCornerShape(8.dp),
                     )
                     .fillMaxWidth(0.35f)
                     .aspectRatio(1.20f),
             )
         }
-    }
+    },
 )

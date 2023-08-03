@@ -104,7 +104,7 @@ public object StreamAttachmentFactories {
         ) -> Unit = ::onFileAttachmentContentItemClick,
     ): List<AttachmentFactory> = listOf(
         UploadAttachmentFactory(
-            onContentItemClick = onUploadContentItemClick
+            onContentItemClick = onUploadContentItemClick,
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
@@ -134,6 +134,6 @@ public object StreamAttachmentFactories {
      * @return a [List] of various [AttachmentFactory] instances that provide different quoted attachments support.
      */
     public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
-        QuotedAttachmentFactory()
+        QuotedAttachmentFactory(),
     )
 }

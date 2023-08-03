@@ -52,16 +52,20 @@ public fun MessageInputOptions(
 ) {
     val optionImage =
         painterResource(
-            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit
+            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit,
         )
     val title = stringResource(
-        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message
-        else R.string.stream_compose_edit_message
+        id = if (activeAction is Reply) {
+            R.string.stream_compose_reply_to_message
+        } else {
+            R.string.stream_compose_edit_message
+        },
     )
 
     Row(
-        modifier, verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
             modifier = Modifier.padding(4.dp),
@@ -82,7 +86,7 @@ public fun MessageInputOptions(
                 .clickable(
                     onClick = onCancelAction,
                     indication = rememberRipple(bounded = false),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),

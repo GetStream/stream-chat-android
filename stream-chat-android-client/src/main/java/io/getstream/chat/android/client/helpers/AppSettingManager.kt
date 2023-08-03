@@ -71,15 +71,15 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
                         allowedFileExtensions = emptyList(),
                         allowedMimeTypes = emptyList(),
                         blockedFileExtensions = emptyList(),
-                        blockedMimeTypes = emptyList()
+                        blockedMimeTypes = emptyList(),
                     ),
                     imageUploadConfig = FileUploadConfig(
                         allowedFileExtensions = emptyList(),
                         allowedMimeTypes = emptyList(),
                         blockedFileExtensions = emptyList(),
-                        blockedMimeTypes = emptyList()
-                    )
-                )
+                        blockedMimeTypes = emptyList(),
+                    ),
+                ),
             )
         }
     }

@@ -86,8 +86,8 @@ public fun FileAttachmentContent(
             indication = null,
             interactionSource = remember { MutableInteractionSource() },
             onClick = {},
-            onLongClick = { onItemLongClick(message) }
-        )
+            onLongClick = { onItemLongClick(message) },
+        ),
     ) {
         for (attachment in message.attachments) {
             FileAttachmentItem(
@@ -102,7 +102,7 @@ public fun FileAttachmentContent(
                         },
                         onLongClick = { onItemLongClick(message) },
                     ),
-                attachment = attachment
+                attachment = attachment,
             )
         }
     }
@@ -119,18 +119,17 @@ public fun FileAttachmentItem(
     attachment: Attachment,
     modifier: Modifier = Modifier,
 ) {
-
     Surface(
         modifier = modifier,
         color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment
+        shape = ChatTheme.shapes.attachment,
     ) {
         Row(
             Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(vertical = 8.dp, horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             FileAttachmentImage(attachment = attachment)
             FileAttachmentDescription(attachment = attachment)
@@ -152,20 +151,20 @@ private fun FileAttachmentDescription(attachment: Attachment) {
             .fillMaxWidth(0.85f)
             .padding(start = 16.dp, end = 8.dp),
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Text(
             text = attachment.title ?: attachment.name ?: "",
             style = ChatTheme.typography.bodyBold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Text(
             text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
             style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis
+            color = ChatTheme.colors.textLowEmphasis,
         )
     }
 }
@@ -187,18 +186,18 @@ private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
             .padding(end = 2.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(bounded = false)
+                indication = rememberRipple(bounded = false),
             ) {
                 onDownloadHandleRequest(
                     context = context,
                     payload = attachment,
                     permissionState = writePermissionState,
-                    downloadPayload = downloadPayload
+                    downloadPayload = downloadPayload,
                 )
             },
         painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
         contentDescription = stringResource(id = R.string.stream_compose_download),
-        tint = ChatTheme.colors.textHighEmphasis
+        tint = ChatTheme.colors.textHighEmphasis,
     )
 }
 
@@ -240,7 +239,7 @@ public fun FileAttachmentImage(attachment: Attachment) {
         modifier = imageModifier,
         painter = painter,
         contentDescription = null,
-        contentScale = if (isImage || isVideoWithThumbnails) ContentScale.Crop else ContentScale.Fit
+        contentScale = if (isImage || isVideoWithThumbnails) ContentScale.Crop else ContentScale.Fit,
     )
 }
 

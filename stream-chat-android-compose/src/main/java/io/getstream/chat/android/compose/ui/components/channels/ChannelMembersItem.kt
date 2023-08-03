@@ -46,13 +46,12 @@ internal fun ChannelMembersItem(
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         UserAvatar(
             modifier = Modifier.size(ChatTheme.dimens.selectedChannelMenuUserItemAvatarSize),
             user = member.user,
-            contentDescription = memberName
+            contentDescription = memberName,
         )
 
         Text(

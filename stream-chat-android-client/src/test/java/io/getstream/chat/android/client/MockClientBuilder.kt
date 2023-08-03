@@ -69,7 +69,7 @@ internal class MockClientBuilder(
         createdAt,
         rawCreatedAt,
         user,
-        connectionId
+        connectionId,
     )
 
     private lateinit var fileUploader: FileUploader
@@ -88,7 +88,7 @@ internal class MockClientBuilder(
             false,
             Mother.chatLoggerConfig(),
             false,
-            false
+            false,
         )
 
         val tokenUtil: TokenUtils = mock()
@@ -121,7 +121,7 @@ internal class MockClientBuilder(
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
-            audioPlayer = streamPlayer
+            audioPlayer = streamPlayer,
         )
 
         client.attachmentsSender = attachmentSender

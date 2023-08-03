@@ -62,7 +62,7 @@ public class AttachmentFilter(
                 allowedFileExtensions = if (isImage) allowedImageExtensions else allowedFileExtensions,
                 allowedMimeTypes = if (isImage) allowedImageMimeTypes else allowedFileMimeTypes,
                 blockedFileExtensions = if (isImage) blockedImageExtensions else blockedFileExtensions,
-                blockedMimeTypes = if (isImage) blockedImageMimeTypes else blockedFileMimeTypes
+                blockedMimeTypes = if (isImage) blockedImageMimeTypes else blockedFileMimeTypes,
             )
         }
     }

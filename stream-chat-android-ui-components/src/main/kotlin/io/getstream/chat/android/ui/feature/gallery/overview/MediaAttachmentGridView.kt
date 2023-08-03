@@ -56,7 +56,7 @@ public class MediaAttachmentGridView : FrameLayout {
     private val dateScrollListener by lazy {
         MediaDateScrollListener(
             spanCount = SPAN_COUNT,
-            positionChangeThreshold = { binding.mediaRecyclerView.top - binding.dateTextView.bottom }
+            positionChangeThreshold = { binding.mediaRecyclerView.top - binding.dateTextView.bottom },
         ) {
             setDateText(adapter.currentList)
         }
@@ -75,7 +75,7 @@ public class MediaAttachmentGridView : FrameLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -83,7 +83,7 @@ public class MediaAttachmentGridView : FrameLayout {
     private fun init(attrs: AttributeSet?) {
         style = MediaAttachmentGridViewStyle(
             context = context,
-            attrs = attrs
+            attrs = attrs,
         )
 
         showUserAvatars = style.showUserAvatars

@@ -43,7 +43,7 @@ internal class SendReactionListenerDatabase(
     private val clientState: ClientState,
     private val reactionsRepository: ReactionRepository,
     private val messageRepository: MessageRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : SendReactionListener {
 
     /**
@@ -82,7 +82,7 @@ internal class SendReactionListenerDatabase(
 
         messageRepository.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
             messageRepository.insertMessage(
-                cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
+                cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique),
             )
         }
     }

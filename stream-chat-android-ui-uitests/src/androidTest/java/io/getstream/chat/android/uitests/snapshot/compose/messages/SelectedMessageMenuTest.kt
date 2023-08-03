@@ -54,7 +54,7 @@ class SelectedMessageMenuTest : ComposeScreenshotTest() {
             selectedMessage = selectedMessage,
             currentUser = currentUser,
             isInThread = false,
-            ownCapabilities = channelCapabilities
+            ownCapabilities = channelCapabilities,
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
@@ -64,7 +64,7 @@ class SelectedMessageMenuTest : ComposeScreenshotTest() {
                 messageOptions = messageOptionsStateList,
                 onMessageAction = {},
                 onShowMoreReactionsSelected = {},
-                ownCapabilities = channelCapabilities
+                ownCapabilities = channelCapabilities,
             )
         }
     }

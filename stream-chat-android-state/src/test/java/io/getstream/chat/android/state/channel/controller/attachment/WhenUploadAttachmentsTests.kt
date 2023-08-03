@@ -50,21 +50,21 @@ import org.mockito.kotlin.whenever
 internal class WhenUploadAttachmentsTests {
 
     private val attachmentsSent = mutableListOf(
-        randomAttachment().copy(uploadState = Attachment.UploadState.Success)
+        randomAttachment().copy(uploadState = Attachment.UploadState.Success),
     )
 
     private val attachmentsPending = mutableListOf(
         randomAttachment().copy(
             uploadState = Attachment.UploadState.InProgress(positiveRandomLong(30), positiveRandomLong(50) + 30),
-        )
+        ),
     )
 
     private val defaultMessageSentAttachments = randomMessage(
-        attachments = attachmentsSent
+        attachments = attachmentsSent,
     )
 
     private val defaultMessagePendingAttachments = randomMessage(
-        attachments = attachmentsPending
+        attachments = attachmentsPending,
     )
 
     @Test
@@ -138,10 +138,10 @@ internal class WhenUploadAttachmentsTests {
                 randomAttachment().copy(
                     uploadState = Attachment.UploadState.Idle,
                     extraData = mutableMapOf(
-                        EXTRA_UPLOAD_ID to "uploadId123"
+                        EXTRA_UPLOAD_ID to "uploadId123",
                     ),
-                )
-            )
+                ),
+            ),
         )
         val sut =
             Fixture().givenAttachmentUploader(attachmentUploader)
@@ -153,7 +153,7 @@ internal class WhenUploadAttachmentsTests {
 
         verify(repository).insertMessage(
             argThat { id == "messageId123" && syncStatus == SyncStatus.FAILED_PERMANENTLY },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -175,8 +175,8 @@ internal class WhenUploadAttachmentsTests {
                     randomAttachment().copy(
                         uploadState = Attachment.UploadState.Success,
                         extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
-                    )
-                )
+                    ),
+                ),
             )
             val sut =
                 Fixture().givenAttachmentUploader(attachmentUploader)
@@ -194,7 +194,7 @@ internal class WhenUploadAttachmentsTests {
                             any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
-                eq(false)
+                eq(false),
             )
         }
 
@@ -208,8 +208,8 @@ internal class WhenUploadAttachmentsTests {
                             any(),
                             any(),
                             any(),
-                            any()
-                        )
+                            any(),
+                        ),
                     ) doReturn Result.Failure(
                         Error.ThrowableError(
                             message = "",
@@ -228,8 +228,8 @@ internal class WhenUploadAttachmentsTests {
                     randomAttachment().copy(
                         uploadState = Attachment.UploadState.Success,
                         extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
-                    )
-                )
+                    ),
+                ),
             )
             val sut =
                 Fixture().givenAttachmentUploader(attachmentUploader)
@@ -247,7 +247,7 @@ internal class WhenUploadAttachmentsTests {
                             any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
-                eq(false)
+                eq(false),
             )
         }
 
@@ -272,8 +272,8 @@ internal class WhenUploadAttachmentsTests {
                     randomAttachment().copy(
                         uploadState = Attachment.UploadState.Success,
                         extraData = mapOf(EXTRA_UPLOAD_ID to "uploadId2"),
-                    )
-                )
+                    ),
+                ),
             )
             val sut =
                 Fixture().givenAttachmentUploader(attachmentUploader)
@@ -291,7 +291,7 @@ internal class WhenUploadAttachmentsTests {
                             any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
-                eq(false)
+                eq(false),
             )
         }
 
@@ -332,11 +332,12 @@ internal class WhenUploadAttachmentsTests {
 
         fun get(): UploadAttachmentsWorker {
             return UploadAttachmentsWorker(
-                channelType, channelId,
+                channelType,
+                channelId,
                 channelStateLogic = channelStateLogic,
                 messageRepository = messageRepository,
                 chatClient = chatClient,
-                attachmentUploader = uploader
+                attachmentUploader = uploader,
             )
         }
     }

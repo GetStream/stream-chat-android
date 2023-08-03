@@ -68,34 +68,34 @@ public data class MessageReplyStyle(
         operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle {
             val messageBackgroundColorMine: Int = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyBackgroundColorMine,
-                VALUE_NOT_SET
+                VALUE_NOT_SET,
             )
             val messageBackgroundColorTheirs: Int = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyBackgroundColorTheirs,
-                VALUE_NOT_SET
+                VALUE_NOT_SET,
             )
             val linkBackgroundColorMine = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyLinkBackgroundColorMine,
-                VALUE_NOT_SET
+                VALUE_NOT_SET,
             )
             val linkBackgroundColorTheirs = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyLinkBackgroundColorTheirs,
-                VALUE_NOT_SET
+                VALUE_NOT_SET,
             )
             val mediumTypeface = ResourcesCompat.getFont(context, R.font.stream_roboto_medium) ?: Typeface.DEFAULT
             val textStyleMine = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageReplyTextSizeMine,
-                    context.getDimension(DEFAULT_TEXT_SIZE)
+                    context.getDimension(DEFAULT_TEXT_SIZE),
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyTextColorMine,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(DEFAULT_TEXT_COLOR),
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageReplyTextFontAssetsMine,
                     R.styleable.MessageListView_streamUiMessageReplyTextFontMine,
-                    mediumTypeface
+                    mediumTypeface,
                 )
                 .style(R.styleable.MessageListView_streamUiMessageReplyTextStyleMine, DEFAULT_TEXT_STYLE)
                 .build()
@@ -103,55 +103,55 @@ public data class MessageReplyStyle(
             val textStyleTheirs = TextStyle.Builder(attributes)
                 .size(
                     R.styleable.MessageListView_streamUiMessageReplyTextSizeTheirs,
-                    context.getDimension(DEFAULT_TEXT_SIZE)
+                    context.getDimension(DEFAULT_TEXT_SIZE),
                 )
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyTextColorTheirs,
-                    context.getColorCompat(DEFAULT_TEXT_COLOR)
+                    context.getColorCompat(DEFAULT_TEXT_COLOR),
                 )
                 .font(
                     R.styleable.MessageListView_streamUiMessageReplyTextFontAssetsTheirs,
                     R.styleable.MessageListView_streamUiMessageReplyTextFontTheirs,
-                    mediumTypeface
+                    mediumTypeface,
                 )
                 .style(
                     R.styleable.MessageListView_streamUiMessageReplyTextStyleTheirs,
-                    DEFAULT_TEXT_STYLE
+                    DEFAULT_TEXT_STYLE,
                 )
                 .build()
 
             val textStyleLinkTheirs = TextStyle.Builder(attributes)
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyLinkColorTheirs,
-                    VALUE_NOT_SET
+                    VALUE_NOT_SET,
                 )
                 .build()
 
             val textStyleLinkMine = TextStyle.Builder(attributes)
                 .color(
                     R.styleable.MessageListView_streamUiMessageReplyLinkColorMine,
-                    VALUE_NOT_SET
+                    VALUE_NOT_SET,
                 )
                 .build()
 
             val messageStrokeColorMine = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageReplyStrokeColorMine,
-                context.getColorCompat(MESSAGE_STROKE_COLOR_MINE)
+                context.getColorCompat(MESSAGE_STROKE_COLOR_MINE),
             )
             val messageStrokeWidthMine =
                 attributes.getDimension(
                     R.styleable.MessageListView_streamUiMessageReplyStrokeWidthMine,
-                    MESSAGE_STROKE_WIDTH_MINE
+                    MESSAGE_STROKE_WIDTH_MINE,
                 )
             val messageStrokeColorTheirs =
                 attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageReplyStrokeColorTheirs,
-                    context.getColorCompat(MESSAGE_STROKE_COLOR_THEIRS)
+                    context.getColorCompat(MESSAGE_STROKE_COLOR_THEIRS),
                 )
             val messageStrokeWidthTheirs =
                 attributes.getDimension(
                     R.styleable.MessageListView_streamUiMessageReplyStrokeWidthTheirs,
-                    MESSAGE_STROKE_WIDTH_THEIRS
+                    MESSAGE_STROKE_WIDTH_THEIRS,
                 )
 
             return MessageReplyStyle(

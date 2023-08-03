@@ -60,13 +60,13 @@ internal class QueryChannelsImplRepositoryTest {
         sut.insertQueryChannels(
             randomQueryChannelsSpec(
                 cids = setOf("cid1", "cid2"),
-            )
+            ),
         )
 
         verify(dao).insert(
             argThat {
                 this.cids == listOf("cid1", "cid2")
-            }
+            },
         )
     }
 
@@ -76,7 +76,7 @@ internal class QueryChannelsImplRepositoryTest {
             id = "id1",
             filter = Filters.contains("cid", "cid1"),
             querySort = QuerySortByField(),
-            cids = listOf("cid1")
+            cids = listOf("cid1"),
         )
 
         val result = sut.selectBy(Filters.contains("cid", "cid1"), QuerySortByField())

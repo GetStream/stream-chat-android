@@ -103,7 +103,7 @@ internal class MessageListScrollHelper(
 
                     scrollButtonView.isVisible = shouldScrollToBottomBeVisible()
                 }
-            }
+            },
         )
     }
 
@@ -179,7 +179,7 @@ internal class MessageListScrollHelper(
                         if (it > SCROLL_BUTTON_VISIBILITY_THRESHOLD) scrollButtonView.isVisible = true
                     }
             },
-            HIGHLIGHT_MESSAGE_DELAY
+            HIGHLIGHT_MESSAGE_DELAY,
         )
     }
 

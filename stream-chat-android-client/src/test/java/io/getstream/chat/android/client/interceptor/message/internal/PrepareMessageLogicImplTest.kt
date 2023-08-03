@@ -50,14 +50,14 @@ internal class PrepareMessageLogicImplTest {
         val attachment: Attachment = randomAttachment(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.syncStatus `should be equal to` SyncStatus.AWAITING_ATTACHMENTS
@@ -81,7 +81,7 @@ internal class PrepareMessageLogicImplTest {
             messageWithAttachments,
             randomString(),
             randomString(),
-            newUser
+            newUser,
         )
 
         preparedMessage.run {
@@ -100,14 +100,14 @@ internal class PrepareMessageLogicImplTest {
 
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.syncStatus `should be equal to` SyncStatus.IN_PROGRESS
@@ -119,14 +119,14 @@ internal class PrepareMessageLogicImplTest {
 
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.syncStatus `should be equal to` SyncStatus.SYNC_NEEDED
@@ -136,14 +136,14 @@ internal class PrepareMessageLogicImplTest {
     fun `given message id and cid is empty, they should be generated`() {
         val messageWithAttachments = randomMessage(
             cid = "",
-            id = ""
+            id = "",
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.cid `should not be equal to` ""
@@ -154,7 +154,7 @@ internal class PrepareMessageLogicImplTest {
     fun `given message's attachment upload id is empty, it should be generated`() {
         val attachment = randomAttachment().copy(upload = randomFile())
         val messageWithAttachments = randomMessage(
-            attachments = mutableListOf(attachment)
+            attachments = mutableListOf(attachment),
         )
 
         println("initialAttachments: ${messageWithAttachments.attachments}")
@@ -163,7 +163,7 @@ internal class PrepareMessageLogicImplTest {
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         println("resultAttachments: ${result.attachments}")

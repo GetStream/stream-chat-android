@@ -58,7 +58,7 @@ internal class ExtraDataValidator(
 
     override fun updateMessage(message: Message): Call<Message> {
         return delegate.updateMessage(
-            message = message
+            message = message,
         ).withExtraDataValidation(message.extraData)
     }
 
@@ -72,7 +72,7 @@ internal class ExtraDataValidator(
             messageId = messageId,
             set = set,
             unset = unset,
-            skipEnrichUrl = skipEnrichUrl
+            skipEnrichUrl = skipEnrichUrl,
         ).withExtraDataValidation(set)
     }
 
@@ -96,7 +96,7 @@ internal class ExtraDataValidator(
                 scope,
                 Error.GenericError(
                     message = obj.composeErrorMessage(reserved),
-                )
+                ),
             )
         }
     }
@@ -109,7 +109,7 @@ internal class ExtraDataValidator(
                 scope,
                 Error.GenericError(
                     message = obj.composeErrorMessage(reserved),
-                )
+                ),
             )
         }
     }
@@ -124,7 +124,7 @@ internal class ExtraDataValidator(
                 scope,
                 Error.GenericError(
                     message = "'extraData' contains reserved keys: ${reserved.joinToString()}",
-                )
+                ),
             )
         }
     }

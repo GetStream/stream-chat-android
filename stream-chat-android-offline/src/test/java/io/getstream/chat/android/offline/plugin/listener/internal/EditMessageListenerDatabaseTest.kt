@@ -57,7 +57,7 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -74,7 +74,7 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -91,7 +91,7 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -108,7 +108,7 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false)
+            eq(false),
         )
     }
 }

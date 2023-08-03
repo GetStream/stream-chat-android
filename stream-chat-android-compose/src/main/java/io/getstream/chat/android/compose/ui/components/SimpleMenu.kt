@@ -58,18 +58,18 @@ public fun SimpleMenu(
             .clickable(
                 onClick = onDismiss,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
+                interactionSource = remember { MutableInteractionSource() },
+            ),
     ) {
         Card(
             modifier = modifier
                 .clickable(
                     onClick = {},
                     indication = null,
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 ),
             shape = shape,
-            backgroundColor = ChatTheme.colors.barsBackground
+            backgroundColor = ChatTheme.colors.barsBackground,
         ) {
             Column {
                 headerContent()

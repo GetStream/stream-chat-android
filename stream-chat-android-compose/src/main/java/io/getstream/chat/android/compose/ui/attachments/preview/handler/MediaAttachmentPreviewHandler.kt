@@ -48,8 +48,8 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
             MediaPreviewActivity.getIntent(
                 context = context,
                 url = requireNotNull(attachment.assetUrl),
-                title = attachment.title ?: attachment.name
-            )
+                title = attachment.title ?: attachment.name,
+            ),
         )
     }
 
@@ -80,6 +80,6 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         // vorbis
         "vorbis",
         // quicktime
-        "quicktime"
+        "quicktime",
     )
 }

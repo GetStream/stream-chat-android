@@ -48,5 +48,5 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
             }
             attachment.isFile() -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)
         }
-    }
+    },
 )

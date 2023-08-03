@@ -53,7 +53,7 @@ public fun GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
-    onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick
+    onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
 ): AttachmentFactory =
     AttachmentFactory(
         canHandle = { attachments -> attachments.any(Attachment::isGiphy) },

@@ -294,7 +294,7 @@ internal class StreamMediaPlayer(
                             currentPosition = finalPosition,
                             progress = progress,
                             duration = durationMs,
-                        )
+                        ),
                     )
                 }
                 prevCurrentPosition.set(currentPosition)

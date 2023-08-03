@@ -198,7 +198,7 @@ internal class ChannelMutableState(
             ChannelData(
                 type = channelType,
                 id = channelId,
-            )
+            ),
         )
 
     /** If we need to recover state when connection established again. */
@@ -403,7 +403,7 @@ internal class ChannelMutableState(
         _watchers?.let {
             deleteWatcher(
                 member.user,
-                watcherCount.value - it.value.count { it.key == member.getUserId() }
+                watcherCount.value - it.value.count { it.key == member.getUserId() },
             )
         }
     }
@@ -497,8 +497,8 @@ internal class ChannelMutableState(
             messages.value.lastOrNull()?.let { lastMessage ->
                 upsertReads(
                     listOf(
-                        currentUserRead.copy(lastRead = lastMessage.let { it.createdAt ?: it.createdLocallyAt })
-                    )
+                        currentUserRead.copy(lastRead = lastMessage.let { it.createdAt ?: it.createdLocallyAt }),
+                    ),
                 )
                 true
             }

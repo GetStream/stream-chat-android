@@ -125,10 +125,10 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         val queryChannelResult = Result.Success(data.channel1)
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
-                Result.Success(data.channel1)
+                Result.Success(data.channel1),
             )
             on { watch(any<WatchChannelRequest>()) } doReturn TestCall(
-                Result.Success(data.channel1)
+                Result.Success(data.channel1),
             )
         }
         val events = listOf<ChatEvent>()
@@ -149,7 +149,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any(), any()) } doReturn TestCall(
-                Result.Success(data.reaction1)
+                Result.Success(data.reaction1),
             )
         }
         whenever(client.connectUser(any(), any<String>(), anyOrNull())) doAnswer {
@@ -163,7 +163,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         return Room
             .inMemoryDatabaseBuilder(
                 InstrumentationRegistry.getInstrumentation().targetContext,
-                ChatDatabase::class.java
+                ChatDatabase::class.java,
             )
             .allowMainThreadQueries()
             // Use a separate thread for Room transactions to avoid deadlocks
@@ -180,14 +180,14 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         repos = RepositoryFacade.create(
             DatabaseRepositoryFactory(db, data.user1),
             getTestScope(),
-            Config(connectEventsEnabled = true, muteEnabled = true)
+            Config(connectEventsEnabled = true, muteEnabled = true),
         )
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error
         client.connectUser(
             data.user1,
-            data.user1Token
+            data.user1Token,
         ).enqueue()
 
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))

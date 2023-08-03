@@ -42,7 +42,7 @@ internal fun ChannelConfig.toEntity(): ChannelConfigEntity = ChannelConfigEntity
             maxMessageLength = maxMessageLength,
             automod = automod,
             automodBehavior = automodBehavior,
-            blocklistBehavior = blocklistBehavior
+            blocklistBehavior = blocklistBehavior,
         )
     },
     commands = config.commands.map { it.toEntity(type) },
@@ -73,14 +73,14 @@ internal fun ChannelConfigEntity.toModel(): ChannelConfig = ChannelConfig(
             blocklistBehavior = blocklistBehavior,
             commands = commands.map(CommandInnerEntity::toModel),
         )
-    }
+    },
 )
 
 private fun CommandInnerEntity.toModel() = Command(
     name = name,
     description = description,
     args = args,
-    set = set
+    set = set,
 )
 
 private fun Command.toEntity(channelType: String) = CommandInnerEntity(
@@ -88,5 +88,5 @@ private fun Command.toEntity(channelType: String) = CommandInnerEntity(
     description = description,
     args = args,
     set = set,
-    channelType = channelType
+    channelType = channelType,
 )

@@ -51,9 +51,9 @@ internal class DevicesApiCallsTests {
         val devices = List(10) { randomDevice() }
 
         Mockito.`when`(
-            mock.api.getDevices()
+            mock.api.getDevices(),
         ).thenReturn(
-            RetroSuccess(devices).toRetrofitCall()
+            RetroSuccess(devices).toRetrofitCall(),
         )
 
         val result = client.getDevices().await()
@@ -64,7 +64,7 @@ internal class DevicesApiCallsTests {
     @Test
     fun getDevicesError() = runTest {
         Mockito.`when`(
-            mock.api.getDevices()
+            mock.api.getDevices(),
         ).thenReturn(RetroError<List<Device>>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.getDevices().await()
@@ -77,7 +77,7 @@ internal class DevicesApiCallsTests {
         val device = randomDevice()
 
         Mockito.`when`(
-            mock.api.addDevice(device)
+            mock.api.addDevice(device),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.addDevice(device).await()
@@ -90,7 +90,7 @@ internal class DevicesApiCallsTests {
         val device = randomDevice()
 
         Mockito.`when`(
-            mock.api.addDevice(device)
+            mock.api.addDevice(device),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.addDevice(device).await()
@@ -103,7 +103,7 @@ internal class DevicesApiCallsTests {
         val device = randomDevice()
 
         Mockito.`when`(
-            mock.api.deleteDevice(device)
+            mock.api.deleteDevice(device),
         ).thenReturn(RetroSuccess(Unit).toRetrofitCall())
 
         val result = client.deleteDevice(device).await()
@@ -116,7 +116,7 @@ internal class DevicesApiCallsTests {
         val device = randomDevice()
 
         Mockito.`when`(
-            mock.api.deleteDevice(device)
+            mock.api.deleteDevice(device),
         ).thenReturn(RetroError<Unit>(mock.serverErrorCode).toRetrofitCall())
 
         val result = client.deleteDevice(device).await()

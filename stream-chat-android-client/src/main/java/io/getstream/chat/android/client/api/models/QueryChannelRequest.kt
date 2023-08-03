@@ -27,8 +27,10 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
 
     @InternalStreamChatApi
     public var shouldRefresh: Boolean = false
+
     @InternalStreamChatApi
     public var isWatchChannel: Boolean = false
+
     @InternalStreamChatApi
     public var isNotificationUpdate: Boolean = false
 

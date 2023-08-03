@@ -72,7 +72,7 @@ internal class RoundedCornersTransformation(
             srcHeight = input.height,
             dstWidth = dstWidth,
             dstHeight = dstHeight,
-            scale = Scale.FILL
+            scale = Scale.FILL,
         )
         val outputWidth = (dstWidth / multiplier).roundToInt()
         val outputHeight = (dstHeight / multiplier).roundToInt()
@@ -88,10 +88,14 @@ internal class RoundedCornersTransformation(
             paint.shader = shader
 
             val radii = floatArrayOf(
-                topLeft, topLeft,
-                topRight, topRight,
-                bottomRight, bottomRight,
-                bottomLeft, bottomLeft
+                topLeft,
+                topLeft,
+                topRight,
+                topRight,
+                bottomRight,
+                bottomRight,
+                bottomLeft,
+                bottomLeft,
             )
             val rect = RectF(0f, 0f, width.toFloat(), height.toFloat())
             val path = Path().apply { addRoundRect(rect, radii, Path.Direction.CW) }

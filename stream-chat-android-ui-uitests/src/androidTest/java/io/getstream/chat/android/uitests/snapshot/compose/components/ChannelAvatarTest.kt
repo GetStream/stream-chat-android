@@ -36,7 +36,7 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
                     TestData.member2(),
                     TestData.member3(),
                     TestData.member4(),
-                    TestData.member5()
+                    TestData.member5(),
                 )
             },
             currentUser = TestData.user1(),
@@ -94,7 +94,7 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
             modifier = Modifier.size(40.dp),
             channel = TestData.channel1().apply {
                 members = listOf(
-                    TestData.member1()
+                    TestData.member1(),
                 )
             },
             currentUser = TestData.user1(),

@@ -39,18 +39,17 @@ internal class MediaAttachmentAdapter(
     private val style: MediaAttachmentGridViewStyle,
     private val mediaAttachmentClickListener: MediaAttachmentClickListener,
 ) : ListAdapter<AttachmentGalleryItem, MediaAttachmentAdapter.MediaAttachmentViewHolder>(
-    AttachmentGalleryItemDiffCallback
+    AttachmentGalleryItemDiffCallback,
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MediaAttachmentViewHolder {
-
         return StreamUiItemMediaAttachmentBinding
             .inflate(parent.streamThemeInflater, parent, false)
             .let {
                 MediaAttachmentViewHolder(
                     binding = it,
                     mediaAttachmentClickListener = mediaAttachmentClickListener,
-                    style = style
+                    style = style,
                 )
             }
     }
@@ -98,7 +97,7 @@ internal class MediaAttachmentAdapter(
             binding.mediaImageView.load(
                 data = if (shouldLoadImage) {
                     attachmentGalleryItem.attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(
-                        streamCdnImageResizing = ChatUI.streamCdnImageResizing
+                        streamCdnImageResizing = ChatUI.streamCdnImageResizing,
                     )
                 } else {
                     null
@@ -113,7 +112,7 @@ internal class MediaAttachmentAdapter(
                     binding.playButtonCardView.isVisible =
                         attachmentGalleryItem.attachment.isVideo()
                     binding.progressBar.visibility = View.GONE
-                }
+                },
             )
         }
 
@@ -163,7 +162,7 @@ internal class MediaAttachmentAdapter(
                     style.playVideoIconPaddingStart,
                     style.playVideoIconPaddingTop,
                     style.playVideoIconPaddingEnd,
-                    style.playVideoIconPaddingBottom
+                    style.playVideoIconPaddingBottom,
                 )
             }
         }

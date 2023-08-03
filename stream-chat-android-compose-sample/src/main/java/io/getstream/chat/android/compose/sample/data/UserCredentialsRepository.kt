@@ -47,7 +47,7 @@ class UserCredentialsRepository(context: Context) {
                 name = userName,
                 image = userImage,
             ),
-            token = token
+            token = token,
         )
     }
 

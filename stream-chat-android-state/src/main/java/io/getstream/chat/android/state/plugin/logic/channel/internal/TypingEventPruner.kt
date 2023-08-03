@@ -73,7 +73,7 @@ internal class TypingEventPruner(
             null -> removeTypingEvent(userId)
             else -> addTypingEvent(
                 userId = userId,
-                typingStartEvent = typingStartEvent
+                typingStartEvent = typingStartEvent,
             )
         }
     }
@@ -97,7 +97,7 @@ internal class TypingEventPruner(
             delayTimeMs = DEFAULT_DELAY_TIME_MS,
             removeTypingEvent = {
                 removeTypingEvent(it)
-            }
+            },
         )
 
         // Cancel the self stopping event you are replacing if one exists

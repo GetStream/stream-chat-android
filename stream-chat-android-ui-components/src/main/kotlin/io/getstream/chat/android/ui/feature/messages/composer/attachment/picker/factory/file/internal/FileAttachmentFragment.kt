@@ -145,7 +145,7 @@ internal class FileAttachmentFragment : Fragment() {
             permissionChecker.checkFilePermissions(
                 binding.root,
                 onPermissionDenied = ::onPermissionDenied,
-                onPermissionGranted = ::onPermissionGranted
+                onPermissionGranted = ::onPermissionGranted,
             )
             return
         }
@@ -165,7 +165,7 @@ internal class FileAttachmentFragment : Fragment() {
                         Toast.makeText(
                             context,
                             getString(R.string.stream_ui_message_composer_file_not_supported),
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                     }
 

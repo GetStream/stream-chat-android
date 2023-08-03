@@ -77,16 +77,16 @@ public class PinnedMessageListView : ViewFlipper {
             addItemDecoration(
                 DividerItemDecoration(
                     context,
-                    LinearLayoutManager.VERTICAL
+                    LinearLayoutManager.VERTICAL,
                 ).apply {
                     setDrawable(AppCompatResources.getDrawable(context, R.drawable.stream_ui_divider)!!)
-                }
+                },
             )
             addOnScrollListener(scrollListener)
         }
 
         binding.emptyDescriptionTextView.text = Html.fromHtml(
-            context.getString(R.string.stream_ui_pinned_message_list_empty_description)
+            context.getString(R.string.stream_ui_pinned_message_list_empty_description),
         )
     }
 

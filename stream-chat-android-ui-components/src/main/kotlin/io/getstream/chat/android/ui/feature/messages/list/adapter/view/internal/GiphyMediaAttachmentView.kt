@@ -63,7 +63,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -102,11 +102,11 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
         if (style.sizingMode == GiphySizingMode.ADAPTIVE) {
             applyAdaptiveSizing(
                 giphyInfo = giphyInfo,
-                giphyUrl = url
+                giphyUrl = url,
             )
         } else {
             applyFixedSizing(
-                giphyUrl = url
+                giphyUrl = url,
             )
         }
     }
@@ -175,7 +175,7 @@ public class GiphyMediaAttachmentView : ConstraintLayout {
             binding.imageView.loadAndResize(
                 data = url,
                 placeholderDrawable = style.placeholderIcon,
-                onStart = { binding.loadImage.isVisible = true }
+                onStart = { binding.loadImage.isVisible = true },
             ) { binding.loadImage.isVisible = false }
         }
     }

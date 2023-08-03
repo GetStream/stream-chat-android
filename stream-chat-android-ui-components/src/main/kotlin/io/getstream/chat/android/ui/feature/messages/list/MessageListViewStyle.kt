@@ -184,78 +184,78 @@ public data class MessageListViewStyle(
                 attrs,
                 R.styleable.MessageListView,
                 R.attr.streamUiMessageListStyle,
-                R.style.StreamUi_MessageList
+                R.style.StreamUi_MessageList,
             ).use { attributes ->
                 val scrollButtonViewStyle = ScrollButtonViewStyle.Builder(context, attributes)
                     .scrollButtonEnabled(
                         scrollButtonEnabledStyleableId = R.styleable.MessageListView_streamUiScrollButtonEnabled,
-                        defaultValue = true
+                        defaultValue = true,
                     )
                     .scrollButtonUnreadEnabled(
                         scrollButtonUnreadEnabledStyleableId =
                         R.styleable.MessageListView_streamUiScrollButtonUnreadEnabled,
-                        defaultValue = true
+                        defaultValue = true,
                     )
                     .scrollButtonColor(
                         scrollButtonColorStyleableId = R.styleable.MessageListView_streamUiScrollButtonColor,
-                        defaultValue = context.getColorCompat(R.color.stream_ui_white)
+                        defaultValue = context.getColorCompat(R.color.stream_ui_white),
                     )
                     .scrollButtonRippleColor(
                         scrollButtonRippleColorStyleableId =
                         R.styleable.MessageListView_streamUiScrollButtonRippleColor,
-                        defaultColor = context.getColorCompat(R.color.stream_ui_white_smoke)
+                        defaultColor = context.getColorCompat(R.color.stream_ui_white_smoke),
                     )
                     .scrollButtonBadgeColor(
                         R.styleable.MessageListView_streamUiScrollButtonBadgeColor,
                     )
                     .scrollButtonElevation(
                         scrollButtonElevation = R.styleable.MessageListView_streamUiScrollButtonElevation,
-                        defaultElevation = DEFAULT_SCROLL_BUTTON_ELEVATION
+                        defaultElevation = DEFAULT_SCROLL_BUTTON_ELEVATION,
                     )
                     .scrollButtonIcon(
                         scrollButtonIconStyleableId = R.styleable.MessageListView_streamUiScrollButtonIcon,
-                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_down)
+                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_ic_down),
                     ).scrollButtonBadgeGravity(
                         scrollButtonBadgeGravity = R.styleable.MessageListView_streamUiScrollButtonBadgeGravity,
-                        defaultGravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP
+                        defaultGravity = Gravity.CENTER_HORIZONTAL or Gravity.TOP,
                     ).scrollButtonBadgeIcon(
                         scrollButtonBadgeIcon = R.styleable.MessageListView_streamUiScrollButtonBadgeIcon,
-                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_shape_scroll_button_badge)
+                        defaultIcon = context.getDrawableCompat(R.drawable.stream_ui_shape_scroll_button_badge),
                     ).scrollButtonBadgeElevation(
                         scrollButtonBadgeElevation = R.styleable.MessageListView_streamUiScrollButtonBadgeElevation,
-                        defaultElevation = DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION
+                        defaultElevation = DEFAULT_SCROLL_BUTTON_BADGE_ELEVATION,
                     ).scrollButtonBadgeInternalMargin(
                         scrollButtonInternalMargin = R.styleable.MessageListView_streamUIScrollButtonInternalMargin,
-                        defaultMargin = DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN
+                        defaultMargin = DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN,
                     ).build()
 
                 val scrollButtonBehaviour = MessageListView.NewMessagesBehaviour.parseValue(
                     attributes.getInt(
                         R.styleable.MessageListView_streamUiNewMessagesBehaviour,
-                        MessageListView.NewMessagesBehaviour.COUNT_UPDATE.value
-                    )
+                        MessageListView.NewMessagesBehaviour.COUNT_UPDATE.value,
+                    ),
                 )
 
                 val scrollButtonMarginBottom =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiScrollButtonBottomMargin,
-                        DEFAULT_SCROLL_BUTTON_MARGIN
+                        DEFAULT_SCROLL_BUTTON_MARGIN,
                     )
 
                 val scrollButtonMarginEnd =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiScrollButtonEndMargin,
-                        DEFAULT_SCROLL_BUTTON_MARGIN
+                        DEFAULT_SCROLL_BUTTON_MARGIN,
                     )
 
                 val reactionsEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReactionsEnabled,
-                    true
+                    true,
                 )
 
                 val backgroundColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiBackgroundColor,
-                    context.getColorCompat(DEFAULT_BACKGROUND_COLOR)
+                    context.getColorCompat(DEFAULT_BACKGROUND_COLOR),
                 )
 
                 val itemStyle = MessageListItemStyle.Builder(attributes, context)
@@ -273,7 +273,7 @@ public data class MessageListViewStyle(
 
                 val replyIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiReplyOptionIcon,
-                    R.drawable.stream_ui_ic_arrow_curve_left_grey
+                    R.drawable.stream_ui_ic_arrow_curve_left_grey,
                 )
 
                 val replyEnabled = attributes.getBoolean(R.styleable.MessageListView_streamUiReplyEnabled, true)
@@ -345,73 +345,73 @@ public data class MessageListViewStyle(
                 val messageOptionsText = TextStyle.Builder(attributes)
                     .size(
                         R.styleable.MessageListView_streamUiMessageOptionsTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageListView_streamUiMessageOptionsTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MessageListView_streamUiMessageOptionsTextFontAssets,
-                        R.styleable.MessageListView_streamUiMessageOptionsTextFont
+                        R.styleable.MessageListView_streamUiMessageOptionsTextFont,
                     )
                     .style(
                         R.styleable.MessageListView_streamUiMessageOptionsTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val warningMessageOptionsText = TextStyle.Builder(attributes)
                     .size(
                         R.styleable.MessageListView_streamUiWarningMessageOptionsTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.MessageListView_streamUiWarningMessageOptionsTextColor,
-                        context.getColorCompat(R.color.stream_ui_accent_red)
+                        context.getColorCompat(R.color.stream_ui_accent_red),
                     )
                     .font(
                         R.styleable.MessageListView_streamUiWarningMessageOptionsTextFontAssets,
-                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextFont
+                        R.styleable.MessageListView_streamUiWarningMessageOptionsTextFont,
                     )
                     .style(
                         R.styleable.MessageListView_streamUiWarningMessageOptionsTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val messageOptionsBackgroundColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiMessageOptionBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val userReactionsBackgroundColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiUserReactionsBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_white)
+                    context.getColorCompat(R.color.stream_ui_white),
                 )
 
                 val userReactionsTitleText = TextStyle.Builder(attributes)
                     .size(
                         R.styleable.MessageListView_streamUiUserReactionsTitleTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_large)
+                        context.getDimension(R.dimen.stream_ui_text_large),
                     )
                     .color(
                         R.styleable.MessageListView_streamUiUserReactionsTitleTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.MessageListView_streamUiUserReactionsTitleTextFontAssets,
-                        R.styleable.MessageListView_streamUiUserReactionsTitleTextFont
+                        R.styleable.MessageListView_streamUiUserReactionsTitleTextFont,
                     )
                     .style(
                         R.styleable.MessageListView_streamUiUserReactionsTitleTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
                 val optionsOverlayDimColor = attributes.getColor(
                     R.styleable.MessageListView_streamUiOptionsOverlayDimColor,
-                    context.getColorCompat(R.color.stream_ui_literal_transparent)
+                    context.getColorCompat(R.color.stream_ui_literal_transparent),
                 )
 
                 val emptyViewTextStyle = emptyViewStyle(context, attributes)
@@ -433,94 +433,94 @@ public data class MessageListViewStyle(
 
                 val messageOptionsUserReactionAlignment = attributes.getInt(
                     R.styleable.MessageListView_streamUiMessageOptionsUserReactionAlignment,
-                    MessageOptionsUserReactionAlignment.BY_USER.value
+                    MessageOptionsUserReactionAlignment.BY_USER.value,
                 )
 
                 val disableScrollWhenShowingDialog = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiDisableScrollWhenShowingDialog,
-                    true
+                    true,
                 )
 
                 val optionsOverlayEditReactionsMarginBottom =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginBottom,
-                        DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM
+                        DEFAULT_EDIT_REACTIONS_MARGIN_BOTTOM,
                     )
 
                 val optionsOverlayEditReactionsMarginTop =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginTop,
-                        DEFAULT_EDIT_REACTIONS_MARGIN_TOP
+                        DEFAULT_EDIT_REACTIONS_MARGIN_TOP,
                     )
 
                 val optionsOverlayEditReactionsMarginStart =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginStart,
-                        DEFAULT_EDIT_REACTIONS_MARGIN_START
+                        DEFAULT_EDIT_REACTIONS_MARGIN_START,
                     )
 
                 val optionsOverlayEditReactionsMarginEnd =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayEditReactionsMarginEnd,
-                        DEFAULT_EDIT_REACTIONS_MARGIN_END
+                        DEFAULT_EDIT_REACTIONS_MARGIN_END,
                     )
 
                 val optionsOverlayUserReactionsMarginTop =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginTop,
-                        DEFAULT_USER_REACTIONS_MARGIN_TOP
+                        DEFAULT_USER_REACTIONS_MARGIN_TOP,
                     )
 
                 val optionsOverlayUserReactionsMarginBottom =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginBottom,
-                        DEFAULT_USER_REACTIONS_MARGIN_BOTTOM
+                        DEFAULT_USER_REACTIONS_MARGIN_BOTTOM,
                     )
 
                 val optionsOverlayUserReactionsMarginStart =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginStart,
-                        DEFAULT_USER_REACTIONS_MARGIN_START
+                        DEFAULT_USER_REACTIONS_MARGIN_START,
                     )
 
                 val optionsOverlayUserReactionsMarginEnd =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayUserReactionsMarginEnd,
-                        DEFAULT_USER_REACTIONS_MARGIN_END
+                        DEFAULT_USER_REACTIONS_MARGIN_END,
                     )
 
                 val optionsOverlayMessageOptionsMarginTop =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginTop,
-                        DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_TOP,
                     )
 
                 val optionsOverlayMessageOptionsMarginBottom =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginBottom,
-                        DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_BOTTOM,
                     )
 
                 val optionsOverlayMessageOptionsMarginStart =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginStart,
-                        DEFAULT_MESSAGE_OPTIONS_MARGIN_START
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_START,
                     )
 
                 val optionsOverlayMessageOptionsMarginEnd =
                     attributes.getDimensionPixelSize(
                         R.styleable.MessageListView_streamUiOptionsOverlayMessageOptionsMarginEnd,
-                        DEFAULT_MESSAGE_OPTIONS_MARGIN_END
+                        DEFAULT_MESSAGE_OPTIONS_MARGIN_END,
                     )
 
                 val showReactionsForUnsentMessages = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiShowReactionsForUnsentMessages,
-                    false
+                    false,
                 )
 
                 val readCountEnabled = attributes.getBoolean(
                     R.styleable.MessageListView_streamUiReadCount,
-                    true
+                    true,
                 )
 
                 return MessageListViewStyle(
@@ -586,11 +586,11 @@ public data class MessageListViewStyle(
             return TextStyle.Builder(typedArray)
                 .color(
                     R.styleable.MessageListView_streamUiEmptyStateTextColor,
-                    context.getColorCompat(R.color.stream_ui_text_color_primary)
+                    context.getColorCompat(R.color.stream_ui_text_color_primary),
                 )
                 .size(
                     R.styleable.MessageListView_streamUiEmptyStateTextSize,
-                    context.getDimension(R.dimen.stream_ui_text_medium)
+                    context.getDimension(R.dimen.stream_ui_text_medium),
                 )
                 .font(
                     R.styleable.MessageListView_streamUiEmptyStateTextFontAssets,
@@ -598,7 +598,7 @@ public data class MessageListViewStyle(
                 )
                 .style(
                     R.styleable.MessageListView_streamUiEmptyStateTextStyle,
-                    Typeface.NORMAL
+                    Typeface.NORMAL,
                 )
                 .build()
         }

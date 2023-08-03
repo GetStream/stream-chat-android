@@ -43,8 +43,8 @@ internal fun CreateVideoCallResponse.toDomain(): VideoCallInfo {
         videoCallToken = VideoCallToken(
             token = token,
             agoraUid = agoraUid,
-            agoraAppId = agoraAppId
-        )
+            agoraAppId = agoraAppId,
+        ),
     )
 }
 
@@ -52,6 +52,6 @@ internal fun VideoCallTokenResponse.toDomain(): VideoCallToken {
     return VideoCallToken(
         token = token,
         agoraUid = agoraUid,
-        agoraAppId = agoraAppId
+        agoraAppId = agoraAppId,
     )
 }

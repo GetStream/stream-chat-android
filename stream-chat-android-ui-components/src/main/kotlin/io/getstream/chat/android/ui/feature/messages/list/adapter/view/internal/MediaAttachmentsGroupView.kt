@@ -64,14 +64,14 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr,
-        defStyleRes
+        defStyleRes,
     )
 
     @Suppress("MagicNumber")
@@ -91,7 +91,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
                 media[1],
                 media[2],
                 media[3],
-                media.size - MAX_PREVIEW_COUNT
+                media.size - MAX_PREVIEW_COUNT,
             )
         }
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToMediaPreviews)
@@ -215,7 +215,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
                 topLeftCorner,
                 topRightCorner,
                 bottomRightCorner,
-                bottomLeftCorner
+                bottomLeftCorner,
             )
             is State.TwoViews -> {
                 stateCopy.viewOne.setMediaPreviewShapeByCorners(topLeftCorner, 0f, 0f, bottomLeftCorner)
@@ -260,7 +260,7 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             BackgroundDecorator.DEFAULT_CORNER_RADIUS,
             0F,
             data.isMine,
-            data.isBottomPosition()
+            data.isBottomPosition(),
         )
             .let(::MaterialShapeDrawable)
             .apply { setTint(ContextCompat.getColor(context, R.color.stream_ui_literal_transparent)) }

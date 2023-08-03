@@ -42,7 +42,7 @@ public class TypingIndicatorView : LinearLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -77,7 +77,7 @@ public class TypingIndicatorView : LinearLayout {
                 R.plurals.stream_ui_message_list_header_typing_users,
                 users.size,
                 users.first().name,
-                users.size - 1
+                users.size - 1,
             )
             true
         }

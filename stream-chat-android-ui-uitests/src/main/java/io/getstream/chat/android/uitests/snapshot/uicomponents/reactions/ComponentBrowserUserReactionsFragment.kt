@@ -61,7 +61,7 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
                         Reaction(type = LOVE, user = currentUser),
                     ),
                 ),
-                currentUser = currentUser
+                currentUser = currentUser,
             )
             userReactionsView2.setMessage(
                 message = randomMessage().copy(
@@ -70,7 +70,7 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
                         Reaction(type = LOVE, user = randomUser()),
                     ),
                 ),
-                currentUser = currentUser
+                currentUser = currentUser,
             )
             userReactionsView3.setMessage(
                 message = randomMessage().copy(
@@ -80,7 +80,7 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
                         Reaction(type = LOL, user = randomUser()),
                     ),
                 ),
-                currentUser = currentUser
+                currentUser = currentUser,
             )
             userReactionsView4.setMessage(
                 message = randomMessage().copy(
@@ -102,7 +102,7 @@ class ComponentBrowserUserReactionsFragment : Fragment() {
                         Reaction(type = WUT, user = randomUser()),
                     ),
                 ),
-                currentUser = currentUser
+                currentUser = currentUser,
             )
         }
     }

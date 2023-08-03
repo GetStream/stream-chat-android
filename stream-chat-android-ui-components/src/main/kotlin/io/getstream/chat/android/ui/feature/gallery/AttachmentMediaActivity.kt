@@ -109,7 +109,7 @@ public class AttachmentMediaActivity : AppCompatActivity() {
         Toast.makeText(
             this,
             R.string.stream_ui_message_list_attachment_display_error,
-            Toast.LENGTH_SHORT
+            Toast.LENGTH_SHORT,
         ).show()
     }
 

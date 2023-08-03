@@ -59,7 +59,7 @@ public fun MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
         modifier = modifier,
-        readCount = readCount
+        readCount = readCount,
     )
 }
 
@@ -87,7 +87,7 @@ public fun MessageReadStatusIcon(
                         text = readCount.toString(),
                         modifier = Modifier.padding(horizontal = 2.dp),
                         style = ChatTheme.typography.footnote,
-                        color = ChatTheme.colors.textLowEmphasis
+                        color = ChatTheme.colors.textLowEmphasis,
                     )
                 }
 
@@ -129,7 +129,7 @@ private fun SeenMessageReadStatusIcon() {
         MessageReadStatusIcon(
             message = PreviewMessageData.message2,
             isMessageRead = true,
-            readCount = 3
+            readCount = 3,
         )
     }
 }

@@ -45,7 +45,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.textAndAttachmentMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 
@@ -62,7 +62,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.textAndAttachmentMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 
@@ -79,7 +79,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.fileAttachmentsMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 
@@ -96,7 +96,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.imageAttachmentMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 
@@ -113,7 +113,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.deletedMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 
@@ -130,7 +130,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.plainTextMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 
@@ -161,7 +161,7 @@ internal class BackgroundDecorator(
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.linkAttachmentMessageBackground(
                 viewHolder.binding.messageContainer.context,
-                data
+                data,
             )
     }
 

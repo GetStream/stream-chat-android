@@ -121,19 +121,19 @@ public fun GiphyAttachmentContent(
                             DpSize(
                                 width = width.coerceIn(
                                     minimumValue = null,
-                                    maximumValue = maxWidth
+                                    maximumValue = maxWidth,
                                 ),
                                 height = height.coerceIn(
                                     minimumValue = null,
-                                    maximumValue = maxHeight
-                                )
+                                    maximumValue = maxHeight,
+                                ),
                             )
                         }
                         else -> calculateResultingDimensions(
                             maxWidth = maxWidth,
                             maxHeight = maxHeight,
                             giphyWidth = giphyWidth,
-                            giphyHeight = giphyHeight
+                            giphyHeight = giphyHeight,
                         )
                     }
                 }
@@ -153,8 +153,8 @@ public fun GiphyAttachmentContent(
                 onClick = {
                     onItemClick(context, previewUrl)
                 },
-                onLongClick = { onLongItemClick(message) }
-            )
+                onLongClick = { onLongItemClick(message) },
+            ),
     ) {
         Image(
             modifier = Modifier.fillMaxSize(),
@@ -171,7 +171,7 @@ public fun GiphyAttachmentContent(
                 .wrapContentHeight(),
             painter = painterResource(R.drawable.stream_compose_giphy_label),
             contentDescription = null,
-            contentScale = ContentScale.Inside
+            contentScale = ContentScale.Inside,
         )
     }
 }
@@ -219,7 +219,7 @@ internal fun onGiphyAttachmentContentClick(context: Context, previewUrl: String)
     context.startActivity(
         Intent(
             Intent.ACTION_VIEW,
-            Uri.parse(previewUrl)
-        )
+            Uri.parse(previewUrl),
+        ),
     )
 }

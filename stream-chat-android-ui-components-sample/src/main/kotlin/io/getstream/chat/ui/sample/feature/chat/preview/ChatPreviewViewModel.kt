@@ -49,7 +49,7 @@ class ChatPreviewViewModel(
                     channelType = "messaging",
                     channelId = "",
                     memberIds = listOf(memberId, user.id),
-                    extraData = mapOf(CHANNEL_ARG_DRAFT to true)
+                    extraData = mapOf(CHANNEL_ARG_DRAFT to true),
                 ).await()
 
                 if (result is Result.Success) {

@@ -29,9 +29,9 @@ internal fun MessageSyncContentEntity.toModel(): MessageSyncContent {
             violations = violations.map { violation ->
                 ModerationViolation(
                     code = violation.code,
-                    messages = violation.messages
+                    messages = violation.messages,
                 )
-            }
+            },
         )
         is MessageAwaitingAttachmentsEntity -> MessageAwaitingAttachments
     }
@@ -44,9 +44,9 @@ internal fun MessageSyncContent.toEntity(): MessageSyncContentEntity {
             violations = violations.map { violation ->
                 MessageModerationFailedEntity.ViolationEntity(
                     code = violation.code,
-                    messages = violation.messages
+                    messages = violation.messages,
                 )
-            }
+            },
         )
         is MessageAwaitingAttachments -> MessageAwaitingAttachmentsEntity()
     }

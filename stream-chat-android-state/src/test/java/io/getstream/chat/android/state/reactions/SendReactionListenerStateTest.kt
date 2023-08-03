@@ -93,7 +93,7 @@ internal class SendReactionListenerStateTest {
                 } && message.ownReactions.any { reaction ->
                     reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
                 }
-            }
+            },
         )
     }
 
@@ -114,7 +114,7 @@ internal class SendReactionListenerStateTest {
                 testReaction,
                 false,
                 currentUser,
-                Result.Success(testReaction)
+                Result.Success(testReaction),
             )
 
             verify(channelLogic).upsertMessage(
@@ -124,7 +124,7 @@ internal class SendReactionListenerStateTest {
                     } && message.ownReactions.any { reaction ->
                         reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.COMPLETED
                     }
-                }
+                },
             )
         }
 }

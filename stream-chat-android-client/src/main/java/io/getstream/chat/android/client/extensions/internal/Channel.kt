@@ -115,7 +115,7 @@ public fun Channel.updateMemberBanned(
     members = members.map { member ->
         member.takeUnless { it.user.id == memberUserId }
             ?: member.copy(banned = banned, shadowBanned = shadow)
-    }
+    },
 )
 
 /**
@@ -157,7 +157,7 @@ public fun Channel.updateMembershipBanned(memberUserId: String, banned: Boolean)
     membership = membership
         ?.takeIf { it.getUserId() == memberUserId }
         ?.copy(banned = banned)
-        ?: membership
+        ?: membership,
 )
 
 /**
@@ -177,7 +177,7 @@ public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
             read - oldRead + newRead
         } else {
             read + newRead
-        }
+        },
     )
 }
 
@@ -196,7 +196,7 @@ public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDa
                     lastMessageSeenDate = lastMessageSeenDate,
                     unreadMessages = read.unreadMessages + 1,
                 )
-        }
+        },
     )
 }
 

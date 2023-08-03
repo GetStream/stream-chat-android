@@ -89,7 +89,7 @@ internal class CurrentUserFetcherTests {
                 warmUp = randomBoolean(),
                 loggerConfig = mock(),
                 debugRequests = randomBoolean(),
-            ).apply { isAnonymous = randomBoolean() }
+            ).apply { isAnonymous = randomBoolean() },
         )
     }
 
@@ -122,7 +122,7 @@ internal class CurrentUserFetcherTests {
     fun `When ws message contains error`() = runTest {
         /* Given */
         val errorMessage = SocketErrorMessage(
-            ErrorResponse(message = "Error")
+            ErrorResponse(message = "Error"),
         )
         whenever(networkStateProvider.isConnected()) doReturn true
         whenever(chatParser.fromJsonOrError(errorMessage.toString(), ChatEvent::class.java)) doReturn Result.Failure(Error.GenericError(""))

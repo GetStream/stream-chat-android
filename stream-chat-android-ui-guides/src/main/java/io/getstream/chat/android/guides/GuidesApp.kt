@@ -35,7 +35,7 @@ class GuidesApp : Application() {
                 backgroundSyncEnabled = true,
                 userPresence = true,
             ),
-            appContext = this
+            appContext = this,
         )
 
         ChatClient.Builder("qx5us2v6xvmh", this)

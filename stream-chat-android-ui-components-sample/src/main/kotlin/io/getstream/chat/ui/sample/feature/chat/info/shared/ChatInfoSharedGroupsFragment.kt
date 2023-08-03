@@ -46,7 +46,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
                     "members",
                     listOf(args.memberId).let { members ->
                         ChatClient.instance().clientState.user.value?.id?.let(members::plus) ?: members
-                    }
+                    },
                 ),
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
                 Filters.greaterThan("member_count", 2),

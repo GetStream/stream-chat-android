@@ -44,7 +44,7 @@ internal data class ChannelQueryKey(
                     watchers = query.watchers,
                     members = query.members,
                     data = query.data,
-                )
+                ),
             )
         }
     }

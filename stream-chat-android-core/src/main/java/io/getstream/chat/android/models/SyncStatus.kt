@@ -54,7 +54,8 @@ public enum class SyncStatus(public val status: Int) {
      * SyncStatus is also a property of Channel and Reaction.
      * AWAITING_ATTACHMENTS should be replace with MessageSyncType.IN_PROGRESS_AWAIT_ATTACHMENTS
      */
-    AWAITING_ATTACHMENTS(AWAITING_ATTACHMENTS_STATUS_CODE);
+    AWAITING_ATTACHMENTS(AWAITING_ATTACHMENTS_STATUS_CODE),
+    ;
 
     public companion object {
         private val map = values().associateBy(SyncStatus::status)

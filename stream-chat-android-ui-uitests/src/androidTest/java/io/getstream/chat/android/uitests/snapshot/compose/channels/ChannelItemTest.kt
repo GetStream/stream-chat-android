@@ -35,15 +35,15 @@ class ChannelItemTest : ComposeScreenshotTest() {
                     )
                     messages = listOf(
                         TestData.message1(),
-                        TestData.message2()
+                        TestData.message2(),
                     )
                     unreadCount = 2
                     lastMessageAt = TestData.date2()
-                }
+                },
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 
@@ -58,14 +58,14 @@ class ChannelItemTest : ComposeScreenshotTest() {
                     )
                     messages = listOf(
                         TestData.message1(),
-                        TestData.message2()
+                        TestData.message2(),
                     )
                     lastMessageAt = TestData.date2()
-                }
+                },
             ),
             currentUser = null,
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 
@@ -80,15 +80,15 @@ class ChannelItemTest : ComposeScreenshotTest() {
                     )
                     messages = listOf(
                         TestData.message1(),
-                        TestData.message2()
+                        TestData.message2(),
                     )
                     lastMessageAt = TestData.date2()
                 },
-                isMuted = true
+                isMuted = true,
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 
@@ -105,7 +105,7 @@ class ChannelItemTest : ComposeScreenshotTest() {
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 }

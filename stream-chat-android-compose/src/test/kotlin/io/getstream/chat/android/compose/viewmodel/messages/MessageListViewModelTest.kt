@@ -113,7 +113,7 @@ internal class MessageListViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
-        statePluginConfig: StatePluginConfig = StatePluginConfig()
+        statePluginConfig: StatePluginConfig = StatePluginConfig(),
     ) {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
@@ -147,7 +147,7 @@ internal class MessageListViewModelTest {
                 id = CHANNEL_ID,
             ),
             messageState: MessagesState = MessagesState.Result(
-                messages = emptyList()
+                messages = emptyList(),
             ),
         ) = apply {
             val channelState: ChannelState = mock {
@@ -175,7 +175,7 @@ internal class MessageListViewModelTest {
                     chatClient = chatClient,
                     cid = channelId,
                     clipboardHandler = mock(),
-                )
+                ),
 
             )
         }

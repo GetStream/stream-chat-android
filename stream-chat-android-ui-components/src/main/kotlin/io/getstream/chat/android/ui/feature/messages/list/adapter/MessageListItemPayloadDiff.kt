@@ -43,7 +43,7 @@ public data class MessageListItemPayloadDiff(
             pinned = pinned || other.pinned,
             user = user || other.user,
             mentions = mentions || other.mentions,
-            footer = footer || other.footer
+            footer = footer || other.footer,
         )
     }
 }

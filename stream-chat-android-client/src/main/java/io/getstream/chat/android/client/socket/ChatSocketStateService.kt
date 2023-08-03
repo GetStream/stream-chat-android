@@ -45,7 +45,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
                     true -> ConnectionType.FORCE_RECONNECTION
                     false -> ConnectionType.AUTOMATIC_RECONNECTION
                 },
-            )
+            ),
         )
     }
 

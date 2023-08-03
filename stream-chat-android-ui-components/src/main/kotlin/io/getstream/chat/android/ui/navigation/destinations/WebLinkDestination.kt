@@ -36,7 +36,7 @@ public class WebLinkDestination(context: Context, private val url: String) : Cha
             Toast.makeText(
                 context,
                 context.getString(R.string.stream_ui_message_list_error_cannot_open_link, url),
-                Toast.LENGTH_LONG
+                Toast.LENGTH_LONG,
             ).show()
         }
     }

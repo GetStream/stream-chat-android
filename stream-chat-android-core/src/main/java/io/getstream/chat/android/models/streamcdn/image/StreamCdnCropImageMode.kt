@@ -50,5 +50,5 @@ public enum class StreamCdnCropImageMode(public val queryParameterName: String) 
     /**
      * Keeps the center area of the image and crops out the rest.
      */
-    CENTER("center")
+    CENTER("center"),
 }

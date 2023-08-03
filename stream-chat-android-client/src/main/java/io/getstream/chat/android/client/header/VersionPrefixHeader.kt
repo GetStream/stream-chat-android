@@ -38,5 +38,5 @@ public enum class VersionPrefixHeader(public val prefix: String) {
     /**
      * Compose UI components.
      */
-    COMPOSE("stream-chat-android-compose-")
+    COMPOSE("stream-chat-android-compose-"),
 }

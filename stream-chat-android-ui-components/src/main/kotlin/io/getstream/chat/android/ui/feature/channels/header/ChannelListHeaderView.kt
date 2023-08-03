@@ -54,7 +54,7 @@ public class ChannelListHeaderView : ConstraintLayout {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -63,7 +63,7 @@ public class ChannelListHeaderView : ConstraintLayout {
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr,
-        defStyleRes
+        defStyleRes,
     ) {
         init(attrs)
     }
@@ -146,19 +146,19 @@ public class ChannelListHeaderView : ConstraintLayout {
         return TextStyle.Builder(typedArray)
             .size(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextSize,
-                context.getDimension(R.dimen.stream_ui_text_large)
+                context.getDimension(R.dimen.stream_ui_text_large),
             )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_primary)
+                context.getColorCompat(R.color.stream_ui_text_color_primary),
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleFontAssets,
-                R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextFont
+                R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextFont,
             )
             .style(
                 R.styleable.ChannelListHeaderView_streamUiOnlineTitleTextStyle,
-                Typeface.BOLD
+                Typeface.BOLD,
             ).build()
     }
 
@@ -166,19 +166,19 @@ public class ChannelListHeaderView : ConstraintLayout {
         return TextStyle.Builder(typedArray)
             .size(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextSize,
-                context.getDimension(R.dimen.stream_ui_text_large)
+                context.getDimension(R.dimen.stream_ui_text_large),
             )
             .color(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextColor,
-                context.getColorCompat(R.color.stream_ui_text_color_primary)
+                context.getColorCompat(R.color.stream_ui_text_color_primary),
             )
             .font(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleFontAssets,
-                R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextFont
+                R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextFont,
             )
             .style(
                 R.styleable.ChannelListHeaderView_streamUiOfflineTitleTextStyle,
-                Typeface.BOLD
+                Typeface.BOLD,
             ).build()
     }
 

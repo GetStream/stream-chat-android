@@ -24,10 +24,13 @@ import io.getstream.chat.android.offline.repository.domain.channel.userread.inte
 internal class MapConverter {
     @OptIn(ExperimentalStdlibApi::class)
     private val stringMapAdapter = moshi.adapter<Map<String, String>>()
+
     @OptIn(ExperimentalStdlibApi::class)
     private val intMapAdapter = moshi.adapter<Map<String, Int>>()
+
     @OptIn(ExperimentalStdlibApi::class)
     private val channelUserReadMapAdapter = moshi.adapter<Map<String, ChannelUserReadEntity>>()
+
     @OptIn(ExperimentalStdlibApi::class)
     private val memberEntityMapAdapter = moshi.adapter<Map<String, MemberEntity>>()
 

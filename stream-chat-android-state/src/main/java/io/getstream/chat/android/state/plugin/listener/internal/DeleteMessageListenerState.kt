@@ -60,7 +60,7 @@ internal class DeleteMessageListenerState(
                         cause = MessageModerationDeletedException(
                             "Message with failed moderation has been deleted locally: $messageId",
                         ),
-                    )
+                    ),
                 )
             } else {
                 Result.Success(Unit)
@@ -87,7 +87,7 @@ internal class DeleteMessageListenerState(
                 val networkAvailable = clientState.isNetworkAvailable
                 val messageToBeDeleted = message.copy(
                     deletedAt = Date(),
-                    syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS
+                    syncStatus = if (!networkAvailable) SyncStatus.SYNC_NEEDED else SyncStatus.IN_PROGRESS,
                 )
 
                 updateMessage(messageToBeDeleted)

@@ -31,9 +31,9 @@ class MessageComposerTest : ComposeScreenshotTest() {
     fun messageComposerWithEmptyInput() = runScreenshotTest {
         MessageComposer(
             messageComposerState = MessageComposerState(
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             ),
-            onSendMessage = { _, _ -> }
+            onSendMessage = { _, _ -> },
         )
     }
 
@@ -42,9 +42,9 @@ class MessageComposerTest : ComposeScreenshotTest() {
         MessageComposer(
             messageComposerState = MessageComposerState(
                 inputValue = "Message text",
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             ),
-            onSendMessage = { _, _ -> }
+            onSendMessage = { _, _ -> },
         )
     }
 }

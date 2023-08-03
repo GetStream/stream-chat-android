@@ -71,7 +71,7 @@ internal class CoroutineCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         blockedTask.isStarted() `should be equal to` true
         blockedTask.isCompleted() `should be equal to` true

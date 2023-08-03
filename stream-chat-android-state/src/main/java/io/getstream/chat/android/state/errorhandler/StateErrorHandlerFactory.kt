@@ -35,7 +35,6 @@ internal class StateErrorHandlerFactory(
 ) : ErrorHandlerFactory {
 
     override fun create(): ErrorHandler {
-
         val deleteReactionErrorHandler = DeleteReactionErrorHandlerImpl(
             scope = scope,
             logic = logicRegistry,
@@ -51,7 +50,7 @@ internal class StateErrorHandlerFactory(
         val queryMembersErrorHandler = QueryMembersErrorHandlerImpl(
             scope = scope,
             clientState = clientState,
-            channelRepository = repositoryFacade
+            channelRepository = repositoryFacade,
         )
 
         val sendReactionErrorHandler = SendReactionErrorHandlerImpl(scope = scope, clientState = clientState)

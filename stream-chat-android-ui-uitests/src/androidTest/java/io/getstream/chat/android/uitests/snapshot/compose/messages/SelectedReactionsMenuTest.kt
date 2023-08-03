@@ -39,7 +39,7 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
             currentUser = TestData.user1(),
             selectedMessage = TestData.message1().apply {
                 latestReactions = mutableListOf(TestData.reaction1())
-            }
+            },
         )
     }
 
@@ -54,7 +54,7 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
                     TestData.reaction3(),
                     TestData.reaction4(),
                 )
-            }
+            },
         )
     }
 
@@ -66,7 +66,7 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
                 currentUser = currentUser,
                 onMessageAction = {},
                 onShowMoreReactionsSelected = {},
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             )
         }
     }

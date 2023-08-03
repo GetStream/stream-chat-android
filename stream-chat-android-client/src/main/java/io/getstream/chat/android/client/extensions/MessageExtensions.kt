@@ -26,7 +26,7 @@ import java.util.Date
 
 public fun Message.enrichWithCid(newCid: String): Message = copy(
     replyTo = replyTo?.enrichWithCid(newCid),
-    cid = newCid
+    cid = newCid,
 )
 
 /**
@@ -56,6 +56,6 @@ public fun Message.updateFailedMessage(error: Error): Message {
 public fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
     return this.copy(
         syncStatus = if (isOnline) SyncStatus.IN_PROGRESS else SyncStatus.SYNC_NEEDED,
-        updatedLocallyAt = Date()
+        updatedLocallyAt = Date(),
     )
 }

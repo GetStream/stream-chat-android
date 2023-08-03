@@ -46,7 +46,7 @@ public fun SearchViewModel.bindView(view: SearchResultListView, lifecycleOwner: 
         lifecycleOwner,
         EventObserver {
             view.showError()
-        }
+        },
     )
     view.setLoadMoreListener(::loadMore)
 }

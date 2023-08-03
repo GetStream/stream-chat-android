@@ -102,8 +102,8 @@ public class MessagesViewModelFactory(
                     fileToUri = fileToUriConverter,
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
-                    maxAttachmentSize = maxAttachmentSize
-                )
+                    maxAttachmentSize = maxAttachmentSize,
+                ),
             )
         },
         MessageListViewModel::class.java to {
@@ -124,14 +124,14 @@ public class MessagesViewModelFactory(
                     threadDateSeparatorHandler = threadDateSeparatorHandler,
                     messagePositionHandler = messagePositionHandler,
                     showDateSeparatorInEmptyThread = showDateSeparatorInEmptyThread,
-                )
+                ),
             )
         },
         AttachmentsPickerViewModel::class.java to {
             AttachmentsPickerViewModel(
                 StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()),
             )
-        }
+        },
     )
 
     /**
@@ -141,7 +141,7 @@ public class MessagesViewModelFactory(
         val viewModel: ViewModel = factories[modelClass]?.invoke()
             ?: throw IllegalArgumentException(
                 "MessageListViewModelFactory can only create instances of " +
-                    "the following classes: ${factories.keys.joinToString { it.simpleName }}"
+                    "the following classes: ${factories.keys.joinToString { it.simpleName }}",
             )
 
         @Suppress("UNCHECKED_CAST")

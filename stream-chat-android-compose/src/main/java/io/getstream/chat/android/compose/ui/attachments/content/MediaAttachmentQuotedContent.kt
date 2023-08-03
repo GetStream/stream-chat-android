@@ -82,20 +82,19 @@ public fun MediaAttachmentQuotedContent(
                 start = ChatTheme.dimens.quotedMessageAttachmentStartPadding,
                 top = ChatTheme.dimens.quotedMessageAttachmentTopPadding,
                 bottom = ChatTheme.dimens.quotedMessageAttachmentBottomPadding,
-                end = ChatTheme.dimens.quotedMessageAttachmentEndPadding
+                end = ChatTheme.dimens.quotedMessageAttachmentEndPadding,
             )
             .size(ChatTheme.dimens.quotedMessageAttachmentPreviewSize)
             .clip(ChatTheme.shapes.quotedAttachment),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
-
         Image(
             modifier = Modifier
                 .fillMaxSize(1f)
                 .background(backgroundColor),
             painter = imagePainter,
             contentDescription = null,
-            contentScale = ContentScale.Crop
+            contentScale = ContentScale.Crop,
         )
 
         if (isVideo) {
@@ -105,7 +104,7 @@ public fun MediaAttachmentQuotedContent(
                     .shadow(6.dp, shape = CircleShape)
                     .background(color = Color.White, shape = CircleShape)
                     .fillMaxWidth(0.8f)
-                    .aspectRatio(1f)
+                    .aspectRatio(1f),
             )
         }
     }

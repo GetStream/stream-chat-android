@@ -78,8 +78,8 @@ internal class RetroError<T : Any>(
                 exceptionFields = exceptionFields,
                 duration = duration,
                 moreInfo = moreInfo,
-                mediaType = mediaType
-            )
+                mediaType = mediaType,
+            ),
         )
     }
 
@@ -122,7 +122,7 @@ internal class RetroError<T : Any>(
 
             errorJsonMembers.add(
                 """"exception_fields":""" +
-                    exceptionFieldMembers.joinToString(separator = ",", prefix = "{", postfix = "}")
+                    exceptionFieldMembers.joinToString(separator = ",", prefix = "{", postfix = "}"),
             )
         }
 

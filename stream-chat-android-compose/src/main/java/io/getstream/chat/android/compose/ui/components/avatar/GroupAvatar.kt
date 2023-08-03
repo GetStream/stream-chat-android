@@ -63,7 +63,7 @@ public fun GroupAvatar(
         modifier.clickable(
             onClick = onClick,
             indication = rememberRipple(bounded = false),
-            interactionSource = remember { MutableInteractionSource() }
+            interactionSource = remember { MutableInteractionSource() },
         )
     } else {
         modifier
@@ -73,7 +73,7 @@ public fun GroupAvatar(
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             for (imageIndex in 0 until imageCount step 2) {
                 if (imageIndex < imageCount) {
@@ -88,8 +88,8 @@ public fun GroupAvatar(
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
-                            memberCount = imageCount
-                        )
+                            memberCount = imageCount,
+                        ),
                     )
                 }
             }
@@ -98,7 +98,7 @@ public fun GroupAvatar(
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             for (imageIndex in 1 until imageCount step 2) {
                 if (imageIndex < imageCount) {
@@ -113,8 +113,8 @@ public fun GroupAvatar(
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
-                            memberCount = imageCount
-                        )
+                            memberCount = imageCount,
+                        ),
                     )
                 }
             }

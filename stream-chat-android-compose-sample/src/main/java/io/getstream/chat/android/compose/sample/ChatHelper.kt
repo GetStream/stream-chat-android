@@ -61,7 +61,7 @@ object ChatHelper {
                     messageId = message.id,
                     parentMessageId = message.parentId,
                 )
-            }
+            },
         )
 
         val offlinePlugin = StreamOfflinePluginFactory(context)
@@ -71,7 +71,7 @@ object ChatHelper {
                 backgroundSyncEnabled = true,
                 userPresence = true,
             ),
-            appContext = context
+            appContext = context,
         )
 
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING

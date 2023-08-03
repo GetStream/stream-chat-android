@@ -43,8 +43,8 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
         super.onCreate(savedInstanceState)
         ChatUI.attachmentFactoryManager = AttachmentFactoryManager(
             attachmentFactories = listOf(
-                DateAttachmentFactory()
-            )
+                DateAttachmentFactory(),
+            ),
         )
         ChatUI.attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
             attachmentPreviewFactories = listOf(
@@ -52,14 +52,14 @@ class ChannelsActivity : ChannelListActivity(), ChannelListFragment.ChannelListI
                 // The default factories
                 MediaAttachmentPreviewFactory(),
                 FileAttachmentPreviewFactory(),
-            )
+            ),
         )
         ChatUI.quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
             quotedAttachmentFactories = listOf(
                 QuotedDateAttachmentFactory(),
                 // The default factory
-                DefaultQuotedAttachmentMessageFactory()
-            )
+                DefaultQuotedAttachmentMessageFactory(),
+            ),
         )
     }
 

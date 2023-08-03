@@ -56,6 +56,6 @@ public fun Timestamp(
         modifier = modifier,
         text = timestamp,
         style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textLowEmphasis
+        color = ChatTheme.colors.textLowEmphasis,
     )
 }

@@ -140,7 +140,7 @@ public interface StreamMediaRecorder {
      * when the duration of the currently active recording has changed.
      */
     public fun setOnCurrentRecordingDurationChangedListener(
-        onCurrentRecordingDurationChanged: OnCurrentRecordingDurationChanged
+        onCurrentRecordingDurationChanged: OnCurrentRecordingDurationChanged,
     )
 
     /**

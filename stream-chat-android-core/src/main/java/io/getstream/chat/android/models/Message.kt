@@ -497,7 +497,7 @@ public data class Message(
                 pinnedBy = pinnedBy,
                 threadParticipants = threadParticipants,
                 skipPushNotification = skipPushNotification,
-                skipEnrichUrl = skipEnrichUrl
+                skipEnrichUrl = skipEnrichUrl,
             )
         }
     }

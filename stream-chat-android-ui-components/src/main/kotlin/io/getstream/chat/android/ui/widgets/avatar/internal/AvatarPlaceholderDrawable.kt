@@ -77,7 +77,7 @@ internal class AvatarPlaceholderDrawable(
             0f,
             width.toFloat(),
             height.toFloat(),
-            paint
+            paint,
         )
     }
 
@@ -98,7 +98,7 @@ internal class AvatarPlaceholderDrawable(
             initials,
             width / 2f,
             height / 2f - (textPaint.ascent() + textPaint.descent()) / 2f,
-            textPaint
+            textPaint,
         )
     }
 
@@ -127,7 +127,7 @@ internal class AvatarPlaceholderDrawable(
             height.toFloat(),
             adjustColorBrightness(baseColor, GRADIENT_DARKER_COLOR_FACTOR),
             adjustColorBrightness(baseColor, GRADIENT_LIGHTER_COLOR_FACTOR),
-            Shader.TileMode.CLAMP
+            Shader.TileMode.CLAMP,
         )
     }
 

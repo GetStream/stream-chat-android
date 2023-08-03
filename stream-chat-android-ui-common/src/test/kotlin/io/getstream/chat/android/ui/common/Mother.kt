@@ -76,7 +76,7 @@ internal fun createUser(
     mutes = mutes,
     teams = teams,
     channelMutes = channelMutes,
-    extraData = extraData
+    extraData = extraData,
 )
 
 internal fun createChannel(
@@ -128,7 +128,7 @@ internal fun createMessage(
     deletedAt = deletedAt,
     user = user,
     extraData = extraData,
-    silent = silent
+    silent = silent,
 )
 
 internal fun randomSyncStatus(): SyncStatus = SyncStatus.values().random()

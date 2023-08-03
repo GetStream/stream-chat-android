@@ -119,7 +119,9 @@ import java.util.Date
 import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSendActionRequest
 
 @Suppress("TooManyFunctions", "LargeClass")
-internal class MoshiChatApi @Suppress("LongParameterList") constructor(
+internal class MoshiChatApi
+@Suppress("LongParameterList")
+constructor(
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -202,7 +204,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             messageId = message.id,
             message = UpdateMessageRequest(
                 message = message.toDto(),
-                skip_enrich_url = message.skipEnrichUrl
+                skip_enrich_url = message.skipEnrichUrl,
             ),
         ).map { response -> response.message.toDomain() }
     }
@@ -219,7 +221,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 set = set,
                 unset = unset,
                 skip_enrich_url = skipEnrichUrl,
-            )
+            ),
         ).map { response -> response.message.toDomain() }
     }
 
@@ -232,7 +234,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
     override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
         return messageApi.deleteMessage(
             messageId = messageId,
-            hard = if (hard) true else null
+            hard = if (hard) true else null,
         ).map { response -> response.message.toDomain() }
     }
 
@@ -315,7 +317,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
             body = MuteUserRequest(
                 target_id = userId,
                 user_id = this.userId,
-                timeout = null
+                timeout = null,
             ),
         ).toUnitCall()
     }
@@ -328,7 +330,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return moderationApi.muteChannel(
             body = MuteChannelRequest(
                 channel_cid = "$channelType:$channelId",
-                expiration = expiration
+                expiration = expiration,
             ),
         ).toUnitCall()
     }
@@ -340,7 +342,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return moderationApi.unmuteChannel(
             body = MuteChannelRequest(
                 channel_cid = "$channelType:$channelId",
-                expiration = null
+                expiration = null,
             ),
         ).toUnitCall()
     }
@@ -358,7 +360,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                     channelId = channelId,
                     userId = userId,
                     file = file,
-                    callback
+                    callback,
                 )
             } else {
                 fileUploader.sendFile(
@@ -384,14 +386,14 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                     channelId = channelId,
                     userId = userId,
                     file = file,
-                    callback
+                    callback,
                 )
             } else {
                 fileUploader.sendImage(
                     channelType = channelType,
                     channelId = channelId,
                     userId = userId,
-                    file = file
+                    file = file,
                 )
             }
         }
@@ -403,7 +405,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,
-                url = url
+                url = url,
             )
             Result.Success(Unit)
         }
@@ -415,7 +417,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 channelType = channelType,
                 channelId = channelId,
                 userId = userId,
-                url = url
+                url = url,
             )
             Result.Success(Unit)
         }
@@ -457,7 +459,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 type = channelType,
                 id = channelId,
                 shadow = shadow,
-            )
+            ),
         ).toUnitCall()
     }
 
@@ -495,7 +497,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
                 created_at_after_or_equal = createdAtAfterOrEqual,
                 created_at_before = createdAtBefore,
                 created_at_before_or_equal = createdAtBeforeOrEqual,
-            )
+            ),
         ).map { response -> response.bans.map(BannedUserResponse::toDomain) }
     }
 
@@ -614,7 +616,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return channelApi.truncateChannel(
             channelType = channelType,
             channelId = channelId,
-            body = TruncateChannelRequest(message = systemMessage?.toDto())
+            body = TruncateChannelRequest(message = systemMessage?.toDto()),
         ).map(this::flattenChannel)
     }
 
@@ -952,7 +954,7 @@ internal class MoshiChatApi @Suppress("LongParameterList") constructor(
         return callApi.createCall(
             channelId = channelId,
             channelType = channelType,
-            request = VideoCallCreateRequest(id = callId, type = callType)
+            request = VideoCallCreateRequest(id = callId, type = callType),
         ).map(CreateVideoCallResponse::toDomain)
     }
 

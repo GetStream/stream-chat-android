@@ -54,7 +54,7 @@ public class UploadAttachmentsWorker(
 
         return try {
             message?.let { sendAttachments(it) } ?: Result.Failure(
-                Error.GenericError("The message with id $messageId could not be found.")
+                Error.GenericError("The message with id $messageId could not be found."),
             )
         } catch (e: Exception) {
             logger.e { "[uploadAttachmentsForMessage] #uploader; couldn't upload attachments ${e.message}" }
@@ -114,7 +114,7 @@ public class UploadAttachmentsWorker(
                         ProgressCallbackImpl(
                             message.id,
                             attachment.uploadId!!,
-                            logic
+                            logic,
                         )
                     }
 
@@ -137,7 +137,7 @@ public class UploadAttachmentsWorker(
                         .takeIf { it == Attachment.UploadState.Success }
                         ?: Attachment.UploadState.Failed(
                             Error.ThrowableError(message = "Could not upload attachments.", cause = e),
-                        )
+                        ),
                 )
             }.toMutableList()
         }
@@ -148,7 +148,7 @@ public class UploadAttachmentsWorker(
             syncStatus = message.syncStatus
                 .takeUnless {
                     message.attachments.any { attachment -> attachment.uploadState is Attachment.UploadState.Failed }
-                } ?: SyncStatus.FAILED_PERMANENTLY
+                } ?: SyncStatus.FAILED_PERMANENTLY,
         )
         channelStateLogic?.upsertMessage(updatedMessage)
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
@@ -176,7 +176,7 @@ public class UploadAttachmentsWorker(
             updateAttachmentUploadState(
                 messageId,
                 uploadId,
-                Attachment.UploadState.InProgress(bytesUploaded, totalBytes)
+                Attachment.UploadState.InProgress(bytesUploaded, totalBytes),
             )
         }
 

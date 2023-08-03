@@ -72,7 +72,7 @@ internal class ChannelClientSubscribeTest {
             Message(),
             0,
             0,
-            0
+            0,
         )
     }
 
@@ -87,7 +87,7 @@ internal class ChannelClientSubscribeTest {
         channelClient = ChannelClient(
             CHANNEL_TYPE,
             CHANNEL_ID,
-            client
+            client,
         )
         result = mutableListOf()
     }

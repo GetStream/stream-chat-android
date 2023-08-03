@@ -80,7 +80,7 @@ public fun ChannelAvatar(
                 textStyle = textStyle,
                 shape = shape,
                 contentDescription = contentDescription,
-                onClick = onClick
+                onClick = onClick,
             )
         }
 
@@ -98,7 +98,7 @@ public fun ChannelAvatar(
                 showOnlineIndicator = showOnlineIndicator,
                 onlineIndicatorAlignment = onlineIndicatorAlignment,
                 onlineIndicator = onlineIndicator,
-                onClick = onClick
+                onClick = onClick,
             )
         }
         /**
@@ -116,7 +116,7 @@ public fun ChannelAvatar(
                 showOnlineIndicator = showOnlineIndicator,
                 onlineIndicatorAlignment = onlineIndicatorAlignment,
                 onlineIndicator = onlineIndicator,
-                onClick = onClick
+                onClick = onClick,
             )
         }
         /**
@@ -204,7 +204,7 @@ private fun ChannelAvatarPreview(channel: Channel) {
         ChannelAvatar(
             channel = channel,
             currentUser = PreviewUserData.user1,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier.size(36.dp),
         )
     }
 }

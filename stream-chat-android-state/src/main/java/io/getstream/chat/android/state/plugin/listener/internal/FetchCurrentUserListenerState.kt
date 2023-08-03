@@ -37,7 +37,7 @@ internal class FetchCurrentUserListenerState(
             logger.d { "[onFetchCurrentUserResult] result: $result" }
             globalMutableState.updateCurrentUser(
                 currentUser = clientState.user.value,
-                receivedUser = SelfUserFull(result.getOrThrow())
+                receivedUser = SelfUserFull(result.getOrThrow()),
             )
         }
     }

@@ -66,19 +66,19 @@ public fun GiphyMessageContent(
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp)
                 .padding(horizontal = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
                 modifier = Modifier.size(24.dp),
                 painter = painterResource(id = R.drawable.stream_compose_ic_giphy),
-                contentDescription = null
+                contentDescription = null,
             )
 
             Spacer(modifier = Modifier.width(8.dp))
@@ -112,14 +112,14 @@ public fun GiphyMessageContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(color = ChatTheme.colors.borders)
+                .background(color = ChatTheme.colors.borders),
         )
 
         Row(
             modifier = Modifier
                 .height(48.dp)
                 .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             GiphyButton(
                 modifier = Modifier
@@ -127,14 +127,14 @@ public fun GiphyMessageContent(
                     .weight(1f),
                 text = stringResource(id = R.string.stream_compose_message_list_giphy_cancel),
                 textColor = ChatTheme.colors.textLowEmphasis,
-                onClick = { onGiphyActionClick(CancelGiphy(message)) }
+                onClick = { onGiphyActionClick(CancelGiphy(message)) },
             )
 
             Spacer(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
-                    .background(color = ChatTheme.colors.borders)
+                    .background(color = ChatTheme.colors.borders),
             )
 
             GiphyButton(
@@ -143,14 +143,14 @@ public fun GiphyMessageContent(
                     .weight(1f),
                 text = stringResource(id = R.string.stream_compose_message_list_giphy_shuffle),
                 textColor = ChatTheme.colors.textLowEmphasis,
-                onClick = { onGiphyActionClick(ShuffleGiphy(message)) }
+                onClick = { onGiphyActionClick(ShuffleGiphy(message)) },
             )
 
             Spacer(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(1.dp)
-                    .background(color = ChatTheme.colors.borders)
+                    .background(color = ChatTheme.colors.borders),
             )
 
             GiphyButton(
@@ -159,7 +159,7 @@ public fun GiphyMessageContent(
                     .weight(1f),
                 text = stringResource(id = R.string.stream_compose_message_list_giphy_send),
                 textColor = ChatTheme.colors.primaryAccent,
-                onClick = { onGiphyActionClick(SendGiphy(message)) }
+                onClick = { onGiphyActionClick(SendGiphy(message)) },
             )
         }
     }
@@ -185,8 +185,8 @@ internal fun GiphyButton(
             .clickable(
                 onClick = onClick,
                 indication = rememberRipple(),
-                interactionSource = remember { MutableInteractionSource() }
-            )
+                interactionSource = remember { MutableInteractionSource() },
+            ),
     ) {
         Text(
             modifier = Modifier.align(Alignment.Center),
@@ -195,7 +195,7 @@ internal fun GiphyButton(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = textColor,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

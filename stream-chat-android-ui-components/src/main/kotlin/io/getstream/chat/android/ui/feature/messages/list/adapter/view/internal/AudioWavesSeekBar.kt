@@ -51,7 +51,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     private val tracker: ImageView
@@ -65,7 +65,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
 
         val layoutParamsButton = LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.MATCH_PARENT
+            ViewGroup.LayoutParams.MATCH_PARENT,
         )
 
         addView(tracker, layoutParamsButton)
@@ -228,7 +228,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
     private fun trackerPosition(positionX: Float) =
         min(
             max(realPaddingStart.toFloat() + tracker.width / 2, positionX),
-            (width - realPaddingEnd - tracker.width / 2).toFloat()
+            (width - realPaddingEnd - tracker.width / 2).toFloat(),
         )
 
     private fun progressToX(progress: Float): Float =

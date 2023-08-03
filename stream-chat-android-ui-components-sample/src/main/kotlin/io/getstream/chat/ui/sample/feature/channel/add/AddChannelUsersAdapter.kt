@@ -34,14 +34,14 @@ class AddChannelUsersAdapter : ListAdapter<UserListItem, BaseViewHolder<*>>(
         override fun areContentsTheSame(oldItem: UserListItem, newItem: UserListItem): Boolean {
             return oldItem == newItem
         }
-    }
+    },
 ) {
 
     var userClickListener: UserClickListener = UserClickListener { }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
-        viewType: Int
+        viewType: Int,
     ): BaseViewHolder<*> {
         return when (viewType) {
             TYPE_SEPARATOR ->

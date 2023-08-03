@@ -83,7 +83,7 @@ internal class ChannelStateLogicTest {
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
             coroutineScope = testCoroutines.scope,
-            unreadCountLogic = unreadCountLogic
+            unreadCountLogic = unreadCountLogic,
         )
         _messages = emptyMap()
         _unreadCount.value = 0
@@ -101,7 +101,7 @@ internal class ChannelStateLogicTest {
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
     private val unreadCount = randomInt()
     private val _read: MutableStateFlow<ChannelUserRead> = MutableStateFlow(
-        ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
+        ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount),
     )
     private val _channelData: MutableStateFlow<ChannelData> =
         MutableStateFlow(ChannelData(randomChannel(), emptySet()))
@@ -159,7 +159,7 @@ internal class ChannelStateLogicTest {
             updatedLocallyAt = updatedAt,
             deletedAt = null,
             silent = false,
-            showInChannel = true
+            showInChannel = true,
         )
         val oldMessage = randomMessage(
             user = User(id = "otherUserId"),
@@ -169,7 +169,7 @@ internal class ChannelStateLogicTest {
             updatedLocallyAt = oldUpdatedAt,
             deletedAt = null,
             silent = false,
-            showInChannel = true
+            showInChannel = true,
         )
 
         channelStateLogic.upsertMessage(recentMessage)
@@ -190,8 +190,8 @@ internal class ChannelStateLogicTest {
             ChannelUserRead(
                 user = user,
                 lastMessageSeenDate = Date(Long.MIN_VALUE),
-                unreadMessages = newUnreadCount
-            )
+                unreadMessages = newUnreadCount,
+            ),
         )
 
         val oldMessage = randomMessage(
@@ -200,11 +200,11 @@ internal class ChannelStateLogicTest {
             createdLocallyAt = oldCreatedAt,
             deletedAt = null,
             silent = false,
-            showInChannel = true
+            showInChannel = true,
         )
 
         val oldMessageNewMessageEvent = randomNewMessageEvent(
-            message = oldMessage
+            message = oldMessage,
         )
 
         channelStateLogic.incrementUnreadCountIfNecessary(oldMessageNewMessageEvent)
@@ -215,7 +215,7 @@ internal class ChannelStateLogicTest {
     fun `old messages should NOT increment the unread count`() {
         // The last message is really new.
         whenever(mutableState.read) doReturn MutableStateFlow(
-            ChannelUserRead(user, lastMessageSeenDate = Date(Long.MAX_VALUE))
+            ChannelUserRead(user, lastMessageSeenDate = Date(Long.MAX_VALUE)),
         )
         val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
@@ -348,7 +348,7 @@ internal class ChannelStateLogicTest {
         val updatedMessage = message.copy(
             text = "new text",
             updatedAt = randomDateAfter((message.updatedAt ?: message.updatedLocallyAt ?: NEVER).time),
-            updatedLocallyAt = randomDateAfter((message.updatedLocallyAt ?: message.updatedAt ?: NEVER).time)
+            updatedLocallyAt = randomDateAfter((message.updatedLocallyAt ?: message.updatedAt ?: NEVER).time),
         )
 
         channelStateLogic.upsertMessage(updatedMessage, false)

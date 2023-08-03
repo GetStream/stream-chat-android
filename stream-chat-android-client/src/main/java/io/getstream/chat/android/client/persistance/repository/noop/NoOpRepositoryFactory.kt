@@ -39,7 +39,7 @@ internal object NoOpRepositoryFactory : RepositoryFactory {
     override fun createAttachmentRepository(): AttachmentRepository = NoOpAttachmentRepository
 
     override fun createReactionRepository(
-        getUser: suspend (userId: String) -> User
+        getUser: suspend (userId: String) -> User,
     ): ReactionRepository = NoOpReactionRepository
 
     override fun createMessageRepository(

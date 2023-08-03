@@ -43,18 +43,18 @@ public object AttachmentsPickerTabFactories {
             when {
                 takeImageEnabled && recordVideoEnabled ->
                     AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO
+                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
                     )
                 takeImageEnabled ->
                     AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO
+                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
                     )
                 recordVideoEnabled ->
                     AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO
+                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
                     )
                 else -> null
-            }
+            },
         )
     }
 }

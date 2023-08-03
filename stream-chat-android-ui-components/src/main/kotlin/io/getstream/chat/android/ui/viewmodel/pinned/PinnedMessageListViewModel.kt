@@ -131,7 +131,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
              */
             _state.value = currentState.copy(
                 isLoading = true,
-                results = currentState.results + Message()
+                results = currentState.results + Message(),
             )
             fetchServerResults()
         }
@@ -151,7 +151,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
             pagination = PinnedMessagesPagination.BeforeDate(
                 date = currentState.nextDate,
                 inclusive = false,
-            )
+            ),
         )
             .await()
 
@@ -164,7 +164,7 @@ public class PinnedMessageListViewModel(private val cid: String) : ViewModel() {
                     isLoading = false,
                     canLoadMore = messages.size == QUERY_LIMIT,
                     // currentState.nextDate should only be assigned when messages are empty
-                    nextDate = messages.lastOrNull()?.pinnedAt ?: currentState.nextDate
+                    nextDate = messages.lastOrNull()?.pinnedAt ?: currentState.nextDate,
                 )
             }
             is Result.Failure -> {

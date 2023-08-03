@@ -42,5 +42,5 @@ public enum class OnlineIndicatorAlignment(public val alignment: Alignment) {
     /**
      * The bottom start position within the avatar.
      */
-    BottomStart(Alignment.BottomStart)
+    BottomStart(Alignment.BottomStart),
 }

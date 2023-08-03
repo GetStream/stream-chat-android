@@ -164,7 +164,7 @@ internal class EventHandlerSequential(
                 syncedEvents.collect {
                     logger.i { "[onSyncEventsReceived] events.size: ${it.size}" }
                     handleBatchEvent(
-                        BatchEvent(sortedEvents = it, isFromHistorySync = true)
+                        BatchEvent(sortedEvents = it, isFromHistorySync = true),
                     )
                 }
             }
@@ -315,7 +315,7 @@ internal class EventHandlerSequential(
                 if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
                     val channelLogic: ChannelLogic = logicRegistry.channel(
                         channelType = channelType,
-                        channelId = channelId
+                        channelId = channelId,
                     )
                     channelLogic.handleEvents(events)
                 }
@@ -344,7 +344,7 @@ internal class EventHandlerSequential(
                 .forEach { channelState ->
                     val channelLogic: ChannelLogic = logicRegistry.channel(
                         channelType = channelState.channelType,
-                        channelId = channelState.channelId
+                        channelId = channelState.channelId,
                     )
                     channelLogic.handleEvent(userPresenceChanged)
                 }
@@ -404,7 +404,7 @@ internal class EventHandlerSequential(
                     repos.selectChannelWithoutMessages(event.cid)?.let { channel ->
                         val updatedChannel = channel.copy(
                             hidden = false,
-                            messages = listOf(enrichedMessage)
+                            messages = listOf(enrichedMessage),
                         )
                         batch.addChannel(updatedChannel)
                     }
@@ -412,13 +412,13 @@ internal class EventHandlerSequential(
                 is MessageDeletedEvent -> {
                     batch.addMessageData(
                         event.cid,
-                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user),
                     )
                 }
                 is MessageUpdatedEvent -> {
                     batch.addMessageData(
                         event.cid,
-                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
+                        event.message.enrichWithOwnReactions(batch, currentUserId, event.user),
                     )
                 }
                 is NotificationMessageNewEvent -> {
@@ -427,7 +427,7 @@ internal class EventHandlerSequential(
                 }
                 is NotificationAddedToChannelEvent -> {
                     batch.addChannel(
-                        event.channel.addMembership(currentUserId, event.member)
+                        event.channel.addMembership(currentUserId, event.member),
                     )
                 }
                 is NotificationInvitedEvent -> {
@@ -464,7 +464,6 @@ internal class EventHandlerSequential(
                 }
 
                 is ReactionNewEvent -> {
-
                     batch.addMessage(event.message.enrichWithOwnReactions(batch, currentUserId, event.user))
                 }
                 is ReactionDeletedEvent -> {
@@ -477,7 +476,7 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.updateMemberBanned(event.user.id, banned = true, event.shadow)
-                                .updateMembershipBanned(event.user.id, banned = true)
+                                .updateMembershipBanned(event.user.id, banned = true),
                         )
                     }
                 }
@@ -485,14 +484,14 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.updateMemberBanned(event.user.id, banned = false, false)
-                                .updateMembershipBanned(event.user.id, banned = false)
+                                .updateMembershipBanned(event.user.id, banned = false),
                         )
                     }
                 }
                 is MemberAddedEvent -> {
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
-                            channel.addMember(event.member)
+                            channel.addMember(event.member),
                         )
                     }
                 }
@@ -500,7 +499,7 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.updateMember(event.member)
-                                .updateMembership(event.member)
+                                .updateMembership(event.member),
                         )
                     }
                 }
@@ -508,7 +507,7 @@ internal class EventHandlerSequential(
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.removeMember(event.user.id)
-                                .removeMembership(currentUserId)
+                                .removeMembership(currentUserId),
                         )
                     }
                 }
@@ -518,7 +517,7 @@ internal class EventHandlerSequential(
                             channel.removeMembership(currentUserId).copy(
                                 memberCount = event.channel.memberCount,
                                 members = event.channel.members,
-                            )
+                            ),
                         )
                     }
                 }
@@ -645,16 +644,16 @@ internal class EventHandlerSequential(
         } else {
             mergeReactions(
                 latestReactions.filter { it.userId == currentUserId },
-                batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf()
+                batch.getCurrentMessage(id)?.ownReactions ?: mutableListOf(),
             ).toMutableList()
-        }
+        },
     )
 
     private infix fun UserId.mustBe(currentUserId: UserId?) {
         if (this != currentUserId) {
             throw InputMismatchException(
                 "received connect event for user with id $this while for user configured " +
-                    "has id $currentUserId. Looks like there's a problem in the user set"
+                    "has id $currentUserId. Looks like there's a problem in the user set",
             )
         }
     }

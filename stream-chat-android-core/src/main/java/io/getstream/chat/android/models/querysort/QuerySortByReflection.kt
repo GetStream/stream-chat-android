@@ -62,7 +62,7 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
                 compare(
                     (compareProperty.getter.call(c0) as? Comparable<Any>),
                     (compareProperty.getter.call(c1) as? Comparable<Any>),
-                    sortDirection
+                    sortDirection,
                 )
             }
         }
@@ -73,7 +73,7 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
             compare(
                 comparableFromExtraData(o1, this) ?: fieldSearcher.findComparable(o1, this),
                 comparableFromExtraData(o2, this) ?: fieldSearcher.findComparable(o2, this),
-                sortDirection
+                sortDirection,
             )
         }
 
@@ -93,8 +93,8 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         return add(
             SortSpecification(
                 SortAttribute.FieldSortAttribute(field, field.name.camelCaseToSnakeCase()),
-                SortDirection.ASC
-            )
+                SortDirection.ASC,
+            ),
         )
     }
 
@@ -106,10 +106,10 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
             SortSpecification(
                 SortAttribute.FieldSortAttribute(
                     field,
-                    field.name.camelCaseToSnakeCase()
+                    field.name.camelCaseToSnakeCase(),
                 ),
-                SortDirection.DESC
-            )
+                SortDirection.DESC,
+            ),
         )
     }
 
@@ -134,8 +134,8 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         return add(
             SortSpecification(
                 SortAttribute.FieldNameSortAttribute(fieldName),
-                SortDirection.ASC
-            )
+                SortDirection.ASC,
+            ),
         )
     }
 
@@ -146,8 +146,8 @@ public open class QuerySortByReflection<T : Any> : BaseQuerySort<T>() {
         return add(
             SortSpecification(
                 SortAttribute.FieldNameSortAttribute(fieldName),
-                SortDirection.DESC
-            )
+                SortDirection.DESC,
+            ),
         )
     }
 

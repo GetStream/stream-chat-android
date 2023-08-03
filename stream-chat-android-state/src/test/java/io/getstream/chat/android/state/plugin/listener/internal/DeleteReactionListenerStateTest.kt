@@ -38,12 +38,12 @@ internal class DeleteReactionListenerStateTest {
     private val user = randomUser()
     private val defaultReaction = randomReaction(
         userId = user.id,
-        user = user
+        user = user,
     )
     private val defaultMessage = randomMessage(
         ownReactions = mutableListOf(defaultReaction),
         latestReactions = mutableListOf(defaultReaction),
-        user = user
+        user = user,
     )
 
     private val clientState = mock<ClientState>()
@@ -65,13 +65,13 @@ internal class DeleteReactionListenerStateTest {
             cid = randomCID(),
             messageId = defaultMessage.id,
             reactionType = defaultReaction.type,
-            currentUser = user
+            currentUser = user,
         )
 
         verify(channelLogic).upsertMessage(
             argThat { message ->
                 message.ownReactions.isEmpty() && message.latestReactions.isEmpty()
-            }
+            },
         )
     }
 }

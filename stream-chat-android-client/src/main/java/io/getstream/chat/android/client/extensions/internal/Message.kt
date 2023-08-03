@@ -38,7 +38,9 @@ public fun Message.updateUsers(users: Map<String, User>): Message =
         copy(
             user = if (users.containsKey(user.id)) {
                 users[user.id] ?: user
-            } else user,
+            } else {
+                user
+            },
             latestReactions = latestReactions.updateByUsers(users).toMutableList(),
             replyTo = replyTo?.updateUsers(users),
             mentionedUsers = mentionedUsers.updateUsers(users).toMutableList(),

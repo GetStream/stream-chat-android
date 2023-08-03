@@ -72,24 +72,24 @@ private class DefaultReactionIconFactory(
     private val supportedReactions: Map<String, ReactionDrawable> = mapOf(
         THUMBS_UP to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_thumbs_up,
-            selectedIconResId = R.drawable.stream_compose_ic_reaction_thumbs_up_selected
+            selectedIconResId = R.drawable.stream_compose_ic_reaction_thumbs_up_selected,
         ),
         LOVE to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_love,
-            selectedIconResId = R.drawable.stream_compose_ic_reaction_love_selected
+            selectedIconResId = R.drawable.stream_compose_ic_reaction_love_selected,
         ),
         LOL to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_lol,
-            selectedIconResId = R.drawable.stream_compose_ic_reaction_lol_selected
+            selectedIconResId = R.drawable.stream_compose_ic_reaction_lol_selected,
         ),
         WUT to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_wut,
-            selectedIconResId = R.drawable.stream_compose_ic_reaction_wut_selected
+            selectedIconResId = R.drawable.stream_compose_ic_reaction_wut_selected,
         ),
         THUMBS_DOWN to ReactionDrawable(
             iconResId = R.drawable.stream_compose_ic_reaction_thumbs_down,
-            selectedIconResId = R.drawable.stream_compose_ic_reaction_thumbs_down_selected
-        )
+            selectedIconResId = R.drawable.stream_compose_ic_reaction_thumbs_down_selected,
+        ),
     ),
 ) : ReactionIconFactory {
 
@@ -113,7 +113,7 @@ private class DefaultReactionIconFactory(
         val reactionDrawable = requireNotNull(supportedReactions[type])
         return ReactionIcon(
             painter = painterResource(reactionDrawable.iconResId),
-            selectedPainter = painterResource(reactionDrawable.selectedIconResId)
+            selectedPainter = painterResource(reactionDrawable.selectedIconResId),
         )
     }
 

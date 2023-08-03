@@ -385,11 +385,11 @@ public class MessageListViewModel(
      */
     public fun scrollToMessage(
         messageId: String,
-        parentMessageId: String?
+        parentMessageId: String?,
     ) {
         messageListController.scrollToMessage(
             messageId = messageId,
-            parentMessageId = parentMessageId
+            parentMessageId = parentMessageId,
         )
     }
 

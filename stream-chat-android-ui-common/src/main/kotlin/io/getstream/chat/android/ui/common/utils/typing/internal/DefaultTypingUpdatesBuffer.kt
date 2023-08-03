@@ -124,7 +124,6 @@ internal class DefaultTypingUpdatesBuffer(
         sendUpdatesJob?.cancel()
 
         sendUpdatesJob = coroutineScope.launch {
-
             while (isTyping) {
                 onTypingStarted()
                 delay(DEFAULT_SEND_TYPING_UPDATES_INTERVAL)

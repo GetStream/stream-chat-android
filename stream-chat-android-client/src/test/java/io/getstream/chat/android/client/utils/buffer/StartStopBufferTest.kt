@@ -169,7 +169,6 @@ internal class StartStopBufferTest {
     @Test
     fun `when buffer overflows, it should start emitting its items`() {
         StartStopBuffer<String>(bufferLimit = 2).run {
-
             val initialData = "0"
             var lastNumber = initialData
             val data1 = "data1"

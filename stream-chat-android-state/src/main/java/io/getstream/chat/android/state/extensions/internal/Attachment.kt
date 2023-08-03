@@ -32,7 +32,7 @@ internal fun Attachment.parseAttachmentNameFromUrl(): String? {
 
     return url?.substringAfterLast(
         delimiter = "/",
-        missingDelimiterValue = ""
+        missingDelimiterValue = "",
     )?.takeIf { it.isNotBlank() }
         ?.substringBefore("?")
 }

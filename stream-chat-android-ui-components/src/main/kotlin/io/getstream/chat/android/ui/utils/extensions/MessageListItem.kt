@@ -44,7 +44,7 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
             messageReadBy = messageReadBy,
             isThreadMode = isInThread,
             isMessageRead = isMessageRead,
-            showMessageFooter = showMessageFooter
+            showMessageFooter = showMessageFooter,
         )
         is EmptyThreadPlaceholderItemState -> MessageListItem.ThreadPlaceholderItem
     }

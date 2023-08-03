@@ -77,7 +77,7 @@ public data class AttachmentGalleryViewMediaStyle(
                 attrs,
                 R.styleable.AttachmentGalleryVideoAttachments,
                 R.attr.streamUiAttachmentGalleryVideoAttachmentsStyle,
-                R.style.StreamUi_AttachmentGallery_VideoAttachments
+                R.style.StreamUi_AttachmentGallery_VideoAttachments,
             ).let { styledAttributes ->
                 val style = AttachmentGalleryViewMediaStyle(context, styledAttributes)
                 styledAttributes.recycle()
@@ -86,55 +86,54 @@ public data class AttachmentGalleryViewMediaStyle(
         }
 
         operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryViewMediaStyle {
-
             val viewMediaPlayVideoButtonIcon = it.getDrawable(
-                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon
+                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_play)
 
             val viewMediaPlayVideoIconTint = it.getColorOrNull(
-                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconTint
+                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconTint,
             )
 
             val viewMediaPlayVideoIconBackgroundColor =
                 it.getColor(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor,
-                    context.getColorCompat(R.color.stream_ui_literal_white)
+                    context.getColorCompat(R.color.stream_ui_literal_white),
                 )
 
             val viewMediaPlayVideoIconCornerRadius =
                 it.getDimension(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius,
-                    0f
+                    0f,
                 )
 
             val viewMediaPlayVideoIconElevation =
                 it.getDimension(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconElevation,
-                    0f
+                    0f,
                 )
 
             val viewMediaPlayVideoIconPaddingTop =
                 it.getDimensionPixelSize(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop,
-                    0
+                    0,
                 )
 
             val viewMediaPlayVideoIconPaddingBottom =
                 it.getDimensionPixelSize(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom,
-                    0
+                    0,
                 )
 
             val viewMediaPlayVideoIconPaddingStart =
                 it.getDimensionPixelSize(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart,
-                    0
+                    0,
                 )
 
             val viewMediaPlayVideoIconPaddingEnd =
                 it.getDimensionPixelSize(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd,
-                    0
+                    0,
                 )
 
             val viewMediaPlayVideoIconPadding =
@@ -145,20 +144,20 @@ public data class AttachmentGalleryViewMediaStyle(
             val viewMediaPlayVideoIconWidth =
                 it.getLayoutDimension(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayIconWidth,
-                    ActionBar.LayoutParams.WRAP_CONTENT
+                    ActionBar.LayoutParams.WRAP_CONTENT,
                 )
 
             val viewMediaPlayVideoIconHeight =
                 it.getLayoutDimension(
                     R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayIconHeight,
-                    ActionBar.LayoutParams.WRAP_CONTENT
+                    ActionBar.LayoutParams.WRAP_CONTENT,
                 )
 
             val imagePlaceholder = it.getDrawable(
-                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaImagePlaceholder
+                R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaImagePlaceholder,
             ) ?: ContextCompat.getDrawable(
                 context,
-                R.drawable.stream_ui_picture_placeholder
+                R.drawable.stream_ui_picture_placeholder,
             )
 
             return AttachmentGalleryViewMediaStyle(

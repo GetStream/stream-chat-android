@@ -127,7 +127,7 @@ class ChatInfoSharedAttachmentsViewModel(
 
     enum class AttachmentsType(val requestTypeKey: String) {
         MEDIA("image"),
-        FILES("file")
+        FILES("file"),
     }
 
     companion object {
@@ -135,7 +135,7 @@ class ChatInfoSharedAttachmentsViewModel(
         private val INITIAL_STATE = State(
             canLoadMore = true,
             results = emptyList(),
-            isLoading = true
+            isLoading = true,
         )
     }
 }

@@ -485,13 +485,13 @@ internal class ChatSocketStateServiceTest {
                     State.RestartConnection,
                     newConnectionConf,
                     true,
-                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION)
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
                 ),
                 Arguments.of(
                     State.RestartConnection,
                     newConnectionConf,
                     false,
-                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION)
+                    State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
                 Arguments.of(
                     State.Connecting(Mother.randomConnectionConf(), Mother.randomConnectionType()),

@@ -85,15 +85,15 @@ internal object MessageDtoTestData {
                 "key1" to "value1",
                 "key2" to true,
                 "key3" to mapOf(
-                    "key4" to "val4"
-                )
+                    "key4" to "val4",
+                ),
             ),
             "customKey1" to "customVal1",
             "customKey2" to true,
             "customKey3" to listOf(
                 "a",
                 "b",
-                "c"
+                "c",
             ),
         ),
         type = "regular",
@@ -232,7 +232,7 @@ internal object MessageDtoTestData {
         pinned_by = null,
         pinned_at = null,
         pin_expires = null,
-        channel = ChannelInfoDtoTestData.channelInfoDtoWithoutMemberCount
+        channel = ChannelInfoDtoTestData.channelInfoDtoWithoutMemberCount,
     )
 
     @Language("JSON")
@@ -278,15 +278,15 @@ internal object MessageDtoTestData {
                 "key1" to "value1",
                 "key2" to true,
                 "key3" to mapOf(
-                    "key4" to "val4"
-                )
+                    "key4" to "val4",
+                ),
             ),
             "customKey1" to "customVal1",
             "customKey2" to true,
             "customKey3" to listOf(
                 "a",
                 "b",
-                "c"
+                "c",
             ),
         ),
         show_in_channel = false,

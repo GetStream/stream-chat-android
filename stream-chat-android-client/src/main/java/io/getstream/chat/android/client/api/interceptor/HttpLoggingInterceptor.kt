@@ -96,8 +96,12 @@ internal class HttpLoggingInterceptor : Interceptor {
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
         logger.i {
             "<-- ${response.code}${
-            if (response.message.isEmpty()) "" else ' ' +
-                response.message
+                if (response.message.isEmpty()) {
+                    ""
+                } else {
+                    ' ' +
+                        response.message
+                }
             } ${response.request.url} (${tookMs}ms${", $bodySize body"})"
         }
 
@@ -138,7 +142,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     @StreamHandsOff(
         reason = "Request body shouldn't be log entirely as it might produce OutOfMemory " +
             "exceptions when sending big files." +
-            " The log will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes."
+            " The log will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes.",
     )
     private fun logRequestBody(buffer: Buffer, charset: Charset) {
         logger.i { buffer.readString(minOf(buffer.size, Constants.MAX_REQUEST_BODY_LENGTH), charset) }

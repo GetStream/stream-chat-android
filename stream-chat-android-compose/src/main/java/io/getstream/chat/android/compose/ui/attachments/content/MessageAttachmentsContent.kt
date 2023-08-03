@@ -60,7 +60,7 @@ public fun MessageAttachmentsContent(
         val attachmentState = AttachmentState(
             message = message,
             onLongItemClick = onLongItemClick,
-            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult
+            onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         )
 
         if (attachmentFactory != null) {

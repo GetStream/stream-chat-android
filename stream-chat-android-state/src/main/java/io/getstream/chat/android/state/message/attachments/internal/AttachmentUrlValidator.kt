@@ -39,8 +39,8 @@ internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHe
             newMessage.copy(
                 attachments = updateValidAttachmentsUrl(
                     newMessage.attachments,
-                    oldMessage.attachments
-                ).toMutableList()
+                    oldMessage.attachments,
+                ).toMutableList(),
             )
         }
     }
@@ -52,7 +52,7 @@ internal class AttachmentUrlValidator(private val attachmentHelper: AttachmentHe
         return newAttachments.map { newAttachment ->
             updateValidAttachmentUrl(
                 newAttachment,
-                oldAttachments.firstOrNull { it.partialEquality(newAttachment) }
+                oldAttachments.firstOrNull { it.partialEquality(newAttachment) },
             )
         }
     }

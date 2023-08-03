@@ -66,7 +66,9 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    public class Builder @SinceKotlin("99999.9") constructor() {
+    public class Builder
+    @SinceKotlin("99999.9")
+    constructor() {
 
         private var filter: FilterObject? = null
         private var sort: QuerySorter<Channel> = ChannelListViewModel.DEFAULT_SORT
@@ -127,7 +129,7 @@ public class ChannelListViewModelFactory @JvmOverloads constructor(
                 limit = limit,
                 messageLimit = messageLimit,
                 memberLimit = memberLimit,
-                chatEventHandlerFactory
+                chatEventHandlerFactory,
             )
         }
     }

@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.ChatClient
 public class TypingIndicatorViewModelFactory(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val messageId: String? = null
+    private val messageId: String? = null,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -45,7 +45,9 @@ public class TypingIndicatorViewModelFactory(
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
-    public class Builder @SinceKotlin("99999.9") constructor() {
+    public class Builder
+    @SinceKotlin("99999.9")
+    constructor() {
         private var cid: String? = null
         private var chatClient: ChatClient? = null
         private var messageId: String? = null
@@ -78,7 +80,7 @@ public class TypingIndicatorViewModelFactory(
             return TypingIndicatorViewModelFactory(
                 cid = cid ?: error("Channel cid should not be null"),
                 chatClient = chatClient ?: ChatClient.instance(),
-                messageId = messageId
+                messageId = messageId,
             )
         }
     }

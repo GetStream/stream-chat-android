@@ -29,7 +29,8 @@ fun AddChannelViewModel.bindView(view: AddChannelView, lifecycleOwner: Lifecycle
                 view.addMoreUsers(state.users)
             }
             is AddChannelViewModel.State.InitializeChannel,
-            is AddChannelViewModel.State.NavigateToChannel -> Unit
+            is AddChannelViewModel.State.NavigateToChannel,
+            -> Unit
         }
     }
 

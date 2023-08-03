@@ -61,7 +61,7 @@ public class ChannelAvatarView : ViewGroup {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
@@ -152,8 +152,8 @@ public class ChannelAvatarView : ViewGroup {
             placeholderDrawable = AvatarPlaceholderDrawable(
                 context = context,
                 initials = channel.initials,
-                initialsTextStyle = avatarStyle.avatarInitialsTextStyle
-            )
+                initialsTextStyle = avatarStyle.avatarInitialsTextStyle,
+            ),
         )
     }
 
@@ -182,8 +182,8 @@ public class ChannelAvatarView : ViewGroup {
                 placeholderDrawable = AvatarPlaceholderDrawable(
                     context,
                     user[i].initials,
-                    avatarStyle.groupAvatarInitialsTextStyle
-                )
+                    avatarStyle.groupAvatarInitialsTextStyle,
+                ),
             )
         }
     }
@@ -330,7 +330,7 @@ public class ChannelAvatarView : ViewGroup {
     private fun View.measureExactly(width: Int, height: Int) {
         measure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY)
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
         )
     }
 
@@ -375,7 +375,7 @@ public class ChannelAvatarView : ViewGroup {
                     height.toFloat() - borderOffset,
                     avatarStyle.borderRadius,
                     avatarStyle.borderRadius,
-                    borderPaint
+                    borderPaint,
                 )
             }
             else -> {
@@ -383,7 +383,7 @@ public class ChannelAvatarView : ViewGroup {
                     width / 2f,
                     height / 2f,
                     width / 2f - borderOffset,
-                    borderPaint
+                    borderPaint,
                 )
             }
         }

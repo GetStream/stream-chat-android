@@ -105,13 +105,13 @@ public fun QuotedMessageText(
         modifier = modifier
             .padding(
                 horizontal = horizontalPadding,
-                vertical = verticalPadding
+                vertical = verticalPadding,
             )
             .clipToBounds(),
         text = styledText,
         style = style,
         maxLines = quoteMaxLines,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
 }
 

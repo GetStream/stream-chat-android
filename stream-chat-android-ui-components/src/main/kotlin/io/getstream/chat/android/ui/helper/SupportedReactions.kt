@@ -130,7 +130,7 @@ public class SupportedReactions(
                 inactiveDrawable = context.getDrawableCompat(drawableResId)!!
                     .applyTint(context.getColorCompat(R.color.stream_ui_grey)),
                 activeDrawable = context.getDrawableCompat(drawableResId)!!
-                    .applyTint(context.getColorCompat(R.color.stream_ui_accent_blue))
+                    .applyTint(context.getColorCompat(R.color.stream_ui_accent_blue)),
             )
         }
     }

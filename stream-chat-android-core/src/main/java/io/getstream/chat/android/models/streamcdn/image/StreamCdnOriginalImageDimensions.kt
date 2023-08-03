@@ -25,5 +25,5 @@ package io.getstream.chat.android.models.streamcdn.image
  */
 public data class StreamCdnOriginalImageDimensions(
     val originalWidth: Int,
-    val originalHeight: Int
+    val originalHeight: Int,
 )

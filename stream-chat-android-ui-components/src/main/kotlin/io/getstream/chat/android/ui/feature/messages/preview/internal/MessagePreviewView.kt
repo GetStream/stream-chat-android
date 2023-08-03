@@ -48,7 +48,7 @@ internal class MessagePreviewView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -84,7 +84,7 @@ internal class MessagePreviewView : FrameLayout {
                     R.string.stream_ui_message_preview_sender,
                     message.user.name,
                     channel.name,
-                )
+                ),
             )
         } else {
             message.user.name.bold()

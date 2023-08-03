@@ -54,7 +54,7 @@ internal fun Channel.toEntity(lastMessageId: String?, lastMessageAt: Date?): Cha
         watcherCount = watcherCount,
         team = team,
         ownCapabilities = ownCapabilities,
-        membership = membership?.toEntity()
+        membership = membership?.toEntity(),
     )
 }
 

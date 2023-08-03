@@ -62,8 +62,8 @@ internal open class AbstractStartupBenchmarkUiComponentsSample(private val start
     fun startupBaselineProfileDisabled() = startup(
         CompilationMode.Partial(
             baselineProfileMode = BaselineProfileMode.Disable,
-            warmupIterations = 1
-        )
+            warmupIterations = 1,
+        ),
     )
 
     @Test
@@ -81,7 +81,7 @@ internal open class AbstractStartupBenchmarkUiComponentsSample(private val start
         startupMode = startupMode,
         setupBlock = {
             pressHome()
-        }
+        },
     ) {
         startActivityAndWait()
     }

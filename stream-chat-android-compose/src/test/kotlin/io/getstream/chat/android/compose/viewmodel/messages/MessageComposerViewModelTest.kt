@@ -91,8 +91,8 @@ internal class MessageComposerViewModelTest {
             viewModel.sendMessage(
                 viewModel.buildNewMessage(
                     message = state.inputValue,
-                    attachments = state.attachments
-                )
+                    attachments = state.attachments,
+                ),
             )
 
             val captor = argumentCaptor<Message>()
@@ -100,7 +100,7 @@ internal class MessageComposerViewModelTest {
                 channelType = eq("messaging"),
                 channelId = eq("123"),
                 message = captor.capture(),
-                isRetrying = eq(false)
+                isRetrying = eq(false),
             )
             captor.firstValue.text `should be equal to` "Message text"
             viewModel.input.value `should be equal to` ""
@@ -120,15 +120,15 @@ internal class MessageComposerViewModelTest {
             viewModel.addSelectedAttachments(
                 listOf(
                     Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2")
-                )
+                    Attachment(imageUrl = "url2"),
+                ),
             )
             val state = viewModel.messageComposerState.value
             viewModel.sendMessage(
                 viewModel.buildNewMessage(
                     message = state.inputValue,
-                    attachments = state.attachments
-                )
+                    attachments = state.attachments,
+                ),
             )
 
             val captor = argumentCaptor<Message>()
@@ -136,7 +136,7 @@ internal class MessageComposerViewModelTest {
                 channelType = eq("messaging"),
                 channelId = eq("123"),
                 message = captor.capture(),
-                isRetrying = eq(false)
+                isRetrying = eq(false),
             )
             captor.firstValue.attachments.size `should be equal to` 2
             viewModel.selectedAttachments.value.size `should be equal to` 0
@@ -155,11 +155,11 @@ internal class MessageComposerViewModelTest {
             viewModel.addSelectedAttachments(
                 listOf(
                     Attachment(imageUrl = "url1"),
-                    Attachment(imageUrl = "url2")
-                )
+                    Attachment(imageUrl = "url2"),
+                ),
             )
             viewModel.removeSelectedAttachment(
-                Attachment(imageUrl = "url1")
+                Attachment(imageUrl = "url1"),
             )
 
             viewModel.selectedAttachments.value.size `should be equal to` 1
@@ -249,8 +249,8 @@ internal class MessageComposerViewModelTest {
             ownCapabilities = setOf(
                 "send-message",
                 "send-reaction",
-                "send-reply"
-            )
+                "send-reply",
+            ),
         )
         val viewModel = Fixture()
             .givenCurrentUser()
@@ -354,7 +354,7 @@ internal class MessageComposerViewModelTest {
         private val channelId: String = "messaging:123",
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
         private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
-        statePluginConfig: StatePluginConfig = StatePluginConfig()
+        statePluginConfig: StatePluginConfig = StatePluginConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
@@ -409,7 +409,7 @@ internal class MessageComposerViewModelTest {
                     fileToUri = { it.path },
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
-                )
+                ),
             )
         }
     }
@@ -418,17 +418,17 @@ internal class MessageComposerViewModelTest {
 
         val user1 = User(
             id = "Jc",
-            name = "Jc Miñarro"
+            name = "Jc Miñarro",
         )
         val user2 = User(
             id = "amit",
-            name = "Amit Kumar"
+            name = "Amit Kumar",
         )
         val giphyCommand = Command(
             name = "giphy",
             description = "Post a random gif to the channel",
             args = "[text]",
-            set = "fun_set"
+            set = "fun_set",
         )
     }
 }

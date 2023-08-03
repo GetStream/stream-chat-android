@@ -38,7 +38,7 @@ public fun BackButton(
 ) {
     IconButton(
         modifier = modifier,
-        onClick = onBackPressed
+        onClick = onBackPressed,
     ) {
         Icon(
             painter = painter,

@@ -66,27 +66,27 @@ object TestData {
 
     fun member1() = Member(
         user = user1(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member2() = Member(
         user = user2(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member3() = Member(
         user = user3(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member4() = Member(
         user = user4(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member5() = Member(
         user = user5(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun message1(): Message = Message().apply {
@@ -155,29 +155,29 @@ object TestData {
 
     fun reaction1(): Reaction = Reaction(
         type = "like",
-        user = user1()
+        user = user1(),
     )
 
     fun reaction2(): Reaction = Reaction(
         type = "love",
-        user = user2()
+        user = user2(),
     )
 
     fun reaction3(): Reaction = Reaction(
         type = "wow",
-        user = user3()
+        user = user3(),
     )
 
     fun reaction4(): Reaction = Reaction(
         type = "sad",
-        user = user4()
+        user = user4(),
     )
 
     private fun LocalDateTime.toDate(): Date {
         return Date(
             atZone(ZoneId.systemDefault())
                 .toInstant()
-                .toEpochMilli()
+                .toEpochMilli(),
         )
     }
 }

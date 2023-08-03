@@ -39,7 +39,7 @@ public class TestCoroutineRule : TestWatcher() {
         Dispatchers.setMain(testDispatcher)
         DispatcherProvider.set(
             mainDispatcher = testDispatcher,
-            ioDispatcher = testDispatcher
+            ioDispatcher = testDispatcher,
         )
     }
 

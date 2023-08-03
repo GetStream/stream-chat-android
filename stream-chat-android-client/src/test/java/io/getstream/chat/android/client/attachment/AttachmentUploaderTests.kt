@@ -153,7 +153,7 @@ internal class AttachmentUploaderTests {
                 mimeType = "",
                 name = attachment.upload!!.name,
                 title = attachment.upload!!.name,
-                uploadState = Attachment.UploadState.Success
+                uploadState = Attachment.UploadState.Success,
             )
             val result = sut.uploadAttachment(channelType, channelId, attachment)
             result.shouldBeInstanceOf(Result.Success::class)
@@ -179,7 +179,7 @@ internal class AttachmentUploaderTests {
                 mimeType = "",
                 name = attachment.upload!!.name,
                 title = attachment.upload!!.name,
-                uploadState = Attachment.UploadState.Success
+                uploadState = Attachment.UploadState.Success,
             )
             val result = sut.uploadAttachment(
                 channelType,
@@ -209,8 +209,8 @@ internal class AttachmentUploaderTests {
                     eq(channelType),
                     eq(channelId),
                     any(),
-                    anyOrNull()
-                )
+                    anyOrNull(),
+                ),
             ) doReturn TestCall(result)
         }
 
@@ -220,8 +220,8 @@ internal class AttachmentUploaderTests {
                     eq(channelType),
                     eq(channelId),
                     any(),
-                    anyOrNull()
-                )
+                    anyOrNull(),
+                ),
             ) doReturn TestCall(result)
         }
 
@@ -236,7 +236,7 @@ internal class AttachmentUploaderTests {
                         eq(channelId),
                         same(file),
                         anyOrNull(),
-                    )
+                    ),
                 ) doReturn TestCall(fileResult)
                 whenever(
                     clientMock.sendImage(
@@ -244,7 +244,7 @@ internal class AttachmentUploaderTests {
                         eq(channelId),
                         same(file),
                         anyOrNull(),
-                    )
+                    ),
                 ) doReturn TestCall(imageResult)
             }
         }

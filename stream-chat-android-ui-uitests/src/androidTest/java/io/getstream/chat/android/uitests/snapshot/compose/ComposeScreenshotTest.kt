@@ -68,7 +68,7 @@ abstract class ComposeScreenshotTest : ScreenshotTest {
                     } else {
                         content()
                     }
-                }
+                },
             )
         }
         compareScreenshot(rule = composeRule, name = generateName())

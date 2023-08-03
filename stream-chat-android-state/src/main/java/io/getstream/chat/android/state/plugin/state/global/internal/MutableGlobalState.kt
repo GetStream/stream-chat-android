@@ -90,7 +90,7 @@ internal class MutableGlobalState : GlobalState {
                     } else {
                         this[cid] = typingEvent
                     }
-                }
+                },
             )
         }
     }

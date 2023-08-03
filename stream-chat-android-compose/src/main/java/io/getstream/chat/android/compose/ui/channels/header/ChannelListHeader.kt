@@ -83,18 +83,18 @@ public fun ChannelListHeader(
     leadingContent: @Composable RowScope.() -> Unit = {
         DefaultChannelHeaderLeadingContent(
             currentUser = currentUser,
-            onAvatarClick = onAvatarClick
+            onAvatarClick = onAvatarClick,
         )
     },
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultChannelListHeaderCenterContent(
             connectionState = connectionState,
-            title = title
+            title = title,
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         DefaultChannelListHeaderTrailingContent(
-            onHeaderActionClick = onHeaderActionClick
+            onHeaderActionClick = onHeaderActionClick,
         )
     },
 ) {
@@ -103,7 +103,7 @@ public fun ChannelListHeader(
             .fillMaxWidth(),
         elevation = elevation,
         color = color,
-        shape = shape
+        shape = shape,
     ) {
         Row(
             Modifier
@@ -138,7 +138,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             user = currentUser,
             contentDescription = currentUser.name,
             showOnlineIndicator = false,
-            onClick = { onAvatarClick(currentUser) }
+            onClick = { onAvatarClick(currentUser) },
         )
     } else {
         Spacer(modifier = size)
@@ -167,7 +167,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 text = title,
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
         is ConnectionState.Connecting -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
@@ -180,7 +180,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 text = stringResource(R.string.stream_compose_disconnected),
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
     }
@@ -202,7 +202,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
         interactionSource = remember { MutableInteractionSource() },
         color = ChatTheme.colors.primaryAccent,
         shape = ChatTheme.shapes.avatar,
-        elevation = 4.dp
+        elevation = 4.dp,
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
@@ -252,7 +252,7 @@ private fun ChannelListHeaderPreview(
         ChannelListHeader(
             title = title,
             currentUser = currentUser,
-            connectionState = connectionState
+            connectionState = connectionState,
         )
     }
 }

@@ -60,7 +60,7 @@ internal class ChatNotificationsImpl constructor(
             onPermissionStatus = { status ->
                 logger.i { "[onPermissionStatus] status: $status" }
                 handler.onNotificationPermissionStatus(status)
-            }
+            },
         )
 
     init {

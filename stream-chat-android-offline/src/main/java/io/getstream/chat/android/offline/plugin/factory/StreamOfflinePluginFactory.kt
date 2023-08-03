@@ -95,32 +95,32 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
         val editMessageListener = EditMessageListenerDatabase(
             userRepository = repositoryFacade,
             messageRepository = repositoryFacade,
-            clientState = clientState
+            clientState = clientState,
         )
 
         val hideChannelListener: HideChannelListener = HideChannelListenerDatabase(
             channelRepository = repositoryFacade,
-            messageRepository = repositoryFacade
+            messageRepository = repositoryFacade,
         )
 
         val deleteReactionListener: DeleteReactionListener = DeleteReactionListenerDatabase(
             clientState = clientState,
             reactionsRepository = repositoryFacade,
-            messageRepository = repositoryFacade
+            messageRepository = repositoryFacade,
         )
 
         val sendReactionListener = SendReactionListenerDatabase(
             clientState = clientState,
             messageRepository = repositoryFacade,
             reactionsRepository = repositoryFacade,
-            userRepository = repositoryFacade
+            userRepository = repositoryFacade,
         )
 
         val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(
             clientState = clientState,
             currentUserId = chatClient.getCurrentUser()?.id,
             messageRepository = repositoryFacade,
-            userRepository = repositoryFacade
+            userRepository = repositoryFacade,
         )
 
         val sendMessageListener: SendMessageListener = SendMessageListenerDatabase(
@@ -129,26 +129,28 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
         )
 
         val sendAttachmentListener: SendAttachmentListener = SendAttachmentsListenerDatabase(
-            repositoryFacade, repositoryFacade
+            repositoryFacade,
+            repositoryFacade,
         )
 
         val shuffleGiphyListener: ShuffleGiphyListener = ShuffleGiphyListenerDatabase(
             userRepository = repositoryFacade,
-            messageRepository = repositoryFacade
+            messageRepository = repositoryFacade,
         )
 
         val queryMembersListener: QueryMembersListener = QueryMembersListenerDatabase(
-            repositoryFacade, repositoryFacade
+            repositoryFacade,
+            repositoryFacade,
         )
 
         val createChannelListener: CreateChannelListener = CreateChannelListenerDatabase(
             clientState = clientState,
             channelRepository = repositoryFacade,
-            userRepository = repositoryFacade
+            userRepository = repositoryFacade,
         )
 
         val getMessageListener: GetMessageListener = GetMessageListenerDatabase(
-            repositoryFacade = repositoryFacade
+            repositoryFacade = repositoryFacade,
         )
 
         val fetchCurrentUserListener = FetchCurrentUserListenerDatabase(

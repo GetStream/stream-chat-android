@@ -34,7 +34,7 @@ internal class TouchInterceptingFrameLayout : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     )
 
     override fun onInterceptTouchEvent(ev: MotionEvent?): Boolean {

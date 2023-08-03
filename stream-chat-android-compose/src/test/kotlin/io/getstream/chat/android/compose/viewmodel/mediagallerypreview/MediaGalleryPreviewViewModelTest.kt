@@ -79,7 +79,7 @@ internal class MediaGalleryPreviewViewModelTest {
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val messageId: String = MESSAGE_ID,
-        private val globalState: GlobalState = mock()
+        private val globalState: GlobalState = mock(),
     ) {
 
         private val clientState: ClientState = mock()

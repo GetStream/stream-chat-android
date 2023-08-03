@@ -31,12 +31,14 @@ internal object AttachmentsVerifier {
         val corruptedAttachment = message.attachments.find {
             it.upload != null && it.imageUrl == null && it.assetUrl == null
         }
-        return if (corruptedAttachment == null) result else {
+        return if (corruptedAttachment == null) {
+            result
+        } else {
             logger.e {
                 "[verifyAttachments] #uploader; message(${message.id}) has corrupted attachment: $corruptedAttachment"
             }
             Result.Failure(
-                Error.GenericError("Message(${message.id}) contains corrupted attachment: $corruptedAttachment")
+                Error.GenericError("Message(${message.id}) contains corrupted attachment: $corruptedAttachment"),
             )
         }
     }

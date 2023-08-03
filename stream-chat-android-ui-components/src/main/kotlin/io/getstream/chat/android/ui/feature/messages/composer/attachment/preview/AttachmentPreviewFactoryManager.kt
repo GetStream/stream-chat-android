@@ -73,7 +73,7 @@ public class AttachmentPreviewFactoryManager @JvmOverloads constructor(
             .onCreateViewHolder(
                 parentView = parentView,
                 attachmentRemovalListener = attachmentRemovalListener,
-                style = style
+                style = style,
             )
     }
 

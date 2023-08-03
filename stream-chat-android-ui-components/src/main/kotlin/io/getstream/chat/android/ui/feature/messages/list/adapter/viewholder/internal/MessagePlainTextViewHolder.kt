@@ -39,7 +39,7 @@ internal class MessagePlainTextViewHolder(
         StreamUiItemMessagePlainTextBinding.inflate(
             parent.streamThemeInflater,
             parent,
-            false
+            false,
         ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
@@ -65,7 +65,7 @@ internal class MessagePlainTextViewHolder(
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
                     longClickTarget = messageContainer,
-                    onLinkClicked = container.linkClickListener::onLinkClick
+                    onLinkClicked = container.linkClickListener::onLinkClick,
                 )
             }
         }

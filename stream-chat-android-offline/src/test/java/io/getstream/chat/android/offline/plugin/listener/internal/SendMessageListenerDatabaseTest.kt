@@ -62,7 +62,7 @@ internal class SendMessageListenerDatabaseTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -84,7 +84,7 @@ internal class SendMessageListenerDatabaseTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false)
+            eq(false),
         )
     }
 
@@ -104,7 +104,7 @@ internal class SendMessageListenerDatabaseTest {
         verify(userRepository, never()).insertUsers(testMessage.users())
         verify(messageRepository, never()).insertMessage(
             argThat { message -> message.id == testMessage.id },
-            eq(false)
+            eq(false),
         )
     }
 }

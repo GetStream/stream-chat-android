@@ -72,7 +72,7 @@ public fun ReactionsPicker(
             message = message,
             onMessageAction = onMessageAction,
             cells = cells,
-            reactionTypes = reactionTypes
+            reactionTypes = reactionTypes,
         )
     },
 ) {
@@ -82,7 +82,7 @@ public fun ReactionsPicker(
         overlayColor = overlayColor,
         headerContent = headerContent,
         centerContent = centerContent,
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
     )
 }
 
@@ -110,11 +110,11 @@ internal fun DefaultReactionsPickerCenterContent(
             onMessageAction(
                 React(
                     reaction = Reaction(messageId = message.id, reactionOptionItemState.type),
-                    message = message
-                )
+                    message = message,
+                ),
             )
         },
-        cells = cells
+        cells = cells,
     )
 }
 
@@ -128,7 +128,7 @@ internal fun ReactionPickerPreview() {
     ChatTheme {
         ReactionsPicker(
             message = PreviewMessageData.messageWithOwnReaction,
-            onMessageAction = {}
+            onMessageAction = {},
         )
     }
 }

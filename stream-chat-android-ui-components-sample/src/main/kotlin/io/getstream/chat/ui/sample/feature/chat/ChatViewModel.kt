@@ -56,7 +56,7 @@ class ChatViewModel(
                         NavigationEvent.NavigateToGroupChatInfo(cid)
                     } else {
                         NavigationEvent.NavigateToChatInfo(cid)
-                    }
+                    },
                 )
             }
         }

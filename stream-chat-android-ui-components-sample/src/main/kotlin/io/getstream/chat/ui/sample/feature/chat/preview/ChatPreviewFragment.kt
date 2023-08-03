@@ -75,7 +75,7 @@ class ChatPreviewFragment : Fragment() {
                         ChatPreviewFragmentDirections.actionOpenChat(cid = it.cid),
                     )
                 }
-            }
+            },
         )
     }
 
@@ -120,7 +120,7 @@ class ChatPreviewFragment : Fragment() {
 
     private fun navigateToChatInfo(cid: String) {
         findNavController().navigateSafely(
-            ChatPreviewFragmentDirections.actionOpenChatInfo(userData = args.userData, cid = cid)
+            ChatPreviewFragmentDirections.actionOpenChatInfo(userData = args.userData, cid = cid),
         )
     }
 }

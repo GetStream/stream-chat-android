@@ -26,16 +26,19 @@ public enum class MessagePosition {
      * Message that is the first message in the group at the top.
      */
     TOP,
+
     /**
      * Message that has another message both at the top and bottom of it.
      */
     MIDDLE,
+
     /**
      * Message that's the last message in the group, at the bottom.
      */
     BOTTOM,
+
     /**
      * Message that is not in a group.
      */
-    NONE
+    NONE,
 }

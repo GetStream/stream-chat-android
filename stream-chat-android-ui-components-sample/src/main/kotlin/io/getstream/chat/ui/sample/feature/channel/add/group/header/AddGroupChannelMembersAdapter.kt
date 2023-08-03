@@ -36,7 +36,7 @@ class AddGroupChannelMembersAdapter :
             override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
                 return oldItem == newItem
             }
-        }
+        },
     ) {
 
     var memberClickListener: MemberClickListener? = null

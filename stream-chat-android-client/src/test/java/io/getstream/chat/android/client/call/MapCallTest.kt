@@ -84,7 +84,7 @@ internal class MapCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedResult
-            }
+            },
         )
         mapper `should be invoked with` resultValue
         blockedCall.isStarted() `should be equal to` true

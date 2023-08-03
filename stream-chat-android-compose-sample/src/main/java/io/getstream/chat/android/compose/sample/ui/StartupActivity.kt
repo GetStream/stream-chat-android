@@ -59,8 +59,8 @@ class StartupActivity : AppCompatActivity() {
                                 context = this@StartupActivity,
                                 channelId = channelId,
                                 messageId = messageId,
-                                parentMessageId = parentMessageId
-                            )
+                                parentMessageId = parentMessageId,
+                            ),
                         )
                         .startActivities()
                 } else {
@@ -84,7 +84,7 @@ class StartupActivity : AppCompatActivity() {
             context: Context,
             channelId: String,
             messageId: String?,
-            parentMessageId: String?
+            parentMessageId: String?,
         ): Intent {
             return Intent(context, StartupActivity::class.java).apply {
                 putExtra(KEY_CHANNEL_ID, channelId)

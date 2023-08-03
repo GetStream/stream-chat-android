@@ -54,19 +54,19 @@ public data class TypingIndicatorViewStyle(
                 val typingIndicatorUsersTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.TypingIndicatorView_streamUiTypingIndicatorUsersTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.TypingIndicatorView_streamUiTypingIndicatorUsersTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.TypingIndicatorView_streamUiTypingIndicatorUsersTextFontAssets,
-                        R.styleable.TypingIndicatorView_streamUiTypingIndicatorUsersTextFont
+                        R.styleable.TypingIndicatorView_streamUiTypingIndicatorUsersTextFont,
                     )
                     .style(
                         R.styleable.TypingIndicatorView_streamUiTypingIndicatorUsersTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 

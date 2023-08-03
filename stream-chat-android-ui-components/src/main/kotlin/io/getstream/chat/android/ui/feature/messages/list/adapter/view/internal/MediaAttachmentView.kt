@@ -84,7 +84,7 @@ internal class MediaAttachmentView : ConstraintLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -121,7 +121,7 @@ internal class MediaAttachmentView : ConstraintLayout {
                 style.playVideoIconPaddingStart,
                 style.playVideoIconPaddingTop,
                 style.playVideoIconPaddingEnd,
-                style.playVideoIconPaddingBottom
+                style.playVideoIconPaddingBottom,
             )
         }
     }
@@ -149,7 +149,7 @@ internal class MediaAttachmentView : ConstraintLayout {
 
         showMediaPreview(
             mediaUrl = url,
-            showImagePlaceholder = attachment.isImage()
+            showImagePlaceholder = attachment.isImage(),
         ) {
             showMore()
             binding.playIconImageView.isVisible = attachment.isVideo()
@@ -196,7 +196,7 @@ internal class MediaAttachmentView : ConstraintLayout {
             onComplete = {
                 showLoading(false)
                 onCompleteCallback()
-            }
+            },
         )
     }
 

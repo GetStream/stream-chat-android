@@ -62,13 +62,13 @@ internal class DatabaseQueryChannelsRepository(
                 generateId(queryChannelsSpec.filter, queryChannelsSpec.querySort),
                 queryChannelsSpec.filter,
                 queryChannelsSpec.querySort,
-                queryChannelsSpec.cids.toList()
+                queryChannelsSpec.cids.toList(),
             )
 
         private fun toModel(queryChannelsEntity: QueryChannelsEntity): QueryChannelsSpec =
             QueryChannelsSpec(
                 queryChannelsEntity.filter,
-                queryChannelsEntity.querySort
+                queryChannelsEntity.querySort,
             ).apply { cids = queryChannelsEntity.cids.toSet() }
     }
 }

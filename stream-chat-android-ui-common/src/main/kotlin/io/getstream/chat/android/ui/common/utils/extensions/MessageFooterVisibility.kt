@@ -46,7 +46,7 @@ public fun MessageFooterVisibility.shouldShowMessageFooter(
             message = message,
             nextMessage = nextMessage,
             isLastMessageInGroup = isLastMessageInGroup,
-            timeDifferenceMillis = timeDifferenceMillis
+            timeDifferenceMillis = timeDifferenceMillis,
         )
     }
 }

@@ -130,9 +130,9 @@ internal interface ChatApi {
             reaction = Reaction(
                 messageId = messageId,
                 type = reactionType,
-                score = 0
+                score = 0,
             ),
-            enforceUnique = enforceUnique
+            enforceUnique = enforceUnique,
         )
     }
 

@@ -39,7 +39,6 @@ public fun ChannelListViewModel.bindView(
     view: ChannelListView,
     lifecycleOwner: LifecycleOwner,
 ) {
-
     state.combineWith(paginationState) { state, paginationState -> state to paginationState }
         .combineWith(typingEvents) { states, typingEvents ->
             val state = states?.first
@@ -100,6 +99,6 @@ public fun ChannelListViewModel.bindView(
         lifecycleOwner,
         EventObserver {
             view.showError(it)
-        }
+        },
     )
 }

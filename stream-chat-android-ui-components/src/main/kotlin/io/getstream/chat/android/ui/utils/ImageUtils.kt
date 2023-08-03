@@ -39,7 +39,7 @@ public fun ImageView.load(
         placeholderResId = placeholderResId,
         transformation = transformation,
         onStart = onStart,
-        onComplete = onComplete
+        onComplete = onComplete,
     )
 }
 
@@ -57,7 +57,7 @@ public fun ImageView.load(
         placeholderDrawable = placeholderDrawable,
         transformation = transformation,
         onStart = onStart,
-        onComplete = onComplete
+        onComplete = onComplete,
     )
 }
 
@@ -85,7 +85,7 @@ public suspend fun ImageView.loadAndResize(
         placeholderDrawable = placeholderDrawable,
         transformation = transformation,
         onStart = onStart,
-        onComplete = onComplete
+        onComplete = onComplete,
     )
 }
 
@@ -103,6 +103,6 @@ public fun ImageView.loadVideoThumbnail(
         placeholderResId = placeholderResId,
         transformation = transformation,
         onStart = onStart,
-        onComplete = onComplete
+        onComplete = onComplete,
     )
 }

@@ -111,14 +111,14 @@ public fun Channel.getMembersStatusText(
             val memberCountString = context.resources.getQuantityString(
                 memberCountResId,
                 memberCount,
-                memberCount
+                memberCount,
             )
 
             return if (watcherCount > 0) {
                 context.getString(
                     memberCountWithOnlineResId,
                     memberCountString,
-                    watcherCount
+                    watcherCount,
                 )
             } else {
                 memberCountString

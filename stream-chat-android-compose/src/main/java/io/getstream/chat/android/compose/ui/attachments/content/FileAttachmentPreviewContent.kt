@@ -57,21 +57,21 @@ public fun FileAttachmentPreviewContent(
         modifier = modifier
             .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start)
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
         items(attachments) { attachment ->
             Surface(
                 modifier = Modifier.padding(1.dp),
                 color = ChatTheme.colors.appBackground,
                 shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, ChatTheme.colors.borders)
+                border = BorderStroke(1.dp, ChatTheme.colors.borders),
             ) {
                 Row(
                     modifier = Modifier
                         .width(200.dp)
                         .height(50.dp)
                         .padding(vertical = 8.dp, horizontal = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     FileAttachmentImage(attachment = attachment)
 
@@ -80,14 +80,14 @@ public fun FileAttachmentPreviewContent(
                             .weight(1f)
                             .padding(horizontal = 8.dp),
                         horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
                     ) {
                         Text(
                             text = attachment.title ?: attachment.name ?: "",
                             style = ChatTheme.typography.bodyBold,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = ChatTheme.colors.textHighEmphasis
+                            color = ChatTheme.colors.textHighEmphasis,
                         )
 
                         val fileSize = attachment.upload?.length()?.let { length ->
@@ -97,14 +97,14 @@ public fun FileAttachmentPreviewContent(
                             Text(
                                 text = fileSize,
                                 style = ChatTheme.typography.footnote,
-                                color = ChatTheme.colors.textLowEmphasis
+                                color = ChatTheme.colors.textLowEmphasis,
                             )
                         }
                     }
 
                     CancelIcon(
                         modifier = Modifier.padding(4.dp),
-                        onClick = { onAttachmentRemoved(attachment) }
+                        onClick = { onAttachmentRemoved(attachment) },
                     )
                 }
             }

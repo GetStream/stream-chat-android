@@ -33,11 +33,11 @@ public sealed class StreamCodeException : StreamException {
  */
 public data class MessageModerationFailedException(
     val details: List<Detail>,
-    override val message: String? = null
+    override val message: String? = null,
 ) : StreamCodeException(message) {
 
     public data class Detail(
         public val code: Int,
-        public val messages: List<String>
+        public val messages: List<String>,
     )
 }

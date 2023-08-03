@@ -36,12 +36,12 @@ public fun LoadingFooter(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .background(color = ChatTheme.colors.appBackground)
-            .padding(top = 8.dp, bottom = 48.dp)
+            .padding(top = 8.dp, bottom = 48.dp),
     ) {
         LoadingIndicator(
             modifier = Modifier
                 .size(16.dp)
-                .align(Alignment.Center)
+                .align(Alignment.Center),
         )
     }
 }

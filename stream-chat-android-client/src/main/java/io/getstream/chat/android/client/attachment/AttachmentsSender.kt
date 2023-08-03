@@ -46,7 +46,7 @@ internal class AttachmentsSender(
     private val networkType: UploadAttachmentsNetworkType,
     private val clientState: ClientState,
     private val scope: CoroutineScope,
-    private val verifier: AttachmentsVerifier = AttachmentsVerifier
+    private val verifier: AttachmentsVerifier = AttachmentsVerifier,
 ) {
 
     private var jobsMap: Map<String, Job> = emptyMap()
@@ -116,7 +116,7 @@ internal class AttachmentsSender(
             Result.Failure(
                 Error.GenericError(
                     "Chat is offline, not sending message with id ${message.id} and text ${message.text}",
-                )
+                ),
             )
         }
     }
@@ -144,7 +144,7 @@ internal class AttachmentsSender(
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
                                 messageToBeSent = repositoryFacade.selectMessage(newMessage.id) ?: newMessage.copy(
-                                    attachments = attachments.toMutableList()
+                                    attachments = attachments.toMutableList(),
                                 )
                                 allAttachmentsUploaded = true
                                 jobsMap[newMessage.id]?.cancel()

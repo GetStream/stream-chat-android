@@ -54,7 +54,7 @@ class DateAttachmentFactory : AttachmentFactory {
             binding.dateTextView.setOnClickListener {
                 listeners?.attachmentClickListener?.onAttachmentClick(
                     message,
-                    message.attachments.first()
+                    message.attachments.first(),
                 )
             }
             binding.dateTextView.setOnLongClickListener {

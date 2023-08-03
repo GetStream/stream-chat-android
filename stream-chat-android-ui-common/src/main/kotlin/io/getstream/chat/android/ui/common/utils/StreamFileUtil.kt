@@ -52,7 +52,7 @@ public object StreamFileUtil {
         return try {
             val file = File(
                 context.getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: context.cacheDir,
-                "share_image_${System.currentTimeMillis()}.png"
+                "share_image_${System.currentTimeMillis()}.png",
             )
             file.outputStream().use { out ->
                 bitmap.compress(Bitmap.CompressFormat.PNG, DEFAULT_BITMAP_QUALITY, out)
@@ -233,7 +233,7 @@ public object StreamFileUtil {
                         Success(getUriForFile(context, file))
                     } else {
                         val fileUrl = attachment.assetUrl ?: attachment.url ?: return Failure(
-                            Error.GenericError(message = "File URL cannot be null.")
+                            Error.GenericError(message = "File URL cannot be null."),
                         )
 
                         when (val response = ChatClient.instance().downloadFile(fileUrl).await()) {
@@ -261,7 +261,7 @@ public object StreamFileUtil {
         return Failure(
             throwable?.let { exception ->
                 Error.ThrowableError(message = "Could not write to file.", cause = exception)
-            } ?: Error.GenericError(message = "Could not write to file.")
+            } ?: Error.GenericError(message = "Could not write to file."),
         )
     }
 

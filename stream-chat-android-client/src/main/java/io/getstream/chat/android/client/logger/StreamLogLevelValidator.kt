@@ -25,7 +25,7 @@ import io.getstream.log.Priority
  * @see ChatLogLevel
  */
 internal class StreamLogLevelValidator(
-    private val logLevel: ChatLogLevel
+    private val logLevel: ChatLogLevel,
 ) : IsLoggableValidator {
 
     /**

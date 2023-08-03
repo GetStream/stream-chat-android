@@ -44,7 +44,7 @@ internal class GiphyViewHolder(
     internal val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.streamThemeInflater,
         parent,
-        false
+        false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
@@ -84,7 +84,7 @@ internal class GiphyViewHolder(
                     },
                     onComplete = {
                         binding.loadingProgressBar.isVisible = false
-                    }
+                    },
                 )
             }
 

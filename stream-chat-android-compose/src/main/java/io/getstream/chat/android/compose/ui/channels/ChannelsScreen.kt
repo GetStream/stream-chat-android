@@ -91,7 +91,7 @@ public fun ChannelsScreen(
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
-        factory = viewModelFactory
+        factory = viewModelFactory,
     )
 
     val selectedChannel by listViewModel.selectedChannel
@@ -118,15 +118,15 @@ public fun ChannelsScreen(
                         onAvatarClick = { onHeaderAvatarClick() },
                         currentUser = user,
                         title = title,
-                        connectionState = connectionState
+                        connectionState = connectionState,
                     )
                 }
-            }
+            },
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color = ChatTheme.colors.appBackground)
+                    .background(color = ChatTheme.colors.appBackground),
             ) {
                 if (isShowingSearch) {
                     SearchInput(
@@ -148,7 +148,7 @@ public fun ChannelsScreen(
                     onChannelClick = onItemClick,
                     onChannelLongClick = {
                         listViewModel.selectChannel(it)
-                    }
+                    },
                 )
             }
         }
@@ -157,7 +157,7 @@ public fun ChannelsScreen(
         AnimatedVisibility(
             visible = channel.cid.isNotEmpty(),
             enter = fadeIn(),
-            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2))
+            exit = fadeOut(animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)),
         ) {
             SelectedChannelMenu(
                 modifier = Modifier
@@ -165,12 +165,12 @@ public fun ChannelsScreen(
                     .animateEnterExit(
                         enter = slideInVertically(
                             initialOffsetY = { height -> height },
-                            animationSpec = tween()
+                            animationSpec = tween(),
                         ),
                         exit = slideOutVertically(
                             targetOffsetY = { height -> height },
-                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2)
-                        )
+                            animationSpec = tween(durationMillis = AnimationConstants.DefaultDurationMillis / 2),
+                        ),
                     ),
                 selectedChannel = channel,
                 currentUser = user,
@@ -183,7 +183,7 @@ public fun ChannelsScreen(
                         else -> listViewModel.performChannelAction(action)
                     }
                 },
-                onDismiss = { listViewModel.dismissChannelAction() }
+                onDismiss = { listViewModel.dismissChannelAction() },
             )
         }
 
@@ -193,27 +193,27 @@ public fun ChannelsScreen(
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_title,
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
-                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user),
                 ),
                 onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
-                onDismiss = { listViewModel.dismissChannelAction() }
+                onDismiss = { listViewModel.dismissChannelAction() },
             )
         } else if (activeAction is DeleteConversation) {
             SimpleDialog(
                 modifier = Modifier.padding(16.dp),
                 title = stringResource(
-                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_title
+                    id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_title,
                 ),
                 message = stringResource(
                     id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
-                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user)
+                    ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user),
                 ),
                 onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },
-                onDismiss = { listViewModel.dismissChannelAction() }
+                onDismiss = { listViewModel.dismissChannelAction() },
             )
         }
     }

@@ -119,7 +119,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
             modifier = Modifier
                 .padding(vertical = 8.dp),
             color = ChatTheme.colors.overlayDark,
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
         ) {
             Text(
                 modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
@@ -127,10 +127,10 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
                     dateSeparator.date.time,
                     System.currentTimeMillis(),
                     DateUtils.DAY_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_RELATIVE
+                    DateUtils.FORMAT_ABBREV_RELATIVE,
                 ).toString(),
                 color = ChatTheme.colors.barsBackground,
-                style = ChatTheme.typography.body
+                style = ChatTheme.typography.body,
             )
         }
     }
@@ -147,8 +147,8 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
     val backgroundGradient = Brush.verticalGradient(
         listOf(
             ChatTheme.colors.threadSeparatorGradientStart,
-            ChatTheme.colors.threadSeparatorGradientEnd
-        )
+            ChatTheme.colors.threadSeparatorGradientEnd,
+        ),
     )
     val replyCount = threadSeparator.replyCount
 
@@ -157,17 +157,17 @@ internal fun DefaultMessageThreadSeparatorContent(threadSeparator: ThreadDateSep
             .fillMaxWidth()
             .padding(vertical = ChatTheme.dimens.threadSeparatorVerticalPadding)
             .background(brush = backgroundGradient),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier.padding(vertical = ChatTheme.dimens.threadSeparatorTextVerticalPadding),
             text = LocalContext.current.resources.getQuantityString(
                 R.plurals.stream_compose_message_list_thread_separator,
                 replyCount,
-                replyCount
+                replyCount,
             ),
             color = ChatTheme.colors.textLowEmphasis,
-            style = ChatTheme.typography.body
+            style = ChatTheme.typography.body,
         )
     }
 }
@@ -188,7 +188,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
         text = systemMessageState.message.text,
         color = ChatTheme.colors.textLowEmphasis,
         style = ChatTheme.typography.footnoteBold,
-        textAlign = TextAlign.Center
+        textAlign = TextAlign.Center,
     )
 }
 

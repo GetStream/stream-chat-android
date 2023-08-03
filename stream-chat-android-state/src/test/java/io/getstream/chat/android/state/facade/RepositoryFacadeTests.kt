@@ -75,16 +75,16 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             val message1 = randomMessage(id = "messageId1", cid = "type:id1", user = user)
             val message2 = randomMessage(id = "messageId2", cid = "type:id2", user = user)
             whenever(messages.selectMessagesForChannel(eq("type:id1"), eq(paginationRequest))) doReturn listOf(
-                message1
+                message1,
             )
             whenever(messages.selectMessagesForChannel(eq("type:id2"), eq(paginationRequest))) doReturn listOf(
-                message2
+                message2,
             )
             val channel1 = randomChannel(messages = emptyList(), id = "id1", type = "type", createdBy = user)
             val channelEntity2 = randomChannel(messages = emptyList(), id = "id2", type = "type", createdBy = user)
             whenever(channels.selectChannels(eq(listOf("type:id1", "type:id2")))) doReturn listOf(
                 channel1,
-                channelEntity2
+                channelEntity2,
             )
 
             val result = sut.selectChannels(listOf("type:id1", "type:id2"), paginationRequest)
@@ -100,7 +100,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val message2 = randomMessage()
         whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(
             message1,
-            message2
+            message2,
         )
 
         val result = sut.selectMessages(listOf("messageId1", "messageId2"))
@@ -129,7 +129,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             check { listUser ->
                 listUser.size `should be equal to` 5
                 listUser `should contain same` listOf(memberUser, channelUser, userRead, messageUser, pinnedByUser)
-            }
+            },
         )
     }
 
@@ -162,7 +162,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         verify(users).insertUsers(
             check { listUser ->
                 listUser `should contain same` expectedListOfUser
-            }
+            },
         )
     }
 
@@ -187,7 +187,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                         channelUser,
                         userRead,
                         messageUser,
-                        pinnedByUser
+                        pinnedByUser,
                     ) to acc.second + channel
                 }
 
@@ -197,7 +197,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             verify(users).insertUsers(
                 check { listUser ->
                     listUser `should contain same` listOfUser
-                }
+                },
             )
         }
 
@@ -234,7 +234,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             verify(users).insertUsers(
                 check { listUser ->
                     listUser `should contain same` listOfUser
-                }
+                },
             )
         }
 

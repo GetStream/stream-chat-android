@@ -70,88 +70,87 @@ public data class ChannelActionsDialogViewStyle(
                 0,
                 0,
             ).use {
-
                 val a = context.obtainStyledAttributes(
                     it.getResourceId(
                         R.styleable.ChannelListView_streamUiChannelActionsDialogStyle,
                         R.style.StreamUi_ChannelList_ActionsDialog,
                     ),
-                    R.styleable.ChannelActionsDialog
+                    R.styleable.ChannelActionsDialog,
                 )
 
                 val memberNamesTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_large)
+                        context.getDimension(R.dimen.stream_ui_text_large),
                     )
                     .color(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextFontAssets,
-                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextFont
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextFont,
                     )
                     .style(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberNamesTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
                 val memberInfoTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_small)
+                        context.getDimension(R.dimen.stream_ui_text_small),
                     )
                     .color(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_secondary)
+                        context.getColorCompat(R.color.stream_ui_text_color_secondary),
                     )
                     .font(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextFontAssets,
-                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextFont
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextFont,
                     )
                     .style(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsMemberInfoTextStyle,
-                        Typeface.NORMAL
+                        Typeface.NORMAL,
                     )
                     .build()
 
                 val itemTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTextColor,
-                        context.getColorCompat(R.color.stream_ui_text_color_primary)
+                        context.getColorCompat(R.color.stream_ui_text_color_primary),
                     )
                     .font(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTextFontAssets,
-                        R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTextFont
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTextFont,
                     )
                     .style(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsItemTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
                 val warningItemTextStyle = TextStyle.Builder(a)
                     .size(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextSize,
-                        context.getDimension(R.dimen.stream_ui_text_medium)
+                        context.getDimension(R.dimen.stream_ui_text_medium),
                     )
                     .color(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextColor,
-                        context.getColorCompat(R.color.stream_ui_accent_red)
+                        context.getColorCompat(R.color.stream_ui_accent_red),
                     )
                     .font(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextFontAssets,
-                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextFont
+                        R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextFont,
                     )
                     .style(
                         R.styleable.ChannelActionsDialog_streamUiChannelActionsWarningItemTextStyle,
-                        Typeface.BOLD
+                        Typeface.BOLD,
                     )
                     .build()
 
@@ -160,7 +159,7 @@ public data class ChannelActionsDialogViewStyle(
 
                 val viewInfoEnabled = a.getBoolean(
                     R.styleable.ChannelActionsDialog_streamUiChannelActionsViewInfoEnabled,
-                    false
+                    false,
                 )
 
                 val leaveGroupIcon =
@@ -169,7 +168,7 @@ public data class ChannelActionsDialogViewStyle(
 
                 val leaveGroupEnabled = a.getBoolean(
                     R.styleable.ChannelActionsDialog_streamUiChannelActionsLeaveGroupEnabled,
-                    true
+                    true,
                 )
 
                 val deleteConversationIcon =
@@ -178,7 +177,7 @@ public data class ChannelActionsDialogViewStyle(
 
                 val deleteConversationEnabled = a.getBoolean(
                     R.styleable.ChannelActionsDialog_streamUiChannelActionsDeleteConversationEnabled,
-                    true
+                    true,
                 )
 
                 val cancelIcon = a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsCancelIcon)
@@ -186,7 +185,7 @@ public data class ChannelActionsDialogViewStyle(
 
                 val cancelEnabled = a.getBoolean(
                     R.styleable.ChannelActionsDialog_streamUiChannelActionsCancelEnabled,
-                    true
+                    true,
                 )
 
                 val background = a.getDrawable(R.styleable.ChannelActionsDialog_streamUiChannelActionsBackground)

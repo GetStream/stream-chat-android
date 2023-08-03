@@ -81,11 +81,11 @@ public class MediaPreviewActivity : AppCompatActivity() {
                         Toast.makeText(
                             this,
                             R.string.stream_ui_message_list_attachment_display_error,
-                            Toast.LENGTH_SHORT
+                            Toast.LENGTH_SHORT,
                         ).show()
                         finish()
                     },
-                    onBackPressed = { finish() }
+                    onBackPressed = { finish() },
                 )
             }
         }
@@ -112,7 +112,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
             modifier = Modifier.fillMaxSize(),
             backgroundColor = Color.Black,
             topBar = { MediaPreviewToolbar(title, onBackPressed) },
-            content = { MediaPreviewContent(url, onBackPressed, onPlaybackError) }
+            content = { MediaPreviewContent(url, onBackPressed, onPlaybackError) },
         )
     }
 
@@ -129,11 +129,11 @@ public class MediaPreviewActivity : AppCompatActivity() {
         SideEffect {
             systemUiController.setStatusBarColor(
                 color = statusBarColor,
-                darkIcons = false
+                darkIcons = false,
             )
             systemUiController.setNavigationBarColor(
                 color = navigationBarColor,
-                darkIcons = false
+                darkIcons = false,
             )
         }
     }
@@ -155,7 +155,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
             navigationIcon = {
                 IconButton(
                     modifier = Modifier.mirrorRtl(LocalLayoutDirection.current),
-                    onClick = { onBackPressed() }
+                    onClick = { onBackPressed() },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
@@ -171,9 +171,9 @@ public class MediaPreviewActivity : AppCompatActivity() {
                     textAlign = TextAlign.Start,
                     style = ChatTheme.typography.body,
                     maxLines = 1,
-                    color = Color.White
+                    color = Color.White,
                 )
-            }
+            },
         )
     }
 
@@ -198,14 +198,14 @@ public class MediaPreviewActivity : AppCompatActivity() {
             val frameLayout = FrameLayout(context).apply {
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                 )
             }
 
             val progressBar = ProgressBar(context).apply {
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
                 ).apply {
                     gravity = Gravity.CENTER
                 }
@@ -230,7 +230,7 @@ public class MediaPreviewActivity : AppCompatActivity() {
 
                 layoutParams = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                 ).apply {
                     gravity = Gravity.CENTER
                 }

@@ -82,14 +82,14 @@ public fun AttachmentsPicker(
             .clickable(
                 onClick = onDismiss,
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            )
+                interactionSource = remember { MutableInteractionSource() },
+            ),
     ) {
         Card(
             modifier = modifier.clickable(
                 indication = null,
                 onClick = {},
-                interactionSource = remember { MutableInteractionSource() }
+                interactionSource = remember { MutableInteractionSource() },
             ),
             elevation = 4.dp,
             shape = shape,
@@ -149,7 +149,7 @@ private fun AttachmentPickerOptions(
 ) {
     Row(
         Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
             tabFactories.forEachIndexed { index, tabFactory ->
@@ -162,10 +162,10 @@ private fun AttachmentPickerOptions(
                     content = {
                         tabFactory.PickerTabIcon(
                             isEnabled = isEnabled,
-                            isSelected = isSelected
+                            isSelected = isSelected,
                         )
                     },
-                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) }
+                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) },
                 )
             }
         }
@@ -188,9 +188,9 @@ private fun AttachmentPickerOptions(
                         ChatTheme.colors.primaryAccent
                     } else {
                         ChatTheme.colors.textLowEmphasis
-                    }
+                    },
                 )
-            }
+            },
         )
     }
 }

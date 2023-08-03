@@ -70,7 +70,7 @@ internal class ChannelStateLogic(
     private val typingEventPruner = TypingEventPruner(
         coroutineScope = coroutineScope,
         channelId = mutableState.channelId,
-        onUpdated = ::updateTypingStates
+        onUpdated = ::updateTypingStates,
     )
 
     /**
@@ -323,7 +323,7 @@ internal class ChannelStateLogic(
                     )
                     false -> member
                 }
-            }
+            },
         )
     }
 
@@ -524,14 +524,14 @@ internal class ChannelStateLogic(
     private fun determinePaginationEnd(request: QueryChannelRequest, noMoreMessages: Boolean) {
         when {
             /* If we are not filtering the messages in any direction and not providing any message id then
-            * we are requesting the newest messages, only if not inside search so we don't override the
-            * search results */
+             * we are requesting the newest messages, only if not inside search so we don't override the
+             * search results */
             !request.isFilteringMessages() -> {
                 mutableState.setEndOfOlderMessages(false)
                 mutableState.setEndOfNewerMessages(true)
             }
             /* If we are filtering around a specific message we are loading both newer and older messages
-            * and can't be sure if there are no older or newer messages left */
+             * and can't be sure if there are no older or newer messages left */
             request.isFilteringAroundIdMessages() -> {
                 mutableState.setEndOfOlderMessages(false)
                 mutableState.setEndOfNewerMessages(false)
