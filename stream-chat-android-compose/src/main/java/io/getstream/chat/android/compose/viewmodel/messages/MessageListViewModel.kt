@@ -451,7 +451,7 @@ public class MessageListViewModel(
      * @return [Int] which describes how many messages come after the last message we've seen in the list.
      */
     private fun getUnreadMessageCount(newMessageState: NewMessageState? = currentMessagesState.newMessageState): Int {
-        if (newMessageState == null || newMessageState == MyOwn) return 0
+        if (newMessageState == null || newMessageState == MyOwn || currentMessagesState.messageItems.isEmpty()) return 0
 
         val messageItems = currentMessagesState.messageItems
         val lastSeenMessagePosition =
