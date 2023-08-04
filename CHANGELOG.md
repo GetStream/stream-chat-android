@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix crash accessing position 0 of an empty list. [#4911](https://github.com/GetStream/stream-chat-android/pull/4911) 
 
 ### ⬆️ Improved
 
