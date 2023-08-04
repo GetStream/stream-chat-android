@@ -475,7 +475,9 @@ internal class MessageInputFieldView : FrameLayout {
     }
 
     sealed class Mode {
-        object MessageMode : Mode()
+        object MessageMode : Mode() {
+            override fun toString(): String = "MessageMode"
+        }
         data class EditMessageMode(val oldMessage: Message) : Mode()
         data class CommandMode(val command: Command) : Mode()
         data class FileAttachmentMode(val attachments: List<AttachmentMetaData>) : Mode()

@@ -919,24 +919,39 @@ public abstract class io/getstream/chat/android/client/clientstate/DisconnectCau
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$ConnectionReleased : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$ConnectionReleased;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$Error : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatNetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;Lio/getstream/chat/android/client/errors/ChatNetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$Error;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$NetworkNotAvailable : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$NetworkNotAvailable;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public fun <init> (Lio/getstream/chat/android/client/errors/ChatNetworkError;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+	public final fun copy (Lio/getstream/chat/android/client/errors/ChatNetworkError;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;Lio/getstream/chat/android/client/errors/ChatNetworkError;ILjava/lang/Object;)Lio/getstream/chat/android/client/clientstate/DisconnectCause$UnrecoverableError;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatNetworkError;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable : io/getstream/chat/android/client/clientstate/DisconnectCause {
 	public static final field INSTANCE Lio/getstream/chat/android/client/clientstate/DisconnectCause$WebSocketNotAvailable;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/client/debugger/ChatClientDebugger {
@@ -1403,6 +1418,7 @@ public final class io/getstream/chat/android/client/events/EventHandlingResult$R
 
 public final class io/getstream/chat/android/client/events/EventHandlingResult$Skip : io/getstream/chat/android/client/events/EventHandlingResult {
 	public static final field INSTANCE Lio/getstream/chat/android/client/events/EventHandlingResult$Skip;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/events/EventHandlingResult$WatchAndAdd : io/getstream/chat/android/client/events/EventHandlingResult {
@@ -3189,6 +3205,7 @@ public abstract class io/getstream/chat/android/client/models/MessageSyncInProgr
 
 public final class io/getstream/chat/android/client/models/MessageSyncNone : io/getstream/chat/android/client/models/MessageSyncContent {
 	public static final field INSTANCE Lio/getstream/chat/android/client/models/MessageSyncNone;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/client/models/MessageSyncType : java/lang/Enum {

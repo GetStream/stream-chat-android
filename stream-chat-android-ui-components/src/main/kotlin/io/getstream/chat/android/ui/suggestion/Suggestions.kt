@@ -31,5 +31,5 @@ public sealed class Suggestions {
 
     public data class MentionSuggestions(val users: List<User>) : Suggestions()
     public data class CommandSuggestions(val commands: List<Command>) : Suggestions()
-    public object EmptySuggestions : Suggestions()
+    public object EmptySuggestions : Suggestions() { override fun toString(): String = "EmptySuggestions" }
 }

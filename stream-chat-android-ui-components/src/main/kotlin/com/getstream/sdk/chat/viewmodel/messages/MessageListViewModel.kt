@@ -1053,7 +1053,9 @@ public class MessageListViewModel(
         /**
          * Signifies that the message list is loading.
          */
-        public object Loading : State()
+        public object Loading : State() {
+            override fun toString(): String = "Loading"
+        }
 
         /**
          * Signifies that the messages have successfully loaded.
@@ -1065,7 +1067,9 @@ public class MessageListViewModel(
         /**
          * Signals that the View should navigate back.
          */
-        public object NavigateUp : State()
+        public object NavigateUp : State() {
+            override fun toString(): String = "NavigateUp"
+        }
     }
 
     /**
@@ -1076,12 +1080,16 @@ public class MessageListViewModel(
         /**
          * When the back button is pressed.
          */
-        public object BackButtonPressed : Event()
+        public object BackButtonPressed : Event() {
+            override fun toString(): String = "BackButtonPressed"
+        }
 
         /**
          * When the oldest loaded message in the list has been reached.
          */
-        public object EndRegionReached : Event()
+        public object EndRegionReached : Event() {
+            override fun toString(): String = "EndRegionReached"
+        }
 
         /**
          * When the newest loaded message in the list has been reached and there's still newer messages to be loaded.
@@ -1091,7 +1099,9 @@ public class MessageListViewModel(
         /**
          * When the newest message in the channel has been read.
          */
-        public object LastMessageRead : Event()
+        public object LastMessageRead : Event() {
+            override fun toString(): String = "LastMessageRead"
+        }
 
         /**
          * When the users enters thread mode.
@@ -1299,7 +1309,9 @@ public class MessageListViewModel(
         /**
          * Normal mode. When the user is not participating in a thread.
          */
-        public object Normal : Mode()
+        public object Normal : Mode() {
+            override fun toString(): String = "Normal"
+        }
     }
 
     /**

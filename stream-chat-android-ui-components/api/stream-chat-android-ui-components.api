@@ -15,6 +15,7 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$DateSeparatorI
 
 public final class com/getstream/sdk/chat/adapter/MessageListItem$LoadingMoreIndicatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$LoadingMoreIndicatorItem;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/adapter/MessageListItem$MessageItem : com/getstream/sdk/chat/adapter/MessageListItem {
@@ -52,6 +53,7 @@ public final class com/getstream/sdk/chat/adapter/MessageListItem$Position : jav
 
 public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem : com/getstream/sdk/chat/adapter/MessageListItem {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/adapter/MessageListItem$ThreadPlaceholderItem;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/adapter/MessageListItem$ThreadSeparatorItem : com/getstream/sdk/chat/adapter/MessageListItem {
@@ -309,6 +311,7 @@ public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewM
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$BanUser : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
@@ -378,6 +381,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$EndRegionReached : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$EndRegionReached;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$FlagMessage : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
@@ -409,6 +413,7 @@ public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewMode
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LastMessageRead : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$LastMessageRead;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event$MessageReaction : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Event {
@@ -593,6 +598,7 @@ public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewM
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Normal : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Normal;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode$Thread : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$Mode {
@@ -614,10 +620,12 @@ public abstract class com/getstream/sdk/chat/viewmodel/messages/MessageListViewM
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$Loading : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$Loading;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$NavigateUp : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State {
 	public static final field INSTANCE Lcom/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$NavigateUp;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State$Result : com/getstream/sdk/chat/viewmodel/messages/MessageListViewModel$State {
@@ -1147,6 +1155,7 @@ public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelList
 
 public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$LoadingMoreItem : io/getstream/chat/android/ui/channel/list/adapter/ChannelListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/adapter/ChannelListItem$LoadingMoreItem;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/adapter/ChannelListItemViewType {
@@ -1287,6 +1296,7 @@ public abstract class io/getstream/chat/android/ui/channel/list/viewmodel/Channe
 
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList : io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Action$ReachedEndOfList;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/channel/list/viewmodel/ChannelListViewModel$Companion {
@@ -2379,6 +2389,7 @@ public final class io/getstream/chat/android/ui/message/input/MessageInputView$I
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Normal : io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Normal;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/message/input/MessageInputView$InputMode$Reply : io/getstream/chat/android/ui/message/input/MessageInputView$InputMode {
@@ -4083,6 +4094,7 @@ public final class io/getstream/chat/android/ui/suggestion/Suggestions$CommandSu
 
 public final class io/getstream/chat/android/ui/suggestion/Suggestions$EmptySuggestions : io/getstream/chat/android/ui/suggestion/Suggestions {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/suggestion/Suggestions$EmptySuggestions;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/suggestion/Suggestions$MentionSuggestions : io/getstream/chat/android/ui/suggestion/Suggestions {
