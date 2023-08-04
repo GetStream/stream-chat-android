@@ -264,17 +264,17 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
         /**
          * Event to notify some WebSocket event has been lost.
          */
-        object WebSocketEventLost : Event()
+        object WebSocketEventLost : Event() { override fun toString() = "WebSocketEventLost" }
 
         /**
          * Event to notify Network is not available.
          */
-        object NetworkNotAvailable : Event()
+        object NetworkNotAvailable : Event() { override fun toString() = "NetworkNotAvailable" }
 
         /**
          * Event to notify Network is available.
          */
-        object NetworkAvailable : Event()
+        object NetworkAvailable : Event() { override fun toString() = "NetworkAvailable" }
 
         /**
          * Event to notify an Unrecoverable Error happened on the WebSocket connection.
@@ -289,17 +289,17 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
         /**
          * Event to stop WebSocket connection required by user.
          */
-        object RequiredDisconnection : Event()
+        object RequiredDisconnection : Event() { override fun toString() = "RequiredDisconnection" }
 
         /**
          * Event to stop WebSocket connection.
          */
-        object Stop : Event()
+        object Stop : Event() { override fun toString() = "Stop" }
 
         /**
          * Event to resume WebSocket connection.
          */
-        object Resume : Event()
+        object Resume : Event() { override fun toString() = "Resume" }
     }
 
     internal sealed class State {

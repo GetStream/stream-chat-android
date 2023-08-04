@@ -104,11 +104,14 @@ internal class SocketStateService {
     }
 
     private sealed class ClientStateEvent {
-        object ConnectionRequested : ClientStateEvent()
+        object ConnectionRequested : ClientStateEvent() { override fun toString(): String = "ConnectionRequested" }
         data class ConnectedEvent(val connectionId: String) : ClientStateEvent()
-        object DisconnectRequestedEvent : ClientStateEvent()
-        object DisconnectedEvent : ClientStateEvent()
-        object ForceDisconnect : ClientStateEvent()
+        object DisconnectRequestedEvent : ClientStateEvent() {
+            override fun toString(): String = "DisconnectRequestedEvent"
+        }
+
+        object DisconnectedEvent : ClientStateEvent() { override fun toString(): String = "DisconnectedEvent" }
+        object ForceDisconnect : ClientStateEvent() { override fun toString(): String = "ForceDisconnect" }
     }
 
     private companion object {

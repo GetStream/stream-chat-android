@@ -26,20 +26,20 @@ public sealed class MessageItemGroupPosition {
     /**
      * Message that is the first message in the group at the top.
      */
-    public object Top : MessageItemGroupPosition()
+    public object Top : MessageItemGroupPosition() { override fun toString(): String = "Top" }
 
     /**
      * Message that has another message both at the top and bottom of it.
      */
-    public object Middle : MessageItemGroupPosition()
+    public object Middle : MessageItemGroupPosition() { override fun toString(): String = "Middle" }
 
     /**
      * Message that's the last message in the group, at the bottom.
      */
-    public object Bottom : MessageItemGroupPosition()
+    public object Bottom : MessageItemGroupPosition() { override fun toString(): String = "Bottom" }
 
     /**
      * Message that is not in a group.
      */
-    public object None : MessageItemGroupPosition()
+    public object None : MessageItemGroupPosition() { override fun toString(): String = "None" }
 }

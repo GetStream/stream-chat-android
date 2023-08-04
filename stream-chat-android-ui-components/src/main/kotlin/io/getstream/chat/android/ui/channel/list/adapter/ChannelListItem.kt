@@ -21,5 +21,7 @@ import io.getstream.chat.android.client.models.User
 
 public sealed class ChannelListItem {
     public data class ChannelItem(val channel: Channel, val typingUsers: List<User>) : ChannelListItem()
-    public object LoadingMoreItem : ChannelListItem()
+    public object LoadingMoreItem : ChannelListItem() {
+        override fun toString(): String = "LoadingMoreItem"
+    }
 }

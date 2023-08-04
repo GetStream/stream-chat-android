@@ -172,14 +172,17 @@ public abstract class io/getstream/chat/android/offline/plugin/state/channel/Mes
 
 public final class io/getstream/chat/android/offline/plugin/state/channel/MessagesState$Loading : io/getstream/chat/android/offline/plugin/state/channel/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/plugin/state/channel/MessagesState$Loading;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/channel/MessagesState$NoQueryActive : io/getstream/chat/android/offline/plugin/state/channel/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/plugin/state/channel/MessagesState$NoQueryActive;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/channel/MessagesState$OfflineNoResults : io/getstream/chat/android/offline/plugin/state/channel/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/offline/plugin/state/channel/MessagesState$OfflineNoResults;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/offline/plugin/state/channel/MessagesState$Result : io/getstream/chat/android/offline/plugin/state/channel/MessagesState {

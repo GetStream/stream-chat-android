@@ -85,7 +85,7 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
     }
 
     internal sealed class ToggleState {
-        object Initial : ToggleState()
+        object Initial : ToggleState() { override fun toString(): String = "Initial" }
         data class StateData(val initialToggles: Map<String, Boolean>, val changes: Map<String, Boolean>) :
             ToggleState() {
             fun hasChanges() = changes.isNotEmpty()
@@ -93,14 +93,14 @@ internal class ToggleDialogController(private val toggleService: ToggleService) 
                 get() = (initialToggles + changes).toList().sortedBy { it.first }
         }
 
-        object Final : ToggleState()
+        object Final : ToggleState() { override fun toString(): String = "Final" }
     }
 
     private sealed class ToggleEvent {
-        class AttachView(val view: ToggleDialogFragment) : ToggleEvent()
-        class ToggleChanged(val toggleName: String, val value: Boolean) : ToggleEvent()
-        object Dismiss : ToggleEvent()
-        class CommitChanges(
+        data class AttachView(val view: ToggleDialogFragment) : ToggleEvent()
+        data class ToggleChanged(val toggleName: String, val value: Boolean) : ToggleEvent()
+        object Dismiss : ToggleEvent() { override fun toString(): String = "Dismiss" }
+        data class CommitChanges(
             val togglesChangesCommittedListener: (changedToggles: List<Pair<String, Boolean>>) -> Unit,
         ) : ToggleEvent()
     }

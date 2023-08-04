@@ -74,9 +74,13 @@ public sealed class MessageListItem {
         val messageCount: Int,
     ) : MessageListItem()
 
-    public object LoadingMoreIndicatorItem : MessageListItem()
+    public object LoadingMoreIndicatorItem : MessageListItem() {
+        override fun toString(): String = "LoadingMoreIndicatorItem"
+    }
 
-    public object ThreadPlaceholderItem : MessageListItem()
+    public object ThreadPlaceholderItem : MessageListItem() {
+        override fun toString(): String = "ThreadPlaceholderItem"
+    }
 
     public enum class Position {
         TOP,

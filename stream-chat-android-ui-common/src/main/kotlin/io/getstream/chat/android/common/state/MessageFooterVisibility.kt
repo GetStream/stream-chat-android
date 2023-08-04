@@ -24,12 +24,16 @@ public sealed class MessageFooterVisibility {
     /**
      * The message footer will never be visible.
      */
-    public object Never : MessageFooterVisibility()
+    public object Never : MessageFooterVisibility() {
+        override fun toString(): String = "Never"
+    }
 
     /**
      * The message footer will only be visible to items that are last in group.
      */
-    public object LastInGroup : MessageFooterVisibility()
+    public object LastInGroup : MessageFooterVisibility() {
+        override fun toString(): String = "LastInGroup"
+    }
 
     /**
      * The message footer will be visible to items that are sent inside a specified time duration.
@@ -43,7 +47,9 @@ public sealed class MessageFooterVisibility {
     /**
      * The message footer will be visible for every message.
      */
-    public object Always : MessageFooterVisibility()
+    public object Always : MessageFooterVisibility() {
+        override fun toString(): String = "Always"
+    }
 }
 
 /**

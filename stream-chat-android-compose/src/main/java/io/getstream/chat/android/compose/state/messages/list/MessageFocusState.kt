@@ -24,9 +24,9 @@ public sealed class MessageFocusState
 /**
  * Represents the state when the message is currently being focused.
  */
-public object MessageFocused : MessageFocusState()
+public object MessageFocused : MessageFocusState() { override fun toString(): String = "MessageFocused" }
 
 /**
  * Represents the state when we've removed the focus from the message.
  */
-public object MessageFocusRemoved : MessageFocusState()
+public object MessageFocusRemoved : MessageFocusState() { override fun toString(): String = "MessageFocusRemoved" }

@@ -72,9 +72,9 @@ internal class UserStateService {
     }
 
     private sealed class UserStateEvent {
-        class ConnectUser(val user: User) : UserStateEvent()
-        class UserUpdated(val user: User) : UserStateEvent()
-        class ConnectAnonymous(val user: User) : UserStateEvent()
-        object UnsetUser : UserStateEvent()
+        data class ConnectUser(val user: User) : UserStateEvent()
+        data class UserUpdated(val user: User) : UserStateEvent()
+        data class ConnectAnonymous(val user: User) : UserStateEvent()
+        object UnsetUser : UserStateEvent() { override fun toString(): String = "UnsetUser" }
     }
 }

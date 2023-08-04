@@ -308,7 +308,10 @@ internal class ImageAttachmentsGroupView : ConstraintLayout {
     }
 
     private sealed class State {
-        object Empty : State()
+        object Empty : State() {
+            override fun toString(): String = "Empty"
+        }
+
         data class OneView(val view: ImageAttachmentView) : State()
         data class TwoViews(val viewOne: ImageAttachmentView, val viewTwo: ImageAttachmentView) : State()
         data class ThreeViews(

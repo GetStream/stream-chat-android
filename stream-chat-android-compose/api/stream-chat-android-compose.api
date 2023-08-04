@@ -53,12 +53,13 @@ public final class io/getstream/chat/android/compose/state/QueryConfig {
 public final class io/getstream/chat/android/compose/state/channels/list/Cancel : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/channels/list/Cancel;
+	public fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
-	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Channel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public abstract fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
 }
 
 public final class io/getstream/chat/android/compose/state/channels/list/ChannelItemState {
@@ -111,26 +112,61 @@ public final class io/getstream/chat/android/compose/state/channels/list/Channel
 public final class io/getstream/chat/android/compose/state/channels/list/DeleteConversation : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/DeleteConversation;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/DeleteConversation;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/DeleteConversation;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/channels/list/LeaveGroup : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/LeaveGroup;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/LeaveGroup;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/LeaveGroup;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/channels/list/MuteChannel : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/MuteChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/MuteChannel;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/MuteChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/channels/list/UnmuteChannel : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/UnmuteChannel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/UnmuteChannel;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/UnmuteChannel;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/channels/list/ViewInfo : io/getstream/chat/android/compose/state/channels/list/ChannelAction {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/client/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/client/models/Channel;)Lio/getstream/chat/android/compose/state/channels/list/ViewInfo;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ViewInfo;Lio/getstream/chat/android/client/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ViewInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/client/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/imagepreview/ImagePreviewResult : android/os/Parcelable {
@@ -212,6 +248,7 @@ public final class io/getstream/chat/android/compose/state/messages/MessagesStat
 public final class io/getstream/chat/android/compose/state/messages/MyOwn : io/getstream/chat/android/compose/state/messages/NewMessageState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/MyOwn;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/compose/state/messages/NewMessageState {
@@ -221,6 +258,7 @@ public abstract class io/getstream/chat/android/compose/state/messages/NewMessag
 public final class io/getstream/chat/android/compose/state/messages/Other : io/getstream/chat/android/compose/state/messages/NewMessageState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/Other;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/SelectedMessageFailedModerationState : io/getstream/chat/android/compose/state/messages/SelectedMessageState {
@@ -290,22 +328,31 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 	public fun <init> ()V
 	public fun <init> (Ljava/util/Map;)V
 	public synthetic fun <init> (Ljava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/util/Map;
+	public final fun copy (Ljava/util/Map;)Lio/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode;
+	public fun equals (Ljava/lang/Object;)Z
 	public final fun getExtraProperties ()Ljava/util/Map;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/Files : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Files;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/Images : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Images;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/MediaCapture : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/MediaCapture;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/CancelGiphy : io/getstream/chat/android/compose/state/messages/list/GiphyAction {
@@ -334,6 +381,7 @@ public abstract class io/getstream/chat/android/compose/state/messages/list/Giph
 public final class io/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
@@ -343,6 +391,7 @@ public abstract class io/getstream/chat/android/compose/state/messages/list/Mess
 public final class io/getstream/chat/android/compose/state/messages/list/MessageFocused : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageFocused;
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition {
@@ -352,21 +401,25 @@ public abstract class io/getstream/chat/android/compose/state/messages/list/Mess
 public final class io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$Bottom : io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$Bottom;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$Middle : io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$Middle;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$None : io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$None;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$Top : io/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition$Top;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/list/MessageItemState : io/getstream/chat/android/compose/state/messages/list/MessageListItemState {
@@ -1416,10 +1469,12 @@ public abstract class io/getstream/chat/android/compose/ui/messages/list/ThreadM
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$BOTTOM : io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$BOTTOM;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$TOP : io/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart$TOP;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {

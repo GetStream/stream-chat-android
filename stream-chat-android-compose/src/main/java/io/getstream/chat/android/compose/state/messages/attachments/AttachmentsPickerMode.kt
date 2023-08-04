@@ -24,23 +24,23 @@ public sealed class AttachmentsPickerMode
 /**
  * Represents the mode with media files from the device.
  */
-public object Images : AttachmentsPickerMode()
+public object Images : AttachmentsPickerMode() { override fun toString(): String = "Images" }
 
 /**
  * Represents the mode with files from the device.
  */
-public object Files : AttachmentsPickerMode()
+public object Files : AttachmentsPickerMode() { override fun toString(): String = "Files" }
 
 /**
  * Represents the mode with media capture.
  */
-public object MediaCapture : AttachmentsPickerMode()
+public object MediaCapture : AttachmentsPickerMode() { override fun toString(): String = "MediaCapture" }
 
 /**
  * User-customizable picker mode, with any number of extra properties.
  *
  * @param extraProperties Map of key-value pairs that let you store extra data for this picker mode.
  */
-public class CustomPickerMode(
+public data class CustomPickerMode(
     public val extraProperties: Map<String, Any> = emptyMap(),
 ) : AttachmentsPickerMode()

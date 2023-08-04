@@ -26,7 +26,9 @@ public sealed class MessagesState {
      * The ChannelState is initialized but no query is currently running.
      * If you know that a query will be started you typically want to display a loading icon.
      */
-    public object NoQueryActive : MessagesState()
+    public object NoQueryActive : MessagesState() {
+        override fun toString(): String = "NoQueryActive"
+    }
 
     /**
      * Indicates we are loading the first page of results.
@@ -37,11 +39,15 @@ public sealed class MessagesState {
      * @see loadingNewerMessages
      * @see loadingOlderMessages
      */
-    public object Loading : MessagesState()
+    public object Loading : MessagesState() {
+        override fun toString(): String = "Loading"
+    }
 
     /** If we are offline and don't have channels stored in offline storage, typically displayed as an error
      * condition. */
-    public object OfflineNoResults : MessagesState()
+    public object OfflineNoResults : MessagesState() {
+        override fun toString(): String = "OfflineNoResults"
+    }
 
     /**
      * The list of messages, loaded either from offline storage or an API call.
