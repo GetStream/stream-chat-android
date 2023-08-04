@@ -437,7 +437,9 @@ public class ChannelListViewModel(
      * Describes the available actions that can be taken.
      */
     public sealed class Action {
-        public object ReachedEndOfList : Action()
+        public object ReachedEndOfList : Action() {
+            override fun toString(): String = "ReachedEndOfList"
+        }
     }
 
     /**

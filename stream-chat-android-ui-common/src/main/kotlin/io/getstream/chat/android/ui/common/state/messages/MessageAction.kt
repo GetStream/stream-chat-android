@@ -22,7 +22,7 @@ import io.getstream.chat.android.models.Reaction
 /**
  * Represents the list of actions users can take with selected messages.
  *
- * @param message The selected message.
+ * @property message The selected message.
  */
 public sealed class MessageAction {
     public abstract val message: Message

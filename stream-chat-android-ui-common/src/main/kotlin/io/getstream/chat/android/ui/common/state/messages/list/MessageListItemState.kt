@@ -96,4 +96,6 @@ public data class TypingItemState(
 /**
  * Represents an empty thread placeholder item inside thread messages list.
  */
-public object EmptyThreadPlaceholderItemState : MessageListItemState()
+public object EmptyThreadPlaceholderItemState : MessageListItemState() {
+    override fun toString(): String = "EmptyThreadPlaceholderItemState"
+}

@@ -1148,6 +1148,7 @@ public abstract class io/getstream/chat/android/models/MessageSyncInProgress : i
 
 public final class io/getstream/chat/android/models/MessageSyncNone : io/getstream/chat/android/models/MessageSyncContent {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessageSyncNone;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/MessageSyncType : java/lang/Enum {
@@ -1181,14 +1182,17 @@ public abstract class io/getstream/chat/android/models/MessagesState {
 
 public final class io/getstream/chat/android/models/MessagesState$Loading : io/getstream/chat/android/models/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessagesState$Loading;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/MessagesState$NoQueryActive : io/getstream/chat/android/models/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessagesState$NoQueryActive;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/MessagesState$OfflineNoResults : io/getstream/chat/android/models/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessagesState$OfflineNoResults;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/MessagesState$Result : io/getstream/chat/android/models/MessagesState {

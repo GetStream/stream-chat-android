@@ -61,5 +61,7 @@ public sealed class ValidationError {
     /**
      * Triggered if the input contains a link and the user is not allowed to send them.
      */
-    public object ContainsLinksWhenNotAllowed : ValidationError()
+    public object ContainsLinksWhenNotAllowed : ValidationError() {
+        override fun toString(): String = "ContainsLinksWhenNotAllowed"
+    }
 }

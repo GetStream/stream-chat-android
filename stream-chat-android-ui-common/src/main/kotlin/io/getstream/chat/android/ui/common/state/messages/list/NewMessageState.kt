@@ -24,9 +24,9 @@ public sealed class NewMessageState
 /**
  * If the message is our own (we sent it), we scroll to the bottom of the list.
  */
-public object MyOwn : NewMessageState()
+public object MyOwn : NewMessageState() { override fun toString(): String = "MyOwn" }
 
 /**
  * If the message is someone else's (we didn't send it), we show a "New message" bubble.
  */
-public object Other : NewMessageState()
+public object Other : NewMessageState() { override fun toString(): String = "Other" }

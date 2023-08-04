@@ -26,7 +26,9 @@ public sealed class MessageSyncContent
 /**
  * When no additional description is required to [SyncStatus].
  */
-public object MessageSyncNone : MessageSyncContent()
+public object MessageSyncNone : MessageSyncContent() {
+    override fun toString(): String = "MessageSyncNone"
+}
 
 /**
  * When sync is in progress.

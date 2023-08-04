@@ -54,6 +54,7 @@ public final class io/getstream/chat/android/state/event/handler/chat/EventHandl
 
 public final class io/getstream/chat/android/state/event/handler/chat/EventHandlingResult$Skip : io/getstream/chat/android/state/event/handler/chat/EventHandlingResult {
 	public static final field INSTANCE Lio/getstream/chat/android/state/event/handler/chat/EventHandlingResult$Skip;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/state/event/handler/chat/EventHandlingResult$WatchAndAdd : io/getstream/chat/android/state/event/handler/chat/EventHandlingResult {

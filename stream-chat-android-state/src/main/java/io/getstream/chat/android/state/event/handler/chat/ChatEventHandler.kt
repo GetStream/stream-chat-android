@@ -73,7 +73,9 @@ public sealed class EventHandlingResult {
     /**
      * Skip the event.
      */
-    public object Skip : EventHandlingResult()
+    public object Skip : EventHandlingResult() {
+        override fun toString(): String = "Skip"
+    }
 }
 
 /**

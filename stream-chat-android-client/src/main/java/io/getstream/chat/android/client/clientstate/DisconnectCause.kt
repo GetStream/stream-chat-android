@@ -29,7 +29,9 @@ public sealed class DisconnectCause {
     /**
      * Happens when Web Socket connection is not available.
      */
-    public object WebSocketNotAvailable : DisconnectCause() { override fun toString(): String = "WSNotAvailable" }
+    public object WebSocketNotAvailable : DisconnectCause() {
+        override fun toString(): String = "WebSocketNotAvailable"
+    }
 
     /**
      * Happens when some non critical error occurs.

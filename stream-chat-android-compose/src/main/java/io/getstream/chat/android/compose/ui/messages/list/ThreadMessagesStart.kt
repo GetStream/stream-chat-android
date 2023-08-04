@@ -27,10 +27,14 @@ public sealed class ThreadMessagesStart {
     /**
      * Thread messages start from the top of the component.
      */
-    @Stable public object TOP : ThreadMessagesStart()
+    @Stable public object TOP : ThreadMessagesStart() {
+        override fun toString(): String = "TOP"
+    }
 
     /**
      * Thread messages start from the bottom of the component.
      */
-    @Stable public object BOTTOM : ThreadMessagesStart()
+    @Stable public object BOTTOM : ThreadMessagesStart() {
+        override fun toString(): String = "BOTTOM"
+    }
 }

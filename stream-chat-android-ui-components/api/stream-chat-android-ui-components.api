@@ -368,6 +368,7 @@ public final class io/getstream/chat/android/ui/feature/channels/list/adapter/Ch
 
 public final class io/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$LoadingMoreItem : io/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$LoadingMoreItem;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItemViewType {
@@ -2124,6 +2125,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$LoadingMoreIndicatorItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$LoadingMoreIndicatorItem;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
@@ -2153,6 +2155,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadPlaceholderItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadPlaceholderItem;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadSeparatorItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
@@ -3104,6 +3107,7 @@ public abstract class io/getstream/chat/android/ui/viewmodel/channels/ChannelLis
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$Action$ReachedEndOfList : io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$Action {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$Action$ReachedEndOfList;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListViewModel$Companion {
@@ -3348,6 +3352,7 @@ public abstract class io/getstream/chat/android/ui/viewmodel/messages/MessageLis
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$BanUser : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
@@ -3404,6 +3409,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$EndRegionReached : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$EndRegionReached;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$FlagMessage : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
@@ -3433,6 +3439,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$LastMessageRead : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$LastMessageRead;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MessageReaction : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
@@ -3609,10 +3616,12 @@ public abstract class io/getstream/chat/android/ui/viewmodel/messages/MessageLis
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$Loading : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$Loading;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$NavigateUp : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$NavigateUp;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State$Result : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$State {
