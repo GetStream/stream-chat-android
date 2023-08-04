@@ -22,32 +22,43 @@ import io.getstream.chat.android.models.Message
 /**
  * Represents a state when a message or its reactions were selected.
  *
- * @param message The selected message.
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
+ * @property message The selected message.
+ * @property ownCapabilities Set of capabilities the user is given for the current channel.
  * For a full list @see [ChannelCapabilities].
  */
-public sealed class SelectedMessageState(public val message: Message, public val ownCapabilities: Set<String>)
+public sealed class SelectedMessageState {
+    public abstract val message: Message
+    public abstract val ownCapabilities: Set<String>
+}
 
 /**
  * Represents a state when a message was selected.
  */
-public class SelectedMessageOptionsState(message: Message, ownCapabilities: Set<String>) :
-    SelectedMessageState(message, ownCapabilities)
+public data class SelectedMessageOptionsState(
+    override val message: Message,
+    override val ownCapabilities: Set<String>,
+) : SelectedMessageState()
 
 /**
  * Represents a state when message reactions were selected.
  */
-public class SelectedMessageReactionsState(message: Message, ownCapabilities: Set<String>) :
-    SelectedMessageState(message, ownCapabilities)
+public data class SelectedMessageReactionsState(
+    override val message: Message,
+    override val ownCapabilities: Set<String>,
+) : SelectedMessageState()
 
 /**
  * Represents a state when the show more reactions button was clicked.
  */
-public class SelectedMessageReactionsPickerState(message: Message, ownCapabilities: Set<String>) :
-    SelectedMessageState(message, ownCapabilities)
+public data class SelectedMessageReactionsPickerState(
+    override val message: Message,
+    override val ownCapabilities: Set<String>,
+) : SelectedMessageState()
 
 /**
  * Represents a state when the moderated message was selected.
  */
-public class SelectedMessageFailedModerationState(message: Message, ownCapabilities: Set<String>) :
-    SelectedMessageState(message, ownCapabilities)
+public data class SelectedMessageFailedModerationState(
+    override val message: Message,
+    override val ownCapabilities: Set<String>,
+) : SelectedMessageState()

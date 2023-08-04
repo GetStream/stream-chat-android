@@ -82,8 +82,12 @@ public sealed interface StreamImageLoader {
     ): Bitmap?
 
     public sealed class ImageTransformation {
-        public object None : ImageTransformation()
-        public object Circle : ImageTransformation()
-        public class RoundedCorners(@Px public val radius: Float) : ImageTransformation()
+        public object None : ImageTransformation() {
+            override fun toString(): String = "None"
+        }
+        public object Circle : ImageTransformation() {
+            override fun toString(): String = "Circle"
+        }
+        public data class RoundedCorners(@Px public val radius: Float) : ImageTransformation()
     }
 }

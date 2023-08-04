@@ -22,27 +22,29 @@ import io.getstream.chat.android.models.Message
  * Represents the actions the user can take with media attachments in the Media Gallery Preview
  * feature.
  *
- * @param message The message that the action is being performed on.
+ * @property message The message that the action is being performed on.
  */
-internal sealed class MediaGalleryPreviewAction(internal val message: Message)
+internal sealed class MediaGalleryPreviewAction {
+    internal abstract val message: Message
+}
 
 /**
  * Should take the user back to the message list with a pre-packaged
  * quoted reply in the message input.
  */
-internal class Reply(message: Message) : MediaGalleryPreviewAction(message)
+internal data class Reply(override val message: Message) : MediaGalleryPreviewAction()
 
 /**
  * Should show the message containing the attachments in the message list.
  */
-internal class ShowInChat(message: Message) : MediaGalleryPreviewAction(message)
+internal data class ShowInChat(override val message: Message) : MediaGalleryPreviewAction()
 
 /**
  * Should save the media to storage.
  */
-internal class SaveMedia(message: Message) : MediaGalleryPreviewAction(message)
+internal data class SaveMedia(override val message: Message) : MediaGalleryPreviewAction()
 
 /**
  * Should remove the selected media attachment from the original message.
  */
-internal class Delete(message: Message) : MediaGalleryPreviewAction(message)
+internal data class Delete(override val message: Message) : MediaGalleryPreviewAction()

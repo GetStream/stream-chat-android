@@ -32,8 +32,12 @@ internal class ChannelItemSwipeListener @JvmOverloads constructor(
 
     // Represents the internal swipe state of the ViewHolder
     sealed class SwipeState {
-        internal object Open : SwipeState()
-        internal object Closed : SwipeState()
+        internal object Open : SwipeState() {
+            override fun toString(): String = "Open"
+        }
+        internal object Closed : SwipeState() {
+            override fun toString(): String = "Closed"
+        }
     }
 
     override fun onSwipeStarted(viewHolder: SwipeViewHolder, adapterPosition: Int, x: Float?, y: Float?) {

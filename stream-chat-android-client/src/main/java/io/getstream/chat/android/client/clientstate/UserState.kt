@@ -20,11 +20,9 @@ import io.getstream.chat.android.models.User as UserModel
 
 internal sealed class UserState {
     object NotSet : UserState() { override fun toString(): String = "NotSet" }
-    class UserSet(val user: UserModel) : UserState() { override fun toString(): String = "UserSet(id=${user.id})" }
+    data class UserSet(val user: UserModel) : UserState()
 
-    class AnonymousUserSet(val anonymousUser: UserModel) : UserState() {
-        override fun toString(): String = "AnonymousUserSet(id=${anonymousUser.id})"
-    }
+    data class AnonymousUserSet(val anonymousUser: UserModel) : UserState()
 
     internal fun userOrError(): UserModel = when (this) {
         is UserSet -> user

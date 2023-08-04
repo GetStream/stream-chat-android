@@ -267,7 +267,9 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     }
 
     private sealed class State {
-        object Empty : State()
+        object Empty : State() {
+            override fun toString(): String = "Empty"
+        }
         data class OneView(val view: MediaAttachmentView) : State()
         data class TwoViews(val viewOne: MediaAttachmentView, val viewTwo: MediaAttachmentView) : State()
         data class ThreeViews(
