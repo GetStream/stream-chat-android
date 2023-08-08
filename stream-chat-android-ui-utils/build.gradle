@@ -58,5 +58,18 @@ dependencies {
     implementation Dependencies.androidxAnnotations
     implementation Dependencies.coroutinesCore
 
+    testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation testFixtures(project(":stream-chat-android-core"))
+
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.coroutinesTest
+
     detektPlugins(Dependencies.detektFormatting)
 }

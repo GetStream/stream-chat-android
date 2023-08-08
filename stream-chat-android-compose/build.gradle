@@ -80,6 +80,7 @@ dependencies {
 
     // Tests
     testImplementation project(':stream-chat-android-test')
+    testImplementation testFixtures(project(":stream-chat-android-core"))
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine

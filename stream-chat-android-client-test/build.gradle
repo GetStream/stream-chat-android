@@ -20,6 +20,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(":stream-chat-android-client")
     implementation project(":stream-chat-android-test")
+    implementation testFixtures(project(":stream-chat-android-core"))
 
     // Kotlin
     implementation Dependencies.kotlinReflect
@@ -34,7 +35,6 @@ dependencies {
 
     // Tests
     testImplementation Dependencies.moshiKotlin
-
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
