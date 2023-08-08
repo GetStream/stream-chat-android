@@ -196,10 +196,16 @@
         <!-- Trailing content -->
         <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerSendMessageButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerSendMessageButtonWidth" format="dimension|reference" />
+        <attr name="streamUiMessageComposerSendMessageButtonHeight" format="dimension|reference" />
+        <attr name="streamUiMessageComposerSendMessageButtonPadding" format="dimension|reference" />
         <attr name="streamUiMessageComposerAudioRecordingButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonPreferred" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonWidth" format="dimension|reference" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonHeight" format="dimension|reference" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonPadding" format="dimension|reference" />
 
         <attr name="streamUiMessageComposerCooldownTimerTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCooldownTimerTextColor" format="reference|color" />

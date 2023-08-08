@@ -60,6 +60,7 @@
 
 ### ⬆️ Improved
 - Improved UI customization for Audio Recording feature. [#4906](https://github.com/GetStream/stream-chat-android/pull/4906)
+- Improved trailing buttons customization for `MessageComposerView`. [#4915](https://github.com/GetStream/stream-chat-android/pull/4915)
 
 ### ✅ Added
 

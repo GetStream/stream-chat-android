@@ -24,6 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -97,6 +98,16 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
         this.style = messageComposerContext.style
 
         binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
+        binding.sendMessageButton.updateLayoutParams {
+            width = style.sendMessageButtonWidth
+            height = style.sendMessageButtonHeight
+        }
+        binding.sendMessageButton.setPadding(
+            style.sendMessageButtonPadding,
+            style.sendMessageButtonPadding,
+            style.sendMessageButtonPadding,
+            style.sendMessageButtonPadding,
+        )
         style.buttonIconDrawableTintColor?.let { tintColor ->
             binding.sendMessageButton.imageTintList = getColorList(
                 normalColor = tintColor,
@@ -112,6 +123,16 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
                 disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
             )
         }
+        binding.recordAudioButton.updateLayoutParams {
+            width = style.audioRecordingButtonWidth
+            height = style.audioRecordingButtonHeight
+        }
+        binding.recordAudioButton.setPadding(
+            style.audioRecordingButtonPadding,
+            style.audioRecordingButtonPadding,
+            style.audioRecordingButtonPadding,
+            style.audioRecordingButtonPadding,
+        )
 
         binding.cooldownBadgeTextView.setTextStyle(style.cooldownTimerTextStyle)
         binding.cooldownBadgeTextView.background = style.cooldownTimerBackgroundDrawable
