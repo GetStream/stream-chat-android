@@ -48,4 +48,6 @@
     <string name="stream_ui_moderation_dialog_edit">Edit message</string>
     <string name="stream_ui_moderation_dialog_delete">Delete message</string>
 
+
+    <string name="stream_ui_channel_list_untitled_channel">Channel without name</string>
 </resources>

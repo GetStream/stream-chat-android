@@ -1153,6 +1153,18 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Typin
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/utils/ChannelNameFormatter {
+	public static final field Companion Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter$Companion;
+	public abstract fun formatChannelName (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/utils/ChannelNameFormatter$Companion {
+	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
+	public final fun defaultFormatter (Landroid/content/Context;I)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
+	public final fun defaultFormatter (Landroid/content/Context;II)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
+	public static synthetic fun defaultFormatter$default (Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter$Companion;Landroid/content/Context;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
+}
+
 public final class io/getstream/chat/android/ui/common/utils/GiphyInfo {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;II)V
