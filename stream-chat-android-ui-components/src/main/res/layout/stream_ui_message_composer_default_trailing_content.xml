@@ -29,22 +29,22 @@
 
         <ImageView
             android:id="@+id/sendMessageButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/stream_ui_message_composer_trailing_content_button_send_message_width"
+            android:layout_height="@dimen/stream_ui_message_composer_trailing_content_button_send_message_height"
             android:layout_gravity="bottom"
             android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:padding="@dimen/stream_ui_message_composer_trailing_content_button_send_message_padding"
             android:src="@drawable/stream_ui_ic_send_message"
             tools:ignore="ContentDescription"
             />
 
         <ImageView
             android:id="@+id/recordAudioButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/stream_ui_message_composer_trailing_content_button_record_audio_width"
+            android:layout_height="@dimen/stream_ui_message_composer_trailing_content_button_record_audio_height"
             android:layout_gravity="bottom"
             android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:padding="@dimen/stream_ui_message_composer_trailing_content_button_record_audio_padding"
             android:src="@drawable/stream_ui_ic_mic"
             android:tag="record_audio"
             tools:ignore="ContentDescription"
