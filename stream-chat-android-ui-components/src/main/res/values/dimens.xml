@@ -184,6 +184,13 @@
     <dimen name="stream_ui_message_composer_leading_content_vertical_padding">12dp</dimen>
     <dimen name="stream_ui_message_composer_trailing_content_horizontal_padding">4dp</dimen>
     <dimen name="stream_ui_message_composer_trailing_content_vertical_padding">12dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_button_send_message_padding">4dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_button_send_message_width">32dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_button_send_message_height">32dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_button_record_audio_padding">4dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_button_record_audio_width">32dp</dimen>
+    <dimen name="stream_ui_message_composer_trailing_content_button_record_audio_height">32dp</dimen>
+
     <dimen name="stream_ui_message_composer_overlapping_content_horizontal_padding">4dp</dimen>
     <dimen name="stream_ui_message_composer_overlapping_content_vertical_padding">12dp</dimen>
     <dimen name="stream_ui_message_composer_overlapping_content_floating_mic_width">64dp</dimen>
