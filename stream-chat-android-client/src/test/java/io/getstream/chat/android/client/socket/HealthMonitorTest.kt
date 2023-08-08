@@ -18,8 +18,8 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.utils.TimeProvider
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.positiveRandomInt
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.currentTime

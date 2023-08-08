@@ -18,11 +18,11 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomMember
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

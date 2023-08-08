@@ -16,23 +16,23 @@
 
 package io.getstream.chat.android.state.utils
 
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomMember
-import io.getstream.chat.android.client.test.randomSyncStatus
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.CustomObject
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomIntBetween
+import io.getstream.chat.android.randomLong
+import io.getstream.chat.android.randomLongBetween
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomSyncStatus
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.utils.internal.filter
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomIntBetween
-import io.getstream.chat.android.test.randomLong
-import io.getstream.chat.android.test.randomLongBetween
-import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.shouldContainSame
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

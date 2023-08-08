@@ -17,9 +17,9 @@
 package io.getstream.chat.android.state.channel
 
 import io.getstream.chat.android.client.helpers.AttachmentHelper
-import io.getstream.chat.android.client.test.randomAttachment
-import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeTrue
@@ -152,7 +152,7 @@ internal class AttachmentUrlValidatorTests {
 
     @Test
     fun `Given attachments with not stream imageUrls and valid old urls Should Not return attachment with old url`() {
-        val oldAttachment = randomAttachment().copy(imageUrl = "oldUrl")
+        val oldAttachment = randomAttachment(imageUrl = "oldUrl")
         val newAttachment = oldAttachment.copy(imageUrl = "newUrl")
         val oldMessage = randomMessage(attachments = mutableListOf(oldAttachment))
         val newMessage = oldMessage.copy(attachments = mutableListOf(newAttachment))

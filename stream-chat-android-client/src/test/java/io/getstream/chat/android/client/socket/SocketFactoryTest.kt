@@ -19,10 +19,10 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import okhttp3.OkHttpClient
 import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`

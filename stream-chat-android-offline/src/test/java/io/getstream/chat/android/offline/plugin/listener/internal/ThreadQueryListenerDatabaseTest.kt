@@ -18,9 +18,9 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

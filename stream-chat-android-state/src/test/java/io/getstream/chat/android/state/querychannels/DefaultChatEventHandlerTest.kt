@@ -17,20 +17,20 @@
 package io.getstream.chat.android.state.querychannels
 
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.client.test.randomMemberAddedEvent
 import io.getstream.chat.android.client.test.randomMemberRemovedEvent
-import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomNotificationAddedToChannelEvent
 import io.getstream.chat.android.client.test.randomNotificationMessageNewEvent
 import io.getstream.chat.android.client.test.randomNotificationRemovedFromChannelEvent
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
-import io.getstream.chat.android.test.randomCID
 import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test

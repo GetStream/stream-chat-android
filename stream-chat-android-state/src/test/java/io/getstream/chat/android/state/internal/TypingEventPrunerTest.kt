@@ -18,8 +18,8 @@ package io.getstream.chat.android.state.internal
 
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.TypingEvent
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.TypingEventPruner
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceTimeBy

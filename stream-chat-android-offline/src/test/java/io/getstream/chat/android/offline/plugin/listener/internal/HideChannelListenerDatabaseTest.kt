@@ -20,8 +20,8 @@ import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.toCid
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomCID
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

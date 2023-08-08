@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.state.internal
 
-import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.errorhandler.internal.DeleteReactionErrorHandlerImpl
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
 import io.getstream.result.Result
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension

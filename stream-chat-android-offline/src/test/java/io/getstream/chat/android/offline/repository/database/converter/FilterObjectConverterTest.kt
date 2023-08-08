@@ -19,10 +19,10 @@ package io.getstream.chat.android.offline.repository.database.converter
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.offline.repository.database.converter.internal.FilterObjectConverter
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

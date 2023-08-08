@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.ui.utils
 
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.createMember
-import io.getstream.chat.android.ui.createUser
-import io.getstream.chat.android.ui.randomChannel
 import io.getstream.chat.android.uiutils.extension.getDisplayName
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
@@ -29,9 +29,9 @@ internal class ChannelKtTest {
 
     @Test
     fun `given a channel has only one member it should have the name of the member`() {
-        val randomUser = createUser()
-        val member = createMember(user = randomUser)
-        val oneMemberChannel = randomChannel(members = listOf(member))
+        val randomUser = randomUser()
+        val member = randomMember(user = randomUser)
+        val oneMemberChannel = randomChannel(name = "", members = listOf(member))
 
         randomUser.name `should be equal to` oneMemberChannel.getDisplayName(
             mock(),

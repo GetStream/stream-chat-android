@@ -28,10 +28,10 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.socket.StreamWebSocket
-import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -57,7 +57,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
 import io.getstream.result.Result
 import java.util.Calendar
 import java.util.Date

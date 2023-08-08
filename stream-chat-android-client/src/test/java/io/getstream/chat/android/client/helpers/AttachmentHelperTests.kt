@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.test.randomAttachment
 import io.getstream.chat.android.client.utils.TimeProvider
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.randomAttachment
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

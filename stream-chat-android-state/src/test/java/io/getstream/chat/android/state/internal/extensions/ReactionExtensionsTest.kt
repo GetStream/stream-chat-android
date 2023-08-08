@@ -17,7 +17,7 @@
 package io.getstream.chat.android.state.internal.extensions
 
 import io.getstream.chat.android.client.extensions.internal.mergeReactions
-import io.getstream.chat.android.client.test.randomReaction
+import io.getstream.chat.android.randomReaction
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain`
 import org.junit.jupiter.api.Test
