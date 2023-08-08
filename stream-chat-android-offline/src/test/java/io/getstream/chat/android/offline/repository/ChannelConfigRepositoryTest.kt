@@ -17,17 +17,17 @@
 package io.getstream.chat.android.offline.repository
 
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
-import io.getstream.chat.android.client.test.randomChannelConfig
-import io.getstream.chat.android.client.test.randomConfig
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigDao
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigInnerEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomChannelConfig
+import io.getstream.chat.android.randomConfig
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineRule
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo

@@ -20,13 +20,13 @@ import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomAttachment
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.test.randomFile
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomFile
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test

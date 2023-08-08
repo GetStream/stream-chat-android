@@ -36,36 +36,25 @@ import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelConfig
-import io.getstream.chat.android.models.ChannelInfo
-import io.getstream.chat.android.models.ChannelMute
-import io.getstream.chat.android.models.ChannelUserRead
-import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.Config
-import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.NeutralFilterObject
 import io.getstream.chat.android.models.Reaction
-import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomExtraData
-import io.getstream.chat.android.test.randomFile
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomIntBetween
-import io.getstream.chat.android.test.randomString
-import java.io.File
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import java.util.Date
 
 private val streamFormatter = StreamDateFormatter()
@@ -345,277 +334,6 @@ public fun randomMessageUpdateEvent(
     message = message,
 )
 
-public fun randomUser(
-    id: String = randomString(),
-    name: String = randomString(),
-    image: String = randomString(),
-    role: String = randomString(),
-    invisible: Boolean = randomBoolean(),
-    banned: Boolean = randomBoolean(),
-    devices: List<Device> = mutableListOf(),
-    online: Boolean = randomBoolean(),
-    createdAt: Date? = null,
-    deactivatedAt: Date? = null,
-    updatedAt: Date? = null,
-    lastActive: Date? = null,
-    totalUnreadCount: Int = positiveRandomInt(),
-    unreadChannels: Int = positiveRandomInt(),
-    mutes: List<Mute> = mutableListOf(),
-    teams: List<String> = listOf(),
-    channelMutes: List<ChannelMute> = emptyList(),
-    extraData: MutableMap<String, Any> = mutableMapOf(),
-): User = User(
-    id = id,
-    role = role,
-    name = name,
-    image = image,
-    invisible = invisible,
-    banned = banned,
-    devices = devices,
-    online = online,
-    createdAt = createdAt,
-    deactivatedAt = deactivatedAt,
-    updatedAt = updatedAt,
-    lastActive = lastActive,
-    totalUnreadCount = totalUnreadCount,
-    unreadChannels = unreadChannels,
-    mutes = mutes,
-    teams = teams,
-    channelMutes = channelMutes,
-    extraData = extraData,
-)
-
-public fun randomMessage(
-    id: String = randomString(),
-    cid: String = randomCID(),
-    text: String = randomString(),
-    html: String = randomString(),
-    parentId: String? = randomString(),
-    command: String? = randomString(),
-    attachments: MutableList<Attachment> = mutableListOf(),
-    mentionedUsers: MutableList<User> = mutableListOf(),
-    replyCount: Int = randomInt(),
-    reactionCounts: MutableMap<String, Int> = mutableMapOf(),
-    reactionScores: MutableMap<String, Int> = mutableMapOf(),
-    syncStatus: SyncStatus = randomSyncStatus(),
-    type: String = randomString(),
-    latestReactions: MutableList<Reaction> = mutableListOf(),
-    ownReactions: MutableList<Reaction> = mutableListOf(),
-    createdAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
-    updatedLocallyAt: Date? = randomDate(),
-    createdLocallyAt: Date? = randomDate(),
-    user: User = randomUser(),
-    extraData: MutableMap<String, Any> = mutableMapOf(),
-    silent: Boolean = randomBoolean(),
-    replyTo: Message? = null,
-    showInChannel: Boolean = randomBoolean(),
-    shadowed: Boolean = false,
-    channelInfo: ChannelInfo? = randomChannelInfo(),
-    replyMessageId: String? = randomString(),
-    pinned: Boolean = randomBoolean(),
-    pinnedAt: Date? = randomDate(),
-    pinExpires: Date? = randomDate(),
-    pinnedBy: User? = randomUser(),
-    threadParticipants: List<User> = emptyList(),
-): Message = Message(
-    id = id,
-    cid = cid,
-    text = text,
-    html = html,
-    parentId = parentId,
-    command = command,
-    attachments = attachments,
-    mentionedUsersIds = mentionedUsers.map(User::id).toMutableList(),
-    mentionedUsers = mentionedUsers,
-    replyCount = replyCount,
-    reactionCounts = reactionCounts,
-    reactionScores = reactionScores,
-    syncStatus = syncStatus,
-    type = type,
-    latestReactions = latestReactions,
-    ownReactions = ownReactions,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    deletedAt = deletedAt,
-    updatedLocallyAt = updatedLocallyAt,
-    createdLocallyAt = createdLocallyAt,
-    user = user,
-    extraData = extraData,
-    silent = silent,
-    replyTo = replyTo,
-    showInChannel = showInChannel,
-    shadowed = shadowed,
-    channelInfo = channelInfo,
-    replyMessageId = replyMessageId,
-    pinned = pinned,
-    pinnedAt = pinnedAt,
-    pinExpires = pinExpires,
-    pinnedBy = pinnedBy,
-    threadParticipants = threadParticipants,
-)
-
-public fun randomChannelInfo(
-    cid: String? = randomString(),
-    id: String? = randomString(),
-    type: String = randomString(),
-    memberCount: Int = randomInt(),
-    name: String? = randomString(),
-): ChannelInfo = ChannelInfo(
-    cid = cid,
-    id = id,
-    type = type,
-    memberCount = memberCount,
-    name = name,
-)
-
-public fun randomChannel(
-    id: String = randomString(),
-    name: String = randomString(),
-    type: String = randomString(),
-    watcherCount: Int = randomInt(),
-    frozen: Boolean = randomBoolean(),
-    lastMessageAt: Date? = randomDate(),
-    createdAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    syncStatus: SyncStatus = randomSyncStatus(),
-    memberCount: Int = randomInt(),
-    messages: List<Message> = mutableListOf(),
-    members: List<Member> = mutableListOf(),
-    watchers: List<User> = mutableListOf(),
-    read: List<ChannelUserRead> = mutableListOf(),
-    config: Config = Config(),
-    createdBy: User = randomUser(),
-    unreadCount: Int? = randomInt(),
-    team: String = randomString(),
-    hidden: Boolean? = randomBoolean(),
-    hiddenMessagesBefore: Date? = randomDate(),
-    extraData: Map<String, Any> = emptyMap(),
-): Channel = Channel(
-    id = id,
-    name = name,
-    type = type,
-    watcherCount = watcherCount,
-    frozen = frozen,
-    lastMessageAt = lastMessageAt,
-    createdAt = createdAt,
-    deletedAt = deletedAt,
-    updatedAt = updatedAt,
-    syncStatus = syncStatus,
-    memberCount = memberCount,
-    messages = messages,
-    members = members,
-    watchers = watchers,
-    read = read,
-    config = config,
-    createdBy = createdBy,
-    unreadCount = unreadCount,
-    team = team,
-    hidden = hidden,
-    hiddenMessagesBefore = hiddenMessagesBefore,
-    extraData = extraData,
-)
-
-public fun randomMember(
-    user: User = randomUser(),
-    createdAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    isInvited: Boolean? = randomBoolean(),
-    inviteAcceptedAt: Date? = randomDate(),
-    inviteRejectedAt: Date? = randomDate(),
-    shadowBanned: Boolean = randomBoolean(),
-): Member = Member(
-    user = user,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    isInvited = isInvited,
-    inviteAcceptedAt = inviteAcceptedAt,
-    inviteRejectedAt = inviteRejectedAt,
-    shadowBanned = shadowBanned,
-)
-
-public fun randomReaction(
-    messageId: String = randomString(),
-    type: String = randomString(),
-    score: Int = randomInt(),
-    user: User? = randomUser(),
-    userId: String = randomString(),
-    createdAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
-    syncStatus: SyncStatus = randomSyncStatus(),
-    extraData: MutableMap<String, Any> = mutableMapOf(),
-    enforceUnique: Boolean = randomBoolean(),
-): Reaction = Reaction(
-    messageId = messageId,
-    type = type,
-    score = score,
-    user = user,
-    userId = userId,
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    deletedAt = deletedAt,
-    syncStatus = syncStatus,
-    extraData = extraData,
-    enforceUnique = enforceUnique,
-)
-
-public fun randomSyncStatus(exclude: List<SyncStatus> = emptyList()): SyncStatus =
-    (SyncStatus.values().asList() - exclude - SyncStatus.AWAITING_ATTACHMENTS).random()
-
-public fun randomAttachment(
-    authorName: String? = randomString(),
-    authorLink: String? = randomString(),
-    titleLink: String? = randomString(),
-    thumbUrl: String? = randomString(),
-    imageUrl: String? = randomString(),
-    assetUrl: String? = randomString(),
-    ogUrl: String? = randomString(),
-    mimeType: String? = randomString(),
-    fileSize: Int = randomIntBetween(
-        min = 1 * 1024 * 1024,
-        max = 100 * 1024 * 1024,
-    ),
-    title: String? = randomString(),
-    text: String? = randomString(),
-    type: String? = randomString(),
-    image: String? = randomString(),
-    url: String? = randomString(),
-    name: String? = randomString(),
-    fallback: String? = randomString(),
-    originalHeight: Int? = randomInt(),
-    originalWidth: Int? = randomInt(),
-    upload: File? = randomFile(),
-    uploadState: Attachment.UploadState? = Attachment.UploadState.Success,
-    extraData: Map<String, Any> = randomExtraData(),
-): Attachment {
-    return Attachment(
-        authorName = authorName,
-        authorLink = authorLink,
-        titleLink = titleLink,
-        thumbUrl = thumbUrl,
-        imageUrl = imageUrl,
-        assetUrl = assetUrl,
-        ogUrl = ogUrl,
-        mimeType = mimeType,
-        fileSize = fileSize,
-        title = title,
-        text = text,
-        type = type,
-        image = image,
-        url = url,
-        name = name,
-        fallback = fallback,
-        originalHeight = originalHeight,
-        originalWidth = originalWidth,
-        upload = upload,
-        uploadState = uploadState,
-        extraData = extraData,
-    )
-}
-
 public fun randomChannelUpdatedEvent(
     createdAt: Date = randomDate(),
     cid: String = randomString(),
@@ -683,53 +401,6 @@ public fun randomNewMessageEvent(
         unreadChannels = unreadChannels,
     )
 }
-
-public fun randomConfig(
-    createdAt: Date? = randomDate(),
-    updatedAt: Date? = randomDate(),
-    name: String = randomString(),
-    typingEventsEnabled: Boolean = randomBoolean(),
-    readEventsEnabled: Boolean = randomBoolean(),
-    connectEventsEnabled: Boolean = randomBoolean(),
-    searchEnabled: Boolean = randomBoolean(),
-    isReactionsEnabled: Boolean = randomBoolean(),
-    isRepliesEnabled: Boolean = randomBoolean(),
-    muteEnabled: Boolean = randomBoolean(),
-    uploadsEnabled: Boolean = randomBoolean(),
-    urlEnrichmentEnabled: Boolean = randomBoolean(),
-    customEventsEnabled: Boolean = randomBoolean(),
-    pushNotificationsEnabled: Boolean = randomBoolean(),
-    messageRetention: String = randomString(),
-    maxMessageLength: Int = randomInt(),
-    automod: String = randomString(),
-    automodBehavior: String = randomString(),
-    blocklistBehavior: String = randomString(),
-    commands: List<Command> = emptyList(),
-): Config = Config(
-    createdAt = createdAt,
-    updatedAt = updatedAt,
-    name = name,
-    typingEventsEnabled = typingEventsEnabled,
-    readEventsEnabled = readEventsEnabled,
-    connectEventsEnabled = connectEventsEnabled,
-    searchEnabled = searchEnabled,
-    isReactionsEnabled = isReactionsEnabled,
-    isThreadEnabled = isRepliesEnabled,
-    muteEnabled = muteEnabled,
-    uploadsEnabled = uploadsEnabled,
-    urlEnrichmentEnabled = urlEnrichmentEnabled,
-    customEventsEnabled = customEventsEnabled,
-    pushNotificationsEnabled = pushNotificationsEnabled,
-    messageRetention = messageRetention,
-    maxMessageLength = maxMessageLength,
-    automod = automod,
-    automodBehavior = automodBehavior,
-    blocklistBehavior = blocklistBehavior,
-    commands = commands,
-)
-
-public fun randomChannelConfig(type: String = randomString(), config: Config = randomConfig()): ChannelConfig =
-    ChannelConfig(type = type, config = config)
 
 public fun randomQueryChannelsSpec(
     filter: FilterObject = NeutralFilterObject,

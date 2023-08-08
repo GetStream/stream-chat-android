@@ -35,9 +35,9 @@ import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

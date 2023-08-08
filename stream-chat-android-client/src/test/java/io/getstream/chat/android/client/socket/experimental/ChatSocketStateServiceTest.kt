@@ -21,7 +21,8 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.SocketFactory
-import io.getstream.chat.android.test.randomBoolean
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomChatNetworkError
 import io.getstream.result.Error
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -249,13 +250,13 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
                 State.Disconnected.DisconnectedByRequest,
             ),
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedTemporarily(it),
                     State.Disconnected.DisconnectedTemporarily(it),
                 )
             },
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedPermanently(it),
                     State.Disconnected.DisconnectedPermanently(it),
@@ -294,10 +295,10 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
-                State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                 State.Disconnected.NetworkDisconnected,
             ),
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedPermanently(it),
                     State.Disconnected.DisconnectedPermanently(it),
@@ -336,11 +337,11 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
-                State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
-                State.Disconnected.DisconnectedPermanently(Mother.randomChatNetworkError()),
+                State.Disconnected.DisconnectedPermanently(randomChatNetworkError()),
                 State.Disconnected.DisconnectedByRequest,
             ),
         )
@@ -376,10 +377,10 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
-                State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                 State.Disconnected.Stopped,
             ),
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedPermanently(it),
                     State.Disconnected.DisconnectedPermanently(it),
@@ -421,13 +422,13 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
                 State.Disconnected.DisconnectedByRequest,
             ),
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedTemporarily(it),
                     State.Disconnected.DisconnectedTemporarily(it),
                 )
             },
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedPermanently(it),
                     State.Disconnected.DisconnectedPermanently(it),
@@ -466,10 +467,10 @@ internal class ChatSocketStateServiceTest {
                 State.Disconnected.DisconnectedByRequest,
             ),
             Arguments.of(
-                State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                 State.Disconnected.WebSocketEventLost,
             ),
-            Mother.randomChatNetworkError().let {
+            randomChatNetworkError().let {
                 Arguments.of(
                     State.Disconnected.DisconnectedPermanently(it),
                     State.Disconnected.DisconnectedPermanently(it),
@@ -562,18 +563,18 @@ internal class ChatSocketStateServiceTest {
                     State.Disconnected.DisconnectedByRequest,
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                     newConnectionConf,
                     true,
                     State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                     newConnectionConf,
                     false,
                     State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.AUTOMATIC_RECONNECTION),
                 ),
-                Mother.randomChatNetworkError().let {
+                randomChatNetworkError().let {
                     Arguments.of(
                         State.Disconnected.DisconnectedPermanently(it),
                         newConnectionConf,
@@ -581,7 +582,7 @@ internal class ChatSocketStateServiceTest {
                         State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.FORCE_RECONNECTION),
                     )
                 },
-                Mother.randomChatNetworkError().let {
+                randomChatNetworkError().let {
                     Arguments.of(
                         State.Disconnected.DisconnectedPermanently(it),
                         newConnectionConf,
@@ -633,11 +634,11 @@ internal class ChatSocketStateServiceTest {
                     State.Disconnected.DisconnectedByRequest,
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                     connectedEvent,
                     State.Connected(connectedEvent),
                 ),
-                Mother.randomChatNetworkError().let {
+                randomChatNetworkError().let {
                     Arguments.of(
                         State.Disconnected.DisconnectedPermanently(it),
                         connectedEvent,
@@ -648,7 +649,7 @@ internal class ChatSocketStateServiceTest {
         }
 
         @JvmStatic
-        fun onUnrecoverableErrorArgs() = Mother.randomChatNetworkError().let { error ->
+        fun onUnrecoverableErrorArgs() = randomChatNetworkError().let { error ->
             listOf(
                 Arguments.of(
                     State.RestartConnection,
@@ -686,11 +687,11 @@ internal class ChatSocketStateServiceTest {
                     State.Disconnected.DisconnectedByRequest,
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                     error,
                     State.Disconnected.DisconnectedPermanently(error),
                 ),
-                Mother.randomChatNetworkError().let {
+                randomChatNetworkError().let {
                     Arguments.of(
                         State.Disconnected.DisconnectedPermanently(it),
                         error,
@@ -701,7 +702,7 @@ internal class ChatSocketStateServiceTest {
         }
 
         @JvmStatic
-        fun onNetworkErrorArgs() = Mother.randomChatNetworkError().let { error ->
+        fun onNetworkErrorArgs() = randomChatNetworkError().let { error ->
             listOf(
                 Arguments.of(
                     State.RestartConnection,
@@ -739,11 +740,11 @@ internal class ChatSocketStateServiceTest {
                     State.Disconnected.DisconnectedByRequest,
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                     error,
                     State.Disconnected.DisconnectedTemporarily(error),
                 ),
-                Mother.randomChatNetworkError().let {
+                randomChatNetworkError().let {
                     Arguments.of(
                         State.Disconnected.DisconnectedPermanently(it),
                         error,
@@ -794,12 +795,12 @@ internal class ChatSocketStateServiceTest {
                     State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedTemporarily(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedTemporarily(randomChatNetworkError()),
                     newConnectionConf,
                     State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),
                 Arguments.of(
-                    State.Disconnected.DisconnectedPermanently(Mother.randomChatNetworkError()),
+                    State.Disconnected.DisconnectedPermanently(randomChatNetworkError()),
                     newConnectionConf,
                     State.Connecting(newConnectionConf, ChatSocketStateService.ConnectionType.INITIAL_CONNECTION),
                 ),

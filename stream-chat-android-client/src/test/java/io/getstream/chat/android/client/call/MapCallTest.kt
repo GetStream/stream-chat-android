@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import io.getstream.result.call.map

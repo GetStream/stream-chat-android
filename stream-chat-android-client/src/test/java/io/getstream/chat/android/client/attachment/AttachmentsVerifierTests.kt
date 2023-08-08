@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.attachment
 
-import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.test.TestLoggingHelper
 import io.getstream.result.Result
 import org.amshove.kluent.`should be equal to`

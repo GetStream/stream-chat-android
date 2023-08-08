@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.clientstate
 
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf

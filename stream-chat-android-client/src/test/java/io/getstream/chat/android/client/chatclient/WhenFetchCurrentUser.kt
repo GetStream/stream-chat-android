@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.clientstate.UserState
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.socket.ChatSocket
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomUser
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest

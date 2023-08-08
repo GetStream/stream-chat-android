@@ -21,7 +21,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
 import io.getstream.chat.android.models.querysort.QuerySorter
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

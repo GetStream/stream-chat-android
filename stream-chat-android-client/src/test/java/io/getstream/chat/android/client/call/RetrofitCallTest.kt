@@ -17,10 +17,9 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedRetrofit2Call
-import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -47,7 +46,7 @@ internal class RetrofitCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    val resultValue = Mother.randomString()
+    val resultValue = randomString()
     val validResult: Result<String> = Result.Success(resultValue)
     val parser: ChatParser = mock()
 

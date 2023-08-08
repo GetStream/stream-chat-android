@@ -25,10 +25,10 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.socket.FakeChatSocket
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.client.token.FakeTokenManager
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import org.amshove.kluent.shouldBeEqualTo

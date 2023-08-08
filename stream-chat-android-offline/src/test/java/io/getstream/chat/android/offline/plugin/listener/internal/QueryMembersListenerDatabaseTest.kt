@@ -19,12 +19,12 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.android.client.test.randomMember
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.querysort.QuerySortByField
-import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomMember
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

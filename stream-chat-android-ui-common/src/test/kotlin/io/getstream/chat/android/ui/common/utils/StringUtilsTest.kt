@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.common.utils
 
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper.Companion.FILE_NAME_PREFIX
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test

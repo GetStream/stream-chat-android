@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.token
 
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.doReturn

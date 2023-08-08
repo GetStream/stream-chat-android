@@ -24,10 +24,10 @@ import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
 import io.getstream.chat.android.client.socket.StreamWebSocket
 import io.getstream.chat.android.client.socket.StreamWebSocketEvent
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.launch

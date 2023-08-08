@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.api.models
 
-import io.getstream.chat.android.test.randomInt
+import io.getstream.chat.android.randomInt
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest

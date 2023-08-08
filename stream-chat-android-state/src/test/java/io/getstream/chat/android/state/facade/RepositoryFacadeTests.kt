@@ -17,12 +17,6 @@
 package io.getstream.chat.android.state.facade
 
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomConfig
-import io.getstream.chat.android.client.test.randomMember
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.test.randomReaction
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelUserRead
@@ -30,9 +24,15 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomConfig
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`

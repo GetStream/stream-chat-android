@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat

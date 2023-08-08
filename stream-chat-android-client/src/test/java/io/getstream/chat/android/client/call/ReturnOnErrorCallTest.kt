@@ -17,9 +17,8 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.Mother
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.Call
@@ -45,8 +44,8 @@ internal class ReturnOnErrorCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    private val resultValue = Mother.randomString()
-    private val errorResultValue = Mother.randomString()
+    private val resultValue = randomString()
+    private val errorResultValue = randomString()
     private val validResult: Result<String> = Result.Success(resultValue)
     private val error: Error = Error.GenericError(message = randomString())
     private val errorResult: Result<String> = Result.Failure(error)

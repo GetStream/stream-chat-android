@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.state.facade
 
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomMessage
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMessage
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test

@@ -18,11 +18,11 @@ package io.getstream.chat.android.client.helpers
 
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
-import io.getstream.chat.android.client.test.randomChannel
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.positiveRandomInt
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.delay

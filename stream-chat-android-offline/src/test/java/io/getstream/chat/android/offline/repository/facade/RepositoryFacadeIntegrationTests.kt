@@ -17,13 +17,13 @@
 package io.getstream.chat.android.offline.repository.facade
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import io.getstream.chat.android.client.test.randomChannelInfo
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.test.randomReaction
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.offline.integration.BaseRepositoryFacadeIntegrationTest
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomChannelInfo
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEmpty
 import org.amshove.kluent.shouldBeEqualTo

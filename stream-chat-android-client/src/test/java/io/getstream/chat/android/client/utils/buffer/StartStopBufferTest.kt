@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.utils.buffer
 
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be in`

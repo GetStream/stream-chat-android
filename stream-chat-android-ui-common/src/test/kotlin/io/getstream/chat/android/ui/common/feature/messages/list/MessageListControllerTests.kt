@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.createDate
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Config
@@ -27,15 +28,15 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.createDate
-import io.getstream.chat.android.ui.common.createMessage
-import io.getstream.chat.android.ui.common.createMessageList
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
@@ -98,7 +99,7 @@ internal class MessageListControllerTests {
 
     @Test
     fun `Given other users are typing When there are messages Should add typing indicator to end`() = runTest {
-        val messageState = MessagesState.Result(createMessageList())
+        val messageState = MessagesState.Result(randomMessageList())
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
@@ -118,7 +119,7 @@ internal class MessageListControllerTests {
     @Test
     fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() =
         runTest {
-            val messages = createMessageList(3) { createMessage(user = user1) }
+            val messages = randomMessageList(3) { randomMessage(user = user1) }
             val messageState = MessagesState.Result(messages)
             val controller = Fixture()
                 .givenCurrentUser()
@@ -136,9 +137,9 @@ internal class MessageListControllerTests {
     fun `Given regular message followed and preceded by other user message When grouping messages Should add top and bottom positions to messages`() =
         runTest {
             var message = 0
-            val messages = createMessageList(3) {
+            val messages = randomMessageList(3) {
                 message++
-                createMessage(user = if (message % 2 == 0) user1 else user2)
+                randomMessage(user = if (message % 2 == 0) user1 else user2)
             }
             val messageState = MessagesState.Result(messages)
             val controller = Fixture()
@@ -157,9 +158,9 @@ internal class MessageListControllerTests {
     fun `Given regular message followed by system message When grouping messages Should add bottom position to the regular message`() =
         runTest {
             var message = 0
-            val messages = createMessageList(3) {
+            val messages = randomMessageList(3) {
                 message++
-                createMessage(user = if (message % 2 == 0) user1 else user2)
+                randomMessage(user = if (message % 2 == 0) user1 else user2)
             }
             val messageState = MessagesState.Result(messages)
             val controller = Fixture()
@@ -178,9 +179,9 @@ internal class MessageListControllerTests {
     @Test
     fun `Given date separators with time difference Should add 3 date separators`() = runTest {
         var message = 0
-        val messages = createMessageList(3) {
+        val messages = randomMessageList(3) {
             message++
-            createMessage(createdAt = createDate(2022, 5, message))
+            randomMessage(createdAt = createDate(2022, 5, message))
         }
         val messageState = MessagesState.Result(messages)
         val controller = Fixture()
@@ -197,9 +198,9 @@ internal class MessageListControllerTests {
     @Test
     fun `Given handler returns no date separators Should not add date separators`() = runTest {
         var message = 0
-        val messages = createMessageList(3) {
+        val messages = randomMessageList(3) {
             message++
-            createMessage(createdAt = createDate(2022, 5, message))
+            randomMessage(createdAt = createDate(2022, 5, message))
         }
         val messageState = MessagesState.Result(messages)
         val controller = Fixture()
@@ -217,9 +218,9 @@ internal class MessageListControllerTests {
     @Test
     fun `When deleted visibility is never When grouping messages Should not add any deleted messages`() = runTest {
         var message = 0
-        val messages = createMessageList {
+        val messages = randomMessageList {
             message++
-            createMessage(deletedAt = if (message % 2 == 0) createDate() else null)
+            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
         }
         val messageState = MessagesState.Result(messages)
         val controller = Fixture()
@@ -235,9 +236,9 @@ internal class MessageListControllerTests {
     @Test
     fun `When deleted visibility is always When grouping messages Should add all deleted messages`() = runTest {
         var message = 0
-        val messages = createMessageList {
+        val messages = randomMessageList {
             message++
-            createMessage(deletedAt = if (message % 2 == 0) createDate() else null)
+            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
         }
         val messageState = MessagesState.Result(messages)
         val controller = Fixture()
@@ -253,9 +254,9 @@ internal class MessageListControllerTests {
     @Test
     fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() = runTest {
         var message = 0
-        val messages = createMessageList {
+        val messages = randomMessageList {
             message++
-            createMessage(deletedAt = if (message % 2 == 0) createDate() else null)
+            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
         }
         val messageState = MessagesState.Result(messages)
         val controller = Fixture()
@@ -273,9 +274,9 @@ internal class MessageListControllerTests {
     fun `When footer visibility is with time difference When message is after specified time Show message footer`() =
         runTest {
             var message = 0
-            val messages = createMessageList(3) {
+            val messages = randomMessageList(3) {
                 message++
-                createMessage(createdAt = createDate(2022, 5, message))
+                randomMessage(createdAt = createDate(2022, 5, message))
             }
             val messageState = MessagesState.Result(messages)
             val controller = Fixture()

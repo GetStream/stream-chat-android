@@ -23,10 +23,10 @@ import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.UploadedImage
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomFile
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomFile
-import io.getstream.chat.android.test.randomString
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi

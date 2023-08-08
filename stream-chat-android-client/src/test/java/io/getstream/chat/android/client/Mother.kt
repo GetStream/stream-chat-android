@@ -26,37 +26,20 @@ import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateForm
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
-import io.getstream.chat.android.client.test.randomUser
 import io.getstream.chat.android.models.ConnectionState
-import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.InitializationState
-import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomInt
-import io.getstream.result.Error
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 import java.util.Date
-import java.util.UUID
 
 internal object Mother {
     private val streamDateFormatter = StreamDateFormatter()
-
-    fun randomString(): String = UUID.randomUUID().toString()
-
-    fun randomDevice(
-        token: String = randomString(),
-        pushProvider: PushProvider = PushProvider.values().random(),
-        providerName: String? = randomString().takeIf { randomBoolean() },
-    ): Device =
-        Device(
-            token = token,
-            pushProvider = pushProvider,
-            providerName = providerName,
-        )
 
     fun randomUserPresenceChangedEvent(
         type: String = randomString(),
@@ -117,16 +100,4 @@ internal object Mother {
     ): ConnectedEvent {
         return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
     }
-
-    fun randomChatNetworkError(
-        serverErrorCode: Int = randomInt(),
-        description: String = randomString(),
-        statusCode: Int = randomInt(),
-        cause: Throwable? = null,
-    ): Error.NetworkError = Error.NetworkError(
-        message = description,
-        serverErrorCode = serverErrorCode,
-        statusCode = statusCode,
-        cause = cause,
-    )
 }

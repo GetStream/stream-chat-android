@@ -27,7 +27,7 @@ import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.models.EventType
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
 import io.getstream.result.Result
 import okhttp3.WebSocketListener
 import org.mockito.kotlin.any

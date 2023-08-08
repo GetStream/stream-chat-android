@@ -17,8 +17,8 @@
 package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomMessage
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
 import io.getstream.chat.android.state.plugin.logic.channel.thread.internal.ThreadLogic
