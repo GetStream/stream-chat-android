@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.client
 
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomLong
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.`should be`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments

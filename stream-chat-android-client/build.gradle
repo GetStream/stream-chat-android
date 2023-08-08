@@ -86,6 +86,7 @@ dependencies {
     // Tests
     testImplementation project(':stream-chat-android-test')
     testImplementation project(":stream-chat-android-client-test")
+    testImplementation testFixtures(project(":stream-chat-android-core"))
     testImplementation Dependencies.streamResult
     testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.androidxLifecycleTesting
