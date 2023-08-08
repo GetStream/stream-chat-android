@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
@@ -230,10 +231,16 @@ public data class MessageComposerViewStyle(
     // Trailing content
     public val sendMessageButtonEnabled: Boolean,
     public val sendMessageButtonIconDrawable: Drawable,
+    @Px public val sendMessageButtonWidth: Int,
+    @Px public val sendMessageButtonHeight: Int,
+    @Px public val sendMessageButtonPadding: Int,
     public val audioRecordingButtonVisible: Boolean,
     public val audioRecordingButtonEnabled: Boolean,
     public val audioRecordingButtonPreferred: Boolean,
     public val audioRecordingButtonIconDrawable: Drawable,
+    @Px public val audioRecordingButtonWidth: Int,
+    @Px public val audioRecordingButtonHeight: Int,
+    @Px public val audioRecordingButtonPadding: Int,
     public val cooldownTimerTextStyle: TextStyle,
     public val cooldownTimerBackgroundDrawable: Drawable,
     // Message reply customization, by default belongs to center content as well
@@ -684,6 +691,22 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
 
+                val sendMessageButtonWidth: Int =
+                    a.getDimensionPixelSize(
+                        R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonWidth,
+                        DEFAULT_TRAILING_BUTTON_SIZE.dpToPx(),
+                    )
+                val sendMessageButtonHeight: Int =
+                    a.getDimensionPixelSize(
+                        R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonHeight,
+                        DEFAULT_TRAILING_BUTTON_SIZE.dpToPx(),
+                    )
+                val sendMessageButtonPadding: Int =
+                    a.getDimensionPixelSize(
+                        R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonPadding,
+                        DEFAULT_TRAILING_BUTTON_PADDING.dpToPx(),
+                    )
+
                 val audioRecordingButtonEnabled = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonEnabled,
                     true,
@@ -700,6 +723,22 @@ public data class MessageComposerViewStyle(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!
+
+                val audioRecordingButtonWidth: Int =
+                    a.getDimensionPixelSize(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonWidth,
+                        DEFAULT_TRAILING_BUTTON_SIZE.dpToPx(),
+                    )
+                val audioRecordingButtonHeight: Int =
+                    a.getDimensionPixelSize(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonHeight,
+                        DEFAULT_TRAILING_BUTTON_SIZE.dpToPx(),
+                    )
+                val audioRecordingButtonPadding: Int =
+                    a.getDimensionPixelSize(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonPadding,
+                        DEFAULT_TRAILING_BUTTON_PADDING.dpToPx(),
+                    )
 
                 val cooldownTimerTextStyle = TextStyle.Builder(a)
                     .size(
@@ -941,10 +980,16 @@ public data class MessageComposerViewStyle(
                     // Trailing content
                     sendMessageButtonEnabled = sendMessageButtonEnabled,
                     sendMessageButtonIconDrawable = sendMessageButtonIconDrawable,
+                    sendMessageButtonWidth = sendMessageButtonWidth,
+                    sendMessageButtonHeight = sendMessageButtonHeight,
+                    sendMessageButtonPadding = sendMessageButtonPadding,
                     audioRecordingButtonEnabled = audioRecordingButtonEnabled,
                     audioRecordingButtonVisible = audioRecordingButtonVisible,
                     audioRecordingButtonPreferred = audioRecordingButtonPreferred,
                     audioRecordingButtonIconDrawable = audioRecordingButtonIconDrawable,
+                    audioRecordingButtonWidth = audioRecordingButtonWidth,
+                    audioRecordingButtonHeight = audioRecordingButtonHeight,
+                    audioRecordingButtonPadding = audioRecordingButtonPadding,
                     cooldownTimerTextStyle = cooldownTimerTextStyle,
                     cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                     messageReplyBackgroundColor = messageReplyBackgroundColor,
@@ -1261,5 +1306,7 @@ public data class MessageComposerViewStyle(
         }
 
         private const val DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH = 4F
+        private const val DEFAULT_TRAILING_BUTTON_SIZE = 32
+        private const val DEFAULT_TRAILING_BUTTON_PADDING = 4
     }
 }
