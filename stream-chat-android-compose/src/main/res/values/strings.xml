@@ -48,7 +48,6 @@
     <string name="stream_compose_ok">OK</string>
     <string name="stream_compose_cancel">Cancel</string>
     <string name="stream_compose_waiting_for_network">Waiting for network</string>
-    <string name="stream_compose_untitled_channel">Channel without name</string>
     <string name="stream_compose_user_status_online">Online</string>
     <string name="stream_compose_user_status_last_seen">Last seen %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">Last seen just now</string>

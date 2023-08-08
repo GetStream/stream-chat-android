@@ -21,6 +21,7 @@ import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
@@ -28,7 +29,6 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.att
 import io.getstream.chat.android.ui.font.ChatFonts
 import io.getstream.chat.android.ui.font.ChatFontsImpl
 import io.getstream.chat.android.ui.font.ChatStyle
-import io.getstream.chat.android.ui.helper.ChannelNameFormatter
 import io.getstream.chat.android.ui.helper.CurrentUserProvider
 import io.getstream.chat.android.ui.helper.MessagePreviewFormatter
 import io.getstream.chat.android.ui.helper.MimeTypeIconProvider

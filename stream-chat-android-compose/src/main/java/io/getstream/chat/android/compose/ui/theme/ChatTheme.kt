@@ -34,7 +34,6 @@ import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactorie
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
-import io.getstream.chat.android.compose.ui.util.ChannelNameFormatter
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
@@ -43,6 +42,7 @@ import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
+import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 

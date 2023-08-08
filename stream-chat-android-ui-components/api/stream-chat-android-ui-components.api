@@ -9,7 +9,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public static final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public static final fun getAttachmentPreviewFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager;
-	public static final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/helper/ChannelNameFormatter;
+	public static final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
 	public static final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/helper/CurrentUserProvider;
 	public static final fun getDateFormatter ()Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/font/ChatFonts;
@@ -25,7 +25,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getVideoThumbnailsEnabled ()Z
 	public static final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public static final fun setAttachmentPreviewFactoryManager (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager;)V
-	public static final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/helper/ChannelNameFormatter;)V
+	public static final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;)V
 	public static final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/helper/CurrentUserProvider;)V
 	public static final fun setDateFormatter (Lio/getstream/chat/android/ui/common/helper/DateFormatter;)V
 	public static final fun setFonts (Lio/getstream/chat/android/ui/font/ChatFonts;)V
@@ -2835,18 +2835,6 @@ public final class io/getstream/chat/android/ui/font/TextStyle$Builder {
 	public final fun size (I)Lio/getstream/chat/android/ui/font/TextStyle$Builder;
 	public final fun size (II)Lio/getstream/chat/android/ui/font/TextStyle$Builder;
 	public final fun style (II)Lio/getstream/chat/android/ui/font/TextStyle$Builder;
-}
-
-public abstract interface class io/getstream/chat/android/ui/helper/ChannelNameFormatter {
-	public static final field Companion Lio/getstream/chat/android/ui/helper/ChannelNameFormatter$Companion;
-	public abstract fun formatChannelName (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/helper/ChannelNameFormatter$Companion {
-	public final fun defaultFormatter (Landroid/content/Context;)Lio/getstream/chat/android/ui/helper/ChannelNameFormatter;
-	public final fun defaultFormatter (Landroid/content/Context;I)Lio/getstream/chat/android/ui/helper/ChannelNameFormatter;
-	public final fun defaultFormatter (Landroid/content/Context;II)Lio/getstream/chat/android/ui/helper/ChannelNameFormatter;
-	public static synthetic fun defaultFormatter$default (Lio/getstream/chat/android/ui/helper/ChannelNameFormatter$Companion;Landroid/content/Context;IIILjava/lang/Object;)Lio/getstream/chat/android/ui/helper/ChannelNameFormatter;
 }
 
 public final class io/getstream/chat/android/ui/helper/CurrentUserProvider$Companion {

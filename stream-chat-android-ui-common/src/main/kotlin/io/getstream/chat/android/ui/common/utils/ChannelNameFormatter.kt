@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.helper
+package io.getstream.chat.android.ui.common.utils
 
 import android.content.Context
 import androidx.annotation.StringRes
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.R
 import io.getstream.chat.android.uiutils.extension.getDisplayName
 
 /**
