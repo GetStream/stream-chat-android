@@ -18,18 +18,24 @@ package io.getstream.chat.android.uiutils.extension
 
 import android.content.Context
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.ui.utils.R
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
+import org.mockito.ArgumentMatchers.anyInt
+import org.mockito.ArgumentMatchers.anyString
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -37,6 +43,17 @@ internal class ChannelKtTest {
     @BeforeEach
     fun setup() {
         whenever(context.getString(fallbackResource)) doReturn fallbackText
+        whenever(
+            context.getString(
+                eq(R.string.stream_ui_channel_list_untitled_channel_plus_more),
+                anyString(),
+                anyInt(),
+            ),
+        ) doAnswer {
+            val users = it.arguments[1] as String
+            val count = it.arguments[2] as Int
+            "$users +$count more"
+        }
     }
 
     /**
@@ -77,12 +94,16 @@ internal class ChannelKtTest {
                     it.joinToString(", ") { user -> user.name },
                 )
             },
-            List(4) { randomUser() }.let {
+            List(5) { randomUser() }.let {
                 val maxMembers = positiveRandomInt(4)
                 Arguments.of(
                     randomChannel(name = "", members = it.map { user -> randomMember(user = user) }),
                     maxMembers,
-                    it.joinToString(limit = maxMembers, separator = ", ") { user -> user.name },
+                    "${
+                        it.sortedBy(User::name)
+                            .take(maxMembers)
+                            .joinToString(separator = ", ") { user -> user.name }
+                    } +${it.size - maxMembers} more",
                 )
             },
             Arguments.of(
