@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.R
@@ -161,6 +162,7 @@ internal class ChatNotificationHandler(
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setAutoCancel(true)
             .setSmallIcon(R.drawable.stream_ic_notification)
+            .setColor(ContextCompat.getColor(context, R.color.stream_ic_notification))
             .setContentTitle(contentTitle)
             .setContentText(contentText)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
