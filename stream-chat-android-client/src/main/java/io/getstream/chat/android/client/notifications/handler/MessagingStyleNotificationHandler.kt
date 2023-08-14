@@ -26,6 +26,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
@@ -90,6 +91,7 @@ internal class MessagingStyleNotificationHandler(
             val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
             val notification = NotificationCompat.Builder(context, getNotificationChannelId())
                 .setSmallIcon(R.drawable.stream_ic_notification)
+                .setColor(ContextCompat.getColor(context, R.color.stream_ic_notification))
                 .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context)))
                 .setContentIntent(contentPendingIntent)
                 .addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
