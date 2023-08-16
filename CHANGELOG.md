@@ -64,6 +64,7 @@
 - Improved trailing buttons customization for `MessageComposerView`. [#4915](https://github.com/GetStream/stream-chat-android/pull/4915)
 
 ### ✅ Added
+- Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4922](https://github.com/GetStream/stream-chat-android/pull/4922)
 
 ### ⚠️ Changed
 

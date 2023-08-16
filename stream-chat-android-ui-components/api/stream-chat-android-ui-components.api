@@ -1673,6 +1673,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setConfirmFlagMessageHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ConfirmFlagMessageHandler;)V
 	public final fun setCopyMessageEnabled (Z)V
 	public final fun setCustomActionHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$CustomActionHandler;)V
+	public final fun setCustomItemAnimator (Landroidx/recyclerview/widget/RecyclerView$ItemAnimator;)V
 	public final fun setCustomLinearLayoutManager (Landroidx/recyclerview/widget/LinearLayoutManager;)V
 	public final fun setDeleteMessageConfirmationEnabled (Z)V
 	public final fun setDeleteMessageEnabled (Z)V
