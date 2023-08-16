@@ -170,7 +170,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
             } else {
                 cooldownBadgeTextView.isVisible = false
                 sendMessageButton.isVisible = when (style.audioRecordingButtonPreferred) {
-                    true -> hasTextInput || isInEditMode
+                    true -> hasTextInput || hasAttachments || isInEditMode
                     else -> true
                 }
                 sendMessageButton.isEnabled = style.sendMessageButtonEnabled && canSendMessage && hasValidContent
