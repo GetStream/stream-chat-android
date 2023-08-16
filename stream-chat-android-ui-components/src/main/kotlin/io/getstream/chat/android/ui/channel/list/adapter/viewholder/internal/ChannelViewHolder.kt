@@ -62,7 +62,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private val swipeListener: ChannelListView.SwipeListener,
     private val style: ChannelListViewStyle,
     private val isMoreOptionsVisible: ChannelListView.ChannelOptionVisibilityPredicate,
-    private val isDeleteOptionsVisible: ChannelListView.ChannelOptionVisibilityPredicate,
+    private val isDeleteOptionVisible: ChannelListView.ChannelOptionVisibilityPredicate,
+    private val getMoreOptionsIcon: ChannelListView.ChannelOptionIconProvider,
+    private val getDeleteOptionIcon: ChannelListView.ChannelOptionIconProvider,
     private val binding: StreamUiChannelListItemViewBinding = StreamUiChannelListItemViewBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -188,6 +190,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         binding.itemBackgroundView.moreOptionsImageView.apply {
             if (style.optionsEnabled && isMoreOptionsVisible(channel)) {
                 isVisible = true
+                getMoreOptionsIcon.invoke(channel)?.also { setImageDrawable(it) }
                 optionsCount++
             } else {
                 isVisible = false
@@ -195,8 +198,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         }
         binding.itemBackgroundView.deleteImageView.apply {
             val canDeleteChannel = channel.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
-            if (style.deleteEnabled && canDeleteChannel && isDeleteOptionsVisible(channel)) {
+            if (style.deleteEnabled && canDeleteChannel && isDeleteOptionVisible(channel)) {
                 isVisible = true
+                getDeleteOptionIcon.invoke(channel)?.also { setImageDrawable(it) }
                 optionsCount++
             } else {
                 isVisible = false
