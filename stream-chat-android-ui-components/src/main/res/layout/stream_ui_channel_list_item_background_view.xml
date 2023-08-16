@@ -27,10 +27,11 @@
         android:layout_width="@dimen/stream_ui_channel_list_item_option_icon_width"
         android:layout_height="0dp"
         android:scaleType="center"
-        android:src="@drawable/stream_ui_ic_delete"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/stream_ui_ic_delete"
+        tools:ignore="ContentDescription"
         />
 
     <ImageView

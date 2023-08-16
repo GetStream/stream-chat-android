@@ -32,6 +32,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.ItemAnimator
 import com.getstream.sdk.chat.adapter.MessageListItem
 import com.getstream.sdk.chat.enums.GiphyAction
 import com.getstream.sdk.chat.model.ModelType
@@ -828,6 +829,17 @@ public class MessageListView : ConstraintLayout {
      */
     public fun setCustomLinearLayoutManager(layoutManager: LinearLayoutManager) {
         binding.chatMessagesRV.layoutManager = layoutManager
+    }
+
+    /**
+     * Set a custom item animator for MessageListView.
+     * That will handle animations involving changes to the items in this MessageListView.
+     *
+     * @param itemAnimator The ItemAnimator being set. If null, no animations will occur when changes occur
+     * to the items in this MessageListView.
+     */
+    public fun setCustomItemAnimator(itemAnimator: ItemAnimator) {
+        binding.chatMessagesRV.itemAnimator = itemAnimator
     }
 
     /**

@@ -61,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4926](https://github.com/GetStream/stream-chat-android/pull/4926)
 
 ### ⚠️ Changed
 
