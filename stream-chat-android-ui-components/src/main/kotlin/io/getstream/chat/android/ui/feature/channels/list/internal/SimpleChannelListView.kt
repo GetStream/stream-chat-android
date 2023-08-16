@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.internal.ChannelListItemAdapter
+import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListIconProviderContainerImpl
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListListenerContainerImpl
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListVisibilityContainerImpl
@@ -58,6 +59,8 @@ internal class SimpleChannelListView @JvmOverloads constructor(
     internal val listenerContainer = ChannelListListenerContainerImpl()
 
     internal val visibilityContainer = ChannelListVisibilityContainerImpl()
+
+    internal val iconProviderContainer = ChannelListIconProviderContainerImpl()
 
     private lateinit var style: ChannelListViewStyle
 
@@ -102,6 +105,7 @@ internal class SimpleChannelListView @JvmOverloads constructor(
 
         viewHolderFactory.setListenerContainer(this.listenerContainer)
         viewHolderFactory.setVisibilityContainer(this.visibilityContainer)
+        viewHolderFactory.setIconProviderContainer(this.iconProviderContainer)
         viewHolderFactory.setStyle(style)
 
         adapter = ChannelListItemAdapter(viewHolderFactory)
@@ -146,6 +150,14 @@ internal class SimpleChannelListView @JvmOverloads constructor(
 
     fun setIsDeleteOptionVisible(isDeleteOptionVisible: ChannelListView.ChannelOptionVisibilityPredicate) {
         visibilityContainer.isDeleteOptionVisible = isDeleteOptionVisible
+    }
+
+    fun setMoreOptionsIconProvider(getMoreOptionsIcon: ChannelListView.ChannelOptionIconProvider) {
+        iconProviderContainer.getMoreOptionsIcon = getMoreOptionsIcon
+    }
+
+    fun setDeleteOptionIconProvider(getDeleteOptionIcon: ChannelListView.ChannelOptionIconProvider) {
+        iconProviderContainer.getDeleteOptionIcon = getDeleteOptionIcon
     }
 
     fun setSwipeListener(listener: ChannelListView.SwipeListener?) {
