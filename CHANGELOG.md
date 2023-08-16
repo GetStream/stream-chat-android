@@ -16,6 +16,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `R.color.stream_ic_notification` to the list of resources that can be overridden. [#4920](https://github.com/GetStream/stream-chat-android/pull/4920)
 
 ### ⚠️ Changed
 
