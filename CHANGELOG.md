@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed send button being hidden with non-empty input when `audioRecordingButtonPreferred` is enabled. [#4925](https://github.com/GetStream/stream-chat-android/pull/4925)
 
 ### ⬆️ Improved
 - Improved UI customization for Audio Recording feature. [#4906](https://github.com/GetStream/stream-chat-android/pull/4906)
