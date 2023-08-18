@@ -32,6 +32,9 @@ public open class ChannelListItemViewHolderFactory {
     protected lateinit var visibilityContainer: ChannelListVisibilityContainer
         private set
 
+    protected lateinit var iconProviderContainer: ChannelListIconProviderContainer
+        private set
+
     protected lateinit var style: ChannelListViewStyle
         private set
 
@@ -41,6 +44,10 @@ public open class ChannelListItemViewHolderFactory {
 
     internal fun setVisibilityContainer(visibilityContainer: ChannelListVisibilityContainer) {
         this.visibilityContainer = visibilityContainer
+    }
+
+    internal fun setIconProviderContainer(iconProviderContainer: ChannelListIconProviderContainer) {
+        this.iconProviderContainer = iconProviderContainer
     }
 
     internal fun setStyle(style: ChannelListViewStyle) {
@@ -89,6 +96,8 @@ public open class ChannelListItemViewHolderFactory {
             style,
             visibilityContainer.isMoreOptionsVisible,
             visibilityContainer.isDeleteOptionVisible,
+            iconProviderContainer.getMoreOptionsIcon,
+            iconProviderContainer.getDeleteOptionIcon,
         )
     }
 
@@ -105,6 +114,9 @@ public open class ChannelListItemViewHolderFactory {
         }
         if (!::visibilityContainer.isInitialized) {
             visibilityContainer = ChannelListVisibilityContainerImpl()
+        }
+        if (!::iconProviderContainer.isInitialized) {
+            iconProviderContainer = ChannelListIconProviderContainerImpl()
         }
         if (!::style.isInitialized) {
             style = ChannelListViewStyle(context, null)

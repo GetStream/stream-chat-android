@@ -37,6 +37,7 @@ import kotlin.reflect.KProperty
  *             wrapped can be referenced by calling the realListener() method. This
  *             function always returns the current listener, even if it changes.
  */
+// TODO Needs to be renamed to something like WrapDelegate. It is no longer used for listeners only.
 @InternalStreamChatApi
 public class ListenerDelegate<L : Any>(
     initialValue: L,
