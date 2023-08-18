@@ -7,7 +7,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Business models are immutable now. [#4893](https://github.com/GetStream/stream-chat-android/pull/4893)
 
 ### ❌ Removed
 
@@ -17,7 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `R.color.stream_ic_notification` to the list of resources that can be overridden. [#4921](https://github.com/GetStream/stream-chat-android/pull/4921)
 
 ### ⚠️ Changed
 
@@ -58,15 +56,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed send button being hidden with non-empty input when `audioRecordingButtonPreferred` is enabled. [#4925](https://github.com/GetStream/stream-chat-android/pull/4925)
 
 ### ⬆️ Improved
-- Improved UI customization for Audio Recording feature. [#4906](https://github.com/GetStream/stream-chat-android/pull/4906)
-- Improved trailing buttons customization for `MessageComposerView`. [#4915](https://github.com/GetStream/stream-chat-android/pull/4915)
 
 ### ✅ Added
-- Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4922](https://github.com/GetStream/stream-chat-android/pull/4922)
-- Added `ChannelListView.setMoreOptionsIconProvider` and `ChannelListView.setDeleteOptionIconProvider` to allow customizing the options icons used by the `ChannelListView`. [#4927](https://github.com/GetStream/stream-chat-android/pull/4927)
 
 ### ⚠️ Changed
 
@@ -93,6 +86,33 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 18th, 2023 - 6.0.0-beta4
+
+I hope you're interested in our latest major release - v6.0.0-beta4! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## Common changes for all artifacts
+### ⚠️ Changed
+- Business models are immutable now. [#4893](https://github.com/GetStream/stream-chat-android/pull/4893)
+
+## stream-chat-android-client
+### ✅ Added
+- Added `R.color.stream_ic_notification` to the list of resources that can be overridden. [#4921](https://github.com/GetStream/stream-chat-android/pull/4921)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed send button being hidden with non-empty input when `audioRecordingButtonPreferred` is enabled. [#4925](https://github.com/GetStream/stream-chat-android/pull/4925)
+
+### ⬆️ Improved
+- Improved UI customization for Audio Recording feature. [#4906](https://github.com/GetStream/stream-chat-android/pull/4906)
+- Improved trailing buttons customization for `MessageComposerView`. [#4915](https://github.com/GetStream/stream-chat-android/pull/4915)
+
+### ✅ Added
+- Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4922](https://github.com/GetStream/stream-chat-android/pull/4922)
+- Added `ChannelListView.setMoreOptionsIconProvider` and `ChannelListView.setDeleteOptionIconProvider` to allow customizing the options icons used by the `ChannelListView`. [#4927](https://github.com/GetStream/stream-chat-android/pull/4927)
 
 # July 27th, 2023 - 6.0.0-beta3
 
