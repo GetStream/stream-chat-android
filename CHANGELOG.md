@@ -66,6 +66,7 @@
 
 ### ✅ Added
 - Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4922](https://github.com/GetStream/stream-chat-android/pull/4922)
+- Added `ChannelListView.setMoreOptionsIconProvider` and `ChannelListView.setDeleteOptionIconProvider` to allow customizing the options icons used by the `ChannelListView`. [#4927](https://github.com/GetStream/stream-chat-android/pull/4927)
 
 ### ⚠️ Changed
 

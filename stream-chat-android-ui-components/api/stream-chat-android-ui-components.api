@@ -200,6 +200,7 @@ public final class io/getstream/chat/android/ui/feature/channels/list/ChannelLis
 	public final fun setChannelListUpdateListener (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelListUpdateListener;)V
 	public final fun setChannelLongClickListener (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelLongClickListener;)V
 	public final fun setChannels (Ljava/util/List;)V
+	public final fun setDeleteOptionIconProvider (Lkotlin/jvm/functions/Function1;)V
 	public final fun setEmptyStateView (Landroid/view/View;)V
 	public final fun setEmptyStateView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setEmptyStateView$default (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
@@ -212,6 +213,7 @@ public final class io/getstream/chat/android/ui/feature/channels/list/ChannelLis
 	public final fun setLoadingView (Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;)V
 	public static synthetic fun setLoadingView$default (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView;Landroid/view/View;Landroid/widget/FrameLayout$LayoutParams;ILjava/lang/Object;)V
 	public final fun setMoreOptionsClickListener (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelClickListener;)V
+	public final fun setMoreOptionsIconProvider (Lkotlin/jvm/functions/Function1;)V
 	public final fun setOnEndReachedListener (Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$EndReachedListener;)V
 	public final fun setPaginationEnabled (Z)V
 	public final fun setShouldDrawItemSeparatorOnLastItem (Z)V
@@ -246,6 +248,15 @@ public abstract interface class io/getstream/chat/android/ui/feature/channels/li
 }
 
 public final class io/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelLongClickListener$Companion {
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionIconProvider : kotlin/jvm/functions/Function1 {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionIconProvider$Companion;
+	public static final field DEFAULT Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionIconProvider;
+	public abstract fun invoke (Lio/getstream/chat/android/models/Channel;)Landroid/graphics/drawable/Drawable;
+}
+
+public final class io/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionIconProvider$Companion {
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionVisibilityPredicate : kotlin/jvm/functions/Function1 {
@@ -409,11 +420,17 @@ public abstract class io/getstream/chat/android/ui/feature/channels/list/adapter
 	public abstract fun bind (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem$ChannelItem;Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListPayloadDiff;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/ChannelListIconProviderContainer {
+	public abstract fun getGetDeleteOptionIcon ()Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionIconProvider;
+	public abstract fun getGetMoreOptionsIcon ()Lio/getstream/chat/android/ui/feature/channels/list/ChannelListView$ChannelOptionIconProvider;
+}
+
 public class io/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/ChannelListItemViewHolderFactory {
 	public fun <init> ()V
 	protected fun createChannelViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/BaseChannelListItemViewHolder;
 	protected fun createLoadingMoreViewHolder (Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/BaseChannelListItemViewHolder;
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/BaseChannelListItemViewHolder;
+	protected final fun getIconProviderContainer ()Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/ChannelListIconProviderContainer;
 	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/channels/list/adapter/ChannelListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/feature/channels/list/adapter/viewholder/ChannelListListenerContainer;
 	protected final fun getStyle ()Lio/getstream/chat/android/ui/feature/channels/list/ChannelListViewStyle;

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.channels.list
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.AttributeSet
@@ -319,6 +320,24 @@ public class ChannelListView : FrameLayout {
     }
 
     /**
+     * Allows clients to override a "more options" icon in ViewHolder items.
+     *
+     * @param getMoreOptionsIcon Provides icon for a "more options".
+     */
+    public fun setMoreOptionsIconProvider(getMoreOptionsIcon: (Channel) -> Drawable?) {
+        simpleChannelListView.setMoreOptionsIconProvider(getMoreOptionsIcon)
+    }
+
+    /**
+     * Allows clients to override a "delete option" icon in ViewHolder items.
+     *
+     * @param getDeleteOptionIcon Provides icon for delete option.
+     */
+    public fun setDeleteOptionIconProvider(getDeleteOptionIcon: (Channel) -> Drawable?) {
+        simpleChannelListView.setDeleteOptionIconProvider(getDeleteOptionIcon)
+    }
+
+    /**
      * Allows a client to set a click listener to be notified of "channel info" clicks in the "more options" menu.
      *
      * @param listener The callback to be invoked when "channel info" is clicked.
@@ -507,7 +526,25 @@ public class ChannelListView : FrameLayout {
          *
          * @return True if the option is visible.
          */
-        override fun invoke(p1: Channel): Boolean
+        override fun invoke(channel: Channel): Boolean
+    }
+
+    public fun interface ChannelOptionIconProvider : Function1<Channel, Drawable?> {
+
+        public companion object {
+            @JvmField
+            public val DEFAULT: ChannelOptionIconProvider = ChannelOptionIconProvider {
+                // option has no customized icon by default
+                null
+            }
+        }
+
+        /**
+         * Called to provide option's icon for the specified [channel].
+         *
+         * @return Drawable which overrides ChannelListViewStyle values.
+         */
+        override fun invoke(channel: Channel): Drawable?
     }
 
     public fun interface EndReachedListener {

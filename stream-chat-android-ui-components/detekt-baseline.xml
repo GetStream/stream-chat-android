@@ -81,6 +81,7 @@
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
     <ID>MaxLineLength:AvatarDecorator.kt$AvatarDecorator$setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
+    <ID>MaxLineLength:ChannelListIconProviderContainerImpl.kt$ChannelListIconProviderContainerImpl$override</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListView$is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel</ID>
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$*</ID>
     <ID>MaxLineLength:ChannelListViewModelFactory.kt$ChannelListViewModelFactory$*</ID>
