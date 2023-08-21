@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed `LinkAttachmentView` to open the correct link when the attachment is clicked. [#4929](https://github.com/GetStream/stream-chat-android/pull/4929)
 
 ### ⬆️ Improved
 
