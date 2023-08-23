@@ -53,7 +53,7 @@ internal class LinkAttachmentView : FrameLayout {
      * @param style The style used for applying various things such as text styles.
      */
     fun showLinkAttachment(attachment: Attachment, style: MessageListItemStyle) {
-        previewUrl = attachment.thumbUrl
+        previewUrl = attachment.titleLink ?: attachment.ogUrl
         showTitle(attachment, style)
         showDescription(attachment, style)
         showLabel(attachment, style)
