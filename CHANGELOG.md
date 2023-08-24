@@ -16,7 +16,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `R.color.stream_ic_notification` to the list of resources that can be overridden. [#4920](https://github.com/GetStream/stream-chat-android/pull/4920)
 
 ### ⚠️ Changed
 
@@ -57,13 +56,10 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed `LinkAttachmentView` to open the correct link when the attachment is clicked. [#4929](https://github.com/GetStream/stream-chat-android/pull/4929)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4926](https://github.com/GetStream/stream-chat-android/pull/4926)
-- Added `ChannelListView.setMoreOptionsIconProvider` and `ChannelListView.setDeleteOptionIconProvider` to allow customizing the options icons used by the `ChannelListView`. [#4928](https://github.com/GetStream/stream-chat-android/pull/4928)
 
 ### ⚠️ Changed
 
@@ -123,6 +119,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 24th, 2023 - 5.17.11
+## stream-chat-android-client
+### ✅ Added
+- Added `R.color.stream_ic_notification` to the list of resources that can be overridden. [#4920](https://github.com/GetStream/stream-chat-android/pull/4920)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed `LinkAttachmentView` to open the correct link when the attachment is clicked. [#4929](https://github.com/GetStream/stream-chat-android/pull/4929)
+
+### ✅ Added
+- Added `MessageListView.setCustomItemAnimator` to allow customizing the item animator used by the `MessageListView`. [#4926](https://github.com/GetStream/stream-chat-android/pull/4926)
+- Added `ChannelListView.setMoreOptionsIconProvider` and `ChannelListView.setDeleteOptionIconProvider` to allow customizing the options icons used by the `ChannelListView`. [#4928](https://github.com/GetStream/stream-chat-android/pull/4928)
 
 # August 4th, 2023 - 5.17.10
 ## stream-chat-android-compose
