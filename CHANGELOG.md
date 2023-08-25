@@ -64,6 +64,7 @@
 - Added `MessageComposerViewModelBinder` for Java parity with Kotlin's `MessageComposerViewModel.bindView` extension function. [#4931](https://github.com/GetStream/stream-chat-android/pull/4931)
 
 ### ⚠️ Changed
+- Changed `MessageListView.setCustomItemAnimator` signature to allow passing `null` to reset the item animator. [#4933](https://github.com/GetStream/stream-chat-android/pull/4933)
 
 ### ❌ Removed
 
