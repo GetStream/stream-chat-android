@@ -285,6 +285,7 @@ public class MessageComposerViewModelBinder private constructor(
         return this
     }
 
+    @JvmName("bind")
     public fun bindView(view: MessageComposerView, lifecycleOwner: LifecycleOwner) {
         vm.bindView(
             view = view,
@@ -309,7 +310,6 @@ public class MessageComposerViewModelBinder private constructor(
             audioCompleteButtonClickListener = audioCompleteButtonClickListener,
             audioSliderDragStartListener = audioSliderDragStartListener,
             audioSliderDragStopListener = audioSliderDragStopListener,
-
-            )
+        )
     }
 }

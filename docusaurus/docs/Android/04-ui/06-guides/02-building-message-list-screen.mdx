@@ -137,7 +137,7 @@ MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposer
 // Bind the ViewModels with the Views
 MessageListHeaderViewModelBinding.bind(messageListHeaderViewModel, messageListHeaderView, getViewLifecycleOwner());
 MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
-MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+MessageComposerViewModelBinder.with(messageComposerViewModel).bind(messageComposerView, getViewLifecycleOwner());
 
 // Let both message list header and message input know when we open a thread
 messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {

@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.MessageCom
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.helper.TransformStyle;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinder;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
@@ -65,8 +66,101 @@ public class MessageComposer extends Fragment {
             MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
         }
 
-
         public void usage2() {
+            // Create MessageComposerViewModel for a given channel
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid("messaging:123")
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+
+            // Bind MessageComposerViewModel with MessageComposerView
+            MessageComposerViewModelBinder.with(viewModel)
+                    .onSendMessageButtonClick((message) -> {
+                        // Handle send button click
+                        return Unit.INSTANCE;
+                    })
+                    .onTextInputChange((text) -> {
+                        // Handle input text change
+                        return Unit.INSTANCE;
+                    })
+                    .onAttachmentSelection((attachments) -> {
+                        // Handle attachment selection
+                        return Unit.INSTANCE;
+                    })
+                    .onAttachmentRemoval((attachment) -> {
+                        // Handle attachment removal
+                        return Unit.INSTANCE;
+                    })
+                    .onMentionSelection((user) -> {
+                        // Handle mention selection
+                        return Unit.INSTANCE;
+                    })
+                    .onCommandSelection((command) -> {
+                        // Handle command selection
+                        return Unit.INSTANCE;
+                    })
+                    .onAlsoSendToChannelSelection((checked) -> {
+                        // Handle "also send to channel" checkbox selection
+                        return Unit.INSTANCE;
+                    })
+                    .onDismissActionClick(() -> {
+                        // Handle dismiss action button click
+                        return Unit.INSTANCE;
+                    })
+                    .onCommandsButtonClick(() -> {
+                        // Handle commands button click
+                        return Unit.INSTANCE;
+                    })
+                    .onDismissSuggestions(() -> {
+                        // Handle when suggestions popup is dismissed
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonHold(() -> {
+                        // Handle audio recording button hold
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonLock(() -> {
+                        // Handle audio recording button lock
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonCancel(() -> {
+                        // Handle audio recording button cancel
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonRelease(() -> {
+                        // Handle audio recording button release
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioDeleteButtonClick(() -> {
+                        // Handle audio recording delete button click
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioStopButtonClick(() -> {
+                        // Handle audio recording stop button click
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioPlaybackButtonClick(() -> {
+                        // Handle audio recording playback button click
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioCompleteButtonClick(() -> {
+                        // Handle audio recording completion
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioSliderDragStart((progress) -> {
+                        // Handle audio recording slider drag start
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioSliderDragStop((progress) -> {
+                        // Handle audio recording slider drag stop
+                        return Unit.INSTANCE;
+                    })
+                    .bind(messageComposerView, getViewLifecycleOwner());
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+        }
+
+        public void usage3() {
             // Create ViewModels for MessageComposerView and MessageListView
             ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
                     .cid("messaging:123")
@@ -141,6 +235,50 @@ public class MessageComposer extends Fragment {
             });
             messageComposerView.setDismissSuggestionsListener(() -> {
                 // Handle when suggestions popup is dismissed
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setDismissSuggestionsListener(() -> {
+                // Handle when suggestions popup is dismissed
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonLockListener(() -> {
+                // Handle audio record button lock
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonHoldListener(() -> {
+                // Handle audio record button hold
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonCancelListener(() -> {
+                // Handle audio record button cancel
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonReleaseListener(() -> {
+                // Handle audio record button release
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioDeleteButtonClickListener(() -> {
+                // Handle audio delete button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioStopButtonClickListener(() -> {
+                // Handle audio stop button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioPlaybackButtonClickListener(() -> {
+                // Handle audio playback button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioCompleteButtonClickListener(() -> {
+                // Handle audio complete button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioSliderDragStartListener((progress) -> {
+                // Handle audio slider drag start
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioSliderDragStopListener((progress) -> {
+                // Handle audio slider drag stop
                 return Unit.INSTANCE;
             });
             messageComposerView.setAttachmentsButtonClickListener(() -> {
