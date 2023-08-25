@@ -44,52 +44,56 @@ class ChannelListViewTest : ScreenshotTest {
             setChannels(
                 listOf(
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message1(),
-                            )
-                            lastMessageAt = TestData.date1()
-                        },
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message2(),
-                            )
-                            lastMessageAt = TestData.date2()
-                        },
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message3(),
-                            )
-                            lastMessageAt = TestData.date3()
-                        },
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message4(),
-                            )
-                            lastMessageAt = TestData.date4()
-                        },
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.LoadingMoreItem,
                 ),
@@ -110,52 +114,56 @@ class ChannelListViewTest : ScreenshotTest {
             setChannels(
                 listOf(
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message1(),
-                            )
-                            lastMessageAt = TestData.date1()
-                        },
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message2(),
-                            )
-                            lastMessageAt = TestData.date2()
-                        },
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message3(),
-                            )
-                            lastMessageAt = TestData.date3()
-                        },
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message4(),
-                            )
-                            lastMessageAt = TestData.date4()
-                        },
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.LoadingMoreItem,
                 ),
