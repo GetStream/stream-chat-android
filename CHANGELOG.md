@@ -62,6 +62,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Changed `MessageListView.setCustomItemAnimator` signature to allow passing `null` to reset the item animator. [#4934](https://github.com/GetStream/stream-chat-android/pull/4934)
 
 ### ❌ Removed
 

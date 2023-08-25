@@ -838,7 +838,7 @@ public class MessageListView : ConstraintLayout {
      * @param itemAnimator The ItemAnimator being set. If null, no animations will occur when changes occur
      * to the items in this MessageListView.
      */
-    public fun setCustomItemAnimator(itemAnimator: ItemAnimator) {
+    public fun setCustomItemAnimator(itemAnimator: ItemAnimator?) {
         binding.chatMessagesRV.itemAnimator = itemAnimator
     }
 
