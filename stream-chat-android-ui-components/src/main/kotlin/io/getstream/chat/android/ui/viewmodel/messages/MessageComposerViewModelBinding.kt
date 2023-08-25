@@ -25,6 +25,26 @@ import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.attachmentRemovalListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.attachmentSelectionListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioCompleteButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioDeleteButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioPlaybackButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioRecordButtonCancelListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioRecordButtonHoldListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioRecordButtonLockListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioRecordButtonReleaseListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioSliderDragStartListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioSliderDragStopListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.audioStopButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.commandSelectionListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.commandsButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.dismissActionClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.dismissSuggestionsListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.mentionSelectionListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.sendMessageButtonClickListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.textInputChangeListener
 import kotlinx.coroutines.launch
 
 /**
@@ -59,26 +79,26 @@ import kotlinx.coroutines.launch
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
-    sendMessageButtonClickListener: (Message) -> Unit = { sendMessage(it) },
-    textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
-    attachmentSelectionListener: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
-    attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
-    mentionSelectionListener: (User) -> Unit = { selectMention(it) },
-    commandSelectionListener: (Command) -> Unit = { selectCommand(it) },
-    alsoSendToChannelSelectionListener: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
-    dismissActionClickListener: () -> Unit = { dismissMessageActions() },
-    commandsButtonClickListener: () -> Unit = { toggleCommandsVisibility() },
-    dismissSuggestionsListener: () -> Unit = { dismissSuggestionsPopup() },
-    audioRecordButtonHoldListener: () -> Unit = { startRecording() },
-    audioRecordButtonLockListener: () -> Unit = { lockRecording() },
-    audioRecordButtonCancelListener: () -> Unit = { cancelRecording() },
-    audioRecordButtonReleaseListener: () -> Unit = { sendRecording() },
-    audioDeleteButtonClickListener: () -> Unit = { cancelRecording() },
-    audioStopButtonClickListener: () -> Unit = { stopRecording() },
-    audioPlaybackButtonClickListener: () -> Unit = { toggleRecordingPlayback() },
-    audioCompleteButtonClickListener: () -> Unit = { completeRecording() },
-    audioSliderDragStartListener: (Float) -> Unit = { pauseRecording() },
-    audioSliderDragStopListener: (Float) -> Unit = { progress -> seekRecordingTo(progress) },
+    sendMessageButtonClickListener: (Message) -> Unit = this.sendMessageButtonClickListener,
+    textInputChangeListener: (String) -> Unit = this.textInputChangeListener,
+    attachmentSelectionListener: (List<Attachment>) -> Unit = this.attachmentSelectionListener,
+    attachmentRemovalListener: (Attachment) -> Unit = this.attachmentRemovalListener,
+    mentionSelectionListener: (User) -> Unit = this.mentionSelectionListener,
+    commandSelectionListener: (Command) -> Unit = this.commandSelectionListener,
+    alsoSendToChannelSelectionListener: (Boolean) -> Unit = this.alsoSendToChannelSelectionListener,
+    dismissActionClickListener: () -> Unit = this.dismissActionClickListener,
+    commandsButtonClickListener: () -> Unit = this.commandsButtonClickListener,
+    dismissSuggestionsListener: () -> Unit = this.dismissSuggestionsListener,
+    audioRecordButtonHoldListener: () -> Unit = this.audioRecordButtonHoldListener,
+    audioRecordButtonLockListener: () -> Unit = this.audioRecordButtonLockListener,
+    audioRecordButtonCancelListener: () -> Unit = this.audioRecordButtonCancelListener,
+    audioRecordButtonReleaseListener: () -> Unit = this.audioRecordButtonReleaseListener,
+    audioDeleteButtonClickListener: () -> Unit = this.audioDeleteButtonClickListener,
+    audioStopButtonClickListener: () -> Unit = this.audioStopButtonClickListener,
+    audioPlaybackButtonClickListener: () -> Unit = this.audioPlaybackButtonClickListener,
+    audioCompleteButtonClickListener: () -> Unit = this.audioCompleteButtonClickListener,
+    audioSliderDragStartListener: (Float) -> Unit = this.audioSliderDragStartListener,
+    audioSliderDragStopListener: (Float) -> Unit = this.audioSliderDragStopListener,
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -104,4 +124,35 @@ public fun MessageComposerViewModel.bindView(
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect(view::renderState)
     }
+}
+
+internal object MessageComposerViewModelDefaults {
+    val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit
+        get() = {
+            sendMessage(it)
+        }
+    val MessageComposerViewModel.textInputChangeListener: (String) -> Unit get() = { setMessageInput(it) }
+    val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit
+        get() = {
+            addSelectedAttachments(
+                it,
+            )
+        }
+    val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }
+    val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
+    val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }
+    val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }
+    val MessageComposerViewModel.dismissActionClickListener: () -> Unit get() = { dismissMessageActions() }
+    val MessageComposerViewModel.commandsButtonClickListener: () -> Unit get() = { toggleCommandsVisibility() }
+    val MessageComposerViewModel.dismissSuggestionsListener: () -> Unit get() = { dismissSuggestionsPopup() }
+    val MessageComposerViewModel.audioRecordButtonHoldListener: () -> Unit get() = { startRecording() }
+    val MessageComposerViewModel.audioRecordButtonLockListener: () -> Unit get() = { lockRecording() }
+    val MessageComposerViewModel.audioRecordButtonCancelListener: () -> Unit get() = { cancelRecording() }
+    val MessageComposerViewModel.audioRecordButtonReleaseListener: () -> Unit get() = { sendRecording() }
+    val MessageComposerViewModel.audioDeleteButtonClickListener: () -> Unit get() = { cancelRecording() }
+    val MessageComposerViewModel.audioStopButtonClickListener: () -> Unit get() = { stopRecording() }
+    val MessageComposerViewModel.audioPlaybackButtonClickListener: () -> Unit get() = { toggleRecordingPlayback() }
+    val MessageComposerViewModel.audioCompleteButtonClickListener: () -> Unit get() = { completeRecording() }
+    val MessageComposerViewModel.audioSliderDragStartListener: (Float) -> Unit get() = { pauseRecording() }
+    val MessageComposerViewModel.audioSliderDragStopListener: (Float) -> Unit get() = { seekRecordingTo(it) }
 }

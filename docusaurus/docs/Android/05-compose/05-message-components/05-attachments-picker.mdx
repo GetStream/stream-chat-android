@@ -173,7 +173,7 @@ class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
 Next, we'll remove the factory for the media capture tab, add a factory for our custom tab and pass the resulting factory list to the picker:
 
 ```kotlin
-val defaultTabFactories = AttachmentsPickerTabFactories.defaultFactories(mediaCaptureTabEnabled = false)
+val defaultTabFactories = AttachmentsPickerTabFactories.defaultFactories(takeImageEnabled = false, recordVideoEnabled = false)
 val customTabFactories = listOf(AttachmentsPickerCustomTabFactory())
 val tabFactories = defaultTabFactories + customTabFactories
 

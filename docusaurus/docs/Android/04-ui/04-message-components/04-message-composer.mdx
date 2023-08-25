@@ -43,7 +43,20 @@ val factory = MessageListViewModelFactory(cid = "messaging:123")
 val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
 // Bind MessageComposerViewModel with MessageComposerView
-messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+messageComposerViewModel.bindView(
+    // Required
+    messageComposerView, 
+    viewLifecycleOwner,
+    // Optional (you can set your custom listeners here)
+    sendMessageButtonClickListener = {
+        // Handle send button click
+    },
+    textInputChangeListener = { text ->
+        // Handle input text change
+    },
+    //... 
+    // other listeners
+)
 ```
 </TabItem>
 
@@ -58,7 +71,21 @@ ViewModelProvider provider = new ViewModelProvider(this, factory);
 MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
 // Bind MessageComposerViewModel with MessageComposerView
-MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+MessageComposerViewModelBinder.with(viewModel)
+        // Optional (you can set your custom listeners here)
+        .onSendMessageButtonClick((message) -> {
+            // Handle send button click
+            return Unit.INSTANCE;
+        })
+        .onTextInputChange((text) -> {
+            // Handle input text change
+            return Unit.INSTANCE;
+        })
+        //... 
+        // other listeners
+        
+        // Required
+        .bind(messageComposerView, getViewLifecycleOwner());
 ```
 </TabItem>
 </Tabs>
@@ -138,7 +165,7 @@ MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposer
 MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
 
 // Bind MessageComposerViewModel with MessageComposerView
-MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+MessageComposerViewModelBinder.with(messageComposerViewModel).bind(messageComposerView, getViewLifecycleOwner());
 
 // Bind MessageListViewModel with MessageListView
 MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
@@ -202,6 +229,45 @@ messageComposerView.commandsButtonClickListener = {
 messageComposerView.dismissSuggestionsListener = {
     // Handle when suggestions popup is dismissed
 }
+messageComposerView.audioRecordButtonLockListener = {
+    // Handle audio record button lock
+}
+
+messageComposerView.audioRecordButtonHoldListener = {
+    // Handle audio record button hold
+}
+
+messageComposerView.audioRecordButtonCancelListener = {
+    // Handle audio record button cancel
+}
+
+messageComposerView.audioRecordButtonReleaseListener = {
+    // Handle audio record button release
+}
+
+messageComposerView.audioDeleteButtonClickListener = {
+    // Handle audio delete button click
+}
+
+messageComposerView.audioStopButtonClickListener = {
+    // Handle audio stop button click
+}
+
+messageComposerView.audioPlaybackButtonClickListener = {
+    // Handle audio playback button click
+}
+
+messageComposerView.audioCompleteButtonClickListener = {
+    // Handle audio complete button click
+}
+
+messageComposerView.audioSliderDragStartListener = { progress ->
+    // Handle audio slider drag start
+}
+
+messageComposerView.audioSliderDragStopListener = { progress ->
+    // Handle audio slider drag stop
+}
 messageComposerView.attachmentsButtonClickListener = {
     // Handle attachments button click
 }
@@ -249,6 +315,50 @@ messageComposerView.setCommandsButtonClickListener(() -> {
 });
 messageComposerView.setDismissSuggestionsListener(() -> {
     // Handle when suggestions popup is dismissed
+    return Unit.INSTANCE;
+});
+messageComposerView.setDismissSuggestionsListener(() -> {
+    // Handle when suggestions popup is dismissed
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioRecordButtonLockListener(() -> {
+    // Handle audio record button lock
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioRecordButtonHoldListener(() -> {
+    // Handle audio record button hold
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioRecordButtonCancelListener(() -> {
+    // Handle audio record button cancel
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioRecordButtonReleaseListener(() -> {
+    // Handle audio record button release
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioDeleteButtonClickListener(() -> {
+    // Handle audio delete button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioStopButtonClickListener(() -> {
+    // Handle audio stop button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioPlaybackButtonClickListener(() -> {
+    // Handle audio playback button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioCompleteButtonClickListener(() -> {
+    // Handle audio complete button click
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioSliderDragStartListener((progress) -> {
+    // Handle audio slider drag start
+    return Unit.INSTANCE;
+});
+messageComposerView.setAudioSliderDragStopListener((progress) -> {
+    // Handle audio slider drag stop
     return Unit.INSTANCE;
 });
 messageComposerView.setAttachmentsButtonClickListener(() -> {

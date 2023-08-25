@@ -54,7 +54,17 @@ private object MessageComposer : Fragment() {
             val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
 
             // Bind MessageComposerViewModel with MessageComposerView
-            messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+            messageComposerViewModel.bindView(
+                messageComposerView,
+                viewLifecycleOwner,
+                sendMessageButtonClickListener = {
+                    // Handle send button click
+                },
+                textInputChangeListener = { text ->
+                    // Handle input text change
+                },
+                //.. other listeners
+            )
         }
 
         fun usage2() {
@@ -127,6 +137,36 @@ private object MessageComposer : Fragment() {
             }
             messageComposerView.dismissSuggestionsListener = {
                 // Handle when suggestions popup is dismissed
+            }
+            messageComposerView.audioRecordButtonLockListener = {
+                // Handle audio record button lock
+            }
+            messageComposerView.audioRecordButtonHoldListener = {
+                // Handle audio record button hold
+            }
+            messageComposerView.audioRecordButtonCancelListener = {
+                // Handle audio record button cancel
+            }
+            messageComposerView.audioRecordButtonReleaseListener = {
+                // Handle audio record button release
+            }
+            messageComposerView.audioDeleteButtonClickListener = {
+                // Handle audio delete button click
+            }
+            messageComposerView.audioStopButtonClickListener = {
+                // Handle audio stop button click
+            }
+            messageComposerView.audioPlaybackButtonClickListener = {
+                // Handle audio playback button click
+            }
+            messageComposerView.audioCompleteButtonClickListener = {
+                // Handle audio complete button click
+            }
+            messageComposerView.audioSliderDragStartListener = { progress ->
+                // Handle audio slider drag start
+            }
+            messageComposerView.audioSliderDragStopListener = { progress ->
+                // Handle audio slider drag stop
             }
             messageComposerView.attachmentsButtonClickListener = {
                 // Handle attachments button click

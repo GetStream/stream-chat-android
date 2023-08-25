@@ -3294,6 +3294,37 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun toggleRecordingPlayback ()V
 }
 
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder {
+	public static final field Companion Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder$Companion;
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun bind (Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;)V
+	public final fun onAlsoSendToChannelSelection (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAttachmentRemoval (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAttachmentSelection (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioCompleteButtonClick (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioDeleteButtonClick (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioPlaybackButtonClick (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioRecordButtonCancel (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioRecordButtonHold (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioRecordButtonLock (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioRecordButtonRelease (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioSliderDragStart (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioSliderDragStop (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onAudioStopButtonClick (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onCommandSelection (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onCommandsButtonClick (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onDismissActionClick (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onDismissSuggestions (Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onMentionSelection (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onSendMessageButtonClick (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public final fun onTextInputChange (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+	public static final fun with (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder$Companion {
+	public final fun with (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinder;
+}
+
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModelBinding {
 	public static final fun bind (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;)V
 	public static final fun bind (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/ui/feature/messages/composer/MessageComposerView;Landroidx/lifecycle/LifecycleOwner;Lkotlin/jvm/functions/Function1;)V
