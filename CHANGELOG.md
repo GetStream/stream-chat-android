@@ -56,15 +56,12 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed `LinkAttachmentView` to open the correct link when the attachment is clicked. [#4930](https://github.com/GetStream/stream-chat-android/pull/4930)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageComposerViewModelBinder` for Java parity with Kotlin's `MessageComposerViewModel.bindView` extension function. [#4931](https://github.com/GetStream/stream-chat-android/pull/4931)
 
 ### ⚠️ Changed
-- Changed `MessageListView.setCustomItemAnimator` signature to allow passing `null` to reset the item animator. [#4933](https://github.com/GetStream/stream-chat-android/pull/4933)
 
 ### ❌ Removed
 
@@ -89,6 +86,23 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 25th, 2023 - 6.0.0-beta5
+
+I hope you're interested in our latest major release - v6.0.0-beta5! We're currently in the process of preparing migration guides and updating all of our
+documentation, but in the meantime, you can look into what we plan to release in v6 of Android Chat.
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed `LinkAttachmentView` to open the correct link when the attachment is clicked. [#4930](https://github.com/GetStream/stream-chat-android/pull/4930)
+
+### ✅ Added
+- Added `MessageComposerViewModelBinder` for Java parity with Kotlin's `MessageComposerViewModel.bindView` extension function. [#4931](https://github.com/GetStream/stream-chat-android/pull/4931)
+
+### ⚠️ Changed
+- Changed `MessageListView.setCustomItemAnimator` signature to allow passing `null` to reset the item animator. [#4933](https://github.com/GetStream/stream-chat-android/pull/4933)
 
 # August 18th, 2023 - 6.0.0-beta4
 
