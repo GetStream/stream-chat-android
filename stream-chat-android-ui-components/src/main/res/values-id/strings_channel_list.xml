@@ -29,7 +29,6 @@
   <string name="stream_ui_channel_list_error_hide_channel">"Gagal menyembunyikan grup"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Gagal keluar dari grup"</string>
   <string name="stream_ui_channel_list_leave_channel">"Keluar dari Grup"</string>
-  <string name="stream_ui_channel_list_untitled_channel">"Grup Anonim"</string>
   <string name="stream_ui_channel_list_view_info">"Lihat info"</string>
   <string name="stream_ui_channel_list_you">"Anda"</string>
 </resources>

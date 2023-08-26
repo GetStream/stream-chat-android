@@ -29,7 +29,6 @@
   <string name="stream_ui_channel_list_error_hide_channel">"チャネルを非表示にできませんでした"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"チャネルを離れることができませんでした"</string>
   <string name="stream_ui_channel_list_leave_channel">"グループを離れる"</string>
-  <string name="stream_ui_channel_list_untitled_channel">"名前のないチャンネル"</string>
   <string name="stream_ui_channel_list_view_info">"情報を見る"</string>
   <string name="stream_ui_channel_list_you">"あなた"</string>
 </resources>

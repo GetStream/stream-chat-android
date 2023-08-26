@@ -139,7 +139,6 @@
   <string name="stream_compose_thread_title">"Respuestas en el hilo"</string>
   <string name="stream_compose_unmute_user">"Dejar de silenciar al usuario"</string>
   <string name="stream_compose_unpin_message">"Desanclar de este chat"</string>
-  <string name="stream_compose_untitled_channel">"Canal sin nombre"</string>
   <string name="stream_compose_upload_file_count">"Subiendo %1$d / %2$d …"</string>
   <string name="stream_compose_upload_progress">"%1$s/%2$s"</string>
   <string name="stream_compose_user_status_last_seen">"Ultima vez visto %1$s"</string>
