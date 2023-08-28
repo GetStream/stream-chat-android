@@ -25,6 +25,14 @@
         <attr name="streamUiSearchInputViewTextColor" format="color|reference" />
         <attr name="streamUiSearchInputViewHintColor" format="color|reference" />
         <attr name="streamUiSearchInputViewTextSize" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewTextMarginStart" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewTextMarginEnd" format="dimension|reference" />
         <attr name="streamUiSearchInputViewHeight" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewIconSearchWidth" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewIconSearchHeight" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewIconSearchMarginStart" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewIconClearWidth" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewIconClearHeight" format="dimension|reference" />
+        <attr name="streamUiSearchInputViewIconClearMarginEnd" format="dimension|reference" />
     </declare-styleable>
 </resources>
