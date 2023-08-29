@@ -15,6 +15,7 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_channel_list_untitled_channel">"Canal sans nom"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Erreur. Le fichier ne peut pas être affiché"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Le chargement a échoué en raison d\'une URL non valide."</string>

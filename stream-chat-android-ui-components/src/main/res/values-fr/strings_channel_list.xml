@@ -30,7 +30,6 @@
   <string name="stream_ui_channel_list_error_hide_channel">"Echec du masquage du canal"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Échec de sortie du canal"</string>
   <string name="stream_ui_channel_list_leave_channel">"Quitter le Groupe"</string>
-  <string name="stream_ui_channel_list_untitled_channel">"Canal sans nom"</string>
   <string name="stream_ui_channel_list_view_info">"Voir les informations"</string>
   <string name="stream_ui_channel_list_you">"Vous"</string>
 </resources>

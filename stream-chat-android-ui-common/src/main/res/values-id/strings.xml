@@ -15,6 +15,7 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+  <string name="stream_ui_channel_list_untitled_channel">"Grup Anonim"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Terjadi kesalahan. Berkas tidak dapat ditampilkan"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Terjadi kesalahan. Tidak dapat membuka lampiran: %s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Data gagal dimuat karena url tidak valid."</string>

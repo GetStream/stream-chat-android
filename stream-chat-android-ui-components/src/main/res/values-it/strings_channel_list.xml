@@ -30,7 +30,6 @@
   <string name="stream_ui_channel_list_error_hide_channel">"Impossibile nascondere il canale"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Impossibile lasciare il canale"</string>
   <string name="stream_ui_channel_list_leave_channel">"Esci dal gruppo"</string>
-  <string name="stream_ui_channel_list_untitled_channel">"Canale senza nome"</string>
   <string name="stream_ui_channel_list_view_info">"Vedi info"</string>
   <string name="stream_ui_channel_list_you">"Tu"</string>
 </resources>
