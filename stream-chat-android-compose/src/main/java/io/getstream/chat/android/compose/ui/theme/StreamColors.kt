@@ -64,6 +64,7 @@ import io.getstream.chat.android.compose.R
  * @param ownMessageQuotedText Changes the text color of the quoted message contained in a reply sent by the current user. [textHighEmphasis] by default.
  * @param otherMessageQuotedText Changes the text color of the quoted message contained in a reply sent by other users. [textHighEmphasis] by default.
  */
+@Suppress("DEPRECATION_ERROR")
 @Immutable
 public data class StreamColors(
     public val textHighEmphasis: Color,
