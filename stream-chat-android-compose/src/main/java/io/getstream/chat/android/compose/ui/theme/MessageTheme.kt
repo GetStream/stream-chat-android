@@ -70,6 +70,7 @@ public data class MessageTheme(
         ): MessageTheme = defaultTheme(own = false, typography = typography, colors = colors)
 
         @Composable
+        @Suppress("DEPRECATION_ERROR")
         private fun defaultTheme(
             own: Boolean,
             typography: StreamTypography,
