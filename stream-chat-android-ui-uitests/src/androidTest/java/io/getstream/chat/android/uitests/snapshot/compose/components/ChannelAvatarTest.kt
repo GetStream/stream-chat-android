@@ -30,15 +30,15 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithFiveMembers() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
                     TestData.member4(),
                     TestData.member5(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -47,14 +47,14 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithFourMembers() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
                     TestData.member4(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -63,13 +63,13 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithThreeMembers() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -78,12 +78,12 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithTwoMembers() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -92,11 +92,11 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithOneMember() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -105,15 +105,15 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithFiveMembersWithoutImages() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                    TestData.member3().apply { user.image = "" },
-                    TestData.member4().apply { user.image = "" },
-                    TestData.member5().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member3().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member4().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member5().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -122,14 +122,14 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithFourMembersWithoutImages() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                    TestData.member3().apply { user.image = "" },
-                    TestData.member4().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member3().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member4().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -138,13 +138,13 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithThreeMembersWithoutImages() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                    TestData.member3().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member3().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -153,12 +153,12 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithTwoMembersWithoutImages() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -167,11 +167,11 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithOneMemberWithoutImage() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -180,12 +180,12 @@ class ChannelAvatarTest : ComposeScreenshotTest() {
     fun channelAvatarForChannelWithoutCurrentUser() = runScreenshotTest {
         ChannelAvatar(
             modifier = Modifier.size(40.dp),
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
-                )
-            },
+                ),
+            ),
             currentUser = null,
         )
     }

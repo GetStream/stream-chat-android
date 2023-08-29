@@ -37,9 +37,9 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
     fun selectedReactionsMenuForOneReaction() {
         selectedReactionsMenu(
             currentUser = TestData.user1(),
-            selectedMessage = TestData.message1().apply {
-                latestReactions = mutableListOf(TestData.reaction1())
-            },
+            selectedMessage = TestData.message1().copy(
+                latestReactions = mutableListOf(TestData.reaction1()),
+            ),
         )
     }
 
@@ -47,14 +47,14 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
     fun selectedReactionsMenuForManyReactions() {
         selectedReactionsMenu(
             currentUser = TestData.user1(),
-            selectedMessage = TestData.message1().apply {
+            selectedMessage = TestData.message1().copy(
                 latestReactions = mutableListOf(
                     TestData.reaction1(),
                     TestData.reaction2(),
                     TestData.reaction3(),
                     TestData.reaction4(),
-                )
-            },
+                ),
+            ),
         )
     }
 

@@ -29,7 +29,7 @@ class ChannelListHeaderTest : ComposeScreenshotTest() {
         ChannelListHeader(
             title = "Stream Chat",
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTED,
+            connectionState = ConnectionState.Connected,
         )
     }
 
@@ -38,7 +38,7 @@ class ChannelListHeaderTest : ComposeScreenshotTest() {
         ChannelListHeader(
             title = "Stream Chat",
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTING,
+            connectionState = ConnectionState.Connecting,
         )
     }
 
@@ -47,7 +47,7 @@ class ChannelListHeaderTest : ComposeScreenshotTest() {
         ChannelListHeader(
             title = "Stream Chat",
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.OFFLINE,
+            connectionState = ConnectionState.Offline,
         )
     }
 
@@ -56,7 +56,7 @@ class ChannelListHeaderTest : ComposeScreenshotTest() {
         ChannelListHeader(
             title = "Stream Chat",
             currentUser = null,
-            connectionState = ConnectionState.CONNECTED,
+            connectionState = ConnectionState.Connected,
         )
     }
 
@@ -65,7 +65,7 @@ class ChannelListHeaderTest : ComposeScreenshotTest() {
         ChannelListHeader(
             title = "",
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTED,
+            connectionState = ConnectionState.Connected,
         )
     }
 }

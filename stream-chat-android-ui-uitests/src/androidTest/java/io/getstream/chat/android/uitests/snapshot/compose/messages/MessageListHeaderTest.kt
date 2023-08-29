@@ -28,31 +28,31 @@ class MessageListHeaderTest : ComposeScreenshotTest() {
     @Test
     fun messageListHeaderForConnectedState() = runScreenshotTest {
         MessageListHeader(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-                memberCount = 3
-            },
+                ),
+                memberCount = 3,
+            ),
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTED,
+            connectionState = ConnectionState.Connected,
         )
     }
 
     @Test
     fun messageListHeaderForThreadMode() = runScreenshotTest {
         MessageListHeader(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTED,
+            connectionState = ConnectionState.Connected,
             messageMode = MessageMode.MessageThread(TestData.message1(), null),
         )
     }
@@ -60,15 +60,15 @@ class MessageListHeaderTest : ComposeScreenshotTest() {
     @Test
     fun messageListHeaderForOfflineState() = runScreenshotTest {
         MessageListHeader(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.OFFLINE,
+            connectionState = ConnectionState.Offline,
             messageMode = MessageMode.Normal,
         )
     }

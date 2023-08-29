@@ -30,15 +30,15 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithFiveMembers() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
                     TestData.member4(),
                     TestData.member5(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -46,14 +46,14 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithFourMembers() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
                     TestData.member4(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -61,13 +61,13 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithThreeMembers() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -75,12 +75,12 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithTwoMembers() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -88,11 +88,11 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithOneMember() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -100,15 +100,15 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithFiveMembersWithoutImages() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                    TestData.member3().apply { user.image = "" },
-                    TestData.member4().apply { user.image = "" },
-                    TestData.member5().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member3().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member4().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member5().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -116,14 +116,14 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithFourMembersWithoutImages() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                    TestData.member3().apply { user.image = "" },
-                    TestData.member4().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member3().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member4().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -131,13 +131,13 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithThreeMembersWithoutImages() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                    TestData.member3().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member3().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -145,12 +145,12 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithTwoMembersWithoutImages() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                    TestData.member2().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                    TestData.member2().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -158,11 +158,11 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithOneMemberWithoutImage() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
-                    TestData.member1().apply { user.image = "" },
-                )
-            },
+                    TestData.member1().let { it.copy(user = it.user.copy(image = "")) },
+                ),
+            ),
             currentUser = TestData.user1(),
         )
     }
@@ -170,12 +170,12 @@ class ChannelAvatarTest : UiComponentsScreenshotTest() {
     @Test
     fun channelAvatarForChannelWithoutCurrentUser() {
         renderChannelAvatarView(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
-                )
-            },
+                ),
+            ),
             currentUser = null,
         )
     }
