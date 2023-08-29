@@ -27,6 +27,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.getstream.sdk.chat.utils.AttachmentConstants
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
@@ -149,7 +150,7 @@ public data class MessageInputViewStyle(
     public val messageReplyTextStyleTheirs: TextStyle,
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
-) {
+) : ViewStyle {
 
     /**
      * Creates an instance of [MessageReplyStyle] from the parameters provided by [MessageInputViewStyle].

@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -57,7 +58,7 @@ public data class SuggestionListViewStyle(
     val mentionIcon: Drawable,
     val commandIcon: Drawable,
     val lightningIcon: Drawable,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle {
             context.obtainStyledAttributes(

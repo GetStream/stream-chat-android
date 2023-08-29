@@ -82,11 +82,25 @@ public class SearchInputView : FrameLayout {
 
         binding.clearInputButton.setImageDrawable(style.clearInputDrawable)
         binding.searchIcon.setImageDrawable(style.searchIconDrawable)
+        // binding.searchIcon.updateLayoutParams<MarginLayoutParams> {
+        //     width = style.searchIconWidth
+        //     height = style.searchIconHeight
+        //     marginStart = style.searchIconMarginStart
+        // }
+        // binding.clearInputButton.updateLayoutParams<MarginLayoutParams> {
+        //     width = style.clearIconWidth
+        //     height = style.clearIconHeight
+        //     marginEnd = style.clearIconMarginEnd
+        // }
         binding.inputField.hint = style.hintText
         binding.inputField.setHintTextColor(style.hintColor)
         binding.inputField.setTextColor(style.textColor)
         binding.root.background = style.backgroundDrawable
         binding.inputField.setTextSizePx(style.textSize.toFloat())
+        // binding.inputField.updateLayoutParams<MarginLayoutParams> {
+        //     marginStart = style.textMarginStart
+        //     marginEnd = style.textMarginEnd
+        // }
 
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)

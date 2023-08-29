@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -50,7 +51,7 @@ public data class SearchResultListViewStyle(
     public val emptyStateTextStyle: TextStyle,
     public val progressBarIcon: Drawable,
     public val messagePreviewStyle: MessagePreviewStyle,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle {
             context.obtainStyledAttributes(
