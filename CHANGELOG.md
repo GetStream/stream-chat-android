@@ -87,6 +87,12 @@
 
 ### ❌ Removed
 
+# August 29th, 2023 - 6.0.0
+
+🚨🚨 **v6.0.0** release brings a lot of different enhancements. Please, make sure to check our [migration guides](https://getstream.io/chat/docs/sdk/android/migration-guides/client/push-notifications/)! 🚨🚨
+
+If you want to learn more about these changes and our decisions, check out our [Android Chat v6 Blog Post](https://getstream.io/blog/announcement-android-sdk-6-beta/).
+
 # August 25th, 2023 - 6.0.0-beta5
 
 I hope you're interested in our latest major release - v6.0.0-beta5! We're currently in the process of preparing migration guides and updating all of our
