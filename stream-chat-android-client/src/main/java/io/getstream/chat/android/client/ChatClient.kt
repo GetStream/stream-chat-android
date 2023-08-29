@@ -3061,11 +3061,6 @@ internal constructor(
         }
 
         @InternalStreamChatApi
-        @Deprecated(
-            message = "It shouldn't be used outside of SDK code. Created for testing purposes",
-            replaceWith = ReplaceWith("this.build()"),
-            level = DeprecationLevel.ERROR,
-        )
         @SuppressWarnings("LongMethod")
         override fun internalBuild(): ChatClient {
             if (apiKey.isEmpty()) {

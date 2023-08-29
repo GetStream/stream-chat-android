@@ -80,18 +80,18 @@ public data class StreamColors(
     public val errorAccent: Color,
     public val infoAccent: Color,
     public val highlight: Color,
-    @Deprecated("Use MessageTheme.backgroundColor instead")
+    @Deprecated("Use MessageTheme.backgroundColor instead", level = DeprecationLevel.ERROR)
     public val ownMessagesBackground: Color,
-    @Deprecated("Use MessageTheme.backgroundColor instead")
+    @Deprecated("Use MessageTheme.backgroundColor instead", level = DeprecationLevel.ERROR)
     public val otherMessagesBackground: Color,
-    @Deprecated("Use MessageTheme.deletedBackgroundColor instead")
+    @Deprecated("Use MessageTheme.deletedBackgroundColor instead", level = DeprecationLevel.ERROR)
     public val deletedMessagesBackground: Color,
     public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
-    @Deprecated("Use MessageTheme.textStyle.color instead")
+    @Deprecated("Use MessageTheme.textStyle.color instead", level = DeprecationLevel.ERROR)
     public val ownMessageText: Color = textHighEmphasis,
-    @Deprecated("Use MessageTheme.textStyle.color instead")
+    @Deprecated("Use MessageTheme.textStyle.color instead", level = DeprecationLevel.ERROR)
     public val otherMessageText: Color = textHighEmphasis,
     public val imageBackgroundMessageList: Color,
     public val imageBackgroundMediaGalleryPicker: Color,
@@ -99,13 +99,13 @@ public data class StreamColors(
     public val videoBackgroundMediaGalleryPicker: Color,
     public val showMoreOverlay: Color,
     public val showMoreCountText: Color,
-    @Deprecated("Use MessageTheme.quotedBackgroundColor instead")
+    @Deprecated("Use MessageTheme.quotedBackgroundColor instead", level = DeprecationLevel.ERROR)
     public val ownMessageQuotedBackground: Color = otherMessagesBackground,
-    @Deprecated("Use MessageTheme.quotedBackgroundColor instead")
+    @Deprecated("Use MessageTheme.quotedBackgroundColor instead", level = DeprecationLevel.ERROR)
     public val otherMessageQuotedBackground: Color = ownMessagesBackground,
-    @Deprecated("Use MessageTheme.quotedTextStyle.color instead")
+    @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
     public val ownMessageQuotedText: Color = textHighEmphasis,
-    @Deprecated("Use MessageTheme.quotedTextStyle.color instead")
+    @Deprecated("Use MessageTheme.quotedTextStyle.color instead", level = DeprecationLevel.ERROR)
     public val otherMessageQuotedText: Color = textHighEmphasis,
 ) {
 
