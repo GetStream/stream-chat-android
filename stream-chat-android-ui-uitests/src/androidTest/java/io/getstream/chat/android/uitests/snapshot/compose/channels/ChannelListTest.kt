@@ -36,52 +36,52 @@ class ChannelListTest : ComposeScreenshotTest() {
                 isLoadingMore = false,
                 channelItems = listOf(
                     ChannelItemState(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message1(),
-                            )
-                            lastMessageAt = TestData.date1()
-                        },
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message2(),
-                            )
-                            lastMessageAt = TestData.date2()
-                        },
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message3(),
-                            )
-                            lastMessageAt = TestData.date3()
-                        },
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message4(),
-                            )
-                            lastMessageAt = TestData.date4()
-                        },
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
                     ),
                 ),
             ),
@@ -111,52 +111,52 @@ class ChannelListTest : ComposeScreenshotTest() {
                 isLoadingMore = true,
                 channelItems = listOf(
                     ChannelItemState(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message1(),
-                            )
-                            lastMessageAt = TestData.date1()
-                        },
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message2(),
-                            )
-                            lastMessageAt = TestData.date2()
-                        },
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message3(),
-                            )
-                            lastMessageAt = TestData.date3()
-                        },
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
                                 TestData.message4(),
-                            )
-                            lastMessageAt = TestData.date4()
-                        },
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
                     ),
                 ),
             ),

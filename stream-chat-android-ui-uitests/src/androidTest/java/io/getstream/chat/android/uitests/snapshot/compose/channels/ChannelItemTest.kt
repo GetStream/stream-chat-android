@@ -28,18 +28,18 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemWithUnreadCount() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
+                    ),
                     messages = listOf(
                         TestData.message1(),
                         TestData.message2(),
-                    )
-                    unreadCount = 2
-                    lastMessageAt = TestData.date2()
-                },
+                    ),
+                    unreadCount = 2,
+                    lastMessageAt = TestData.date2(),
+                ),
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
@@ -51,17 +51,17 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemWithoutCurrentUser() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
+                    ),
                     messages = listOf(
                         TestData.message1(),
                         TestData.message2(),
-                    )
-                    lastMessageAt = TestData.date2()
-                },
+                    ),
+                    lastMessageAt = TestData.date2(),
+                ),
             ),
             currentUser = null,
             onChannelClick = {},
@@ -73,17 +73,17 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemForMutedChannel() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
+                    ),
                     messages = listOf(
                         TestData.message1(),
                         TestData.message2(),
-                    )
-                    lastMessageAt = TestData.date2()
-                },
+                    ),
+                    lastMessageAt = TestData.date2(),
+                ),
                 isMuted = true,
             ),
             currentUser = TestData.user1(),
@@ -96,12 +96,12 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemForChannelWithoutMessages() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
-                },
+                    ),
+                ),
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},

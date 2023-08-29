@@ -32,16 +32,16 @@ class SelectedChannelMenuTest : ComposeScreenshotTest() {
         Box(modifier = Modifier.fillMaxSize()) {
             SelectedChannelMenu(
                 modifier = Modifier.align(Alignment.BottomCenter),
-                selectedChannel = TestData.channel1().apply {
+                selectedChannel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
                         TestData.member3(),
                         TestData.member4(),
                         TestData.member5(),
-                    )
-                    messages = listOf(TestData.message1())
-                },
+                    ),
+                    messages = listOf(TestData.message1()),
+                ),
                 isMuted = false,
                 currentUser = TestData.user1(),
                 onChannelOptionClick = {},

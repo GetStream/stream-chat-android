@@ -24,6 +24,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.images.internal.StreamCoil
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItemViewType
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListPayloadDiff
 import io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.ChannelListItemViewHolderFactory
@@ -47,35 +48,38 @@ class ChannelListItemViewTest : ScreenshotTest {
     @Test
     fun channelItemWithUnreadCount() {
         renderChannelListItemView(
-            TestData.channel1().apply {
+            TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
-                )
+                ),
                 messages = listOf(
                     TestData.message1(),
                     TestData.message2(),
-                )
-                unreadCount = 2
-                lastMessageAt = TestData.date2()
-            },
+                ),
+                unreadCount = 2,
+                lastMessageAt = TestData.date2(),
+            ),
         )
     }
 
     @Test
     fun channelItemForMutedChannel() {
         renderChannelListItemView(
-            TestData.channel1().apply {
-                members = listOf(
-                    TestData.member1(),
-                    TestData.member2(),
+            TestData.channel1().let {
+                it.copy(
+                    members = listOf(
+                        TestData.member1(),
+                        TestData.member2(),
+                    ),
+                    messages = listOf(
+                        TestData.message1(),
+                        TestData.message2(),
+                    ),
+                    lastMessageAt = TestData.date2(),
+                    extraData = it.extraData + mapOf("mutedChannel" to true),
+                    // extraData = extraData["mutedChannel"] = true,
                 )
-                messages = listOf(
-                    TestData.message1(),
-                    TestData.message2(),
-                )
-                lastMessageAt = TestData.date2()
-                extraData["mutedChannel"] = true
             },
         )
     }
@@ -83,12 +87,12 @@ class ChannelListItemViewTest : ScreenshotTest {
     @Test
     fun channelItemForChannelWithoutMessages() {
         renderChannelListItemView(
-            TestData.channel1().apply {
+            TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
-                )
-            },
+                ),
+            ),
         )
     }
 
@@ -96,7 +100,8 @@ class ChannelListItemViewTest : ScreenshotTest {
         val viewHolder = ChannelListItemViewHolderFactory()
             .createViewHolder(FrameLayout(context), ChannelListItemViewType.DEFAULT)
 
-        viewHolder.bind(channel, CHANNEL_LIST_PAYLOAD_DIFF)
+        val channelListItem = ChannelListItem.ChannelItem(channel, emptyList())
+        viewHolder.bind(channelListItem, CHANNEL_LIST_PAYLOAD_DIFF)
 
         compareScreenshot(viewHolder.itemView)
     }
