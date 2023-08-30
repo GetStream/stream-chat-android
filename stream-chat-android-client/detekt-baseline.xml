@@ -11,6 +11,7 @@
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>TooGenericExceptionCaught:StreamPayloadParser.kt$StreamPayloadParser$e: Throwable</ID>
     <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>
     <ID>UnusedPrivateMember:ChatEventsObservable.kt$ChatEventsObservable$private val logger = StreamLog.getLogger("Chat:EventsObservable")</ID>
   </CurrentIssues>

@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.PayloadValidator
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.notifications.parser.StreamPayloadParser
 import kotlin.jvm.Throws
 
 /**
@@ -102,12 +103,35 @@ public object XiaomiMessagingDelegate {
 
     private fun MiPushMessage.toPushMessage() =
         contentMap.let {
+            val expectedKeys = hashSetOf("channel_id", "message_id", "channel_type", "getstream")
             PushMessage(
                 channelId = it["channel_id"]!!,
                 messageId = it["message_id"]!!,
                 channelType = it["channel_type"]!!,
+                getstream = StreamPayloadParser.parse(it["getstream"]),
+                extraData = it.filterKeys { key -> key !in expectedKeys },
+                metadata = extractMetadata(),
             )
         }
+
+    private fun MiPushMessage.extractMetadata(): Map<String, Any> {
+        return hashMapOf<String, Any>().apply {
+            put("xiaomi.message_type", messageType)
+            messageId?.also { put("xiaomi.message_id", it) }
+            userAccount?.also { put("xiaomi.user_account", it) }
+            title?.also { put("xiaomi.title", it) }
+            topic?.also { put("xiaomi.topic", it) }
+            alias?.also { put("xiaomi.alias", it) }
+            category?.also { put("xiaomi.category", it) }
+            description?.also { put("xiaomi.description", it) }
+            put("xiaomi.is_arrived_message", isArrivedMessage)
+            put("xiaomi.is_notified", isNotified)
+            put("xiaomi.notify_type", notifyType)
+            put("xiaomi.notify_id", notifyId)
+            put("xiaomi.pass_through", passThrough)
+            put("xiaomi.extra", extra)
+        }
+    }
 
     private fun MiPushMessage.isValid() =
         PayloadValidator.isFromStreamServer(contentMap) &&
