@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.PayloadValidator
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.notifications.parser.StreamPayloadParser
 import kotlin.jvm.Throws
 
 /**
@@ -76,12 +77,36 @@ public object HuaweiMessagingDelegate {
     }
 }
 
-private fun RemoteMessage.toPushMessage() =
-    PushMessage(
+private fun RemoteMessage.toPushMessage(): PushMessage {
+    val expectedKeys = hashSetOf("channel_id", "message_id", "channel_type", "getstream")
+    return PushMessage(
         channelId = dataOfMap["channel_id"]!!,
         messageId = dataOfMap["message_id"]!!,
         channelType = dataOfMap["channel_type"]!!,
+        getstream = StreamPayloadParser.parse(dataOfMap["getstream"]),
+        extraData = dataOfMap.filterKeys { it !in expectedKeys },
+        metadata = extractMetadata(),
     )
+}
+
+private fun RemoteMessage.extractMetadata(): Map<String, Any> {
+    return hashMapOf<String, Any>().apply {
+        from?.also { put("huawei.from", it) }
+        to?.also { put("huawei.to", it) }
+        messageType?.also { put("huawei.message_type", it) }
+        messageId?.also { put("huawei.message_id", it) }
+        collapseKey?.also { put("huawei.collapse_key", it) }
+        analyticInfoMap?.also { put("huawei.analytic_info_map", it) }
+        token?.also { put("huawei.token", token) }
+        put("huawei.sent_time", sentTime)
+        put("huawei.send_mode", sendMode)
+        put("huawei.receipt_mode", receiptMode)
+        put("huawei.urgency", urgency)
+        put("huawei.original_urgency", originalUrgency)
+        put("huawei.original_urgency", originalUrgency)
+        put("huawei.ttl", ttl)
+    }
+}
 
 private fun RemoteMessage.isValid() =
     PayloadValidator.isFromStreamServer(dataOfMap) &&

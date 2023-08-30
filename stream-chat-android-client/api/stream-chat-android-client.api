@@ -3261,16 +3261,22 @@ public final class io/getstream/chat/android/client/models/Mute {
 }
 
 public final class io/getstream/chat/android/client/models/PushMessage {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/models/PushMessage;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/PushMessage;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/PushMessage;
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/util/Map;
+	public final fun component6 ()Ljava/util/Map;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;)Lio/getstream/chat/android/client/models/PushMessage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/models/PushMessage;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;ILjava/lang/Object;)Lio/getstream/chat/android/client/models/PushMessage;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getChannelType ()Ljava/lang/String;
+	public final fun getExtraData ()Ljava/util/Map;
+	public final fun getGetstream ()Ljava/util/Map;
 	public final fun getMessageId ()Ljava/lang/String;
+	public final fun getMetadata ()Ljava/util/Map;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

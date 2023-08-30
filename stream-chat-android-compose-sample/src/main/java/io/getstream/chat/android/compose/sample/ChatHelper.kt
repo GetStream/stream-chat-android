@@ -44,7 +44,7 @@ object ChatHelper {
     fun initializeSdk(context: Context, apiKey: String) {
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
-            pushDeviceGenerators = listOf(FirebasePushDeviceGenerator())
+            pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "Firebase"))
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,

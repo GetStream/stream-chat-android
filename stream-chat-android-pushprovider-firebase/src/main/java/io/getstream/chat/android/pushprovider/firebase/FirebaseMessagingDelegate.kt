@@ -22,6 +22,9 @@ import io.getstream.chat.android.client.PayloadValidator
 import io.getstream.chat.android.client.models.Device
 import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.models.PushProvider
+import io.getstream.chat.android.client.notifications.parser.StreamPayloadParser
+import org.json.JSONArray
+import org.json.JSONObject
 
 /**
  * Helper class for delegating Firebase push messages to the Stream Chat SDK.
@@ -46,7 +49,6 @@ public object FirebaseMessagingDelegate {
         if (!remoteMessage.isValid()) {
             return false
         }
-
         ChatClient.handlePushMessage(remoteMessage.toPushMessage())
         return true
     }
@@ -75,12 +77,56 @@ public object FirebaseMessagingDelegate {
     }
 }
 
-private fun RemoteMessage.toPushMessage() =
-    PushMessage(
+private fun RemoteMessage.toPushMessage(): PushMessage {
+    val expectedKeys = hashSetOf("channel_id", "message_id", "channel_type", "getstream")
+    return PushMessage(
         channelId = data.getValue("channel_id"),
         messageId = data.getValue("message_id"),
         channelType = data.getValue("channel_type"),
+        getstream = StreamPayloadParser.parse(data["getstream"]),
+        extraData = data.filterKeys { it !in expectedKeys },
+        metadata = extractMetadata(),
     )
+}
+
+private fun RemoteMessage.extractMetadata(): Map<String, Any> {
+    return hashMapOf<String, Any>().apply {
+        senderId?.also { put("firebase.sender_id", it) }
+        from?.also { put("firebase.from", it) }
+        to?.also { put("firebase.to", it) }
+        messageType?.also { put("firebase.message_type", it) }
+        messageId?.also { put("firebase.message_id", it) }
+        collapseKey?.also { put("firebase.collapse_key", it) }
+        put("firebase.sent_time", sentTime)
+        put("firebase.ttl", ttl)
+        put("firebase.priority", priority)
+        put("firebase.priority", originalPriority)
+    }
+}
+
+internal fun JSONObject.toMap(): Map<String, Any> {
+    val map = mutableMapOf<String, Any>()
+    for (key in this.keys()) {
+        when (val value = this[key]) {
+            is JSONObject -> map[key] = value.toMap()
+            is JSONArray -> map[key] = value.toList()
+            else -> map[key] = value
+        }
+    }
+    return map
+}
+
+internal fun JSONArray.toList(): List<Any> {
+    val list = mutableListOf<Any>()
+    for (i in 0 until this.length()) {
+        when (val value = this[i]) {
+            is JSONObject -> list.add(value.toMap())
+            is JSONArray -> list.add(value.toList())
+            else -> list.add(value)
+        }
+    }
+    return list
+}
 
 private fun RemoteMessage.isValid() =
     PayloadValidator.isFromStreamServer(data) &&
