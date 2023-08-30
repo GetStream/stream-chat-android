@@ -20,6 +20,15 @@ This document lists deprecated constructs in the SDK, with their expected time �
 | `MessageListView::setBlockUserEnabled` | 2022.08.02 <br/>5.7.0 | 2022.09.13<br/>5.10.0 | 2022.10.04 ⌛ | The option to block the user from `MessageListView` has been deprecated and will be removed. |
 | `MessageListView` attributes | 2022.08.02 <br/>5.7.0 | 2022.09.13<br/>5.10.0 | 2022.10.04 ⌛ | The attributes `streamUiMuteOptionIcon`, `streamUiUnmuteOptionIcon`, `streamUiMuteUserEnabled`, `streamUiBlockOptionIcon` and `streamUiBlockUserEnabled` have been deprecated and will be removed. The options to block and mute users will no longer be contained inside `MessageListView` |
 | `MessageListViewStyle` constructor containing params: `muteIcon`, `unmuteIcon`, `muteEnabled`, `blockIcon` and `blockEnabled` | 2022.08.02 <br/>5.7.0 | 2022.09.13<br/>5.10.0  | 2022.10.04 ⌛ | This constructor has been deprecated. Use the constructor that does not contain these parameters. |
+| `StreamColors.ownMessagesBackground` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.backgroundColor` instead. |
+| `StreamColors.otherMessagesBackground` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.backgroundColor` instead. |
+| `StreamColors.deletedMessagesBackground` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.deletedBackgroundColor` instead. |
+| `StreamColors.ownMessageText` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.textStyle.color` instead. |
+| `StreamColors.otherMessageText` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.textStyle.color` instead. |
+| `StreamColors.ownMessageQuotedBackground` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.quotedBackgroundColor` instead. |
+| `StreamColors.otherMessageQuotedBackground` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.quotedBackgroundColor` instead. |
+| `StreamColors.ownMessageQuotedText` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.quotedTextStyle.color` instead. |
+| `StreamColors.otherMessageQuotedText` | 2023.07.11 <br/>5.17.7 | 2023.09.13<br/> ⌛ | 2023.10.04<br/> ⌛ | Use `MessageTheme.quotedTextStyle.color` instead. |
 | `DefaultTypingUpdatesBuffer` | 2022.08.02 <br/>5.7.0 | 2022.08.16<br/>5.8.0 | 2022.08.30<br/>5.9.0 | This implementation of `TypingUpdatesBuffer` has been deprecated and will be removed. Should you wish to user your own typing updates buffer, you should create a custom implementation of `TypingUpdatesBuffer`. |
 | `ChannelListView.showLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.13<br/>5.10.0 | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |
 | `ChannelListView.hideLoadingMore()` | 2022.08.02 <br/>5.7.0 | 2022.09.13<br/>5.10.0 | 2022.10.04 ⌛ | Insert the loading item before passing the list to the adapter. |

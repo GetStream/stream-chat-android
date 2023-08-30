@@ -17,6 +17,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/backgroundView"
     android:layout_width="match_parent"
     android:layout_height="@dimen/stream_ui_channel_list_item_height"
     android:background="@color/stream_ui_white_smoke"

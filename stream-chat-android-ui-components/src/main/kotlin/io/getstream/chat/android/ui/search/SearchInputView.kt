@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.search
 
 import android.content.Context
+import android.graphics.drawable.GradientDrawable
 import android.text.TextWatcher
 import android.util.AttributeSet
 import android.view.inputmethod.EditorInfo
@@ -29,6 +30,7 @@ import androidx.transition.TransitionManager
 import com.getstream.sdk.chat.utils.extensions.focusAndShowKeyboard
 import io.getstream.chat.android.ui.common.Debouncer
 import io.getstream.chat.android.ui.common.extensions.internal.createStreamThemeWrapper
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.setTextSizePx
 import io.getstream.chat.android.ui.common.extensions.internal.streamThemeInflater
 import io.getstream.chat.android.ui.databinding.StreamUiSearchViewBinding
@@ -82,25 +84,31 @@ public class SearchInputView : FrameLayout {
 
         binding.clearInputButton.setImageDrawable(style.clearInputDrawable)
         binding.searchIcon.setImageDrawable(style.searchIconDrawable)
-        // binding.searchIcon.updateLayoutParams<MarginLayoutParams> {
-        //     width = style.searchIconWidth
-        //     height = style.searchIconHeight
-        //     marginStart = style.searchIconMarginStart
-        // }
-        // binding.clearInputButton.updateLayoutParams<MarginLayoutParams> {
-        //     width = style.clearIconWidth
-        //     height = style.clearIconHeight
-        //     marginEnd = style.clearIconMarginEnd
-        // }
+        binding.searchIcon.updateLayoutParams<MarginLayoutParams> {
+            width = style.searchIconWidth
+            height = style.searchIconHeight
+            marginStart = style.searchIconMarginStart
+        }
+        binding.clearInputButton.updateLayoutParams<MarginLayoutParams> {
+            width = style.clearIconWidth
+            height = style.clearIconHeight
+            marginEnd = style.clearIconMarginEnd
+        }
         binding.inputField.hint = style.hintText
         binding.inputField.setHintTextColor(style.hintColor)
         binding.inputField.setTextColor(style.textColor)
+        style.backgroundDrawable.also {
+            val outline = style.backgroundDrawableOutline
+            if (it is GradientDrawable && outline != null) {
+                it.setStroke(outline.width, outline.color)
+            }
+        }
         binding.root.background = style.backgroundDrawable
         binding.inputField.setTextSizePx(style.textSize.toFloat())
-        // binding.inputField.updateLayoutParams<MarginLayoutParams> {
-        //     marginStart = style.textMarginStart
-        //     marginEnd = style.textMarginEnd
-        // }
+        binding.inputField.updateLayoutParams<MarginLayoutParams> {
+            marginStart = style.textMarginStart
+            marginEnd = style.textMarginEnd
+        }
 
         binding.inputField.doAfterTextChanged { newText ->
             updateClearButtonVisibility(newText)

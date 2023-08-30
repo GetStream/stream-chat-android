@@ -25,9 +25,12 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
+import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
+import io.getstream.chat.android.ui.common.extensions.internal.getDimensionOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
+import kotlin.math.roundToInt
 
 /**
  * @property textColor Color value of the search input text.
@@ -45,6 +48,8 @@ import io.getstream.chat.android.ui.common.extensions.internal.use
  * @property clearIconWidth The width of the clear icon.
  * @property clearIconHeight The height of the clear icon.
  * @property clearIconMarginEnd The end margin of the clear icon.
+ * @property textMarginStart The start margin of the input text.
+ * @property textMarginEnd The end margin of the input text.
  */
 public data class SearchInputViewStyle(
     @ColorInt val textColor: Int,
@@ -52,6 +57,7 @@ public data class SearchInputViewStyle(
     val searchIconDrawable: Drawable,
     val clearInputDrawable: Drawable,
     val backgroundDrawable: Drawable,
+    val backgroundDrawableOutline: DrawableOutline?,
     @ColorInt val containerBackgroundColor: Int,
     val hintText: String,
     val textSize: Int,
@@ -81,6 +87,21 @@ public data class SearchInputViewStyle(
 
                 val backgroundDrawable = a.getDrawable(R.styleable.SearchInputView_streamUiSearchInputViewBackground)
                     ?: context.getDrawableCompat(R.drawable.stream_ui_shape_search_view_background)!!
+
+                var backgroundDrawableOutline: DrawableOutline? = null
+
+                val backgroundDrawableOutlineColor = a.getColorOrNull(
+                    R.styleable.SearchInputView_streamUiSearchInputViewBackgroundOutlineColor
+                )
+                val backgroundDrawableOutlineWidth = a.getDimensionOrNull(
+                    R.styleable.SearchInputView_streamUiSearchInputViewBackgroundOutlineWidth
+                )?.roundToInt()
+                if (backgroundDrawableOutlineColor != null && backgroundDrawableOutlineWidth != null) {
+                    backgroundDrawableOutline = DrawableOutline(
+                        width = backgroundDrawableOutlineWidth,
+                        color = backgroundDrawableOutlineColor,
+                    )
+                }
 
                 val containerBackground = a.getColor(
                     R.styleable.SearchInputView_streamUiSearchInputViewContainerBackground,
@@ -154,6 +175,7 @@ public data class SearchInputViewStyle(
                     searchIconDrawable = searchIcon,
                     clearInputDrawable = clearIcon,
                     backgroundDrawable = backgroundDrawable,
+                    backgroundDrawableOutline = backgroundDrawableOutline,
                     containerBackgroundColor = containerBackground,
                     textColor = textColor,
                     hintColor = hintColor,
@@ -172,4 +194,15 @@ public data class SearchInputViewStyle(
             }
         }
     }
+
+    /**
+     * Represents the outline of the drawable.
+     *
+     * @property color Color of the drawable outline.
+     * @property width Width of the drawable outline.
+     */
+    public data class DrawableOutline(
+        @Px val width: Int,
+        @ColorInt val color: Int,
+    )
 }

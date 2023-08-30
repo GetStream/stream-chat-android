@@ -22,9 +22,11 @@ import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.annotation.StyleRes
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.getstream.sdk.chat.utils.Utils
@@ -32,6 +34,7 @@ import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.ui.channel.list.ChannelListFragmentViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListView
 import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
 import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel
@@ -42,6 +45,7 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelListBinding
 import io.getstream.chat.android.ui.message.MessageListActivity
+import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel
@@ -70,6 +74,7 @@ public open class ChannelListFragment : Fragment() {
     protected val channelListViewModel: ChannelListViewModel by viewModels { createChannelListViewModelFactory() }
     protected val searchViewModel: SearchViewModel by viewModels()
 
+    protected lateinit var style: ChannelListFragmentViewStyle
     protected var headerUserAvatarClickListener: HeaderUserAvatarClickListener? = null
     protected var headerActionButtonClickListener: HeaderActionButtonClickListener? = null
     protected var channelListItemClickListener: ChannelListItemClickListener? = null
@@ -80,6 +85,7 @@ public open class ChannelListFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        this.style = ChannelListFragmentViewStyle(context)
         headerUserAvatarClickListener = findListener()
         headerActionButtonClickListener = findListener()
         channelListItemClickListener = findListener()
@@ -106,6 +112,16 @@ public open class ChannelListFragment : Fragment() {
         setupChannelList(binding.channelListView)
         setupSearchInput(binding.searchInputView)
         setupSearchResultList(binding.searchResultListView)
+        applyStyle(style)
+    }
+
+    protected open fun applyStyle(style: ChannelListFragmentViewStyle) {
+        binding.searchInputView.updateLayoutParams<MarginLayoutParams> {
+            topMargin = style.searchInputMarginTop
+            bottomMargin = style.searchInputMarginBottom
+            marginStart = style.searchInputMarginStart
+            marginEnd = style.searchInputMarginEnd
+        }
     }
 
     /**

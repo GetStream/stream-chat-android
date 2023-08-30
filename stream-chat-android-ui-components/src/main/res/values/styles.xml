@@ -244,6 +244,7 @@
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiMessageListHeaderAvatarStyle">@style/StreamUi.MessageList.Header.Avatar</item>
+        <item name="streamUiChannelListViewStyle">@style/StreamUi.ChannelListView</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelListHeader.Avatar</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
@@ -604,6 +605,7 @@
     </style>
 
     <style name="StreamUi.ChannelListView" parent="StreamUi">
+        <item name="streamUiChannelHeight">@dimen/stream_ui_channel_list_item_height</item>
         <item name="streamUiChannelsItemSeparatorDrawable">@drawable/stream_ui_divider</item>
 
         <!--Background layout-->
@@ -615,6 +617,11 @@
         <item name="streamUiBackgroundLayoutColor">@color/stream_ui_white_smoke</item>
 
         <!--Foreground layout-->
+        <item name="streamUiChannelMarginStart">@dimen/stream_ui_channel_list_item_margin_start</item>
+        <item name="streamUiChannelMarginEnd">@dimen/stream_ui_channel_list_item_margin_end</item>
+        <item name="streamUiChannelTitleMarginStart">@dimen/stream_ui_channel_list_item_title_margin_start</item>
+        <item name="streamUiChannelVerticalSpacerHeight">@dimen/stream_ui_channel_list_item_vertical_spacer_height</item>
+        <item name="streamUiChannelVerticalSpacerPosition">@dimen/stream_ui_channel_list_item_vertical_spacer_position</item>
         <item name="streamUiChannelTitleTextSize">@dimen/stream_ui_channel_item_title</item>
         <item name="streamUiChannelTitleTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiChannelTitleTextStyle">bold</item>

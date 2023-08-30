@@ -39,6 +39,7 @@
         android:layout_marginStart="@dimen/stream_ui_channel_list_search_margin_start"
         android:layout_marginTop="@dimen/stream_ui_channel_list_search_margin_top"
         android:layout_marginEnd="@dimen/stream_ui_channel_list_search_margin_end"
+        android:layout_marginBottom="@dimen/stream_ui_channel_list_search_margin_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
