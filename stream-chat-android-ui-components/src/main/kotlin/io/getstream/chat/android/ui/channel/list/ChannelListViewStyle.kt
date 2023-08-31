@@ -100,7 +100,7 @@ public data class ChannelListViewStyle(
     @Px public val itemTitleMarginStart: Int,
     @Px public val itemVerticalSpacerHeight: Int,
     @Px public val itemVerticalSpacerPosition: Float,
-): ViewStyle {
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle {

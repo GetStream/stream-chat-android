@@ -45,7 +45,6 @@ import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListVi
 import io.getstream.chat.android.ui.common.extensions.internal.findListener
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelListBinding
 import io.getstream.chat.android.ui.message.MessageListActivity
-import io.getstream.chat.android.ui.message.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.search.SearchInputView
 import io.getstream.chat.android.ui.search.list.SearchResultListView
 import io.getstream.chat.android.ui.search.list.viewmodel.SearchViewModel

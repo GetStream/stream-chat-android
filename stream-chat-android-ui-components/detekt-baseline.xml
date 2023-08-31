@@ -45,6 +45,7 @@
     <ID>LongMethod:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$override fun createMessageOptionItems( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, style: MessageListViewStyle, ): List&lt;MessageOptionItem></ID>
     <ID>LongMethod:MessageReplyStyle.kt$MessageReplyStyle.Companion$operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle</ID>
     <ID>LongMethod:PinnedMessageListViewStyle.kt$PinnedMessageListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): PinnedMessageListViewStyle</ID>
+    <ID>LongMethod:SearchInputViewStyle.kt$SearchInputViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchInputViewStyle</ID>
     <ID>LongMethod:SearchResultListViewStyle.kt$SearchResultListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle</ID>
     <ID>LongMethod:SuggestionListViewStyle.kt$SuggestionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle</ID>
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
@@ -86,6 +87,7 @@
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
     <ID>MaxLineLength:AvatarView.kt$AvatarView$*</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
+    <ID>MaxLineLength:ChannelListFragmentViewStyle.kt$ChannelListFragmentViewStyle$*</ID>
     <ID>MaxLineLength:ChannelListIconProviderContainerImpl.kt$ChannelListIconProviderContainerImpl$override</ID>
     <ID>MaxLineLength:ChannelListView.kt$ChannelListView$is ChannelListViewModel.ErrorEvent.DeleteChannelError -> R.string.stream_ui_channel_list_error_delete_channel</ID>
     <ID>MaxLineLength:ChannelListViewModel.kt$ChannelListViewModel$*</ID>

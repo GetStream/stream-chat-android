@@ -38,7 +38,7 @@ public data class ChannelListFragmentViewStyle(
     @Px public val searchInputMarginTop: Int,
     @Px public val searchInputMarginEnd: Int,
     @Px public val searchInputMarginBottom: Int,
-): ViewStyle {
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context): ChannelListFragmentViewStyle {
