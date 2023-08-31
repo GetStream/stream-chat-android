@@ -24,6 +24,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -60,7 +61,7 @@ public data class ScrollButtonViewStyle(
     public val scrollButtonBadgeGravity: Int,
     public val scrollButtonBadgeElevation: Float,
     public val scrollButtonInternalMargin: Int,
-) {
+) : ViewStyle {
 
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false

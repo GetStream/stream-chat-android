@@ -25,6 +25,7 @@ import androidx.annotation.StyleableRes
 import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
@@ -72,7 +73,7 @@ public data class SingleReactionViewStyle(
     @Px public val smallTailBubbleRadius: Int,
     @Px public val smallTailBubbleOffset: Int,
     public val reactionOrientation: Int,
-) {
+) : ViewStyle {
 
     internal companion object {
         private val DEFAULT_BUBBLE_BORDER_COLOR_MINE = R.color.stream_ui_grey_whisper

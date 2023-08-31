@@ -22,6 +22,7 @@ import android.util.AttributeSet
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.use
@@ -37,7 +38,7 @@ import io.getstream.chat.android.ui.common.style.TextStyle
 public data class TypingIndicatorViewStyle(
     @LayoutRes public val typingIndicatorAnimationView: Int,
     public val typingIndicatorUsersTextStyle: TextStyle,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): TypingIndicatorViewStyle {
             context.obtainStyledAttributes(

@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui
 
 import io.getstream.chat.android.ui.avatar.AvatarStyle
 import io.getstream.chat.android.ui.channel.list.ChannelActionsDialogViewStyle
+import io.getstream.chat.android.ui.channel.list.ChannelListFragmentViewStyle
 import io.getstream.chat.android.ui.channel.list.ChannelListViewStyle
 import io.getstream.chat.android.ui.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.mention.list.MentionListViewStyle
@@ -45,6 +46,10 @@ import io.getstream.chat.android.ui.typing.TypingIndicatorViewStyle
 public object TransformStyle {
     @JvmStatic
     public var avatarStyleTransformer: StyleTransformer<AvatarStyle> = noopTransformer()
+
+    @JvmStatic
+    public var channelListFragmentStyleTransformer: StyleTransformer<ChannelListFragmentViewStyle> =
+        noopTransformer()
 
     @JvmStatic
     public var channelListStyleTransformer: StyleTransformer<ChannelListViewStyle> = noopTransformer()

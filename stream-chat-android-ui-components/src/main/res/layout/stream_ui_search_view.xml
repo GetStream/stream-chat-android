@@ -24,9 +24,9 @@
 
     <ImageView
         android:id="@+id/searchIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="@dimen/stream_ui_search_input_icon_search_width"
+        android:layout_height="@dimen/stream_ui_search_input_icon_search_height"
+        android:layout_marginStart="@dimen/stream_ui_search_input_icon_search_margin_start"
         android:contentDescription="@string/stream_ui_search_input_search_icon_content_description"
         android:src="@drawable/stream_ui_ic_search"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -38,8 +38,8 @@
         android:id="@+id/inputField"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginStart="@dimen/stream_ui_search_input_text_margin_start"
+        android:layout_marginEnd="@dimen/stream_ui_search_input_text_margin_end"
         android:background="@color/stream_ui_literal_transparent"
         android:hint="@string/stream_ui_search_input_hint"
         android:imeOptions="actionSearch"
@@ -58,9 +58,9 @@
 
     <ImageView
         android:id="@+id/clearInputButton"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="8dp"
+        android:layout_width="@dimen/stream_ui_search_input_icon_clear_width"
+        android:layout_height="@dimen/stream_ui_search_input_icon_clear_height"
+        android:layout_marginEnd="@dimen/stream_ui_search_input_icon_clear_margin_end"
         android:contentDescription="@string/stream_ui_search_input_clear_icon_content_description"
         android:src="@drawable/stream_ui_ic_clear"
         app:layout_constraintBottom_toBottomOf="parent"

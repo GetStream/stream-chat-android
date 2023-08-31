@@ -121,5 +121,12 @@
         <attr name="streamUiEdgeEffectColor" format="color|reference" />
 
         <attr name="streamUiChannelActionsDialogStyle" />
+
+        <attr name="streamUiChannelHeight" format="dimension|reference" />
+        <attr name="streamUiChannelMarginStart" format="dimension|reference" />
+        <attr name="streamUiChannelMarginEnd" format="dimension|reference" />
+        <attr name="streamUiChannelTitleMarginStart" format="dimension|reference" />
+        <attr name="streamUiChannelVerticalSpacerHeight" format="dimension|reference" />
+        <attr name="streamUiChannelVerticalSpacerPosition" format="float|dimension|reference" />
     </declare-styleable>
 </resources>

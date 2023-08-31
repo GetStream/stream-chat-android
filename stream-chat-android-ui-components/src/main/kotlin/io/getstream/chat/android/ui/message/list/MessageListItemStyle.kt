@@ -29,6 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -131,7 +132,7 @@ public data class MessageListItemStyle(
     public val iconFailedMessage: Drawable,
     public val iconBannedMessage: Drawable,
     public val systemMessageAlignment: Int,
-) {
+) : ViewStyle {
 
     @ColorInt
     public fun getStyleTextColor(isMine: Boolean): Int? {

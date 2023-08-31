@@ -24,6 +24,7 @@ import androidx.annotation.Px
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPxPrecise
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -63,7 +64,7 @@ public data class MessageReplyStyle(
     @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
     @Px public val messageStrokeWidthTheirs: Float,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle {
             val messageBackgroundColorMine: Int = attributes.getColor(

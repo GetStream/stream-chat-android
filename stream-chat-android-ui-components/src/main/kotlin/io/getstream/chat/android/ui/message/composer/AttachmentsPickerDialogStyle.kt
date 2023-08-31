@@ -25,6 +25,7 @@ import androidx.annotation.ColorInt
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -111,7 +112,7 @@ public data class AttachmentsPickerDialogStyle(
     val allowAccessToCameraIconDrawable: Drawable,
     val takeImageEnabled: Boolean,
     val recordVideoEnabled: Boolean,
-) {
+) : ViewStyle {
     public companion object {
         internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle {
             context.obtainStyledAttributes(

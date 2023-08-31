@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
@@ -58,6 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Extended channel list screen styling. [#4941](https://github.com/GetStream/stream-chat-android/pull/4941)
 
 ### ✅ Added
 
@@ -92,6 +94,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
@@ -103,6 +106,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
@@ -114,6 +118,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 

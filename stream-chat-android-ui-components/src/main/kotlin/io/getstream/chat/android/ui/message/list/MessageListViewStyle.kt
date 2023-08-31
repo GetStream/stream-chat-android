@@ -28,6 +28,7 @@ import androidx.annotation.LayoutRes
 import io.getstream.chat.android.common.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -148,7 +149,7 @@ constructor(
     public val optionsOverlayUserReactionsMargin: Int,
     public val optionsOverlayMessageOptionsMargin: Int,
     public val showReactionsForUnsentMessages: Boolean,
-) {
+) : ViewStyle {
 
     /**
      * Style for [MessageListView].

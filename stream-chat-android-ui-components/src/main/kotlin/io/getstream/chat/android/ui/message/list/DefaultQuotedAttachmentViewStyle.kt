@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 
 /**
@@ -38,7 +39,7 @@ public class DefaultQuotedAttachmentViewStyle(
     @Px public val imageAttachmentHeight: Int,
     @Px public val imageAttachmentWidth: Int,
     @Px public val quotedImageRadius: Int,
-) {
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context): DefaultQuotedAttachmentViewStyle {

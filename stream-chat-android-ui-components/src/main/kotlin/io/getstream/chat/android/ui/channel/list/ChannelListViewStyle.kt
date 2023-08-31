@@ -22,9 +22,12 @@ import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
+import androidx.annotation.Px
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.channel.list.adapter.viewholder.internal.ChannelViewHolder
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
@@ -60,6 +63,12 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @property loadingMoreView Loading more view. Default value is [R.layout.stream_ui_channel_list_loading_more_view].
  * @property edgeEffectColor Color applied to the [ChannelListView] edge effect. Pass null if you want to use default [android.R.attr.colorEdgeEffect]. Default value is null.
  * @property showChannelDeliveryStatusIndicator Flag if we need to show the delivery indicator or not.
+ * @property itemHeight Height of the channel list item. Default value is [R.dimen.stream_ui_channel_list_item_height].
+ * @property itemMarginStart Start margin of the channel list item. Default value is [R.dimen.stream_ui_channel_list_item_margin_start].
+ * @property itemMarginEnd End margin of the channel list item. Default value is [R.dimen.stream_ui_channel_list_item_margin_end].
+ * @property itemTitleMarginStart Start margin of the channel list item title. Default value is [R.dimen.stream_ui_channel_list_item_title_margin_start].
+ * @property itemVerticalSpacerHeight Height of the channel list item vertical spacer. Default value is [R.dimen.stream_ui_channel_list_item_vertical_spacer_height].
+ * @property itemVerticalSpacerPosition Position of the channel list item vertical spacer. Default value is [R.dimen.stream_ui_channel_list_item_vertical_spacer_position].
  */
 public data class ChannelListViewStyle(
     public val optionsIcon: Drawable,
@@ -85,7 +94,13 @@ public data class ChannelListViewStyle(
     @LayoutRes public val loadingMoreView: Int,
     @ColorInt public val edgeEffectColor: Int?,
     public val showChannelDeliveryStatusIndicator: Boolean,
-) {
+    @Px public val itemHeight: Int,
+    @Px public val itemMarginStart: Int,
+    @Px public val itemMarginEnd: Int,
+    @Px public val itemTitleMarginStart: Int,
+    @Px public val itemVerticalSpacerHeight: Int,
+    @Px public val itemVerticalSpacerPosition: Float,
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): ChannelListViewStyle {
@@ -252,6 +267,39 @@ public data class ChannelListViewStyle(
 
                 val edgeEffectColor = a.getColorOrNull(R.styleable.ChannelListView_streamUiEdgeEffectColor)
 
+                val itemHeight = a.getDimensionPixelSize(
+                    R.styleable.ChannelListView_streamUiChannelHeight,
+                    context.getDimension(R.dimen.stream_ui_channel_list_item_height)
+                )
+
+                val itemMarginStart = a.getDimensionPixelSize(
+                    R.styleable.ChannelListView_streamUiChannelMarginStart,
+                    context.getDimension(R.dimen.stream_ui_channel_list_item_margin_start)
+                )
+
+                val itemMarginEnd = a.getDimensionPixelSize(
+                    R.styleable.ChannelListView_streamUiChannelMarginEnd,
+                    context.getDimension(R.dimen.stream_ui_channel_list_item_margin_end)
+                )
+
+                val itemTitleMarginStart = a.getDimensionPixelSize(
+                    R.styleable.ChannelListView_streamUiChannelTitleMarginStart,
+                    context.getDimension(R.dimen.stream_ui_channel_list_item_title_margin_start)
+                )
+
+                val itemVerticalSpacerHeight = a.getDimensionPixelSize(
+                    R.styleable.ChannelListView_streamUiChannelVerticalSpacerHeight,
+                    context.getDimension(R.dimen.stream_ui_channel_list_item_vertical_spacer_height)
+                )
+
+                val itemVerticalSpacerPosition = a.getFloat(
+                    R.styleable.ChannelListView_streamUiChannelVerticalSpacerPosition,
+                    ResourcesCompat.getFloat(
+                        context.resources,
+                        R.dimen.stream_ui_channel_list_item_vertical_spacer_position
+                    )
+                )
+
                 return ChannelListViewStyle(
                     optionsIcon = optionsIcon,
                     deleteIcon = deleteIcon,
@@ -275,7 +323,13 @@ public data class ChannelListViewStyle(
                     emptyStateView = emptyStateView,
                     loadingMoreView = loadingMoreView,
                     edgeEffectColor = edgeEffectColor,
-                    showChannelDeliveryStatusIndicator = showChannelDeliveryStatusIndicator
+                    showChannelDeliveryStatusIndicator = showChannelDeliveryStatusIndicator,
+                    itemHeight = itemHeight,
+                    itemMarginStart = itemMarginStart,
+                    itemMarginEnd = itemMarginEnd,
+                    itemTitleMarginStart = itemTitleMarginStart,
+                    itemVerticalSpacerHeight = itemVerticalSpacerHeight,
+                    itemVerticalSpacerPosition = itemVerticalSpacerPosition,
                 ).let(TransformStyle.channelListStyleTransformer::transform)
             }
         }

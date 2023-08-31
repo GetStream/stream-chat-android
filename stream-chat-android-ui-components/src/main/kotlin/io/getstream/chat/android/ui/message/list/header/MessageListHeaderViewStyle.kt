@@ -25,6 +25,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -62,7 +63,7 @@ public data class MessageListHeaderViewStyle(
     public val showSearchingForNetworkProgressBar: Boolean,
     public val searchingForNetworkProgressBarTint: ColorStateList,
     public val separatorBackgroundDrawable: Drawable?,
-) {
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): MessageListHeaderViewStyle {

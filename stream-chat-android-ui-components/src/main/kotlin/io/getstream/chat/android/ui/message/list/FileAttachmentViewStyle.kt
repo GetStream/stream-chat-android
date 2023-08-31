@@ -24,6 +24,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
@@ -41,7 +42,7 @@ public data class FileAttachmentViewStyle(
     public val failedAttachmentIcon: Drawable,
     val titleTextStyle: TextStyle,
     val fileSizeTextStyle: TextStyle,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): FileAttachmentViewStyle {
             context.obtainStyledAttributes(

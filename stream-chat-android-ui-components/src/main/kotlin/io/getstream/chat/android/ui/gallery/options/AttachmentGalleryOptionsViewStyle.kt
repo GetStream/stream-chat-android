@@ -25,6 +25,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.TransformStyle
+import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
@@ -59,7 +60,7 @@ public data class AttachmentGalleryOptionsViewStyle(
     val deleteOptionEnabled: Boolean,
     val deleteOptionDrawable: Drawable,
     @ColorInt val deleteOptionTextColor: Int,
-) {
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentGalleryOptionsViewStyle {
