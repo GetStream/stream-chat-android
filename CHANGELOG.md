@@ -14,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
@@ -59,12 +58,10 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Extended channel list screen styling. [#4941](https://github.com/GetStream/stream-chat-android/pull/4941)
 
 ### ✅ Added
 
 ### ⚠️ Changed
-- Changed `MessageListView.setCustomItemAnimator` signature to allow passing `null` to reset the item animator. [#4934](https://github.com/GetStream/stream-chat-android/pull/4934)
 
 ### ❌ Removed
 
@@ -94,7 +91,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
@@ -106,7 +102,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
@@ -118,13 +113,36 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 ### ✅ Added
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 30th, 2023 - 5.17.12
+## stream-chat-android-client
+### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Extended channel list screen styling. [#4941](https://github.com/GetStream/stream-chat-android/pull/4941)
+
+### ⚠️ Changed
+- Changed `MessageListView.setCustomItemAnimator` signature to allow passing `null` to reset the item animator. [#4934](https://github.com/GetStream/stream-chat-android/pull/4934)
+
+## stream-chat-android-pushprovider-firebase
+### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
+
+## stream-chat-android-pushprovider-huawei
+### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
+
+## stream-chat-android-pushprovider-xiaomi
+### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4940](https://github.com/GetStream/stream-chat-android/pull/4940)
 
 # August 24th, 2023 - 5.17.11
 ## stream-chat-android-client
