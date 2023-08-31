@@ -788,10 +788,20 @@
         <item name="streamUiSearchInputViewSearchIcon">@drawable/stream_ui_ic_search</item>
         <item name="streamUiSearchInputViewClearInputIcon">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiSearchInputViewBackground">@drawable/stream_ui_shape_search_view_background</item>
+        <item name="streamUiSearchInputViewBackgroundOutlineColor">@color/stream_ui_search_input_background_outline_color</item>
+        <item name="streamUiSearchInputViewBackgroundOutlineWidth">@dimen/stream_ui_search_input_background_outline_width</item>
         <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiSearchInputViewHeight">@dimen/stream_ui_search_input_height</item>
+        <item name="streamUiSearchInputViewTextMarginStart">@dimen/stream_ui_search_input_text_margin_start</item>
+        <item name="streamUiSearchInputViewTextMarginEnd">@dimen/stream_ui_search_input_text_margin_end</item>
+        <item name="streamUiSearchInputViewIconSearchWidth">@dimen/stream_ui_search_input_icon_search_width</item>
+        <item name="streamUiSearchInputViewIconSearchHeight">@dimen/stream_ui_search_input_icon_search_height</item>
+        <item name="streamUiSearchInputViewIconSearchMarginStart">@dimen/stream_ui_search_input_icon_search_margin_start</item>
+        <item name="streamUiSearchInputViewIconClearWidth">@dimen/stream_ui_search_input_icon_clear_width</item>
+        <item name="streamUiSearchInputViewIconClearHeight">@dimen/stream_ui_search_input_icon_clear_height</item>
+        <item name="streamUiSearchInputViewIconClearMarginEnd">@dimen/stream_ui_search_input_icon_clear_margin_end</item>
     </style>
 
     <style name="StreamUi.SearchResultListView" parent="StreamUi">
