@@ -59,6 +59,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Extended channel list screen styling. [#4944](https://github.com/GetStream/stream-chat-android/pull/4944)
 
 ### ✅ Added
 
