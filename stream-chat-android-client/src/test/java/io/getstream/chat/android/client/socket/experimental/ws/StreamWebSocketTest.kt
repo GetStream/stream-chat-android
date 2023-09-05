@@ -55,6 +55,14 @@ internal class StreamWebSocketTest {
     }
 
     @Test
+    fun `Class can be created correctly with listener invoked during creation`() {
+        StreamWebSocket(parser, socketCreator = {
+            it.onFailure(webSocket, IllegalStateException(), null)
+            webSocket
+        })
+    }
+
+    @Test
     fun `When a chatEvent is sent, websocket should send a parsed event`() {
         val chatEvent = mock<ChatEvent>()
         val textEvent = randomString()
