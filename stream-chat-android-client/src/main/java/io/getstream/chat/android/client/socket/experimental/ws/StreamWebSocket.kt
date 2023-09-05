@@ -38,7 +38,9 @@ internal class StreamWebSocket(
     private val parser: ChatParser,
     socketCreator: (WebSocketListener) -> WebSocket,
 ) {
-    private val webSocketListener = object : WebSocketListener() {
+    private val eventFlow = MutableSharedFlow<StreamWebSocketEvent>(extraBufferCapacity = EVENTS_BUFFER_SIZE)
+
+    private val webSocket = socketCreator(object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
             eventFlow.tryEmit(parseMessage(text))
         }
@@ -57,9 +59,7 @@ internal class StreamWebSocket(
                 eventFlow.tryEmit(StreamWebSocketEvent.Error(ChatNetworkError.create(ChatErrorCode.SOCKET_CLOSED)))
             }
         }
-    }
-    private val webSocket = socketCreator(webSocketListener)
-    private val eventFlow = MutableSharedFlow<StreamWebSocketEvent>(extraBufferCapacity = EVENTS_BUFFER_SIZE)
+    })
 
     fun send(chatEvent: ChatEvent): Boolean = webSocket.send(parser.toJson(chatEvent))
     fun close(): Boolean = webSocket.close(CLOSE_SOCKET_CODE, CLOSE_SOCKET_REASON)
