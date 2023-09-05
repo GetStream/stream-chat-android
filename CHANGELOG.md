@@ -1,15 +1,4 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# September 05th, 2023 - 6.0.1
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed NPE in `StreamWebSocket.onFailure`. [#4942](https://github.com/GetStream/stream-chat-android/pull/4942)
@@ -17,78 +6,9 @@
 ### ⬆️ Improved
 - Extended `PushMessage` to access extra data [#4945](https://github.com/GetStream/stream-chat-android/pull/4945)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Extended channel list screen styling. [#4944](https://github.com/GetStream/stream-chat-android/pull/4944)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # August 29th, 2023 - 6.0.0
 
