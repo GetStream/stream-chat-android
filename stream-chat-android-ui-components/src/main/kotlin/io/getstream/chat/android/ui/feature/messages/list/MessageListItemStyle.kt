@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewRea
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -133,7 +134,7 @@ public data class MessageListItemStyle(
     public val iconBannedMessage: Drawable,
     public val systemMessageAlignment: Int,
     @LayoutRes public val loadingMoreView: Int,
-) {
+) : ViewStyle {
 
     @ColorInt
     public fun getStyleTextColor(isMine: Boolean): Int? {

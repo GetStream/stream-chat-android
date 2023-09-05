@@ -25,6 +25,7 @@ import androidx.annotation.Px
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -45,7 +46,7 @@ public data class AvatarStyle(
     @ColorInt public val onlineIndicatorBorderColor: Int,
     public val avatarShape: AvatarShape,
     @Px public val borderRadius: Float,
-) {
+) : ViewStyle {
 
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle {

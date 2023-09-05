@@ -20,6 +20,7 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import androidx.annotation.ColorInt
 import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 
 /**
  * Style for [AttachmentsPickerDialogFragment].
@@ -98,4 +99,4 @@ public data class AttachmentsPickerDialogStyle(
     val allowAccessToCameraButtonText: String,
     val allowAccessToCameraIconDrawable: Drawable,
     val pickerMediaMode: PickerMediaMode,
-)
+) : ViewStyle

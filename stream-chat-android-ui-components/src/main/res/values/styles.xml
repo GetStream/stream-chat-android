@@ -245,6 +245,7 @@
         <item name="streamUiGlobalAvatarTextColor">@color/stream_ui_white</item>
         <item name="streamUiMessageListItemAvatarStyle">@style/StreamUi.MessageList.Item.Avatar</item>
         <item name="streamUiMessageListHeaderAvatarStyle">@style/StreamUi.MessageList.Header.Avatar</item>
+        <item name="streamUiChannelListViewStyle">@style/StreamUi.ChannelListView</item>
         <item name="streamUiChannelListItemAvatarStyle">@style/StreamUi.ChannelList.Item.Avatar</item>
         <item name="streamUiChannelListHeaderAvatarStyle">@style/StreamUi.ChannelListHeader.Avatar</item>
         <item name="streamUiMentionPreviewItemAvatarStyle">@style/StreamUi.MentionPreview.Item.Avatar</item>
@@ -617,12 +618,13 @@
         <item name="android:layout_height">@dimen/stream_ui_avatar_size_medium</item>
         <item name="streamUiAvatarTextSize">@dimen/stream_ui_avatar_text_size_medium</item>
         <item name="streamUiAvatarOnlineIndicatorEnabled">true</item>
-        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_marginStart">@dimen/stream_ui_channel_list_item_margin_start</item>
         <item name="android:layout_marginTop">12dp</item>
         <item name="android:layout_marginBottom">12dp</item>
     </style>
 
     <style name="StreamUi.ChannelListView" parent="StreamUi">
+        <item name="streamUiChannelHeight">@dimen/stream_ui_channel_list_item_height</item>
         <item name="streamUiChannelsItemSeparatorDrawable">@drawable/stream_ui_divider</item>
 
         <!--Background layout-->
@@ -635,6 +637,11 @@
         <item name="streamUiBackgroundLayoutColor">@color/stream_ui_white_smoke</item>
 
         <!--Foreground layout-->
+        <item name="streamUiChannelMarginStart">@dimen/stream_ui_channel_list_item_margin_start</item>
+        <item name="streamUiChannelMarginEnd">@dimen/stream_ui_channel_list_item_margin_end</item>
+        <item name="streamUiChannelTitleMarginStart">@dimen/stream_ui_channel_list_item_title_margin_start</item>
+        <item name="streamUiChannelVerticalSpacerHeight">@dimen/stream_ui_channel_list_item_vertical_spacer_height</item>
+        <item name="streamUiChannelVerticalSpacerPosition">@dimen/stream_ui_channel_list_item_vertical_spacer_position</item>
         <item name="streamUiChannelTitleTextSize">@dimen/stream_ui_channel_item_title</item>
         <item name="streamUiChannelTitleTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiChannelTitleTextStyle">bold</item>
@@ -801,10 +808,20 @@
         <item name="streamUiSearchInputViewSearchIcon">@drawable/stream_ui_ic_search</item>
         <item name="streamUiSearchInputViewClearInputIcon">@drawable/stream_ui_ic_clear</item>
         <item name="streamUiSearchInputViewBackground">@drawable/stream_ui_shape_search_view_background</item>
+        <item name="streamUiSearchInputViewBackgroundOutlineColor">@color/stream_ui_search_input_background_outline_color</item>
+        <item name="streamUiSearchInputViewBackgroundOutlineWidth">@dimen/stream_ui_search_input_background_outline_width</item>
         <item name="streamUiSearchInputViewTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewHintColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiSearchInputViewTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiSearchInputViewHeight">@dimen/stream_ui_search_input_height</item>
+        <item name="streamUiSearchInputViewTextMarginStart">@dimen/stream_ui_search_input_text_margin_start</item>
+        <item name="streamUiSearchInputViewTextMarginEnd">@dimen/stream_ui_search_input_text_margin_end</item>
+        <item name="streamUiSearchInputViewIconSearchWidth">@dimen/stream_ui_search_input_icon_search_width</item>
+        <item name="streamUiSearchInputViewIconSearchHeight">@dimen/stream_ui_search_input_icon_search_height</item>
+        <item name="streamUiSearchInputViewIconSearchMarginStart">@dimen/stream_ui_search_input_icon_search_margin_start</item>
+        <item name="streamUiSearchInputViewIconClearWidth">@dimen/stream_ui_search_input_icon_clear_width</item>
+        <item name="streamUiSearchInputViewIconClearHeight">@dimen/stream_ui_search_input_icon_clear_height</item>
+        <item name="streamUiSearchInputViewIconClearMarginEnd">@dimen/stream_ui_search_input_icon_clear_margin_end</item>
     </style>
 
     <style name="StreamUi.SearchResultListView" parent="StreamUi">

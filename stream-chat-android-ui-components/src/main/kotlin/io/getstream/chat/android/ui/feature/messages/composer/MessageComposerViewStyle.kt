@@ -32,6 +32,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
@@ -252,7 +253,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
     public val attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle,
-) {
+) : ViewStyle {
 
     /**
      * Creates an instance of [MessageReplyStyle] from the parameters provided by [MessageComposerViewStyle].

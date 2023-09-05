@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.list.internal.ScrollButtonView
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -60,7 +61,7 @@ public data class ScrollButtonViewStyle(
     public val scrollButtonBadgeGravity: Int,
     public val scrollButtonBadgeElevation: Float,
     public val scrollButtonInternalMargin: Int,
-) {
+) : ViewStyle {
 
     internal class Builder(private val context: Context, private val attrs: TypedArray) {
         private var scrollButtonEnabled: Boolean = false

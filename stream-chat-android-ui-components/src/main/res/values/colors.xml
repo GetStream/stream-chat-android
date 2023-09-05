@@ -79,4 +79,7 @@
 
     <!-- Make status bar icons dark -->
     <bool name="stream_ui_light_status_bar">true</bool>
+
+    <!-- Search Input -->
+    <color name="stream_ui_search_input_background_outline_color">@color/stream_ui_grey_whisper</color>
 </resources>
