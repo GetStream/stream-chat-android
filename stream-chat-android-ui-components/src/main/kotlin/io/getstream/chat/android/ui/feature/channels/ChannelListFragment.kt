@@ -25,6 +25,7 @@ import android.view.ViewGroup
 import androidx.annotation.StyleRes
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import io.getstream.chat.android.models.Channel
@@ -34,6 +35,7 @@ import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.ui.common.utils.Utils
 import io.getstream.chat.android.ui.databinding.StreamUiFragmentChannelListBinding
 import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListFragmentViewStyle
 import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
 import io.getstream.chat.android.ui.feature.messages.MessageListActivity
 import io.getstream.chat.android.ui.feature.search.SearchInputView
@@ -69,6 +71,7 @@ public open class ChannelListFragment : Fragment() {
     protected val channelListViewModel: ChannelListViewModel by viewModels { createChannelListViewModelFactory() }
     protected val searchViewModel: SearchViewModel by viewModels()
 
+    protected lateinit var style: ChannelListFragmentViewStyle
     protected var headerUserAvatarClickListener: HeaderUserAvatarClickListener? = null
     protected var headerActionButtonClickListener: HeaderActionButtonClickListener? = null
     protected var channelListItemClickListener: ChannelListItemClickListener? = null
@@ -79,6 +82,7 @@ public open class ChannelListFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        this.style = ChannelListFragmentViewStyle(context)
         headerUserAvatarClickListener = findListener()
         headerActionButtonClickListener = findListener()
         channelListItemClickListener = findListener()
@@ -105,6 +109,16 @@ public open class ChannelListFragment : Fragment() {
         setupChannelList(binding.channelListView)
         setupSearchInput(binding.searchInputView)
         setupSearchResultList(binding.searchResultListView)
+        applyStyle(style)
+    }
+
+    protected open fun applyStyle(style: ChannelListFragmentViewStyle) {
+        binding.searchInputView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+            topMargin = style.searchInputMarginTop
+            bottomMargin = style.searchInputMarginBottom
+            marginStart = style.searchInputMarginStart
+            marginEnd = style.searchInputMarginEnd
+        }
     }
 
     /**

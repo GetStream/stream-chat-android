@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.channels.actions.internal.ChannelActionsDialogFragment
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
@@ -61,7 +62,7 @@ public data class ChannelActionsDialogViewStyle(
     public val cancelIcon: Drawable,
     public val cancelEnabled: Boolean,
     public val background: Drawable,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle {
             context.obtainStyledAttributes(

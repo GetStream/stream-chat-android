@@ -19,8 +19,10 @@ package io.getstream.chat.android.ui.feature.channels.list.adapter.viewholder.in
 import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.MarginLayoutParams
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -81,6 +83,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     init {
         binding.apply {
+            channelItemView.updateLayoutParams {
+                height = style.itemHeight
+            }
             itemBackgroundView.apply {
                 moreOptionsImageView.setOnClickListener {
                     channelMoreOptionsListener.onClick(channel)
@@ -331,17 +336,40 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     private fun StreamUiChannelListItemBackgroundViewBinding.applyStyle(style: ChannelListViewStyle) {
         root.setBackgroundColor(style.backgroundLayoutColor)
+        backgroundView.setBackgroundColor(style.backgroundLayoutColor)
+        backgroundView.updateLayoutParams {
+            height = style.itemHeight
+        }
         deleteImageView.setImageDrawable(style.deleteIcon)
         moreOptionsImageView.setImageDrawable(style.optionsIcon)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.applyStyle(style: ChannelListViewStyle) {
-        root.backgroundTintList = ColorStateList.valueOf(style.foregroundLayoutColor)
+        foregroundView.backgroundTintList = ColorStateList.valueOf(style.foregroundLayoutColor)
+        foregroundView.updateLayoutParams {
+            height = style.itemHeight
+        }
         channelNameLabel.setTextStyle(style.channelTitleText)
         lastMessageLabel.setTextStyle(style.lastMessageText)
         lastMessageTimeLabel.setTextStyle(style.lastMessageDateText)
         unreadCountBadge.setTextStyle(style.unreadMessageCounterText)
         unreadCountBadge.backgroundTintList = ColorStateList.valueOf(style.unreadMessageCounterBackgroundColor)
         muteIcon.setImageDrawable(style.mutedChannelIcon)
+        channelAvatarView.updateLayoutParams<MarginLayoutParams> {
+            marginStart = style.itemMarginStart
+        }
+        lastMessageTimeLabel.updateLayoutParams<MarginLayoutParams> {
+            marginEnd = style.itemMarginEnd
+        }
+        unreadCountBadge.updateLayoutParams<MarginLayoutParams> {
+            marginEnd = style.itemMarginEnd
+        }
+        channelNameLabel.updateLayoutParams<MarginLayoutParams> {
+            marginStart = style.itemTitleMarginStart
+        }
+        spacer.updateLayoutParams {
+            height = style.itemVerticalSpacerHeight
+        }
+        guideline.setGuidelinePercent(style.itemVerticalSpacerPosition)
     }
 }

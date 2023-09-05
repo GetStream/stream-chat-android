@@ -24,15 +24,36 @@
     android:background="@drawable/stream_ui_foreground_channel_list"
     >
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="@dimen/stream_ui_channel_list_item_vertical_spacer_position"
+        />
+
+    <View
+        android:id="@+id/spacer"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/stream_ui_channel_list_item_vertical_spacer_height"
+        app:layout_constraintBottom_toBottomOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline"
+        app:layout_constraintVertical_bias="0.5"
+        />
+
     <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
         android:id="@+id/channelAvatarView"
         style="?attr/streamUiChannelListItemAvatarStyle"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/stream_ui_channel_list_item_margin_start"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:layout_width="@dimen/stream_ui_avatar_size_medium"
+        tools:layout_height="@dimen/stream_ui_avatar_size_medium"
         tools:src="@tools:sample/avatars"
         />
 
@@ -40,24 +61,17 @@
         android:id="@+id/channelNameLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="8dp"
+        android:layout_marginStart="@dimen/stream_ui_channel_list_item_title_margin_start"
+        android:layout_marginEnd="8dp"
         android:ellipsize="end"
         android:maxLines="1"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         android:textDirection="locale"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/spacer"
         app:layout_constraintEnd_toStartOf="@+id/muteIcon"
         app:layout_constraintStart_toEndOf="@+id/channelAvatarView"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Gebruiker, Usuario, Benutzer"
-        />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.50"
         />
 
     <TextView
@@ -71,7 +85,7 @@
         android:textDirection="locale"
         app:layout_constraintStart_toStartOf="@+id/channelNameLabel"
         app:layout_constraintEnd_toStartOf="@+id/messageStatusImageView"
-        app:layout_constraintTop_toBottomOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/spacer"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a."
         />
 
@@ -86,7 +100,7 @@
         android:textDirection="locale"
         app:layout_constraintStart_toStartOf="@+id/channelNameLabel"
         app:layout_constraintEnd_toStartOf="@+id/messageStatusImageView"
-        app:layout_constraintTop_toBottomOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/spacer"
         tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus a."
         />
 
@@ -94,10 +108,10 @@
         android:id="@+id/lastMessageTimeLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/stream_ui_channel_list_item_margin_end"
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textDirection="locale"
-        app:layout_constraintTop_toTopOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/spacer"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="3:00PM"
         />
@@ -133,7 +147,7 @@
         android:visibility="gone"
         android:layout_marginBottom="4dp"
         app:layout_constraintTop_toTopOf="@id/channelNameLabel"
-        app:layout_constraintBottom_toTopOf="@id/lastMessageTimeLabel"
+        app:layout_constraintBottom_toTopOf="@id/spacer"
         app:layout_constraintEnd_toStartOf="@id/unreadCountBadge"
         tools:src="@drawable/stream_ui_ic_mute"
         tools:visibility="visible"
@@ -143,7 +157,7 @@
         android:id="@+id/unreadCountBadge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/stream_ui_channel_list_item_margin_end"
         android:layout_marginBottom="4dp"
         android:background="@drawable/stream_ui_shape_badge_background"
         android:fontFamily="sans-serif-medium"
@@ -153,7 +167,7 @@
         android:textColor="@color/stream_ui_literal_white"
         android:textSize="@dimen/stream_ui_text_small"
         android:textDirection="locale"
-        app:layout_constraintBottom_toTopOf="@+id/lastMessageTimeLabel"
+        app:layout_constraintBottom_toTopOf="@+id/spacer"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="99"
     />

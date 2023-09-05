@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.feature.messages.list.internal.ScrollButtonView
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -149,7 +150,7 @@ public data class MessageListViewStyle(
     public val optionsOverlayMessageOptionsMarginEnd: Int,
     public val showReactionsForUnsentMessages: Boolean,
     public val readCountEnabled: Boolean,
-) {
+) : ViewStyle {
     public companion object {
         private val DEFAULT_BACKGROUND_COLOR = R.color.stream_ui_white_snow
         private val DEFAULT_SCROLL_BUTTON_ELEVATION = 3.dpToPx().toFloat()

@@ -25,6 +25,7 @@ import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimensionOrNull
@@ -68,7 +69,7 @@ public data class AttachmentGalleryViewMediaStyle(
     val viewMediaPlayVideoIconWidth: Int,
     val viewMediaPlayVideoIconHeight: Int,
     val imagePlaceholder: Drawable?,
-) {
+) : ViewStyle {
 
     internal companion object {
 

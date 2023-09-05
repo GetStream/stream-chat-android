@@ -22,6 +22,7 @@ import android.graphics.drawable.RippleDrawable
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
 import androidx.annotation.StringRes
 import androidx.fragment.app.FragmentActivity
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -59,4 +60,24 @@ public val View.activity: FragmentActivity?
 @InternalStreamChatApi
 public fun View.showToast(@StringRes resId: Int) {
     Toast.makeText(context, context.getString(resId), Toast.LENGTH_SHORT).show()
+}
+
+internal fun View.setPaddingStart(@Px start: Int) {
+    val isRtl = context.isRtlLayout
+
+    if (isRtl) {
+        setPadding(paddingLeft, paddingTop, start, paddingBottom)
+    } else {
+        setPadding(start, paddingTop, paddingRight, paddingBottom)
+    }
+}
+
+internal fun View.setPaddingEnd(@Px start: Int) {
+    val isRtl = context.isRtlLayout
+
+    if (isRtl) {
+        setPadding(start, paddingTop, paddingRight, paddingBottom)
+    } else {
+        setPadding(paddingLeft, paddingTop, start, paddingBottom)
+    }
 }

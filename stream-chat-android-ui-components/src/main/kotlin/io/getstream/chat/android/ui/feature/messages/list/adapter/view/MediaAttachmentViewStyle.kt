@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.MediaAttachmentView
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getColorOrNull
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -78,7 +79,7 @@ public data class MediaAttachmentViewStyle(
     public val playVideoIconPaddingStart: Int,
     public val playVideoIconPaddingEnd: Int,
     public val playVideoIconCornerRadius: Float,
-) {
+) : ViewStyle {
     internal companion object {
         /**
          * Fetches styled attributes and returns them wrapped inside of [MediaAttachmentViewStyle].

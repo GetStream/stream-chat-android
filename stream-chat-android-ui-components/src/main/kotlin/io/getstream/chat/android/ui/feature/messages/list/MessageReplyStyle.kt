@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle.Comp
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle.Companion.MESSAGE_STROKE_WIDTH_THEIRS
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
+import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.getDimension
@@ -63,7 +64,7 @@ public data class MessageReplyStyle(
     @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
     @Px public val messageStrokeWidthTheirs: Float,
-) {
+) : ViewStyle {
     internal companion object {
         operator fun invoke(attributes: TypedArray, context: Context): MessageReplyStyle {
             val messageBackgroundColorMine: Int = attributes.getColor(
