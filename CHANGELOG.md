@@ -15,6 +15,7 @@
 - Fixed NPE in `StreamWebSocket.onFailure`. [#4942](https://github.com/GetStream/stream-chat-android/pull/4942)
 
 ### ⬆️ Improved
+- Extended `PushMessage` to access extra data [#4945](https://github.com/GetStream/stream-chat-android/pull/4945)
 
 ### ✅ Added
 
