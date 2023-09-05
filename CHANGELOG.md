@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed NPE in `StreamWebSocket.onFailure`. [#4943](https://github.com/GetStream/stream-chat-android/pull/4943)
 
 ### ⬆️ Improved
 
