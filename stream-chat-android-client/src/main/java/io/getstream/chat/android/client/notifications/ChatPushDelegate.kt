@@ -22,6 +22,7 @@ import io.getstream.android.push.PushProvider
 import io.getstream.android.push.delegate.PushDelegate
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.PayloadValidator
+import io.getstream.chat.android.client.notifications.parser.StreamPayloadParser
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushMessage
 private typealias DevicePushProvider = io.getstream.chat.android.models.PushProvider
@@ -33,13 +34,19 @@ private typealias DevicePushProvider = io.getstream.chat.android.models.PushProv
  */
 @Suppress("Unused")
 internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
-    override fun handlePushMessage(payload: Map<String, Any?>): Boolean =
+
+    private val expectedKeys = hashSetOf(KEY_CHANNEL_ID, KEY_MESSAGE_ID, KEY_CHANNEL_TYPE, KEY_GETSTREAM)
+
+    override fun handlePushMessage(metadata: Map<String, Any?>, payload: Map<String, Any?>): Boolean =
         payload.ifValid {
             ChatClient.handlePushMessage(
                 PushMessage(
-                    channelId = payload.getValue("channel_id") as String,
-                    messageId = payload.getValue("message_id") as String,
-                    channelType = payload.getValue("channel_type") as String,
+                    channelId = payload.getValue(KEY_CHANNEL_ID) as String,
+                    messageId = payload.getValue(KEY_MESSAGE_ID) as String,
+                    channelType = payload.getValue(KEY_CHANNEL_TYPE) as String,
+                    getstream = StreamPayloadParser.parse(payload[KEY_GETSTREAM] as? String),
+                    extraData = payload.filterKeys { it !in expectedKeys },
+                    metadata = metadata,
                 ),
             )
         }
@@ -53,6 +60,13 @@ internal class ChatPushDelegate(context: Context) : PushDelegate(context) {
             PayloadValidator.isValidNewMessage(this)
         effect.takeIf { isValid }?.invoke()
         return isValid
+    }
+
+    private companion object {
+        private const val KEY_CHANNEL_ID = "channel_id"
+        private const val KEY_MESSAGE_ID = "message_id"
+        private const val KEY_CHANNEL_TYPE = "channel_type"
+        private const val KEY_GETSTREAM = "getstream"
     }
 }
 
