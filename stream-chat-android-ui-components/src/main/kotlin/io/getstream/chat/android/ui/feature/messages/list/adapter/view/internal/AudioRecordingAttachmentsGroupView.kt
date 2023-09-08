@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 import android.content.Context
 import android.util.AttributeSet
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.children
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
@@ -74,6 +75,20 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        logger.d { "[onAttachedToWindow] audioAttachments.size: ${audioAttachments?.size}" }
+        val audioPlayer = ChatClient.instance().audioPlayer
+        val audioHashes = audioAttachments?.map { it.hashCode() }?.toHashSet() ?: return
+        for (child in children) {
+            if (child !is AudioRecordPlayerView) continue
+            val audioHash = child.audioHash ?: continue
+            if (audioHash !in audioHashes) continue
+            audioPlayer.registerStateChange(child, audioHash)
+            logger.v { "[onAttachedToWindow] restored (audioHash: $audioHash)" }
+        }
+    }
+
     /**
      * Shows audio track.
      *
@@ -81,6 +96,7 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
      */
     public fun showAudioAttachments(attachments: List<Attachment>) {
         logger.d { "[showAudioAttachments] attachments.size: ${attachments.size}" }
+        resetCurrentAttachments()
         removeAllViews()
 
         val audiosAttachment = attachments.filter { attachment -> attachment.isAudioRecording() }
@@ -112,33 +128,41 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             addView(playerView)
 
             if (index > 0) {
-                playerView.updateLayoutParams {
-                    if (this is MarginLayoutParams) {
-                        this.setMargins(0, 2.dpToPx(), 0, 0)
-                    }
+                playerView.updateLayoutParams<MarginLayoutParams> {
+                    topMargin = 2.dpToPx()
                 }
             }
 
             val audioPlayer = ChatClient.instance().audioPlayer
-            val hashCode = attachment.hashCode()
+            val audioHash = attachment.hashCode()
 
-            audioPlayer.registerStateChange(playerView, hashCode)
-            playerView.registerButtonsListeners(audioPlayer, attachment, hashCode)
+            audioPlayer.registerStateChange(playerView, audioHash)
+            playerView.registerButtonsListeners(audioPlayer, attachment, audioHash)
+            playerView.audioHash = audioHash
         }
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         logger.d { "[onDetachedFromWindow] no args" }
+        resetCurrentAttachments()
+    }
+
+    private fun resetCurrentAttachments() {
+        val audioAttachments = audioAttachments ?: return
+        logger.d { "[resetCurrentAttachments] no args" }
         val audioPlayer = ChatClient.instance().audioPlayer
-        audioAttachments?.forEach { attachment ->
-            audioPlayer.resetAudio(attachment.hashCode())
+        audioAttachments.forEach { attachment ->
+            val audioHash = attachment.hashCode()
+            logger.v { "[resetCurrentAttachments] audioHash: $audioHash" }
+            audioPlayer.resetAudio(audioHash)
         }
     }
 
-    private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
-        onAudioStateChange(hashCode) { audioState ->
-            logger.d { "[onAudioStateChange] audioState: $audioState" }
+    private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, audioHash: Int) {
+        logger.d { "[registerStateChange] audioHash: $audioHash" }
+        registerOnAudioStateChange(audioHash) { audioState ->
+            logger.d { "[onAudioStateChange] audioHash: $audioHash, audioState: $audioState" }
             when (audioState) {
                 AudioState.LOADING -> playerView.setLoading()
                 AudioState.PAUSE -> playerView.setPaused()
@@ -146,40 +170,44 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
                 AudioState.PLAYING -> playerView.setPlaying()
             }
         }
-        onProgressStateChange(hashCode) { (duration, progress) ->
+        registerOnProgressStateChange(audioHash) { (duration, progress) ->
             playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
             // TODO
             playerView.setProgress(progress.toDouble())
         }
-        onSpeedChange(hashCode, playerView::setSpeedText)
+        registerOnSpeedChange(audioHash, playerView::setSpeedText)
     }
 
     private fun AudioRecordPlayerView.registerButtonsListeners(
         audioPlayer: AudioPlayer,
         attachment: Attachment,
-        hashCode: Int,
+        audioHash: Int,
     ) {
-        onPlayButtonPress {
-            logger.d { "[onPlayButtonPress] no args" }
+        logger.d { "[registerButtonsListeners] audioHash: $audioHash" }
+        setOnPlayButtonClickListener {
+            logger.v { "[onPlayButtonClick] audioHash: $audioHash" }
             audioPlayer.clearTracks()
             audioAttachments?.forEachIndexed { index, attachment ->
                 audioPlayer.registerTrack(attachment.assetUrl!!, attachment.hashCode(), index)
             }
 
             if (attachment.assetUrl != null) {
-                audioPlayer.play(attachment.assetUrl!!, hashCode)
+                audioPlayer.play(attachment.assetUrl!!, audioHash)
             } else {
                 setLoading()
             }
         }
 
-        onSpeedButtonPress {
+        setOnSpeedButtonClickListener {
+            logger.v { "[onSpeedButtonClick] audioHash: $audioHash" }
             audioPlayer.changeSpeed()
         }
 
-        onSeekbarMove({
+        setOnSeekbarMoveListeners({
+            logger.v { "[onSeekBarStart] audioHash: $audioHash" }
             audioPlayer.startSeek(attachment.hashCode())
         }, { progress ->
+            logger.v { "[onSeekBarStop] audioHash: $audioHash" }
             audioPlayer.seekTo(
                 progressToDecimal(progress, attachment.extraData["duration"] as? Double),
                 attachment.hashCode(),

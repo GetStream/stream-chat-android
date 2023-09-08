@@ -217,8 +217,8 @@ internal class AudioRecordingController(
         }
         logger.v { "[toggleRecordingPlayback] start playback" }
         val hash = audioFile.hashCode()
-        audioPlayer.onProgressStateChange(hash, ::onAudioPlayingProgress)
-        audioPlayer.onAudioStateChange(hash, ::onAudioStateChanged)
+        audioPlayer.registerOnProgressStateChange(hash, ::onAudioPlayingProgress)
+        audioPlayer.registerOnAudioStateChange(hash, ::onAudioStateChanged)
         audioPlayer.play(fileToUri(audioFile), hash)
         this.recordingState.value = state.copy(
             isPlaying = true,

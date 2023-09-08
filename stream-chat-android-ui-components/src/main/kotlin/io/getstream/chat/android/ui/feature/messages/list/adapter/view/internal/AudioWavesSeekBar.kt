@@ -122,12 +122,12 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         invalidate()
     }
 
-    internal fun setOnStartDrag(func: () -> Unit) {
-        onStartDrag = func
+    internal fun setOnStartDragListener(listener: () -> Unit) {
+        onStartDrag = listener
     }
 
-    internal fun setOnEndDrag(func: (Int) -> Unit) {
-        onEndDrag = func
+    internal fun setOnEndDragListener(listener: (Int) -> Unit) {
+        onEndDrag = listener
     }
 
     /**

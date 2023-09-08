@@ -56,6 +56,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
     private val logger by taggedLogger("Chat:PlayerView")
 
     private var totalDuration: String? = null
+    internal var audioHash: Int? = null
 
     /**
      * Sets total duration of audio tracker as a String. When the view goes to idle state, this is the duration show
@@ -163,21 +164,21 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
     }
 
     /**
-     * Register a callback for the play button
+     * Register a [listener] for the play button
      *
-     * @param func
+     * @param listener
      */
-    public fun onPlayButtonPress(func: () -> Unit) {
-        binding.playButton.setOnClickListener { func() }
+    public fun setOnPlayButtonClickListener(listener: () -> Unit) {
+        binding.playButton.setOnClickListener { listener() }
     }
 
     /**
-     * Register a callback for the speed button
+     * Register a [listener] for the speed button
      *
-     * @param func
+     * @param listener
      */
-    public fun onSpeedButtonPress(func: () -> Unit) {
-        binding.speedButton.setOnClickListener { func() }
+    public fun setOnSpeedButtonClickListener(listener: () -> Unit) {
+        binding.speedButton.setOnClickListener { listener() }
     }
 
     /**
@@ -186,10 +187,10 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
      * @param startDrag Triggered when the drag of the seekbar starts
      * @param stopDrag Triggered when the drag of the seekbar stops
      */
-    public fun onSeekbarMove(startDrag: () -> Unit, stopDrag: (Int) -> Unit) {
+    public fun setOnSeekbarMoveListeners(startDrag: () -> Unit, stopDrag: (Int) -> Unit) {
         binding.audioSeekBar.run {
-            setOnStartDrag(startDrag)
-            setOnEndDrag(stopDrag)
+            setOnStartDragListener(startDrag)
+            setOnEndDragListener(stopDrag)
         }
     }
 }

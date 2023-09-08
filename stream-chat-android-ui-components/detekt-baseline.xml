@@ -37,6 +37,7 @@
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
     <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, messageAnchorPosition: Float, canvasBounds: IntRange, )</ID>
     <ID>LongParameterList:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$( public val progressIcon: Drawable, public val giphyIcon: Drawable, public val placeholderIcon: Drawable, @ColorInt public val imageBackgroundColor: Int, public val giphyType: GiphyInfoType, public val scaleType: ImageView.ScaleType, public val sizingMode: GiphySizingMode, public val width: Int, public val height: Int, public val dimensionRatio: Float, )</ID>
+    <ID>LoopWithTooManyJumpStatements:AudioRecordingAttachmentsGroupView.kt$AudioRecordingAttachmentsGroupView$for</ID>
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$0.5f</ID>
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$3</ID>
     <ID>MagicNumber:ChannelAvatarView.kt$ChannelAvatarView$4</ID>

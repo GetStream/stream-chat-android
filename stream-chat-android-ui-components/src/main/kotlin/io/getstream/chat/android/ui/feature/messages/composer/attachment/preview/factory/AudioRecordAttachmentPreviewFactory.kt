@@ -119,7 +119,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
-            onAudioStateChange(hashCode) { audioState ->
+            registerOnAudioStateChange(hashCode) { audioState ->
                 when (audioState) {
                     AudioState.LOADING -> playerView.setLoading()
                     AudioState.PAUSE -> playerView.setPaused()
@@ -127,11 +127,11 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
                     AudioState.PLAYING -> playerView.setPlaying()
                 }
             }
-            onProgressStateChange(hashCode) { (duration, progress) ->
+            registerOnProgressStateChange(hashCode) { (duration, progress) ->
                 playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
                 playerView.setProgress(progress.toDouble())
             }
-            onSpeedChange(hashCode, playerView::setSpeedText)
+            registerOnSpeedChange(hashCode, playerView::setSpeedText)
         }
 
         private fun AudioRecordPlayerView.registerButtonsListeners(
@@ -139,20 +139,20 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
             attachment: Attachment,
             hashCode: Int,
         ) {
-            onPlayButtonPress {
+            setOnPlayButtonClickListener {
                 val audioFile = attachment.upload ?: run {
                     logger.w { "[toggleRecordingPlayback] rejected (audioFile is null)" }
-                    return@onPlayButtonPress
+                    return@setOnPlayButtonClickListener
                 }
                 val fileUri = audioFile.toUri().toString()
                 audioPlayer.play(fileUri, hashCode)
             }
 
-            onSpeedButtonPress {
+            setOnSpeedButtonClickListener {
                 audioPlayer.changeSpeed()
             }
 
-            onSeekbarMove({
+            setOnSeekbarMoveListeners({
                 audioPlayer.startSeek(attachment.hashCode())
             }, { progress ->
                 audioPlayer.seekTo(
