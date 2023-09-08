@@ -41,6 +41,7 @@ import io.getstream.chat.android.client.api.models.identifier.GetRepliesIdentifi
 import io.getstream.chat.android.client.api.models.identifier.GetRepliesMoreIdentifier
 import io.getstream.chat.android.client.api.models.identifier.HideChannelIdentifier
 import io.getstream.chat.android.client.api.models.identifier.MarkAllReadIdentifier
+import io.getstream.chat.android.client.api.models.identifier.MarkReadIdentifier
 import io.getstream.chat.android.client.api.models.identifier.QueryChannelIdentifier
 import io.getstream.chat.android.client.api.models.identifier.QueryChannelsIdentifier
 import io.getstream.chat.android.client.api.models.identifier.QueryMembersIdentifier
@@ -1846,18 +1847,19 @@ internal constructor(
         request: QueryChannelRequest,
         skipOnRequest: Boolean = false,
     ): Call<Channel> {
-        logger.d { "[queryChannel] cid: $channelType:$channelId" }
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
+                logger.d { "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
+                    ", cid: $channelType:$channelId, request: $request" }
                 if (!skipOnRequest) {
                     plugins.forEach { plugin ->
-                        logger.v { "[queryChannel] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                         plugin.onQueryChannelRequest(channelType, channelId, request)
                     }
                 }
             }.doOnResult(userScope) { result ->
+                logger.v { "[queryChannel] #doOnResult; " +
+                    "completed(${channelType}:$channelId): ${result.errorOrNull() ?: Unit}" }
                 plugins.forEach { plugin ->
-                    logger.v { "[queryChannel] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onQueryChannelResult(result, channelType, channelId, request)
                 }
             }.precondition(plugins) {
@@ -1910,6 +1912,12 @@ internal constructor(
         messageId: String,
     ): Call<Unit> {
         return api.markRead(channelType, channelId, messageId)
+            .doOnStart(userScope) {
+                logger.d { "[markMessageRead] #doOnStart; cid: ${channelType}:$channelId, msgId: $messageId" }
+            }
+            .doOnResult(userScope) {
+                logger.v { "[markMessageRead] #doOnResult; completed(${channelType}:$channelId-$messageId): $it" }
+            }
     }
 
     @CheckResult
@@ -2126,10 +2134,11 @@ internal constructor(
     public fun markAllRead(): Call<Unit> {
         return api.markAllRead()
             .doOnStart(userScope) {
-                plugins.forEach { plugin ->
-                    logger.v { "[markAllRead] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
-                    plugin.onMarkAllReadRequest()
-                }
+                logger.d { "[markAllRead] #doOnStart; no args" }
+                plugins.forEach { it.onMarkAllReadRequest() }
+            }
+            .doOnResult(userScope) {
+                logger.v { "[markAllRead] #doOnStart; completed" }
             }
             .share(userScope) { MarkAllReadIdentifier() }
     }
@@ -2144,6 +2153,13 @@ internal constructor(
     public fun markRead(channelType: String, channelId: String): Call<Unit> {
         return api.markRead(channelType, channelId)
             .precondition(plugins) { onChannelMarkReadPrecondition(channelType, channelId) }
+            .doOnStart(userScope) {
+                logger.d { "[markRead] #doOnStart; cid: ${channelType}:$channelId" }
+            }
+            .doOnResult(userScope) {
+                logger.v { "[markRead] #doOnResult; completed(${channelType}:$channelId): $it" }
+            }
+            .share(userScope) { MarkReadIdentifier(channelType, channelId) }
     }
 
     @CheckResult

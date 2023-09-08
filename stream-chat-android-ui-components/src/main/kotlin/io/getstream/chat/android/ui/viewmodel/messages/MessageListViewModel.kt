@@ -203,6 +203,7 @@ public class MessageListViewModel(
      */
     @Suppress("LongMethod", "ComplexMethod")
     public fun onEvent(event: Event) {
+        logger.v { "[onEvent] event: $event" }
         when (event) {
             is Event.EndRegionReached -> {
                 onEndRegionReached()

@@ -29,6 +29,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import kotlin.properties.Delegates
 
 internal class MessageListScrollHelper(
@@ -37,6 +39,9 @@ internal class MessageListScrollHelper(
     private val disableScrollWhenShowingDialog: Boolean,
     private val callback: MessageReadListener,
 ) {
+
+    private val logger by taggedLogger("MessageListScrollHelper")
+
     internal var alwaysScrollToBottom: Boolean by Delegates.notNull()
     internal var scrollToBottomButtonEnabled: Boolean by Delegates.notNull()
 
@@ -64,7 +69,8 @@ internal class MessageListScrollHelper(
      */
     private var isAtBottom = false
         set(value) {
-            if (value) {
+            logger.d { "[setIsAtBottom] value: $value" }
+            if (value && !field) {
                 callback.onLastMessageRead()
             }
             field = value
@@ -89,6 +95,7 @@ internal class MessageListScrollHelper(
                  * @param newState The scroll state of the list.
                  */
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    logger.d { "[onScrollStateChanged] newState: $newState" }
                     super.onScrollStateChanged(recyclerView, newState)
 
                     if (disableScrollWhenShowingDialog) {
@@ -97,11 +104,13 @@ internal class MessageListScrollHelper(
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    logger.d { "[onScrolled] scrollToBottomButtonEnabled: $scrollToBottomButtonEnabled, currentList.size: ${currentList.size}" }
                     if (!scrollToBottomButtonEnabled || currentList.isEmpty()) {
                         return
                     }
-
-                    scrollButtonView.isVisible = shouldScrollToBottomBeVisible()
+                    val shouldScrollToBottomBeVisible = shouldScrollToBottomBeVisible()
+                    logger.v { "[onScrolled] shouldScrollToBottomBeVisible: $shouldScrollToBottomBeVisible" }
+                    scrollButtonView.isVisible = shouldScrollToBottomBeVisible
                 }
             },
         )
@@ -116,7 +125,8 @@ internal class MessageListScrollHelper(
     private fun calculateBottomOffset(): Int {
         val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
         val lastPotentiallyVisibleItemPosition = currentList.indexOfLast { it.isValid() }
-
+        logger.v { "[calculateBottomOffset] lastVisibleItemPosition: $lastVisibleItemPosition, " +
+            "lastPotentiallyVisibleItemPosition: $lastPotentiallyVisibleItemPosition" }
         return lastPotentiallyVisibleItemPosition - lastVisibleItemPosition
     }
 
@@ -127,6 +137,7 @@ internal class MessageListScrollHelper(
      */
     private fun shouldScrollToBottomBeVisible(): Boolean {
         bottomOffset = calculateBottomOffset()
+        logger.d { "[shouldScrollToBottomBeVisible] bottomOffset: $bottomOffset, areNewestMessagesLoaded: $areNewestMessagesLoaded" }
         isAtBottom = bottomOffset <= 0 && areNewestMessagesLoaded
 
         return when {
@@ -193,6 +204,7 @@ internal class MessageListScrollHelper(
         isInitialList: Boolean,
         areNewestMessagesLoaded: Boolean,
     ) {
+        logger.d { "[onMessageListChanged] areNewestMessagesLoaded: $areNewestMessagesLoaded" }
         this.areNewestMessagesLoaded = areNewestMessagesLoaded
         scrollButtonView.isVisible = shouldScrollToBottomBeVisible()
 
@@ -202,7 +214,11 @@ internal class MessageListScrollHelper(
 
         if (isThreadStart) {
             layoutManager.scrollToPosition(currentList.lastIndex)
-        } else if (shouldScrollToBottom(isInitialList, areNewestMessagesLoaded, hasNewMessages)) {
+            return
+        }
+        val shouldScrollToBottom = shouldScrollToBottom(isInitialList, areNewestMessagesLoaded, hasNewMessages)
+        logger.v { "[onMessageListChanged] shouldScrollToBottom: $shouldScrollToBottom" }
+        if (shouldScrollToBottom) {
             layoutManager.scrollToPosition(currentList.lastIndex)
             callback.onLastMessageRead()
         }

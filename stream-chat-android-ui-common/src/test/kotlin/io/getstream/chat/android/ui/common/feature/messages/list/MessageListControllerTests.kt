@@ -44,6 +44,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -53,6 +54,8 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @ExperimentalCoroutinesApi
@@ -229,7 +232,8 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
 
-        val deletedMessageCount = controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
+        val deletedMessageCount =
+            controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
         deletedMessageCount `should be equal to` 0
     }
 
@@ -252,22 +256,24 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() = runTest {
-        var message = 0
-        val messages = randomMessageList {
-            message++
-            randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
-        }
-        val messageState = MessagesState.Result(messages)
-        val controller = Fixture()
-            .givenCurrentUser()
-            .givenChannelQuery()
-            .givenChannelState(messageState = messageState)
-            .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
+    fun `When deleted visibility is current user When grouping messages Should not see other users deleted messages`() =
+        runTest {
+            var message = 0
+            val messages = randomMessageList {
+                message++
+                randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
+            }
+            val messageState = MessagesState.Result(messages)
+            val controller = Fixture()
+                .givenCurrentUser()
+                .givenChannelQuery()
+                .givenChannelState(messageState = messageState)
+                .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
 
-        val deletedMessageCount = controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
-        deletedMessageCount `should be equal to` 0
-    }
+            val deletedMessageCount =
+                controller.messageListState.value.messageItems.count { it is MessageItemState && it.message.isDeleted() }
+            deletedMessageCount `should be equal to` 0
+        }
 
     // footer visibility
     @Test
@@ -285,10 +291,36 @@ internal class MessageListControllerTests {
                 .givenChannelState(messageState = messageState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
-            val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is MessageItemState && it.showMessageFooter }
+            val dateSeparatorCount =
+                controller.messageListState.value.messageItems.count { it is MessageItemState && it.showMessageFooter }
 
             dateSeparatorCount `should be equal to` 3
         }
+
+    @Test
+    fun `When repetitive markLastMessageRead calls appear only single API call should be sent`() = runTest {
+        val chatClient: ChatClient = mock()
+        val messages = arrayListOf(
+            randomMessage(id = "1"),
+            randomMessage(id = "2"),
+            randomMessage(id = "3"),
+        )
+        val messageState = MessagesState.Result(messages)
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(messageState = messageState)
+            .get()
+
+        controller.markLastMessageRead(); delay(10)
+        controller.markLastMessageRead(); delay(10)
+        controller.markLastMessageRead(); delay(10)
+        controller.markLastMessageRead(); delay(10)
+        controller.markLastMessageRead(); delay(1000)
+
+        verify(chatClient, times(1)).markRead(any(), any())
+    }
 
     private class Fixture(
         private val chatClient: ChatClient = mock(),
@@ -315,6 +347,14 @@ internal class MessageListControllerTests {
 
         fun givenChannelQuery(channel: Channel = Channel()) = apply {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
+        }
+
+        fun givenMarkRead() = apply {
+            whenever(chatClient.markRead(any(), any())) doReturn Unit.asCall()
+        }
+
+        fun givenMarkMessageRead() = apply {
+            whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
         fun givenChannelState(
