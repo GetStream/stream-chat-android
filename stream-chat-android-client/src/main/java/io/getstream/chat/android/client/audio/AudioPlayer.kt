@@ -26,30 +26,35 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 public interface AudioPlayer {
 
     /**
+     * Current state of the current audio.
+     */
+    public val currentState: AudioState
+
+    /**
      * Subscribing for audio state changes for the audio of the hash
      *
-     * @param hash the identifier of the audio track
-     * @param func The listener of the [AudioState] change.
+     * @param audioHash the identifier of the audio track
+     * @param onAudioStateChange The listener of the [AudioState] change.
      */
-    public fun onAudioStateChange(hash: Int, func: (AudioState) -> Unit)
+    public fun registerOnAudioStateChange(audioHash: Int, onAudioStateChange: (AudioState) -> Unit)
 
     /**
      * Subscribing for progress changes for the audio of the hash. The progress is updated every 50ms
      *
-     * @param hash the identifier of the audio track
-     * @param func The listener of the [ProgressData] change.
+     * @param audioHash the identifier of the audio track
+     * @param onProgressDataChange The listener of the [ProgressData] change.
      */
-    public fun onProgressStateChange(hash: Int, func: (ProgressData) -> Unit)
+    public fun registerOnProgressStateChange(audioHash: Int, onProgressDataChange: (ProgressData) -> Unit)
 
     /**
      * Subscribing for speed changes for the audio of the hash.
      *
-     * @param hash the identifier of the audio track
-     * @param func The listener of the speed change.
+     * @param audioHash the identifier of the audio track
+     * @param onSpeedChange The listener of the speed change.
      */
-    public fun onSpeedChange(hash: Int, func: (Float) -> Unit)
+    public fun registerOnSpeedChange(audioHash: Int, onSpeedChange: (Float) -> Unit)
 
-    public fun registerTrack(url: String, hash: Int, position: Int)
+    public fun registerTrack(sourceUrl: String, audioHash: Int, position: Int)
 
     public fun clearTracks()
 
@@ -73,13 +78,13 @@ public interface AudioPlayer {
     public fun resetAudio(audioHash: Int)
 
     /**
-     * Seeks the audio track of the audio hash to the milli second position. If the hash is the same of the current
+     * Seeks the audio track of the audio hash to the millisecond position. If the hash is the same of the current
      * playing audio track, the current audio track pauses.
      *
-     * @param msec the position in milli seconds.
-     * @param hash the identifier of the audio track
+     * @param positionInMs the position in milliseconds.
+     * @param audioHash the identifier of the audio track
      */
-    public fun seekTo(msec: Int, hash: Int)
+    public fun seekTo(positionInMs: Int, audioHash: Int)
 
     /**
      * Informs the player that seek has started. This can be used to pause the current audio track when seek starts.
@@ -115,6 +120,7 @@ public interface AudioPlayer {
 /**
  * Progress data of the audio track.
  */
+@InternalStreamChatApi
 public data class ProgressData(
     public val currentPosition: Int,
     public val progress: Float,
@@ -125,6 +131,7 @@ public data class ProgressData(
  * State of the an audio track. When a song complete and another starts the current song goes to UNSET and the next one
  * go to LOADING and PLAYING.
  */
+@InternalStreamChatApi
 public enum class AudioState {
     UNSET,
     LOADING,
@@ -136,6 +143,7 @@ public enum class AudioState {
 /**
  * State of the AudioPlayer. This is the state of the whole player, not individual songs.
  */
+@InternalStreamChatApi
 public enum class PlayerState {
     UNSET,
     LOADING,

@@ -72,16 +72,16 @@ public fun AudioRecordAttachmentContent(
     audioPlayer.run {
         val audioHash = audioTrack.hashCode()
 
-        onProgressStateChange(audioHash) { progressData ->
+        registerOnProgressStateChange(audioHash) { progressData ->
             trackProgress = progressData.progress.toFloat()
             durationText = DurationFormatter.formatDurationInMillis(progressData.currentPosition)
         }
 
-        onAudioStateChange(audioHash) { audioState ->
+        registerOnAudioStateChange(audioHash) { audioState ->
             playing = audioState == AudioState.PLAYING
         }
 
-        onSpeedChange(audioHash) { speed ->
+        registerOnSpeedChange(audioHash) { speed ->
             speedState = speed
         }
     }

@@ -29,6 +29,7 @@
     <ID>SwallowedException:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
     <ID>TooGenericExceptionCaught:StreamPayloadParser.kt$StreamPayloadParser$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
+    <ID>TooManyFunctions:NativeMediaPlayer.kt$NativeMediaPlayer</ID>
     <ID>UnusedPrivateMember:StreamAudioPlayer.kt$StreamMediaPlayer$private fun normalize(uri: String): String</ID>
   </CurrentIssues>
 </SmellBaseline>

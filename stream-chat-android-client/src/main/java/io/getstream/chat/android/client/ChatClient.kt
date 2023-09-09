@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdenti
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
 import io.getstream.chat.android.client.audio.StreamMediaPlayer
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
@@ -3134,13 +3135,16 @@ internal constructor(
             val appSettingsManager = AppSettingManager(module.api())
 
             val audioPlayer: AudioPlayer = StreamMediaPlayer(
-                mediaPlayer = MediaPlayer().apply {
-                    AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build()
-                        .let(this::setAudioAttributes)
-                },
+                mediaPlayer = NativeMediaPlayerImpl(
+                    MediaPlayer().apply {
+                        AudioAttributes.Builder()
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build()
+                            .let(this::setAudioAttributes)
+                    },
+                ),
                 userScope = userScope,
+                isMarshmallowOrHigher = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.M },
             )
 
             return ChatClient(

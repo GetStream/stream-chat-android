@@ -374,7 +374,7 @@ private class RecordingFileAttachmentViewHolder(
     }
 
     private fun AudioPlayer.registerStateChange(playerView: AudioRecordPlayerView, hashCode: Int) {
-        onAudioStateChange(hashCode) { audioState ->
+        registerOnAudioStateChange(hashCode) { audioState ->
             logger.d { "[onAudioStateChange] audioState: $audioState" }
             when (audioState) {
                 AudioState.LOADING -> playerView.setLoading()
@@ -383,31 +383,31 @@ private class RecordingFileAttachmentViewHolder(
                 AudioState.PLAYING -> playerView.setPlaying()
             }
         }
-        onProgressStateChange(hashCode) { (duration, progress) ->
+        registerOnProgressStateChange(hashCode) { (duration, progress) ->
             playerView.setDuration(DurationFormatter.formatDurationInMillis(duration))
             // TODO
             playerView.setProgress(progress.toDouble())
         }
-        onSpeedChange(hashCode, playerView::setSpeedText)
+        registerOnSpeedChange(hashCode, playerView::setSpeedText)
     }
 
     private fun AudioRecordPlayerView.registerButtonsListeners(
         audioPlayer: AudioPlayer,
     ) {
-        onPlayButtonPress {
+        setOnPlayButtonClickListener {
             val assetUrl = attachment?.assetUrl
-            val hash = attachment.hashCode()
-            logger.d { "[onPlayButtonPress] hash: $hash, assetUrl: $assetUrl" }
+            val audioHash = attachment.hashCode()
+            logger.d { "[onPlayButtonClick] audioHash: $audioHash, assetUrl: $assetUrl" }
             if (assetUrl != null) {
-                audioPlayer.play(assetUrl, hash)
+                audioPlayer.play(assetUrl, audioHash)
             }
         }
 
-        onSpeedButtonPress {
+        setOnSpeedButtonClickListener {
             audioPlayer.changeSpeed()
         }
 
-        onSeekbarMove({
+        setOnSeekbarMoveListeners({
             val hash = attachment.hashCode()
             audioPlayer.startSeek(hash)
         }, { progress ->
