@@ -1255,7 +1255,7 @@ public class MessageListController(
      * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     public fun markLastMessageRead() {
-        logger.v { "[markLastMessageRead] no args" }
+        logger.v { "[markLastMessageRead] cid: $cid" }
         debouncer.submit {
             markLastMessageReadInternal()
         }
@@ -1268,11 +1268,11 @@ public class MessageListController(
         val itemState = messagesState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState
         val messageId = itemState?.message?.id
         val messageText = itemState?.message?.text
-        logger.d { "[markLastMessageRead] messageId($isInThread): $messageId, messageText: \"$messageText\"" }
+        logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
         val lastSeenMessageId = if (isInThread) lastSeenThreadMessageId else lastSeenMessageId
         if (lastSeenMessageId == messageId) {
-            logger.w { "[markLastMessageRead] rejected[$isInThread] (already seen messageId): $messageId" }
+            logger.w { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
             return
         }
         if (isInThread) {
