@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `ChatClient.markRead` returns ongoing `Call` instance if exists to avoid firing duplicate requests. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
 
 ### ✅ Added
 
@@ -45,6 +46,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- `MessageListController.markLastMessageRead` does debounce its' calls and checks last seen messageId to avoid duplicate `read` requests. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
 
 ### ⬆️ Improved
 
@@ -58,6 +60,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `MessageListScrollHelper.isAtBottom` now triggers `callback.onLastMessageRead()` when it changes from `false` to `true` only. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
 
 ### ✅ Added
 

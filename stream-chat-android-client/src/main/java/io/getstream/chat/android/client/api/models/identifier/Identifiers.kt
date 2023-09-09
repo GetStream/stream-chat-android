@@ -245,7 +245,6 @@ internal fun MarkAllReadIdentifier(): Int {
     return "MarkAllRead".hashCode()
 }
 
-
 /**
  * Identifier for a [ChatClient.hideChannel] call.
  */

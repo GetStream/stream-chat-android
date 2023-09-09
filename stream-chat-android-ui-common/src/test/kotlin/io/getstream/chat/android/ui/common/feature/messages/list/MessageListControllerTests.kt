@@ -313,11 +313,16 @@ internal class MessageListControllerTests {
             .givenChannelState(messageState = messageState)
             .get()
 
-        controller.markLastMessageRead(); delay(10)
-        controller.markLastMessageRead(); delay(10)
-        controller.markLastMessageRead(); delay(10)
-        controller.markLastMessageRead(); delay(10)
-        controller.markLastMessageRead(); delay(1000)
+        controller.markLastMessageRead()
+        delay(10)
+        controller.markLastMessageRead()
+        delay(10)
+        controller.markLastMessageRead()
+        delay(10)
+        controller.markLastMessageRead()
+        delay(10)
+        controller.markLastMessageRead()
+        delay(1000)
 
         verify(chatClient, times(1)).markRead(any(), any())
     }

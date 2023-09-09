@@ -29,7 +29,6 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
-import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import kotlin.properties.Delegates
 
@@ -125,8 +124,10 @@ internal class MessageListScrollHelper(
     private fun calculateBottomOffset(): Int {
         val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
         val lastPotentiallyVisibleItemPosition = currentList.indexOfLast { it.isValid() }
-        logger.v { "[calculateBottomOffset] lastVisibleItemPosition: $lastVisibleItemPosition, " +
-            "lastPotentiallyVisibleItemPosition: $lastPotentiallyVisibleItemPosition" }
+        logger.v {
+            "[calculateBottomOffset] lastVisibleItemPosition: $lastVisibleItemPosition, " +
+                "lastPotentiallyVisibleItemPosition: $lastPotentiallyVisibleItemPosition"
+        }
         return lastPotentiallyVisibleItemPosition - lastVisibleItemPosition
     }
 

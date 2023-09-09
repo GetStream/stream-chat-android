@@ -1849,16 +1849,20 @@ internal constructor(
     ): Call<Channel> {
         return queryChannelInternal(channelType = channelType, channelId = channelId, request = request)
             .doOnStart(userScope) {
-                logger.d { "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
-                    ", cid: $channelType:$channelId, request: $request" }
+                logger.d {
+                    "[queryChannel] #doOnStart; skipOnRequest: $skipOnRequest" +
+                        ", cid: $channelType:$channelId, request: $request"
+                }
                 if (!skipOnRequest) {
                     plugins.forEach { plugin ->
                         plugin.onQueryChannelRequest(channelType, channelId, request)
                     }
                 }
             }.doOnResult(userScope) { result ->
-                logger.v { "[queryChannel] #doOnResult; " +
-                    "completed(${channelType}:$channelId): ${result.errorOrNull() ?: Unit}" }
+                logger.v {
+                    "[queryChannel] #doOnResult; " +
+                        "completed($channelType:$channelId): ${result.errorOrNull() ?: Unit}"
+                }
                 plugins.forEach { plugin ->
                     plugin.onQueryChannelResult(result, channelType, channelId, request)
                 }
@@ -1913,10 +1917,10 @@ internal constructor(
     ): Call<Unit> {
         return api.markRead(channelType, channelId, messageId)
             .doOnStart(userScope) {
-                logger.d { "[markMessageRead] #doOnStart; cid: ${channelType}:$channelId, msgId: $messageId" }
+                logger.d { "[markMessageRead] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
             }
             .doOnResult(userScope) {
-                logger.v { "[markMessageRead] #doOnResult; completed(${channelType}:$channelId-$messageId): $it" }
+                logger.v { "[markMessageRead] #doOnResult; completed($channelType:$channelId-$messageId): $it" }
             }
     }
 
@@ -2154,10 +2158,10 @@ internal constructor(
         return api.markRead(channelType, channelId)
             .precondition(plugins) { onChannelMarkReadPrecondition(channelType, channelId) }
             .doOnStart(userScope) {
-                logger.d { "[markRead] #doOnStart; cid: ${channelType}:$channelId" }
+                logger.d { "[markRead] #doOnStart; cid: $channelType:$channelId" }
             }
             .doOnResult(userScope) {
-                logger.v { "[markRead] #doOnResult; completed(${channelType}:$channelId): $it" }
+                logger.v { "[markRead] #doOnResult; completed($channelType:$channelId): $it" }
             }
             .share(userScope) { MarkReadIdentifier(channelType, channelId) }
     }

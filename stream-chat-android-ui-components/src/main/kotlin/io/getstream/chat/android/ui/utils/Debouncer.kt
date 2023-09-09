@@ -33,7 +33,7 @@ import kotlinx.coroutines.launch
     message = "Use the one from stream-chat-android-core",
     replaceWith = ReplaceWith(
         expression = "Debouncer(debounceMs)",
-        imports = ["io.getstream.chat.android.core.utils.Debouncer"]
+        imports = ["io.getstream.chat.android.core.utils.Debouncer"],
     ),
     level = DeprecationLevel.WARNING,
 )

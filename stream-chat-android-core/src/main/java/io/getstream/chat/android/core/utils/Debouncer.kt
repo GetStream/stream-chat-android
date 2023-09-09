@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
  */
 public class Debouncer(
     private val debounceMs: Long,
-    private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.Main)
+    private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.Main),
 ) {
 
     private var job: Job? = null
