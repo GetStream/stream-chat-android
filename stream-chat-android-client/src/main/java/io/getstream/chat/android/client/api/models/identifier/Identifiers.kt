@@ -244,3 +244,17 @@ internal fun GetMessageIdentifier(
 internal fun MarkAllReadIdentifier(): Int {
     return "MarkAllRead".hashCode()
 }
+
+/**
+ * Identifier for a [ChatClient.hideChannel] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun MarkReadIdentifier(
+    channelType: String,
+    channelId: String,
+): Int {
+    var result = "MarkRead".hashCode()
+    result = 31 * result + channelType.hashCode()
+    result = 31 * result + channelId.hashCode()
+    return result
+}

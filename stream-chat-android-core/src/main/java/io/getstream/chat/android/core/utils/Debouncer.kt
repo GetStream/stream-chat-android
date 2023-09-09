@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.utils
+package io.getstream.chat.android.core.utils
 
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import kotlinx.coroutines.CoroutineScope
@@ -29,17 +29,11 @@ import kotlinx.coroutines.launch
  * [submit]ting a new piece of work to run within the debounce window
  * will cancel the previously submitted pending work.
  */
-@Deprecated(
-    message = "Use the one from stream-chat-android-core",
-    replaceWith = ReplaceWith(
-        expression = "Debouncer(debounceMs)",
-        imports = ["io.getstream.chat.android.core.utils.Debouncer"],
-    ),
-    level = DeprecationLevel.WARNING,
-)
-public class Debouncer(private val debounceMs: Long) {
+public class Debouncer(
+    private val debounceMs: Long,
+    private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.Main),
+) {
 
-    private val scope = CoroutineScope(DispatcherProvider.Main)
     private var job: Job? = null
 
     /**

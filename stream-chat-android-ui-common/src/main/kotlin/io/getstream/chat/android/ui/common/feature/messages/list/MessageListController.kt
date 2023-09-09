@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
+import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -358,6 +359,14 @@ public class MessageListController(
      * out of the thread state.
      */
     private var threadJob: Job? = null
+
+    private val debouncer = Debouncer(debounceMs = 200L, scope = scope)
+
+    @Volatile
+    private var lastSeenMessageId: String? = null
+
+    @Volatile
+    private var lastSeenThreadMessageId: String? = null
 
     /**
      * We start observing messages and if the message list screen was started after searching for a message, it will
@@ -820,6 +829,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadOlderMessages(messageLimit: Int = this.messageLimit) {
+        logger.i { "[loadOlderMessages] messageLimit: $messageLimit" }
         if (clientState.isOffline) return
 
         _mode.value.run {
@@ -1233,7 +1243,9 @@ public class MessageListController(
      * @param message The last seen [Message].
      */
     public fun updateLastSeenMessage(message: Message) {
+        val lastLoadedMessage = if (isInThread) lastLoadedThreadMessage else lastLoadedMessage
         if (message.id == lastLoadedMessage?.id) {
+            logger.d { "[updateLastSeenMessage] matched($isInThread); message.id: ${message.id}" }
             markLastMessageRead()
         }
     }
@@ -1242,9 +1254,34 @@ public class MessageListController(
      * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     public fun markLastMessageRead() {
+        logger.v { "[markLastMessageRead] cid: $cid" }
+        debouncer.submit {
+            markLastMessageReadInternal()
+        }
+    }
+
+    /**
+     * Marks that the last message in the list as read. This also sets the unread count to 0.
+     */
+    private fun markLastMessageReadInternal() {
+        val itemState = messagesState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState
+        val messageId = itemState?.message?.id
+        val messageText = itemState?.message?.text
+        logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
+
+        val lastSeenMessageId = if (isInThread) lastSeenThreadMessageId else lastSeenMessageId
+        if (lastSeenMessageId == messageId) {
+            logger.w { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
+            return
+        }
+        if (isInThread) {
+            this.lastSeenThreadMessageId = messageId
+        } else {
+            this.lastSeenMessageId = messageId
+        }
+
         cid.cidToTypeAndId().let { (channelType, channelId) ->
-            val mode = _mode.value
-            if (mode is MessageMode.MessageThread) {
+            if (isInThread) {
                 // TODO sort out thread unreads when
                 //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
                 // chatClient.markThreadRead(channelType, channelId, mode.parentMessage.id)

@@ -192,6 +192,20 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         return result
     }
 
+    override fun toString(): String {
+        return "QueryChannelRequest(" +
+            "state=$state, " +
+            "watch=$watch, " +
+            "presence=$presence, " +
+            "shouldRefresh=$shouldRefresh, " +
+            "isWatchChannel=$isWatchChannel, " +
+            "isNotificationUpdate=$isNotificationUpdate, " +
+            "messages=$messages, " +
+            "watchers=$watchers, " +
+            "members=$members, " +
+            "data=$data)"
+    }
+
     internal companion object {
         private const val KEY_LIMIT = "limit"
         private const val KEY_OFFSET = "offset"

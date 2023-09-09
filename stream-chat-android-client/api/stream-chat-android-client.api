@@ -356,6 +356,7 @@ public class io/getstream/chat/android/client/api/models/QueryChannelRequest : i
 	public fun setPresence (Z)V
 	public fun setState (Z)V
 	public fun setWatch (Z)V
+	public fun toString ()Ljava/lang/String;
 	public final fun watchersLimit ()I
 	public final fun watchersOffset ()I
 	public fun withData (Ljava/util/Map;)Lio/getstream/chat/android/client/api/models/QueryChannelRequest;
