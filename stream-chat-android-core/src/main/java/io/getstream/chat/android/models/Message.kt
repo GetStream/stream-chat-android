@@ -72,6 +72,11 @@ public data class Message(
     val replyCount: Int = 0,
 
     /**
+     * The number of deleted replies to this message
+     */
+    val deletedReplyCount: Int = 0,
+
+    /**
      * A mapping between reaction type and the count, ie like:10, heart:4
      */
     val reactionCounts: Map<String, Int> = mapOf(),
@@ -232,6 +237,7 @@ public data class Message(
             "parentId" -> parentId
             "command" -> command
             "replyCount" -> replyCount
+            "deletedReplyCount" -> deletedReplyCount
             "type" -> type
             "createdAt" -> createdAt
             "updatedAt" -> updatedAt
@@ -283,6 +289,7 @@ public data class Message(
         if (mentionedUsersIds.isNotEmpty()) append(", mentionedUsersIds=").append(mentionedUsersIds)
         if (mentionedUsers.isNotEmpty()) append(", mentionedUsers=").append(mentionedUsers)
         if (replyCount > 0) append(", replyCount=").append(replyCount)
+        if (deletedReplyCount > 0) append(", deletedReplyCount=").append(deletedReplyCount)
         if (reactionCounts.isNotEmpty()) append(", reactionCounts=").append(reactionCounts)
         if (reactionScores.isNotEmpty()) append(", reactionScores=").append(reactionScores)
         append(", syncStatus=").append(syncStatus)
@@ -329,6 +336,7 @@ public data class Message(
         private var mentionedUsersIds: List<String> = listOf()
         private var mentionedUsers: List<User> = listOf()
         private var replyCount: Int = 0
+        private var deletedReplyCount: Int = 0
         private var reactionCounts: Map<String, Int> = mapOf()
         private var reactionScores: Map<String, Int> = mapOf()
         private var syncStatus: SyncStatus = SyncStatus.COMPLETED
@@ -369,6 +377,7 @@ public data class Message(
             mentionedUsersIds = message.mentionedUsersIds
             mentionedUsers = message.mentionedUsers
             replyCount = message.replyCount
+            deletedReplyCount = message.deletedReplyCount
             reactionCounts = message.reactionCounts
             reactionScores = message.reactionScores
             syncStatus = message.syncStatus
@@ -413,6 +422,8 @@ public data class Message(
             this.mentionedUsers = mentionedUsers
         }
         public fun withReplyCount(replyCount: Int): Builder = apply { this.replyCount = replyCount }
+        public fun withDeletedReplyCount(deletedReplyCount: Int): Builder =
+            apply { this.deletedReplyCount = deletedReplyCount }
         public fun withReactionCounts(reactionCounts: Map<String, Int>): Builder = apply {
             this.reactionCounts = reactionCounts
         }
@@ -470,6 +481,7 @@ public data class Message(
                 mentionedUsersIds = mentionedUsersIds,
                 mentionedUsers = mentionedUsers,
                 replyCount = replyCount,
+                deletedReplyCount = deletedReplyCount,
                 reactionCounts = reactionCounts,
                 reactionScores = reactionScores,
                 syncStatus = syncStatus,
