@@ -58,13 +58,14 @@ internal class StreamMediaPlayer(
     private var playingSpeed = 1F
     private var currentIndex = 0
 
-    override val currentState: AudioState get() = when (playerState) {
-        PlayerState.UNSET -> AudioState.UNSET
-        PlayerState.LOADING -> AudioState.LOADING
-        PlayerState.IDLE -> AudioState.IDLE
-        PlayerState.PAUSE -> AudioState.PAUSE
-        PlayerState.PLAYING -> AudioState.PLAYING
-    }
+    override val currentState: AudioState
+        get() = when (playerState) {
+            PlayerState.UNSET -> AudioState.UNSET
+            PlayerState.LOADING -> AudioState.LOADING
+            PlayerState.IDLE -> AudioState.IDLE
+            PlayerState.PAUSE -> AudioState.PAUSE
+            PlayerState.PLAYING -> AudioState.PLAYING
+        }
 
     override fun registerOnAudioStateChange(audioHash: Int, onAudioStateChange: (AudioState) -> Unit) {
         logger.i { "[registerOnAudioStateChange] audioHash: $audioHash" }
@@ -108,10 +109,7 @@ internal class StreamMediaPlayer(
     override fun prepare(sourceUrl: String, audioHash: Int) {
         logger.d { "[prepare] audioHash: $audioHash, sourceUrl.hash: ${sourceUrl.hashCode()}" }
         if (audioHash != currentAudioHash) {
-            stopPolling()
-            mediaPlayer.reset()
-            playerState = PlayerState.UNSET
-            publishAudioState(currentAudioHash, AudioState.UNSET)
+            resetPlayer(currentAudioHash)
             setAudio(sourceUrl, audioHash, autoPlay = false)
             return
         }
@@ -120,10 +118,7 @@ internal class StreamMediaPlayer(
     override fun play(sourceUrl: String, audioHash: Int) {
         logger.i { "[play] audioHash: $audioHash, sourceUrl.hash: ${sourceUrl.hashCode()}" }
         if (audioHash != currentAudioHash) {
-            stopPolling()
-            mediaPlayer.reset()
-            playerState = PlayerState.UNSET
-            publishAudioState(currentAudioHash, AudioState.UNSET)
+            resetPlayer(currentAudioHash)
             setAudio(sourceUrl, audioHash, autoPlay = true)
             return
         }
@@ -190,12 +185,17 @@ internal class StreamMediaPlayer(
     override fun resetAudio(audioHash: Int) {
         logger.i { "[resetAudio] audioHash: $audioHash" }
         if (audioHash == currentAudioHash) {
-            stopPolling()
-            mediaPlayer.reset()
-            playerState = PlayerState.UNSET
-            publishAudioState(audioHash, AudioState.UNSET)
+            resetPlayer(audioHash)
         }
         removeAudio(audioHash)
+    }
+
+    private fun resetPlayer(audioHash: Int) {
+        logger.v { "[resetPlayer] audioHash: $audioHash" }
+        stopPolling()
+        mediaPlayer.reset()
+        playerState = PlayerState.UNSET
+        publishAudioState(audioHash, AudioState.UNSET)
     }
 
     private fun setAudio(sourceUrl: String, audioHash: Int, autoPlay: Boolean = true) {
