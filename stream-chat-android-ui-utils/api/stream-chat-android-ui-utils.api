@@ -8,6 +8,7 @@ public final class io/getstream/chat/android/ui/utils/BuildConfig {
 public final class io/getstream/chat/android/uiutils/extension/AttachmentKt {
 	public static final fun hasLink (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isAnyFileType (Lio/getstream/chat/android/models/Attachment;)Z
+	public static final fun isFailed (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isUploading (Lio/getstream/chat/android/models/Attachment;)Z
 }
 
