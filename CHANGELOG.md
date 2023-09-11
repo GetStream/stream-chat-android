@@ -59,7 +59,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed UI not being updated after replaying the same voice message after scrolling in and out. [4948](https://github.com/GetStream/stream-chat-android/pull/4948)
+- Fixed UI not being updated after replaying the same voice message after scrolling out and in. [4948](https://github.com/GetStream/stream-chat-android/pull/4948)
+- Fixed crash when trying to play a failed voice message. [4951](https://github.com/GetStream/stream-chat-android/pull/4951)
 
 ### ⬆️ Improved
 - `MessageListScrollHelper.isAtBottom` now triggers `callback.onLastMessageRead()` when it changes from `false` to `true` only. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
