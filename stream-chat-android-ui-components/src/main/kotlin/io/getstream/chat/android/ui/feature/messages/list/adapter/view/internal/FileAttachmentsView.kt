@@ -52,6 +52,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.loadAttachmentThumb
 import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
 import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.chat.android.uiutils.extension.isFailed
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -241,6 +242,9 @@ private class GeneralFileAttachmentViewHolder(
 
         attachmentDownloadClickListener?.let { listener ->
             binding.actionButton.setOnClickListener {
+                if (attachment?.isFailed() == true) {
+                    return@setOnClickListener
+                }
                 attachment?.let(listener::onAttachmentDownloadClick)
             }
         }
@@ -364,6 +368,9 @@ private class RecordingFileAttachmentViewHolder(
 
         attachmentDownloadClickListener?.let { listener ->
             binding.actionButton.setOnClickListener {
+                if (attachment?.isFailed() == true) {
+                    return@setOnClickListener
+                }
                 attachment?.let(listener::onAttachmentDownloadClick)
             }
         }
@@ -400,6 +407,8 @@ private class RecordingFileAttachmentViewHolder(
             logger.d { "[onPlayButtonClick] audioHash: $audioHash, assetUrl: $assetUrl" }
             if (assetUrl != null) {
                 audioPlayer.play(assetUrl, audioHash)
+            } else {
+                setLoading()
             }
         }
 
@@ -464,9 +473,9 @@ private class RecordingFileAttachmentViewHolder(
             fileTypeIcon.loadAttachmentThumb(item)
             fileTitle.text = context.getString(R.string.stream_ui_attachment_list_recording)
 
-            val isUploading = item.uploadState is Attachment.UploadState.InProgress
-            uploadingContainer.isVisible = isUploading
-            playerView.isVisible = isUploading.not()
+            val isSuccess = item.uploadState?.let { it is Attachment.UploadState.Success } ?: true
+            uploadingContainer.isVisible = isSuccess.not()
+            playerView.isVisible = isSuccess
 
             item.duration
                 ?.let(DurationFormatter::formatDurationInSeconds)
@@ -485,11 +494,11 @@ private class RecordingFileAttachmentViewHolder(
             } else if (item.uploadState is Attachment.UploadState.Failed || item.fileSize == 0) {
                 actionButton.visibility = View.VISIBLE
                 actionButton.setImageDrawable(style.failedAttachmentIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.upload?.length() ?: 0L)
+                fileSize.text = DurationFormatter.formatDurationInSeconds(item.duration ?: 0.0f)
             } else {
                 actionButton.visibility = View.GONE
                 actionButton.setImageDrawable(style.actionButtonIcon)
-                fileSize.text = MediaStringUtil.convertFileSizeByteCount(item.fileSize.toLong())
+                fileSize.text = DurationFormatter.formatDurationInSeconds(item.duration ?: 0.0f)
             }
 
             binding.progressBar.indeterminateDrawable = style.progressBarDrawable
