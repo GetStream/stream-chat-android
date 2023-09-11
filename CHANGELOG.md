@@ -1,15 +1,4 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# September 11th, 2023 - 6.0.2
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed a crash when replaying the same voice message after scrolling out and in. [4948](https://github.com/GetStream/stream-chat-android/pull/4948)
@@ -17,45 +6,9 @@
 ### ⬆️ Improved
 - `ChatClient.markRead` returns ongoing `Call` instance if exists to avoid firing duplicate requests. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - `MessageListController.markLastMessageRead` does debounce its' calls and checks last seen messageId to avoid duplicate `read` requests. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -64,34 +17,6 @@
 
 ### ⬆️ Improved
 - `MessageListScrollHelper.isAtBottom` now triggers `callback.onLastMessageRead()` when it changes from `false` to `true` only. [#4949](https://github.com/GetStream/stream-chat-android/pull/4949)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 05th, 2023 - 6.0.1
 ## stream-chat-android-client
