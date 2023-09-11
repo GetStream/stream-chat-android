@@ -43,6 +43,15 @@ public fun Attachment.isUploading(): Boolean {
 }
 
 /**
+ * @return If the attachment has been failed when uploading to the server.
+ */
+public fun Attachment.isFailed(): Boolean {
+    return (uploadState is Attachment.UploadState.Failed) &&
+        upload != null &&
+        uploadId != null
+}
+
+/**
  * @return If the [Attachment] is a link attachment or not.
  */
 public fun Attachment.hasLink(): Boolean = titleLink != null || ogUrl != null

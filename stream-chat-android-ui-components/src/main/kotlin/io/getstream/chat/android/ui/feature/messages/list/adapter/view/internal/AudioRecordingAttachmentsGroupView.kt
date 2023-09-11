@@ -188,11 +188,15 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             logger.v { "[onPlayButtonClick] audioHash: $audioHash" }
             audioPlayer.clearTracks()
             audioAttachments?.forEachIndexed { index, attachment ->
-                audioPlayer.registerTrack(attachment.assetUrl!!, attachment.hashCode(), index)
+                attachment.assetUrl?.also {
+                    val curAudioHash = it.hashCode()
+                    audioPlayer.registerTrack(it, curAudioHash, index)
+                }
             }
 
-            if (attachment.assetUrl != null) {
-                audioPlayer.play(attachment.assetUrl!!, audioHash)
+            val assetUrl = attachment.assetUrl
+            if (assetUrl != null) {
+                audioPlayer.play(assetUrl, audioHash)
             } else {
                 setLoading()
             }
