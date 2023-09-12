@@ -77,7 +77,7 @@ internal open class ChatSocket constructor(
     )
 
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
-        override fun onConnected() {
+        override suspend fun onConnected() {
             logger.i { "[onNetworkConnected] socket state: ${state.javaClass.simpleName}" }
             if (state is State.DisconnectedTemporarily || state == State.NetworkDisconnected) {
                 logger.i { "network connected, reconnecting socket" }
@@ -85,7 +85,7 @@ internal open class ChatSocket constructor(
             }
         }
 
-        override fun onDisconnected() {
+        override suspend fun onDisconnected() {
             logger.i { "[onNetworkDisconnected] socket state: ${state.javaClass.simpleName}" }
             healthMonitor.stop()
             if (state is State.Connected || state is State.Connecting) {
