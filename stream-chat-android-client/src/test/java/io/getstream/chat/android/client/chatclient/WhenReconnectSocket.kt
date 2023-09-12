@@ -19,12 +19,13 @@ package io.getstream.chat.android.client.chatclient
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.clientstate.SocketState
 import io.getstream.chat.android.client.clientstate.UserState
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.test.randomString
 import org.amshove.kluent.invoking
-import org.amshove.kluent.`should throw`
+import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldThrow
-import org.amshove.kluent.`with message`
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito
@@ -39,9 +40,12 @@ internal class WhenReconnectSocket : BaseChatClientTest() {
     fun `Given idle connection state Should do nothing`() {
         val sut = Fixture().givenIdleConnectionState().clearSocketInvocations().get()
 
-        invoking {
-            sut.reconnectSocket()
-        } `should throw` IllegalStateException::class `with message` "Invalid user state null without user being set!"
+        val result = sut.reconnectSocket(forceReconnection = true).execute()
+        result shouldBeEqualTo Result.error(
+            ChatError(
+                "Invalid user state null without user being set!"
+            )
+        )
 
         Mockito.verifyNoInteractions(socket)
     }

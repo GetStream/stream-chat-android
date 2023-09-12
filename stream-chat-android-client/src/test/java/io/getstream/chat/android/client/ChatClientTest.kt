@@ -135,7 +135,7 @@ internal class ChatClientTest {
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle),
             pluginFactories = pluginFactories,
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = Mother.mockedClientState(),

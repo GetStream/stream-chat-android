@@ -105,7 +105,7 @@ internal class ConnectUserTest {
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocketExperimental = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            lifecycleObserver = StreamLifecycleObserver(userScope, lifecycleOwner.lifecycle),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState,
@@ -288,7 +288,7 @@ internal class ConnectUserTest {
         result.error().message `should be equal to` messageError
     }
 
-    private fun prepareAliveConnection(user: User, connectionId: String) {
+    private suspend fun prepareAliveConnection(user: User, connectionId: String) {
         userStateService.onSetUser(user, false)
         socketStateService.onConnectionRequested()
         socketStateService.onConnected(connectionId)

@@ -70,7 +70,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
     }
 
     @Test
-    fun `Given user set and socket in idle state and user with different id Should Not connect to the socket, update the user and token provider`() {
+    fun `Given user set and socket in idle state and user with different id Should Not connect to the socket, update the user and token provider`() = runTest {
         val sut = Fixture()
             .givenUserAndToken(Mother.randomUser { id = "differentUserId" }, "token")
             .givenIdleConnectionState()
@@ -85,7 +85,7 @@ internal class WhenConnectUser : BaseChatClientTest() {
     }
 
     @Test
-    fun `Given user not set Should set the user`() {
+    fun `Given user not set Should set the user`() = runTest {
         val user = Mother.randomUser { id = "userId" }
         val sut = Fixture()
             .givenUserAndToken(user, "token")
