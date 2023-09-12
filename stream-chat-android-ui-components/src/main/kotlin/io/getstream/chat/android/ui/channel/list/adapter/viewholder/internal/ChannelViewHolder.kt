@@ -104,7 +104,12 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             itemForegroundView.apply {
                 avatarView.setOnClickListener {
                     when {
-                        channel.isDirectMessaging() -> currentUser.value?.let(userClickListener::onClick)
+                        channel.isDirectMessaging() -> {
+                            channel.members.filterNot { currentUser.value?.id == it.user.id }
+                                .firstOrNull()
+                                ?.user
+                                ?.let(userClickListener::onClick)
+                        }
                         else -> channelClickListener.onClick(channel)
                     }
                 }
