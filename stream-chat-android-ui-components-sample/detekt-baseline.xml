@@ -5,6 +5,7 @@
     <ID>ComplexCondition:UserRepository.kt$UserRepository$apiKey != null &amp;&amp; id != null &amp;&amp; name != null &amp;&amp; token != null &amp;&amp; image != null</ID>
     <ID>ComplexMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
     <ID>ForbiddenComment:ChatInfoViewModel.kt$ChatInfoViewModel$// TODO: Handle error</ID>
+    <ID>ForbiddenComment:CustomChatClientDebugger.kt$CustomChatClientDebugger$// TODO: Implement your custom logic here</ID>
     <ID>LongMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>

@@ -259,7 +259,13 @@ internal constructor(
             logger.d { "[onAppResume] no args" }
             val result = reconnectSocket(false).await()
             if (result.isError) {
-                logger.e { "[onAppResume] failed to reconnect socket: ${result.stringify { "" }}" }
+                logger.e { "[onAppResume] failed to reconnect socket: ${result.error().stringify()}" }
+                clientDebugger.onNonFatalErrorOccurred(
+                    tag = "ChatClient",
+                    src = "LifecycleHandler.resume",
+                    desc = "Failed to reconnect socket",
+                    error = result.error()
+                )
             }
         }
         override suspend fun stopped() {

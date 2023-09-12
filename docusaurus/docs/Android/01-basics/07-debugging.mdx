@@ -39,6 +39,15 @@ To debug a message sending flow you can override `ChatClientDebugger.debugSendMe
 ```kotlin
 class CustomChatClientDebugger : ChatClientDebugger {
 
+    override fun onNonFatalErrorOccurred(
+        tag: String, 
+        src: String, 
+        desc: String, 
+        error: ChatError
+    ) {
+        // TODO: Implement your custom logic here
+    }
+
     override fun debugSendMessage(
         channelType: String,
         channelId: String,
@@ -59,21 +68,31 @@ class CustomChatClientDebugger : ChatClientDebugger {
 <TabItem value="java" label="Java">
 
 ```java
-class CustomChatClientDebugger : ChatClientDebugger {
+class CustomChatClientDebugger implements ChatClientDebugger {
 
     @Override
-    public void debugSendMessage(
+    public void onNonFatalErrorOccurred(
+        @NonNull String tag, 
+        @NonNull String src, 
+        @NonNull String desc, 
+        @NonNull ChatError error
+    ) {
+        // TODO: Implement your custom logic here
+    }
+
+    @Override
+    public SendMessageDebugger debugSendMessage(
         @NonNull String channelType,
         @NonNull String channelId,
         @NonNull Message message,
-        boolean isRetrying,
-    ): SendMessageDebugger {
+        boolean isRetrying
+    ) {
         return new CustomSendMessageDebugger(
             channelType,
             channelId,
             message,
             isRetrying
-        )
+        );
     }
 }
 ```

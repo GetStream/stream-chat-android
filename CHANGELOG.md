@@ -18,6 +18,7 @@
 
 ### ✅ Added`
 - Added new implementations of `ChatClient.reconnectSocket` and `ChatClient.disconnectSocket` to align SDK API. [#4954](https://github.com/GetStream/stream-chat-android/pull/4954)
+- Added `ChatClientDebugger.onNonFatalErrorOccurred` to handle non-fatal errors. [#4955](https://github.com/GetStream/stream-chat-android/pull/4955)
 
 ### ⚠️ Changed
 

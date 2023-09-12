@@ -18,11 +18,16 @@ package io.getstream.chat.ui.sample.debugger
 
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.debugger.SendMessageDebugger
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 import io.getstream.logging.StreamLog
 
 class CustomChatClientDebugger : ChatClientDebugger {
+
+    override fun onNonFatalErrorOccurred(tag: String, src: String, desc: String, error: ChatError) {
+        // TODO: Implement your custom logic here
+    }
 
     override fun debugSendMessage(
         channelType: String,

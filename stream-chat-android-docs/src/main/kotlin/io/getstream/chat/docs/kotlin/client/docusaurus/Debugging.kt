@@ -4,6 +4,7 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.debugger.SendMessageDebugger
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.utils.Result
 
@@ -15,6 +16,10 @@ class Debugging {
     fun addClientDebugger(context: Context) {
         val client = ChatClient.Builder("apiKey", context)
             .clientDebugger(object : ChatClientDebugger {
+                override fun onNonFatalErrorOccurred(tag: String, src: String, desc: String, error: ChatError) {
+                    // TODO: Implement your custom logic here
+                }
+
                 override fun debugSendMessage(
                     channelType: String,
                     channelId: String,
