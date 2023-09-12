@@ -46,6 +46,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun disableSlowMode (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnect (Z)Lio/getstream/chat/android/client/call/Call;
 	public final fun disconnectSocket ()V
+	public final fun disconnectSocket (Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun disconnectSocket$default (Lio/getstream/chat/android/client/ChatClient;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/chat/android/client/call/Call;
 	public final fun fetchCurrentUser ()Lio/getstream/chat/android/client/call/Call;
@@ -114,6 +116,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IILio/getstream/chat/android/client/api/models/FilterObject;Lio/getstream/chat/android/client/api/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun queryUsers (Lio/getstream/chat/android/client/api/models/QueryUsersRequest;)Lio/getstream/chat/android/client/call/Call;
 	public final fun reconnectSocket ()V
+	public final fun reconnectSocket (Z)Lio/getstream/chat/android/client/call/Call;
+	public static synthetic fun reconnectSocket$default (Lio/getstream/chat/android/client/ChatClient;ZILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;
 	public final fun rejectInvite (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/call/Call;
 	public final fun removeMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/client/call/Call;

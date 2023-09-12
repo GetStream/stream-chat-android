@@ -71,23 +71,23 @@ internal class ChatSocket private constructor(
         }
     )
     private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() {
+        override suspend fun resume() {
             logger.i { "[onAppResume] no args" }
             chatSocketStateService.onResume()
         }
 
-        override fun stopped() {
+        override suspend fun stopped() {
             logger.i { "[onAppStop] no args" }
             chatSocketStateService.onStop()
         }
     }
     private val networkStateListener = object : NetworkStateProvider.NetworkStateListener {
-        override fun onConnected() {
+        override suspend fun onConnected() {
             logger.i { "[onNetworkConnected] no args" }
             chatSocketStateService.onNetworkAvailable()
         }
 
-        override fun onDisconnected() {
+        override suspend fun onDisconnected() {
             logger.i { "[onNetworkDisconnected] no args" }
             chatSocketStateService.onNetworkNotAvailable()
         }
@@ -97,7 +97,7 @@ internal class ChatSocket private constructor(
     private fun observeSocketStateService(): Job {
         var socketListenerJob: Job? = null
 
-        fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
+        suspend fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
             logger.d { "[connectUser] connectionConf: $connectionConf" }
             coroutineScope.launch { startObservers() }
             this.connectionConf = connectionConf
@@ -117,7 +117,7 @@ internal class ChatSocket private constructor(
             }
         }
 
-        fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
+        suspend fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
             logger.d { "[reconnect] connectionConf: $connectionConf" }
             connectUser(connectionConf.asReconnectionConf())
         }
@@ -180,7 +180,7 @@ internal class ChatSocket private constructor(
         }
     }
 
-    fun connectUser(user: User, isAnonymous: Boolean) {
+    suspend fun connectUser(user: User, isAnonymous: Boolean) {
         logger.i { "[connectUser] isAnonymous: $isAnonymous, user: $user" }
         socketStateObserverJob?.cancel()
         socketStateObserverJob = observeSocketStateService()
@@ -192,13 +192,13 @@ internal class ChatSocket private constructor(
         )
     }
 
-    fun disconnect() {
+    suspend fun disconnect() {
         logger.i { "[disconnect] connectionConf: $connectionConf" }
         connectionConf = null
         chatSocketStateService.onRequiredDisconnect()
     }
 
-    private fun handleEvent(chatEvent: ChatEvent) {
+    private suspend fun handleEvent(chatEvent: ChatEvent) {
         when (chatEvent) {
             is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
             is HealthEvent -> healthMonitor.ack()
@@ -220,7 +220,7 @@ internal class ChatSocket private constructor(
         networkStateProvider.unsubscribe(networkStateListener)
     }
 
-    private fun handleError(error: ChatError) {
+    private suspend fun handleError(error: ChatError) {
         logger.e { error.stringify() }
         when (error) {
             is ChatNetworkError -> onChatNetworkError(error)
@@ -228,7 +228,7 @@ internal class ChatSocket private constructor(
         }
     }
 
-    private fun onChatNetworkError(error: ChatNetworkError) {
+    private suspend fun onChatNetworkError(error: ChatNetworkError) {
         if (ChatErrorCode.isAuthenticationError(error.streamCode)) {
             tokenManager.expireToken()
         }
@@ -298,7 +298,7 @@ internal class ChatSocket private constructor(
         else -> error("This state doesn't contain connectionId")
     }
 
-    fun reconnectUser(user: User, isAnonymous: Boolean, forceReconnection: Boolean) {
+    suspend fun reconnectUser(user: User, isAnonymous: Boolean, forceReconnection: Boolean) {
         chatSocketStateService.onReconnect(
             when (isAnonymous) {
                 true -> SocketFactory.ConnectionConf.AnonymousConnectionConf(wssUrl, apiKey, user)

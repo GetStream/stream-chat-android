@@ -92,6 +92,7 @@ object Dependencies {
     const val androidxFragmentKtx = "androidx.fragment:fragment-ktx:${Versions.ANDROIDX_FRAGMENT_KTX}"
     const val androidxLifecycleProcess = "androidx.lifecycle:lifecycle-process:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxLifecycleLiveDataKtx = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.ANDROIDX_LIFECYCLE}"
+    const val androidxLifecycleRuntimeKtx = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxLifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.ANDROIDX_LIFECYCLE}"
     const val androidxPreferences = "androidx.preference:preference:${Versions.ANDROIDX_PREFERENCES}"
     const val androidxRecyclerview = "androidx.recyclerview:recyclerview:${Versions.ANDROIDX_RECYCLERVIEW}"

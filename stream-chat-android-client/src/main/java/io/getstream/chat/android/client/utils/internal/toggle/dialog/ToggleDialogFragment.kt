@@ -22,6 +22,7 @@ import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
@@ -49,7 +50,9 @@ public class ToggleDialogFragment : DialogFragment(R.layout.stream_toggle_dialog
                 dismiss()
             }.onSuccess { service ->
                 adapter = ToggleAdapter(requireContext())
-                _controller = ToggleDialogController(service).apply { attachView(this@ToggleDialogFragment) }
+                _controller = ToggleDialogController(lifecycleScope, service).apply {
+                    attachView(this@ToggleDialogFragment)
+                }
                 adapter?.listener = ToggleSwitchListener(controller::onToggleSwitchClicked)
                 listView.adapter = adapter
                 saveButton.isEnabled = false

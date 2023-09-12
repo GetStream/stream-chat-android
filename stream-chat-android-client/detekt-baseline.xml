@@ -10,6 +10,7 @@
     <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
+    <ID>MaxLineLength:UserStateServiceTests.kt$UserStateServiceTests.Fixture$suspend fun givenUserSetState(user: User = Mother.randomUser())</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
     <ID>TooGenericExceptionCaught:StreamPayloadParser.kt$StreamPayloadParser$e: Throwable</ID>
     <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>

@@ -20,6 +20,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.CheckResult
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -254,11 +255,14 @@ internal constructor(
             "The new Socket Implementation handle it internally"
     )
     private val lifecycleHandler = object : LifecycleHandler {
-        override fun resume() {
+        override suspend fun resume() {
             logger.d { "[onAppResume] no args" }
-            reconnectSocket(false)
+            val result = reconnectSocket(false).await()
+            if (result.isError) {
+                logger.e { "[onAppResume] failed to reconnect socket: ${result.stringify { "" }}" }
+            }
         }
-        override fun stopped() {
+        override suspend fun stopped() {
             logger.d { "[onAppStop] no args" }
             socket.releaseConnection(false)
         }
@@ -1052,12 +1056,26 @@ internal constructor(
 
     //endregion
 
+    @Deprecated(
+        message = "Use ChatClient.disconnectSocket(requested: Boolean) instead",
+        replaceWith = ReplaceWith("disconnectSocket(requested: Boolean): Call<Unit>"),
+        level = DeprecationLevel.WARNING,
+    )
+    @WorkerThread
     public fun disconnectSocket() {
         logger.d { "[disconnectSocket] no args" }
-        if (ToggleService.isSocketExperimental()) {
-            chatSocketExperimental.disconnect()
-        } else {
-            socket.releaseConnection(true)
+        disconnectSocket(requested = true).execute()
+    }
+
+    @CheckResult
+    public fun disconnectSocket(requested: Boolean = true): Call<Unit> {
+        return CoroutineCall(userScope) {
+            logger.d { "[disconnectSocket] requested: $requested" }
+            if (ToggleService.isSocketExperimental()) {
+                Result.success(chatSocketExperimental.disconnect())
+            } else {
+                Result.success(socket.releaseConnection(requested))
+            }
         }
     }
 
@@ -1083,35 +1101,48 @@ internal constructor(
         }
     }
 
+    @Deprecated(
+        message = "Use ChatClient.reconnectSocket(forceReconnection: Boolean) instead",
+        replaceWith = ReplaceWith("reconnectSocket(forceReconnection: Boolean): Call<Unit>"),
+        level = DeprecationLevel.WARNING,
+    )
+    @WorkerThread
     public fun reconnectSocket() {
-        reconnectSocket(true)
+        reconnectSocket(forceReconnection = true).execute()
     }
 
-    private fun reconnectSocket(forceReconnection: Boolean) {
-        logger.d { "[reconnectSocket] forceReconnection: $forceReconnection" }
-        if (ToggleService.isSocketExperimental().not()) {
-            when (socketStateService.state) {
-                is SocketState.Disconnected,
-                is SocketState.Idle -> when (val userState = userStateService.state) {
-                    is UserState.UserSet,
-                    is UserState.AnonymousUserSet -> socket.reconnectUser(
-                        userState.userOrError(),
-                        userState is UserState.AnonymousUserSet,
-                        forceReconnection,
-                    )
-                    else -> error("Invalid user state $userState without user being set!")
+    @CheckResult
+    public fun reconnectSocket(forceReconnection: Boolean = true): Call<Unit> {
+        return CoroutineCall(userScope) {
+            logger.d { "[reconnectSocket] forceReconnection: $forceReconnection" }
+            if (ToggleService.isSocketExperimental().not()) {
+                when (socketStateService.state) {
+                    is SocketState.Disconnected,
+                    is SocketState.Idle -> when (val userState = userStateService.state) {
+                        is UserState.UserSet,
+                        is UserState.AnonymousUserSet -> Result.success(
+                            socket.reconnectUser(
+                                userState.userOrError(),
+                                userState is UserState.AnonymousUserSet,
+                                forceReconnection,
+                            )
+                        )
+                        else -> Result.error(ChatError("Invalid user state $userState without user being set!"))
+                    }
+                    is SocketState.Connected,
+                    is SocketState.Pending -> Result.success(Unit)
                 }
-                is SocketState.Connected,
-                is SocketState.Pending -> Unit
-            }
-        } else {
-            when (val userState = userStateService.state) {
-                is UserState.UserSet, is UserState.AnonymousUserSet -> chatSocketExperimental.reconnectUser(
-                    userState.userOrError(),
-                    userState is UserState.AnonymousUserSet,
-                    forceReconnection,
-                )
-                else -> error("Invalid user state $userState without user being set!")
+            } else {
+                when (val userState = userStateService.state) {
+                    is UserState.UserSet, is UserState.AnonymousUserSet -> Result.success(
+                        chatSocketExperimental.reconnectUser(
+                            userState.userOrError(),
+                            userState is UserState.AnonymousUserSet,
+                            forceReconnection,
+                        )
+                    )
+                    else -> Result.error(ChatError("Invalid user state $userState without user being set!"))
+                }
             }
         }
     }

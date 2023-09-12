@@ -24,23 +24,23 @@ import kotlinx.coroutines.withTimeout
 internal class SocketStateService {
     private val logger = StreamLog.getLogger("Chat:SocketStateService")
 
-    fun onConnected(connectionId: String) {
+    suspend fun onConnected(connectionId: String) {
         stateMachine.sendEvent(ClientStateEvent.ConnectedEvent(connectionId))
     }
 
-    fun onDisconnected() {
+    suspend fun onDisconnected() {
         stateMachine.sendEvent(ClientStateEvent.DisconnectedEvent)
     }
 
-    fun onConnectionRequested() {
+    suspend fun onConnectionRequested() {
         stateMachine.sendEvent(ClientStateEvent.ConnectionRequested)
     }
 
-    fun onDisconnectRequested() {
+    suspend fun onDisconnectRequested() {
         stateMachine.sendEvent(ClientStateEvent.DisconnectRequestedEvent)
     }
 
-    fun onSocketUnrecoverableError() {
+    suspend fun onSocketUnrecoverableError() {
         stateMachine.sendEvent(ClientStateEvent.ForceDisconnect)
     }
 

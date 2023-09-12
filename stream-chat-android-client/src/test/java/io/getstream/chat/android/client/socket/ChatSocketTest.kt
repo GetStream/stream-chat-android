@@ -103,10 +103,13 @@ internal class ChatSocketTest {
     }
 
     @Test
-    fun `Should start connecting to socket when connecting was called and connection was recovered`() {
+    fun `Should start connecting to socket when connecting was called and connection was recovered`() = runTest {
         whenever(networkStateProvider.isConnected()) doReturn false
         whenever(networkStateProvider.subscribe(any())) doAnswer {
-            it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
+            testCoroutines.scope.launch {
+                it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
+            }
+            Unit
         }
 
         chatSocket.connectUser(randomUser(), isAnonymous = false)
@@ -136,7 +139,10 @@ internal class ChatSocketTest {
     fun `Should start connecting to socket when connecting with anymous user  was called and connection was recovered`() {
         whenever(networkStateProvider.isConnected()) doReturn false
         whenever(networkStateProvider.subscribe(any())) doAnswer {
-            it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
+            testCoroutines.scope.launch {
+                it.getArgument<NetworkStateProvider.NetworkStateListener>(0).onConnected()
+            }
+            Unit
         }
 
         chatSocket.connectUser(randomUser(), isAnonymous = true)

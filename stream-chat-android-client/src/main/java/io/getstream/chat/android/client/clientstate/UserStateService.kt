@@ -23,12 +23,12 @@ import io.getstream.logging.StreamLog
 internal class UserStateService {
     private val logger = StreamLog.getLogger("Chat:UserStateService")
 
-    fun onUserUpdated(user: User) {
+    suspend fun onUserUpdated(user: User) {
         logger.d { "[onUserUpdated] user id: ${user.id}" }
         fsm.sendEvent(UserStateEvent.UserUpdated(user))
     }
 
-    fun onSetUser(user: User, isAnonymous: Boolean) {
+    suspend fun onSetUser(user: User, isAnonymous: Boolean) {
         logger.d { "[onSetUser] user id: ${user.id}" }
         if (isAnonymous) {
             fsm.sendEvent(UserStateEvent.ConnectAnonymous(user))
@@ -37,12 +37,12 @@ internal class UserStateService {
         }
     }
 
-    fun onLogout() {
+    suspend fun onLogout() {
         logger.d { "[onLogout]" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }
 
-    fun onSocketUnrecoverableError() {
+    suspend fun onSocketUnrecoverableError() {
         logger.d { "[onSocketUnrecoverableError]" }
         fsm.sendEvent(UserStateEvent.UnsetUser)
     }

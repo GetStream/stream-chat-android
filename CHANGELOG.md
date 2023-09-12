@@ -16,7 +16,8 @@
 
 ### ⬆️ Improved
 
-### ✅ Added
+### ✅ Added`
+- Added new implementations of `ChatClient.reconnectSocket` and `ChatClient.disconnectSocket` to align SDK API. [#4954](https://github.com/GetStream/stream-chat-android/pull/4954)
 
 ### ⚠️ Changed
 
