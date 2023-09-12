@@ -343,6 +343,7 @@ internal constructor(
         eventsObservable.subscribeSuspend { event ->
             when (event) {
                 is ConnectedEvent -> {
+                    logger.d { "[onEvent] event: ConnectedEvent(${event.me.id})" }
                     val user = event.me
                     val connectionId = event.connectionId
                     api.setConnection(user.id, connectionId)
@@ -361,10 +362,12 @@ internal constructor(
                     notifications.onNewMessageEvent(event)
                 }
                 is ConnectingEvent -> {
+                    logger.d { "[onEvent] event: ConnectingEvent" }
                     clientState.toMutableState()?.setConnectionState(ConnectionState.CONNECTING)
                 }
 
                 is DisconnectedEvent -> {
+                    logger.e { "[onEvent] event: DisconnectedEvent(${event.disconnectCause})" }
                     api.releseConnection()
                     when (event.disconnectCause) {
                         DisconnectCause.ConnectionReleased,
