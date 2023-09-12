@@ -12,13 +12,10 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed NPE in `StreamWebSocket.onFailure`. [#4943](https://github.com/GetStream/stream-chat-android/pull/4943)
 
 ### ⬆️ Improved
 
 ### ✅ Added`
-- Added new implementations of `ChatClient.reconnectSocket` and `ChatClient.disconnectSocket` to align SDK API. [#4954](https://github.com/GetStream/stream-chat-android/pull/4954)
-- Added `ChatClientDebugger.onNonFatalErrorOccurred` to handle non-fatal errors. [#4955](https://github.com/GetStream/stream-chat-android/pull/4955)
 
 ### ⚠️ Changed
 
@@ -59,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed user avatar click on channel list view. [#4956](https://github.com/GetStream/stream-chat-android/pull/4956)
 
 ### ⬆️ Improved
 
@@ -123,6 +119,19 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 12th, 2023 - 5.17.13
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed NPE in `StreamWebSocket.onFailure`. [#4943](https://github.com/GetStream/stream-chat-android/pull/4943)
+
+### ✅ Added`
+- Added new implementations of `ChatClient.reconnectSocket` and `ChatClient.disconnectSocket` to align SDK API. [#4954](https://github.com/GetStream/stream-chat-android/pull/4954)
+- Added `ChatClientDebugger.onNonFatalErrorOccurred` to handle non-fatal errors. [#4955](https://github.com/GetStream/stream-chat-android/pull/4955)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed user avatar click on channel list view. [#4956](https://github.com/GetStream/stream-chat-android/pull/4956)
 
 # August 30th, 2023 - 5.17.12
 ## stream-chat-android-client
