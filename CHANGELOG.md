@@ -59,6 +59,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed user avatar click on channel list view. [#4956](https://github.com/GetStream/stream-chat-android/pull/4956)
 
 ### ⬆️ Improved
 
