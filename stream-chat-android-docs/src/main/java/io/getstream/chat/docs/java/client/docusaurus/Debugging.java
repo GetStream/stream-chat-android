@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.debugger.ChatClientDebugger;
 import io.getstream.chat.android.client.debugger.SendMessageDebugger;
+import io.getstream.chat.android.client.errors.ChatError;
 import io.getstream.chat.android.client.models.Message;
 import io.getstream.chat.android.client.utils.Result;
 
@@ -18,6 +19,11 @@ public class Debugging {
     public void addClientDebugger(@NonNull Context context) {
         final ChatClient chatClient = new ChatClient.Builder("apiKey", context)
                 .clientDebugger(new ChatClientDebugger() {
+                    @Override
+                    public void onNonFatalErrorOccurred(@NonNull String tag, @NonNull String src, @NonNull String desc, @NonNull ChatError error) {
+                        // TODO: handle non-fatal error
+                    }
+
                     @NonNull
                     @Override
                     public SendMessageDebugger debugSendMessage(

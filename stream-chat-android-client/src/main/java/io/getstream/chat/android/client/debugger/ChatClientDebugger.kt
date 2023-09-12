@@ -16,12 +16,23 @@
 
 package io.getstream.chat.android.client.debugger
 
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.models.Message
 
 /**
  * Debugs the [io.getstream.chat.android.client.ChatClient].
  */
 public interface ChatClientDebugger {
+
+    /**
+     * Called when a non-fatal error occurs.
+     *
+     * @param tag The location where the error occurred.
+     * @param src The source of the error.
+     * @param desc The description of the error.
+     * @param error The error that occurred.
+     */
+    public fun onNonFatalErrorOccurred(tag: String, src: String, desc: String, error: ChatError) {}
 
     /**
      * Creates an instance of [SendMessageDebugger] that allows you to debug the sending process of a message.
