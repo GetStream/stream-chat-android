@@ -17,6 +17,7 @@
 
 ### ✅ Added
 - Added `ChatClientDebugger.onNonFatalErrorOccurred` to handle non-fatal errors. [#4959](https://github.com/GetStream/stream-chat-android/pull/4959)
+- Added `Message.deletedReplyCount` property. [#4950](https://github.com/GetStream/stream-chat-android/pull/4950)
 
 ### ⚠️ Changed
 
