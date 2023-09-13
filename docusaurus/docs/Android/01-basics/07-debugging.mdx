@@ -37,13 +37,15 @@ To debug a message sending flow you can override `ChatClientDebugger.debugSendMe
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
+import io.getstream.result.Error
+
 class CustomChatClientDebugger : ChatClientDebugger {
 
     override fun onNonFatalErrorOccurred(
         tag: String,
         src: String,
         desc: String,
-        error: ChatError
+        error: Error,
     ) {
         // TODO: Implement your custom logic here
     }
@@ -68,6 +70,8 @@ class CustomChatClientDebugger : ChatClientDebugger {
 <TabItem value="java" label="Java">
 
 ```java
+import io.getstream.result.Error;
+
 class CustomChatClientDebugger implements ChatClientDebugger {
 
     @Override
@@ -75,7 +79,7 @@ class CustomChatClientDebugger implements ChatClientDebugger {
             @NonNull String tag,
             @NonNull String src,
             @NonNull String desc,
-            @NonNull ChatError error
+            @NonNull Error error
     ) {
         // TODO: Implement your custom logic here
     }
