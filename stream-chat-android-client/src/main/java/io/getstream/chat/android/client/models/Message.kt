@@ -74,6 +74,11 @@ public data class Message(
     var replyCount: Int = 0,
 
     /**
+     * The number of deleted replies to this message
+     */
+    var deletedReplyCount: Int = 0,
+
+    /**
      * A mapping between reaction type and the count, ie like:10, heart:4
      */
     var reactionCounts: MutableMap<String, Int> = mutableMapOf(),
@@ -235,6 +240,7 @@ public data class Message(
             "parentId" -> parentId
             "command" -> command
             "replyCount" -> replyCount
+            "deletedReplyCount" -> deletedReplyCount
             "type" -> type
             "createdAt" -> createdAt
             "updatedAt" -> updatedAt
@@ -262,6 +268,7 @@ public data class Message(
         if (mentionedUsersIds.isNotEmpty()) append(", mentionedUsersIds=").append(mentionedUsersIds)
         if (mentionedUsers.isNotEmpty()) append(", mentionedUsers=").append(mentionedUsers)
         if (replyCount > 0) append(", replyCount=").append(replyCount)
+        if (deletedReplyCount > 0) append(", deletedReplyCount=").append(deletedReplyCount)
         if (reactionCounts.isNotEmpty()) append(", reactionCounts=").append(reactionCounts)
         if (reactionScores.isNotEmpty()) append(", reactionScores=").append(reactionScores)
         append(", syncStatus=").append(syncStatus)

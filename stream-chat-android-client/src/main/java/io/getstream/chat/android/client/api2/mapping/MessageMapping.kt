@@ -69,6 +69,7 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         reactionCounts = reaction_counts.orEmpty().toMutableMap(),
         reactionScores = reaction_scores.orEmpty().toMutableMap(),
         replyCount = reply_count,
+        deletedReplyCount = deleted_reply_count,
         replyMessageId = quoted_message_id,
         replyTo = quoted_message?.toDomain(),
         shadowed = shadowed,
