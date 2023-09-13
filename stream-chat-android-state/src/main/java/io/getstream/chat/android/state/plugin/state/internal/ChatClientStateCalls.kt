@@ -44,7 +44,7 @@ internal class ChatClientStateCalls(
     private val globalState: GlobalState,
     private val scope: CoroutineScope,
 ) {
-    private val logger by taggedLogger("ChatClientState")
+    private val logger by taggedLogger("Chat:ClientStateCalls")
 
     /**
      * Deferred value of StateRegistry.

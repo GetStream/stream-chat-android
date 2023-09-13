@@ -56,17 +56,27 @@ internal class NetworkStateProvider(
     private val isRegistered: AtomicBoolean = AtomicBoolean(false)
 
     private fun notifyListenersIfNetworkStateChanged() {
+        val isNowConnected = isConnected()
+        if (!isConnected && isNowConnected) {
+            logger.i { "Network connected." }
+            isConnected = true
+            listeners.onConnected()
+        } else if (isConnected && !isNowConnected) {
+            logger.i { "Network disconnected." }
+            isConnected = false
+            listeners.onDisconnected()
+        }
+    }
+
+    private fun Set<NetworkStateListener>.onConnected() {
         scope.launch {
-            val isNowConnected = isConnected()
-            if (!isConnected && isNowConnected) {
-                logger.i { "Network connected." }
-                isConnected = true
-                listeners.forEach { it.onConnected() }
-            } else if (isConnected && !isNowConnected) {
-                logger.i { "Network disconnected." }
-                isConnected = false
-                listeners.forEach { it.onDisconnected() }
-            }
+            forEach { it.onConnected() }
+        }
+    }
+
+    private fun Set<NetworkStateListener>.onDisconnected() {
+        scope.launch {
+            forEach { it.onDisconnected() }
         }
     }
 
