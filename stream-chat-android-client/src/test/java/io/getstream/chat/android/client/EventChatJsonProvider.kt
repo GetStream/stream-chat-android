@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client
 
+import org.intellij.lang.annotations.Language
+
 internal fun createChannelDeletedEventStringJson() =
     createChatEventStringJson(
         "channel.deleted",
@@ -518,6 +520,7 @@ internal fun createNewMessageWithoutUnreadCountsEventStringJson() =
 internal fun createUnknownEventStringJson(type: String = "unknown_event") =
     createChatEventStringJson(type, null)
 
+@Language("JSON")
 private fun createChatEventStringJson(type: String, payload: String?) =
     """
         {"type": "$type",
@@ -526,6 +529,7 @@ private fun createChatEventStringJson(type: String, payload: String?) =
          }
     """.trimIndent()
 
+@Language("JSON")
 private fun createUserJsonString() =
     """
         {
@@ -547,6 +551,7 @@ private fun createUserJsonString() =
           }
     """.trimIndent()
 
+@Language("JSON")
 private fun createMessageJsonString() =
     """
         {
@@ -560,6 +565,7 @@ private fun createMessageJsonString() =
             "reaction_counts": { },
             "reaction_scores": { },
             "reply_count": 0,
+            "deleted_reply_count": 0,
             "created_at": "2020-06-29T06:14:28.000Z",
             "updated_at": "2020-06-29T06:14:28.000Z",
             "mentioned_users": [ ],
@@ -569,6 +575,7 @@ private fun createMessageJsonString() =
         }
     """.trimIndent()
 
+@Language("JSON")
 private fun createMemberJsonString() =
     """
         {
@@ -579,6 +586,7 @@ private fun createMemberJsonString() =
         }
     """.trimIndent()
 
+@Language("JSON")
 private fun createChannelJsonString() =
     """
         {
@@ -598,6 +606,7 @@ private fun createChannelJsonString() =
   }
     """.trimIndent()
 
+@Language("JSON")
 private fun createConfigJsonString() =
     """
         {
@@ -631,6 +640,7 @@ private fun createConfigJsonString() =
         }
     """.trimIndent()
 
+@Language("JSON")
 private fun createReactionJsonString() =
     """
         {
@@ -643,6 +653,7 @@ private fun createReactionJsonString() =
         }
     """.trimIndent()
 
+@Language("JSON")
 internal fun createMarkAllReadEventStringJson() =
     """
         {
