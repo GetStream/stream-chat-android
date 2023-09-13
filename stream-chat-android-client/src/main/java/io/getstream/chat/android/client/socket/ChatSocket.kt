@@ -103,13 +103,12 @@ internal open class ChatSocket(
                 logger.i { "[onSocketStateChanged] state: $state" }
                 when (state) {
                     is State.RestartConnection -> {
-                        logger.w { "[onSocketStateChanged] reconnect on resume" }
                         connectionConf?.let { chatSocketStateService.onReconnect(it, false) } ?: run {
                             logger.e { "[onSocketStateChanged] #reconnect; connectionConf is null" }
                             clientDebugger?.onNonFatalErrorOccurred(
                                 tag = TAG,
                                 src = "onSocketStateChanged",
-                                desc = "Failed to reconnect socket on app resume",
+                                desc = "Failed to reconnect socket on ${state.reason}",
                                 error = Error.GenericError("connectionConf is null"),
                             )
                         }
