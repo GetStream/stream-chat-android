@@ -53,6 +53,8 @@ internal data class ReplyMessageInnerEntity(
 
     /** the number of replies */
     val replyCount: Int = 0,
+    /** the number of deleted replies */
+    val deletedReplyCount: Int = 0,
     /** when the message was created */
     val createdAt: Date? = null,
     /** when the message was created locally */
