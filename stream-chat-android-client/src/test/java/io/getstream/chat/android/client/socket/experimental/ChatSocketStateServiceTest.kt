@@ -19,8 +19,8 @@ package io.getstream.chat.android.client.socket.experimental
 import io.getstream.chat.android.client.Mother
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.socket.ChatSocketStateService
-import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.ChatSocketStateService.RestartReason
+import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomChatNetworkError
