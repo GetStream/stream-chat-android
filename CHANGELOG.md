@@ -15,7 +15,8 @@
 
 ### ⬆️ Improved
 
-### ✅ Added`
+### ✅ Added
+- Added `Message.deletedReplyCount` property. [#4960](https://github.com/GetStream/stream-chat-android/pull/4960)
 
 ### ⚠️ Changed
 
