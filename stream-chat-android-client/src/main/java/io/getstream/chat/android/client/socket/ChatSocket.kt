@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.socket
 import io.getstream.chat.android.client.LifecycleHandler
 import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.clientstate.DisconnectCause
+import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -48,9 +49,10 @@ internal open class ChatSocket(
     private val userScope: UserScope,
     private val lifecycleObserver: StreamLifecycleObserver,
     private val networkStateProvider: NetworkStateProvider,
+    private val clientDebugger: ChatClientDebugger? = null,
 ) {
     private var streamWebSocket: StreamWebSocket? = null
-    private val logger by taggedLogger("Chat:Socket")
+    private val logger by taggedLogger(TAG)
     private var connectionConf: SocketFactory.ConnectionConf? = null
     private val listeners = mutableSetOf<SocketListener>()
     private val chatSocketStateService = ChatSocketStateService()
@@ -101,7 +103,16 @@ internal open class ChatSocket(
                 logger.i { "[onSocketStateChanged] state: $state" }
                 when (state) {
                     is State.RestartConnection -> {
-                        connectionConf?.let { chatSocketStateService.onReconnect(it, false) }
+                        logger.w { "[onSocketStateChanged] reconnect on resume" }
+                        connectionConf?.let { chatSocketStateService.onReconnect(it, false) } ?: run {
+                            logger.e { "[onSocketStateChanged] #reconnect; connectionConf is null" }
+                            clientDebugger?.onNonFatalErrorOccurred(
+                                tag = TAG,
+                                src = "onSocketStateChanged",
+                                desc = "Failed to reconnect socket on app resume",
+                                error = Error.GenericError("connectionConf is null"),
+                            )
+                        }
                     }
                     is State.Connected -> {
                         healthMonitor.ack()
@@ -306,6 +317,7 @@ internal open class ChatSocket(
         }
 
     companion object {
+        private const val TAG = "Chat:Socket"
         private const val DEFAULT_CONNECTION_TIMEOUT = 60_000L
     }
 }

@@ -20,9 +20,14 @@ import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.debugger.SendMessageDebugger
 import io.getstream.chat.android.models.Message
 import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
 
 class CustomChatClientDebugger : ChatClientDebugger {
+
+    override fun onNonFatalErrorOccurred(tag: String, src: String, desc: String, error: Error) {
+        // TODO: Implement your custom logic here
+    }
 
     override fun debugSendMessage(
         channelType: String,

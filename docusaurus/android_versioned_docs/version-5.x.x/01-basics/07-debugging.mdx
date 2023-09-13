@@ -40,9 +40,9 @@ To debug a message sending flow you can override `ChatClientDebugger.debugSendMe
 class CustomChatClientDebugger : ChatClientDebugger {
 
     override fun onNonFatalErrorOccurred(
-        tag: String,
-        src: String,
-        desc: String,
+        tag: String, 
+        src: String, 
+        desc: String, 
         error: ChatError
     ) {
         // TODO: Implement your custom logic here
@@ -72,10 +72,10 @@ class CustomChatClientDebugger implements ChatClientDebugger {
 
     @Override
     public void onNonFatalErrorOccurred(
-            @NonNull String tag,
-            @NonNull String src,
-            @NonNull String desc,
-            @NonNull ChatError error
+        @NonNull String tag, 
+        @NonNull String src, 
+        @NonNull String desc, 
+        @NonNull ChatError error
     ) {
         // TODO: Implement your custom logic here
     }
