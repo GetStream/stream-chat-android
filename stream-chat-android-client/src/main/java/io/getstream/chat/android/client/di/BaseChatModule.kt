@@ -49,6 +49,7 @@ import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.UserStateService
+import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.notifications.ChatNotifications
@@ -85,6 +86,7 @@ internal open class BaseChatModule(
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val customOkHttpClient: OkHttpClient? = null,
+    private val clientDebugger: ChatClientDebugger? = null,
     private val lifecycle: Lifecycle,
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
@@ -221,6 +223,7 @@ internal open class BaseChatModule(
         userScope,
         lifecycleObserver,
         networkStateProvider,
+        clientDebugger,
     )
 
     @Suppress("RemoveExplicitTypeArguments")

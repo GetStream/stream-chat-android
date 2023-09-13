@@ -197,7 +197,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
             state<State.Disconnected.Stopped> {
                 onEvent<Event.RequiredDisconnection> { State.Disconnected.DisconnectedByRequest }
                 onEvent<Event.Connect> { State.Connecting(it.connectionConf, it.connectionType) }
-                onEvent<Event.Resume> { State.RestartConnection }
+                onEvent<Event.Resume> { State.RestartConnection(RestartReason.LIFECYCLE_RESUME) }
             }
 
             state<State.Disconnected.NetworkDisconnected> {
@@ -207,7 +207,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
                 onEvent<Event.NetworkError> { State.Disconnected.DisconnectedTemporarily(it.error) }
                 onEvent<Event.RequiredDisconnection> { State.Disconnected.DisconnectedByRequest }
                 onEvent<Event.Stop> { State.Disconnected.Stopped }
-                onEvent<Event.NetworkAvailable> { State.RestartConnection }
+                onEvent<Event.NetworkAvailable> { State.RestartConnection(RestartReason.NETWORK_AVAILABLE) }
             }
 
             state<State.Disconnected.WebSocketEventLost> {
@@ -259,6 +259,11 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
         INITIAL_CONNECTION,
         AUTOMATIC_RECONNECTION,
         FORCE_RECONNECTION,
+    }
+
+    internal enum class RestartReason {
+        LIFECYCLE_RESUME,
+        NETWORK_AVAILABLE,
     }
 
     private sealed class Event {
@@ -322,7 +327,7 @@ internal class ChatSocketStateService(initialState: State = State.Disconnected.S
         /**
          * State of socket when connection need to be reestablished.
          */
-        object RestartConnection : State() { override fun toString() = "RestartConnection" }
+        data class RestartConnection(val reason: RestartReason) : State()
 
         /**
          * State of socket when connection is being establishing.

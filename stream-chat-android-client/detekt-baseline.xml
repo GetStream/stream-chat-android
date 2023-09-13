@@ -6,8 +6,9 @@
     <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
     <ID>LongMethod:ChatClient.kt$ChatClient$private suspend fun handleEvent(event: ChatEvent)</ID>
     <ID>LongMethod:ChatClientDebuggerTest.kt$ChatClientDebuggerTest$@BeforeEach fun setUp()</ID>
+    <ID>LongMethod:ChatSocket.kt$ChatSocket$@Suppress("ComplexMethod") private fun observeSocketStateService(): Job</ID>
     <ID>LongMethod:PinnedMessagesRequest.kt$PinnedMessagesRequest.Companion$fun create( limit: Int, sort: QuerySorter&lt;Message>, pagination: PinnedMessagesPagination, ): PinnedMessagesRequest</ID>
-    <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
+    <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val clientDebugger: ChatClientDebugger? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
     <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$127f</ID>
     <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$16</ID>
     <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$1_000_000f</ID>

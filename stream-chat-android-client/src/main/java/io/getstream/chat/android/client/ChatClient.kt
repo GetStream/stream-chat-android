@@ -3129,6 +3129,7 @@ internal constructor(
                     fileUploader,
                     tokenManager,
                     customOkHttpClient,
+                    clientDebugger,
                     lifecycle,
                 )
 

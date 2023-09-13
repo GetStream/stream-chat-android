@@ -740,11 +740,13 @@ public final class io/getstream/chat/android/client/clientstate/DisconnectCause$
 
 public abstract interface class io/getstream/chat/android/client/debugger/ChatClientDebugger {
 	public abstract fun debugSendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Z)Lio/getstream/chat/android/client/debugger/SendMessageDebugger;
+	public abstract fun onNonFatalErrorOccurred (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/result/Error;)V
 }
 
 public final class io/getstream/chat/android/client/debugger/ChatClientDebugger$DefaultImpls {
 	public static fun debugSendMessage (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Z)Lio/getstream/chat/android/client/debugger/SendMessageDebugger;
 	public static synthetic fun debugSendMessage$default (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)Lio/getstream/chat/android/client/debugger/SendMessageDebugger;
+	public static fun onNonFatalErrorOccurred (Lio/getstream/chat/android/client/debugger/ChatClientDebugger;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/result/Error;)V
 }
 
 public abstract interface class io/getstream/chat/android/client/debugger/SendMessageDebugger {

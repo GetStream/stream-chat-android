@@ -8,6 +8,7 @@ import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.debugger.ChatClientDebugger;
 import io.getstream.chat.android.client.debugger.SendMessageDebugger;
 import io.getstream.chat.android.models.Message;
+import io.getstream.result.Error;
 import io.getstream.result.Result;
 
 /**
@@ -18,6 +19,11 @@ public class Debugging {
     public void addClientDebugger(@NonNull Context context) {
         final ChatClient chatClient = new ChatClient.Builder("apiKey", context)
                 .clientDebugger(new ChatClientDebugger() {
+                    @Override
+                    public void onNonFatalErrorOccurred(@NonNull String tag, @NonNull String src, @NonNull String desc, @NonNull Error error) {
+                        // TODO: Implement your custom logic here
+                    }
+
                     @NonNull
                     @Override
                     public SendMessageDebugger debugSendMessage(
