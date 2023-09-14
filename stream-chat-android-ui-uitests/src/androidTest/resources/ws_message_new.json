@@ -17,7 +17,7 @@
   "created_at": "2022-03-10T14:30:34.052003307Z",
   "message": {
     "updated_at": "2022-03-10T14:30:34.037207Z",
-    "reply_count": 0,
+    "deleted_reply_count": 0,
     "html": "<p>Message text</p>\n",
     "type": "regular",
     "own_reactions": [],
