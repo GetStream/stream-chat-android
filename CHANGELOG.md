@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed Push Notifications for not working with R8 enabled. [#4961](https://github.com/GetStream/stream-chat-android/pull/4961)
 
 ### ⬆️ Improved
 
