@@ -26,7 +26,6 @@ import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
-import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.launch
@@ -41,7 +40,6 @@ import kotlinx.coroutines.flow.first
  */
 internal class ChatClientStateCalls(
     private val chatClient: ChatClient,
-    private val globalState: GlobalState,
     private val scope: CoroutineScope,
 ) {
     private val logger by taggedLogger("Chat:ClientStateCalls")

@@ -93,7 +93,6 @@ public class StatePlugin internal constructor(
     private val queryingChannelsFree: MutableStateFlow<Boolean>,
     private val statePluginConfig: StatePluginConfig,
 ) : Plugin,
-    DependencyResolver,
     QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
     QueryChannelListener by QueryChannelListenerState(logic),
     ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),

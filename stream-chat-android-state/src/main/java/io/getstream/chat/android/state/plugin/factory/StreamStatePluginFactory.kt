@@ -20,9 +20,11 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.errorhandler.StateErrorHandlerFactory
@@ -32,8 +34,10 @@ import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.chat.android.state.sync.internal.OfflineSyncFirebaseMessagingHandler
+import io.getstream.chat.android.state.sync.internal.SyncHistoryManager
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
@@ -43,6 +47,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.job
+import kotlin.reflect.KClass
 
 /**
  * Implementation of [PluginFactory] that provides [StatePlugin].
@@ -56,12 +61,23 @@ public class StreamStatePluginFactory(
 ) : PluginFactory {
     private val logger by taggedLogger("Chat:StatePluginFactory")
 
+    @InternalStreamChatApi
+    override fun <T : Any> resolveDependency(klass: KClass<T>): T? {
+        return when (klass) {
+            StatePluginConfig::class -> config as T
+            else -> null
+        }
+    }
+
     /**
      * Creates a [Plugin]
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin = createStatePlugin(user)
+    override fun get(user: User): Plugin {
+        logger.d { "[get] user.id: ${user.id}" }
+        return createStatePlugin(user)
+    }
 
     private fun createStatePlugin(user: User): StatePlugin {
         val exceptionHandler = CoroutineExceptionHandler { context, throwable ->
@@ -81,7 +97,7 @@ public class StreamStatePluginFactory(
         scope: CoroutineScope,
         mutableGlobalState: MutableGlobalState,
     ): StatePlugin {
-        logger.i { "[createStatePlugin] no args" }
+        logger.v { "[createStatePlugin] user.id: ${user.id}" }
         val chatClient = ChatClient.instance()
         val repositoryFacade = chatClient.repositoryFacade
         val clientState = chatClient.clientState

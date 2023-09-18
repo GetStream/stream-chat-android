@@ -76,7 +76,6 @@ internal class OfflinePlugin(
     private val fetchCurrentUserListener: FetchCurrentUserListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
 ) : Plugin,
-    DependencyResolver,
     QueryChannelListener by queryChannelListener,
     ThreadQueryListener by threadQueryListener,
     EditMessageListener by editMessageListener,

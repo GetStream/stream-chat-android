@@ -64,7 +64,7 @@ public class DependencyResolverTest {
             client.resolveDependency<PluginDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
-            .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved from plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency'")
+            .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency'")
     }
 
     /** This method use [initializationStatesArguments] as a source of arguments. */

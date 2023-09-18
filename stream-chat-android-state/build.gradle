@@ -83,6 +83,7 @@ dependencies {
     testImplementation Dependencies.androidxTestJunit
     testImplementation Dependencies.androidxArchCoreTest
     testImplementation Dependencies.androidxRecyclerview // for performance test
+    testImplementation Dependencies.androidxLifecycleTesting
     testImplementation Dependencies.roomTesting
     testImplementation Dependencies.workTesting
 
