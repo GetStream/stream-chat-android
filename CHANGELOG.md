@@ -1,96 +1,19 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# September 18th, 2023 - 6.0.3
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed Push Notifications for not working with R8 enabled. [#4961](https://github.com/GetStream/stream-chat-android/pull/4961)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added `ChatClientDebugger.onNonFatalErrorOccurred` to handle non-fatal errors. [#4959](https://github.com/GetStream/stream-chat-android/pull/4959)
 - Added `Message.deletedReplyCount` property. [#4950](https://github.com/GetStream/stream-chat-android/pull/4950)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fixed `ChatClient.watchChannelAsState` to be called without connecting a user. [#4962](https://github.com/GetStream/stream-chat-android/pull/4962)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed user avatar click on channel list view. [#4957](https://github.com/GetStream/stream-chat-android/pull/4957)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 11th, 2023 - 6.0.2
 ## stream-chat-android-client
