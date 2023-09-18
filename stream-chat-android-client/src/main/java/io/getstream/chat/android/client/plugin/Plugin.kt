@@ -54,7 +54,8 @@ import java.util.Date
  * Plugin is an extension for [ChatClient].
  */
 @Suppress("TooManyFunctions")
-public interface Plugin : DependencyResolver,
+public interface Plugin :
+    DependencyResolver,
     QueryMembersListener,
     DeleteReactionListener,
     SendReactionListener,

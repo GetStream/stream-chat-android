@@ -332,7 +332,7 @@ internal constructor(
         StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
         val initState = clientState.initializationState.value
         if (initState != InitializationState.COMPLETE) {
-            StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState "}
+            StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
             throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
         }
         val resolver = plugins.find { plugin ->

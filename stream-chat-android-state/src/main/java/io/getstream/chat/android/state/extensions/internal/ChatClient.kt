@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.extensions.internal
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.internal.ChatClientStateCalls
