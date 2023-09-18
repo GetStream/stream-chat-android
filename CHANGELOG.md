@@ -37,6 +37,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed `ChatClient.watchChannelAsState` to be called without connecting a user. [#4962](https://github.com/GetStream/stream-chat-android/pull/4962)
 
 ### ⬆️ Improved
 

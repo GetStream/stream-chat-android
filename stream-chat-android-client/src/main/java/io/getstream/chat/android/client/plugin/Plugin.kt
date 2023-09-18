@@ -55,6 +55,7 @@ import java.util.Date
  */
 @Suppress("TooManyFunctions")
 public interface Plugin :
+    DependencyResolver,
     QueryMembersListener,
     DeleteReactionListener,
     SendReactionListener,

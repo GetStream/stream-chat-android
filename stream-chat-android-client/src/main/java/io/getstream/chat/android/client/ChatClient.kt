@@ -194,6 +194,7 @@ import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.coroutines.CoroutineContext
+import kotlin.reflect.full.isSubclassOf
 import kotlin.time.Duration.Companion.days
 
 /**
@@ -216,14 +217,15 @@ internal constructor(
     internal val retryPolicy: RetryPolicy,
     private val appSettingsManager: AppSettingManager,
     private val chatSocket: ChatSocket,
-    private val pluginFactories: List<PluginFactory>,
+    @InternalStreamChatApi
+    public val pluginFactories: List<PluginFactory>,
     private val mutableClientState: MutableClientState,
     private val currentUserFetcher: CurrentUserFetcher,
     private val repositoryFactoryProvider: RepositoryFactory.Provider,
     @InternalStreamChatApi
     public val audioPlayer: AudioPlayer,
 ) {
-    private val logger by taggedLogger("Chat:Client")
+    private val logger by taggedLogger(TAG)
     private val waitConnection = MutableSharedFlow<Result<ConnectionData>>()
     public val clientState: ClientState = mutableClientState
 
@@ -250,6 +252,15 @@ internal constructor(
      */
     @InternalStreamChatApi
     public fun inheritScope(block: (Job) -> CoroutineContext): CoroutineScope {
+        if (userScope.userId.value == null) {
+            logger.e { "[inheritScope] userId is null" }
+            clientDebugger.onNonFatalErrorOccurred(
+                tag = TAG,
+                src = "inheritScope",
+                desc = "ChatClient::connectUser() must be called before inheriting scope",
+                error = Error.GenericError("userScope.userId.value is null"),
+            )
+        }
         return userScope + block(userScope.coroutineContext.job)
     }
 
@@ -277,7 +288,7 @@ internal constructor(
     public var plugins: List<Plugin> = emptyList()
 
     /**
-     * Resolves dependency [T] within the provided plugin [P].
+     * Resolves dependency [T] within the provided plugin [DR].
      * This method can't be called before user is connected because plugins are added only after user
      * connection is completed.
      *
@@ -287,19 +298,51 @@ internal constructor(
     @InternalStreamChatApi
     @Throws(IllegalStateException::class)
     @Suppress("ThrowsCount")
-    public inline fun <reified P : Plugin, reified T : Any> resolveDependency(): T {
-        if (clientState.initializationState.value != InitializationState.COMPLETE) {
+    public inline fun <reified DR : DependencyResolver, reified T : Any> resolveDependency(): T {
+        StreamLog.d(TAG) { "[resolveDependency] DR: ${DR::class.simpleName}, T: ${T::class.simpleName}" }
+        return when {
+            DR::class.isSubclassOf(PluginFactory::class) -> resolveFactoryDependency<DR, T>()
+            DR::class.isSubclassOf(Plugin::class) -> resolvePluginDependency<DR, T>()
+            else -> error("Unsupported dependency resolver: ${DR::class}")
+        }
+    }
+
+    @PublishedApi
+    @InternalStreamChatApi
+    @Throws(IllegalStateException::class)
+    @Suppress("ThrowsCount")
+    internal inline fun <reified F : DependencyResolver, reified T : Any> resolveFactoryDependency(): T {
+        StreamLog.v(TAG) { "[resolveFactoryDependency] F: ${F::class.simpleName}, T: ${T::class.simpleName}" }
+        val resolver = pluginFactories.find { plugin ->
+            plugin is F
+        } ?: throw IllegalStateException(
+            "Factory '${F::class.qualifiedName}' was not found. Did you init it within ChatClient?",
+        )
+        return resolver.resolveDependency(T::class)
+            ?: throw IllegalStateException(
+                "Dependency '${T::class.qualifiedName}' was not resolved by factory '${F::class.qualifiedName}'",
+            )
+    }
+
+    @PublishedApi
+    @InternalStreamChatApi
+    @Throws(IllegalStateException::class)
+    @Suppress("ThrowsCount")
+    internal inline fun <reified P : DependencyResolver, reified T : Any> resolvePluginDependency(): T {
+        StreamLog.v(TAG) { "[resolvePluginDependency] P: ${P::class.simpleName}, T: ${T::class.simpleName}" }
+        val initState = clientState.initializationState.value
+        if (initState != InitializationState.COMPLETE) {
+            StreamLog.e(TAG) { "[resolvePluginDependency] failed (initializationState is not COMPLETE): $initState " }
             throw IllegalStateException("ChatClient::connectUser() must be called before resolving any dependency")
         }
         val resolver = plugins.find { plugin ->
-            plugin is P && plugin is DependencyResolver
-        } as? DependencyResolver
-            ?: throw IllegalStateException(
-                "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?",
-            )
+            plugin is P
+        } ?: throw IllegalStateException(
+            "Plugin '${P::class.qualifiedName}' was not found. Did you init it within ChatClient?",
+        )
         return resolver.resolveDependency(T::class)
             ?: throw IllegalStateException(
-                "Dependency '${T::class.qualifiedName}' was not resolved from plugin '${P::class.qualifiedName}'",
+                "Dependency '${T::class.qualifiedName}' was not resolved by plugin '${P::class.qualifiedName}'",
             )
     }
 
@@ -3216,6 +3259,10 @@ internal constructor(
     }
 
     public companion object {
+        @PublishedApi
+        @InternalStreamChatApi
+        internal const val TAG: String = "Chat:Client"
+
         /**
          * Header used to track which SDK is being used.
          */
