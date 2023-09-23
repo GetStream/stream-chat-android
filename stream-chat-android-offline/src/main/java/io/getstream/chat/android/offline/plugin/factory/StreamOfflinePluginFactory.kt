@@ -30,7 +30,6 @@ import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerDatabase
@@ -50,7 +49,6 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryLis
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.log.taggedLogger
-import kotlin.reflect.KClass
 
 /**
  * Implementation of [PluginFactory] that provides [OfflinePlugin].
@@ -61,15 +59,8 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
 
     private val logger by taggedLogger("Chat:OfflinePluginFactory")
 
-    @InternalStreamChatApi
-    override fun <T : Any> resolveDependency(klass: KClass<T>): T? {
-        return when (klass) {
-            else -> null
-        }
-    }
-
     override fun createRepositoryFactory(user: User): RepositoryFactory {
-        logger.d { "[createRepositoryFactory] user.id: '${user.id}'" }
+        logger.i { "[createRepositoryFactory] user.id: '${user.id}'" }
         return DatabaseRepositoryFactory(
             database = createDatabase(appContext, user),
             currentUser = user,
@@ -81,10 +72,7 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
      *
      * @return The [Plugin] instance.
      */
-    override fun get(user: User): Plugin {
-        logger.d { "[get] user.id: ${user.id}" }
-        return createOfflinePlugin(user)
-    }
+    override fun get(user: User): Plugin = createOfflinePlugin(user)
 
     /**
      * Tries to get cached [OfflinePlugin] instance for the user if it exists or
@@ -94,7 +82,6 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
      */
     @Suppress("LongMethod")
     private fun createOfflinePlugin(user: User): OfflinePlugin {
-        logger.v { "[createOfflinePlugin] user.id: ${user.id}" }
         ChatClient.OFFLINE_SUPPORT_ENABLED = true
 
         val chatClient = ChatClient.instance()

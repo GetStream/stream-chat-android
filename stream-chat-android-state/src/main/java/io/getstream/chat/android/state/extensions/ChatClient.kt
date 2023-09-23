@@ -33,7 +33,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
@@ -41,7 +40,6 @@ import io.getstream.chat.android.state.extensions.internal.logic
 import io.getstream.chat.android.state.extensions.internal.parseAttachmentNameFromUrl
 import io.getstream.chat.android.state.extensions.internal.requestsAsState
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
-import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
@@ -57,7 +55,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -90,7 +87,7 @@ public val ChatClient.globalState: GlobalState
  * @throws IllegalArgumentException If the StatePluginConfig was not initialized yet.
  */
 internal val ChatClient.stateConfig: StatePluginConfig
-    get() = resolveDependency<StreamStatePluginFactory, StatePluginConfig>()
+    get() = resolveDependency<StatePlugin, StatePluginConfig>()
 
 /**
  * Performs [ChatClient.queryChannels] under the hood and returns [QueryChannelsState] associated with the query.
@@ -190,13 +187,13 @@ private fun <T> ChatClient.getStateOrNull(
     coroutineScope: CoroutineScope,
     producer: suspend () -> T,
 ): StateFlow<T?> {
-    return clientState.initializationState.combine(clientState.user) { initializationState, user ->
-        if (initializationState == InitializationState.COMPLETE && user != null) {
-            producer()
-        } else {
+    return clientState.user.map { it?.id }.distinctUntilChanged().map { userId ->
+        if (userId == null) {
             null
+        } else {
+            producer()
         }
-    }.distinctUntilChanged().stateIn(coroutineScope, SharingStarted.Eagerly, null)
+    }.stateIn(coroutineScope, SharingStarted.Eagerly, null)
 }
 
 /**

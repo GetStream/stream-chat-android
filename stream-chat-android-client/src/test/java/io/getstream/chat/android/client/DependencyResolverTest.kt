@@ -17,8 +17,8 @@
 package io.getstream.chat.android.client
 
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
-import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.InitializationState
@@ -51,12 +51,6 @@ public class DependencyResolverTest {
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("Plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency' was not found. Did you init it within ChatClient?")
-
-        invoking {
-            client.resolveDependency<FactoryDependency, SomeDependency>()
-        }
-            .`should throw`(IllegalStateException::class)
-            .`with message`("Factory 'io.getstream.chat.android.client.DependencyResolverTest.FactoryDependency' was not found. Did you init it within ChatClient?")
     }
 
     @Test
@@ -64,20 +58,13 @@ public class DependencyResolverTest {
         val client = Fixture()
             .with(InitializationState.COMPLETE)
             .with(PluginDependency(emptyMap()))
-            .with(FactoryDependency(emptyMap()))
             .get()
 
         invoking {
             client.resolveDependency<PluginDependency, SomeDependency>()
         }
             .`should throw`(IllegalStateException::class)
-            .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency'")
-
-        invoking {
-            client.resolveDependency<FactoryDependency, SomeDependency>()
-        }
-            .`should throw`(IllegalStateException::class)
-            .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by factory 'io.getstream.chat.android.client.DependencyResolverTest.FactoryDependency'")
+            .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved from plugin 'io.getstream.chat.android.client.DependencyResolverTest.PluginDependency'")
     }
 
     /** This method use [initializationStatesArguments] as a source of arguments. */
@@ -89,7 +76,6 @@ public class DependencyResolverTest {
         val client = Fixture()
             .with(initializationState)
             .with(PluginDependency(emptyMap()))
-            .with(FactoryDependency(emptyMap()))
             .get()
 
         invoking {
@@ -97,12 +83,6 @@ public class DependencyResolverTest {
         }
             .`should throw`(IllegalStateException::class)
             .`with message`("ChatClient::connectUser() must be called before resolving any dependency")
-
-        invoking {
-            client.resolveDependency<FactoryDependency, SomeDependency>()
-        }
-            .`should throw`(IllegalStateException::class)
-            .`with message`("Dependency 'io.getstream.chat.android.client.DependencyResolverTest.SomeDependency' was not resolved by factory 'io.getstream.chat.android.client.DependencyResolverTest.FactoryDependency'")
     }
 
     @Test
@@ -111,14 +91,11 @@ public class DependencyResolverTest {
         val client = Fixture()
             .with(InitializationState.COMPLETE)
             .with(PluginDependency(mapOf(SomeDependency::class to expectedDependency)))
-            .with(FactoryDependency(mapOf(SomeDependency::class to expectedDependency)))
             .get()
 
-        val pResult = client.resolveDependency<PluginDependency, SomeDependency>()
-        val fResult = client.resolveDependency<FactoryDependency, SomeDependency>()
+        val result = client.resolveDependency<PluginDependency, SomeDependency>()
 
-        pResult `should be` expectedDependency
-        fResult `should be` expectedDependency
+        result `should be` expectedDependency
     }
 
     public companion object {
@@ -131,16 +108,11 @@ public class DependencyResolverTest {
     }
 
     private class Fixture {
-        var plugins: MutableList<Plugin> = arrayListOf()
-        var pluginFactories: MutableList<PluginFactory> = arrayListOf()
+        var plugins: List<Plugin> = emptyList()
         val mutableClientState: MutableClientState = mock()
 
         fun with(plugin: Plugin) = apply {
-            plugins.add(plugin)
-        }
-
-        fun with(factory: PluginFactory) = apply {
-            pluginFactories.add(factory)
+            plugins = plugins + plugin
         }
 
         fun with(state: InitializationState) = apply {
@@ -160,7 +132,7 @@ public class DependencyResolverTest {
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocket = mock(),
-            pluginFactories = pluginFactories,
+            pluginFactories = mock(),
             repositoryFactoryProvider = mock(),
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
@@ -172,7 +144,7 @@ public class DependencyResolverTest {
 
     private class PluginDependency(
         private val classes: Map<KClass<*>, Any>,
-    ) : Plugin {
+    ) : Plugin, DependencyResolver {
         override val errorHandler: ErrorHandler? = null
         override fun onUserSet(user: User) {
             /** NO-OP */
@@ -180,19 +152,6 @@ public class DependencyResolverTest {
 
         override fun onUserDisconnected() {
             /** NO-OP */
-        }
-
-        @InternalStreamChatApi
-        override fun <T : Any> resolveDependency(klass: KClass<T>): T? =
-            classes[klass] as? T
-    }
-
-    private class FactoryDependency(
-        private val classes: Map<KClass<*>, Any>,
-    ) : PluginFactory {
-        override fun get(user: User): Plugin {
-            /** NO-OP */
-            TODO("not implemented")
         }
 
         @InternalStreamChatApi
