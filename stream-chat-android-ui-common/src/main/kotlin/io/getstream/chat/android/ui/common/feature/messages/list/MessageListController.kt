@@ -520,6 +520,20 @@ public class MessageListController(
         reads: StateFlow<List<ChannelUserRead>>,
     ) {
         threadJob = scope.launch {
+            user.onEach {
+                _threadListState.value = _threadListState.value.copy(currentUser = it)
+            }.launchIn(this)
+
+            endOfOlderMessages.onEach {
+                _threadListState.value = _threadListState.value.copy(
+                    endOfOldMessagesReached = it,
+                    isLoadingOlderMessages = when {
+                        it -> false
+                        else -> _threadListState.value.isLoadingOlderMessages
+                    },
+                )
+            }.launchIn(this)
+
             combine(
                 messages,
                 reads,
@@ -575,20 +589,6 @@ public class MessageListController(
                 _threadListState.value = newState.copy(newMessageState = newMessageState)
                 if (newMessageState != null) lastLoadedThreadMessage = newLastMessage
             }
-
-            user.onEach {
-                _messageListState.value = _threadListState.value.copy(currentUser = it)
-            }.launchIn(this)
-
-            endOfOlderMessages.onEach {
-                _threadListState.value = _threadListState.value.copy(endOfOldMessagesReached = it)
-            }.launchIn(this)
-
-            // TODO separate unreads to message list unreads and thread unreads after
-            //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
-            unreadCount.onEach {
-                _threadListState.value = _messageListState.value.copy(unreadCount = it)
-            }.launchIn(scope)
         }
     }
 
@@ -853,6 +853,7 @@ public class MessageListController(
         if (_threadListState.value.endOfOldMessagesReached) return
 
         if (threadMode.threadState != null) {
+            _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
             chatClient.getRepliesMore(
                 messageId = threadMode.parentMessage.id,
                 firstId = threadMode.threadState.oldestInThread.value?.id ?: threadMode.parentMessage.id,
@@ -860,7 +861,6 @@ public class MessageListController(
             ).enqueue {
                 _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = false)
             }
-            _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = true)
         } else {
             logger.w { "Thread state must be not null for offline plugin thread load more!" }
         }
