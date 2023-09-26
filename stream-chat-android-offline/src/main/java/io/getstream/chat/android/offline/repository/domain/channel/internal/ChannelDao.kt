@@ -33,7 +33,6 @@ internal interface ChannelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMany(channelEntities: List<ChannelEntity>)
 
-    @Transaction
     @Query("SELECT cid FROM $CHANNEL_ENTITY_TABLE_NAME")
     suspend fun selectAllCids(): List<String>
 

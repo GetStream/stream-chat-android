@@ -28,7 +28,6 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.in
 internal interface ReplyMessageDao {
 
     @Query("SELECT * FROM $REPLY_MESSAGE_ENTITY_TABLE_NAME WHERE id = :id")
-    @Transaction
     suspend fun selectById(id: String): ReplyMessageEntity?
 
     @Transaction

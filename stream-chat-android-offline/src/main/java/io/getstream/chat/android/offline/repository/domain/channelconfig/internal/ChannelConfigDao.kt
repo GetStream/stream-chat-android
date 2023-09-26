@@ -47,7 +47,6 @@ internal interface ChannelConfigDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCommands(commands: List<CommandInnerEntity>)
 
-    @Transaction
     @Query("SELECT * FROM stream_chat_channel_config LIMIT 100")
     suspend fun selectAll(): List<ChannelConfigEntity>
 

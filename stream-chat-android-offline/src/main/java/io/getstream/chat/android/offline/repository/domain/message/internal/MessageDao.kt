@@ -39,7 +39,6 @@ internal interface MessageDao {
         insertReactions(messageEntities.flatMap { it.latestReactions + it.ownReactions })
     }
 
-    @Transaction
     fun deleteAttachments(messageIds: List<String>) {
         messageIds.chunked(SQLITE_MAX_VARIABLE_NUMBER).forEach(::deleteAttachmentsChunked)
     }
@@ -47,7 +46,6 @@ internal interface MessageDao {
     @Query("DELETE FROM attachment_inner_entity WHERE messageId in (:messageIds)")
     fun deleteAttachmentsChunked(messageIds: List<String>)
 
-    @Transaction
     suspend fun insert(messageEntity: MessageEntity) = insert(listOf(messageEntity))
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -91,7 +89,6 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END ASC LIMIT :limit",
     )
-    @Transaction
     suspend fun messagesForChannelNewerThan(
         cid: String,
         limit: Int = 100,
@@ -107,7 +104,6 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END ASC LIMIT :limit",
     )
-    @Transaction
     suspend fun messagesForChannelEqualOrNewerThan(
         cid: String,
         limit: Int = 100,
@@ -123,7 +119,6 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END DESC LIMIT :limit",
     )
-    @Transaction
     suspend fun messagesForChannelOlderThan(
         cid: String,
         limit: Int = 100,
@@ -139,7 +134,6 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END DESC LIMIT :limit",
     )
-    @Transaction
     suspend fun messagesForChannelEqualOrOlderThan(
         cid: String,
         limit: Int = 100,
@@ -154,7 +148,6 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END DESC LIMIT :limit",
     )
-    @Transaction
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
 
     @Query(
@@ -165,7 +158,6 @@ internal interface MessageDao {
             "ELSE createdAt " +
             "END DESC LIMIT :limit",
     )
-    @Transaction
     suspend fun messagesForThread(messageId: String, limit: Int = 100): List<MessageEntity>
 
     @Query(
@@ -182,20 +174,16 @@ internal interface MessageDao {
     )
     suspend fun deleteMessage(cid: String, messageId: String)
 
-    @Transaction
     suspend fun select(ids: List<String>): List<MessageEntity> {
         return ids.chunked(SQLITE_MAX_VARIABLE_NUMBER).flatMap { messageIds -> selectChunked(messageIds) }
     }
 
     @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE id IN (:ids)")
-    @Transaction
     suspend fun selectChunked(ids: List<String>): List<MessageEntity>
 
     @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE id IN (:id)")
-    @Transaction
     suspend fun select(id: String): MessageEntity?
 
-    @Transaction
     suspend fun selectWaitForAttachments(): List<MessageEntity> {
         return selectBySyncStatus(SyncStatus.AWAITING_ATTACHMENTS)
     }
@@ -206,7 +194,6 @@ internal interface MessageDao {
             "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC " +
             "LIMIT :limit",
     )
-    @Transaction
     suspend fun selectBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<MessageEntity>
 
     @Query(
