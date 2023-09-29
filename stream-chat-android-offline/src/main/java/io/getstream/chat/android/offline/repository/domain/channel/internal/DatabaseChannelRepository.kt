@@ -92,6 +92,16 @@ internal class DatabaseChannelRepository(
     }
 
     /**
+     * Select a channels, but without loading the messages.
+     *
+     * @param cid String
+     */
+    override suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> {
+        val entities = channelDao.select(cids = cids)
+        return entities.map { it.toModel(getUser, getMessage) }
+    }
+
+    /**
      * Selects all channels' cids.
      *
      * @return A list of channels' cids stored in the repository.

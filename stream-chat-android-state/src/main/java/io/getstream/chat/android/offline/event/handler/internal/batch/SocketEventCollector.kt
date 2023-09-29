@@ -17,8 +17,12 @@
 package io.getstream.chat.android.offline.event.handler.internal.batch
 
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
+import io.getstream.chat.android.offline.event.handler.internal.utils.realType
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -40,7 +44,7 @@ internal class SocketEventCollector(
     private val timeoutJob = TimeoutJob()
 
     internal suspend fun collect(event: ChatEvent) {
-        logger.d { "[collect] event.type: '${event.type}', event: $event" }
+        logger.d { "[collect] event.type: '${event.realType}', event.has: ${event.hashCode()}" }
         if (add(event)) {
             return
         }
@@ -50,8 +54,8 @@ internal class SocketEventCollector(
     }
 
     private suspend fun add(event: ChatEvent): Boolean {
-        if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
-            logger.d { "[add] event.type: ${event.type}(${event.hashCode()})" }
+        if (event !is ConnectingEvent && event !is ConnectedEvent && event !is DisconnectedEvent) {
+            logger.d { "[add] event.type: ${event.realType}(${event.hashCode()})" }
             mutex.withLock {
                 timeoutJob.cancel()
                 return postponed.add(event).also {
@@ -63,7 +67,7 @@ internal class SocketEventCollector(
                 }
             }
         }
-        logger.v { "[add] rejected (unsupported event.type): ${event.type}" }
+        logger.v { "[add] rejected (unsupported event.type): ${event.realType}" }
         return false
     }
 
@@ -113,8 +117,8 @@ internal class SocketEventCollector(
 
     private companion object {
         private const val TIMEOUT = 300L
-        private const val TIME_LIMIT = 2000L
-        private const val ITEM_COUNT_LIMIT = 100
+        private const val TIME_LIMIT = 1000L
+        private const val ITEM_COUNT_LIMIT = 200
     }
 }
 

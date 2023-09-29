@@ -364,6 +364,10 @@ internal class ChannelMutableState(
         _messages.value = _messages.value - message.id
     }
 
+    fun deleteMessages(messages: List<Message>) {
+        _messages.value = _messages.value - messages.map { it.id }.toSet()
+    }
+
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
         _watchers.value += watchers.associateBy(User::id)
         _watcherCount.value = watchersCount.takeUnless { it == 0 } ?: _watchers.value.size

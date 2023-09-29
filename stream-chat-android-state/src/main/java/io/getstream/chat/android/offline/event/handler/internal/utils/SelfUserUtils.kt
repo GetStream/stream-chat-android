@@ -43,4 +43,4 @@ internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
     setChannelUnreadCount(me.unreadChannels)
 }
 
-private fun ClientState.toMutableState(): ClientMutableState? = this as? ClientMutableState
+internal fun ClientState.toMutableState(): ClientMutableState? = this as? ClientMutableState

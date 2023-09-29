@@ -87,9 +87,15 @@ internal class ThreadLogic(
     }
 
     internal fun handleEvents(events: List<HasMessage>) {
-        for (event in events) {
-            handleEvent(event)
-        }
+        val messages = events
+            .map { event ->
+                event.message.apply {
+                    if (event is MessageUpdatedEvent) {
+                        replyTo = mutableState.messages.value.firstOrNull { it.id == replyMessageId }
+                    }
+                }
+            }
+        upsertMessages(messages)
     }
 
     private fun handleEvent(event: HasMessage) {

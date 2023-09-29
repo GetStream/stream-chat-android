@@ -222,6 +222,15 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Deletes messages for the channel
+     *
+     * @param messages [List<Message>]
+     */
+    fun deleteMessages(messages: List<Message>) {
+        mutableState.deleteMessages(messages)
+    }
+
+    /**
      * Removes messages before a certain date
      *
      * @param date all messages will be removed before this date.

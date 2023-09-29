@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
+import io.getstream.chat.android.client.events.HasUnreadCounts
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -80,11 +81,16 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
+import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
+import io.getstream.chat.android.offline.event.handler.internal.model.MutableValue
 import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
-import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserPart
+import io.getstream.chat.android.offline.event.handler.internal.model.parameterizedLazy
+import io.getstream.chat.android.offline.event.handler.internal.model.useIfModified
+import io.getstream.chat.android.offline.event.handler.internal.utils.realType
+import io.getstream.chat.android.offline.event.handler.internal.utils.toMutableState
 import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
@@ -94,19 +100,23 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.InputMismatchException
+import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "Chat:EventHandlerSeq"
 private const val TAG_SOCKET = "Chat:SocketEvent"
@@ -135,7 +145,7 @@ internal class EventHandlerSequential(
     }
 
     private val mutex = Mutex()
-    private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = EVENTS_BUFFER)
+    private val socketEvents = MutableSharedFlow<ChatEvent>(extraBufferCapacity = Int.MAX_VALUE)
     private val socketEventCollector = SocketEventCollector(scope) { batchEvent ->
         handleBatchEvent(batchEvent)
     }
@@ -145,6 +155,9 @@ internal class EventHandlerSequential(
     init {
         logger.d { "<init> no args" }
     }
+
+    private val emittedCount = AtomicInteger()
+    private val collectedCount = AtomicInteger()
 
     /**
      * Start listening to chat events.
@@ -174,7 +187,10 @@ internal class EventHandlerSequential(
             }
             eventsDisposable = subscribeForEvents { event ->
                 if (socketEvents.tryEmit(event)) {
-                    StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.type}" }
+                    val cCount = collectedCount.get()
+                    val eCount = emittedCount.incrementAndGet()
+                    val ratio = eCount.toDouble() / cCount.toDouble()
+                    StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)" }
                 } else {
                     StreamLog.e(TAG_SOCKET) { "[onSocketEventReceived] failed to emit socket event: $event" }
                 }
@@ -191,36 +207,47 @@ internal class EventHandlerSequential(
         scope.coroutineContext.job.cancelChildren()
     }
 
-    private suspend fun handleChatEvents(eventList: List<ChatEvent>, queryChannelsLogic: QueryChannelsLogic) {
-        eventList.forEach { event -> handleChatEvent(event, queryChannelsLogic) }
-    }
-
-    private suspend fun handleChatEvent(event: ChatEvent, queryChannelsLogic: QueryChannelsLogic) {
-        // update the info for that channel from the channel repo
-        logger.i { "[handleEvent] event: $event" }
-
-        when (val handlingResult = queryChannelsLogic.parseChatEventResult(event)) {
-            is EventHandlingResult.Add -> queryChannelsLogic.addChannel(handlingResult.channel)
-            is EventHandlingResult.WatchAndAdd -> queryChannelsLogic.watchAndAddChannel(handlingResult.cid)
-            is EventHandlingResult.Remove -> queryChannelsLogic.removeChannel(handlingResult.cid)
-            is EventHandlingResult.Skip -> Unit
+    private suspend fun handleChatEvents(
+        batchEvent: BatchEvent,
+        queryChannelsLogic: QueryChannelsLogic,
+    ) {
+        logger.v { "[handleChatEvents] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
+        queryChannelsLogic.parseChatEventResults(batchEvent.sortedEvents).forEach { result ->
+            when (result) {
+                is EventHandlingResult.Add -> {
+                    queryChannelsLogic.addChannel(result.channel)
+                }
+                is EventHandlingResult.WatchAndAdd -> {
+                    queryChannelsLogic.watchAndAddChannel(result.cid)
+                }
+                is EventHandlingResult.Remove -> {
+                    queryChannelsLogic.removeChannel(result.cid)
+                }
+                is EventHandlingResult.Skip -> Unit
+            }
         }
 
-        if (event is MarkAllReadEvent) {
+        val hasMarkAllReadEvent = batchEvent.sortedEvents.lastOrNull { it is  MarkAllReadEvent} != null
+        if (hasMarkAllReadEvent) {
             queryChannelsLogic.refreshAllChannelsState()
         }
 
-        if (event is CidEvent) {
+        val cids = batchEvent.sortedEvents
+            .filterIsInstance<CidEvent>()
+            .filterNot { it is UserStartWatchingEvent || it is UserStopWatchingEvent }
+            .map { it.cid }
+            .distinct()
+        if (cids.isNotEmpty()) {
             // skip events that are typically not impacting the query channels overview
-            if (event is UserStartWatchingEvent || event is UserStopWatchingEvent) {
-                return
-            }
-            queryChannelsLogic.refreshChannelState(event.cid)
+            queryChannelsLogic.refreshChannelsState(cids)
         }
 
+        val event = batchEvent.sortedEvents.filterIsInstance<UserPresenceChangedEvent>().lastOrNull()
         if (event is UserPresenceChangedEvent) {
             queryChannelsLogic.refreshMembersStateForUser(event.user)
         }
+
+        logger.v { "[handleChatEvents] completed batchId: ${batchEvent.id}" }
     }
 
     /**
@@ -236,7 +263,7 @@ internal class EventHandlerSequential(
         try {
             logger.d {
                 "[handleBatchEvent] >>> id: ${event.id}, fromSocket: ${event.isFromSocketConnection}" +
-                    ", size: ${event.size}, event.types: '${event.sortedEvents.joinToString { it.type }}'"
+                    ", size: ${event.size}, event.types: '${event.sortedEvents.joinToString { it.realType }}'"
             }
             updateGlobalState(event)
             updateChannelsState(event)
@@ -250,56 +277,94 @@ internal class EventHandlerSequential(
 
     private suspend fun updateGlobalState(batchEvent: BatchEvent) {
         logger.v { "[updateGlobalState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
+
+        val me = MutableValue(mutableGlobalState.clientState.user.value)
+        val totalUnreadCount = MutableValue(mutableGlobalState.totalUnreadCount.value)
+        val channelUnreadCount = MutableValue(mutableGlobalState.channelUnreadCount.value)
+
+        val modifyValues = { event: HasUnreadCounts ->
+            me.modify {
+                it?.copy(
+                    totalUnreadCount = event.totalUnreadCount,
+                    unreadChannels = event.unreadChannels
+                )
+            }
+            totalUnreadCount.set(event.totalUnreadCount)
+            channelUnreadCount.set(event.unreadChannels)
+        }
+
+        val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
+            // can we somehow get rid of repos usage here?
+            repos.hasReadEventsCapability(cid)
+        }
+
         batchEvent.sortedEvents.forEach { event: ChatEvent ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
-                is ConnectedEvent -> if (batchEvent.isFromSocketConnection) {
-                    event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
+                is ConnectedEvent -> if (batchEvent.isFromSocketConnection && event.me.id == currentUserId) {
+                    me.set(event.me)
+                    totalUnreadCount.set(event.me.totalUnreadCount)
+                    channelUnreadCount.set(event.me.unreadChannels)
                 }
-                is NotificationMutesUpdatedEvent -> {
-                    event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
+                is NotificationMutesUpdatedEvent -> if (event.me.id == currentUserId) {
+                    me.set(event.me)
+                    totalUnreadCount.set(event.me.totalUnreadCount)
+                    channelUnreadCount.set(event.me.unreadChannels)
                 }
-                is NotificationChannelMutesUpdatedEvent -> {
-                    event.me.id mustBe currentUserId
-                    mutableGlobalState.updateCurrentUser(SelfUserFull(event.me))
+                is NotificationChannelMutesUpdatedEvent -> if (event.me.id == currentUserId) {
+                    me.set(event.me)
+                    totalUnreadCount.set(event.me.totalUnreadCount)
+                    channelUnreadCount.set(event.me.unreadChannels)
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    mutableGlobalState.updateCurrentUser(SelfUserPart(event.user))
+                    me.modify { it?.mergePartially(event.user) ?: event.user }
                 }
                 is MarkAllReadEvent -> {
-                    mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
-                    mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
+                    modifyValues(event)
                 }
                 is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
-                    // can we somehow get rid of repos usage here?
-                    if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
-                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyValues(event)
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
-                    // can we somehow get rid of repos usage here?
-                    if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
-                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyValues(event)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
-                    // can we somehow get rid of repos usage here?
-                    if (repos.hasReadEventsCapability(event.cid)) {
-                        mutableGlobalState.setTotalUnreadCount(event.totalUnreadCount)
-                        mutableGlobalState.setChannelUnreadCount(event.unreadChannels)
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyValues(event)
                     }
                 }
                 else -> Unit
             }
         }
+
+        me.useIfModified {
+            if (it == null) return@useIfModified
+            mutableGlobalState.clientState.toMutableState()?.setUser(it)
+            mutableGlobalState.setBanned(it.banned)
+            mutableGlobalState.setMutedUsers(it.mutes)
+            mutableGlobalState.setChannelMutes(it.channelMutes)
+        }
+
+        totalUnreadCount.useIfModified {
+            mutableGlobalState.setTotalUnreadCount(it)
+        }
+        channelUnreadCount.useIfModified {
+            mutableGlobalState.setChannelUnreadCount(it)
+        }
+        logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
     }
 
     private suspend fun updateChannelsState(batchEvent: BatchEvent) {
-        logger.v { "[updateChannelsState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
+        val first = batchEvent.sortedEvents.firstOrNull()
+        val last = batchEvent.sortedEvents.lastOrNull()
+        val firstDate = first?.createdAt
+        val lastDate = last?.createdAt
+        val firstLessLast = firstDate?.let { lastDate?.let { firstDate < lastDate } }
+        logger.v { "[updateChannelsState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}, first(${first?.seq}) < last(${last?.seq}): $firstLessLast" }
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
 
         // step 3 - forward the events to the active channels
@@ -317,7 +382,7 @@ internal class EventHandlerSequential(
             }
 
         // mark all read applies to all channels
-        sortedEvents.filterIsInstance<MarkAllReadEvent>().firstOrNull()?.let { markAllRead ->
+        sortedEvents.filterIsInstance<MarkAllReadEvent>().lastOrNull()?.let { markAllRead ->
             logicRegistry.getActiveChannelsLogic().forEach { channelLogic: ChannelLogic ->
                 channelLogic.handleEvent(markAllRead)
             }
@@ -344,14 +409,14 @@ internal class EventHandlerSequential(
                     channelLogic.handleEvent(userPresenceChanged)
                 }
         }
-
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         logicRegistry.getActiveQueryChannelsLogic().map { channelsLogic ->
             scope.async {
-                handleChatEvents(sortedEvents, channelsLogic)
+                handleChatEvents(batchEvent, channelsLogic)
             }
         }.awaitAll()
+        logger.v { "[updateChannelsState] completed batchId: ${batchEvent.id}" }
     }
 
     private fun updateThreadState(batchEvent: BatchEvent) {
@@ -363,6 +428,7 @@ internal class EventHandlerSequential(
             .forEach { (messageId, events) ->
                 logicRegistry.thread(messageId).handleEvents(events)
             }
+        logger.v { "[updateThreadState] completed batchId: ${batchEvent.id}" }
     }
 
     private suspend fun updateOfflineStorage(batchEvent: BatchEvent) {
@@ -598,6 +664,8 @@ internal class EventHandlerSequential(
                 else -> Unit // Ignore other events
             }
         }
+
+        logger.v { "[updateOfflineStorage] completed batchId: ${batchEvent.id}" }
     }
 
     private fun List<ChatEvent>.extractMessageIds() = mapNotNull { event ->
@@ -664,6 +732,23 @@ internal class EventHandlerSequential(
         val EMPTY_DISPOSABLE = object : Disposable {
             override val isDisposed: Boolean = true
             override fun dispose() = Unit
+        }
+    }
+}
+
+public fun main() {
+    val events = MutableSharedFlow<Int>(extraBufferCapacity = Int.MAX_VALUE)
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    scope.launch {
+        repeat(100) {
+            println("emit $it: ${events.tryEmit(it)}")
+
+        }
+    }
+    runBlocking {
+        events.collect {
+            println("collect $it")
+            delay(1000)
         }
     }
 }
