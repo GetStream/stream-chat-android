@@ -31,9 +31,10 @@ internal class DatabaseMessageRepository(
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,
     cacheSize: Int = 1000,
+    // messageCache is overridden in unit tests only
+    private val messageCache: LruCache<String, Message> = LruCache(cacheSize),
 ) : MessageRepository {
     private val logger = StreamLog.getLogger("Chat:MessageRepository")
-    private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
     /**
      * Select messages for a channel in a desired page.
      *

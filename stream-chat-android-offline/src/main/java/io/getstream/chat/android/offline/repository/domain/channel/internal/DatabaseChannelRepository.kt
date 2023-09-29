@@ -94,7 +94,9 @@ internal class DatabaseChannelRepository(
      * @param cid String
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? =
-        channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage)
+        // TODO do we really need to pass `getMessage` here?
+        //  Based on the name of the function, it seems that we don't need it.
+        channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage)?.also(this::updateCache)
 
     /**
      * Select a channels, but without loading the messages.
@@ -248,6 +250,11 @@ internal class DatabaseChannelRepository(
         for (channel in channels) {
             channelCache.put(channel.cid, channel)
         }
+    }
+
+    private fun updateCache(channel: Channel) {
+        logger.v { "[updateCache] single channel" }
+        channelCache.put(channel.cid, channel)
     }
 
     /**
