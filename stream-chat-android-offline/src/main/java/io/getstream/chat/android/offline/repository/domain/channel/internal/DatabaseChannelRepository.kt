@@ -37,7 +37,7 @@ internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
-    cacheSize: Int = 100,
+    cacheSize: Int = 1000,
 ) : ChannelRepository {
 
     private val logger = StreamLog.getLogger("Chat:ChannelRepository")

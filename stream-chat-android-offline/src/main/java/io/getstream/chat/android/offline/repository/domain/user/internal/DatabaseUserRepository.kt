@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 internal class DatabaseUserRepository(
     private val userDao: UserDao,
-    cacheSize: Int = 100,
+    cacheSize: Int = 1000,
 ) : UserRepository {
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
