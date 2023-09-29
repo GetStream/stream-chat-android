@@ -72,13 +72,17 @@ internal class DatabaseMessageRepository(
      * @return A list of messages found in repository.
      */
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
-        return if (forceCache) {
-            fetchMessagesFromDB(messageIds)
-        } else {
-            val missingMessageIds = messageIds.filter { !messageCache.contains(it) }
-            val cachedIds = messageIds - missingMessageIds
-            cachedIds.mapNotNull { fetchFromCache(it) } + fetchMessagesFromDB(missingMessageIds)
-        }
+        return messageIds.map { it to fetchFromCache(it) }
+            .partition { it.second != null }
+            .let { (cachedMessages, missingMessages) ->
+                cachedMessages.mapNotNull { it.second } +
+                    (
+                        missingMessages.map { it.first }
+                            .takeUnless { it.isEmpty() }
+                            ?.let { fetchMessagesFromDB(it) }
+                            ?: emptyList()
+                        )
+            }
     }
 
     /**
