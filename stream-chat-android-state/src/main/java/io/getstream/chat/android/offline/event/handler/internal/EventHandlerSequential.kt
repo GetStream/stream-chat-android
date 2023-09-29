@@ -85,9 +85,9 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
-import io.getstream.chat.android.offline.event.handler.internal.model.MutableValue
-import io.getstream.chat.android.offline.event.handler.internal.model.parameterizedLazy
-import io.getstream.chat.android.offline.event.handler.internal.model.useIfModified
+import io.getstream.chat.android.core.internal.utils.MutableValue
+import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
+import io.getstream.chat.android.core.internal.utils.useIfModified
 import io.getstream.chat.android.offline.event.handler.internal.utils.realType
 import io.getstream.chat.android.offline.event.handler.internal.utils.toMutableState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic

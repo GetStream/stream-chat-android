@@ -14,22 +14,40 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.model
+package io.getstream.chat.android.core.internal.utils
 
-internal class MutableValue<T>(initialValue: T) {
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
+/**
+ * Mutable value that tracks if it was modified.
+ */
+@InternalStreamChatApi
+public class MutableValue<T>(initialValue: T) {
 
     private var modified = false
     private var currentValue: T = initialValue
 
-    fun isModified(): Boolean = modified
+    /**
+     * Checks if the value is modified.
+     */
+    public fun isModified(): Boolean = modified
 
-    fun get(): T = currentValue
+    /**
+     * Provides the current value.
+     */
+    public fun get(): T = currentValue
 
-    fun modify(block: (T) -> T) {
+    /**
+     * Modifies the current value using [block] function.
+     */
+    public fun modify(block: (T) -> T) {
         set(block(currentValue))
     }
 
-    fun set(value: T) {
+    /**
+     * Sets the current value.
+     */
+    public fun set(value: T) {
         if (currentValue != value) {
             currentValue = value
             modified = true
@@ -37,13 +55,15 @@ internal class MutableValue<T>(initialValue: T) {
     }
 }
 
-internal fun <T> MutableValue<T>.useIfModified(block: (T) -> Unit) {
+@InternalStreamChatApi
+public fun <T> MutableValue<T>.useIfModified(block: (T) -> Unit) {
     if (isModified()) {
         block(get())
     }
 }
 
-internal fun <T> MutableValue<T?>.useNotNullIfModified(block: (T) -> Unit) {
+@InternalStreamChatApi
+public fun <T> MutableValue<T?>.useNotNullIfModified(block: (T) -> Unit) {
     if (isModified()) {
         get()?.also(block)
     }
