@@ -174,6 +174,7 @@ internal class EventHandlerSequential(
             }
             scope.launch {
                 socketEvents.collect { event ->
+                    collectedCount.incrementAndGet()
                     initJob.join()
                     sideEffect()
                     socketEventCollector.collect(event)
@@ -184,7 +185,9 @@ internal class EventHandlerSequential(
                     val cCount = collectedCount.get()
                     val eCount = emittedCount.incrementAndGet()
                     val ratio = eCount.toDouble() / cCount.toDouble()
-                    StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)" }
+                    StreamLog.v(TAG_SOCKET) {
+                        "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)"
+                    }
                 } else {
                     StreamLog.e(TAG_SOCKET) { "[onSocketEventReceived] failed to emit socket event: $event" }
                 }

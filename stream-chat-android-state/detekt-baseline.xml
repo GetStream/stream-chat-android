@@ -55,7 +55,6 @@
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
-    <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)" }</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$logger.v { "[updateChannelsState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}, first(${first?.seq}) &lt; last(${last?.seq}): $firstLessLast" }</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
