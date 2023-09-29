@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Create Throttling mechanism for `MarkRead` Events [#4974](https://github.com/GetStream/stream-chat-android/pull/4974)
 
 ### ✅ Added
 - Added `Message.deletedReplyCount` property. [#4960](https://github.com/GetStream/stream-chat-android/pull/4960)
