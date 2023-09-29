@@ -36,11 +36,6 @@ public class io/getstream/chat/android/offline/event/handler/chat/factory/ChatEv
 	public fun chatEventHandler (Lkotlinx/coroutines/flow/StateFlow;)Lio/getstream/chat/android/client/events/ChatEventHandler;
 }
 
-public final class io/getstream/chat/android/offline/event/handler/internal/EventHandlerSequentialKt {
-	public static final fun main ()V
-	public static synthetic fun main ([Ljava/lang/String;)V
-}
-
 public final class io/getstream/chat/android/offline/extensions/ChatClientExtensions {
 	public static final fun cancelEphemeralMessage (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/client/call/Call;
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/client/models/Attachment;)Lio/getstream/chat/android/client/call/Call;

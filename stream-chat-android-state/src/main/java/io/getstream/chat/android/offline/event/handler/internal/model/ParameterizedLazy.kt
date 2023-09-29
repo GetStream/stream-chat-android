@@ -16,15 +16,23 @@
 
 package io.getstream.chat.android.offline.event.handler.internal.model
 
-internal class ParameterizedLazy<T, R>(private val initializer: suspend (T) -> R) : suspend (T) -> R {
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+
+internal class ParameterizedLazy<T, R>(
+    private val initializer: suspend (T) -> R
+) : suspend (T) -> R {
     @Volatile
     private var _value: R? = null
 
+    private val mutex = Mutex()
+
     override suspend fun invoke(param: T): R {
-        if (_value == null) {
-            _value = initializer(param)
+        return _value ?: mutex.withLock {
+            _value ?: initializer(param).also {
+                _value = it
+            }
         }
-        return _value!!
     }
 
     fun isInitialized(): Boolean = _value != null
