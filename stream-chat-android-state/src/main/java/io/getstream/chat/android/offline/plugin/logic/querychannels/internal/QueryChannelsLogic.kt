@@ -301,7 +301,7 @@ internal class QueryChannelsLogic(
      *
      * @param cidList The channels to refresh.
      */
-    private fun refreshChannelsState(cidList: Collection<String>) {
+    internal fun refreshChannelsState(cidList: Collection<String>) {
         queryChannelsStateLogic?.refreshChannels(cidList)
     }
 
@@ -323,6 +323,19 @@ internal class QueryChannelsLogic(
         } else null
 
         return queryChannelsStateLogic?.handleChatEvent(chatEvent, cachedChannel) ?: EventHandlingResult.Skip
+    }
+
+    internal suspend fun parseChatEventResults(chatEvents: List<ChatEvent>): List<EventHandlingResult> {
+        val cids = chatEvents.filterIsInstance<CidEvent>().map { it.cid }.distinct()
+        val cachedChannels = queryChannelsDatabaseLogic
+            ?.selectChannelsWithoutMessages(cids)
+            ?.associate { it.cid to it }
+            ?: emptyMap()
+
+        return chatEvents.map { event ->
+            val channel = (event as? CidEvent)?.let { cachedChannels[it.cid] }
+            queryChannelsStateLogic?.handleChatEvent(event, channel) ?: EventHandlingResult.Skip
+        }
     }
 
     /**
