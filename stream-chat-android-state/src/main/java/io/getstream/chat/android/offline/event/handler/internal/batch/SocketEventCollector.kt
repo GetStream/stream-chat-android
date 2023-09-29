@@ -20,8 +20,6 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.events.UserStartWatchingEvent
-import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.offline.event.handler.internal.utils.realType
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope

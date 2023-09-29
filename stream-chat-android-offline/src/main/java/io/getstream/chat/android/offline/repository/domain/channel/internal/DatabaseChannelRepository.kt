@@ -88,6 +88,9 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         val entity = channelDao.select(cid = cid)
+        // TODO
+        //  Do we really need to pass getMessage here?
+        //  Name `selectChannelsWithoutMessages` we should not load messages here.
         return entity?.toModel(getUser, getMessage)
     }
 
@@ -98,6 +101,9 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> {
         val entities = channelDao.select(cids = cids)
+        // TODO
+        //  Do we really need to pass getMessage here?
+        //  Name `selectChannelsWithoutMessages` we should not load messages here.
         return entities.map { it.toModel(getUser, getMessage) }
     }
 

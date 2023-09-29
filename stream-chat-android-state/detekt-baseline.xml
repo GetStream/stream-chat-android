@@ -31,11 +31,13 @@
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
     <ID>LongMethod:EventHandlerImpl.kt$EventHandlerImpl$private suspend fun updateOfflineStorageFromEvents(events: List&lt;ChatEvent>, isFromSync: Boolean)</ID>
+    <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>LongParameterList:AttachmentUploader.kt$AttachmentUploader$( channelType: String, channelId: String, file: File, progressCallback: ProgressCallback?, attachment: Attachment, mimeType: String, attachmentType: AttachmentType, )</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
+    <ID>MatchingDeclarationName:LazyAction.kt$ParameterizedLazy&lt;T, R> : </ID>
     <ID>MatchingDeclarationName:OfflineErrorHandlerFactories.kt$OfflineErrorHandlerFactoriesProvider</ID>
     <ID>MaxLineLength:ChannelLogic.kt$ChannelLogic$*</ID>
     <ID>MaxLineLength:ChannelsStateData.kt$ChannelsStateData.OfflineNoResults$/** If we are offline and don't have channels stored in offline storage, typically displayed as an error condition. */</ID>
@@ -53,6 +55,8 @@
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
     <ID>MaxLineLength:EventHandlerImpl.kt$EventHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
+    <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$StreamLog.v(TAG_SOCKET) { "[onSocketEventReceived] event.type: ${event.realType}; $eCount => $cCount ($ratio)" }</ID>
+    <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$logger.v { "[updateChannelsState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}, first(${first?.seq}) &lt; last(${last?.seq}): $firstLessLast" }</ID>
     <ID>MaxLineLength:Mapper.kt$internal</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
@@ -69,7 +73,9 @@
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
+    <ID>UnusedPrivateMember:ChannelLogic.kt$ChannelLogic$private fun upsertEventMessages(messages: List&lt;Message>)</ID>
     <ID>UnusedPrivateMember:QueryChannelsSortTest.kt$QueryChannelsSortTest$testName: String</ID>
+    <ID>UnusedPrivateMember:ThreadLogic.kt$ThreadLogic$private fun handleEvent(event: HasMessage)</ID>
     <ID>UnusedPrivateMember:UploadAttachmentsIntegrationTests.kt$UploadAttachmentsIntegrationTests$private val currentUser = randomUser()</ID>
   </CurrentIssues>
 </SmellBaseline>

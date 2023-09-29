@@ -86,12 +86,10 @@ import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.offline.event.handler.internal.model.MutableValue
-import io.getstream.chat.android.offline.event.handler.internal.model.SelfUserFull
 import io.getstream.chat.android.offline.event.handler.internal.model.parameterizedLazy
 import io.getstream.chat.android.offline.event.handler.internal.model.useIfModified
 import io.getstream.chat.android.offline.event.handler.internal.utils.realType
 import io.getstream.chat.android.offline.event.handler.internal.utils.toMutableState
-import io.getstream.chat.android.offline.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.offline.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.offline.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -100,19 +98,16 @@ import io.getstream.chat.android.offline.plugin.state.global.internal.MutableGlo
 import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.cancelChildren
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.plus
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.InputMismatchException
@@ -120,7 +115,6 @@ import java.util.concurrent.atomic.AtomicInteger
 
 private const val TAG = "Chat:EventHandlerSeq"
 private const val TAG_SOCKET = "Chat:SocketEvent"
-private const val EVENTS_BUFFER = 100
 
 /**
  * Processes events sequentially. That means a new event will not be processed
@@ -227,7 +221,7 @@ internal class EventHandlerSequential(
             }
         }
 
-        val hasMarkAllReadEvent = batchEvent.sortedEvents.lastOrNull { it is  MarkAllReadEvent} != null
+        val hasMarkAllReadEvent = batchEvent.sortedEvents.lastOrNull { it is MarkAllReadEvent } != null
         if (hasMarkAllReadEvent) {
             queryChannelsLogic.refreshAllChannelsState()
         }
@@ -732,23 +726,6 @@ internal class EventHandlerSequential(
         val EMPTY_DISPOSABLE = object : Disposable {
             override val isDisposed: Boolean = true
             override fun dispose() = Unit
-        }
-    }
-}
-
-public fun main() {
-    val events = MutableSharedFlow<Int>(extraBufferCapacity = Int.MAX_VALUE)
-    val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    scope.launch {
-        repeat(100) {
-            println("emit $it: ${events.tryEmit(it)}")
-
-        }
-    }
-    runBlocking {
-        events.collect {
-            println("collect $it")
-            delay(1000)
         }
     }
 }
