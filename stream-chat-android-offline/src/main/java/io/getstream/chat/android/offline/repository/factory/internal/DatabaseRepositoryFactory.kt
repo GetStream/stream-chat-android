@@ -102,7 +102,7 @@ internal class DatabaseRepositoryFactory(
                 database.messageDao(),
                 getUser,
                 currentUser,
-                DEFAULT_CACHE_SIZE
+                DEFAULT_CACHE_SIZE,
             ).also { repository ->
                 repositoriesCache[MessageRepository::class.java] = repository
             }

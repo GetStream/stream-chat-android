@@ -23,18 +23,17 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.logging.StreamLog
 import java.util.Date
 
 internal class DatabaseMessageRepository(
     private val messageDao: MessageDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,
-    private val cacheSize: Int = 100,
-    private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
+    cacheSize: Int = 1000,
 ) : MessageRepository {
-    // the message cache, specifically caches messages on which we're receiving events
-    // (saving a few trips to the db when you get 10 likes on 1 message)
-
+    private val logger = StreamLog.getLogger("Chat:MessageRepository")
+    private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
     /**
      * Select messages for a channel in a desired page.
      *
@@ -100,18 +99,27 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
         if (messages.isEmpty()) return
-        val messagesToInsert = messages.flatMap(Companion::allMessages)
-        for (message in messagesToInsert) {
+        val allMessages = messages.flatMap(Companion::allMessages)
+        for (message in allMessages) {
             require(message.cid.isNotEmpty()) {
                 "message.cid can not be empty. Id of the message: ${message.id}. Text: ${message.text}"
             }
         }
-        for (m in messagesToInsert) {
-            if (messageCache.get(m.id) != null || cache) {
-                messageCache.put(m.id, m)
+        val messagesToInsert = allMessages
+            .partition { messageCache[it.id] == null }
+            .let { (newMessages, messagesToUpdate) ->
+                newMessages.map(Message::toEntity) +
+                    messagesToUpdate.map { it.toEntity() }
+                        .filter { messageCache[it.messageInnerEntity.id]?.toEntity() != it }
             }
+
+        cacheMessage(messages)
+        logger.d {
+            "[insertMessages] inserting ${messagesToInsert.size} entities on DB, updated ${allMessages.size} on cache"
         }
-        messageDao.insert(messagesToInsert.map { it.toEntity() })
+        messagesToInsert
+            .takeUnless { it.isEmpty() }
+            ?.let { messageDao.insert(it) }
     }
 
     /**
@@ -134,7 +142,7 @@ internal class DatabaseMessageRepository(
         // delete the messages
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
         // wipe the cache
-        messageCache = LruCache(cacheSize)
+        messageCache.evictAll()
     }
 
     /**
@@ -163,6 +171,10 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
         return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
+    }
+
+    private fun cacheMessage(messages: Collection<Message>) {
+        messages.forEach { messageCache.put(it.id, it) }
     }
 
     override suspend fun clear() {
