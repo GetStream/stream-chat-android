@@ -83,11 +83,11 @@ import io.getstream.chat.android.client.models.UserId
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
+import io.getstream.chat.android.core.internal.utils.MutableValue
+import io.getstream.chat.android.core.internal.utils.useIfModified
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
-import io.getstream.chat.android.core.internal.utils.MutableValue
-import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
-import io.getstream.chat.android.core.internal.utils.useIfModified
 import io.getstream.chat.android.offline.event.handler.internal.utils.realType
 import io.getstream.chat.android.offline.event.handler.internal.utils.toMutableState
 import io.getstream.chat.android.offline.plugin.logic.channel.internal.ChannelLogic
