@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Create Throttling mechanism for `MarkRead` Events [#4975](https://github.com/GetStream/stream-chat-android/pull/4975)
 
 ### ✅ Added
 
