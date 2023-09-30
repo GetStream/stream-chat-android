@@ -16,11 +16,17 @@
 
 package io.getstream.chat.android.client.parser2.adapters.internal
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.utils.threadLocal
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.logging.StreamLog
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
@@ -46,6 +52,14 @@ public class StreamDateFormatter(
         SimpleDateFormat(DATE_FORMAT, Locale.US).apply {
             timeZone = TimeZone.getTimeZone("UTC")
         }
+    }
+
+    // DateTimeFormatter is thread-safe.
+    @delegate:RequiresApi(Build.VERSION_CODES.O)
+    private val dateFormat26: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern(DATE_FORMAT)
+            .withLocale(Locale.US)
+            .withZone(ZoneId.of(ZoneOffset.UTC.id))
     }
 
     private val dateFormatWithoutNanoseconds: SimpleDateFormat by threadLocal {
@@ -89,7 +103,13 @@ public class StreamDateFormatter(
             null
         } else {
             try {
-                dateFormat.parse(rawValue)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Java Instant is up to 4x faster for parsing
+                    // and can parse the date both with and without nano-seconds
+                    Date.from(Instant.parse(rawValue))
+                } else {
+                    dateFormat.parse(rawValue)
+                }
             } catch (_: Throwable) {
                 try {
                     dateFormatWithoutNanoseconds.parse(rawValue)
@@ -116,5 +136,11 @@ public class StreamDateFormatter(
     /**
      * Formats the [Date] in the standard way to Stream's API
      */
-    public fun format(date: Date): String = dateFormat.format(date)
+    public fun format(date: Date): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            dateFormat26.format(date.toInstant())
+        } else {
+            dateFormat.format(date)
+        }
+    }
 }
