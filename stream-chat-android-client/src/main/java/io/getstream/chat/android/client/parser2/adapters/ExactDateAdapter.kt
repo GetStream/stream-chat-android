@@ -28,7 +28,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 @InternalStreamChatApi
 internal class ExactDateAdapter : JsonAdapter<ExactDate>() {
 
-    private val streamDateFormatter = StreamDateFormatter()
+    private val streamDateFormatter = StreamDateFormatter("ExactDateAdapter")
 
     @ToJson
     override fun toJson(writer: JsonWriter, value: ExactDate?) {
