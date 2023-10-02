@@ -110,6 +110,7 @@ internal open class BaseChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState,
             currentUserFetcher = currentUserFetcher,
+            notificationConfig = mock(),
         )
 
         Mockito.reset(

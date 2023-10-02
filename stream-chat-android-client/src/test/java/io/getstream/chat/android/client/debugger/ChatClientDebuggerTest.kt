@@ -138,6 +138,7 @@ internal class ChatClientDebuggerTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = Mother.mockedClientState(),
             currentUserFetcher = mock(),
+            notificationConfig = mock(),
         ).apply {
             addInterceptor(sendMessageInterceptor)
             connectUser(user, token).enqueue()

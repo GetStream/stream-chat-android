@@ -140,6 +140,7 @@ internal class ChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = Mother.mockedClientState(),
             currentUserFetcher = mock(),
+            notificationConfig = mock(),
         ).apply {
             connectUser(user, token).enqueue()
         }

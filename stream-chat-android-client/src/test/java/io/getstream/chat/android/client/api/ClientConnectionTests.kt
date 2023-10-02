@@ -133,9 +133,9 @@ internal class ClientConnectionTests {
 
         client = ChatClient(
             config,
-            api,
-            socket,
-            notificationsManager,
+            api = api,
+            socket = socket,
+            notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             userCredentialStorage = mock(),
@@ -151,6 +151,7 @@ internal class ClientConnectionTests {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState,
             currentUserFetcher = mock(),
+            notificationConfig = mock(),
         )
     }
 
