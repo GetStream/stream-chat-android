@@ -165,6 +165,7 @@ public class DependencyResolverTest {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
+            notificationConfig = mock(),
         ).apply {
             this.plugins = this@Fixture.plugins
         }

@@ -106,8 +106,8 @@ internal class MockClientBuilder(
         val userScope = UserTestScope(clientScope)
         client = ChatClient(
             config,
-            api,
-            notificationsManager,
+            api = api,
+            notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
             userCredentialStorage = mock(),
             userStateService = userStateService,
@@ -122,6 +122,7 @@ internal class MockClientBuilder(
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = streamPlayer,
+            notificationConfig = mock(),
         )
 
         client.attachmentsSender = attachmentSender

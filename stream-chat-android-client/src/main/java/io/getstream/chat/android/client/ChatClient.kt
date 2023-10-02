@@ -206,6 +206,7 @@ public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
     public val config: ChatClientConfig,
+    internal val notificationConfig: NotificationConfig,
     private val api: ChatApi,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
@@ -3194,6 +3195,7 @@ internal constructor(
 
             return ChatClient(
                 config,
+                notificationConfig,
                 module.api(),
                 module.notifications(),
                 tokenManager,
@@ -3321,7 +3323,7 @@ internal constructor(
         @JvmStatic
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                if (!isSocketConnected()) {
+                if (!notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)

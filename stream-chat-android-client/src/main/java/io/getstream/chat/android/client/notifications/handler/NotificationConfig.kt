@@ -29,6 +29,13 @@ public data class NotificationConfig @JvmOverloads constructor(
     val pushNotificationsEnabled: Boolean = true,
 
     /**
+     * Push notifications are ignored and not displayed when the user is online (when there is an
+     * active WebSocket connection). Set to false if you would like to receive and handle push
+     * notifications even if user is online. Default value is true.
+     */
+    val ignorePushMessagesWhenUserOnline: Boolean = true,
+
+    /**
      * A list of generators responsible for providing the information needed to register a device
      * @see [PushDeviceGenerator]
      */
