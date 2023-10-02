@@ -3292,9 +3292,15 @@ internal constructor(
         @JvmStatic
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                clientScope.launch {
-                    setUserWithoutConnectingIfNeeded()
-                    notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                if (!isSocketConnected()) {
+                    clientScope.launch {
+                        setUserWithoutConnectingIfNeeded()
+                        notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                    }
+                } else {
+                    // We ignore push messages if the WS is connected (this prevents unnecessary IO).
+                    // Push notifications can also be fully disabled from the dashboard for not connected users.
+                    logger.v { "[handlePushMessage] received push message while WS is connected - ignoring" }
                 }
             }
         }
