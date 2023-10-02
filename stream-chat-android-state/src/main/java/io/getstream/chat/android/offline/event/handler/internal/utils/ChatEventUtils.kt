@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,12 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.event.handler.internal.batch
+package io.getstream.chat.android.offline.event.handler.internal.utils
 
 import io.getstream.chat.android.client.events.ChatEvent
-import java.util.concurrent.atomic.AtomicInteger
+import io.getstream.chat.android.client.events.ConnectedEvent
 
-private val idGenerator = AtomicInteger(0)
-
-/**
- * Events container to represent the source of the received events.
- */
-internal class BatchEvent(
-    val id: Int = idGenerator.incrementAndGet(),
-    val sortedEvents: List<ChatEvent>,
-    val isFromHistorySync: Boolean,
-) {
-    val size: Int = sortedEvents.size
-    val isFromSocketConnection: Boolean = !isFromHistorySync
+internal val ChatEvent.realType get() = when (this) {
+    is ConnectedEvent -> "connection.connected"
+    else -> type
 }

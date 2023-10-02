@@ -292,6 +292,10 @@ internal class ChannelLogic(
         channelStateLogic.deleteMessage(message)
     }
 
+    internal fun deleteMessages(messages: List<Message>) {
+        channelStateLogic.deleteMessages(messages)
+    }
+
     /**
      * Updates the messages locally and saves it at database.
      *
@@ -397,6 +401,17 @@ internal class ChannelLogic(
      */
     internal fun hideMessagesBefore(date: Date) {
         channelStateLogic.hideMessagesBefore(date)
+    }
+
+    private fun upsertEventMessages(messages: List<Message>) {
+        // make sure we don't lose ownReactions
+        messages.forEach { message ->
+            getMessage(message.id)?.let {
+                message.ownReactions = it.ownReactions
+            }
+        }
+
+        channelStateLogic.upsertMessages(messages)
     }
 
     private fun upsertEventMessage(message: Message) {

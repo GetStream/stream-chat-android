@@ -61,13 +61,15 @@ internal class TotalUnreadCountTest {
     private lateinit var globalMutableState: GlobalMutableState
     private lateinit var clientMutableState: ClientState
 
-    private val totalUnreadCount = MutableStateFlow(0)
-    private val channelUnreadCount = MutableStateFlow(0)
+    private lateinit var totalUnreadCount: MutableStateFlow<Int>
+    private lateinit var channelUnreadCount: MutableStateFlow<Int>
 
     private lateinit var userStateFlow: StateFlow<User>
 
     @BeforeEach
     fun setUp() {
+        totalUnreadCount = MutableStateFlow(0)
+        channelUnreadCount = MutableStateFlow(0)
         data = TestDataHelper()
         userStateFlow = MutableStateFlow(data.user1)
         clientMutableState = mock {
@@ -75,6 +77,7 @@ internal class TotalUnreadCountTest {
         }
 
         globalMutableState = mock {
+            on(it.clientState) doReturn clientMutableState
             on(it.channelMutes) doReturn MutableStateFlow(emptyList())
             on(it.totalUnreadCount) doReturn totalUnreadCount
             on(it.channelUnreadCount) doReturn channelUnreadCount
@@ -110,6 +113,8 @@ internal class TotalUnreadCountTest {
     fun `When mark read event is received for channel with read capability Should properly update total unread counts`(
         eventHandlerType: EventHandlerType,
     ) = runTest {
+        totalUnreadCount.value = 5
+        channelUnreadCount.value = 2
         val channelWithReadCapability = data.channel1.copy(ownCapabilities = setOf(ChannelCapabilities.READ_EVENTS))
         val sut = Fixture(globalMutableState, clientMutableState, eventHandlerType, data.user1)
             .givenMockedRepositories()
