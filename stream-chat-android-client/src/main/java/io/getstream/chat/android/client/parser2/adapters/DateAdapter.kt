@@ -28,7 +28,7 @@ import java.util.Date
 @InternalStreamChatApi
 public class DateAdapter : JsonAdapter<Date>() {
 
-    private val streamDateFormatter = StreamDateFormatter()
+    private val streamDateFormatter = StreamDateFormatter("DateAdapter", cacheEnabled = true)
 
     @ToJson
     override fun toJson(writer: JsonWriter, value: Date?) {
