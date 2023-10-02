@@ -105,9 +105,9 @@ internal class MockClientBuilder(
         val userScope = UserTestScope(clientScope)
         client = ChatClient(
             config,
-            api,
-            socket,
-            notificationsManager,
+            api = api,
+            socket = socket,
+            notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
             socketStateService = socketStateService,
             userCredentialStorage = mock(),
@@ -123,6 +123,7 @@ internal class MockClientBuilder(
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = mock(),
             currentUserFetcher = mock(),
+            notificationConfig = mock(),
         )
 
         client.connectUser(user, token).enqueue()

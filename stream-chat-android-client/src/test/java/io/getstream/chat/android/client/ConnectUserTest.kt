@@ -110,6 +110,7 @@ internal class ConnectUserTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState,
             currentUserFetcher = mock(),
+            notificationConfig = mock(),
         )
     }
 
