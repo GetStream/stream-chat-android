@@ -1031,6 +1031,7 @@ public final class io/getstream/chat/android/client/events/ChannelVisibleEvent :
 public abstract class io/getstream/chat/android/client/events/ChatEvent {
 	public abstract fun getCreatedAt ()Ljava/util/Date;
 	public abstract fun getRawCreatedAt ()Ljava/lang/String;
+	public final fun getSeq ()I
 	public abstract fun getType ()Ljava/lang/String;
 }
 
@@ -2104,6 +2105,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun selectChannelWithoutMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectChannels (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectChannelsSyncNeeded (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun selectChannelsWithoutMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMembersForChannel (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun setChannelDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun setHiddenForChannel (Ljava/lang/String;ZLjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

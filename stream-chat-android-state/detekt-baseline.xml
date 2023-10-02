@@ -15,6 +15,7 @@
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
+    <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateGlobalState(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
@@ -35,6 +36,7 @@
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order"</ID>
     <ID>MaxLineLength:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order"</ID>
     <ID>MaxLineLength:SendReactionErrorHandlerImpl.kt$SendReactionErrorHandlerImpl$*</ID>
+    <ID>MaxLineLength:SocketEventCollector.kt$SocketEventCollector$*</ID>
     <ID>MaxLineLength:StatePlugin.kt$StatePlugin$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
     <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
@@ -44,5 +46,6 @@
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
+    <ID>UnusedPrivateMember:ThreadLogic.kt$ThreadLogic$private fun handleEvent(event: HasMessage)</ID>
   </CurrentIssues>
 </SmellBaseline>
