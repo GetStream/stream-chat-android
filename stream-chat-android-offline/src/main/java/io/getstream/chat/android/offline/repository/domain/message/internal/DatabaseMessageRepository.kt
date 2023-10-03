@@ -68,12 +68,10 @@ internal class DatabaseMessageRepository(
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of messages found in repository.
      */
-    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
+    override suspend fun selectMessages(messageIds: List<String>): List<Message> {
         return messageIds.map { it to messageCache[it] }
             .partition { it.second != null }
             .let { (cachedMessages, missingMessages) ->
@@ -99,9 +97,8 @@ internal class DatabaseMessageRepository(
      * Inserts many messages.
      *
      * @param messages list of [Message]
-     * @param cache Boolean.
      */
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+    override suspend fun insertMessages(messages: List<Message>) {
         if (messages.isEmpty()) return
         val validMessages = messages
             .filter { message -> message.cid.isNotEmpty() }
@@ -130,8 +127,8 @@ internal class DatabaseMessageRepository(
      * @param message [Message]
      * @param cache Boolean.
      */
-    override suspend fun insertMessage(message: Message, cache: Boolean) {
-        insertMessages(listOf(message), cache)
+    override suspend fun insertMessage(message: Message) {
+        insertMessages(listOf(message))
     }
 
     /**

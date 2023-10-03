@@ -59,7 +59,7 @@ public interface MessageRepository {
      *
      * @return A list of messages found in repository.
      */
-    public suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean = false): List<Message>
+    public suspend fun selectMessages(messageIds: List<String>): List<Message>
 
     /**
      * Reads the message with passed ID.
@@ -74,7 +74,7 @@ public interface MessageRepository {
      * @param messages list of [Message]
      * @param cache Boolean.
      */
-    public suspend fun insertMessages(messages: List<Message>, cache: Boolean = false)
+    public suspend fun insertMessages(messages: List<Message>)
 
     /**
      * Inserts a messages.
@@ -82,7 +82,7 @@ public interface MessageRepository {
      * @param message [Message]
      * @param cache Boolean.
      */
-    public suspend fun insertMessage(message: Message, cache: Boolean = false)
+    public suspend fun insertMessage(message: Message)
 
     /**
      * Deletes all messages before a message with passed ID.

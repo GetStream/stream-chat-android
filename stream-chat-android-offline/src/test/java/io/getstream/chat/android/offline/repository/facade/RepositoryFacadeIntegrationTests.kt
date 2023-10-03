@@ -43,8 +43,8 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             val updatedText = randomString()
             val updatedMessage = originalMessage.copy(text = updatedText)
 
-            repositoryFacade.insertMessages(listOf(originalMessage), cache = false)
-            repositoryFacade.insertMessages(listOf(updatedMessage), cache = false)
+            repositoryFacade.insertMessages(listOf(originalMessage))
+            repositoryFacade.insertMessages(listOf(updatedMessage))
             val result = repositoryFacade.selectMessage(id)
 
             result.shouldNotBeNull()
@@ -68,7 +68,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             ),
         )
 
-        repositoryFacade.insertMessages(listOf(message), cache = false)
+        repositoryFacade.insertMessages(listOf(message))
         val result = repositoryFacade.selectMessage(message.id)
 
         result.shouldNotBeNull()
@@ -99,7 +99,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             )
 
             repositoryFacade.insertCurrentUser(randomUser())
-            repositoryFacade.insertMessages(listOf(message), cache = false)
+            repositoryFacade.insertMessages(listOf(message))
             val result: Message? = repositoryFacade.selectMessage(message.id)
 
             result.shouldNotBeNull()
@@ -112,7 +112,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
         runTest {
             val message = randomMessage(channelInfo = null)
 
-            repositoryFacade.insertMessages(listOf(message), cache = false)
+            repositoryFacade.insertMessages(listOf(message))
             val result = repositoryFacade.selectMessage(message.id)
 
             result?.channelInfo.shouldBeNull()
@@ -124,7 +124,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             val channelInfo = randomChannelInfo()
             val message = randomMessage(channelInfo = channelInfo)
 
-            repositoryFacade.insertMessages(listOf(message), cache = false)
+            repositoryFacade.insertMessages(listOf(message))
             val result = repositoryFacade.selectMessage(message.id)
 
             result?.channelInfo shouldBeEqualTo channelInfo

@@ -105,14 +105,14 @@ public class RepositoryFacade private constructor(
         channelsRepository.upsertChannels(channels)
     }
 
-    override suspend fun insertMessage(message: Message, cache: Boolean) {
+    override suspend fun insertMessage(message: Message) {
         insertUsers(message.users())
-        messageRepository.insertMessage(message, cache)
+        messageRepository.insertMessage(message)
     }
 
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+    override suspend fun insertMessages(messages: List<Message>) {
         insertUsers(messages.flatMap(Message::users))
-        messageRepository.insertMessages(messages, cache)
+        messageRepository.insertMessages(messages)
     }
 
     /**
@@ -141,7 +141,6 @@ public class RepositoryFacade private constructor(
             channels.flatMap { channel ->
                 channel.messages.map { it.enrichWithCid(channel.cid) }
             },
-            false,
         )
     }
 

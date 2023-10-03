@@ -46,7 +46,7 @@ internal class ShuffleGiphyListenerDatabase(
         if (result is Result.Success) {
             val processedMessage = result.value.copy(syncStatus = SyncStatus.COMPLETED)
             userRepository.insertUsers(processedMessage.users())
-            messageRepository.insertMessage(processedMessage, cache = false)
+            messageRepository.insertMessage(processedMessage)
         }
     }
 }

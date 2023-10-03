@@ -41,7 +41,6 @@ import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -153,7 +152,6 @@ internal class WhenUploadAttachmentsTests {
 
         verify(repository).insertMessage(
             argThat { id == "messageId123" && syncStatus == SyncStatus.FAILED_PERMANENTLY },
-            eq(false),
         )
     }
 
@@ -194,7 +192,6 @@ internal class WhenUploadAttachmentsTests {
                             any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
-                eq(false),
             )
         }
 
@@ -247,7 +244,6 @@ internal class WhenUploadAttachmentsTests {
                             any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
-                eq(false),
             )
         }
 
@@ -291,7 +287,6 @@ internal class WhenUploadAttachmentsTests {
                             any { it.uploadId == "uploadId2" && it.uploadState == Attachment.UploadState.Success }
                     }
                 },
-                eq(false),
             )
         }
 

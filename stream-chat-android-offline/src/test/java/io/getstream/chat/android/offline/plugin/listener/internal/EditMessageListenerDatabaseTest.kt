@@ -29,7 +29,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -57,7 +56,6 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
-            eq(false),
         )
     }
 
@@ -74,7 +72,6 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false),
         )
     }
 
@@ -91,7 +88,6 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            eq(false),
         )
     }
 
@@ -108,7 +104,6 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false),
         )
     }
 }

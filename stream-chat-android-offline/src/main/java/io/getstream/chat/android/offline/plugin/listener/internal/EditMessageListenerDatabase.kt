@@ -69,6 +69,6 @@ internal class EditMessageListenerDatabase(
 
     private suspend fun saveMessage(message: Message) {
         userRepository.insertUsers(message.users())
-        messageRepository.insertMessage(message, false)
+        messageRepository.insertMessage(message)
     }
 }

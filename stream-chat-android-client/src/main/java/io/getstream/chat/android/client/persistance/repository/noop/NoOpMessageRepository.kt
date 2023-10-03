@@ -28,10 +28,10 @@ import java.util.Date
 
 @Suppress("TooManyFunctions")
 internal object NoOpMessageRepository : MessageRepository {
-    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> = emptyList()
+    override suspend fun selectMessages(messageIds: List<String>): List<Message> = emptyList()
     override suspend fun selectMessage(messageId: String): Message? = null
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) { /* No-Op */ }
-    override suspend fun insertMessage(message: Message, cache: Boolean) { /* No-Op */ }
+    override suspend fun insertMessages(messages: List<Message>) { /* No-Op */ }
+    override suspend fun insertMessage(message: Message) { /* No-Op */ }
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) { /* No-Op */ }
     override suspend fun deleteChannelMessage(message: Message) { /* No-Op */ }
     override suspend fun selectMessageIdsBySyncState(syncStatus: SyncStatus): List<String> = emptyList()

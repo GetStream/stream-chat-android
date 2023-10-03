@@ -226,7 +226,7 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
+    override suspend fun selectMessages(messageIds: List<String>): List<Message> {
         return messages.filter { (messageId, _) ->
             messageIds.contains(messageId)
         }.values.toList()
@@ -236,11 +236,11 @@ internal class MockMessageRepository : MessageRepository {
         return messages[messageId]
     }
 
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+    override suspend fun insertMessages(messages: List<Message>) {
         messages.forEach { this.messages[it.id] = it }
     }
 
-    override suspend fun insertMessage(message: Message, cache: Boolean) {
+    override suspend fun insertMessage(message: Message) {
         messages[message.id] = message
     }
 

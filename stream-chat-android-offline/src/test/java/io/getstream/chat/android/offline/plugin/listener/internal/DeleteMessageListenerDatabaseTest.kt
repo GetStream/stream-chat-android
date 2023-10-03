@@ -62,7 +62,6 @@ internal class DeleteMessageListenerDatabaseTest {
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
-            argThat { _ -> true },
         )
     }
 
@@ -83,7 +82,6 @@ internal class DeleteMessageListenerDatabaseTest {
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            argThat { _ -> true },
         )
     }
 
@@ -104,7 +102,6 @@ internal class DeleteMessageListenerDatabaseTest {
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            argThat { _ -> true },
         )
     }
 
@@ -125,7 +122,6 @@ internal class DeleteMessageListenerDatabaseTest {
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            argThat { _ -> true },
         )
     }
 }
