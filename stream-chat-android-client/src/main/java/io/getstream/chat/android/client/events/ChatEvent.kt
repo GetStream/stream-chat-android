@@ -24,11 +24,16 @@ import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
 import java.util.Date
+import java.util.concurrent.atomic.AtomicInteger
+
+private val seqGenerator = AtomicInteger()
 
 public sealed class ChatEvent {
     public abstract val type: String
     public abstract val createdAt: Date
     public abstract val rawCreatedAt: String?
+
+    public val seq: Int = seqGenerator.incrementAndGet()
 }
 
 public sealed class CidEvent : ChatEvent() {

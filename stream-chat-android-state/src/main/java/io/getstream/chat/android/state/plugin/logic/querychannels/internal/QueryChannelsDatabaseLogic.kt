@@ -56,12 +56,21 @@ internal class QueryChannelsDatabaseLogic(
     }
 
     /**
-     * Select channels from database without fetching messages
+     * Select a channel from database without fetching messages
      *
      * @param cid String
      */
     internal suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         return channelRepository.selectChannelWithoutMessages(cid)
+    }
+
+    /**
+     * Select channels from database without fetching messages
+     *
+     * @param cids List<String>
+     */
+    internal suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> {
+        return channelRepository.selectChannelsWithoutMessages(cids)
     }
 
     /**

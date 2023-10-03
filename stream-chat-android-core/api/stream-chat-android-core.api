@@ -54,6 +54,9 @@ public final class io/getstream/chat/android/core/internal/fsm/FiniteStateMachin
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/core/internal/fsm/FiniteStateMachine;
 }
 
+public final class io/getstream/chat/android/core/internal/lazy/ParameterizedLazyKt {
+}
+
 public final class io/getstream/chat/android/core/utils/Debouncer {
 	public fun <init> (JLkotlinx/coroutines/CoroutineScope;)V
 	public synthetic fun <init> (JLkotlinx/coroutines/CoroutineScope;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -61,6 +64,9 @@ public final class io/getstream/chat/android/core/utils/Debouncer {
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class io/getstream/chat/android/core/utils/MutableValueKt {
 }
 
 public final class io/getstream/chat/android/core/utils/date/DateUtils {
