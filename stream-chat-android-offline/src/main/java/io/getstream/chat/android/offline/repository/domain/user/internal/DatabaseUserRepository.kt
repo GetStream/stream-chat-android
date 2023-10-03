@@ -95,31 +95,6 @@ internal class DatabaseUserRepository(
         return cachedUsers + userDao.select(missingUserIds).map(::toModel).also { cacheUsers(it) }
     }
 
-    /**
-     * Select all users respecting a limit and a offset.
-     *
-     * @param limit Int.
-     * @param offset Int.
-     */
-    override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> = userDao
-        .selectAllUser(limit, offset)
-        .map(::toModel)
-        .map { userCache[it.id] ?: it }
-        .also { cacheUsers(it) }
-
-    /**
-     * Selects users with a name that looks like the of wanted.
-     *
-     * @param searchString - The name of the user.
-     * @param limit Int
-     * @param offset Int
-     */
-    override suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User> = userDao
-        .selectUsersLikeName("$searchString%", limit, offset)
-        .map(::toModel)
-        .map { userCache[it.id] ?: it }
-        .also { cacheUsers(it) }
-
     private fun cacheUsers(users: Collection<User>) {
         for (userEntity in users) {
             userCache.put(userEntity.id, userEntity)
