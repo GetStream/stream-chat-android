@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.EventArguments
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
@@ -99,6 +100,7 @@ internal class ChatClientTest {
             Mother.chatLoggerConfig(),
             false,
             false,
+            NotificationConfig(),
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         api = mock()
@@ -135,7 +137,6 @@ internal class ChatClientTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
-            notificationConfig = mock(),
         ).apply {
             connectUser(user, token).enqueue()
         }

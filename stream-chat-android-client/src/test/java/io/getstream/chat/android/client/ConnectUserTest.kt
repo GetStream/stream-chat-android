@@ -120,7 +120,6 @@ internal class ConnectUserTest {
             mutableClientState = mutableClientState,
             currentUserFetcher = mock(),
             audioPlayer = mock(),
-            notificationConfig = mock(),
         )
     }
 
