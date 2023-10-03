@@ -1,96 +1,17 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# October 03th, 2023 - 6.0.4
 ## stream-chat-android-client
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Create Throttling mechanism for `MarkRead` Events [#4975](https://github.com/GetStream/stream-chat-android/pull/4975)
 - Ignore push messages if WS is connected. [#4979](https://github.com/GetStream/stream-chat-android/pull/4979)
 - Added caching mechanism to date parsing. [#4981](https://github.com/GetStream/stream-chat-android/pull/4981)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-offline
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Improved database caching, which resulted in reduced IO operations. [#4983](https://github.com/GetStream/stream-chat-android/pull/4983) 
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Expanded/Enhanced event batching to speed up the event processing. [#4982](https://github.com/GetStream/stream-chat-android/pull/4982)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # September 18th, 2023 - 6.0.3
 ## stream-chat-android-client
