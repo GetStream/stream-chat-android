@@ -226,8 +226,6 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun selectRepliedMessage(messageId: String): Message? = messages[messageId]
-
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
         return messages.filter { (messageId, _) ->
             messageIds.contains(messageId)
