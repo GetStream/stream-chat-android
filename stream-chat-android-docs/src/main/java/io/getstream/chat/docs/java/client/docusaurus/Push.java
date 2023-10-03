@@ -49,8 +49,9 @@ public class Push {
      */
     public void configureNotification(Context context, NotificationHandler notificationHandler) {
         boolean pushNotificationEnabled = true;
+        boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
 
         new ChatClient.Builder("api-key", context)
                 .notifications(notificationConfig, notificationHandler)
@@ -62,8 +63,9 @@ public class Push {
      */
     public void customNotificationHandler(Context context) {
         boolean pushNotificationEnabled = true;
+        boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
 
         NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (message, channel) -> {
             // Return the intent you want to be triggered when the notification is clicked
@@ -173,12 +175,13 @@ public class Push {
          */
         public void configureFirebaseNotifications(Context context) {
             boolean pushNotificationEnabled = true;
+            boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
                     new FirebasePushDeviceGenerator(
                             "providerName"
                     )
             );
-            NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -224,10 +227,11 @@ public class Push {
          */
         public void configureHuaweiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
+            boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
                     new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "providerName")
             );
-            NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -271,8 +275,9 @@ public class Push {
          */
         public void configureXiaomiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
+            boolean ignorePushMessagesWhenUserOnline = true;
             List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", "providerName", Region.Global));
-            NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();

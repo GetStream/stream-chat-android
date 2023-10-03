@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.audio.StreamMediaPlayer
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -89,6 +90,7 @@ internal class MockClientBuilder(
             Mother.chatLoggerConfig(),
             false,
             false,
+            NotificationConfig(),
         )
 
         val tokenUtil: TokenUtils = mock()
@@ -106,8 +108,8 @@ internal class MockClientBuilder(
         val userScope = UserTestScope(clientScope)
         client = ChatClient(
             config,
-            api,
-            notificationsManager,
+            api = api,
+            notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
             userCredentialStorage = mock(),
             userStateService = userStateService,
