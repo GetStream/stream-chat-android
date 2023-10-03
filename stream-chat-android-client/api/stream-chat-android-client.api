@@ -221,15 +221,16 @@ public final class io/getstream/chat/android/client/ClientExtensionsKt {
 }
 
 public final class io/getstream/chat/android/client/api/ChatClientConfig {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;Z)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZZ)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZLio/getstream/chat/android/client/notifications/handler/NotificationConfig;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZZLio/getstream/chat/android/client/notifications/handler/NotificationConfig;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLio/getstream/chat/android/client/logger/ChatLoggerConfig;ZZLio/getstream/chat/android/client/notifications/handler/NotificationConfig;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun getApiKey ()Ljava/lang/String;
 	public final fun getCdnHttpUrl ()Ljava/lang/String;
 	public final fun getDebugRequests ()Z
 	public final fun getDistinctApiCalls ()Z
 	public final fun getHttpUrl ()Ljava/lang/String;
 	public final fun getLoggerConfig ()Lio/getstream/chat/android/client/logger/ChatLoggerConfig;
+	public final fun getNotificationConfig ()Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;
 	public final fun getWarmUp ()Z
 	public final fun getWssUrl ()Ljava/lang/String;
 	public final fun isAnonymous ()Z

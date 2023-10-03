@@ -206,7 +206,6 @@ public class ChatClient
 @Suppress("LongParameterList")
 internal constructor(
     public val config: ChatClientConfig,
-    internal val notificationConfig: NotificationConfig,
     private val api: ChatApi,
     private val notifications: ChatNotifications,
     private val tokenManager: TokenManager = TokenManagerImpl(),
@@ -3155,6 +3154,7 @@ internal constructor(
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,
                 debugRequests,
+                notificationConfig,
             )
             setupStreamLog()
 
@@ -3170,7 +3170,6 @@ internal constructor(
                     userScope,
                     config,
                     notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
-                    notificationConfig,
                     fileUploader,
                     tokenManager,
                     customOkHttpClient,
@@ -3195,7 +3194,6 @@ internal constructor(
 
             return ChatClient(
                 config,
-                notificationConfig,
                 module.api(),
                 module.notifications(),
                 tokenManager,
@@ -3323,7 +3321,7 @@ internal constructor(
         @JvmStatic
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                if (!notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
+                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
                     clientScope.launch {
                         setUserWithoutConnectingIfNeeded()
                         notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
