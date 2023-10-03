@@ -37,7 +37,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.Dat
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 
-private const val DEFAULT_CACHE_SIZE = 100
+private const val DEFAULT_CACHE_SIZE = 1000
 
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,

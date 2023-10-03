@@ -55,13 +55,13 @@ internal class ShuffleGiphyListenerDatabaseTest {
 
         shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Success(testMessage))
 
-        verify(messageRepository).insertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED), false)
+        verify(messageRepository).insertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED))
     }
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be insert in database`() = runTest {
         shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(Error.GenericError("")))
 
-        verify(messageRepository, never()).insertMessage(any(), any())
+        verify(messageRepository, never()).insertMessage(any())
     }
 }

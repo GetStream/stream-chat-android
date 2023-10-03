@@ -76,7 +76,7 @@ internal class SendMessageListenerDatabase(
             )
             .also { message ->
                 userRepository.insertUsers(message.users())
-                messageRepository.insertMessage(message, cache = false)
+                messageRepository.insertMessage(message)
             }
     }
 
@@ -103,7 +103,7 @@ internal class SendMessageListenerDatabase(
             updatedLocallyAt = Date(),
         ).also { parsedMessage ->
             userRepository.insertUsers(parsedMessage.users())
-            messageRepository.insertMessage(parsedMessage, cache = false)
+            messageRepository.insertMessage(parsedMessage)
         }
     }
 }

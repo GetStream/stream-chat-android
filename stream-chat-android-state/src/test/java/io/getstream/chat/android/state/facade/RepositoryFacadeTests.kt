@@ -25,7 +25,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
-import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomConfig
@@ -98,7 +97,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     fun `Given Db contains all required data When select messages Should return message list`() = runTest {
         val message1 = randomMessage()
         val message2 = randomMessage()
-        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")), any())) doReturn listOf(
+        whenever(messages.selectMessages(eq(listOf("messageId1", "messageId2")))) doReturn listOf(
             message1,
             message2,
         )
@@ -155,10 +154,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             threadParticipants = threadParticipantsUsers,
             pinnedBy = pinnedByUser,
         )
-        val cache = randomBoolean()
-        sut.insertMessage(message, cache)
+        sut.insertMessage(message)
 
-        verify(messages).insertMessage(eq(message), eq(cache))
+        verify(messages).insertMessage(eq(message))
         verify(users).insertUsers(
             check { listUser ->
                 listUser `should contain same` expectedListOfUser
@@ -226,11 +224,10 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     )
                     (acc.first + latestReactionUsers + ownReactionUsers + threadParticipantsUsers + mentionedUsers + replyToUser + messageUser + pinnedByUser) to acc.second + message
                 }
-            val cache = randomBoolean()
 
-            sut.insertMessages(listOfMessages, cache)
+            sut.insertMessages(listOfMessages)
 
-            verify(messages).insertMessages(eq(listOfMessages), eq(cache))
+            verify(messages).insertMessages(eq(listOfMessages))
             verify(users).insertUsers(
                 check { listUser ->
                     listUser `should contain same` listOfUser
@@ -279,7 +276,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(configs).insertChannelConfigs(expectedChannelsConfig)
         verify(channels).upsertChannels(expectedChannels)
-        verify(messages).insertMessages(expectedMessages, false)
+        verify(messages).insertMessages(expectedMessages)
     }
 
     @Test
@@ -301,6 +298,6 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
 
         verify(configs).insertChannelConfigs(expectedChannelsConfig)
         verify(channels).upsertChannels(expectedChannels)
-        verify(messages).insertMessages(expectedMessages, false)
+        verify(messages).insertMessages(expectedMessages)
     }
 }

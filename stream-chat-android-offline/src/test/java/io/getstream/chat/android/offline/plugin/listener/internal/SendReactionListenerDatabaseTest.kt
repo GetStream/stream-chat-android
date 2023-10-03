@@ -81,7 +81,6 @@ internal class SendReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.IN_PROGRESS
                 }
             },
-            any(),
         )
     }
 
@@ -110,7 +109,6 @@ internal class SendReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId && reaction.syncStatus == SyncStatus.SYNC_NEEDED
                 }
             },
-            any(),
         )
     }
 
