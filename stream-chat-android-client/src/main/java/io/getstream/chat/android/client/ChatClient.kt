@@ -103,7 +103,6 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReposito
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
-import io.getstream.chat.android.client.plugin.factory.ThrottlingPluginFactory
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -3244,7 +3243,7 @@ internal constructor(
          * @see [Plugin]
          * @see [PluginFactory]
          */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(ThrottlingPluginFactory)
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
 
         /**
          * Create a [ChatClient] instance based on the current configuration

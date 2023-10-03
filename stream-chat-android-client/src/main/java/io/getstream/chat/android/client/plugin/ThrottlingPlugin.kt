@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.plugin
 
 import io.getstream.chat.android.models.User
+import io.getstream.log.StreamLog
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlin.reflect.KClass
@@ -31,7 +32,9 @@ internal class ThrottlingPlugin : Plugin {
         return when {
             deltaLastMarkReadAt > MARK_READ_THROTTLE_MS -> Result.Success(Unit)
                 .also { lastMarkReadMap[channelId] = now }
-            else -> Result.Failure(Error.GenericError("Mark read throttled"))
+            else -> Result.Failure(Error.GenericError("Mark read throttled")).also {
+                StreamLog.w("ThrottlingPlugin") { "[onChannelMarkReadPrecondition] read is ignored ($channelId)" }
+            }
         }
     }
 
