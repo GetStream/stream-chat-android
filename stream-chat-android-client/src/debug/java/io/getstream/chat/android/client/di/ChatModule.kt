@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.di
 import android.content.Context
 import androidx.lifecycle.Lifecycle
 import io.getstream.chat.android.client.api.ChatClientConfig
-import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.scope.ClientScope
@@ -40,7 +39,6 @@ internal class ChatModule(
     userScope: UserScope,
     config: ChatClientConfig,
     notificationsHandler: NotificationHandler,
-    notificationConfig: NotificationConfig,
     uploader: FileUploader?,
     tokenManager: TokenManager,
     customOkHttpClient: OkHttpClient?,
@@ -51,7 +49,6 @@ internal class ChatModule(
     userScope,
     config,
     notificationsHandler,
-    notificationConfig,
     uploader,
     tokenManager,
     customOkHttpClient,
