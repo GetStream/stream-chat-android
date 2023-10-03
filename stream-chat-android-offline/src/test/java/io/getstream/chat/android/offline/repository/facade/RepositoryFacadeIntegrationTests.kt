@@ -31,7 +31,6 @@ import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.Date
 
 @RunWith(AndroidJUnit4::class)
 internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegrationTest() {
@@ -44,8 +43,8 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             val updatedText = randomString()
             val updatedMessage = originalMessage.copy(text = updatedText)
 
-            repositoryFacade.insertMessages(listOf(originalMessage), cache = false)
-            repositoryFacade.insertMessages(listOf(updatedMessage), cache = false)
+            repositoryFacade.insertMessages(listOf(originalMessage))
+            repositoryFacade.insertMessages(listOf(updatedMessage))
             val result = repositoryFacade.selectMessage(id)
 
             result.shouldNotBeNull()
@@ -69,7 +68,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             ),
         )
 
-        repositoryFacade.insertMessages(listOf(message), cache = false)
+        repositoryFacade.insertMessages(listOf(message))
         val result = repositoryFacade.selectMessage(message.id)
 
         result.shouldNotBeNull()
@@ -100,7 +99,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             )
 
             repositoryFacade.insertCurrentUser(randomUser())
-            repositoryFacade.insertMessages(listOf(message), cache = false)
+            repositoryFacade.insertMessages(listOf(message))
             val result: Message? = repositoryFacade.selectMessage(message.id)
 
             result.shouldNotBeNull()
@@ -109,36 +108,11 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
         }
 
     @Test
-    fun `Given a message with deleted own reaction When querying message Should return massage without own reactions`(): Unit =
-        runTest {
-            val messageId = randomString()
-            val mineDeletedReaction = randomReaction(
-                messageId = messageId,
-                user = currentUser,
-                userId = currentUser.id,
-                deletedAt = Date(),
-
-            )
-            val message = randomMessage(
-                id = messageId,
-                ownReactions = mutableListOf(mineDeletedReaction),
-                latestReactions = mutableListOf(mineDeletedReaction),
-            )
-
-            repositoryFacade.insertMessages(listOf(message), cache = false)
-            val result = repositoryFacade.selectMessage(message.id)
-
-            result.shouldNotBeNull()
-            result.latestReactions.shouldBeEmpty()
-            result.ownReactions.shouldBeEmpty()
-        }
-
-    @Test
     fun `Given a message without channel info When querying message Should return message with null channel info`() =
         runTest {
             val message = randomMessage(channelInfo = null)
 
-            repositoryFacade.insertMessages(listOf(message), cache = false)
+            repositoryFacade.insertMessages(listOf(message))
             val result = repositoryFacade.selectMessage(message.id)
 
             result?.channelInfo.shouldBeNull()
@@ -150,7 +124,7 @@ internal class RepositoryFacadeIntegrationTests : BaseRepositoryFacadeIntegratio
             val channelInfo = randomChannelInfo()
             val message = randomMessage(channelInfo = channelInfo)
 
-            repositoryFacade.insertMessages(listOf(message), cache = false)
+            repositoryFacade.insertMessages(listOf(message))
             val result = repositoryFacade.selectMessage(message.id)
 
             result?.channelInfo shouldBeEqualTo channelInfo

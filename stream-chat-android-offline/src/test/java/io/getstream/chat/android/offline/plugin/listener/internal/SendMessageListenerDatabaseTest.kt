@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
@@ -62,7 +61,6 @@ internal class SendMessageListenerDatabaseTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            eq(false),
         )
     }
 
@@ -84,7 +82,6 @@ internal class SendMessageListenerDatabaseTest {
             argThat { message ->
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false),
         )
     }
 
@@ -104,7 +101,6 @@ internal class SendMessageListenerDatabaseTest {
         verify(userRepository, never()).insertUsers(testMessage.users())
         verify(messageRepository, never()).insertMessage(
             argThat { message -> message.id == testMessage.id },
-            eq(false),
         )
     }
 }

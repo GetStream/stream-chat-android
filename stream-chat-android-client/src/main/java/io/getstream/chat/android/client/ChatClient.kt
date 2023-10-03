@@ -103,6 +103,7 @@ import io.getstream.chat.android.client.persistance.repository.noop.NoOpReposito
 import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.plugin.factory.ThrottlingPluginFactory
 import io.getstream.chat.android.client.scope.ClientScope
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.setup.state.ClientState
@@ -3153,6 +3154,7 @@ internal constructor(
                 loggerConfig = ChatLoggerConfigImpl(logLevel, loggerHandler),
                 distinctApiCalls = distinctApiCalls,
                 debugRequests,
+                notificationConfig,
             )
             setupStreamLog()
 
@@ -3168,7 +3170,6 @@ internal constructor(
                     userScope,
                     config,
                     notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
-                    notificationConfig,
                     fileUploader,
                     tokenManager,
                     customOkHttpClient,
@@ -3243,7 +3244,7 @@ internal constructor(
          * @see [Plugin]
          * @see [PluginFactory]
          */
-        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf()
+        protected val pluginFactories: MutableList<PluginFactory> = mutableListOf(ThrottlingPluginFactory)
 
         /**
          * Create a [ChatClient] instance based on the current configuration
@@ -3320,9 +3321,15 @@ internal constructor(
         @JvmStatic
         public fun handlePushMessage(pushMessage: PushMessage) {
             ensureClientInitialized().run {
-                clientScope.launch {
-                    setUserWithoutConnectingIfNeeded()
-                    notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                if (!config.notificationConfig.ignorePushMessagesWhenUserOnline || !isSocketConnected()) {
+                    clientScope.launch {
+                        setUserWithoutConnectingIfNeeded()
+                        notifications.onPushMessage(pushMessage, pushNotificationReceivedListener)
+                    }
+                } else {
+                    // We ignore push messages if the WS is connected (this prevents unnecessary IO).
+                    // Push notifications can also be fully disabled from the dashboard for not connected users.
+                    logger.v { "[handlePushMessage] received push message while WS is connected - ignoring" }
                 }
             }
         }

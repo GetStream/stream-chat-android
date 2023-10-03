@@ -49,11 +49,18 @@ public interface ChannelRepository {
     public suspend fun deleteChannel(cid: String)
 
     /**
-     * Select a channels, but without loading the messages.
+     * Select a channel, but without loading the messages.
      *
      * @param cid String
      */
     public suspend fun selectChannelWithoutMessages(cid: String): Channel?
+
+    /**
+     * Select a channels, but without loading the messages.
+     *
+     * @param cids List<String>
+     */
+    public suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel>
 
     /**
      * Selects all channels' cids.

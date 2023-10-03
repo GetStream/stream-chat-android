@@ -54,7 +54,6 @@ internal class GetMessageListenerDatabase(
             is Result.Success -> {
                 repositoryFacade.insertMessage(
                     message = result.value,
-                    cache = true,
                 )
             }
             is Result.Failure -> {

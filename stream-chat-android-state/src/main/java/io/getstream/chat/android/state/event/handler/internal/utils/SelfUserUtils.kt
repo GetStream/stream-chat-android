@@ -33,7 +33,6 @@ internal fun MutableGlobalState.updateCurrentUser(currentUser: User?, receivedUs
     }
 
     setBanned(me.banned)
-    setBanned(me.banned)
     setMutedUsers(me.mutes)
     setChannelMutes(me.channelMutes)
     setTotalUnreadCount(me.totalUnreadCount)

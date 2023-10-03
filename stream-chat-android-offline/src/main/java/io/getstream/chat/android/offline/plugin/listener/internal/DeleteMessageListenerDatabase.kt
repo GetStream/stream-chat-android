@@ -81,7 +81,7 @@ internal class DeleteMessageListenerDatabase(
             )
 
             userRepository.insertUsers(messageToBeDeleted.users())
-            messageRepository.insertMessage(messageToBeDeleted, true)
+            messageRepository.insertMessage(messageToBeDeleted)
         }
     }
 
@@ -96,7 +96,6 @@ internal class DeleteMessageListenerDatabase(
             is Result.Success -> {
                 messageRepository.insertMessage(
                     result.value.copy(syncStatus = SyncStatus.COMPLETED),
-                    true,
                 )
             }
             is Result.Failure -> {
@@ -106,7 +105,7 @@ internal class DeleteMessageListenerDatabase(
                         updatedLocallyAt = Date(),
                     )
 
-                    messageRepository.insertMessage(failureMessage, true)
+                    messageRepository.insertMessage(failureMessage)
                 }
             }
         }

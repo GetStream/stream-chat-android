@@ -50,7 +50,7 @@ internal class ThreadQueryListenerDatabaseTest {
         threadQueryListenerDatabase.onGetRepliesResult(Result.Success(messageList), randomString(), randomInt())
 
         verify(userRepository).insertUsers(any())
-        verify(messageRepository).insertMessages(messageList, false)
+        verify(messageRepository).insertMessages(messageList)
     }
 
     @Test
@@ -61,6 +61,6 @@ internal class ThreadQueryListenerDatabaseTest {
         threadQueryListenerDatabase.onGetRepliesResult(Result.Failure(Error.GenericError("")), randomString(), randomInt())
 
         verify(userRepository, never()).insertUsers(any())
-        verify(messageRepository, never()).insertMessages(messageList, false)
+        verify(messageRepository, never()).insertMessages(messageList)
     }
 }

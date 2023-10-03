@@ -36,6 +36,7 @@ internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
+    cacheSize: Int = 1000,
 ) : ChannelRepository {
 
     private val logger by taggedLogger("Chat:ChannelRepository")
@@ -80,7 +81,23 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
         val entity = channelDao.select(cid = cid)
+        // TODO
+        //  Do we really need to pass getMessage here?
+        //  Name `selectChannelsWithoutMessages` we should not load messages here.
         return entity?.toModel(getUser, getMessage)
+    }
+
+    /**
+     * Select a channels, but without loading the messages.
+     *
+     * @param cids List<String>
+     */
+    override suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> {
+        val entities = channelDao.select(cids = cids)
+        // TODO
+        //  Do we really need to pass getMessage here?
+        //  Name `selectChannelsWithoutMessages` we should not load messages here.
+        return entities.map { it.toModel(getUser, getMessage) }
     }
 
     /**
