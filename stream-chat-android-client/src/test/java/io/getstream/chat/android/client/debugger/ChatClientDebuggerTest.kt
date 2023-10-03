@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.interceptor.SendMessageInterceptor
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -86,7 +87,8 @@ internal class ChatClientDebuggerTest {
             false,
             Mother.chatLoggerConfig(),
             false,
-            false
+            false,
+            NotificationConfig(),
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
         api = mock()
@@ -138,7 +140,6 @@ internal class ChatClientDebuggerTest {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = Mother.mockedClientState(),
             currentUserFetcher = mock(),
-            notificationConfig = mock(),
         ).apply {
             addInterceptor(sendMessageInterceptor)
             connectUser(user, token).enqueue()

@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
@@ -90,6 +91,7 @@ internal class CurrentUserFetcherTests {
                 warmUp = randomBoolean(),
                 loggerConfig = mock(),
                 debugRequests = randomBoolean(),
+                notificationConfig = NotificationConfig(),
             ).apply { isAnonymous = randomBoolean() }
         )
     }

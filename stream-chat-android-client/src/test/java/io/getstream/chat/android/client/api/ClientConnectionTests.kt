@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.models.ConnectionData
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -88,7 +89,8 @@ internal class ClientConnectionTests {
         false,
         Mother.chatLoggerConfig(),
         false,
-        false
+        false,
+        NotificationConfig(),
     )
 
     private val connectedEvent = ConnectedEvent(
@@ -151,7 +153,6 @@ internal class ClientConnectionTests {
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = clientState,
             currentUserFetcher = mock(),
-            notificationConfig = mock(),
         )
     }
 

@@ -25,6 +25,7 @@ import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.models.EventType
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -86,7 +87,8 @@ internal class MockClientBuilder(
             false,
             Mother.chatLoggerConfig(),
             false,
-            false
+            false,
+            NotificationConfig(),
         )
 
         val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutineExtension.dispatcher)
@@ -123,7 +125,6 @@ internal class MockClientBuilder(
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
             clientState = mock(),
             currentUserFetcher = mock(),
-            notificationConfig = mock(),
         )
 
         client.connectUser(user, token).enqueue()
