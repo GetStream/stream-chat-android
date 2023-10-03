@@ -63,7 +63,7 @@ internal class DatabaseMessageRepository(
             .filterReactions()
     }
 
-    override suspend fun selectRepliedMessage(messageId: String): Message? {
+    private suspend fun selectRepliedMessage(messageId: String): Message? {
         return replyMessageDao.selectById(messageId)?.toModel(getUser)
     }
 
