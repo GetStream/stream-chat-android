@@ -15,6 +15,8 @@
 
 ### ⬆️ Improved
 - Create Throttling mechanism for `MarkRead` Events [#4975](https://github.com/GetStream/stream-chat-android/pull/4975)
+- Ignore push messages if WS is connected. [#4979](https://github.com/GetStream/stream-chat-android/pull/4979)
+- Added caching mechanism to date parsing. [#4981](https://github.com/GetStream/stream-chat-android/pull/4981)
 
 ### ✅ Added
 
@@ -26,6 +28,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved database caching, which resulted in reduced IO operations. [#4983](https://github.com/GetStream/stream-chat-android/pull/4983) 
 
 ### ✅ Added
 
@@ -37,6 +40,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Expanded/Enhanced event batching to speed up the event processing. [#4982](https://github.com/GetStream/stream-chat-android/pull/4982)
 
 ### ✅ Added
 
