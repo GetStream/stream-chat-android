@@ -11,11 +11,11 @@ jobs:
         uses: actions/checkout@v3.1.0
         with:
           fetch-depth: 0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: Find touched DB Entities
         id: touchedEntities
         continue-on-error: true
