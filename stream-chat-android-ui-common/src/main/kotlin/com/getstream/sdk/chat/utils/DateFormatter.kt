@@ -88,16 +88,17 @@ public fun DateFormatter.formatTime(date: Date?): String {
 
 internal class DefaultDateFormatter(
     private val dateContext: DateContext,
+    private val locale: Locale = Locale.getDefault(),
 ) : DateFormatter {
 
     constructor(context: Context) : this(DefaultDateContext(context))
 
-    private val timeFormatter12h = DateTimeFormatter.ofPattern("h:mm a")
-    private val timeFormatter24h = DateTimeFormatter.ofPattern("HH:mm")
-    private val dateFormatterDayOfWeek = DateTimeFormatter.ofPattern("EEEE")
+    private val timeFormatter12h = DateTimeFormatter.ofPattern("h:mm a", locale)
+    private val timeFormatter24h = DateTimeFormatter.ofPattern("HH:mm", locale)
+    private val dateFormatterDayOfWeek = DateTimeFormatter.ofPattern("EEEE", locale)
     private val dateFormatterFullDate: DateTimeFormatter
         // Re-evaluated every time to account for runtime Locale changes
-        get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern())
+        get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern(), locale)
 
     override fun formatDate(localDateTime: LocalDateTime?): String {
         localDateTime ?: return ""

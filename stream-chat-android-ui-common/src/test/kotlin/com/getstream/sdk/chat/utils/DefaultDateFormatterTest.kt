@@ -23,6 +23,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.threeten.bp.LocalDate
 import org.threeten.bp.LocalDateTime
+import java.util.Locale
 
 @RunWith(TestParameterInjector::class)
 internal class DefaultDateFormatterTest {
@@ -45,7 +46,8 @@ internal class DefaultDateFormatterTest {
     @Test
     fun `Date formatting is correct`(@TestParameter testCase: TestCase) {
         val formatter: DateFormatter = DefaultDateFormatter(
-            TestDateContext(testCase.now, testCase.is24Hour, testCase.dateTimePattern)
+            TestDateContext(testCase.now, testCase.is24Hour, testCase.dateTimePattern),
+            Locale.US,
         )
 
         val formattedDate = formatter.formatDate(testCase.dateToFormat)

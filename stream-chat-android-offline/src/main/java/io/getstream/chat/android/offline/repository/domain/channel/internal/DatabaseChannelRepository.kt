@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
-import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import io.getstream.logging.StreamLog
@@ -37,7 +36,7 @@ internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
-    cacheSize: Int = 100,
+    cacheSize: Int = 1000,
 ) : ChannelRepository {
 
     private val logger = StreamLog.getLogger("Chat:ChannelRepository")
@@ -51,10 +50,7 @@ internal class DatabaseChannelRepository(
      * @param channel [Channel]
      */
     override suspend fun insertChannel(channel: Channel) {
-        val entity = channel.toEntity()
-        logger.v { "[insertChannel] entity: ${entity.lastMessageInfo()}" }
-        updateCache(listOf(channel))
-        channelDao.insert(entity)
+        insertChannels(listOf(channel))
     }
 
     /**
@@ -64,10 +60,22 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
-        val entities = channels.map(Channel::toEntity)
-        logger.v { "[insertChannels] entities.size: ${entities.size}" }
+
+        val channelsToInsert = channels
+            .partition { !channelCache.contains(it.cid) }
+            .let { (newChannels, channelsToUpdate) ->
+                newChannels.map(Channel::toEntity) +
+                    channelsToUpdate
+                        .map(Channel::toEntity)
+                        .filter { channelCache[it.cid]?.toEntity() != it }
+            }
         updateCache(channels)
-        channelDao.insertMany(entities)
+        logger.v {
+            "[insertChannels] inserting ${channelsToInsert.size} entities on DB, updated ${channels.size} on cache"
+        }
+        channelsToInsert
+            .takeUnless { it.isEmpty() }
+            ?.let { channelDao.insertMany(it) }
     }
 
     /**
@@ -87,11 +95,14 @@ internal class DatabaseChannelRepository(
      * @param cid String
      */
     override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
+        val cached = fetchFromCache(cid)
+        if (cached != null) {
+            return cached
+        }
         val entity = channelDao.select(cid = cid)
-        // TODO
-        //  Do we really need to pass getMessage here?
-        //  Name `selectChannelsWithoutMessages` we should not load messages here.
-        return entity?.toModel(getUser, getMessage)
+        // TODO do we really need to pass `getMessage` here?
+        //  Based on the name of the function, it seems that we don't need it.
+        return entity?.toModel(getUser, getMessage)?.also(this::updateCache)
     }
 
     /**
@@ -128,13 +139,13 @@ internal class DatabaseChannelRepository(
             return emptyList()
         }
         return if (forceCache) {
-            fetchChannels(channelCIDs)
+            fetchChannelsFromDB(channelCIDs)
         } else {
-            val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf(), channelCache::get)
-            val missingChannelIds = channelCIDs.filter { channelCache.get(it) == null }
-            val dbChannels = fetchChannels(missingChannelIds).toMutableList()
-            dbChannels.addAll(cachedChannels)
-            dbChannels
+            val cachedChannels: MutableList<Channel> = channelCIDs.mapNotNullTo(mutableListOf()) {
+                fetchFromCache(it)
+            }
+            val missingChannelIds = channelCIDs.filter { !channelCache.contains(it) }
+            fetchChannelsFromDB(missingChannelIds) + cachedChannels
         }
     }
 
@@ -237,15 +248,38 @@ internal class DatabaseChannelRepository(
         channelCache.evictAll()
     }
 
-    private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
+    private suspend fun fetchChannelsFromDB(channelCIDs: List<String>): List<Channel> {
         return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }.also(::updateCache)
     }
 
     private fun updateCache(channels: Collection<Channel>) {
         logger.v { "[updateCache] channels.size: ${channels.size}" }
         for (channel in channels) {
-            channelCache.put(channel.cid, channel)
+            saveToCache(channel)
         }
+    }
+
+    private fun updateCache(channel: Channel) {
+        logger.v { "[updateCache] single channel" }
+        saveToCache(channel)
+    }
+
+    private fun saveToCache(channel: Channel) {
+        // We copy channel because it's mutable and we don't
+        // want the cache to be updated when the channel is updated.
+        // This is because we want to keep the cache in sync with the DB.
+        //
+        // This copying operation can be deleted in v6 where channel is immutable.
+        channelCache.put(channel.cid, channel.copy())
+    }
+
+    private fun fetchFromCache(cid: String): Channel? {
+        // We copy channel because it's mutable and we don't
+        // want the cache to be updated when the channel is updated.
+        // This is because we want to keep the cache in sync with the DB.
+        //
+        // This copying operation can be deleted in v6 where channel is immutable.
+        return channelCache[cid]?.copy()
     }
 
     /**
@@ -281,5 +315,9 @@ internal class DatabaseChannelRepository(
 
     override suspend fun clear() {
         channelDao.deleteAll()
+    }
+
+    private fun LruCache<String, Channel>.contains(cid: String): Boolean {
+        return this[cid] != null
     }
 }

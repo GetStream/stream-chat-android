@@ -23,18 +23,18 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.logging.StreamLog
 import java.util.Date
 
 internal class DatabaseMessageRepository(
     private val messageDao: MessageDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User?,
-    private val cacheSize: Int = 100,
-    private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
+    cacheSize: Int = 1000,
+    // messageCache is overridden in unit tests only
+    private val messageCache: LruCache<String, Message> = LruCache(cacheSize),
 ) : MessageRepository {
-    // the message cache, specifically caches messages on which we're receiving events
-    // (saving a few trips to the db when you get 10 likes on 1 message)
-
+    private val logger = StreamLog.getLogger("Chat:MessageRepository")
     /**
      * Select messages for a channel in a desired page.
      *
@@ -72,13 +72,17 @@ internal class DatabaseMessageRepository(
      * @return A list of messages found in repository.
      */
     override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
-        return if (forceCache) {
-            fetchMessages(messageIds)
-        } else {
-            val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-            val cachedIds = messageIds - missingMessageIds
-            cachedIds.mapNotNull { messageCache[it] } + fetchMessages(missingMessageIds)
-        }
+        return messageIds.map { it to fetchFromCache(it) }
+            .partition { it.second != null }
+            .let { (cachedMessages, missingMessages) ->
+                cachedMessages.mapNotNull { it.second } +
+                    (
+                        missingMessages.map { it.first }
+                            .takeUnless { it.isEmpty() }
+                            ?.let { fetchMessagesFromDB(it) }
+                            ?: emptyList()
+                        )
+            }
     }
 
     /**
@@ -87,9 +91,10 @@ internal class DatabaseMessageRepository(
      * @param messageId String.
      */
     override suspend fun selectMessage(messageId: String): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
+        val message = fetchFromCache(messageId) ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
+        return message
             ?.filterReactions()
-            ?.also { messageCache.put(it.id, it) }
+            ?.also { updateCache(it) }
     }
 
     /**
@@ -100,18 +105,27 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
         if (messages.isEmpty()) return
-        val messagesToInsert = messages.flatMap(Companion::allMessages)
-        for (message in messagesToInsert) {
+        val allMessages = messages.flatMap(Companion::allMessages)
+        for (message in allMessages) {
             require(message.cid.isNotEmpty()) {
                 "message.cid can not be empty. Id of the message: ${message.id}. Text: ${message.text}"
             }
         }
-        for (m in messagesToInsert) {
-            if (messageCache.get(m.id) != null || cache) {
-                messageCache.put(m.id, m)
+        val messagesToInsert = allMessages
+            .partition { !messageCache.contains(it.id) }
+            .let { (newMessages, messagesToUpdate) ->
+                newMessages.map(Message::toEntity) +
+                    messagesToUpdate.map { it.toEntity() }
+                        .filter { messageCache[it.messageInnerEntity.id]?.toEntity() != it }
             }
+
+        updateCache(allMessages)
+        logger.d {
+            "[insertMessages] inserting ${messagesToInsert.size} entities on DB, updated ${allMessages.size} on cache"
         }
-        messageDao.insert(messagesToInsert.map { it.toEntity() })
+        messagesToInsert
+            .takeUnless { it.isEmpty() }
+            ?.let { messageDao.insert(it) }
     }
 
     /**
@@ -134,7 +148,7 @@ internal class DatabaseMessageRepository(
         // delete the messages
         messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
         // wipe the cache
-        messageCache = LruCache(cacheSize)
+        messageCache.evictAll()
     }
 
     /**
@@ -163,6 +177,36 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
         return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
+    }
+
+    private fun updateCache(messages: Collection<Message>) {
+        logger.v { "[updateCache] messages.size: ${messages.size}" }
+        messages.forEach {
+            saveToCache(it)
+        }
+    }
+
+    private fun updateCache(message: Message) {
+        logger.v { "[updateCache] single channel" }
+        saveToCache(message)
+    }
+
+    private fun saveToCache(message: Message) {
+        // We copy message because it's mutable and we don't
+        // want the cache to be updated when the message is updated.
+        // This is because we want to keep the cache in sync with the DB.
+        //
+        // This copying operation can be deleted in v6 where message is immutable.
+        messageCache.put(message.id, message.copy())
+    }
+
+    private fun fetchFromCache(messageId: String): Message? {
+        // We copy message because it's mutable and we don't
+        // want the cache to be updated when the message is updated.
+        // This is because we want to keep the cache in sync with the DB.
+        //
+        // This copying operation can be deleted in v6 where message is immutable.
+        return messageCache[messageId]?.copy()
     }
 
     override suspend fun clear() {
@@ -203,10 +247,12 @@ internal class DatabaseMessageRepository(
     }
 
     /** Fetches messages from [MessageDao] and cache values in [LruCache]. */
-    private suspend fun fetchMessages(messageIds: List<String>): List<Message> {
+    private suspend fun fetchMessagesFromDB(messageIds: List<String>): List<Message> {
         return messageDao.select(messageIds)
             .map { entity ->
-                entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) }
+                entity.toModel(getUser, ::selectMessage).filterReactions().also {
+                    updateCache(it)
+                }
             }
     }
 
@@ -230,6 +276,10 @@ internal class DatabaseMessageRepository(
                 .filter { it.deletedAt == null }
                 .toMutableList()
         }
+    }
+
+    private fun LruCache<String, Message>.contains(messageId: String): Boolean {
+        return this[messageId] != null
     }
 
     private companion object {
