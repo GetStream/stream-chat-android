@@ -18,6 +18,7 @@ apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
+    namespace "io.getstream.chat.android.compose"
     defaultConfig {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

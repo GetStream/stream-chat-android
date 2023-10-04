@@ -10,6 +10,7 @@ apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
+    namespace "io.getstream.chat.android.compose.sample"
     defaultConfig {
         targetSdk io.getstream.chat.android.Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.android.compose.sample"
