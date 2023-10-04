@@ -1,10 +1,3 @@
-public final class io/getstream/chat/android/compose/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public abstract interface class io/getstream/chat/android/compose/handlers/ClipboardHandler {
 	public abstract fun copyMessage (Lio/getstream/chat/android/models/Message;)V
 }
@@ -48,6 +41,7 @@ public final class io/getstream/chat/android/compose/handlers/PermissionHandler$
 public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
 	public static final field DATE Lio/getstream/chat/android/compose/state/DateFormatType;
 	public static final field TIME Lio/getstream/chat/android/compose/state/DateFormatType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/DateFormatType;
 	public static fun values ()[Lio/getstream/chat/android/compose/state/DateFormatType;
 }
@@ -58,6 +52,7 @@ public final class io/getstream/chat/android/compose/state/OnlineIndicatorAlignm
 	public static final field TopEnd Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
 	public static final field TopStart Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
 	public final fun getAlignment ()Landroidx/compose/ui/Alignment;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
 	public static fun values ()[Lio/getstream/chat/android/compose/state/OnlineIndicatorAlignment;
 }
@@ -161,6 +156,7 @@ public final class io/getstream/chat/android/compose/state/mediagallerypreview/M
 public final class io/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType : java/lang/Enum {
 	public static final field QUOTE Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType;
 	public static final field SHOW_IN_CHAT Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType;
 	public static fun values ()[Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType;
 }
@@ -179,6 +175,7 @@ public final class io/getstream/chat/android/compose/state/messages/MessageAlign
 	public static final field End Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
 	public static final field Start Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
 	public final fun getContentAlignment ()Landroidx/compose/ui/Alignment$Horizontal;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getItemAlignment ()Landroidx/compose/ui/Alignment;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
 	public static fun values ()[Lio/getstream/chat/android/compose/state/messages/MessageAlignment;
@@ -1201,6 +1198,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public static final field PHOTO Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerMediaCaptureTabFactory$PickerMediaMode;
 	public static final field PHOTO_AND_VIDEO Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerMediaCaptureTabFactory$PickerMediaMode;
 	public static final field VIDEO Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerMediaCaptureTabFactory$PickerMediaMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerMediaCaptureTabFactory$PickerMediaMode;
 	public static fun values ()[Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerMediaCaptureTabFactory$PickerMediaMode;
 }

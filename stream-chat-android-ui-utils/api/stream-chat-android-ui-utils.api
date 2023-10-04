@@ -1,10 +1,3 @@
-public final class io/getstream/chat/android/ui/utils/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/uiutils/extension/AttachmentKt {
 	public static final fun hasLink (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isAnyFileType (Lio/getstream/chat/android/models/Attachment;)Z

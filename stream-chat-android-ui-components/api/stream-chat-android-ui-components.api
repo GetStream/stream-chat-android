@@ -1,10 +1,3 @@
-public final class io/getstream/chat/android/ui/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public static final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;
@@ -1253,6 +1246,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public static final field PHOTO Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/PickerMediaMode;
 	public static final field PHOTO_AND_VIDEO Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/PickerMediaMode;
 	public static final field VIDEO Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/PickerMediaMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/PickerMediaMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/PickerMediaMode;
@@ -1902,6 +1896,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 public final class io/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart : java/lang/Enum {
 	public static final field BOTTOM Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart;
 	public static final field TOP Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart;
 	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagesStart;
 }
@@ -1917,6 +1912,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 public final class io/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour : java/lang/Enum {
 	public static final field COUNT_UPDATE Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;
 	public static final field SCROLL_TO_BOTTOM Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;
 	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;
 }
@@ -2525,6 +2521,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 public final class io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment$OptionsDialogType : java/lang/Enum {
 	public static final field MESSAGE_OPTIONS Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
 	public static final field REACTION_OPTIONS Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
 	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment$OptionsDialogType;
 }
@@ -2628,6 +2625,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/reactions/
 	public static final field BY_USER_INVERTED Lio/getstream/chat/android/ui/feature/messages/list/reactions/view/MessageOptionsUserReactionOrientation;
 	public static final field END Lio/getstream/chat/android/ui/feature/messages/list/reactions/view/MessageOptionsUserReactionOrientation;
 	public static final field START Lio/getstream/chat/android/ui/feature/messages/list/reactions/view/MessageOptionsUserReactionOrientation;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/reactions/view/MessageOptionsUserReactionOrientation;
 	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/list/reactions/view/MessageOptionsUserReactionOrientation;
@@ -3915,6 +3913,7 @@ public class io/getstream/chat/android/ui/widgets/GridSpacingItemDecoration : an
 public final class io/getstream/chat/android/ui/widgets/avatar/AvatarShape : java/lang/Enum {
 	public static final field CIRCLE Lio/getstream/chat/android/ui/widgets/avatar/AvatarShape;
 	public static final field ROUND_RECT Lio/getstream/chat/android/ui/widgets/avatar/AvatarShape;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/widgets/avatar/AvatarShape;
 	public static fun values ()[Lio/getstream/chat/android/ui/widgets/avatar/AvatarShape;
@@ -3963,6 +3962,7 @@ public final class io/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPo
 	public static final field BOTTOM_START Lio/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition;
 	public static final field TOP_END Lio/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition;
 	public static final field TOP_START Lio/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition;
 	public static fun values ()[Lio/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition;
 }

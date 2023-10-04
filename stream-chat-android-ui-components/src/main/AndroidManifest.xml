@@ -16,7 +16,6 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.getstream.chat.android.ui"
     >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
