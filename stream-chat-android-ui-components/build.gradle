@@ -16,6 +16,7 @@ apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.ui.components"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
     }

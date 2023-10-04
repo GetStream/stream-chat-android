@@ -10,6 +10,7 @@ plugins {
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.uitests"
     defaultConfig {
         applicationId "io.getstream.chat.android.uitests"
         versionCode 1

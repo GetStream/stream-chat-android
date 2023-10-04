@@ -16,6 +16,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     }
 }
 
+android {
+    namespace "io.getstream.chat.android.client.test"
+}
 
 dependencies {
     api project(":stream-chat-android-client")

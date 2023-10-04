@@ -11,6 +11,7 @@ apply plugin: 'shot'
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.ui.sample"
     defaultConfig {
         targetSdk Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.ui.sample"
