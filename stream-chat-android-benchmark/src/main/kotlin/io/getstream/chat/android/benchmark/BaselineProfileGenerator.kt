@@ -16,17 +16,20 @@
 
 package io.getstream.chat.android.benchmark
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import org.junit.Rule
 import org.junit.Test
 
+@RequiresApi(Build.VERSION_CODES.P)
 internal class BaselineProfileGenerator {
     @get:Rule
     internal val baselineProfileRule = BaselineProfileRule()
 
     @Test
     fun startupComposeSample() =
-        baselineProfileRule.collectBaselineProfile(
+        baselineProfileRule.collect(
             packageName = COMPOSE_SAMPLE_PACKAGE_NAME,
         ) {
             pressHome()
@@ -39,7 +42,7 @@ internal class BaselineProfileGenerator {
 
     @Test
     fun startupUiComponentsSample() =
-        baselineProfileRule.collectBaselineProfile(
+        baselineProfileRule.collect(
             packageName = UI_COMPONENTS_PACKAGE_NAME,
         ) {
             pressHome()
