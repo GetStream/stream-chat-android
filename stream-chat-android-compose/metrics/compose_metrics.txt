@@ -15,10 +15,10 @@ unstable class QueryConfig {
   unstable val querySort: QuerySorter<T>
   <runtime stability> = Unstable
 }
-unstable class ChannelItemState {
-  unstable val channel: Channel
+stable class ChannelItemState {
+  stable val channel: Channel
   stable val isMuted: Boolean
-  <runtime stability> = Unstable
+  <runtime stability> = Stable
 }
 unstable class ChannelOptionState {
   stable val title: String
@@ -55,11 +55,11 @@ runtime class AttachmentPickerItemState {
   stable val isSelected: Boolean
   <runtime stability> = Runtime(AttachmentMetaData)
 }
-unstable class AttachmentState {
-  unstable val message: Message
+stable class AttachmentState {
+  stable val message: Message
   stable val onLongItemClick: Function1<Message, Unit>
   stable val onMediaGalleryPreviewResult: Function1<MediaGalleryPreviewResult?, Unit>
-  <runtime stability> = Unstable
+  <runtime stability> = Stable
 }
 stable class AttachmentsPickerMode {
   <runtime stability> = Stable
@@ -99,7 +99,7 @@ unstable class ReactionOptionItemState {
   <runtime stability> = Unstable
 }
 unstable class UserReactionItemState {
-  unstable val user: User
+  stable val user: User
   unstable val painter: Painter
   stable val type: String
   <runtime stability> = Unstable
@@ -121,13 +121,13 @@ unstable class MediaGalleryPreviewActivity {
   unstable val mediaGalleryPreviewViewModel$delegate: Lazy<MediaGalleryPreviewViewModel>
   <runtime stability> = Unstable
 }
-unstable class Input {
-  unstable val message: Message
+runtime class Input {
+  stable val message: Message
   stable val initialPosition: Int
   stable val videoThumbnailsEnabled: Boolean
   runtime val streamCdnImageResizing: StreamCdnImageResizing
   stable val skipEnrichUrl: Boolean
-  <runtime stability> = Unstable
+  <runtime stability> = Runtime(StreamCdnImageResizing)
 }
 stable class MediaGalleryPreviewContract {
   <runtime stability> = Stable
