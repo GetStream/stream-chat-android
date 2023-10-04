@@ -3720,10 +3720,8 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun insertUser (Lio/getstream/chat/android/client/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertUsers (Ljava/util/Collection;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun observeLatestUsers ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun selectAllUsers (IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectUser (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectUsers (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun selectUsersLikeName (Ljava/lang/String;IILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory {
