@@ -58,23 +58,6 @@ public interface UserRepository {
     public suspend fun selectUsers(ids: List<String>): List<User>
 
     /**
-     * Select all users respecting a limit and a offset.
-     *
-     * @param limit Int.
-     * @param offset Int.
-     */
-    public suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
-
-    /**
-     * Selects users with a name that looks like the of wanted.
-     *
-     * @param searchString - The name of the user.
-     * @param limit Int
-     * @param offset Int
-     */
-    public suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
-
-    /**
      * Returns flow of latest updated users.
      */
     public fun observeLatestUsers(): StateFlow<Map<String, User>>
