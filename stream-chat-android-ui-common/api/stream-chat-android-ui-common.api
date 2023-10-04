@@ -1,10 +1,3 @@
-public final class io/getstream/chat/android/ui/common/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
 public final class io/getstream/chat/android/ui/common/StreamFileProvider : androidx/core/content/FileProvider {
 	public static final field $stable I
 	public fun <init> ()V
@@ -829,6 +822,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Delet
 	public static final field ALWAYS_HIDDEN Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
 	public static final field ALWAYS_VISIBLE Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
 	public static final field VISIBLE_FOR_CURRENT_USER Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
 }
@@ -980,6 +974,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public static final field BY_USER_INVERTED Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;
 	public static final field END Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;
 	public static final field START Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;
@@ -994,6 +989,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public static final field MIDDLE Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
 	public static final field NONE Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
 	public static final field TOP Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/state/messages/list/MessagePosition;
 }
@@ -1185,6 +1181,7 @@ public final class io/getstream/chat/android/ui/common/utils/GiphyInfoType : jav
 	public static final field FIXED_HEIGHT Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;
 	public static final field FIXED_HEIGHT_DOWNSAMPLED Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;
 	public static final field ORIGINAL Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;
@@ -1197,6 +1194,7 @@ public final class io/getstream/chat/android/ui/common/utils/GiphyInfoTypeKt {
 public final class io/getstream/chat/android/ui/common/utils/GiphySizingMode : java/lang/Enum {
 	public static final field ADAPTIVE Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;
 	public static final field FIXED_SIZE Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;
 	public static fun values ()[Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;
 }
@@ -1284,6 +1282,7 @@ public final class io/getstream/sdk/chat/audio/recording/MediaRecorderState : ja
 	public static final field PREPARED Lio/getstream/sdk/chat/audio/recording/MediaRecorderState;
 	public static final field RECORDING Lio/getstream/sdk/chat/audio/recording/MediaRecorderState;
 	public static final field UNINITIALIZED Lio/getstream/sdk/chat/audio/recording/MediaRecorderState;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/sdk/chat/audio/recording/MediaRecorderState;
 	public static fun values ()[Lio/getstream/sdk/chat/audio/recording/MediaRecorderState;
 }

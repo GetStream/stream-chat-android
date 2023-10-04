@@ -15,7 +15,7 @@ apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
-    namespace "io.getstream.chat.android.markdown"
+    namespace "io.getstream.chat.android.ui.markdown"
     sourceSets {
         all {
             it.java.srcDir "src/$it.name/kotlin"

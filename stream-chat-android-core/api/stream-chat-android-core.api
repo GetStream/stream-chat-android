@@ -26,6 +26,7 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode : java/
 	public static final field VALIDATION_ERROR Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public final fun getCode ()I
 	public final fun getDescription ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatErrorCode;
 	public static fun values ()[Lio/getstream/chat/android/client/errors/ChatErrorCode;
 }
@@ -921,6 +922,7 @@ public final class io/getstream/chat/android/models/InitializationState : java/l
 	public static final field COMPLETE Lio/getstream/chat/android/models/InitializationState;
 	public static final field INITIALIZING Lio/getstream/chat/android/models/InitializationState;
 	public static final field NOT_INITIALIZED Lio/getstream/chat/android/models/InitializationState;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/InitializationState;
 	public static fun values ()[Lio/getstream/chat/android/models/InitializationState;
 }
@@ -1176,6 +1178,7 @@ public final class io/getstream/chat/android/models/MessageSyncType : java/lang/
 	public static final field NONE Lio/getstream/chat/android/models/MessageSyncType;
 	public static final field TYPE Ljava/lang/String;
 	public final fun getAlias ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getType ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/MessageSyncType;
 	public static fun values ()[Lio/getstream/chat/android/models/MessageSyncType;
@@ -1341,6 +1344,7 @@ public final class io/getstream/chat/android/models/PushProvider : java/lang/Enu
 	public static final field HUAWEI Lio/getstream/chat/android/models/PushProvider;
 	public static final field UNKNOWN Lio/getstream/chat/android/models/PushProvider;
 	public static final field XIAOMI Lio/getstream/chat/android/models/PushProvider;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getKey ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/PushProvider;
 	public static fun values ()[Lio/getstream/chat/android/models/PushProvider;
@@ -1448,6 +1452,7 @@ public final class io/getstream/chat/android/models/SyncStatus : java/lang/Enum 
 	public static final field FAILED_PERMANENTLY Lio/getstream/chat/android/models/SyncStatus;
 	public static final field IN_PROGRESS Lio/getstream/chat/android/models/SyncStatus;
 	public static final field SYNC_NEEDED Lio/getstream/chat/android/models/SyncStatus;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getStatus ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/SyncStatus;
 	public static fun values ()[Lio/getstream/chat/android/models/SyncStatus;
@@ -1475,6 +1480,7 @@ public final class io/getstream/chat/android/models/UploadAttachmentsNetworkType
 	public static final field METERED Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
 	public static final field NOT_ROAMING Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
 	public static final field UNMETERED Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
 	public static fun values ()[Lio/getstream/chat/android/models/UploadAttachmentsNetworkType;
 }
@@ -1708,6 +1714,7 @@ public final class io/getstream/chat/android/models/querysort/SortDirection : ja
 	public static final field ASC Lio/getstream/chat/android/models/querysort/SortDirection;
 	public static final field Companion Lio/getstream/chat/android/models/querysort/SortDirection$Companion;
 	public static final field DESC Lio/getstream/chat/android/models/querysort/SortDirection;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/querysort/SortDirection;
 	public static fun values ()[Lio/getstream/chat/android/models/querysort/SortDirection;
@@ -1764,6 +1771,7 @@ public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnCro
 	public static final field LEFT Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
 	public static final field RIGHT Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
 	public static final field TOP Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getQueryParameterName ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
 	public static fun values ()[Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;
@@ -1787,6 +1795,7 @@ public final class io/getstream/chat/android/models/streamcdn/image/StreamCdnRes
 	public static final field CROP Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
 	public static final field FILL Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
 	public static final field SCALE Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getQueryParameterName ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;
 	public static fun values ()[Lio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;

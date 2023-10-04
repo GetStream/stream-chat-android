@@ -3,10 +3,3 @@ public final class io/getstream/chat/android/markdown/MarkdownTextTransformer : 
 	public fun transformAndApply (Landroid/widget/TextView;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
 }
 
-public final class io/getstream/chat/android/ui/markdown/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-

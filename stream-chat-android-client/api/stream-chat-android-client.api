@@ -247,6 +247,7 @@ public final class io/getstream/chat/android/client/api/models/Pagination : java
 	public static final field GREATER_THAN_OR_EQUAL Lio/getstream/chat/android/client/api/models/Pagination;
 	public static final field LESS_THAN Lio/getstream/chat/android/client/api/models/Pagination;
 	public static final field LESS_THAN_OR_EQUAL Lio/getstream/chat/android/client/api/models/Pagination;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public fun toString ()Ljava/lang/String;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/api/models/Pagination;
 	public static fun values ()[Lio/getstream/chat/android/client/api/models/Pagination;
@@ -2004,6 +2005,7 @@ public final class io/getstream/chat/android/client/logger/ChatLogLevel : java/l
 	public static final field ERROR Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public static final field NOTHING Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public static final field WARN Lio/getstream/chat/android/client/logger/ChatLogLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/client/logger/ChatLogLevel;
 	public static fun values ()[Lio/getstream/chat/android/client/logger/ChatLogLevel;
 }
