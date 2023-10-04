@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
 /**
  * A [Channel] object that contains less information.
  * Used only internally.
@@ -27,6 +29,7 @@ package io.getstream.chat.android.models
  * @param name Channel's name.
  * @param image Channel's image.
  */
+@Stable
 public data class ChannelInfo(
     val cid: String? = null,
     val id: String? = null,

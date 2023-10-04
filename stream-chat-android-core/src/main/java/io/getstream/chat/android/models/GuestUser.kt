@@ -16,4 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
+@Stable
 public data class GuestUser(val user: User, val token: String)

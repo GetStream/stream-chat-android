@@ -16,4 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
+@Stable
 public data class ConnectionData(val user: User, val connectionId: String)

@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
+@Stable
 public data class SearchMessagesResult(
     /**
      * Search results

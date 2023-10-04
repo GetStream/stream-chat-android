@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
 import java.util.Date
 
 /**
@@ -39,6 +40,7 @@ import java.util.Date
  * in the events.
  * @param membership Represents relationship of the current user to the channel.
  */
+@Stable
 public data class ChannelData(
     val id: String,
     val type: String,

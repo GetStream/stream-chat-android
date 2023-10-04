@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -55,6 +56,7 @@ import java.util.Date
  * @param isInsideSearch When the channel is inside search, eg. searching from the channel list for a message or when
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  */
+@Stable
 public data class Channel(
     val id: String = "",
     val type: String = "",

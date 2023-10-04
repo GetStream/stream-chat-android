@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
 /**
  * Device's information needed to register push notifications.
  *
@@ -24,6 +26,7 @@ package io.getstream.chat.android.models
  * @property providerName Push notifications provider name.
  * @see [PushProvider]
  */
+@Stable
 public data class Device(
     val token: String,
     val pushProvider: PushProvider,

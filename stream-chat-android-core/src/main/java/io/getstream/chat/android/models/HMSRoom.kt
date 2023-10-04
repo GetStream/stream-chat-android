@@ -16,12 +16,15 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
 /**
  * Represents HMS room information that contains available room in a chat channel.
  *
  * @property roomId A new room id.
  * @property roomId A new room name.
  */
+@Stable
 public data class HMSRoom(
     val roomId: String,
     val roomName: String,

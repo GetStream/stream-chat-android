@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
 import io.getstream.result.Error
 import java.io.File
 
@@ -56,6 +57,7 @@ import java.io.File
  * @param extraData Stores various extra information that can be sent
  * when uploading the attachment or read when downloading it.
  */
+@Stable
 public data class Attachment(
     val authorName: String? = null,
     val authorLink: String? = null,

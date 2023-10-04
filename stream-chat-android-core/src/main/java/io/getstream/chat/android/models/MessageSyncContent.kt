@@ -16,40 +16,49 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+
 /**
  * A content of message sync description.
  *
  * @see [MessageSyncDescription]
  */
+@Immutable
 public sealed class MessageSyncContent
 
 /**
  * When no additional description is required to [SyncStatus].
  */
-public object MessageSyncNone : MessageSyncContent() {
+@Immutable
+public data object MessageSyncNone : MessageSyncContent() {
     override fun toString(): String = "MessageSyncNone"
 }
 
 /**
  * When sync is in progress.
  */
+@Immutable
 public sealed class MessageSyncInProgress : MessageSyncContent()
 
 /**
  * When sync is failed.
  */
+@Immutable
 public sealed class MessageSyncFailed : MessageSyncContent()
 
 /**
  * When sync is in progress due to awaiting attachments.
  */
-public object MessageAwaitingAttachments : MessageSyncInProgress() {
+@Immutable
+public data object MessageAwaitingAttachments : MessageSyncInProgress() {
     override fun toString(): String = "MessageAwaitingAttachments"
 }
 
 /**
  * When sync is failed due to moderation violation.
  */
+@Stable
 public data class MessageModerationFailed(
     val violations: List<ModerationViolation>,
 ) : MessageSyncFailed()
@@ -57,6 +66,7 @@ public data class MessageModerationFailed(
 /**
  * Moderation violation details.
  */
+@Stable
 public data class ModerationViolation(
     val code: Int,
     val messages: List<String>,

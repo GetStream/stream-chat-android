@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
 import java.util.Date
 
+@Stable
 public data class Mute(
     val user: User,
     val target: User,

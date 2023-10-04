@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
 /**
  * Configuration of a channel.
  *
  * @property type String.
  * @property config [Config]
  */
+@Stable
 public data class ChannelConfig(val type: String, val config: Config)

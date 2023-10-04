@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
 import java.util.Date
 
+@Stable
 public data class Reaction(
     val messageId: String = "",
     val type: String = "",

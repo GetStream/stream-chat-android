@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Stable
+
 /**
  * Represents Agora channel information that contains available [channel] in a chat channel.
  *
  * @property channel A new channel.
  */
+@Stable
 public data class AgoraChannel(val channel: String)
