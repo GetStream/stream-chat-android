@@ -30,16 +30,16 @@ public interface ChannelRepository {
     /**
      * Inserts a [Channel]
      *
-     * @param channel [Channel]
+     * @param channel [Channel] to insert.
      */
-    public suspend fun upsertChannel(channel: Channel)
+    public suspend fun insertChannel(channel: Channel)
 
     /**
      * Inserts many [Channel]s.
      *
      * @param channels collection of [Channel]
      */
-    public suspend fun upsertChannels(channels: Collection<Channel>)
+    public suspend fun insertChannels(channels: Collection<Channel>)
 
     /**
      * Deletes a [Channel] by the cid.
@@ -47,20 +47,6 @@ public interface ChannelRepository {
      * @param cid String
      */
     public suspend fun deleteChannel(cid: String)
-
-    /**
-     * Select a channel, but without loading the messages.
-     *
-     * @param cid String
-     */
-    public suspend fun selectChannelWithoutMessages(cid: String): Channel?
-
-    /**
-     * Select a channels, but without loading the messages.
-     *
-     * @param cids List<String>
-     */
-    public suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel>
 
     /**
      * Selects all channels' cids.
@@ -85,7 +71,7 @@ public interface ChannelRepository {
      *
      * @return A channel found in repository.
      */
-    public suspend fun selectChannelByCid(cid: String): Channel?
+    public suspend fun selectChannel(cid: String): Channel?
 
     /**
      * Read which channel cids need sync.

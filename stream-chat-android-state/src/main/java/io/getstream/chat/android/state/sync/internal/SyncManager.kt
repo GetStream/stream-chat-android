@@ -431,7 +431,7 @@ internal class SyncManager(
         logger.d { "[retryChannels] cids.size: ${cids.size}" }
         cids.forEach { cid ->
             logger.v { "[retryChannels] channel.cid: $cid" }
-            val channel = repos.selectChannelByCid(cid) ?: return@forEach
+            val channel = repos.selectChannel(cid) ?: return@forEach
             val result = if (channel.createdAt.exceedsSyncThreshold()) {
                 logger.w { "[retryChannels] outdated channel($cid)" }
                 repos.deleteChannel(cid)

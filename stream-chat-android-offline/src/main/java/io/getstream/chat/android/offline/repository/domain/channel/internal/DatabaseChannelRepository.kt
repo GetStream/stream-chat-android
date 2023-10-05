@@ -16,15 +16,14 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
-import io.getstream.chat.android.client.extensions.internal.lastMessage
+import android.util.LruCache
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.core.utils.date.maxOf
+import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.repository.domain.channel.lastMessageInfo
-import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toEntity
-import io.getstream.chat.android.offline.repository.domain.channel.member.internal.toModel
 import io.getstream.log.taggedLogger
 import java.util.Date
 
@@ -40,16 +39,10 @@ internal class DatabaseChannelRepository(
 ) : ChannelRepository {
 
     private val logger by taggedLogger("Chat:ChannelRepository")
+    private val channelCache = LruCache<String, Channel>(cacheSize)
 
-    /**
-     * Inserts a [Channel]
-     *
-     * @param channel [Channel]
-     */
-    override suspend fun upsertChannel(channel: Channel) {
-        val entity = channel.convertToEntity()
-        logger.v { "[upsertChannel] entity: ${entity.lastMessageInfo()}" }
-        channelDao.insert(entity)
+    override suspend fun insertChannel(channel: Channel) {
+        insertChannels(listOf(channel))
     }
 
     /**
@@ -57,11 +50,25 @@ internal class DatabaseChannelRepository(
      *
      * @param channels collection of [Channel]
      */
-    override suspend fun upsertChannels(channels: Collection<Channel>) {
+    override suspend fun insertChannels(channels: Collection<Channel>) {
         if (channels.isEmpty()) return
-        val entities = channels.map { channel -> channel.convertToEntity() }
-        logger.v { "[upsertChannels] entities.size: ${entities.size}" }
-        channelDao.insertMany(entities)
+        val updatedChannels = channels
+            .map { channelCache[it.cid]?.let { cachedChannel -> it.combine(cachedChannel) } ?: it }
+        val channelToInsert = updatedChannels
+            .filter { channelCache[it.cid] != it }
+            .map { it.toEntity() }
+        cacheChannel(updatedChannels)
+        logger.v {
+            "[insertChannels] inserting ${channelToInsert.size} entities on DB, " +
+                "updated ${updatedChannels.size} on cache"
+        }
+        channelToInsert
+            .takeUnless { it.isEmpty() }
+            ?.let { channelDao.insertMany(it) }
+    }
+
+    private fun cacheChannel(channels: Collection<Channel>) {
+        channels.forEach { channelCache.put(it.cid, it) }
     }
 
     /**
@@ -71,33 +78,31 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun deleteChannel(cid: String) {
         logger.v { "[deleteChannel] cid: $cid" }
+        channelCache.remove(cid)
         channelDao.delete(cid)
     }
 
     /**
-     * Select a channels, but without loading the messages.
+     * Select a channel by cid.
      *
      * @param cid String
      */
-    override suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        val entity = channelDao.select(cid = cid)
-        // TODO
-        //  Do we really need to pass getMessage here?
-        //  Name `selectChannelsWithoutMessages` we should not load messages here.
-        return entity?.toModel(getUser, getMessage)
-    }
+    override suspend fun selectChannel(cid: String): Channel? =
+        channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage)
+            ?.also { cacheChannel(listOf(it)) }
 
     /**
-     * Select a channels, but without loading the messages.
+     * Select a list of channels by cid.
      *
      * @param cids List<String>
      */
-    override suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> {
-        val entities = channelDao.select(cids = cids)
-        // TODO
-        //  Do we really need to pass getMessage here?
-        //  Name `selectChannelsWithoutMessages` we should not load messages here.
-        return entities.map { it.toModel(getUser, getMessage) }
+    override suspend fun selectChannels(cids: List<String>): List<Channel> {
+        val cachedChannels = cids.mapNotNull { channelCache[it] }
+        val missingChannelIds = cids.minus(cachedChannels.map(Channel::cid).toSet())
+        return cachedChannels +
+            channelDao.select(missingChannelIds)
+                .map { it.toModel(getUser, getMessage) }
+                .also { cacheChannel(it) }
     }
 
     /**
@@ -106,24 +111,6 @@ internal class DatabaseChannelRepository(
      * @return A list of channels' cids stored in the repository.
      */
     override suspend fun selectAllCids(): List<String> = channelDao.selectAllCids()
-
-    /**
-     * Select channels by full channel IDs [Channel.cid]
-     *
-     * @param channelCIDs A list of [Channel.cid] as query specification.
-     *
-     * @return A list of channels found in repository.
-     */
-    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> {
-        return if (channelCIDs.isEmpty()) emptyList() else fetchChannels(channelCIDs)
-    }
-
-    /**
-     * Reads channel using specified [cid].
-     */
-    override suspend fun selectChannelByCid(cid: String): Channel? {
-        return channelDao.select(cid = cid)?.toModel(getUser, getMessage)
-    }
 
     /**
      * Read which channel cids need sync.
@@ -171,13 +158,12 @@ internal class DatabaseChannelRepository(
     }
 
     /**
-     * Reads the member list of a channel. Allows us to avoid enriching channel just to select members
+     * Reads the member list of a channel.
      *
      * @param cid String.
      */
-    override suspend fun selectMembersForChannel(cid: String): List<Member> {
-        return channelDao.select(cid)?.members?.values?.map { it.toModel(getUser) } ?: emptyList()
-    }
+    override suspend fun selectMembersForChannel(cid: String): List<Member> =
+        selectChannel(cid)?.members ?: emptyList()
 
     /**
      * Updates the members of a [Channel]
@@ -186,19 +172,9 @@ internal class DatabaseChannelRepository(
      * @param members list of [Member]
      */
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
-        members
-            .map { it.toEntity() }
-            .associateBy { it.userId }
-            .let { memberMap ->
-                channelDao.select(cid)?.copy(members = memberMap)
-            }
-            ?.let { updatedChannel ->
-                channelDao.insert(updatedChannel)
-            }
-    }
-
-    private suspend fun fetchChannels(channelCIDs: List<String>): List<Channel> {
-        return channelDao.select(channelCIDs).map { it.toModel(getUser, getMessage) }
+        selectChannel(cid)?.let {
+            insertChannel(it.copy(members = (members + it.members).distinctBy(Member::getUserId)))
+        }
     }
 
     /**
@@ -208,43 +184,32 @@ internal class DatabaseChannelRepository(
      * @param lastMessage [Message].
      */
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        selectChannelWithoutMessages(cid)?.also { channel ->
-            val messageCreatedAt = checkNotNull(
-                lastMessage.createdAt
-                    ?: lastMessage.createdLocallyAt,
-            ) { "created at cant be null, be sure to set message.createdAt" }
-
-            val oldLastMessage = channel.lastMessage
-            val updateNeeded = if (oldLastMessage != null) {
-                lastMessage.id == oldLastMessage.id ||
-                    channel.lastMessageAt == null ||
-                    messageCreatedAt.after(channel.lastMessageAt)
-            } else {
-                true
-            }
-
-            if (updateNeeded) {
-                upsertChannel(
-                    channel.copy(
-                        lastMessageAt = messageCreatedAt,
-                        messages = listOf(lastMessage),
-                    ),
-                )
-            }
-        }
+        selectChannel(cid)?.let { insertChannel(it.copy(messages = listOf(lastMessage))) }
     }
 
-    private suspend fun Channel.convertToEntity(): ChannelEntity {
-        val dbChannel = channelDao.select(this.cid)
-
-        val thisLastMessageAt = this.lastMessage?.createdAt ?: this.lastMessageAt ?: Date(0)
-        return if (dbChannel?.lastMessageAt?.after(thisLastMessageAt) == true) {
-            this.toEntity(dbChannel.lastMessageId, dbChannel.lastMessageAt)
-        } else {
-            val lastMessage = this.lastMessage
-            this.toEntity(lastMessage?.id, lastMessage?.createdAt ?: lastMessage?.createdLocallyAt)
-        }
+    private fun Channel.combine(cachedChannel: Channel): Channel {
+        val hideMessagesBefore = minOf(this.hiddenMessagesBefore, cachedChannel.hiddenMessagesBefore)
+        val messages = (
+            messages.filter { it.after(hideMessagesBefore) } +
+                cachedChannel.messages.filter { it.after(hideMessagesBefore) }
+            )
+            .distinctBy { it.id }
+            .sortedBy { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
+        val read = (read + cachedChannel.read).distinctBy { it.getUserId() }
+        return copy(
+            messages = messages,
+            lastMessageAt = maxOf(
+                lastMessageAt,
+                cachedChannel.lastMessageAt,
+                messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt ?: Date(0) },
+            ),
+            hiddenMessagesBefore = hideMessagesBefore,
+            members = members,
+            read = read,
+        )
     }
+    private fun Message.after(date: Date?): Boolean =
+        date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
 
     override suspend fun clear() {
         channelDao.deleteAll()

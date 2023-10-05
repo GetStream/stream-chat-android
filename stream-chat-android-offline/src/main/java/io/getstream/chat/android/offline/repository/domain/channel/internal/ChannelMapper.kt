@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
+import io.getstream.chat.android.client.extensions.internal.lastMessage
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
@@ -27,9 +28,8 @@ import io.getstream.chat.android.offline.repository.domain.channel.member.intern
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.ChannelUserReadEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.channel.userread.internal.toModel
-import java.util.Date
 
-internal fun Channel.toEntity(lastMessageId: String?, lastMessageAt: Date?): ChannelEntity {
+internal fun Channel.toEntity(): ChannelEntity {
     return ChannelEntity(
         type = type,
         channelId = id,
@@ -47,7 +47,7 @@ internal fun Channel.toEntity(lastMessageId: String?, lastMessageAt: Date?): Cha
         members = members.map(Member::toEntity).associateBy(MemberEntity::userId).toMutableMap(),
         memberCount = memberCount,
         reads = read.map(ChannelUserRead::toEntity).associateBy(ChannelUserReadEntity::userId).toMutableMap(),
-        lastMessageId = lastMessageId,
+        lastMessageId = lastMessage?.id,
         lastMessageAt = lastMessageAt,
         createdByUserId = createdBy.id,
         watcherIds = watchers.map(User::id),

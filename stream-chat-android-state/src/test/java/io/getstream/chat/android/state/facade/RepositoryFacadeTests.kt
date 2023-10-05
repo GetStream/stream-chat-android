@@ -38,7 +38,6 @@ import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should contain same`
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.any
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
@@ -189,9 +188,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     ) to acc.second + channel
                 }
 
-            sut.upsertChannels(listOfChannels)
+            sut.insertChannels(listOfChannels)
 
-            verify(channels).upsertChannels(eq(listOfChannels))
+            verify(channels).insertChannels(eq(listOfChannels))
             verify(users).insertUsers(
                 check { listUser ->
                     listUser `should contain same` listOfUser
@@ -275,7 +274,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         sut.storeStateForChannel(channel)
 
         verify(configs).insertChannelConfigs(expectedChannelsConfig)
-        verify(channels).upsertChannels(expectedChannels)
+        verify(channels).insertChannels(expectedChannels)
         verify(messages).insertMessages(expectedMessages)
     }
 
@@ -297,7 +296,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         sut.storeStateForChannels(channelsToBeInserted)
 
         verify(configs).insertChannelConfigs(expectedChannelsConfig)
-        verify(channels).upsertChannels(expectedChannels)
+        verify(channels).insertChannels(expectedChannels)
         verify(messages).insertMessages(expectedMessages)
     }
 }

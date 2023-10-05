@@ -95,14 +95,14 @@ public class RepositoryFacade private constructor(
         },
     )
 
-    override suspend fun upsertChannel(channel: Channel) {
+    override suspend fun insertChannel(channel: Channel) {
         insertUsers(channel.let(Channel::users))
-        channelsRepository.upsertChannel(channel)
+        channelsRepository.insertChannel(channel)
     }
 
-    override suspend fun upsertChannels(channels: Collection<Channel>) {
+    override suspend fun insertChannels(channels: Collection<Channel>) {
         insertUsers(channels.flatMap(Channel::users))
-        channelsRepository.upsertChannels(channels)
+        channelsRepository.insertChannels(channels)
     }
 
     override suspend fun insertMessage(message: Message) {
@@ -136,7 +136,7 @@ public class RepositoryFacade private constructor(
 
     public suspend fun storeStateForChannels(channels: Collection<Channel>) {
         insertChannelConfigs(channels.map { ChannelConfig(it.type, it.config) })
-        upsertChannels(channels)
+        insertChannels(channels)
         insertMessages(
             channels.flatMap { channel ->
                 channel.messages.map { it.enrichWithCid(channel.cid) }
