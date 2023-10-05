@@ -59,9 +59,10 @@ android {
             signingConfig signingConfigs.debug
         }
         benchmark {
+            debuggable false
             signingConfig signingConfigs.debug
             matchingFallbacks = ['release']
-            debuggable false
+            proguardFiles 'benchmark-rules.pro'
         }
         release {
             minifyEnabled true

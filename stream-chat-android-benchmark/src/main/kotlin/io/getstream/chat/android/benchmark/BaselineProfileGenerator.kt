@@ -31,19 +31,9 @@ internal class BaselineProfileGenerator {
     fun startupComposeSample() =
         baselineProfileRule.collect(
             packageName = COMPOSE_SAMPLE_PACKAGE_NAME,
-        ) {
-            pressHome()
-            // This block defines the app's critical user journey. Here we are interested in
-            // optimizing for app startup. But you can also navigate and scroll
-            // through your most important UI.
-            startActivityAndWait()
-            device.waitForIdle()
-        }
-
-    @Test
-    fun startupUiComponentsSample() =
-        baselineProfileRule.collect(
-            packageName = UI_COMPONENTS_PACKAGE_NAME,
+            stableIterations = 2,
+            maxIterations = 8,
+            includeInStartupProfile = true,
         ) {
             pressHome()
             // This block defines the app's critical user journey. Here we are interested in

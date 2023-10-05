@@ -13,11 +13,13 @@ apply {
 
 android {
     namespace = "io.getstream.chat.android.benchmark"
+    compileSdk = Configuration.compileSdk
 
     defaultConfig {
         minSdk = 24
         targetSdk = Configuration.targetSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
     }
 
     compileOptions {
