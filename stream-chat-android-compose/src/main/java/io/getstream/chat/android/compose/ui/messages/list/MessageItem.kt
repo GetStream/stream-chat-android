@@ -47,6 +47,7 @@ import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -185,6 +186,7 @@ public fun MessageItem(
 
     Box(
         modifier = Modifier
+            .testTag("Stream_MessageItem")
             .fillMaxWidth()
             .wrapContentHeight()
             .background(color = color)

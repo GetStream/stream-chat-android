@@ -44,6 +44,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -142,13 +143,18 @@ public fun MessagesScreen(
                 listViewModel.leaveThread()
                 composerViewModel.leaveThread()
             }
+
             else -> onBackPressed()
         }
     }
 
     BackHandler(enabled = true, onBack = backAction)
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("Stream_MessagesScreen"),
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -199,6 +205,7 @@ public fun MessagesScreen(
 
             MessageList(
                 modifier = Modifier
+                    .testTag("Stream_MessagesList")
                     .fillMaxSize()
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
@@ -232,6 +239,7 @@ public fun MessagesScreen(
                                 parentMessageId = result.parentMessageId,
                             )
                         }
+
                         null -> Unit
                     }
                 },
@@ -575,6 +583,7 @@ private fun MessageModerationDialog(
                             ),
                         ),
                     )
+
                     else -> {
                         // Custom events
                     }

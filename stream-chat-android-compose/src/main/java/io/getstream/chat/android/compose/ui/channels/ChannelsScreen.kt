@@ -40,6 +40,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -108,7 +109,11 @@ public fun ChannelsScreen(
 
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .testTag("Stream_ChannelsScreen"),
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -125,6 +130,7 @@ public fun ChannelsScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .padding(it)
                     .fillMaxSize()
                     .background(color = ChatTheme.colors.appBackground),
             ) {
