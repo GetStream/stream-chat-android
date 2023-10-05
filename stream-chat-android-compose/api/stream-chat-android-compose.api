@@ -572,7 +572,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/preview/hand
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/ChannelsScreenKt {
-	public static final fun ChannelsScreen (Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Ljava/lang/String;ZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelsScreen (Lio/getstream/chat/android/compose/viewmodel/channels/ChannelViewModelFactory;Ljava/lang/String;ZZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/header/ChannelListHeaderKt {
@@ -1163,7 +1163,7 @@ public final class io/getstream/chat/android/compose/ui/composables/AudioWaveSee
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenKt {
-	public static final fun MessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ZZLio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart;Lio/getstream/chat/android/compose/state/messages/attachments/StatefulStreamMediaRecorder;Landroidx/compose/runtime/Composer;II)V
+	public static final fun MessagesScreen (Lio/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ZZZLio/getstream/chat/android/compose/ui/messages/list/ThreadMessagesStart;Lio/getstream/chat/android/compose/state/messages/attachments/StatefulStreamMediaRecorder;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package io.getstream.chat.android.compose.sample.ui.login
 
 import android.content.Context
@@ -44,10 +46,14 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -97,7 +103,9 @@ class UserLoginActivity : AppCompatActivity() {
         onCustomLoginClick: () -> Unit,
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .semantics { testTagsAsResourceId = true },
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(32.dp))
@@ -132,6 +140,7 @@ class UserLoginActivity : AppCompatActivity() {
 
             LazyColumn(
                 modifier = Modifier
+                    .testTag("Stream_UserLogin")
                     .fillMaxWidth()
                     .weight(1f),
             ) {
@@ -175,7 +184,9 @@ class UserLoginActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     interactionSource = remember { MutableInteractionSource() },
                 )
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .testTag("Stream_UserLoginItem")
+            ,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserAvatar(

@@ -94,6 +94,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
                     isShowingSearch = true,
+                    testTagsAsResourceId = true,
                     onItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
