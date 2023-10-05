@@ -25,6 +25,8 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.util.Date
 
 /**
@@ -32,6 +34,7 @@ import java.util.Date
  */
 @SuppressWarnings("TooManyFunctions")
 internal class DatabaseChannelRepository(
+    private val scope: CoroutineScope,
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
@@ -58,13 +61,15 @@ internal class DatabaseChannelRepository(
             .filter { channelCache[it.cid] != it }
             .map { it.toEntity() }
         cacheChannel(updatedChannels)
-        logger.v {
-            "[insertChannels] inserting ${channelToInsert.size} entities on DB, " +
-                "updated ${updatedChannels.size} on cache"
+        scope.launch {
+            logger.v {
+                "[insertChannels] inserting ${channelToInsert.size} entities on DB, " +
+                    "updated ${updatedChannels.size} on cache"
+            }
+            channelToInsert
+                .takeUnless { it.isEmpty() }
+                ?.let { channelDao.insertMany(it) }
         }
-        channelToInsert
-            .takeUnless { it.isEmpty() }
-            ?.let { channelDao.insertMany(it) }
     }
 
     private fun cacheChannel(channels: Collection<Channel>) {

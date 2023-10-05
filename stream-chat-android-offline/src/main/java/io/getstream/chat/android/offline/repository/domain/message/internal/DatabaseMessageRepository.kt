@@ -23,13 +23,16 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.util.Date
 
 internal class DatabaseMessageRepository(
+    private val scope: CoroutineScope,
     private val messageDao: MessageDao,
     private val replyMessageDao: ReplyMessageDao,
     private val getUser: suspend (userId: String) -> User,
-    private val currentUser: User?,
+    private val currentUser: User,
     cacheSize: Int = 1000,
 ) : MessageRepository {
     // the message cache, specifically caches messages on which we're receiving events
@@ -115,10 +118,12 @@ internal class DatabaseMessageRepository(
 
         replyMessages.forEach { replyMessageCache.put(it.id, it) }
         validMessages.forEach { messageCache.put(it.id, it) }
-        replyMessagesToInsert.takeUnless { it.isEmpty() }
-            ?.let { replyMessageDao.insert(it) }
-        messagesToInsert.takeUnless { it.isEmpty() }
-            ?.let { messageDao.insert(it) }
+        scope.launch {
+            replyMessagesToInsert.takeUnless { it.isEmpty() }
+                ?.let { replyMessageDao.insert(it) }
+            messagesToInsert.takeUnless { it.isEmpty() }
+                ?.let { messageDao.insert(it) }
+        }
     }
 
     /**
