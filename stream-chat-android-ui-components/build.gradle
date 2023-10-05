@@ -5,6 +5,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'androidx.baselineprofile'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -44,6 +45,12 @@ android {
         all {
             it.java.srcDir "src/$it.name/kotlin"
         }
+    }
+}
+
+baselineProfile {
+    filter {
+        include("io.getstream.chat.android.ui.**")
     }
 }
 
@@ -95,4 +102,6 @@ dependencies {
     testImplementation Dependencies.androidxArchCoreTest
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

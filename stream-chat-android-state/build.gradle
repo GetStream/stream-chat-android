@@ -4,6 +4,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'de.mannodermaus.android-junit5'
+    id 'androidx.baselineprofile'
 }
 
 
@@ -44,6 +45,11 @@ android {
     }
 }
 
+baselineProfile {
+    filter {
+        include("io.getstream.chat.android.state.**")
+    }
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
@@ -105,4 +111,6 @@ dependencies {
     androidTestImplementation Dependencies.mockitoKotlin
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

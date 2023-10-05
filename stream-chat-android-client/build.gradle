@@ -5,6 +5,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.devtools.ksp'
 apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: 'androidx.baselineprofile'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -46,6 +47,12 @@ android {
 
     testOptions.unitTests {
         returnDefaultValues = true
+    }
+}
+
+baselineProfile {
+    filter {
+        include("io.getstream.chat.android.client.**")
     }
 }
 
@@ -114,6 +121,8 @@ dependencies {
     androidTestImplementation Dependencies.androidxTestJunit
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }
 
 /* Uncomment if the Dokka page per module is required

@@ -5,6 +5,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'androidx.baselineprofile'
 
 apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-compose.gradle"
@@ -120,4 +121,6 @@ dependencies {
     implementation Dependencies.firebaseCrashlytics
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

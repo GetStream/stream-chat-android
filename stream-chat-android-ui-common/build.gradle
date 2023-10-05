@@ -5,6 +5,7 @@ import io.getstream.chat.android.Versions
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'androidx.baselineprofile'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -49,6 +50,12 @@ android {
 
     composeOptions {
         kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
+    }
+}
+
+baselineProfile {
+    filter {
+        include("io.getstream.chat.android.ui.common.**")
     }
 }
 
@@ -103,4 +110,6 @@ dependencies {
     testImplementation Dependencies.coroutinesTest
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

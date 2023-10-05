@@ -185,8 +185,7 @@ class UserLoginActivity : AppCompatActivity() {
                     interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp)
-                .testTag("Stream_UserLoginItem")
-            ,
+                .testTag("Stream_UserLoginItem"),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserAvatar(
