@@ -45,7 +45,16 @@ public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
 }
 
 @InternalStreamChatApi
+public fun min(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
+    true -> dateB
+    else -> dateA
+}
+
+@InternalStreamChatApi
 public fun maxOf(vararg dates: Date?): Date? = dates.reduceOrNull { acc, date -> max(acc, date) }
+
+@InternalStreamChatApi
+public fun minOf(vararg dates: Date?): Date? = dates.reduceOrNull { acc, date -> min(acc, date) }
 
 /**
  * Check if current date has difference with [other] no more that [offset].

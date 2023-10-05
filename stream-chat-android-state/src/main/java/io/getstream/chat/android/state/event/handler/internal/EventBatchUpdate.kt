@@ -130,7 +130,7 @@ internal class EventBatchUpdate private constructor(
         logger.v { "[execute] id: $id, channelMap.size: ${channelMap.size}" }
 
         repos.insertUsers(userMap.values.toList())
-        repos.upsertChannels(channelMap.values.updateUsers(userMap))
+        repos.insertChannels(channelMap.values.updateUsers(userMap))
         repos.insertMessages(messageMap.values.toList().updateUsers(userMap))
     }
 

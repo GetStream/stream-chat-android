@@ -459,10 +459,10 @@ internal class EventHandlerSequential(
                 is NewMessageEvent -> {
                     val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.cid, enrichedMessage, isNewMessage = true)
-                    repos.selectChannelWithoutMessages(event.cid)?.let { channel ->
+                    batch.getCurrentChannel(event.cid)?.let { channel ->
                         val updatedChannel = channel.copy(
                             hidden = false,
-                            messages = listOf(enrichedMessage),
+                            messages = channel.messages + listOf(enrichedMessage),
                         )
                         batch.addChannel(updatedChannel)
                     }

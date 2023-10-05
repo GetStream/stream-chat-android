@@ -77,7 +77,7 @@ internal class CreateChannelListenerDatabase(
             image = extraData["image"] as? String ?: "",
         )
 
-        channelRepository.upsertChannel(channel)
+        channelRepository.insertChannel(channel)
     }
 
     /**
@@ -118,11 +118,11 @@ internal class CreateChannelListenerDatabase(
                 if (channel.cid != generatedCid) {
                     channelRepository.deleteChannel(generatedCid)
                 }
-                channelRepository.upsertChannel(channel)
+                channelRepository.insertChannel(channel)
             }
             is Result.Failure -> {
                 channelRepository.selectChannels(listOf(generatedCid)).firstOrNull()?.let { cachedChannel ->
-                    channelRepository.upsertChannel(
+                    channelRepository.insertChannel(
                         cachedChannel.copy(
                             syncStatus = if (result.value.isPermanent()) {
                                 SyncStatus.FAILED_PERMANENTLY

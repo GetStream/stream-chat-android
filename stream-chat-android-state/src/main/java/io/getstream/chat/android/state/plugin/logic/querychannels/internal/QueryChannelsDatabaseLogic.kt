@@ -60,8 +60,8 @@ internal class QueryChannelsDatabaseLogic(
      *
      * @param cid String
      */
-    internal suspend fun selectChannelWithoutMessages(cid: String): Channel? {
-        return channelRepository.selectChannelWithoutMessages(cid)
+    internal suspend fun selectChannel(cid: String): Channel? {
+        return channelRepository.selectChannel(cid)
     }
 
     /**
@@ -69,8 +69,8 @@ internal class QueryChannelsDatabaseLogic(
      *
      * @param cids List<String>
      */
-    internal suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> {
-        return channelRepository.selectChannelsWithoutMessages(cids)
+    internal suspend fun selectChannels(cids: List<String>): List<Channel> {
+        return channelRepository.selectChannels(cids)
     }
 
     /**

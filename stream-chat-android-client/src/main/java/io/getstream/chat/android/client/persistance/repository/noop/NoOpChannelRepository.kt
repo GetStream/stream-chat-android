@@ -27,14 +27,12 @@ import java.util.Date
  */
 @Suppress("TooManyFunctions")
 internal object NoOpChannelRepository : ChannelRepository {
-    override suspend fun upsertChannel(channel: Channel) { /* No-Op */ }
-    override suspend fun upsertChannels(channels: Collection<Channel>) { /* No-Op */ }
+    override suspend fun insertChannel(channel: Channel) { /* No-Op */ }
+    override suspend fun insertChannels(channels: Collection<Channel>) { /* No-Op */ }
     override suspend fun deleteChannel(cid: String) { /* No-Op */ }
-    override suspend fun selectChannelWithoutMessages(cid: String): Channel? = null
-    override suspend fun selectChannelsWithoutMessages(cids: List<String>): List<Channel> = emptyList()
     override suspend fun selectAllCids(): List<String> = emptyList()
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> = emptyList()
-    override suspend fun selectChannelByCid(cid: String): Channel? = null
+    override suspend fun selectChannel(cid: String): Channel? = null
     override suspend fun selectChannelCidsBySyncNeeded(limit: Int): List<String> = emptyList()
     override suspend fun selectChannelsSyncNeeded(limit: Int): List<Channel> = emptyList()
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) { /* No-Op */ }

@@ -313,7 +313,7 @@ internal class QueryChannelsLogic(
 
     internal suspend fun parseChatEventResult(chatEvent: ChatEvent): EventHandlingResult {
         val cachedChannel = if (chatEvent is CidEvent) {
-            queryChannelsDatabaseLogic.selectChannelWithoutMessages(chatEvent.cid)
+            queryChannelsDatabaseLogic.selectChannel(chatEvent.cid)
         } else {
             null
         }
@@ -324,7 +324,7 @@ internal class QueryChannelsLogic(
     internal suspend fun parseChatEventResults(chatEvents: List<ChatEvent>): List<EventHandlingResult> {
         val cids = chatEvents.filterIsInstance<CidEvent>().map { it.cid }.distinct()
         val cachedChannels = queryChannelsDatabaseLogic
-            .selectChannelsWithoutMessages(cids).associateBy { it.cid }
+            .selectChannels(cids).associateBy { it.cid }
 
         return chatEvents.map { event ->
             val channel = (event as? CidEvent)?.let { cachedChannels[it.cid] }
