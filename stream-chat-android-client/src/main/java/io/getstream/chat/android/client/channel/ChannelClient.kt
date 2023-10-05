@@ -498,7 +498,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean = false): Call<Reaction> {
-        return client.sendReaction(reaction, enforceUnique)
+        return client.sendReaction(reaction, enforceUnique, cid)
     }
 
     @CheckResult

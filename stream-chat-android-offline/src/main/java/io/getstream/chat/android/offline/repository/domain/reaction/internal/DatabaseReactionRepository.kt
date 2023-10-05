@@ -126,6 +126,15 @@ internal class DatabaseReactionRepository(
             .map { it.toModel(getUser) }
     }
 
+    /**
+     * Deletes a reaction.
+     *
+     * @param reaction [Reaction]
+     */
+    override suspend fun deleteReaction(reaction: Reaction) {
+        reactionDao.delete(reaction.toEntity())
+    }
+
     override suspend fun clear() {
         reactionDao.deleteAll()
     }

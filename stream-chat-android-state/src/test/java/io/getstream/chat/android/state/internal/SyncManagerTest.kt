@@ -27,10 +27,14 @@ import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.core.internal.coroutines.Tube
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.SyncStatus.AWAITING_ATTACHMENTS
+import io.getstream.chat.android.models.SyncStatus.SYNC_NEEDED
+import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomReaction
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
@@ -41,6 +45,7 @@ import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -107,22 +112,24 @@ internal class SyncManagerTest {
 
     @Test
     fun `when a health check event happens, a request to retry failed entities should happen`() = runTest {
+        /* Given */
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
 
         val syncManager = buildSyncManager()
-        whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
-        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
 
-        val connectingEvent = HealthEvent(
-            type = "type",
-            createdAt = createdAt,
-            rawCreatedAt = rawCreatedAt,
-            connectionId = randomString(),
+        /* When */
+
+        syncManager.onEvent(
+            HealthEvent(
+                type = "type",
+                createdAt = createdAt,
+                rawCreatedAt = rawCreatedAt,
+                connectionId = randomString(),
+            ),
         )
 
-        syncManager.onEvent(connectingEvent)
-
+        /* Then */
         verify(repositoryFacade).selectChannelCidsBySyncNeeded()
         verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         verify(repositoryFacade).selectMessageIdsBySyncState(SyncStatus.AWAITING_ATTACHMENTS)
@@ -199,7 +206,91 @@ internal class SyncManagerTest {
         verify(_syncEvents).emit(listOf(mockedChatEvent))
     }
 
-    private fun buildSyncManager(): SyncManager {
+    @Test
+    fun `test sync max threshold for messages`() = runTest {
+        /* Given */
+        val message1 = localRandomMessage()
+        val message2 = randomMessage(deletedAt = localDate())
+        val message3 = randomMessage(deletedAt = null)
+        val message4 = localRandomMessage()
+        whenever(repositoryFacade.selectMessageIdsBySyncState(SYNC_NEEDED)) doReturn listOf(
+            message1.id, message2.id, message3.id,
+        )
+        whenever(repositoryFacade.selectMessageIdsBySyncState(AWAITING_ATTACHMENTS)) doReturn listOf(message4.id)
+
+        whenever(repositoryFacade.selectMessage(message1.id)) doReturn message1
+        whenever(repositoryFacade.selectMessage(message2.id)) doReturn message2
+        whenever(repositoryFacade.selectMessage(message3.id)) doReturn message3
+        whenever(repositoryFacade.selectMessage(message4.id)) doReturn message4
+
+        val syncManager = buildSyncManager()
+
+        /* When */
+        delay(7_000)
+        syncManager.onEvent(
+            HealthEvent(
+                type = "type",
+                createdAt = Date(testCoroutines.dispatcher.scheduler.currentTime),
+                rawCreatedAt = streamDateFormatter.format(Date(testCoroutines.dispatcher.scheduler.currentTime)),
+                connectionId = randomString(),
+            ),
+        )
+
+        /* Then */
+        verify(repositoryFacade).deleteChannelMessage(message1)
+        verify(repositoryFacade).deleteChannelMessage(message2)
+        verify(repositoryFacade).deleteChannelMessage(message3)
+        verify(repositoryFacade).deleteChannelMessage(message4)
+
+        verify(chatClient, never()).sendMessage(any(), any(), any(), any())
+        verify(chatClient, never()).deleteMessage(any(), any())
+        verify(chatClient, never()).updateMessage(any())
+    }
+
+    @Test
+    fun `test sync max threshold for reactions`() = runTest {
+        /* Given */
+        val reactionId1 = 1
+        val reactionId2 = 2
+        val reaction1 = randomReaction(deletedAt = null)
+        val reaction2 = randomReaction()
+        whenever(repositoryFacade.selectReactionIdsBySyncStatus(SYNC_NEEDED)) doReturn listOf(
+            reactionId1, reactionId2,
+        )
+        whenever(repositoryFacade.selectReactionById(reactionId1)) doReturn reaction1
+        whenever(repositoryFacade.selectReactionById(reactionId2)) doReturn reaction2
+
+        val syncManager = buildSyncManager()
+
+        /* When */
+        delay(7_000)
+        syncManager.onEvent(
+            HealthEvent(
+                type = "type",
+                createdAt = Date(testCoroutines.dispatcher.scheduler.currentTime),
+                rawCreatedAt = streamDateFormatter.format(Date(testCoroutines.dispatcher.scheduler.currentTime)),
+                connectionId = randomString(),
+            ),
+        )
+
+        /* Then */
+        verify(repositoryFacade).deleteReaction(reaction1)
+        verify(repositoryFacade).deleteReaction(reaction1)
+
+        verify(chatClient, never()).sendReaction(any(), any(), any())
+        verify(chatClient, never()).deleteReaction(any(), any(), any())
+    }
+
+    private fun localRandomMessage() = randomMessage(
+        createdLocallyAt = Date(testCoroutines.dispatcher.scheduler.currentTime),
+        createdAt = null,
+        updatedAt = null,
+        deletedAt = null,
+    )
+
+    private fun localDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)
+
+    private fun buildSyncManager(syncMaxThreshold: TimeDuration = TimeDuration.seconds(5)): SyncManager {
         return SyncManager(
             currentUserId = user.id,
             scope = testCoroutines.scope,
@@ -210,6 +301,8 @@ internal class SyncManagerTest {
             clientState = clientState,
             userPresence = true,
             events = _syncEvents,
+            syncMaxThreshold = syncMaxThreshold,
+            now = { testCoroutines.dispatcher.scheduler.currentTime },
         )
     }
 }

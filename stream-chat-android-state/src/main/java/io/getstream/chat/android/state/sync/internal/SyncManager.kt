@@ -19,6 +19,7 @@ package io.getstream.chat.android.state.sync.internal
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
@@ -27,22 +28,28 @@ import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
+import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.models.UserEntity
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.CoroutineCall
 import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -75,6 +82,8 @@ internal class SyncManager(
     private val logicRegistry: LogicRegistry,
     private val stateRegistry: StateRegistry,
     private val userPresence: Boolean,
+    private val syncMaxThreshold: TimeDuration,
+    private val now: () -> Long,
     scope: CoroutineScope,
     private val events: Tube<List<ChatEvent>> = Tube(),
 ) : SyncHistoryManager {
@@ -99,6 +108,7 @@ internal class SyncManager(
     private val mutex = Mutex()
 
     override fun start() {
+        chatClient.config.apiKey
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return
@@ -306,7 +316,7 @@ internal class SyncManager(
             logger.v { "[retryFailedEntities] completed" }
         }
     } catch (e: Throwable) {
-        logger.e { "[retryFailedEntities] failed: $e" }
+        logger.e(e) { "[retryFailedEntities] failed: $e" }
     }
 
     @SuppressWarnings("LongMethod")
@@ -419,17 +429,23 @@ internal class SyncManager(
 
     private suspend fun retryChannels() {
         val cids = repos.selectChannelCidsBySyncNeeded()
-        logger.v { "[retryChannels] cids.size: ${cids.size}" }
+        logger.d { "[retryChannels] cids.size: ${cids.size}" }
         cids.forEach { cid ->
-            logger.d { "[retryReactions] process channel($cid)" }
+            logger.v { "[retryChannels] channel.cid: $cid" }
             val channel = repos.selectChannelByCid(cid) ?: return@forEach
-            logger.v { "[retryChannels] sending channel($cid)" }
-            val result = chatClient.createChannel(
-                channel.type,
-                channel.id,
-                channel.members.map(UserEntity::getUserId),
-                channel.extraData,
-            ).await()
+            val result = if (channel.createdAt.exceedsSyncThreshold()) {
+                logger.w { "[retryChannels] outdated channel($cid)" }
+                repos.deleteChannel(cid)
+                Result.Success(Unit)
+            } else {
+                logger.v { "[retryChannels] sending channel($cid)" }
+                chatClient.createChannel(
+                    channel.type,
+                    channel.id,
+                    channel.members.map(UserEntity::getUserId),
+                    channel.extraData,
+                ).await()
+            }
             logger.v { "[retryChannels] result($cid).isSuccess: ${result is Result.Success}" }
         }
     }
@@ -449,13 +465,11 @@ internal class SyncManager(
             logger.d { "[retryReactions] process reaction($id)" }
             val reaction = repos.selectReactionById(id) ?: return@forEach
             val result = if (reaction.deletedAt != null) {
-                logger.v { "[retryReactions] deleting reaction($id) for messageId: ${reaction.messageId}" }
-                chatClient.deleteReaction(reaction.messageId, reaction.type)
+                retryReactionDeletion(id, reaction)
             } else {
-                logger.v { "[retryReactions] sending reaction($id) for messageId: ${reaction.messageId}" }
-                chatClient.sendReaction(reaction, reaction.enforceUnique)
+                retryReactionSending(reaction, id)
             }.await()
-            logger.v { "[retryReactions] result($id).isSuccess: ${result is Result.Success}" }
+            logger.v { "[retryReactions] result(${reaction.id}).isSuccess: ${result is Result.Success}" }
         }
     }
 
@@ -463,33 +477,17 @@ internal class SyncManager(
         val ids = repos.selectMessageIdsBySyncState(SyncStatus.SYNC_NEEDED)
         logger.d { "[retryMgsWithSyncedAttachments] ids.size: ${ids.size}" }
         ids.forEach { id ->
-            logger.d { "[retryMgsWithSyncedAttachments] process message($id)" }
+            logger.v { "[retryMgsWithSyncedAttachments] message.id: $id" }
             val message = repos.selectMessage(id) ?: return@forEach
             val channelClient = chatClient.channel(message.cid)
             val result = when {
-                message.isDeleted() -> {
-                    logger.v { "[retryMgsWithSyncedAttachments] deleting message($id)" }
-                    channelClient.deleteMessage(message.id).await()
-                }
+                message.isDeleted() -> retryDeletionOfMessageWithSyncedAttachments(id, message, channelClient)
                 message.updatedLocallyAt != null && message.createdAt != null -> {
-                    logger.v { "[retryMgsWithSyncedAttachments] updating message($id)" }
-                    channelClient.updateMessage(message).await()
+                    retryUpdateOfMessageWithSyncedAttachments(id, message, channelClient)
                 }
-                else -> {
-                    logger.v { "[retryMgsWithSyncedAttachments] sending message($id)" }
-                    channelClient.sendMessage(message).await().also { result ->
-                        when (result) {
-                            is Result.Success -> repos.insertMessage(message.copy(syncStatus = SyncStatus.COMPLETED))
-                            is Result.Failure -> {
-                                if (result.value.isPermanent()) {
-                                    repos.markMessageAsFailed(message)
-                                }
-                            }
-                        }
-                    }
-                }
+                else -> retrySendingOfMessageWithSyncedAttachments(message, id, channelClient)
             }
-            logger.v { "[retryMgsWithSyncedAttachments] result($id).isSuccess: ${result is Result.Success}" }
+            logger.v { "[retryMgsWithSyncedAttachments] result(${message.id}).isSuccess: ${result is Result.Success}" }
         }
     }
 
@@ -504,18 +502,141 @@ internal class SyncManager(
             val message = repos.selectMessage(id) ?: return@forEach
             val isFailed = message.attachments.any { it.uploadState is Attachment.UploadState.Failed }
             if (isFailed) {
-                logger.v { "[retryMessagesWithSyncedAttachments] marking message(${message.id}) as failed" }
+                logger.v { "[retryMessagesWithPendingAttachments] marking message($id) as failed" }
                 repos.markMessageAsFailed(message)
             } else {
-                logger.v { "[retryMessagesWithSyncedAttachments] sending message(${message.id})" }
-                val (channelType, channelId) = message.cid.cidToTypeAndId()
-                chatClient.sendMessage(channelType, channelId, message, true).await()
+                logger.v { "[retryMessagesWithPendingAttachments] sending message($id)" }
+                if (message.createdLocallyAt.exceedsSyncThreshold()) {
+                    logger.w { "[retryMessagesWithPendingAttachments] outdated sending($id)" }
+                    removeMessage(message).await()
+                } else {
+                    val (channelType, channelId) = message.cid.cidToTypeAndId()
+                    chatClient.sendMessage(channelType, channelId, message, true).await()
+                }
             }
         }
     }
 
     private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) =
         insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
+
+    private suspend fun retryReactionDeletion(
+        id: Int,
+        reaction: Reaction,
+    ): Call<out Any> {
+        logger.v { "[retryReactionDeletion] reaction($id) for messageId: ${reaction.messageId}" }
+        return if (reaction.deletedAt.exceedsSyncThreshold()) {
+            logger.w { "[retryReactionDeletion] outdated deletion($id)" }
+            removeReaction(reaction)
+        } else {
+            chatClient.deleteReaction(reaction.messageId, reaction.type)
+        }
+    }
+
+    private suspend fun retryReactionSending(
+        reaction: Reaction,
+        id: Int,
+    ): Call<out Any> {
+        logger.v { "[retryReactionSending] reaction(${reaction.id}) for messageId: ${reaction.messageId}" }
+        return if (reaction.createdLocallyAt.exceedsSyncThreshold()) {
+            logger.w { "[retryReactionSending] outdated sending($id)" }
+            removeReaction(reaction)
+        } else {
+            chatClient.sendReaction(reaction, reaction.enforceUnique)
+        }
+    }
+
+    private suspend fun retryDeletionOfMessageWithSyncedAttachments(
+        id: String,
+        message: Message,
+        channelClient: ChannelClient,
+    ): Result<Any> {
+        logger.v { "[retryDeletionOfMessageWithSyncedAttachments] deleting message($id)" }
+        return if (message.deletedAt.exceedsSyncThreshold()) {
+            logger.w { "[retryDeletionOfMessageWithSyncedAttachments] outdated deleting($id)" }
+            removeMessage(message).await()
+        } else {
+            channelClient.deleteMessage(message.id).await()
+        }
+    }
+
+    private suspend fun retryUpdateOfMessageWithSyncedAttachments(
+        id: String,
+        message: Message,
+        channelClient: ChannelClient,
+    ): Result<Any> {
+        logger.v { "[retryUpdateOfMessageWithSyncedAttachments] updating message($id)" }
+        return if (message.updatedLocallyAt.exceedsSyncThreshold()) {
+            logger.w { "[retryUpdateOfMessageWithSyncedAttachments] outdated updating($id)" }
+            removeMessage(message).await()
+        } else {
+            channelClient.updateMessage(message).await()
+        }
+    }
+
+    private suspend fun retrySendingOfMessageWithSyncedAttachments(
+        message: Message,
+        id: String,
+        channelClient: ChannelClient,
+    ): Result<Any> {
+        logger.v { "[retrySendingOfMessageWithSyncedAttachments] sending message(${message.id})" }
+        return if (message.createdLocallyAt.exceedsSyncThreshold()) {
+            logger.w { "[retrySendingOfMessageWithSyncedAttachments] outdated sending($id)" }
+            removeMessage(message).await()
+        } else {
+            channelClient.sendMessage(message).await().also { result ->
+                when (result) {
+                    is Result.Success -> repos.insertMessage(
+                        message.copy(syncStatus = SyncStatus.COMPLETED),
+                    )
+
+                    is Result.Failure -> if (result.value.isPermanent()) {
+                        repos.markMessageAsFailed(message)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun removeReaction(reaction: Reaction): Call<Unit> {
+        return CoroutineCall(syncScope) {
+            try {
+                logger.d { "[removeReaction] reaction.id: ${reaction.id}" }
+                repos.deleteReaction(reaction)
+                logicRegistry.channelFromMessageId(reaction.messageId)
+                    ?.getMessage(reaction.messageId)
+                    ?.removeMyReaction(reaction)
+                logicRegistry.threadFromMessageId(reaction.messageId)
+                    ?.getMessage(reaction.messageId)
+                    ?.removeMyReaction(reaction)
+                logger.v { "[removeReaction] completed: ${reaction.id}" }
+                Result.Success(Unit)
+            } catch (e: Throwable) {
+                logger.e { "[removeReaction] failed(${reaction.id}): $e" }
+                Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
+            }
+        }
+    }
+
+    private suspend fun removeMessage(message: Message): Call<Unit> {
+        return CoroutineCall(syncScope) {
+            try {
+                logger.d { "[removeMessage] message.id: ${message.id}" }
+                repos.deleteChannelMessage(message)
+                logicRegistry.channelFromMessage(message)?.deleteMessage(message)
+                logicRegistry.threadFromMessage(message)?.deleteMessage(message)
+                logger.v { "[removeMessage] completed: ${message.id}" }
+                Result.Success(Unit)
+            } catch (e: Throwable) {
+                logger.e { "[removeMessage] failed(${message.id}): $e" }
+                Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
+            }
+        }
+    }
+
+    private fun Date?.exceedsSyncThreshold(): Boolean {
+        return this == null || diff(now()) > syncMaxThreshold
+    }
 
     private enum class State {
         Idle, Syncing
