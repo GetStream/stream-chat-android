@@ -43,7 +43,7 @@ public fun Channel.users(): List<User> {
 
 @InternalStreamChatApi
 public val Channel.lastMessage: Message?
-    get() = messages.lastOrNull()
+    get() = messages.maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
 
 @InternalStreamChatApi
 public fun Channel.updateLastMessage(message: Message): Channel {
