@@ -50,6 +50,7 @@ import io.getstream.chat.android.offline.plugin.listener.internal.ThreadQueryLis
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.SupervisorJob
 import kotlin.reflect.KClass
 
 /**
@@ -73,6 +74,7 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
         return DatabaseRepositoryFactory(
             database = createDatabase(appContext, user),
             currentUser = user,
+            scope = ChatClient.instance().inheritScope { SupervisorJob(it) },
         )
     }
 

@@ -20,10 +20,13 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.models.User
 import io.getstream.log.taggedLogger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 internal class DatabaseUserRepository(
+    private val scope: CoroutineScope,
     private val userDao: UserDao,
     cacheSize: Int = 1000,
 ) : UserRepository {
@@ -50,10 +53,12 @@ internal class DatabaseUserRepository(
             .filter { it != userCache[it.id] }
             .map { it.toEntity() }
         cacheUsers(users)
-        logger.v { "[insertUsers] inserting ${usersToInsert.size} entities on DB, updated ${users.size} on cache" }
-        usersToInsert
-            .takeUnless { it.isEmpty() }
-            ?.let { userDao.insertMany(it) }
+        scope.launch {
+            logger.v { "[insertUsers] inserting ${usersToInsert.size} entities on DB, updated ${users.size} on cache" }
+            usersToInsert
+                .takeUnless { it.isEmpty() }
+                ?.let { userDao.insertMany(it) }
+        }
     }
 
     /**
@@ -99,7 +104,7 @@ internal class DatabaseUserRepository(
         for (userEntity in users) {
             userCache.put(userEntity.id, userEntity)
         }
-        latestUsersFlow.value = userCache.snapshot()
+        scope.launch { latestUsersFlow.value = userCache.snapshot() }
     }
 
     private fun User.toEntity(): UserEntity =

@@ -36,12 +36,14 @@ import io.getstream.chat.android.offline.repository.domain.queryChannels.interna
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
+import kotlinx.coroutines.CoroutineScope
 
 private const val DEFAULT_CACHE_SIZE = 1000
 
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
+    private val scope: CoroutineScope,
 ) : RepositoryFactory {
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
@@ -50,7 +52,7 @@ internal class DatabaseRepositoryFactory(
         val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?
 
         return databaseUserRepository ?: run {
-            DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
+            DatabaseUserRepository(scope, database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
                 repositoriesCache[UserRepository::class.java] = repository
             }
         }
@@ -74,7 +76,7 @@ internal class DatabaseRepositoryFactory(
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
         return databaseChannelRepository ?: run {
-            DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage)
+            DatabaseChannelRepository(scope, database.channelStateDao(), getUser, getMessage)
                 .also { repository ->
                     repositoriesCache[ChannelRepository::class.java] = repository
                 }
@@ -99,6 +101,7 @@ internal class DatabaseRepositoryFactory(
 
         return databaseMessageRepository ?: run {
             DatabaseMessageRepository(
+                scope,
                 database.messageDao(),
                 database.replyMessageDao(),
                 getUser,
