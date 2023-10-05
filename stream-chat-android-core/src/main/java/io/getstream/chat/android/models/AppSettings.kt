@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * App settings, as they are configured in the dashboard.
  *
  * @param app [App] The configurations of the app.
  */
-@Stable
+@Immutable
 public data class AppSettings(
     val app: App,
 )
@@ -35,7 +35,7 @@ public data class AppSettings(
  * @param fileUploadConfig [FileUploadConfig] The configuration of file uploads.
  * @param imageUploadConfig [FileUploadConfig] The configuration of image uploads.
  */
-@Stable
+@Immutable
 public data class App(
     val name: String,
     val fileUploadConfig: FileUploadConfig,
@@ -50,7 +50,7 @@ public data class App(
  * @param blockedFileExtensions Blocked mime types.
  * @param blockedMimeTypes Blocked mime types.
  */
-@Stable
+@Immutable
 public data class FileUploadConfig(
     val allowedFileExtensions: List<String>,
     val allowedMimeTypes: List<String>,

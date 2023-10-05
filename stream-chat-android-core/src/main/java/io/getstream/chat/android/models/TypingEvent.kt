@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
-@Stable
+@Immutable
 public data class TypingEvent(val channelId: String, val users: List<User>)

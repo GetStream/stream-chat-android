@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
-@Stable
+@Immutable
 public data class GuestUser(val user: User, val token: String)

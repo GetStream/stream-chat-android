@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import java.util.Date
 
-@Stable
+@Immutable
 public data class BannedUser(
     val user: User,
     val bannedBy: User?,

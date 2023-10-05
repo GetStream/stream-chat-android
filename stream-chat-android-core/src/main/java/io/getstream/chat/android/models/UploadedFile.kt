@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * Represents a successfully uploaded file.
@@ -25,7 +25,7 @@ import androidx.compose.runtime.Stable
  * @param thumbUrl The property is auto-generated when uploading videos using
  * Stream CDN and can be used to display video previews.
  */
-@Stable
+@Immutable
 public data class UploadedFile(
     val file: String,
     val thumbUrl: String? = null,

@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * Represents a warning related to message search results. For example, if there are more
  * than 500 channels that match the channel filter.
  */
-@Stable
+@Immutable
 public data class SearchWarning(
     /**
      * Channel CIDs for the searched channels

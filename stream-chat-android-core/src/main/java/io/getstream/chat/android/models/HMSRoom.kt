@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * Represents HMS room information that contains available room in a chat channel.
@@ -24,7 +24,7 @@ import androidx.compose.runtime.Stable
  * @property roomId A new room id.
  * @property roomId A new room name.
  */
-@Stable
+@Immutable
 public data class HMSRoom(
     val roomId: String,
     val roomName: String,

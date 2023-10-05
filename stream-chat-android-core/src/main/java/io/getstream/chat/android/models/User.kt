@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -43,7 +43,7 @@ import java.util.Date
  * @param extraData A map of custom fields for the user.
  * @param deactivatedAt Date/time of deactivation.
  */
-@Stable
+@Immutable
 public data class User(
     val id: String = "",
     val role: String = "",

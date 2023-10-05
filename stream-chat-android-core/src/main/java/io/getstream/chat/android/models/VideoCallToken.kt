@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * A call token that is used in currently available video call integrations.
@@ -25,7 +25,7 @@ import androidx.compose.runtime.Stable
  * @property agoraUid The Uid of Agora.
  * @property agoraAppId The App Id of Agora.
  */
-@Stable
+@Immutable
 public data class VideoCallToken(
     val token: String,
     val agoraUid: Int?,

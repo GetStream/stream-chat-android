@@ -17,7 +17,6 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 
 /**
  * A content of message sync description.
@@ -58,7 +57,7 @@ public data object MessageAwaitingAttachments : MessageSyncInProgress() {
 /**
  * When sync is failed due to moderation violation.
  */
-@Stable
+@Immutable
 public data class MessageModerationFailed(
     val violations: List<ModerationViolation>,
 ) : MessageSyncFailed()
@@ -66,7 +65,7 @@ public data class MessageModerationFailed(
 /**
  * Moderation violation details.
  */
-@Stable
+@Immutable
 public data class ModerationViolation(
     val code: Int,
     val messages: List<String>,

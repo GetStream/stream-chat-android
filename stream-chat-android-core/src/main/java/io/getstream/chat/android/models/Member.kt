@@ -16,14 +16,14 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 /**
  * Represents a channel member.
  */
-@Stable
+@Immutable
 public data class Member(
     /**
      * The user who is a member of the channel.

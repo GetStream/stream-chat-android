@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * Configuration of a channel.
@@ -24,5 +24,5 @@ import androidx.compose.runtime.Stable
  * @property type String.
  * @property config [Config]
  */
-@Stable
+@Immutable
 public data class ChannelConfig(val type: String, val config: Config)

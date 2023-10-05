@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * Represents a successfully uploaded image.
@@ -24,7 +24,7 @@ import androidx.compose.runtime.Stable
  * @param file The URL of the uploaded image.
  * @param thumbUrl The thumb URL generated using custom CDN.
  */
-@Stable
+@Immutable
 public data class UploadedImage(
     val file: String,
     val thumbUrl: String? = null,

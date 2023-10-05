@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 
 /**
  * A [Channel] object that contains less information.
@@ -29,7 +29,7 @@ import androidx.compose.runtime.Stable
  * @param name Channel's name.
  * @param image Channel's image.
  */
-@Stable
+@Immutable
 public data class ChannelInfo(
     val cid: String? = null,
     val id: String? = null,

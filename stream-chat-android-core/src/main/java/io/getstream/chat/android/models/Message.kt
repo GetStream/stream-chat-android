@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.models
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
-@Stable
+@Immutable
 public data class Message(
     /**
      * The unique string identifier of the message. This is either created by Stream
