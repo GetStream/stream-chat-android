@@ -44,6 +44,9 @@ public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
     else -> dateB
 }
 
+@InternalStreamChatApi
+public fun maxOf(vararg dates: Date?): Date? = dates.reduceOrNull { acc, date -> max(acc, date) }
+
 /**
  * Check if current date has difference with [other] no more that [offset].
  */
