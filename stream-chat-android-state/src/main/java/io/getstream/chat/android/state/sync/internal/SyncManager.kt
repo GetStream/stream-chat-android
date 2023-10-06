@@ -108,7 +108,6 @@ internal class SyncManager(
     private val mutex = Mutex()
 
     override fun start() {
-        chatClient.config.apiKey
         logger.d { "[start] no args" }
         val isDisposed = eventsDisposable?.isDisposed ?: true
         if (!isDisposed) return

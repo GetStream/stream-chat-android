@@ -26,7 +26,7 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * Represents the amount of time one instant of time is away from another instant.
  */
-public data class TimeDuration constructor(
+public class TimeDuration private constructor(
     private val duration: Duration,
 ) : Comparable<TimeDuration> {
 
@@ -57,6 +57,20 @@ public data class TimeDuration constructor(
 
     override fun compareTo(other: TimeDuration): Int {
         return duration.compareTo(other.duration)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is TimeDuration) return false
+        return duration == other.duration
+    }
+
+    override fun hashCode(): Int {
+        return duration.hashCode()
+    }
+
+    override fun toString(): String {
+        return duration.toString()
     }
 
     public companion object {
