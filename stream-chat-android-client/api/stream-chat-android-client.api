@@ -2149,6 +2149,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ReactionRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteReaction (Lio/getstream/chat/android/models/Reaction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertReaction (Lio/getstream/chat/android/models/Reaction;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectReactionById (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectReactionIdsBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

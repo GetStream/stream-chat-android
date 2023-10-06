@@ -36,6 +36,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improved `SyncManger`, which now does not retry outdated messages/reactions [#4991](https://github.com/GetStream/stream-chat-android/pull/4991)
 
 ### ✅ Added
 

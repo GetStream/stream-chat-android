@@ -19,7 +19,9 @@
 package io.getstream.chat.android.core.utils.date
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.TimeDuration
 import java.util.Date
+import kotlin.math.abs
 
 /**
  * Tests if [this] date is after [that] date.
@@ -47,3 +49,12 @@ public fun max(dateA: Date?, dateB: Date?): Date? = when (dateA after dateB) {
  */
 @InternalStreamChatApi
 public fun Date.inOffsetWith(other: Date, offset: Long): Boolean = (time + offset) >= other.time
+
+/**
+ * Returns difference between [this] date and the [otherTime] in [TimeDuration].
+ */
+@InternalStreamChatApi
+public fun Date.diff(otherTime: Long): TimeDuration {
+    val diff = abs(time - otherTime)
+    return TimeDuration.millis(diff)
+}
