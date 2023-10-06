@@ -1,0 +1,2 @@
+Lio/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory;
+HSPLio/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory;-><init>(Landroid/content/Context;)V

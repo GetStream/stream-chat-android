@@ -20,6 +20,7 @@ android {
         targetSdk = Configuration.targetSdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["androidx.benchmark.suppressErrors"] = "EMULATOR"
+        buildConfigField("String", "STREAM_CHAT_VERSION", "\"$version\"")
     }
 
     compileOptions {
@@ -29,6 +30,10 @@ android {
 
     kotlinOptions {
         jvmTarget = "11"
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     targetProjectPath = ":stream-chat-android-compose-sample"

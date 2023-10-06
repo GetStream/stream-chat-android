@@ -4,7 +4,6 @@ import io.getstream.chat.android.Configuration
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'de.mannodermaus.android-junit5'
-apply plugin: 'androidx.baselineprofile'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -23,13 +22,6 @@ android {
         }
     }
 }
-
-baselineProfile {
-    filter {
-        include("stream-chat-android-markdown-transformer.**")
-    }
-}
-
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
@@ -56,6 +48,4 @@ dependencies {
     testRuntimeOnly Dependencies.junitJupiterEngine
 
     detektPlugins(Dependencies.detektFormatting)
-
-    baselineProfile(project(":stream-chat-android-benchmark"))
 }

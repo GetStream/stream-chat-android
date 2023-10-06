@@ -1,0 +1,4 @@
+Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
+HSPLio/getstream/chat/android/state/plugin/config/StatePluginConfig;-><init>(ZZ)V
+Lio/getstream/chat/android/state/plugin/factory/StreamStatePluginFactory;
+HSPLio/getstream/chat/android/state/plugin/factory/StreamStatePluginFactory;-><init>(Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;Landroid/content/Context;)V

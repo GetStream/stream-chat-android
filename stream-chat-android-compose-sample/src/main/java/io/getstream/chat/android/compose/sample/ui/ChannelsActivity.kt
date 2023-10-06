@@ -252,7 +252,9 @@ class ChannelsActivity : BaseConnectedActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
+            return Intent(context, ChannelsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
         }
     }
 }
