@@ -1470,8 +1470,6 @@ public final class io/getstream/chat/android/models/TimeDuration : java/lang/Com
 	public synthetic fun <init> (JLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun compareTo (Lio/getstream/chat/android/models/TimeDuration;)I
 	public synthetic fun compareTo (Ljava/lang/Object;)I
-	public final fun copy-LRDsOJo (J)Lio/getstream/chat/android/models/TimeDuration;
-	public static synthetic fun copy-LRDsOJo$default (Lio/getstream/chat/android/models/TimeDuration;JILjava/lang/Object;)Lio/getstream/chat/android/models/TimeDuration;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDays ()J
 	public final fun getHours ()J
