@@ -38,6 +38,7 @@ buildscript {
         classpath Dependencies.gradleVersionsPlugin
         classpath Dependencies.navigationSafeArgsGradlePlugin
         classpath Dependencies.gradleNexusPublishPlugin
+        classpath Dependencies.baselineProfilePlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
         classpath Dependencies.shot

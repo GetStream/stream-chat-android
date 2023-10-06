@@ -103,6 +103,7 @@ class MessagesActivity : BaseConnectedActivity() {
             ChatTheme(dateFormatter = ChatApp.dateFormatter) {
                 MessagesScreen(
                     viewModelFactory = factory,
+                    testTagsAsResourceId = true,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
                     // TODO
@@ -165,6 +166,7 @@ class MessagesActivity : BaseConnectedActivity() {
 
                             MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
                             }
+
                             null -> Unit
                         }
                     },
@@ -216,6 +218,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             onDismiss = { listViewModel.removeOverlay() },
                         )
                     }
+
                     is SelectedMessageReactionsState -> {
                         SelectedReactionsMenu(
                             modifier = Modifier
@@ -236,6 +239,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             ownCapabilities = selectedMessageState.ownCapabilities,
                         )
                     }
+
                     is SelectedMessageReactionsPickerState -> {
                         ReactionsPicker(
                             modifier = Modifier
@@ -251,6 +255,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             onDismiss = { listViewModel.removeOverlay() },
                         )
                     }
+
                     else -> Unit
                 }
             }

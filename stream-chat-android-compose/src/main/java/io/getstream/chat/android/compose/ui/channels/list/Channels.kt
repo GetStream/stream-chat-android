@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
@@ -64,7 +65,7 @@ public fun Channels(
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.testTag("Stream_Channels")) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = lazyListState,

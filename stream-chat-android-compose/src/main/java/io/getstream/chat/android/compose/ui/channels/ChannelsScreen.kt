@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package io.getstream.chat.android.compose.ui.channels
 
 import androidx.activity.compose.BackHandler
@@ -39,8 +41,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
@@ -83,6 +89,7 @@ public fun ChannelsScreen(
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     isShowingSearch: Boolean = false,
+    testTagsAsResourceId: Boolean = false,
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
@@ -108,7 +115,12 @@ public fun ChannelsScreen(
 
     var searchQuery by rememberSaveable { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .semantics { this.testTagsAsResourceId = testTagsAsResourceId }
+            .testTag("Stream_ChannelsScreen"),
+    ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -125,6 +137,7 @@ public fun ChannelsScreen(
         ) {
             Column(
                 modifier = Modifier
+                    .padding(it)
                     .fillMaxSize()
                     .background(color = ChatTheme.colors.appBackground),
             ) {

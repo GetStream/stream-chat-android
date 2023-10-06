@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
@@ -109,7 +110,7 @@ public fun Messages(
 
     val density = LocalDensity.current
 
-    Box(modifier = modifier) {
+    Box(modifier = modifier.testTag("Stream_Messages")) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
