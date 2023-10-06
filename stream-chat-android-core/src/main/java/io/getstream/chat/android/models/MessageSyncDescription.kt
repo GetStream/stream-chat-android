@@ -16,12 +16,15 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * An addition to [SyncStatus] to cover message related statuses in detail.
  *
  * @param type Represents the type of message sync description.
  * @param content May contain a detailed information for the specified [type].
  */
+@Immutable
 public data class MessageSyncDescription(
     val type: MessageSyncType,
     val content: MessageSyncContent,

@@ -16,24 +16,28 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents possible states of the WebSocket connection.
  */
+@Immutable
 public sealed class ConnectionState {
     /**
      * The client is connected to the WebSocket.
-     *
-     * @property user Current [User] connected to the WebSocket.
      */
-    public object Connected : ConnectionState() { override fun toString(): String = "Connected" }
+    @Immutable
+    public data object Connected : ConnectionState() { override fun toString(): String = "Connected" }
 
     /**
      * The client is trying to connect to the WebSocket.
      */
-    public object Connecting : ConnectionState() { override fun toString(): String = "Connecting" }
+    @Immutable
+    public data object Connecting : ConnectionState() { override fun toString(): String = "Connecting" }
 
     /**
      * The client is permanently disconnected from the WebSocket.
      */
-    public object Offline : ConnectionState() { override fun toString(): String = "Offline" }
+    @Immutable
+    public data object Offline : ConnectionState() { override fun toString(): String = "Offline" }
 }

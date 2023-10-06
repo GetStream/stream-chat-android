@@ -16,4 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 public data class ConnectionData(val user: User, val connectionId: String)

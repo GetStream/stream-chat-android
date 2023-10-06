@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
 import java.util.Date
 
 /**
@@ -27,6 +28,7 @@ import java.util.Date
  * @param updatedAt Date/time of the last update.
  * @param expires Date/time of mute expiration.
  */
+@Immutable
 public data class ChannelMute(
     val user: User,
     val channel: Channel,
