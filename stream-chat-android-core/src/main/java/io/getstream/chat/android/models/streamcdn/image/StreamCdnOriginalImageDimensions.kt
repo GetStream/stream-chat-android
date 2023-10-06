@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.models.streamcdn.image
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Holds the original width and height information for images
  * hosted by Stream CDN which declare said properties in their URL.
@@ -23,6 +25,7 @@ package io.getstream.chat.android.models.streamcdn.image
  * @param originalWidth The width of the original image.
  * @param originalHeight The height of the original image.
  */
+@Immutable
 public data class StreamCdnOriginalImageDimensions(
     val originalWidth: Int,
     val originalHeight: Int,

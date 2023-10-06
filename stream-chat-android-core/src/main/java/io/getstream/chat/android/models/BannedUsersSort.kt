@@ -16,9 +16,11 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
+@Immutable
 public data class BannedUsersSort(val createdAt: Date) : ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {

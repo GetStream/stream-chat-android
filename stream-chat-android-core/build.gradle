@@ -38,6 +38,7 @@ dependencies {
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAnnotations
+    compileOnly Dependencies.composeStableMarker
 
     api Dependencies.streamResult
     api Dependencies.streamResultCall

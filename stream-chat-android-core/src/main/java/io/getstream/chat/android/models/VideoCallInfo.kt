@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents currently available call information for Agora and HMS video calls.
  *
@@ -25,6 +27,7 @@ package io.getstream.chat.android.models
  * @property agoraChannel The available channel info of Agora.
  * @property hmsRoom The available room info of HMS.
  */
+@Immutable
 public data class VideoCallInfo(
     val callId: String,
     val provider: String,

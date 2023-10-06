@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
 import java.util.Date
 
 /**
@@ -27,6 +28,7 @@ import java.util.Date
  * @property lastMessageSeenDate The time of the last message that the SDK is aware of. If new messages arrive with
  * the createdAt newer than this one, that means that the count of unread messages should be incremented.
  */
+@Immutable
 public data class ChannelUserRead(
     override val user: User,
     val lastRead: Date? = null,

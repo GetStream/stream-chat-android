@@ -16,8 +16,10 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
 import java.util.Date
 
+@Immutable
 public data class Config(
 
     /**

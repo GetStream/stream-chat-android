@@ -657,16 +657,22 @@ public abstract class io/getstream/chat/android/models/ConnectionState {
 
 public final class io/getstream/chat/android/models/ConnectionState$Connected : io/getstream/chat/android/models/ConnectionState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ConnectionState$Connected;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ConnectionState$Connecting : io/getstream/chat/android/models/ConnectionState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ConnectionState$Connecting;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ConnectionState$Offline : io/getstream/chat/android/models/ConnectionState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ConnectionState$Offline;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1130,6 +1136,8 @@ public final class io/getstream/chat/android/models/Message$Companion {
 
 public final class io/getstream/chat/android/models/MessageAwaitingAttachments : io/getstream/chat/android/models/MessageSyncInProgress {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessageAwaitingAttachments;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1168,6 +1176,8 @@ public abstract class io/getstream/chat/android/models/MessageSyncInProgress : i
 
 public final class io/getstream/chat/android/models/MessageSyncNone : io/getstream/chat/android/models/MessageSyncContent {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessageSyncNone;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1203,16 +1213,22 @@ public abstract class io/getstream/chat/android/models/MessagesState {
 
 public final class io/getstream/chat/android/models/MessagesState$Loading : io/getstream/chat/android/models/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessagesState$Loading;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/MessagesState$NoQueryActive : io/getstream/chat/android/models/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessagesState$NoQueryActive;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/MessagesState$OfflineNoResults : io/getstream/chat/android/models/MessagesState {
 	public static final field INSTANCE Lio/getstream/chat/android/models/MessagesState$OfflineNoResults;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

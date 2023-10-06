@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 public data class Command(
     val name: String,
     val description: String,

@@ -16,15 +16,19 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Represents of possible state of messages for [ChannelState].
  */
+@Immutable
 public sealed class MessagesState {
     /**
      * The ChannelState is initialized but no query is currently running.
      * If you know that a query will be started you typically want to display a loading icon.
      */
-    public object NoQueryActive : MessagesState() {
+    @Immutable
+    public data object NoQueryActive : MessagesState() {
         override fun toString(): String = "NoQueryActive"
     }
 
@@ -37,13 +41,15 @@ public sealed class MessagesState {
      * @see loadingNewerMessages
      * @see loadingOlderMessages
      */
-    public object Loading : MessagesState() {
+    @Immutable
+    public data object Loading : MessagesState() {
         override fun toString(): String = "Loading"
     }
 
     /** If we are offline and don't have channels stored in offline storage, typically displayed as an error
      * condition. */
-    public object OfflineNoResults : MessagesState() {
+    @Immutable
+    public data object OfflineNoResults : MessagesState() {
         override fun toString(): String = "OfflineNoResults"
     }
 
@@ -53,5 +59,6 @@ public sealed class MessagesState {
      *
      * @param messages Message collection of this channel.
      */
+    @Immutable
     public data class Result(val messages: List<Message>) : MessagesState()
 }

@@ -1,0 +1,439 @@
+unstable class ClipboardHandlerImpl {
+  unstable val clipboardManager: ClipboardManager
+  <runtime stability> = Unstable
+}
+unstable class DownloadPermissionHandler {
+  stable val permissionState: PermissionState
+  unstable val context: Context
+  stable val onPermissionRequired: Function0<Unit>
+  stable val onPermissionGranted: Function1<Map<String, Any>, Unit>
+  unstable var lastPayload: Map<String, Any>?
+  <runtime stability> = Unstable
+}
+unstable class QueryConfig {
+  unstable val filters: FilterObject
+  unstable val querySort: QuerySorter<T>
+  <runtime stability> = Unstable
+}
+stable class ChannelItemState {
+  stable val channel: Channel
+  stable val isMuted: Boolean
+  <runtime stability> = Stable
+}
+unstable class ChannelOptionState {
+  stable val title: String
+  stable val titleColor: Color
+  unstable val iconPainter: Painter
+  stable val iconColor: Color
+  runtime val action: ChannelAction
+  <runtime stability> = Unstable
+}
+unstable class ChannelsState {
+  stable val isLoading: Boolean
+  stable val isLoadingMore: Boolean
+  stable val endOfChannels: Boolean
+  unstable val channelItems: List<ChannelItemState>
+  stable val searchQuery: String
+  <runtime stability> = Unstable
+}
+stable class MediaGalleryPreviewResult {
+  stable val messageId: String
+  stable val parentMessageId: String?
+  stable val resultType: MediaGalleryPreviewResultType
+  <runtime stability> = Stable
+}
+unstable class MessageOptionItemState {
+  stable val title: Int
+  stable val titleColor: Color
+  unstable val iconPainter: Painter
+  stable val iconColor: Color
+  runtime val action: MessageAction
+  <runtime stability> = Unstable
+}
+runtime class AttachmentPickerItemState {
+  runtime val attachmentMetaData: AttachmentMetaData
+  stable val isSelected: Boolean
+  <runtime stability> = Runtime(AttachmentMetaData)
+}
+stable class AttachmentState {
+  stable val message: Message
+  stable val onLongItemClick: Function1<Message, Unit>
+  stable val onMediaGalleryPreviewResult: Function1<MediaGalleryPreviewResult?, Unit>
+  <runtime stability> = Stable
+}
+stable class AttachmentsPickerMode {
+  <runtime stability> = Stable
+}
+stable class Images {
+  <runtime stability> = Stable
+}
+stable class Files {
+  <runtime stability> = Stable
+}
+stable class MediaCapture {
+  <runtime stability> = Stable
+}
+unstable class CustomPickerMode {
+  unstable val extraProperties: Map<String, Any>
+  <runtime stability> = Unstable
+}
+unstable class StatefulStreamMediaRecorder {
+  unstable val streamMediaRecorder: StreamMediaRecorder
+  stable var maxAmplitudeSampleKey$delegate: MutableState<Int>
+  unstable val logger: TaggedLogger
+  stable val _onInfoState: MutableState<StreamMediaRecorderState?>
+  stable val onInfoState: State<StreamMediaRecorderState?>
+  stable val _onErrorState: MutableState<StreamMediaRecorderState?>
+  stable val onErrorState: State<StreamMediaRecorderState?>
+  stable val _latestMaxAmplitude: MutableState<KeyValuePair<Int, Int>>
+  stable val latestMaxAmplitude: State<KeyValuePair<Int, Int>>
+  stable val _mediaRecorderState: MutableState<MediaRecorderState>
+  stable val mediaRecorderState: State<MediaRecorderState>
+  stable val _activeRecordingDuration: MutableState<Long>
+  stable val activeRecordingDuration: State<Long>
+  <runtime stability> = Unstable
+}
+unstable class ReactionOptionItemState {
+  unstable val painter: Painter
+  stable val type: String
+  <runtime stability> = Unstable
+}
+unstable class UserReactionItemState {
+  stable val user: User
+  unstable val painter: Painter
+  stable val type: String
+  <runtime stability> = Unstable
+}
+stable class AttachmentFactory {
+  stable val canHandle: Function1<@[ParameterName(name = 'attachments')] List<Attachment>, Boolean>
+  stable val previewContent: @[Composable] Function3<@[ParameterName(name = 'modifier')] Modifier, @[ParameterName(name = 'attachments')] List<Attachment>, @[ParameterName(name = 'onAttachmentRemoved')] Function1<Attachment, Unit>, Unit>?
+  stable val content: @[Composable] Function2<@[ParameterName(name = 'modifier')] Modifier, @[ParameterName(name = 'attachmentState')] AttachmentState, Unit>
+  stable val textFormatter: Function1<@[ParameterName(name = 'attachments')] Attachment, String>
+  <runtime stability> = Stable
+}
+stable class StreamAttachmentFactories {
+  stable val DEFAULT_LINK_DESCRIPTION_MAX_LINES: Int
+  <runtime stability> = Stable
+}
+unstable class MediaGalleryPreviewActivity {
+  unstable val factory$delegate: Lazy<MediaGalleryPreviewViewModelFactory>
+  unstable var fileSharingJob: Job?
+  unstable val mediaGalleryPreviewViewModel$delegate: Lazy<MediaGalleryPreviewViewModel>
+  <runtime stability> = Unstable
+}
+runtime class Input {
+  stable val message: Message
+  stable val initialPosition: Int
+  stable val videoThumbnailsEnabled: Boolean
+  runtime val streamCdnImageResizing: StreamCdnImageResizing
+  stable val skipEnrichUrl: Boolean
+  <runtime stability> = Runtime(StreamCdnImageResizing)
+}
+stable class MediaGalleryPreviewContract {
+  <runtime stability> = Stable
+}
+stable class MediaPreviewActivity {
+  <runtime stability> = Stable
+}
+unstable class DocumentAttachmentPreviewHandler {
+  unstable val context: Context
+  <runtime stability> = Unstable
+}
+unstable class MediaAttachmentPreviewHandler {
+  unstable val context: Context
+  <runtime stability> = Unstable
+}
+unstable class UrlAttachmentPreviewHandler {
+  unstable val context: Context
+  <runtime stability> = Unstable
+}
+stable class AttachmentsPickerFilesTabFactory {
+  <runtime stability> = Stable
+}
+stable class AttachmentsPickerImagesTabFactory {
+  <runtime stability> = Stable
+}
+stable class AttachmentsPickerMediaCaptureTabFactory {
+  stable val pickerMediaMode: PickerMediaMode
+  <runtime stability> = Stable
+}
+stable class AttachmentsPickerTabFactories {
+  <runtime stability> = Stable
+}
+runtime class MessagesLazyListState {
+  stable val lazyListState: LazyListState
+  runtime val messageOffsetHandler: MessageOffsetHandler
+  stable val _parentSize: MutableState<IntSize>
+  stable val _focusedMessageSize: MutableState<IntSize>
+  stable val _focusedMessageOffset: MutableState<Int>
+  stable val focusedMessageOffset$delegate: MutableState<Int>
+  <runtime stability> = Uncertain(MessageOffsetHandler)
+}
+stable class TOP {
+}
+stable class BOTTOM {
+}
+stable class ThreadMessagesStart {
+}
+stable class ChatTheme {
+  <runtime stability> = Stable
+}
+stable class MessageTheme {
+  stable val textStyle: TextStyle
+  stable val backgroundColor: Color
+  stable val quotedTextStyle: TextStyle
+  stable val quotedBackgroundColor: Color
+  stable val deletedBackgroundColor: Color
+}
+stable class StreamColors {
+  stable val textHighEmphasis: Color
+  stable val textLowEmphasis: Color
+  stable val disabled: Color
+  stable val borders: Color
+  stable val inputBackground: Color
+  stable val appBackground: Color
+  stable val barsBackground: Color
+  stable val linkBackground: Color
+  stable val overlay: Color
+  stable val overlayDark: Color
+  stable val primaryAccent: Color
+  stable val errorAccent: Color
+  stable val infoAccent: Color
+  stable val highlight: Color
+  stable val ownMessagesBackground: Color
+  stable val otherMessagesBackground: Color
+  stable val deletedMessagesBackground: Color
+  stable val giphyMessageBackground: Color
+  stable val threadSeparatorGradientStart: Color
+  stable val threadSeparatorGradientEnd: Color
+  stable val ownMessageText: Color
+  stable val otherMessageText: Color
+  stable val imageBackgroundMessageList: Color
+  stable val imageBackgroundMediaGalleryPicker: Color
+  stable val videoBackgroundMessageList: Color
+  stable val videoBackgroundMediaGalleryPicker: Color
+  stable val showMoreOverlay: Color
+  stable val showMoreCountText: Color
+  stable val ownMessageQuotedBackground: Color
+  stable val otherMessageQuotedBackground: Color
+  stable val ownMessageQuotedText: Color
+  stable val otherMessageQuotedText: Color
+}
+stable class StreamDimens {
+  stable val channelItemVerticalPadding: Dp
+  stable val channelItemHorizontalPadding: Dp
+  stable val channelAvatarSize: Dp
+  stable val selectedChannelMenuUserItemWidth: Dp
+  stable val selectedChannelMenuUserItemHorizontalPadding: Dp
+  stable val selectedChannelMenuUserItemAvatarSize: Dp
+  stable val attachmentsContentImageWidth: Dp
+  stable val attachmentsContentGiphyWidth: Dp
+  stable val attachmentsContentGiphyHeight: Dp
+  stable val attachmentsContentLinkWidth: Dp
+  stable val attachmentsContentFileWidth: Dp
+  stable val attachmentsContentFileUploadWidth: Dp
+  stable val attachmentsContentUnsupportedWidth: Dp
+  stable val threadSeparatorVerticalPadding: Dp
+  stable val threadSeparatorTextVerticalPadding: Dp
+  stable val messageOptionsItemHeight: Dp
+  stable val suggestionListMaxHeight: Dp
+  stable val suggestionListPadding: Dp
+  stable val suggestionListElevation: Dp
+  stable val mentionSuggestionItemHorizontalPadding: Dp
+  stable val mentionSuggestionItemVerticalPadding: Dp
+  stable val mentionSuggestionItemAvatarSize: Dp
+  stable val commandSuggestionItemHorizontalPadding: Dp
+  stable val commandSuggestionItemVerticalPadding: Dp
+  stable val commandSuggestionItemIconSize: Dp
+  stable val threadParticipantItemSize: Dp
+  stable val userReactionsMaxHeight: Dp
+  stable val userReactionItemWidth: Dp
+  stable val userReactionItemAvatarSize: Dp
+  stable val userReactionItemIconSize: Dp
+  stable val reactionOptionItemIconSize: Dp
+  stable val headerElevation: Dp
+  stable val messageItemMaxWidth: Dp
+  stable val quotedMessageTextVerticalPadding: Dp
+  stable val quotedMessageTextHorizontalPadding: Dp
+  stable val quotedMessageAttachmentPreviewSize: Dp
+  stable val quotedMessageAttachmentTopPadding: Dp
+  stable val quotedMessageAttachmentBottomPadding: Dp
+  stable val quotedMessageAttachmentStartPadding: Dp
+  stable val quotedMessageAttachmentEndPadding: Dp
+  stable val groupAvatarInitialsXOffset: Dp
+  stable val groupAvatarInitialsYOffset: Dp
+  stable val attachmentsContentImageMaxHeight: Dp
+  stable val attachmentsContentGiphyMaxWidth: Dp
+  stable val attachmentsContentGiphyMaxHeight: Dp
+  stable val attachmentsContentVideoMaxHeight: Dp
+  stable val attachmentsContentMediaGridSpacing: Dp
+  stable val attachmentsContentVideoWidth: Dp
+  stable val attachmentsContentGroupPreviewWidth: Dp
+  stable val attachmentsContentGroupPreviewHeight: Dp
+}
+stable class StreamShapes {
+  stable val avatar: Shape
+  stable val myMessageBubble: Shape
+  stable val otherMessageBubble: Shape
+  stable val inputField: Shape
+  stable val attachment: Shape
+  stable val imageThumbnail: Shape
+  stable val bottomSheet: Shape
+  stable val suggestionList: Shape
+  stable val attachmentSiteLabel: Shape
+  stable val header: Shape
+  stable val quotedAttachment: Shape
+}
+stable class StreamTypography {
+  stable val title1: TextStyle
+  stable val title3: TextStyle
+  stable val title3Bold: TextStyle
+  stable val body: TextStyle
+  stable val bodyItalic: TextStyle
+  stable val bodyBold: TextStyle
+  stable val footnote: TextStyle
+  stable val footnoteItalic: TextStyle
+  stable val footnoteBold: TextStyle
+  stable val captionBold: TextStyle
+  stable val tabBar: TextStyle
+  stable val singleEmoji: TextStyle
+  stable val emojiOnly: TextStyle
+}
+stable class ReactionDrawable {
+  stable val iconResId: Int
+  stable val selectedIconResId: Int
+  <runtime stability> = Stable
+}
+unstable class ReactionIcon {
+  unstable val painter: Painter
+  unstable val selectedPainter: Painter
+  <runtime stability> = Unstable
+}
+unstable class StorageHelperWrapper {
+  unstable val context: Context
+  runtime val storageHelper: StorageHelper
+  runtime val attachmentFilter: AttachmentFilter
+  <runtime stability> = Unstable
+}
+stable class KeyValuePair {
+  runtime val key: K
+  runtime val value: V
+  <runtime stability> = 
+}
+unstable class ChannelListViewModel {
+  unstable val chatClient: ChatClient
+  stable val channelLimit: Int
+  stable val memberLimit: Int
+  stable val messageLimit: Int
+  unstable val chatEventHandlerFactory: ChatEventHandlerFactory
+  unstable val filterFlow: MutableStateFlow<FilterObject?>
+  unstable val logger$delegate: Lazy<TaggedLogger>
+  unstable val querySortFlow: MutableStateFlow<QuerySorter<Channel>>
+  unstable val queryConfigFlow: Flow<QueryConfig<Channel>>
+  unstable val searchQuery: MutableStateFlow<String>
+  stable var channelsState$delegate: MutableState<ChannelsState>
+  stable var selectedChannel: MutableState<Channel?>
+  stable var activeChannelAction$delegate: MutableState<ChannelAction?>
+  unstable val connectionState: StateFlow<ConnectionState>
+  unstable val user: StateFlow<User?>
+  unstable val channelMutes: StateFlow<List<ChannelMute>>
+  unstable var queryChannelsState: StateFlow<QueryChannelsState?>
+  <runtime stability> = Unstable
+}
+unstable class ChannelViewModelFactory {
+  unstable val chatClient: ChatClient
+  unstable val querySort: QuerySorter<Channel>
+  unstable val filters: FilterObject?
+  stable val channelLimit: Int
+  stable val memberLimit: Int
+  stable val messageLimit: Int
+  unstable val chatEventHandlerFactory: ChatEventHandlerFactory
+  unstable val factories: Map<Class<*>, Function0<ViewModel>>
+  <runtime stability> = Unstable
+}
+unstable class MediaGalleryPreviewViewModel {
+  unstable val chatClient: ChatClient
+  unstable val clientState: ClientState
+  stable val messageId: String
+  stable val skipEnrichUrl: Boolean
+  unstable val user: StateFlow<User?>
+  stable var hasCompleteMessage: Boolean
+  stable var message$delegate: MutableState<Message>
+  stable var isSharingInProgress$delegate: MutableState<Boolean>
+  stable var promptedAttachment$delegate: MutableState<Attachment?>
+  stable var connectionState$delegate: MutableState<ConnectionState>
+  stable var isShowingOptions$delegate: MutableState<Boolean>
+  stable var isShowingGallery$delegate: MutableState<Boolean>
+  <runtime stability> = Unstable
+}
+unstable class MediaGalleryPreviewViewModelFactory {
+  unstable val chatClient: ChatClient
+  unstable val clientState: ClientState
+  stable val messageId: String
+  stable val skipEnrichUrl: Boolean
+  <runtime stability> = Unstable
+}
+unstable class AttachmentsPickerViewModel {
+  unstable val storageHelper: StorageHelperWrapper
+  stable var attachmentsPickerMode$delegate: MutableState<AttachmentsPickerMode>
+  stable var images$delegate: MutableState<List<AttachmentPickerItemState>>
+  stable var files$delegate: MutableState<List<AttachmentPickerItemState>>
+  stable var attachments$delegate: MutableState<List<AttachmentPickerItemState>>
+  stable var isShowingAttachments$delegate: MutableState<Boolean>
+  <runtime stability> = Unstable
+}
+unstable class MessageComposerViewModel {
+  runtime val messageComposerController: MessageComposerController
+  unstable val messageComposerState: StateFlow<MessageComposerState>
+  unstable val input: MutableStateFlow<String>
+  unstable val alsoSendToChannel: MutableStateFlow<Boolean>
+  unstable val cooldownTimer: MutableStateFlow<Int>
+  unstable val selectedAttachments: MutableStateFlow<List<Attachment>>
+  unstable val validationErrors: MutableStateFlow<List<ValidationError>>
+  unstable val mentionSuggestions: MutableStateFlow<List<User>>
+  unstable val commandSuggestions: MutableStateFlow<List<Command>>
+  unstable val messageMode: MutableStateFlow<MessageMode>
+  unstable val lastActiveAction: Flow<MessageAction?>
+  unstable val ownCapabilities: StateFlow<Set<String>>
+  <runtime stability> = Unstable
+}
+unstable class MessageListViewModel {
+  runtime val messageListController: MessageListController
+  stable val messagesState$delegate: State<MessageListState>
+  stable val threadMessagesState$delegate: State<MessageListState>
+  stable val messageMode$delegate: State<MessageMode>
+  stable val channel$delegate: State<Channel>
+  stable val typingUsers$delegate: State<List<User>>
+  stable val messageActions$delegate: State<Set<MessageAction>>
+  unstable val connectionState: StateFlow<ConnectionState>
+  unstable val isOnline: Flow<Boolean>
+  unstable val user: StateFlow<User?>
+  stable val showSystemMessagesState$delegate: State<Boolean>
+  stable val messageFooterVisibilityState$delegate: State<MessageFooterVisibility>
+  stable val deletedMessageVisibilityState$delegate: State<DeletedMessageVisibility>
+  <runtime stability> = Unstable
+}
+unstable class MessagesViewModelFactory {
+  unstable val context: Context
+  stable val channelId: String
+  stable val messageId: String?
+  stable val parentMessageId: String?
+  unstable val chatClient: ChatClient
+  unstable val clientState: ClientState
+  unstable val mediaRecorder: StreamMediaRecorder
+  stable val fileToUriConverter: Function1<File, String>
+  stable val messageLimit: Int
+  unstable val clipboardHandler: ClipboardHandler
+  stable val enforceUniqueReactions: Boolean
+  stable val maxAttachmentCount: Int
+  stable val maxAttachmentSize: Long
+  stable val showSystemMessages: Boolean
+  stable val deletedMessageVisibility: DeletedMessageVisibility
+  runtime val messageFooterVisibility: MessageFooterVisibility
+  unstable val dateSeparatorHandler: DateSeparatorHandler
+  unstable val threadDateSeparatorHandler: DateSeparatorHandler
+  unstable val messagePositionHandler: MessagePositionHandler
+  stable val showDateSeparatorInEmptyThread: Boolean
+  unstable val factories: Map<Class<*>, Function0<ViewModel>>
+  <runtime stability> = Unstable
+}
