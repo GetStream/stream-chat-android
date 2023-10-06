@@ -92,6 +92,13 @@ public interface ReactionRepository {
     ): List<Reaction>
 
     /**
+     * Deletes a reaction.
+     *
+     * @param reaction [Reaction]
+     */
+    public suspend fun deleteReaction(reaction: Reaction)
+
+    /**
      * Clear reactions of this repository.
      */
     public suspend fun clear()

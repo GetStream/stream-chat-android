@@ -64,6 +64,8 @@ internal data class ReactionEntity(
     val score: Int = 1,
     /** when the reaction was created */
     val createdAt: Date? = null,
+    /** when the reaction was created locally */
+    val createdLocallyAt: Date? = null,
     /** when the reaction was updated */
     val updatedAt: Date? = null,
     /** when the reaction was deleted, this field is only stored in the local db */
