@@ -30,6 +30,7 @@ internal object NoOpReactionRepository : ReactionRepository {
     override suspend fun selectReactionsByIds(ids: List<Int>): List<Reaction> = emptyList()
     override suspend fun selectReactionIdsBySyncStatus(syncStatus: SyncStatus): List<Int> = emptyList()
     override suspend fun selectReactionsBySyncStatus(syncStatus: SyncStatus): List<Reaction> = emptyList()
+    override suspend fun deleteReaction(reaction: Reaction) { /* No-Op */ }
     override suspend fun clear() { /* No-Op */ }
 
     override suspend fun updateReactionsForMessageByDeletedDate(

@@ -130,6 +130,8 @@ public class StreamStatePluginFactory(
             logicRegistry = logic,
             stateRegistry = stateRegistry,
             userPresence = config.userPresence,
+            syncMaxThreshold = config.syncMaxThreshold,
+            now = { System.currentTimeMillis() },
         )
 
         val eventHandler: EventHandler = createEventHandler(

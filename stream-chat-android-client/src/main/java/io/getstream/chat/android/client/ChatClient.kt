@@ -1038,8 +1038,8 @@ internal constructor(
     @JvmOverloads
     public fun sendReaction(reaction: Reaction, enforceUnique: Boolean, cid: String? = null): Call<Reaction> {
         val currentUser = getCurrentUser()
-
-        return api.sendReaction(reaction, enforceUnique)
+        val finalReaction = reaction.copy(createdLocallyAt = Date())
+        return api.sendReaction(finalReaction, enforceUnique)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
                 plugins
@@ -1047,7 +1047,7 @@ internal constructor(
                         logger.v { "[sendReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                         plugin.onSendReactionRequest(
                             cid = cid,
-                            reaction = reaction,
+                            reaction = finalReaction,
                             enforceUnique = enforceUnique,
                             currentUser = currentUser!!,
                         )
@@ -1058,7 +1058,7 @@ internal constructor(
                     logger.v { "[sendReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onSendReactionResult(
                         cid = cid,
-                        reaction = reaction,
+                        reaction = finalReaction,
                         enforceUnique = enforceUnique,
                         currentUser = currentUser!!,
                         result = result,

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.reaction.internal
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -72,6 +73,9 @@ internal interface ReactionDao {
             "AND messageId = :messageId",
     )
     suspend fun setDeleteAt(userId: String, messageId: String, deletedAt: Date)
+
+    @Delete
+    suspend fun delete(reactionEntity: ReactionEntity)
 
     @Query("DELETE FROM $REACTION_ENTITY_TABLE_NAME")
     suspend fun deleteAll()

@@ -27,6 +27,7 @@ public data class Reaction(
     val user: User? = null,
     val userId: String = "",
     val createdAt: Date? = null,
+    val createdLocallyAt: Date? = null,
     val updatedAt: Date? = null,
     val deletedAt: Date? = null,
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
@@ -55,6 +56,7 @@ public data class Reaction(
         private var user: User? = null
         private var userId: String = ""
         private var createdAt: Date? = null
+        private var createdLocallyAt: Date? = null
         private var updatedAt: Date? = null
         private var deletedAt: Date? = null
         private var syncStatus: SyncStatus = SyncStatus.COMPLETED
@@ -68,6 +70,7 @@ public data class Reaction(
             user = reaction.user
             userId = reaction.userId
             createdAt = reaction.createdAt
+            createdLocallyAt = reaction.createdLocallyAt
             updatedAt = reaction.updatedAt
             deletedAt = reaction.deletedAt
             syncStatus = reaction.syncStatus
@@ -81,6 +84,9 @@ public data class Reaction(
         public fun withUser(user: User?): Builder = apply { this.user = user }
         public fun withUserId(userId: String): Builder = apply { this.userId = userId }
         public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }
+        public fun withCreatedLocallyAt(createdLocallyAt: Date?): Builder = apply {
+            this.createdLocallyAt = createdLocallyAt
+        }
         public fun withUpdatedAt(updatedAt: Date?): Builder = apply { this.updatedAt = updatedAt }
         public fun withDeletedAt(deletedAt: Date?): Builder = apply { this.deletedAt = deletedAt }
         public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
@@ -95,6 +101,7 @@ public data class Reaction(
                 user = user,
                 userId = userId,
                 createdAt = createdAt,
+                createdLocallyAt = createdLocallyAt,
                 updatedAt = updatedAt,
                 deletedAt = deletedAt,
                 syncStatus = syncStatus,
