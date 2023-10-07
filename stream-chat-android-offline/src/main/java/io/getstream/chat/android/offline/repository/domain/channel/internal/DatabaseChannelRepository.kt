@@ -189,7 +189,14 @@ internal class DatabaseChannelRepository(
      * @param lastMessage [Message].
      */
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) {
-        selectChannel(cid)?.let { insertChannel(it.copy(messages = listOf(lastMessage))) }
+        selectChannel(cid)?.let {
+            insertChannel(
+                it.copy(
+                    messages = listOf(lastMessage),
+                    lastMessageAt = lastMessage.createdAt ?: lastMessage.createdLocallyAt ?: Date(0),
+                ),
+            )
+        }
     }
 
     private fun Channel.combine(cachedChannel: Channel): Channel {

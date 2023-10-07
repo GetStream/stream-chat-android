@@ -34,11 +34,11 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
 
     @Test
     fun `Given no channel in DB Should not do insert`() = runTest {
-        whenever(channels.selectChannelWithoutMessages(eq("cid"))) doReturn null
+        whenever(channels.selectChannel(eq("cid"))) doReturn null
 
         sut.updateLastMessageForChannel("cid", randomMessage())
 
-        verify(channels, never()).upsertChannel(any())
+        verify(channels, never()).insertChannel(any())
     }
 
     @Test
@@ -48,10 +48,10 @@ internal class WhenUpdateLastMessage : BaseRepositoryFacadeTest() {
         val outdatedMessage = randomMessage(id = "messageId1", createdAt = before)
         val newLastMessage = randomMessage(id = "messageId2", createdAt = after)
         val channel = randomChannel(messages = listOf(newLastMessage), lastMessageAt = after)
-        whenever(channels.selectChannelWithoutMessages(eq("cid"))) doReturn channel
+        whenever(channels.selectChannel(eq("cid"))) doReturn channel
 
         sut.updateLastMessageForChannel("cid", outdatedMessage)
 
-        verify(channels, never()).upsertChannel(any())
+        verify(channels, never()).insertChannel(any())
     }
 }

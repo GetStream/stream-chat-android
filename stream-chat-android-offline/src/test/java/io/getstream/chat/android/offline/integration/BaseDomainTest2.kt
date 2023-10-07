@@ -178,7 +178,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         val context = ApplicationProvider.getApplicationContext() as Context
 
         repos = RepositoryFacade.create(
-            DatabaseRepositoryFactory(db, data.user1),
+            DatabaseRepositoryFactory(db, data.user1, this),
             getTestScope(),
             Config(connectEventsEnabled = true, muteEnabled = true),
         )

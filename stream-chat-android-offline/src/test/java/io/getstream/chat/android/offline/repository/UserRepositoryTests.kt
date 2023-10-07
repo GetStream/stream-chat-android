@@ -50,7 +50,7 @@ internal class UserRepositoryTests {
     @BeforeEach
     fun setup() {
         userDao = mock()
-        sut = DatabaseUserRepository(userDao)
+        sut = DatabaseUserRepository(testCoroutines.scope, userDao)
     }
 
     @Test

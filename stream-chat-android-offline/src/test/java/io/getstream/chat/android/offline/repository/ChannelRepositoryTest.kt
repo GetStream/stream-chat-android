@@ -31,7 +31,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     @Test
     fun `inserting a channel and reading it should be equal`(): Unit = runTest {
         helper.insertChannels(listOf(data.channel1))
-        val channel = helper.selectChannelWithoutMessages(data.channel1.cid)!!
+        val channel = helper.selectChannel(data.channel1.cid)!!
 
         channel shouldBeEqualTo data.channel1
     }
@@ -40,7 +40,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     fun `deleting a channel should work`(): Unit = runTest {
         helper.insertChannels(listOf(data.channel1))
         helper.deleteChannel(data.channel1.cid)
-        val entity = helper.selectChannelWithoutMessages(data.channel1.cid)
+        val entity = helper.selectChannel(data.channel1.cid)
 
         entity.shouldBeNull()
     }
@@ -48,7 +48,7 @@ internal class ChannelRepositoryTest : BaseDomainTest2() {
     @Test
     fun `updating a channel should work as intended`(): Unit = runTest {
         helper.insertChannels(listOf(data.channel1, data.channel1Updated))
-        val channel = helper.selectChannelWithoutMessages(data.channel1.cid)
+        val channel = helper.selectChannel(data.channel1.cid)
 
         channel shouldBeEqualTo data.channel1Updated
     }
