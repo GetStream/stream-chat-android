@@ -120,9 +120,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
             messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
         )
 
-        sut.upsertChannel(channel)
+        sut.insertChannel(channel)
 
-        verify(channels).upsertChannel(eq(channel))
+        verify(channels).insertChannel(eq(channel))
         verify(users).insertUsers(
             check { listUser ->
                 listUser.size `should be equal to` 5

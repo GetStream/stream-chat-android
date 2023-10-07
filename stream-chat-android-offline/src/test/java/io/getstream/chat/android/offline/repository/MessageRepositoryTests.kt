@@ -27,7 +27,6 @@ import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
@@ -40,18 +39,13 @@ import java.util.Date
 @ExperimentalCoroutinesApi
 internal class MessageRepositoryTests {
 
-    private lateinit var messageDao: MessageDao
+    private val messageDao: MessageDao = mock()
     private val replyMessageDao: ReplyMessageDao = mock()
     private lateinit var sut: MessageRepository
 
-    @BeforeEach
-    fun setup() {
-        messageDao = mock()
-        sut = DatabaseMessageRepository(messageDao, replyMessageDao, ::randomUser, null, 100)
-    }
-
     @Test
     fun `when selecting messages for channel, correct messages should be requested to DAO`() = runTest {
+        val sut = DatabaseMessageRepository(this, messageDao, replyMessageDao, ::randomUser, randomUser(id = "currentUserId"), 100)
         val createdAt = Date()
         val cid = randomString()
         val messageEntity = randomMessageEntity(createdAt = createdAt)
