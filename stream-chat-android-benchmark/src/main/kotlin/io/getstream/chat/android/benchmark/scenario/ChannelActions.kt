@@ -19,6 +19,7 @@ package io.getstream.chat.android.benchmark.scenario
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
+import io.getstream.chat.android.benchmark.STANDARD_TIMEOUT
 import io.getstream.chat.android.benchmark.flingElementDownUp
 import io.getstream.chat.android.benchmark.waitAndFindObject
 
@@ -28,15 +29,15 @@ fun MacrobenchmarkScope.channelsExplore() = device.apply {
 }
 
 fun MacrobenchmarkScope.channelsWaitForContent() = device.apply {
-    wait(Until.hasObject(By.res("Stream_ChannelsScreen")), 15_000)
+    wait(Until.hasObject(By.res("Stream_ChannelsScreen")), STANDARD_TIMEOUT)
 }
 
 fun MacrobenchmarkScope.channelsScrollDownUp() = device.apply {
-    val channelList = waitAndFindObject(By.res("Stream_Channels"), 15_000)
+    val channelList = waitAndFindObject(By.res("Stream_Channels"), STANDARD_TIMEOUT)
     flingElementDownUp(channelList)
 }
 
 fun MacrobenchmarkScope.navigateFromChannelsToMessages() = device.apply {
-    waitAndFindObject(By.res("Stream_ChannelItem"), 15_000).click()
+    waitAndFindObject(By.res("Stream_ChannelItem"), STANDARD_TIMEOUT).click()
     waitForIdle()
 }

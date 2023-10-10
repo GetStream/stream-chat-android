@@ -19,10 +19,11 @@ package io.getstream.chat.android.benchmark.scenario
 import androidx.benchmark.macro.MacrobenchmarkScope
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.Until
+import io.getstream.chat.android.benchmark.STANDARD_TIMEOUT
 import io.getstream.chat.android.benchmark.waitForObject
 
 fun MacrobenchmarkScope.navigateFromUserLoginToChannels() = device.apply {
-    wait(Until.hasObject(By.res("Stream_UserLogin")), 15_000)
-    waitForObject(By.res("Stream_UserLoginItem"), 5_000)?.click()
+    wait(Until.hasObject(By.res("Stream_UserLogin")), STANDARD_TIMEOUT)
+    waitForObject(By.res("Stream_UserLoginItem"), STANDARD_TIMEOUT)?.click()
     waitForIdle()
 }

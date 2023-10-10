@@ -26,6 +26,8 @@ internal const val COMPOSE_SAMPLE_PACKAGE_NAME = "io.getstream.chat.android.comp
 
 internal const val FLING_SCREEN_DIVIDER = 5
 
+internal const val STANDARD_TIMEOUT = 15_000L
+
 internal fun UiDevice.flingElementDownUp(element: UiObject2) {
     // Set some margin from the sides to prevent triggering system navigation
     element.setGestureMargin(displayWidth / FLING_SCREEN_DIVIDER)
@@ -48,7 +50,7 @@ internal fun UiDevice.flingElementUpDown(element: UiObject2) {
  * Waits until an object with [selector] if visible on screen and returns the object.
  * If the element is not available in [timeout], throws [AssertionError]
  */
-internal fun UiDevice.waitAndFindObject(selector: BySelector, timeout: Long = 5_000): UiObject2 {
+internal fun UiDevice.waitAndFindObject(selector: BySelector, timeout: Long = STANDARD_TIMEOUT): UiObject2 {
     if (!wait(Until.hasObject(selector), timeout)) {
         throw AssertionError("Element not found on screen in ${timeout}ms (selector=$selector)")
     }
