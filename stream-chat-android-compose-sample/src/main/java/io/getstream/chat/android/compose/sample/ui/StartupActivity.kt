@@ -22,6 +22,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.TaskStackBuilder
 import androidx.lifecycle.lifecycleScope
+import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
@@ -42,7 +43,7 @@ class StartupActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             val userCredentials = ChatApp.credentialsRepository.loadUserCredentials()
-            if (userCredentials != null) {
+            if (userCredentials != null && !BuildConfig.BENCHMARK) {
                 // Ensure that the user is connected
                 ChatHelper.connectUser(userCredentials)
 
