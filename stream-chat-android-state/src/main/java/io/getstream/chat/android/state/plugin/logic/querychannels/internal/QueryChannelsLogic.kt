@@ -48,7 +48,7 @@ internal class QueryChannelsLogic(
     private val queryChannelsDatabaseLogic: QueryChannelsDatabaseLogic,
 ) {
 
-    private val logger by taggedLogger("QueryChannelsLogic")
+    private val logger by taggedLogger("Chat:QueryChannelsLogic")
 
     internal suspend fun queryOffline(pagination: AnyChannelPaginationRequest) {
         if (queryChannelsStateLogic.isLoading()) {
@@ -149,7 +149,6 @@ internal class QueryChannelsLogic(
         }
 
         loadingPerPage(false, request.offset > 0)
-        logger.d { "loadingPerPage: false. success: $result.isSuccess" }
     }
 
     private fun updateLastMessageSeenOfReads(reads: List<ChannelUserRead>, lastSeenDate: Date): List<ChannelUserRead> {

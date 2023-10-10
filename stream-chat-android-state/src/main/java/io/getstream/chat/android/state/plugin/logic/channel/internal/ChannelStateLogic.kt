@@ -64,7 +64,7 @@ internal class ChannelStateLogic(
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
 
-    private val logger by taggedLogger("Chat:ChannelStateLogic")
+    private val logger by taggedLogger(TAG)
 
     /**
      * Used to prune stale active typing events when the sender
@@ -199,8 +199,9 @@ internal class ChannelStateLogic(
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
-            "[upsertMessages] messages.size: ${messages.size}, first: ${first?.text}, last: ${last?.text}" +
-                "shouldRefreshMessages: $shouldRefreshMessages, updateCount: $updateCount"
+            "[upsertMessages] messages.size: ${messages.size}, first: ${first?.text?.take(TEXT_LIMIT)}, " +
+                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages, " +
+                "updateCount: $updateCount"
         }
         when (shouldRefreshMessages) {
             true -> {
@@ -629,6 +630,7 @@ internal class ChannelStateLogic(
     }
 
     private companion object {
-        private const val TAG = "Chat:ChannelStateLogicImpl"
+        private const val TAG = "Chat:ChannelStateLogic"
+        private const val TEXT_LIMIT = 10
     }
 }
