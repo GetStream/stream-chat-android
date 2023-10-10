@@ -33,6 +33,15 @@ internal fun UiDevice.flingElementDownUp(element: UiObject2) {
     element.fling(Direction.UP)
 }
 
+internal fun UiDevice.flingElementUpDown(element: UiObject2) {
+    // Set some margin from the sides to prevent triggering system navigation
+    element.setGestureMargin(displayWidth / 5)
+
+    element.fling(Direction.UP)
+    waitForIdle()
+    element.fling(Direction.DOWN)
+}
+
 /**
  * Waits until an object with [selector] if visible on screen and returns the object.
  * If the element is not available in [timeout], throws [AssertionError]

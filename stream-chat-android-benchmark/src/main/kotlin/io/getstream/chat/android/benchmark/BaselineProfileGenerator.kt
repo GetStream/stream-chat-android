@@ -20,6 +20,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
 import io.getstream.chat.android.benchmark.scenario.channelsExplore
+import io.getstream.chat.android.benchmark.scenario.messagesExplore
 import io.getstream.chat.android.benchmark.scenario.navigateFromChannelsToMessages
 import io.getstream.chat.android.benchmark.scenario.navigateFromUserLoginToChannels
 import org.junit.Rule
@@ -50,9 +51,14 @@ internal class BaselineProfileGenerator {
             navigateFromUserLoginToChannels()
 
             // -------------
-            // ChannelsScreen
+            // Channels
             // -------------
             channelsExplore()
             navigateFromChannelsToMessages()
+
+            // -------------
+            // Messages
+            // -------------
+            messagesExplore()
         }
 }
