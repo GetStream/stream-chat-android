@@ -19,10 +19,7 @@ package io.getstream.chat.android.benchmark
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.benchmark.macro.junit4.BaselineProfileRule
-import io.getstream.chat.android.benchmark.scenario.channelsExplore
-import io.getstream.chat.android.benchmark.scenario.messagesExplore
-import io.getstream.chat.android.benchmark.scenario.navigateFromChannelsToMessages
-import io.getstream.chat.android.benchmark.scenario.navigateFromUserLoginToChannels
+import io.getstream.chat.android.benchmark.scenario.composeSampleScenarios
 import org.junit.Rule
 import org.junit.Test
 
@@ -39,26 +36,6 @@ internal class BaselineProfileGenerator {
             maxIterations = 8,
             includeInStartupProfile = true,
         ) {
-            allowNotifications()
-            pressHome()
-            startActivityAndWait()
-            allowNotifications()
-            device.waitForIdle()
-
-            // -------------
-            // UserLogin
-            // -------------
-            navigateFromUserLoginToChannels()
-
-            // -------------
-            // Channels
-            // -------------
-            channelsExplore()
-            navigateFromChannelsToMessages()
-
-            // -------------
-            // Messages
-            // -------------
-            messagesExplore()
+            composeSampleScenarios()
         }
 }

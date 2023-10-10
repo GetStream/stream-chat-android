@@ -17,21 +17,28 @@
 package io.getstream.chat.android.benchmark.scenario
 
 import androidx.benchmark.macro.MacrobenchmarkScope
-import androidx.test.uiautomator.By
-import androidx.test.uiautomator.Until
-import io.getstream.chat.android.benchmark.flingElementDownUp
-import io.getstream.chat.android.benchmark.waitAndFindObject
+import io.getstream.chat.android.benchmark.allowNotifications
 
-fun MacrobenchmarkScope.messagesExplore() = device.apply {
-    messagesWaitForContent()
-    messagesScrollDownUp()
-}
+fun MacrobenchmarkScope.composeSampleScenarios() {
+    allowNotifications()
+    pressHome()
+    startActivityAndWait()
+    allowNotifications()
+    device.waitForIdle()
 
-fun MacrobenchmarkScope.messagesWaitForContent() = device.apply {
-    wait(Until.hasObject(By.res("Stream_MessagesScreen")), 15_000)
-}
+    // -------------
+    // UserLogin
+    // -------------
+    navigateFromUserLoginToChannels()
 
-fun MacrobenchmarkScope.messagesScrollDownUp() = device.apply {
-    val channelList = waitAndFindObject(By.res("Stream_Messages"), 30_000)
-    flingElementDownUp(channelList)
+    // -------------
+    // Channels
+    // -------------
+    channelsExplore()
+    navigateFromChannelsToMessages()
+
+    // -------------
+    // Messages
+    // -------------
+    messagesExplore()
 }
