@@ -48,7 +48,7 @@ import kotlinx.coroutines.launch
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
-    private val messageListController: MessageListController,
+    internal val messageListController: MessageListController,
 ) : ViewModel() {
 
     private val logger by taggedLogger("Chat:MessageListVM")

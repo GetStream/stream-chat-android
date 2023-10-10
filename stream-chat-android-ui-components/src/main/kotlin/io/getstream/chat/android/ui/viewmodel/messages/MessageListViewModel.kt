@@ -70,7 +70,7 @@ import io.getstream.chat.android.state.utils.Event as EventWrapper
 @OptIn(FlowPreview::class)
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
-    private val messageListController: MessageListController,
+    internal val messageListController: MessageListController,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
