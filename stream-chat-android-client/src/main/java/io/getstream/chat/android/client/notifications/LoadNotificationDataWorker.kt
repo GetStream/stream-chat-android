@@ -20,6 +20,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -85,13 +86,22 @@ internal class LoadNotificationDataWorker(
     }
 
     private fun createForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            NOTIFICATION_ID,
-            createForegroundNotification(
-                notificationChannelId = context.getString(R.string.stream_chat_other_notifications_channel_id),
-                notificationChannelName = context.getString(R.string.stream_chat_other_notifications_channel_name),
-            ),
+        val foregroundNotification = createForegroundNotification(
+            notificationChannelId = context.getString(R.string.stream_chat_other_notifications_channel_id),
+            notificationChannelName = context.getString(R.string.stream_chat_other_notifications_channel_name),
         )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                foregroundNotification,
+                FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+            )
+        } else {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                foregroundNotification,
+            )
+        }
     }
 
     private fun createForegroundNotification(
