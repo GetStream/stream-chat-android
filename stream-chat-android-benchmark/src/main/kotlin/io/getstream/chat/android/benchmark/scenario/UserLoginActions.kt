@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,15 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.benchmark
+package io.getstream.chat.android.benchmark.scenario
 
-internal const val COMPOSE_SAMPLE_PACKAGE_NAME = "io.getstream.chat.android.compose.sample"
-internal const val UI_COMPONENTS_PACKAGE_NAME = "io.getstream.chat.ui.sample"
+import androidx.benchmark.macro.MacrobenchmarkScope
+import androidx.test.uiautomator.By
+import androidx.test.uiautomator.Until
+import io.getstream.chat.android.benchmark.waitForObject
+
+fun MacrobenchmarkScope.navigateFromUserLoginToChannels() = device.apply {
+    wait(Until.hasObject(By.res("Stream_UserLogin")), 15_000)
+    waitForObject(By.res("Stream_UserLoginItem"), 5_000)?.click()
+    waitForIdle()
+}

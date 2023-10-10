@@ -65,9 +65,11 @@ public fun Channels(
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
 
-    Box(modifier = modifier.testTag("Stream_Channels")) {
+    Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("Stream_Channels"),
             state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = contentPadding,

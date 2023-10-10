@@ -146,6 +146,7 @@ class UserLoginActivity : AppCompatActivity() {
             ) {
                 items(items = PredefinedUserCredentials.availableUsers) { userCredentials ->
                     UserLoginItem(
+                        modifier = Modifier.testTag("Stream_UserLoginItem"),
                         userCredentials = userCredentials,
                         onItemClick = onUserItemClick,
                     )
@@ -172,11 +173,12 @@ class UserLoginActivity : AppCompatActivity() {
      */
     @Composable
     fun UserLoginItem(
+        modifier: Modifier,
         userCredentials: UserCredentials,
         onItemClick: (UserCredentials) -> Unit,
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(64.dp)
                 .clickable(
@@ -184,8 +186,7 @@ class UserLoginActivity : AppCompatActivity() {
                     indication = rememberRipple(),
                     interactionSource = remember { MutableInteractionSource() },
                 )
-                .padding(horizontal = 16.dp)
-                .testTag("Stream_UserLoginItem"),
+                .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UserAvatar(
