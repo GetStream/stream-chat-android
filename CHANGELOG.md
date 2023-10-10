@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the message list gap. [#4998](https://github.com/GetStream/stream-chat-android/pull/4998)
 
 ### ⬆️ Improved
 
@@ -68,6 +69,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed the message list gap. [#4998](https://github.com/GetStream/stream-chat-android/pull/4998)
 
 ### ⬆️ Improved
 
@@ -102,6 +104,10 @@
 ## stream-chat-android-state
 ### ⬆️ Improved
 - Expanded/Enhanced event batching to speed up the event processing. [#4982](https://github.com/GetStream/stream-chat-android/pull/4982)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed thread loading. [#4971](https://github.com/GetStream/stream-chat-android/pull/4971)
 
 # September 18th, 2023 - 6.0.3
 ## stream-chat-android-client
