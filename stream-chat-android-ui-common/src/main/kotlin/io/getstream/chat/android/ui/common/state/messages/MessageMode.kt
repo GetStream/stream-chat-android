@@ -40,3 +40,8 @@ public sealed class MessageMode {
         public val threadState: ThreadState? = null,
     ) : MessageMode()
 }
+
+internal fun MessageMode.stringify(): String = when (this) {
+    MessageMode.Normal -> "Normal"
+    is MessageMode.MessageThread -> "MessageThread(parentMessage.id=${parentMessage.id})"
+}

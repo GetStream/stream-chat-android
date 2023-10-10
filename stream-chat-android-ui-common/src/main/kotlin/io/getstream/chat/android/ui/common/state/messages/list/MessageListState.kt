@@ -47,3 +47,18 @@ public data class MessageListState(
     public val newMessageState: NewMessageState? = null,
     public val selectedMessageState: SelectedMessageState? = null,
 )
+
+internal fun MessageListState.stringify(): String {
+    return "MessageListState(" +
+        "messageItems.size: ${messageItems.size}, " +
+        "endOfNewMessagesReached: $endOfNewMessagesReached, " +
+        "endOfOldMessagesReached: $endOfOldMessagesReached, " +
+        "isLoading: $isLoading, " +
+        "isLoadingNewerMessages: $isLoadingNewerMessages, " +
+        "isLoadingOlderMessages: $isLoadingOlderMessages, " +
+        "currentUser.id: ${currentUser?.id}, " +
+        "parentMessageId: $parentMessageId, " +
+        "unreadCount: $unreadCount, " +
+        "newMessageState: $newMessageState, " +
+        "selectedMessageState: $selectedMessageState)"
+}

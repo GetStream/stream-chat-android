@@ -103,6 +103,7 @@ public class MessagesViewModelFactory(
                     channelId = channelId,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
+                    messageId = messageId,
                 ),
             )
         },

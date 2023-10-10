@@ -47,6 +47,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -64,6 +65,8 @@ import kotlinx.coroutines.flow.stateIn
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+
+private const val TAG = "Chat:Client-StatePlugin"
 
 /**
  * [StateRegistry] instance that contains all state objects exposed in offline plugin.
@@ -113,6 +116,7 @@ public fun ChatClient.queryChannelsAsState(
     chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(clientState),
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<QueryChannelsState?> {
+    StreamLog.d(TAG) { "[queryChannelsAsState] request: $request" }
     return getStateOrNull(coroutineScope) {
         requestsAsState(coroutineScope).queryChannels(request, chatEventHandlerFactory)
     }
@@ -135,6 +139,7 @@ public fun ChatClient.watchChannelAsState(
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): StateFlow<ChannelState?> {
+    StreamLog.i(TAG) { "[watchChannelAsState] cid: $cid, messageLimit: $messageLimit" }
     return getStateOrNull(coroutineScope) {
         requestsAsState(coroutineScope).watchChannel(cid, messageLimit, stateConfig.userPresence)
     }
@@ -155,6 +160,7 @@ public suspend fun ChatClient.getRepliesAsState(
     messageLimit: Int,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): ThreadState {
+    StreamLog.d(TAG) { "[getRepliesAsState] messageId: $messageId, messageLimit: $messageLimit" }
     return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
 }
 
@@ -175,6 +181,7 @@ public suspend fun ChatClient.awaitRepliesAsState(
     messageId: String,
     messageLimit: Int,
 ): ThreadState {
+    StreamLog.d(TAG) { "[awaitRepliesAsState] messageId: $messageId, messageLimit: $messageLimit" }
     return coroutineScope {
         requestsAsState(scope = this).awaitReplies(messageId, messageLimit)
     }
@@ -266,6 +273,7 @@ public fun ChatClient.downloadAttachment(context: Context, attachment: Attachmen
  * @return The channel wrapped in [Call]. This channel contains older requested messages.
  */
 public fun ChatClient.loadOlderMessages(cid: String, messageLimit: Int): Call<Channel> {
+    StreamLog.d(TAG) { "[loadOlderMessages] cid: $cid, messageLimit: $messageLimit" }
     return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {
@@ -283,6 +291,10 @@ public fun ChatClient.loadNewerMessages(
     baseMessageId: String,
     messageLimit: Int,
 ): Call<Channel> {
+    StreamLog.d(TAG) {
+        "[loadNewerMessages] cid: $channelCid, " +
+            "messageLimit: $messageLimit, baseMessageId: $baseMessageId"
+    }
     return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(channelCid)) {
             is Result.Success -> {
@@ -364,6 +376,7 @@ public fun ChatClient.loadMessageById(
     cid: String,
     messageId: String,
 ): Call<Message> {
+    StreamLog.d(TAG) { "[loadMessageById] cid: $cid, messageId: $messageId" }
     return CoroutineCall(inheritScope { Job(it) }) {
         loadMessageByIdInternal(cid, messageId)
     }
@@ -417,6 +430,7 @@ public fun ChatClient.loadNewestMessages(
     messageLimit: Int,
     userPresence: Boolean = true,
 ): Call<Channel> {
+    StreamLog.d(TAG) { "[loadNewestMessages] cid: $cid, messageLimit: $messageLimit, userPresence: $userPresence" }
     return CoroutineCall(inheritScope { Job(it) }) {
         when (val cidValidationResult = validateCidWithResult(cid)) {
             is Result.Success -> {

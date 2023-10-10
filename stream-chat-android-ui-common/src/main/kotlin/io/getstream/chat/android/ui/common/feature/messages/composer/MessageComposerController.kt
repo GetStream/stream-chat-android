@@ -98,7 +98,7 @@ public class MessageComposerController(
     private val fileToUri: (File) -> String,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
-    messageId: String? = null,
+    private val messageId: String? = null,
 ) {
 
     /**
@@ -139,11 +139,7 @@ public class MessageComposerController(
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: Flow<ChannelState> = chatClient.watchChannelAsState(
-        cid = channelId,
-        messageLimit = if (messageId != null) 0 else DefaultMessageLimit,
-        coroutineScope = scope,
-    ).filterNotNull()
+    public val channelState: Flow<ChannelState> = observeChannelState()
 
     /**
      * Holds information about the abilities the current user
@@ -344,6 +340,16 @@ public class MessageComposerController(
             }.launchIn(scope)
 
         setupComposerState()
+    }
+
+    private fun observeChannelState(): Flow<ChannelState> {
+        val messageLimit = if (messageId != null) 0 else DefaultMessageLimit
+        logger.d { "[observeChannelState] cid: $channelId, messageId: $messageId, messageLimit: $messageLimit" }
+        return chatClient.watchChannelAsState(
+            cid = channelId,
+            messageLimit = messageLimit,
+            coroutineScope = scope,
+        ).filterNotNull()
     }
 
     /**

@@ -104,6 +104,7 @@ internal class ChannelLogic(
         get() = mutableState.cid
 
     suspend fun updateStateFromDatabase(request: QueryChannelRequest) {
+        logger.d { "[updateStateFromDatabase] request: $request" }
         if (request.isNotificationUpdate) return
         channelStateLogic.refreshMuteState()
 
@@ -132,6 +133,7 @@ internal class ChannelLogic(
      * @param userPresence Flag to determine if the SDK is going to receive UserPresenceChanged events. Used by the SDK to indicate if the user is online or not.
      */
     internal suspend fun watch(messagesLimit: Int = 30, userPresence: Boolean): Result<Channel> {
+        logger.i { "[watch] messagesLimit: $messagesLimit, userPresence: $userPresence" }
         // Otherwise it's too easy for devs to create UI bugs which DDOS our API
         if (mutableState.loading.value) {
             logger.i { "Another request to watch this channel is in progress. Ignoring this request." }
@@ -142,6 +144,7 @@ internal class ChannelLogic(
             )
         }
         return runChannelQuery(
+            "watch",
             QueryChannelPaginationRequest(messagesLimit).toWatchChannelRequest(userPresence).apply {
                 shouldRefresh = true
             },
@@ -157,8 +160,9 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
+        logger.i { "[loadNewerMessages] messageId: $messageId, limit: $limit" }
         mutableState.setLoadingNewerMessages(true)
-        return runChannelQuery(newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
+        return runChannelQuery("loadNewerMessages", newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
     /**
@@ -170,15 +174,24 @@ internal class ChannelLogic(
      * @return [Result] of [Channel] with fetched messages.
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
+        logger.i { "[loadOlderMessages] messageLimit: $messageLimit, baseMessageId: $baseMessageId" }
         mutableState.setLoadingOlderMessages(true)
-        return runChannelQuery(olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId))
+        return runChannelQuery(
+            "loadOlderMessages",
+            olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId),
+        )
     }
 
     internal suspend fun loadMessagesAroundId(aroundMessageId: String): Result<Channel> {
-        return runChannelQuery(aroundIdWatchChannelRequest(aroundMessageId))
+        logger.i { "[loadMessagesAroundId] aroundMessageId: $aroundMessageId" }
+        return runChannelQuery("loadMessagesAroundId", aroundIdWatchChannelRequest(aroundMessageId))
     }
 
-    private suspend fun runChannelQuery(request: WatchChannelRequest): Result<Channel> {
+    private suspend fun runChannelQuery(
+        src: String,
+        request: WatchChannelRequest,
+    ): Result<Channel> {
+        logger.d { "[runChannelQuery] #$src; request: $request" }
         val offlineChannel = runChannelQueryOffline(request)
 
         val onlineResult =
@@ -199,7 +212,10 @@ internal class ChannelLogic(
         if (request.isFilteringNewerMessages() || request.isFilteringAroundIdMessages()) return null
 
         return selectAndEnrichChannel(mutableState.cid, request)?.also { channel ->
-            logger.i { "Loaded channel ${channel.cid} from offline storage with ${channel.messages.size} messages" }
+            logger.v {
+                "[runChannelQueryOffline] completed; channel.cid: ${channel.cid}, " +
+                    "channel.messages.size: ${channel.messages.size}"
+            }
             if (request.filteringOlderMessages()) {
                 updateOldMessagesFromLocalChannel(channel)
             } else {
@@ -223,6 +239,11 @@ internal class ChannelLogic(
         shouldRefreshMessages: Boolean,
         isChannelsStateUpdate: Boolean = false,
     ) {
+        logger.v {
+            "[updateDataFromLocalChannel] localChannel.cid: ${localChannel.cid}, messageLimit: $messageLimit, " +
+                "scrollUpdate: $scrollUpdate, shouldRefreshMessages: $shouldRefreshMessages, " +
+                "isChannelsStateUpdate: $isChannelsStateUpdate"
+        }
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
         updateDataForChannel(
@@ -236,6 +257,7 @@ internal class ChannelLogic(
     }
 
     private fun updateOldMessagesFromLocalChannel(localChannel: Channel) {
+        logger.v { "[updateOldMessagesFromLocalChannel] localChannel.cid: ${localChannel.cid}" }
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
         channelStateLogic.updateOldMessagesFromChannel(localChannel)
     }
@@ -322,7 +344,10 @@ internal class ChannelLogic(
      * @param baseMessageId Message id of the last available. Can be null then it calculates the last available message.
      */
     private fun watchChannelRequest(pagination: Pagination, limit: Int, baseMessageId: String?): WatchChannelRequest {
-        val messageId = baseMessageId ?: getLoadMoreBaseMessageId(pagination)
+        logger.d { "[watchChannelRequest] pagination: $pagination, limit: $limit, baseMessageId: $baseMessageId" }
+        val messageId = baseMessageId ?: getLoadMoreBaseMessage(pagination)?.also {
+            logger.v { "[watchChannelRequest] baseMessage(${it.id}): ${it.text}" }
+        }?.id
         return QueryChannelPaginationRequest(limit).apply {
             messageId?.let {
                 messageFilterDirection = pagination
@@ -336,16 +361,16 @@ internal class ChannelLogic(
      *
      * @param direction [Pagination] instance which shows direction of pagination.
      */
-    private fun getLoadMoreBaseMessageId(direction: Pagination): String? {
+    private fun getLoadMoreBaseMessage(direction: Pagination): Message? {
         val messages = mutableState.sortedMessages.value.takeUnless(Collection<Message>::isEmpty) ?: return null
         return when (direction) {
             Pagination.GREATER_THAN_OR_EQUAL,
             Pagination.GREATER_THAN,
-            -> messages.last().id
+            -> messages.last()
             Pagination.LESS_THAN,
             Pagination.LESS_THAN_OR_EQUAL,
             Pagination.AROUND_ID,
-            -> messages.first().id
+            -> messages.first()
         }
     }
 

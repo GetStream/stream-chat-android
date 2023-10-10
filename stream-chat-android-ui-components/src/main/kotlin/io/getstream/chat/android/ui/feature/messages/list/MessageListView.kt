@@ -137,6 +137,7 @@ import io.getstream.chat.android.ui.utils.extensions.showToast
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.use
 import io.getstream.chat.android.uiutils.extension.hasLink
+import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
@@ -157,6 +158,8 @@ public class MessageListView : ConstraintLayout {
     private companion object {
         private const val LOAD_MORE_THRESHOLD = 10
     }
+
+    private val logger by taggedLogger("Chat:MessageListView")
 
     private var messageListViewStyle: MessageListViewStyle? = null
 
@@ -653,14 +656,14 @@ public class MessageListView : ConstraintLayout {
                     endRegionReachedHandler.onEndRegionReached()
                 }
                 val loadMoreAtBottom = {
-                    val lastId = adapter.currentList
+                    val last = adapter.currentList
                         .asSequence()
                         .filterIsInstance<MessageListItem.MessageItem>()
                         .lastOrNull()
                         ?.message
-                        ?.id
 
-                    bottomEndRegionReachedHandler.onBottomEndRegionReached(lastId)
+                    logger.i { "[loadMoreAtBottom] last.id: ${last?.id}, last.text: ${last?.text}" }
+                    bottomEndRegionReachedHandler.onBottomEndRegionReached(last?.id)
                 }
 
                 loadMoreListener = EndlessMessageListScrollListener(loadMoreThreshold, loadMoreAtTop, loadMoreAtBottom)

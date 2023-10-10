@@ -27,25 +27,33 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 
 class ChatViewModel(
     private val cid: String,
-    chatClient: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    private val logger by taggedLogger("Chat:ChannelVM")
 
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: StateFlow<ChannelState?> =
-        chatClient.watchChannelAsState(cid, 0, viewModelScope)
+    private val channelState: StateFlow<ChannelState?> = observeChannelState()
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
 
     val members: LiveData<List<Member>> = channelState.filterNotNull().flatMapLatest { it.members }.asLiveData()
+
+    private fun observeChannelState(): StateFlow<ChannelState?> {
+        val messageLimit = 0
+        logger.d { "[observeChannelState] cid: $cid, messageLimit: $messageLimit" }
+        return chatClient.watchChannelAsState(cid, messageLimit, viewModelScope)
+    }
 
     fun onAction(action: Action) {
         when (action) {

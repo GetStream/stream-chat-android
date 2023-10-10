@@ -103,7 +103,7 @@ public fun MessageList(
             )
         }
     },
-    onMessagesPageEndReached: (String) -> Unit = { viewModel.loadNewerMessages(it) },
+    onMessagesPageEndReached: (String) -> Unit = { viewModel.onBottomEndRegionReached(it) },
     onScrollToBottomClicked: (() -> Unit) -> Unit = { viewModel.scrollToBottom(scrollToBottom = it) },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },

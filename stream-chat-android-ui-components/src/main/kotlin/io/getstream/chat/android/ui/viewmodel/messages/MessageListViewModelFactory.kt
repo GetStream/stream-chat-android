@@ -86,16 +86,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
-        MessageComposerViewModel::class.java to {
-            MessageComposerViewModel(
-                MessageComposerController(
-                    cid,
-                    mediaRecorder = mediaRecorder,
-                    messageId = messageId,
-                    fileToUri = fileToUri,
-                ),
-            )
-        },
         MessageListViewModel::class.java to {
             MessageListViewModel(
                 messageListController = MessageListController(
@@ -127,6 +117,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
                     fileToUri = fileToUri,
+                    messageId = messageId,
                 ),
             )
         },
