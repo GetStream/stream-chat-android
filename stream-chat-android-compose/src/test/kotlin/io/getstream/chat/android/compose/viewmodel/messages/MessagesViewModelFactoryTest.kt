@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.viewmodel.messages
 
 import io.getstream.chat.android.client.ChatClient
@@ -32,7 +48,7 @@ internal class MessagesViewModelFactoryTest {
         val scope = TestScope()
         val stubUser: StateFlow<User> = MutableStateFlow(randomUser())
         val stubInitializationState: StateFlow<InitializationState> = MutableStateFlow(
-            InitializationState.NOT_INITIALIZED
+            InitializationState.NOT_INITIALIZED,
         )
         val mockClientState: ClientState = mock {
             on { initializationState } doReturn stubInitializationState
@@ -54,7 +70,7 @@ internal class MessagesViewModelFactoryTest {
             chatClient = mockChatClient,
             clientState = mockClientState,
             mediaRecorder = mock(),
-            clipboardHandler = mock()
+            clipboardHandler = mock(),
         )
 
         val messageListViewModel = messageListViewModelFactory.create(MessageListViewModel::class.java)
@@ -66,5 +82,4 @@ internal class MessagesViewModelFactoryTest {
         foundMessageId shouldBeEqualTo messageId
         foundParentMessageId shouldBeEqualTo parentMessageId
     }
-
 }
