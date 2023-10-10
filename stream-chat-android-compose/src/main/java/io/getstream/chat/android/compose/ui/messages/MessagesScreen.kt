@@ -138,19 +138,24 @@ public fun MessagesScreen(
         composerViewModel.setMessageMode(messageMode)
     }
 
-    val backAction = {
-        val isInThread = listViewModel.isInThread
-        val isShowingOverlay = listViewModel.isShowingOverlay
+    val backAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
+        {
+            val isInThread = listViewModel.isInThread
+            val isShowingOverlay = listViewModel.isShowingOverlay
 
-        when {
-            attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(false)
-            isShowingOverlay -> listViewModel.selectMessage(null)
-            isInThread -> {
-                listViewModel.leaveThread()
-                composerViewModel.leaveThread()
+            when {
+                attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(
+                    false,
+                )
+
+                isShowingOverlay -> listViewModel.selectMessage(null)
+                isInThread -> {
+                    listViewModel.leaveThread()
+                    composerViewModel.leaveThread()
+                }
+
+                else -> onBackPressed()
             }
-
-            else -> onBackPressed()
         }
     }
 
@@ -190,19 +195,30 @@ public fun MessagesScreen(
                         .wrapContentHeight()
                         .align(Alignment.Center),
                     viewModel = composerViewModel,
-                    onAttachmentsClick = { attachmentsPickerViewModel.changeAttachmentState(true) },
-                    onCommandsClick = { composerViewModel.toggleCommandsVisibility() },
-                    onCancelAction = {
-                        listViewModel.dismissAllMessageActions()
-                        composerViewModel.dismissMessageActions()
+                    onAttachmentsClick = remember(attachmentsPickerViewModel) {
+                        {
+                            attachmentsPickerViewModel.changeAttachmentState(
+                                true,
+                            )
+                        }
                     },
-                    onSendMessage = { message ->
-                        composerViewModel.sendMessage(
-                            message.copy(
-                                skipPushNotification = skipPushNotification,
-                                skipEnrichUrl = skipEnrichUrl,
-                            ),
-                        )
+                    onCommandsClick = remember(composerViewModel) { { composerViewModel.toggleCommandsVisibility() } },
+                    onCancelAction = remember(listViewModel, composerViewModel) {
+                        {
+                            listViewModel.dismissAllMessageActions()
+                            composerViewModel.dismissMessageActions()
+                        }
+                    },
+                    onSendMessage = remember(composerViewModel) {
+                        {
+                                message ->
+                            composerViewModel.sendMessage(
+                                message.copy(
+                                    skipPushNotification = skipPushNotification,
+                                    skipEnrichUrl = skipEnrichUrl,
+                                ),
+                            )
+                        }
                     },
                     statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 )
@@ -219,35 +235,41 @@ public fun MessagesScreen(
                 viewModel = listViewModel,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 threadMessagesStart = threadMessagesStart,
-                onThreadClick = { message ->
-                    composerViewModel.setMessageMode(MessageMode.MessageThread(message))
-                    listViewModel.openMessageThread(message)
+                onThreadClick = remember(composerViewModel, listViewModel) {
+                    {
+                            message ->
+                        composerViewModel.setMessageMode(MessageMode.MessageThread(message))
+                        listViewModel.openMessageThread(message)
+                    }
                 },
-                onMediaGalleryPreviewResult = { result ->
-                    when (result?.resultType) {
-                        MediaGalleryPreviewResultType.QUOTE -> {
-                            val message = listViewModel.getMessageById(result.messageId)
+                onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
+                    {
+                            result ->
+                        when (result?.resultType) {
+                            MediaGalleryPreviewResultType.QUOTE -> {
+                                val message = listViewModel.getMessageById(result.messageId)
 
-                            if (message != null) {
-                                composerViewModel.performMessageAction(
-                                    Reply(
-                                        message.copy(
-                                            skipPushNotification = skipPushNotification,
-                                            skipEnrichUrl = skipEnrichUrl,
+                                if (message != null) {
+                                    composerViewModel.performMessageAction(
+                                        Reply(
+                                            message.copy(
+                                                skipPushNotification = skipPushNotification,
+                                                skipEnrichUrl = skipEnrichUrl,
+                                            ),
                                         ),
-                                    ),
+                                    )
+                                }
+                            }
+
+                            MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
+                                listViewModel.scrollToMessage(
+                                    messageId = result.messageId,
+                                    parentMessageId = result.parentMessageId,
                                 )
                             }
-                        }
 
-                        MediaGalleryPreviewResultType.SHOW_IN_CHAT -> {
-                            listViewModel.scrollToMessage(
-                                messageId = result.messageId,
-                                parentMessageId = result.parentMessageId,
-                            )
+                            null -> Unit
                         }
-
-                        null -> Unit
                     }
                 },
             )
@@ -382,21 +404,26 @@ private fun BoxScope.MessagesScreenMenus(
             messageOptions = messageOptions,
             message = selectedMessage,
             ownCapabilities = ownCapabilities,
-            onMessageAction = { action ->
-                action.updateMessage(
-                    action.message.copy(
-                        skipPushNotification = skipPushNotification,
-                        skipEnrichUrl = skipEnrichUrl,
-                    ),
-                ).let {
-                    composerViewModel.performMessageAction(it)
-                    listViewModel.performMessageAction(it)
+            onMessageAction = remember(composerViewModel, listViewModel) {
+                {
+                        action ->
+                    action.updateMessage(
+                        action.message.copy(
+                            skipPushNotification = skipPushNotification,
+                            skipEnrichUrl = skipEnrichUrl,
+                        ),
+                    ).let {
+                        composerViewModel.performMessageAction(it)
+                        listViewModel.performMessageAction(it)
+                    }
                 }
             },
-            onShowMoreReactionsSelected = {
-                listViewModel.selectExtendedReactions(selectedMessage)
+            onShowMoreReactionsSelected = remember(listViewModel) {
+                {
+                    listViewModel.selectExtendedReactions(selectedMessage)
+                }
             },
-            onDismiss = { listViewModel.removeOverlay() },
+            onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
         )
     }
 
@@ -420,21 +447,26 @@ private fun BoxScope.MessagesScreenMenus(
                 ),
             currentUser = user,
             message = selectedMessage,
-            onMessageAction = { action ->
-                action.updateMessage(
-                    action.message.copy(
-                        skipPushNotification = skipPushNotification,
-                        skipEnrichUrl = skipEnrichUrl,
-                    ),
-                ).let {
-                    composerViewModel.performMessageAction(it)
-                    listViewModel.performMessageAction(it)
+            onMessageAction = remember(composerViewModel, listViewModel) {
+                {
+                        action ->
+                    action.updateMessage(
+                        action.message.copy(
+                            skipPushNotification = skipPushNotification,
+                            skipEnrichUrl = skipEnrichUrl,
+                        ),
+                    ).let {
+                        composerViewModel.performMessageAction(it)
+                        listViewModel.performMessageAction(it)
+                    }
                 }
             },
-            onShowMoreReactionsSelected = {
-                listViewModel.selectExtendedReactions(selectedMessage)
+            onShowMoreReactionsSelected = remember(listViewModel) {
+                {
+                    listViewModel.selectExtendedReactions(selectedMessage)
+                }
             },
-            onDismiss = { listViewModel.removeOverlay() },
+            onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
             ownCapabilities = selectedMessageState?.ownCapabilities ?: setOf(),
         )
     }
@@ -486,18 +518,21 @@ private fun BoxScope.MessagesScreenReactionsPicker(
                     ),
                 ),
             message = selectedMessage,
-            onMessageAction = { action ->
-                action.updateMessage(
-                    action.message.copy(
-                        skipPushNotification = skipPushNotification,
-                        skipEnrichUrl = skipEnrichUrl,
-                    ),
-                ).let {
-                    composerViewModel.performMessageAction(action)
-                    listViewModel.performMessageAction(action)
+            onMessageAction = remember(composerViewModel, listViewModel) {
+                {
+                        action ->
+                    action.updateMessage(
+                        action.message.copy(
+                            skipPushNotification = skipPushNotification,
+                            skipEnrichUrl = skipEnrichUrl,
+                        ),
+                    ).let {
+                        composerViewModel.performMessageAction(action)
+                        listViewModel.performMessageAction(action)
+                    }
                 }
             },
-            onDismiss = { listViewModel.removeOverlay() },
+            onDismiss = remember(listViewModel) { { listViewModel.removeOverlay() } },
         )
     }
 }
@@ -539,13 +574,18 @@ private fun BoxScope.AttachmentsPickerMenu(
                         animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2),
                     ),
                 ),
-            onAttachmentsSelected = { attachments ->
-                attachmentsPickerViewModel.changeAttachmentState(false)
-                composerViewModel.addSelectedAttachments(attachments)
+            onAttachmentsSelected = remember(attachmentsPickerViewModel) {
+                {
+                        attachments ->
+                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    composerViewModel.addSelectedAttachments(attachments)
+                }
             },
-            onDismiss = {
-                attachmentsPickerViewModel.changeAttachmentState(false)
-                attachmentsPickerViewModel.dismissAttachments()
+            onDismiss = remember(attachmentsPickerViewModel) {
+                {
+                    attachmentsPickerViewModel.changeAttachmentState(false)
+                    attachmentsPickerViewModel.dismissAttachments()
+                }
             },
         )
     }
@@ -577,22 +617,25 @@ private fun MessageModerationDialog(
                 shape = MaterialTheme.shapes.medium,
                 color = ChatTheme.colors.inputBackground,
             ),
-            onDismissRequest = { listViewModel.removeOverlay() },
-            onDialogOptionInteraction = { message, action ->
-                when (action) {
-                    DeleteMessage -> listViewModel.deleteMessage(message = message, true)
-                    EditMessage -> composerViewModel.performMessageAction(Edit(message))
-                    SendAnyway -> listViewModel.performMessageAction(
-                        Resend(
-                            message.copy(
-                                skipPushNotification = skipPushNotification,
-                                skipEnrichUrl = skipEnrichUrl,
+            onDismissRequest = remember(listViewModel) { { listViewModel.removeOverlay() } },
+            onDialogOptionInteraction = remember(listViewModel, composerViewModel) {
+                {
+                        message, action ->
+                    when (action) {
+                        DeleteMessage -> listViewModel.deleteMessage(message = message, true)
+                        EditMessage -> composerViewModel.performMessageAction(Edit(message))
+                        SendAnyway -> listViewModel.performMessageAction(
+                            Resend(
+                                message.copy(
+                                    skipPushNotification = skipPushNotification,
+                                    skipEnrichUrl = skipEnrichUrl,
+                                ),
                             ),
-                        ),
-                    )
+                        )
 
-                    else -> {
-                        // Custom events
+                        else -> {
+                            // Custom events
+                        }
                     }
                 }
             },
@@ -618,8 +661,8 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             modifier = Modifier.padding(16.dp),
             title = stringResource(id = R.string.stream_compose_delete_message_title),
             message = stringResource(id = R.string.stream_compose_delete_message_text),
-            onPositiveAction = { listViewModel.deleteMessage(deleteAction.message) },
-            onDismiss = { listViewModel.dismissMessageAction(deleteAction) },
+            onPositiveAction = remember(listViewModel) { { listViewModel.deleteMessage(deleteAction.message) } },
+            onDismiss = remember(listViewModel) { { listViewModel.dismissMessageAction(deleteAction) } },
         )
     }
 
@@ -630,8 +673,8 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             modifier = Modifier.padding(16.dp),
             title = stringResource(id = R.string.stream_compose_flag_message_title),
             message = stringResource(id = R.string.stream_compose_flag_message_text),
-            onPositiveAction = { listViewModel.flagMessage(flagAction.message) },
-            onDismiss = { listViewModel.dismissMessageAction(flagAction) },
+            onPositiveAction = remember(listViewModel) { { listViewModel.flagMessage(flagAction.message) } },
+            onDismiss = remember(listViewModel) { { listViewModel.dismissMessageAction(flagAction) } },
         )
     }
 }
