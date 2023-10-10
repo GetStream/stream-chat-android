@@ -24,9 +24,11 @@ import androidx.test.uiautomator.Until
 
 internal const val COMPOSE_SAMPLE_PACKAGE_NAME = "io.getstream.chat.android.compose.sample"
 
+internal const val FLING_SCREEN_DIVIDER = 5
+
 internal fun UiDevice.flingElementDownUp(element: UiObject2) {
     // Set some margin from the sides to prevent triggering system navigation
-    element.setGestureMargin(displayWidth / 5)
+    element.setGestureMargin(displayWidth / FLING_SCREEN_DIVIDER)
 
     element.fling(Direction.DOWN)
     waitForIdle()
@@ -35,7 +37,7 @@ internal fun UiDevice.flingElementDownUp(element: UiObject2) {
 
 internal fun UiDevice.flingElementUpDown(element: UiObject2) {
     // Set some margin from the sides to prevent triggering system navigation
-    element.setGestureMargin(displayWidth / 5)
+    element.setGestureMargin(displayWidth / FLING_SCREEN_DIVIDER)
 
     element.fling(Direction.UP)
     waitForIdle()
