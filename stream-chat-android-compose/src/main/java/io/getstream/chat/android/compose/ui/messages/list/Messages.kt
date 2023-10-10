@@ -110,9 +110,10 @@ public fun Messages(
 
     val density = LocalDensity.current
 
-    Box(modifier = modifier.testTag("Stream_Messages")) {
+    Box(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
+                .testTag("Stream_Messages")
                 .fillMaxSize()
                 .onSizeChanged {
                     val bottomPadding = contentPadding.calculateBottomPadding()

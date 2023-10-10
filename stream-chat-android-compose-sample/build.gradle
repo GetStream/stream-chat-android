@@ -57,17 +57,20 @@ android {
             minifyEnabled false
             shrinkResources false
             signingConfig signingConfigs.debug
+            buildConfigField "Boolean", "BENCHMARK", "false"
         }
         benchmark {
             debuggable false
             signingConfig signingConfigs.debug
             matchingFallbacks = ['release']
             proguardFiles 'benchmark-rules.pro'
+            buildConfigField "Boolean", "BENCHMARK", "true"
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            buildConfigField "Boolean", "BENCHMARK", "false"
         }
     }
 
