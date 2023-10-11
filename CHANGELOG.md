@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix background service used to sync data when a Push Notification is received on Android 14. [#5001](https://github.com/GetStream/stream-chat-android/pull/5001)
 
 ### ⬆️ Improved
 - Create Throttling mechanism for `MarkRead` Events [#4974](https://github.com/GetStream/stream-chat-android/pull/4974)
