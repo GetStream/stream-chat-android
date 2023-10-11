@@ -26,13 +26,15 @@ public fun Message.addMyReaction(reaction: Reaction, enforceUnique: Boolean = fa
         when (enforceUnique) {
             true -> clearOwnReactions(reaction.userId)
             false -> this
-        }.copy(
-            latestReactions = latestReactions + reaction,
-            ownReactions = ownReactions + reaction,
-            reactionCounts = reactionCounts + (reaction.type to ((reactionCounts[reaction.type] ?: 0) + 1)),
-            reactionScores = reactionScores +
-                (reaction.type to ((reactionScores[reaction.type] ?: 0) + reaction.score)),
-        )
+        }.let {
+            it.copy(
+                latestReactions = it.latestReactions + reaction,
+                ownReactions = it.ownReactions + reaction,
+                reactionCounts = it.reactionCounts + (reaction.type to ((reactionCounts[reaction.type] ?: 0) + 1)),
+                reactionScores = it.reactionScores +
+                    (reaction.type to ((reactionScores[reaction.type] ?: 0) + reaction.score)),
+            )
+        }
     }
 }
 
