@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix background service used to sync data when a Push Notification is received on Android 14. [#4997](https://github.com/GetStream/stream-chat-android/pull/4997)
+- Fix `Message.addOwnReaction()` process. [#5000](https://github.com/GetStream/stream-chat-android/pull/5000)
 
 ### ⬆️ Improved
 
