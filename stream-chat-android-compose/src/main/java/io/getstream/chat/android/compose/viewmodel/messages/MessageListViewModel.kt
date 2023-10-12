@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -47,8 +48,10 @@ import kotlinx.coroutines.launch
  */
 @Suppress("TooManyFunctions", "LargeClass", "TooManyFunctions")
 public class MessageListViewModel(
-    private val messageListController: MessageListController,
+    internal val messageListController: MessageListController,
 ) : ViewModel() {
+
+    private val logger by taggedLogger("Chat:MessageListVM")
 
     /**
      * State handler for the UI, which holds all the information the UI needs to render messages.
@@ -144,6 +147,14 @@ public class MessageListViewModel(
      */
     public fun updateLastSeenMessage(message: Message) {
         messageListController.updateLastSeenMessage(message)
+    }
+
+    internal fun onBottomEndRegionReached(
+        baseMessageId: String,
+        messageLimit: Int = messageListController.messageLimit,
+    ) {
+        logger.i { "[onBottomEndRegionReached] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
+        loadNewerMessages(baseMessageId, messageLimit)
     }
 
     /**

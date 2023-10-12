@@ -70,14 +70,14 @@ import io.getstream.chat.android.state.utils.Event as EventWrapper
 @OptIn(FlowPreview::class)
 @Suppress("TooManyFunctions")
 public class MessageListViewModel(
-    private val messageListController: MessageListController,
+    internal val messageListController: MessageListController,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
     /**
      * The logger used to print to errors, warnings, information and other things to log.
      */
-    private val logger: TaggedLogger by taggedLogger("Chat:MessageListViewModel")
+    private val logger: TaggedLogger by taggedLogger("Chat:MessageListVM")
 
     /**
      * Holds information about the current channel and is actively updated.
@@ -391,10 +391,11 @@ public class MessageListViewModel(
         baseMessageId: String?,
         messageLimit: Int = messageListController.messageLimit,
     ) {
+        logger.i { "[onBottomEndRegionReached] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
         if (baseMessageId != null) {
             messageListController.loadNewerMessages(baseMessageId, messageLimit)
         } else {
-            logger.e { "There's no base message to request more message at bottom of limit" }
+            logger.e { "[onBottomEndRegionReached] there's no base message to request more message at bottom of limit" }
         }
     }
 

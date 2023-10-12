@@ -18,8 +18,10 @@ package io.getstream.chat.android.state.plugin.listener.internal
 
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
+import io.getstream.chat.android.client.utils.stringify
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 
 /**
@@ -28,6 +30,8 @@ import io.getstream.result.Result
  * @param logic [LogicRegistry]
  */
 internal class QueryChannelListenerState(private val logic: LogicRegistry) : QueryChannelListener {
+
+    private val logger by taggedLogger("QueryChannelListenerS")
 
     override suspend fun onQueryChannelPrecondition(
         channelType: String,
@@ -47,6 +51,7 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         channelId: String,
         request: QueryChannelRequest,
     ) {
+        logger.d { "[onQueryChannelRequest] cid: $channelType:$channelId, request: $request" }
         logic.channel(channelType, channelId).updateStateFromDatabase(request)
     }
 
@@ -64,6 +69,10 @@ internal class QueryChannelListenerState(private val logic: LogicRegistry) : Que
         channelId: String,
         request: QueryChannelRequest,
     ) {
+        logger.d {
+            "[onQueryChannelResult] cid: $channelType:$channelId, " +
+                "request: $request, result: ${result.stringify { it.cid }}"
+        }
         val channelStateLogic = logic.channel(channelType, channelId).stateLogic()
 
         result.onSuccess { channel -> channelStateLogic.propagateChannelQuery(channel, request) }

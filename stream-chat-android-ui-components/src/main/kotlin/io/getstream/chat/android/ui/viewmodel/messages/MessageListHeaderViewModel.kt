@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -48,21 +49,18 @@ import kotlinx.coroutines.flow.map
  * queries executed on screen initialization.
  */
 public class MessageListHeaderViewModel(
-    cid: String,
-    chatClient: ChatClient = ChatClient.instance(),
+    private val cid: String,
+    private val chatClient: ChatClient = ChatClient.instance(),
     clientState: ClientState = chatClient.clientState,
-    messageId: String? = null,
+    private val messageId: String? = null,
 ) : ViewModel() {
+
+    private val logger by taggedLogger("Chat:MessagesHeaderVM")
 
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = if (messageId != null) 0 else DEFAULT_MESSAGES_LIMIT,
-            coroutineScope = viewModelScope,
-        ).filterNotNull()
+    private val channelState: Flow<ChannelState> = observeChannelState()
 
     /**
      * The current [Channel] created from [ChannelState]. It emits new data either when
@@ -131,6 +129,16 @@ public class MessageListHeaderViewModel(
      */
     public fun resetThread() {
         _activeThread.postValue(null)
+    }
+
+    private fun observeChannelState(): Flow<ChannelState> {
+        val messageLimit = if (messageId != null) 0 else DEFAULT_MESSAGES_LIMIT
+        logger.d { "[observeChannelState] cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
+        return chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = messageLimit,
+            coroutineScope = viewModelScope,
+        ).filterNotNull()
     }
 
     private companion object {

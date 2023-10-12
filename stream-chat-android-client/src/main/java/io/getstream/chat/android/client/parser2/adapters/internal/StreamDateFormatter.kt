@@ -44,7 +44,7 @@ public class StreamDateFormatter(
     private val logger by taggedLogger("StreamDateFormatter")
 
     private companion object {
-        const val STATS = true
+        const val STATS = false
         const val DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
         const val DATE_FORMAT_WITHOUT_NANOSECONDS = "yyyy-MM-dd'T'HH:mm:ss'Z'"
     }

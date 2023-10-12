@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list
 
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import io.getstream.log.StreamLog
 
 /**
  * Scroll listener which checks the layout manager of the MessageListView, listens for scrolling gestures
@@ -96,7 +97,12 @@ public class EndlessMessageListScrollListener(
     private fun handleScrollDown(layoutManager: LinearLayoutManager, recyclerView: RecyclerView) {
         val lastVisiblePosition = layoutManager.findLastVisibleItemPosition()
         val total = recyclerView.adapter?.itemCount ?: 0
-
+        if (DEBUG) {
+            StreamLog.v(TAG) {
+                "[handleScrollDown] lastVisiblePosition: $lastVisiblePosition, " +
+                    "total: $total, loadMoreThreshold: $loadMoreThreshold, scrollStateReset: $scrollStateReset"
+            }
+        }
         if (scrollStateReset && lastVisiblePosition > total - loadMoreThreshold) {
             scrollStateReset = false
             recyclerView.post(loadMoreAtBottomListener)
@@ -139,5 +145,10 @@ public class EndlessMessageListScrollListener(
      */
     public fun disablePagination() {
         paginationEnabled = false
+    }
+
+    private companion object {
+        private const val TAG = "Chat:EndlessMessageScroll"
+        private const val DEBUG = false
     }
 }

@@ -39,6 +39,7 @@ import io.getstream.chat.android.state.message.attachments.internal.AttachmentUr
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
 import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
@@ -62,6 +63,8 @@ internal class ChannelStateLogic(
     private val unreadCountLogic: UnreadCountLogic,
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
+
+    private val logger by taggedLogger(TAG)
 
     /**
      * Used to prune stale active typing events when the sender
@@ -112,6 +115,7 @@ internal class ChannelStateLogic(
      * @param reads the information about the read.
      */
     private fun updateReads(reads: List<ChannelUserRead>) {
+        logger.v { "[updateReads] cid: ${mutableState.cid}, reads.size: ${reads.size}" }
         mutableState.upsertReads(reads)
     }
 
@@ -173,6 +177,10 @@ internal class ChannelStateLogic(
      * @param message The message to be added or updated.
      */
     override fun upsertMessage(message: Message, updateCount: Boolean) {
+        logger.d {
+            "[upsertMessage] message.id: ${message.id}, " +
+                "message.text: ${message.text}, updateCount: $updateCount"
+        }
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
             upsertMessages(listOf(message), updateCount = updateCount)
         } else {
@@ -188,6 +196,13 @@ internal class ChannelStateLogic(
      * new messages should be kept.
      */
     override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
+        val first = messages.firstOrNull()
+        val last = messages.lastOrNull()
+        logger.d {
+            "[upsertMessages] messages.size: ${messages.size}, first: ${first?.text?.take(TEXT_LIMIT)}, " +
+                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages, " +
+                "updateCount: $updateCount"
+        }
         when (shouldRefreshMessages) {
             true -> {
                 messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
@@ -401,6 +416,12 @@ internal class ChannelStateLogic(
         isChannelsStateUpdate: Boolean = false,
         isWatchChannel: Boolean = false,
     ) {
+        logger.d {
+            "[updateDataForChannel] cid: ${channel.cid}, messageLimit: $messageLimit, " +
+                "shouldRefreshMessages: $shouldRefreshMessages, scrollUpdate: $scrollUpdate, " +
+                "isNotificationUpdate: $isNotificationUpdate, isChannelsStateUpdate: $isChannelsStateUpdate, " +
+                "isWatchChannel: $isWatchChannel"
+        }
         // Update all the flow objects based on the channel
         updateChannelData(channel)
 
@@ -501,6 +522,7 @@ internal class ChannelStateLogic(
      * @param request [QueryChannelRequest]
      */
     fun propagateChannelQuery(channel: Channel, request: QueryChannelRequest) {
+        logger.d { "[propagateChannelQuery] cid: ${channel.cid}, request: $request" }
         val noMoreMessages = request.messagesLimit() > channel.messages.size
         val isNotificationUpdate = request.isNotificationUpdate
 
@@ -608,6 +630,7 @@ internal class ChannelStateLogic(
     }
 
     private companion object {
-        private const val TAG = "Chat:ChannelStateLogicImpl"
+        private const val TAG = "Chat:ChannelStateLogic"
+        private const val TEXT_LIMIT = 10
     }
 }

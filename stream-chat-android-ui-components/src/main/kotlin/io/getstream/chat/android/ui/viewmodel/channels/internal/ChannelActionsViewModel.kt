@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
@@ -37,19 +38,16 @@ import kotlinx.coroutines.flow.flatMapLatest
  * @param chatClient The main entry point for all low-level chat operations.
  */
 internal class ChannelActionsViewModel(
-    cid: String,
-    chatClient: ChatClient = ChatClient.instance(),
+    private val cid: String,
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    private val logger by taggedLogger("Chat:ChannelActionsVM")
 
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = DEFAULT_MESSAGE_LIMIT,
-            coroutineScope = viewModelScope,
-        ).filterNotNull()
+    private val channelState: Flow<ChannelState> = observeChannelState()
 
     /**
      * The current [Channel] created from [ChannelState]. It emits new data either when
@@ -68,6 +66,16 @@ internal class ChannelActionsViewModel(
                 state.toChannel()
             }
         }.asLiveData()
+
+    private fun observeChannelState(): Flow<ChannelState> {
+        val messageLimit = DEFAULT_MESSAGE_LIMIT
+        logger.d { "[observeChannelState] cid: $cid, messageLimit: $messageLimit" }
+        return chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = messageLimit,
+            coroutineScope = viewModelScope,
+        ).filterNotNull()
+    }
 
     private companion object {
 

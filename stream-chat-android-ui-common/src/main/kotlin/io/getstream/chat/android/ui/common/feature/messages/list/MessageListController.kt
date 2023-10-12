@@ -86,6 +86,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
+import io.getstream.chat.android.ui.common.state.messages.list.stringify
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
@@ -175,14 +176,7 @@ public class MessageListController(
     /**
      * Holds information about the current channel and is actively updated.
      */
-    public val channelState: StateFlow<ChannelState?> =
-        chatClient.watchChannelAsState(
-            cid = cid,
-            // Using 0 as limit will skip insertion of new messages if we are loading a specific message when
-            // opening the MessageList screen. Prevents race condition where wrong messages might get loaded.
-            messageLimit = if (messageId != null) 0 else messageLimit,
-            coroutineScope = scope,
-        )
+    public val channelState: StateFlow<ChannelState?> = observeChannelState()
 
     /**
      * Gives us information about the online state of the device.
@@ -374,30 +368,19 @@ public class MessageListController(
      */
     init {
         observeMessagesListState()
+        processMessageId()
+    }
 
-        messageId?.takeUnless { it.isBlank() }?.let { messageId ->
-            scope.launch {
-                if (parentMessageId != null) {
-                    enterThreadSequential(parentMessageId)
-                }
-
-                listState
-                    .onCompletion {
-                        when {
-                            _mode.value is MessageMode.Normal -> {
-                                focusChannelMessage(messageId)
-                            }
-                            _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
-                                focusThreadMessage(
-                                    threadMessageId = messageId,
-                                    parentMessageId = parentMessageId,
-                                )
-                            }
-                        }
-                    }
-                    .first { it.messageItems.isNotEmpty() }
-            }
-        }
+    private fun observeChannelState(): StateFlow<ChannelState?> {
+        // Using 0 as limit will skip insertion of new messages if we are loading a specific message when
+        // opening the MessageList screen. Prevents race condition where wrong messages might get loaded.
+        val messageLimit = if (messageId != null) 0 else messageLimit
+        logger.d { "[observeChannelState] cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
+        return chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = messageLimit,
+            coroutineScope = scope,
+        )
     }
 
     /**
@@ -459,48 +442,114 @@ public class MessageListController(
             it.cause?.printStackTrace()
             showEmptyState()
         }.onEach { newState ->
-            if (_messageListState.value.messageItems.isEmpty() &&
-                !newState.endOfNewMessagesReached &&
-                messageId == null
-            ) {
-                return@onEach
-            }
-
-            val newLastMessage =
-                newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageItemState }?.let {
-                    when (it) {
-                        is MessageItemState -> it.message
-                        is SystemMessageItemState -> it.message
-                        else -> null
-                    }
-                }
-
-            val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
-            _messageListState.value = newState.copy(newMessageState = newMessageState)
-            if (newMessageState != null) lastLoadedMessage = newLastMessage
+            updateMessageList(newState)
         }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.endOfOlderMessages }.onEach {
-            _messageListState.value = _messageListState.value.copy(endOfOldMessagesReached = it)
+            updateEndOfOldMessagesReached(it)
         }.launchIn(scope)
 
         user.onEach {
-            _messageListState.value = _messageListState.value.copy(currentUser = it)
+            updateCurrentUser(it)
         }.launchIn(scope)
 
         // TODO separate unreads to message list unreads and thread unreads after
         //  https://github.com/GetStream/stream-chat-android/pull/4122 has been merged in
         unreadCount.onEach {
-            _messageListState.value = _messageListState.value.copy(unreadCount = it)
+            updateUnreadCount(it)
         }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.loadingOlderMessages }.onEach {
-            _messageListState.value = _messageListState.value.copy(isLoadingOlderMessages = it)
+            updateIsLoadingOlderMessages(it)
         }.launchIn(scope)
 
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
-            _messageListState.value = _messageListState.value.copy(isLoadingNewerMessages = it)
+            updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
+    }
+
+    private fun processMessageId() {
+        messageId?.takeUnless { it.isBlank() }?.let { messageId ->
+            logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
+            scope.launch {
+                if (parentMessageId != null) {
+                    enterThreadSequential(parentMessageId)
+                }
+
+                listState
+                    .onCompletion {
+                        logger.v { "[processMessageId] mode: ${_mode.value}" }
+                        when {
+                            _mode.value is MessageMode.Normal -> {
+                                focusChannelMessage(messageId)
+                            }
+                            _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
+                                focusThreadMessage(
+                                    threadMessageId = messageId,
+                                    parentMessageId = parentMessageId,
+                                )
+                            }
+                        }
+                    }
+                    .first { it.messageItems.isNotEmpty() }
+            }
+        }
+    }
+
+    private fun updateMessageList(newState: MessageListState) {
+        if (_messageListState.value.messageItems.isEmpty() &&
+            !newState.endOfNewMessagesReached &&
+            messageId == null
+        ) {
+            logger.w { "[updateMessageList] #messageList; rejected (N1)" }
+            return
+        }
+        val first = newState.messageItems.filterIsInstance<MessageItemState>().firstOrNull()?.stringify()
+        val last = newState.messageItems.filterIsInstance<MessageItemState>().lastOrNull()?.stringify()
+        logger.d { "[updateMessageList] #messageList; first: $first, last: $last" }
+
+        val newLastMessage =
+            newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageItemState }?.let {
+                when (it) {
+                    is MessageItemState -> it.message
+                    is SystemMessageItemState -> it.message
+                    else -> null
+                }
+            }
+
+        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+        setMessageListState(newState.copy(newMessageState = newMessageState))
+        if (newMessageState != null) lastLoadedMessage = newLastMessage
+    }
+
+    private fun updateEndOfOldMessagesReached(endOfOldMessagesReached: Boolean) {
+        logger.d { "[updateEndOfOldMessagesReached] #messageList; endOfOldMessagesReached: $endOfOldMessagesReached" }
+        setMessageListState(_messageListState.value.copy(endOfOldMessagesReached = endOfOldMessagesReached))
+    }
+
+    private fun updateCurrentUser(currentUser: User?) {
+        logger.d { "[updateCurrentUser] #messageList; currentUser.id: ${currentUser?.id}" }
+        setMessageListState(_messageListState.value.copy(currentUser = currentUser))
+    }
+
+    private fun updateUnreadCount(unreadCount: Int) {
+        logger.d { "[updateUnreadCount] #messageList; unreadCount: $unreadCount" }
+        setMessageListState(_messageListState.value.copy(unreadCount = unreadCount))
+    }
+
+    private fun updateIsLoadingOlderMessages(isLoadingOlderMessages: Boolean) {
+        logger.d { "[updateIsLoadingOlderMessages] #messageList; isLoadingOlderMessages: $isLoadingOlderMessages" }
+        setMessageListState(_messageListState.value.copy(isLoadingOlderMessages = isLoadingOlderMessages))
+    }
+
+    private fun updateIsLoadingNewerMessages(isLoadingNewerMessages: Boolean) {
+        logger.d { "[updateIsLoadingNewerMessages] #messageList; isLoadingNewerMessages: $isLoadingNewerMessages" }
+        setMessageListState(_messageListState.value.copy(isLoadingNewerMessages = isLoadingNewerMessages))
+    }
+
+    private fun setMessageListState(newState: MessageListState) {
+        logger.v { "[setMessageListState] #messageList; newState: ${newState.stringify()}" }
+        _messageListState.value = newState
     }
 
     /**
@@ -813,10 +862,15 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
+        logger.i { "[loadNewerMessages] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
         if (isInThread ||
             clientState.isOffline ||
             channelState.value?.endOfNewerMessages?.value == true
         ) {
+            logger.w {
+                "[loadNewerMessages] rejected; isInThread: $isInThread, isOffline: ${clientState.isOffline}, " +
+                    "endOfNewerMessages: ${channelState.value?.endOfNewerMessages?.value}"
+            }
             return
         }
 
@@ -900,6 +954,7 @@ public class MessageListController(
      * @param parentMessage The message with the thread we want to observe.
      */
     private suspend fun enterThreadSequential(parentMessage: Message) {
+        logger.v { "[enterThreadSequential] parentMessage(id: ${parentMessage.id}, text: ${parentMessage.text})" }
         val threadState = chatClient.awaitRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
         val channelState = channelState.value ?: return
 
@@ -920,6 +975,7 @@ public class MessageListController(
      * @param parentMessageId The ID of the message we are trying to fetch.
      */
     private suspend fun enterThreadSequential(parentMessageId: String) {
+        logger.v { "[enterThreadSequential] parentMessageId: $parentMessageId" }
         val result = chatClient.getMessageUsingCache(parentMessageId).await()
 
         when (result) {
@@ -950,6 +1006,7 @@ public class MessageListController(
      * @param onResult Handler that notifies the result of the load action.
      */
     public fun loadMessageById(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
+        logger.i { "[loadMessageById] messageId: $messageId" }
         chatClient.loadMessageById(cid, messageId).enqueue { result ->
             onResult(result)
             if (result is Result.Failure) {
@@ -989,6 +1046,7 @@ public class MessageListController(
         messageId: String,
         parentMessageId: String?,
     ) {
+        logger.v { "[focusMessage] messageId: $messageId, parentMessageId: $parentMessageId" }
         if (parentMessageId == null) {
             focusChannelMessage(messageId)
         } else {
@@ -1005,6 +1063,7 @@ public class MessageListController(
      * @param messageId The ID of the message we want to focus
      */
     private fun focusChannelMessage(messageId: String) {
+        logger.v { "[focusChannelMessage] messageId: $messageId" }
         val message = getMessageFromListStateById(messageId)
 
         if (message != null) {
@@ -1073,7 +1132,7 @@ public class MessageListController(
                         it
                     }
                 }
-                _messageListState.value = _messageListState.value.copy(messageItems = messages)
+                setMessageListState(_messageListState.value.copy(messageItems = messages))
 
                 if (focusedMessage.value?.id == messageId) {
                     focusedMessage.value = null
@@ -1148,7 +1207,7 @@ public class MessageListController(
         if (isInThread) {
             _threadListState.value = _threadListState.value.copy(selectedMessageState = selectedMessageState)
         } else {
-            _messageListState.value = _messageListState.value.copy(selectedMessageState = selectedMessageState)
+            setMessageListState(_messageListState.value.copy(selectedMessageState = selectedMessageState))
         }
     }
 
@@ -1212,7 +1271,7 @@ public class MessageListController(
      */
     public fun removeOverlay() {
         _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
-        _messageListState.value = _messageListState.value.copy(selectedMessageState = null)
+        setMessageListState(_messageListState.value.copy(selectedMessageState = null))
     }
 
     /**
@@ -1454,7 +1513,8 @@ public class MessageListController(
      * Clears the messages list and shows a clear list state.
      */
     private fun showEmptyState() {
-        _messageListState.value = _messageListState.value.copy(isLoading = false, messageItems = emptyList())
+        logger.d { "[showEmptyState] no args" }
+        setMessageListState(_messageListState.value.copy(isLoading = false, messageItems = emptyList()))
     }
 
     /**
@@ -1476,9 +1536,10 @@ public class MessageListController(
      * Clears the new messages state and drops the unread count to 0 after the user scrolls to the newest message.
      */
     public fun clearNewMessageState() {
+        logger.d { "[clearNewMessageState] no args" }
         if (!messagesState.endOfNewMessagesReached) return
         _threadListState.value = _threadListState.value.copy(newMessageState = null, unreadCount = 0)
-        _messageListState.value = _messageListState.value.copy(newMessageState = null, unreadCount = 0)
+        setMessageListState(_messageListState.value.copy(newMessageState = null, unreadCount = 0))
     }
 
     /**
@@ -1602,6 +1663,7 @@ public class MessageListController(
      * @param attachmentToBeDeleted The [Attachment] to be deleted from the message.
      */
     public fun removeAttachment(messageId: String, attachmentToBeDeleted: Attachment) {
+        logger.d { "[removeAttachment] messageId: $messageId, attachmentToBeDeleted: $attachmentToBeDeleted" }
         chatClient.loadMessageById(
             cid,
             messageId,
@@ -1792,5 +1854,16 @@ public class MessageListController(
          * Time after which the focus from message will be removed
          */
         internal const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
+    }
+}
+
+private fun MessageListItemState.stringify(): String {
+    return when (this) {
+        is DateSeparatorItemState -> "DateSeparator"
+        is EmptyThreadPlaceholderItemState -> "EmptyThreadPlaceholder"
+        is MessageItemState -> message.text
+        is SystemMessageItemState -> message.text
+        is ThreadDateSeparatorItemState -> "ThreadDateSeparator"
+        is TypingItemState -> "Typing"
     }
 }
