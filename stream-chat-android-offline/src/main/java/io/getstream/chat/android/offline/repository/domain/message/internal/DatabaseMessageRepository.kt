@@ -23,8 +23,10 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.extensions.awaitWithMutex
+import io.getstream.chat.android.offline.extensions.launchWithMutex
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import java.util.Date
 
 internal class DatabaseMessageRepository(
@@ -40,6 +42,7 @@ internal class DatabaseMessageRepository(
 
     private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
     private val replyMessageCache: LruCache<String, Message> = LruCache(cacheSize)
+    private val dbMutex = Mutex()
 
     /**
      * Select messages for a channel in a desired page.
@@ -118,7 +121,7 @@ internal class DatabaseMessageRepository(
 
         replyMessages.forEach { replyMessageCache.put(it.id, it) }
         validMessages.forEach { messageCache.put(it.id, it) }
-        scope.launch {
+        scope.launchWithMutex(dbMutex) {
             replyMessagesToInsert.takeUnless { it.isEmpty() }
                 ?.let { replyMessageDao.insert(it) }
             messagesToInsert.takeUnless { it.isEmpty() }
@@ -145,7 +148,7 @@ internal class DatabaseMessageRepository(
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
         messageCache.evictAll()
         replyMessageCache.evictAll()
-        messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
+        scope.launchWithMutex(dbMutex) { messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore) }
     }
 
     /**
@@ -155,7 +158,7 @@ internal class DatabaseMessageRepository(
      */
     override suspend fun deleteChannelMessage(message: Message) {
         messageCache.remove(message.id)
-        messageDao.deleteMessage(message.cid, message.id)
+        scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
     }
 
     /**
@@ -179,8 +182,10 @@ internal class DatabaseMessageRepository(
     override suspend fun clear() {
         messageCache.evictAll()
         replyMessageCache.evictAll()
-        messageDao.deleteAll()
-        replyMessageDao.deleteAll()
+        scope.awaitWithMutex(dbMutex) {
+            messageDao.deleteAll()
+            replyMessageDao.deleteAll()
+        }
     }
 
     private suspend fun selectMessagesEntitiesForChannel(

@@ -24,9 +24,11 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.extensions.awaitWithMutex
+import io.getstream.chat.android.offline.extensions.launchWithMutex
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import java.util.Date
 
 /**
@@ -43,6 +45,7 @@ internal class DatabaseChannelRepository(
 
     private val logger by taggedLogger("Chat:ChannelRepository")
     private val channelCache = LruCache<String, Channel>(cacheSize)
+    private val dbMutex = Mutex()
 
     override suspend fun insertChannel(channel: Channel) {
         insertChannels(listOf(channel))
@@ -61,7 +64,7 @@ internal class DatabaseChannelRepository(
             .filter { channelCache[it.cid] != it }
             .map { it.toEntity() }
         cacheChannel(updatedChannels)
-        scope.launch {
+        scope.launchWithMutex(dbMutex) {
             logger.v {
                 "[insertChannels] inserting ${channelToInsert.size} entities on DB, " +
                     "updated ${updatedChannels.size} on cache"
@@ -84,7 +87,7 @@ internal class DatabaseChannelRepository(
     override suspend fun deleteChannel(cid: String) {
         logger.v { "[deleteChannel] cid: $cid" }
         channelCache.remove(cid)
-        channelDao.delete(cid)
+        scope.launchWithMutex(dbMutex) { channelDao.delete(cid) }
     }
 
     /**
@@ -158,11 +161,11 @@ internal class DatabaseChannelRepository(
                     cachedChannel.copy(
                         hidden = hidden,
                         hiddenMessagesBefore = hideMessagesBefore,
-                    )
-                )
+                    ),
+                ),
             )
         }
-        channelDao.setHidden(cid, hidden, hideMessagesBefore)
+        scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden, hideMessagesBefore) }
     }
 
     /**
@@ -175,7 +178,7 @@ internal class DatabaseChannelRepository(
         channelCache[cid]?.let { cachedChannel ->
             cacheChannel(listOf(cachedChannel.copy(hidden = hidden)))
         }
-        channelDao.setHidden(cid, hidden)
+        scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden) }
     }
 
     /**
@@ -240,6 +243,6 @@ internal class DatabaseChannelRepository(
         date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
 
     override suspend fun clear() {
-        channelDao.deleteAll()
+        scope.awaitWithMutex(dbMutex) { channelDao.deleteAll() }
     }
 }
