@@ -23,10 +23,10 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.extensions.awaitWithMutex
 import io.getstream.chat.android.offline.extensions.launchWithMutex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 internal class DatabaseMessageRepository(
@@ -182,7 +182,7 @@ internal class DatabaseMessageRepository(
     override suspend fun clear() {
         messageCache.evictAll()
         replyMessageCache.evictAll()
-        scope.awaitWithMutex(dbMutex) {
+        dbMutex.withLock {
             messageDao.deleteAll()
             replyMessageDao.deleteAll()
         }
