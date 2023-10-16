@@ -38,12 +38,12 @@ internal class DatabaseUserRepository(
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
     private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
-    private val dbMutext = Mutex()
+    private val dbMutex = Mutex()
 
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
     override suspend fun clear() {
-        scope.awaitWithMutex(dbMutext) {
+        scope.awaitWithMutex(dbMutex) {
             userDao.deleteAll()
         }
     }
@@ -59,7 +59,7 @@ internal class DatabaseUserRepository(
             .filter { it != userCache[it.id] }
             .map { it.toEntity() }
         cacheUsers(users)
-        scope.launchWithMutex(dbMutext) {
+        scope.launchWithMutex(dbMutex) {
             logger.v { "[insertUsers] inserting ${usersToInsert.size} entities on DB, updated ${users.size} on cache" }
             usersToInsert
                 .takeUnless { it.isEmpty() }
@@ -83,7 +83,7 @@ internal class DatabaseUserRepository(
      */
     override suspend fun insertCurrentUser(user: User) {
         insertUser(user)
-        scope.launchWithMutex(dbMutext) {
+        scope.launchWithMutex(dbMutex) {
             val userEntity = user.toEntity().copy(id = ME_ID)
             userDao.insert(userEntity)
         }
