@@ -24,11 +24,11 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.extensions.awaitWithMutex
 import io.getstream.chat.android.offline.extensions.launchWithMutex
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 /**
@@ -144,7 +144,7 @@ internal class DatabaseChannelRepository(
         channelCache[cid]?.let { cachedChannel ->
             cacheChannel(listOf(cachedChannel.copy(deletedAt = deletedAt)))
         }
-        channelDao.setDeletedAt(cid, deletedAt)
+        scope.launchWithMutex(dbMutex) { channelDao.setDeletedAt(cid, deletedAt) }
     }
 
     /**
@@ -243,6 +243,6 @@ internal class DatabaseChannelRepository(
         date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
 
     override suspend fun clear() {
-        scope.awaitWithMutex(dbMutex) { channelDao.deleteAll() }
+        dbMutex.withLock { channelDao.deleteAll() }
     }
 }

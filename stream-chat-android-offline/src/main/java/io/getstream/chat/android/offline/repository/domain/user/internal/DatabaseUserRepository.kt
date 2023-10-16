@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.offline.extensions.awaitWithMutex
 import io.getstream.chat.android.offline.extensions.launchWithMutex
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
@@ -27,6 +26,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 internal class DatabaseUserRepository(
     private val scope: CoroutineScope,
@@ -43,7 +43,7 @@ internal class DatabaseUserRepository(
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
     override suspend fun clear() {
-        scope.awaitWithMutex(dbMutex) {
+        dbMutex.withLock {
             userDao.deleteAll()
         }
     }

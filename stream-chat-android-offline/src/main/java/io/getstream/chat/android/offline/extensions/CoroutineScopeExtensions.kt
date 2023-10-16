@@ -24,7 +24,3 @@ import kotlinx.coroutines.sync.withLock
 internal suspend fun CoroutineScope.launchWithMutex(mutex: Mutex, block: suspend () -> Unit) = launch {
     mutex.withLock { block() }
 }
-
-internal suspend fun CoroutineScope.awaitWithMutex(mutex: Mutex, block: suspend () -> Unit) {
-    mutex.withLock { block() }
-}
