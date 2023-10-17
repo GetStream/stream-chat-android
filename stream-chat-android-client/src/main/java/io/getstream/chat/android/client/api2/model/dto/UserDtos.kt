@@ -35,6 +35,7 @@ internal data class UpstreamUserDto(
     val name: String,
     val image: String,
     val invisible: Boolean,
+    val language: String,
     val role: String,
     val devices: List<DeviceDto>,
     val teams: List<String>,
