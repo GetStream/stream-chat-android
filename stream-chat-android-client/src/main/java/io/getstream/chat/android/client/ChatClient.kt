@@ -407,6 +407,7 @@ internal constructor(
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
                 api.releseConnection()
+                mutableClientState.setConnectionState(ConnectionState.Offline)
                 when (event.disconnectCause) {
                     is DisconnectCause.ConnectionReleased,
                     is DisconnectCause.NetworkNotAvailable,
@@ -416,10 +417,9 @@ internal constructor(
                     }
 
                     is DisconnectCause.UnrecoverableError -> {
-                        userStateService.onSocketUnrecoverableError()
+                        disconnectSuspend(true)
                     }
                 }
-                mutableClientState.setConnectionState(ConnectionState.Offline)
             }
 
             else -> Unit // Ignore other events

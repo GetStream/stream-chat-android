@@ -58,6 +58,11 @@ internal class FakeChatSocket private constructor(
 ) {
     private val streamDateFormatter = StreamDateFormatter()
     private val webSocketListener: WebSocketListener by lazy { getWebSocketListener() }
+    private val _socketFactory: SocketFactory
+
+    init {
+        _socketFactory = socketFactory
+    }
 
     fun mockEventReceived(event: ChatEvent) {
         val randomString = randomString()
@@ -70,6 +75,10 @@ internal class FakeChatSocket private constructor(
         val rawCreatedAt = streamDateFormatter.format(createdAt)
         connectUser(user, false)
         mockEventReceived(ConnectedEvent(EventType.HEALTH_CHECK, createdAt, rawCreatedAt, user, connectionId))
+    }
+
+    fun verifySocketFactory(block: (SocketFactory) -> Unit) {
+        block(_socketFactory)
     }
 
     companion object {
