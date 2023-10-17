@@ -50,6 +50,7 @@ public data class User(
     val name: String = "",
     val image: String = "",
     val invisible: Boolean = false,
+    val language: String = "",
     val banned: Boolean = false,
     val devices: List<Device> = listOf(),
     val online: Boolean = false,
@@ -72,6 +73,7 @@ public data class User(
             "name" -> name
             "image" -> image
             "invisible" -> invisible
+            "language" -> language
             "banned" -> banned
             "online" -> online
             "totalUnreadCount" -> totalUnreadCount
@@ -94,6 +96,7 @@ public data class User(
         private var name: String = ""
         private var image: String = ""
         private var invisible: Boolean = false
+        private var language: String = ""
         private var banned: Boolean = false
         private var devices: List<Device> = listOf()
         private var online: Boolean = false
@@ -114,6 +117,7 @@ public data class User(
             name = user.name
             image = user.image
             invisible = user.invisible
+            language = user.language
             banned = user.banned
             devices = user.devices
             online = user.online
@@ -133,6 +137,7 @@ public data class User(
         public fun withName(name: String): Builder = apply { this.name = name }
         public fun withImage(image: String): Builder = apply { this.image = image }
         public fun withInvisible(invisible: Boolean): Builder = apply { this.invisible = invisible }
+        public fun withLanguage(language: String): Builder = apply { this.language = language }
         public fun withBanned(banned: Boolean): Builder = apply { this.banned = banned }
         public fun withDevices(devices: List<Device>): Builder = apply { this.devices = devices }
         public fun withOnline(online: Boolean): Builder = apply { this.online = online }
@@ -158,6 +163,7 @@ public data class User(
                 name = name,
                 image = image,
                 invisible = invisible,
+                language = language,
                 banned = banned,
                 devices = devices,
                 online = online,

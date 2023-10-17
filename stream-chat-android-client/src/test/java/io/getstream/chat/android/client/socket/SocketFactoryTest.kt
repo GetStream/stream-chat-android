@@ -69,7 +69,7 @@ internal class SocketFactoryTest {
         @JvmStatic
         @Suppress("MaxLineLength")
         fun arguments() = listOf(
-            randomUser(image = randomString(), name = randomString()).let {
+            randomUser(image = randomString(), name = randomString(), language = randomString()).let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
                     "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt",
@@ -108,6 +108,7 @@ internal class SocketFactoryTest {
                     "banned" to user.banned,
                     "invisible" to user.invisible,
                     "teams" to user.teams,
+                    "language" to user.language,
                     "image" to user.image,
                     "name" to user.name,
                 ) + user.extraData,

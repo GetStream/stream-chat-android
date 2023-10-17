@@ -3,5 +3,6 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
+    <ID>TooManyFunctions:User.kt$User$Builder</ID>
   </CurrentIssues>
 </SmellBaseline>

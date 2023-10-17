@@ -191,6 +191,7 @@ internal object UserDtoTestData {
             "name": "username",
             "image": "image",
             "invisible": false,
+            "language": "language",
             "role": "owner",
             "devices": [],
             "teams": []
@@ -201,6 +202,7 @@ internal object UserDtoTestData {
         role = "owner",
         name = "username",
         image = "image",
+        language = "language",
         invisible = false,
         banned = true,
         devices = emptyList(),
@@ -216,6 +218,7 @@ internal object UserDtoTestData {
             "name": "username",
             "image": "image",
             "invisible": false,
+            "language": "language",
             "role": "owner",
             "devices": [
              {
@@ -236,6 +239,7 @@ internal object UserDtoTestData {
         teams = listOf("team1", "team2"),
         name = "username",
         image = "image",
+        language = "language",
         extraData = emptyMap(),
     )
 }

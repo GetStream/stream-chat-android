@@ -31,6 +31,7 @@ import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.transformWhile
 import kotlinx.coroutines.launch
+import java.util.Locale
 import io.getstream.chat.android.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {
@@ -72,6 +73,7 @@ class UserLoginViewModel : ViewModel() {
             id = user.id,
             image = user.image,
             name = user.name,
+            language = Locale.getDefault().language,
         )
 
         ChatClient.instance().run {
