@@ -38,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -148,9 +149,11 @@ public fun ChannelsScreen(
                             .fillMaxWidth(),
                         query = searchQuery,
                         onSearchStarted = {},
-                        onValueChange = {
-                            searchQuery = it
-                            listViewModel.setSearchQuery(it)
+                        onValueChange = remember(listViewModel) {
+                            {
+                                searchQuery = it
+                                listViewModel.setSearchQuery(it)
+                            }
                         },
                     )
                 }
@@ -159,8 +162,10 @@ public fun ChannelsScreen(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = onItemClick,
-                    onChannelLongClick = {
-                        listViewModel.selectChannel(it)
+                    onChannelLongClick = remember(listViewModel) {
+                        {
+                            listViewModel.selectChannel(it)
+                        }
                     },
                 )
             }
@@ -188,15 +193,18 @@ public fun ChannelsScreen(
                 selectedChannel = channel,
                 currentUser = user,
                 isMuted = listViewModel.isChannelMuted(channel.cid),
-                onChannelOptionClick = { action ->
-                    when (action) {
-                        is ViewInfo -> onViewChannelInfoAction(action.channel)
-                        is MuteChannel -> listViewModel.muteChannel(action.channel)
-                        is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
-                        else -> listViewModel.performChannelAction(action)
+                onChannelOptionClick = remember(listViewModel) {
+                    {
+                            action ->
+                        when (action) {
+                            is ViewInfo -> onViewChannelInfoAction(action.channel)
+                            is MuteChannel -> listViewModel.muteChannel(action.channel)
+                            is UnmuteChannel -> listViewModel.unmuteChannel(action.channel)
+                            else -> listViewModel.performChannelAction(action)
+                        }
                     }
                 },
-                onDismiss = { listViewModel.dismissChannelAction() },
+                onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
             )
         }
 
@@ -212,8 +220,8 @@ public fun ChannelsScreen(
                     id = R.string.stream_compose_selected_channel_menu_leave_group_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user),
                 ),
-                onPositiveAction = { listViewModel.leaveGroup(activeAction.channel) },
-                onDismiss = { listViewModel.dismissChannelAction() },
+                onPositiveAction = remember(listViewModel) { { listViewModel.leaveGroup(activeAction.channel) } },
+                onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
             )
         } else if (activeAction is DeleteConversation) {
             SimpleDialog(
@@ -225,8 +233,9 @@ public fun ChannelsScreen(
                     id = R.string.stream_compose_selected_channel_menu_delete_conversation_confirmation_message,
                     ChatTheme.channelNameFormatter.formatChannelName(activeAction.channel, user),
                 ),
-                onPositiveAction = { listViewModel.deleteConversation(activeAction.channel) },
-                onDismiss = { listViewModel.dismissChannelAction() },
+                onPositiveAction =
+                remember(listViewModel) { { listViewModel.deleteConversation(activeAction.channel) } },
+                onDismiss = remember(listViewModel) { { listViewModel.dismissChannelAction() } },
             )
         }
     }

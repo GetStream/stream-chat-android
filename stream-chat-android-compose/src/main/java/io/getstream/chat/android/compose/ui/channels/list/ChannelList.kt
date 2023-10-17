@@ -28,6 +28,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -87,9 +88,9 @@ public fun ChannelList(
         ),
     ),
     lazyListState: LazyListState = rememberLazyListState(),
-    onLastItemReached: () -> Unit = { viewModel.loadMore() },
+    onLastItemReached: () -> Unit = remember(viewModel) { { viewModel.loadMore() } },
     onChannelClick: (Channel) -> Unit = {},
-    onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
+    onChannelLongClick: (Channel) -> Unit = remember(viewModel) { { viewModel.selectChannel(it) } },
     loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyContent(modifier) },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->

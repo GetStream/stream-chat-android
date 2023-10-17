@@ -333,12 +333,16 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                     R.string.stream_compose_media_gallery_share_large_file_prompt_message,
                                     (promptedAttachment.fileSize.toFloat() / (1024 * 1024)),
                                 ),
-                                onPositiveAction = {
-                                    shareAttachment(promptedAttachment)
-                                    mediaGalleryPreviewViewModel.promptedAttachment = null
+                                onPositiveAction = remember(mediaGalleryPreviewViewModel) {
+                                    {
+                                        shareAttachment(promptedAttachment)
+                                        mediaGalleryPreviewViewModel.promptedAttachment = null
+                                    }
                                 },
-                                onDismiss = {
-                                    mediaGalleryPreviewViewModel.promptedAttachment = null
+                                onDismiss = remember(mediaGalleryPreviewViewModel) {
+                                    {
+                                        mediaGalleryPreviewViewModel.promptedAttachment = null
+                                    }
                                 },
                             )
                         }
@@ -483,7 +487,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(bounded = false),
-                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = true) },
+                    onClick = remember(mediaGalleryPreviewViewModel) {
+                        {
+                            mediaGalleryPreviewViewModel.toggleMediaOptions(
+                                isShowingOptions = true,
+                            )
+                        }
+                    },
                     enabled = message.id.isNotEmpty(),
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_menu_vertical),
@@ -515,7 +525,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false) },
+                    onClick = remember(mediaGalleryPreviewViewModel) {
+                        {
+                            mediaGalleryPreviewViewModel.toggleMediaOptions(
+                                isShowingOptions = false,
+                            )
+                        }
+                    },
                 ),
         ) {
             Surface(
@@ -575,17 +591,19 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(),
-                    onClick = {
-                        mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
+                    onClick = remember(mediaGalleryPreviewViewModel) {
+                        {
+                            mediaGalleryPreviewViewModel.toggleMediaOptions(isShowingOptions = false)
 
-                        handleMediaAction(
-                            context = context,
-                            mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
-                            currentPage = pagerState.currentPage,
-                            writePermissionState = writePermissionState,
-                            downloadPayload = downloadPayload,
-                            attachments = attachments,
-                        )
+                            handleMediaAction(
+                                context = context,
+                                mediaGalleryPreviewAction = mediaGalleryPreviewOption.action,
+                                currentPage = pagerState.currentPage,
+                                writePermissionState = writePermissionState,
+                                downloadPayload = downloadPayload,
+                                attachments = attachments,
+                            )
+                        }
                     },
                     enabled = mediaGalleryPreviewOption.isEnabled,
                 ),
@@ -1087,29 +1105,36 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
             ) {
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterStart),
-                    onClick = {
-                        val attachment = attachments[pagerState.currentPage]
+                    onClick = remember(mediaGalleryPreviewViewModel) {
+                        {
+                            val attachment = attachments[pagerState.currentPage]
 
-                        when {
-                            mediaGalleryPreviewViewModel.isSharingInProgress -> {
-                                fileSharingJob?.cancel()
-                                mediaGalleryPreviewViewModel.isSharingInProgress = false
-                            }
-                            attachment.fileSize >= MaxUnpromptedFileSize -> {
-                                val result = StreamFileUtil.getFileFromCache(
-                                    context = applicationContext,
-                                    attachment = attachment,
-                                )
-
-                                when (result) {
-                                    is Result.Success -> shareAttachment(
-                                        mediaUri = result.value,
-                                        attachmentType = attachment.type,
-                                    )
-                                    is Result.Failure -> mediaGalleryPreviewViewModel.promptedAttachment = attachment
+                            when {
+                                mediaGalleryPreviewViewModel.isSharingInProgress -> {
+                                    fileSharingJob?.cancel()
+                                    mediaGalleryPreviewViewModel.isSharingInProgress = false
                                 }
+
+                                attachment.fileSize >= MaxUnpromptedFileSize -> {
+                                    val result = StreamFileUtil.getFileFromCache(
+                                        context = applicationContext,
+                                        attachment = attachment,
+                                    )
+
+                                    when (result) {
+                                        is Result.Success -> shareAttachment(
+                                            mediaUri = result.value,
+                                            attachmentType = attachment.type,
+                                        )
+
+                                        is Result.Failure ->
+                                            mediaGalleryPreviewViewModel.promptedAttachment =
+                                                attachment
+                                    }
+                                }
+
+                                else -> shareAttachment(attachment)
                             }
-                            else -> shareAttachment(attachment)
                         }
                     },
                     enabled = mediaGalleryPreviewViewModel.connectionState is ConnectionState.Connected,
@@ -1164,7 +1189,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 IconButton(
                     modifier = Modifier.align(Alignment.CenterEnd),
-                    onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = true) },
+                    onClick = remember(mediaGalleryPreviewViewModel) {
+                        {
+                            mediaGalleryPreviewViewModel.toggleGallery(
+                                isShowingGallery = true,
+                            )
+                        }
+                    },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_gallery),
@@ -1390,7 +1421,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 .clickable(
                     indication = null,
                     interactionSource = remember { MutableInteractionSource() },
-                    onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false) },
+                    onClick = remember(mediaGalleryPreviewViewModel) {
+                        {
+                            mediaGalleryPreviewViewModel.toggleGallery(
+                                isShowingGallery = false,
+                            )
+                        }
+                    },
                 ),
         ) {
             Surface(
@@ -1436,7 +1473,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     .clickable(
                         indication = rememberRipple(),
                         interactionSource = remember { MutableInteractionSource() },
-                        onClick = { mediaGalleryPreviewViewModel.toggleGallery(isShowingGallery = false) },
+                        onClick = remember(mediaGalleryPreviewViewModel) {
+                            {
+                                mediaGalleryPreviewViewModel.toggleGallery(
+                                    isShowingGallery = false,
+                                )
+                            }
+                        },
                     ),
                 painter = painterResource(id = R.drawable.stream_compose_ic_close),
                 contentDescription = stringResource(id = R.string.stream_compose_cancel),
