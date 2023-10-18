@@ -76,6 +76,7 @@ internal open class ChatSocket(
         var socketListenerJob: Job? = null
 
         suspend fun connectUser(connectionConf: SocketFactory.ConnectionConf) {
+            logger.d { "[connectUser] connectionConf: $connectionConf" }
             userScope.launch { startObservers() }
             this.connectionConf = connectionConf
             socketListenerJob?.cancel()
@@ -95,6 +96,7 @@ internal open class ChatSocket(
         }
 
         suspend fun reconnect(connectionConf: SocketFactory.ConnectionConf) {
+            logger.d { "[reconnect] connectionConf: $connectionConf" }
             connectUser(connectionConf.asReconnectionConf())
         }
 

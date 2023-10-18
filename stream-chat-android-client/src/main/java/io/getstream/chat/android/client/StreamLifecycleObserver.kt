@@ -59,7 +59,7 @@ internal class StreamLifecycleObserver(
     }
 
     override fun onResume(owner: LifecycleOwner) {
-        logger.d { "[onResume] owner: $owner" }
+        logger.d { "[onResume] owner: $owner, recurringResumeEvent: $recurringResumeEvent" }
         // ignore event when we just started observing the lifecycle
         if (recurringResumeEvent) {
             scope.launch {

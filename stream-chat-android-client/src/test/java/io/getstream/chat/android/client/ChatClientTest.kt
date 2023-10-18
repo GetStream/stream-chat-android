@@ -16,12 +16,16 @@
 
 package io.getstream.chat.android.client
 
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
+import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
+import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.events.UnknownEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
@@ -36,6 +40,9 @@ import io.getstream.chat.android.client.socket.FakeChatSocket
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCall
@@ -43,6 +50,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
@@ -51,6 +59,8 @@ import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.util.Date
 
@@ -74,6 +84,7 @@ internal class ChatClientTest {
         val eventF = UnknownEvent("f", createdAt, rawCreatedAt, null, emptyMap<Any, Any>())
     }
 
+    lateinit var lifecycleOwner: TestLifecycleOwner
     lateinit var api: ChatApi
     lateinit var client: ChatClient
     lateinit var fakeChatSocket: FakeChatSocket
@@ -88,7 +99,6 @@ internal class ChatClientTest {
 
     @BeforeEach
     fun setUp() {
-        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         val apiKey = "api-key"
         val wssUrl = "socket.url"
         val config = ChatClientConfig(
@@ -103,6 +113,7 @@ internal class ChatClientTest {
             NotificationConfig(),
         )
         whenever(tokenUtils.getUserId(token)) doReturn userId
+        lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutines.dispatcher)
         api = mock()
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutines.scope)
@@ -317,5 +328,73 @@ internal class ChatClientTest {
                 ),
             ),
         )
+    }
+
+    @Test
+    fun `Disconnect on unrecoverable error`() = runTest {
+        /* Given */
+        lifecycleOwner.currentState = Lifecycle.State.RESUMED
+
+        /* When */
+        fakeChatSocket.mockEventReceived(
+            DisconnectedEvent(
+                EventType.CONNECTION_DISCONNECTED,
+                Date(),
+                rawCreatedAt = null,
+                disconnectCause = DisconnectCause.UnrecoverableError(
+                    Error.NetworkError(
+                        statusCode = -1,
+                        serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+                        message = ChatErrorCode.VALIDATION_ERROR.description,
+                    ),
+                ),
+            ),
+        )
+        delay(10L)
+        lifecycleOwner.currentState = Lifecycle.State.STARTED
+        delay(10L)
+        lifecycleOwner.currentState = Lifecycle.State.CREATED
+        delay(1000L)
+        lifecycleOwner.currentState = Lifecycle.State.RESUMED
+
+        /* Then */
+        fakeChatSocket.verifySocketFactory {
+            verify(it, times(1)).createSocket(any())
+        }
+        client.clientState.connectionState.value shouldBeEqualTo ConnectionState.Offline
+    }
+
+    @Test
+    fun `Reconnect fails after unrecoverable error`() = runTest {
+        /* Given */
+
+        /* When */
+        fakeChatSocket.mockEventReceived(
+            DisconnectedEvent(
+                EventType.CONNECTION_DISCONNECTED,
+                Date(),
+                rawCreatedAt = null,
+                disconnectCause = DisconnectCause.UnrecoverableError(
+                    Error.NetworkError(
+                        statusCode = -1,
+                        serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+                        message = ChatErrorCode.VALIDATION_ERROR.description,
+                    ),
+                ),
+            ),
+        )
+        delay(10L)
+        client.disconnectSocket().await()
+        delay(1000L)
+        val result = client.reconnectSocket().await()
+
+        /* Then */
+        result shouldBeEqualTo Result.Failure(
+            value = Error.GenericError(message = "Invalid user state NotSet without user being set!"),
+        )
+        client.getCurrentUser() shouldBeEqualTo null
+        client.clientState.user.value shouldBeEqualTo null
+        client.clientState.connectionState.value shouldBeEqualTo ConnectionState.Offline
+        client.clientState.initializationState.value shouldBeEqualTo InitializationState.NOT_INITIALIZED
     }
 }

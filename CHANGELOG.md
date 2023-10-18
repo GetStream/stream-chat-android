@@ -22,6 +22,7 @@
 - Supported user's `language` property in `ChatClient.connectUser`. [#5003](https://github.com/GetStream/stream-chat-android/pull/5003)
 
 ### ⚠️ Changed
+- Disconnect user on `UnrecoverableError`. [#5000](https://github.com/GetStream/stream-chat-android/pull/5004)
 
 ### ❌ Removed
 
