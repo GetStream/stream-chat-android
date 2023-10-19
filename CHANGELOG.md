@@ -12,13 +12,10 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix background service used to sync data when a Push Notification is received on Android 14. [#5001](https://github.com/GetStream/stream-chat-android/pull/5001)
 
 ### ⬆️ Improved
-- Create Throttling mechanism for `MarkRead` Events [#4974](https://github.com/GetStream/stream-chat-android/pull/4974)
 
 ### ✅ Added
-- Added `Message.deletedReplyCount` property. [#4960](https://github.com/GetStream/stream-chat-android/pull/4960)
 
 ### ⚠️ Changed
 
@@ -122,6 +119,21 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# October 19th, 2023 - 5.17.14
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix background service used to sync data when a Push Notification is received on Android 14. [#5001](https://github.com/GetStream/stream-chat-android/pull/5001)
+
+### ⬆️ Improved
+- Create Throttling mechanism for `MarkRead` Events [#4974](https://github.com/GetStream/stream-chat-android/pull/4974)
+
+### ✅ Added
+- Added `Message.deletedReplyCount` property. [#4960](https://github.com/GetStream/stream-chat-android/pull/4960)
+
+## stream-chat-android-markdown-transformer
+### ❌ Removed
+## stream-chat-android-pushprovider-firebase
 
 # September 12th, 2023 - 5.17.13
 ## stream-chat-android-client
