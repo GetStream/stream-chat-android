@@ -120,7 +120,9 @@ private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
 private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
     error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
-
+private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSeparatorTheme> {
+    error("No MessageDateSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -152,6 +154,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * applies only to images hosted on Stream's CDN which contain the original height (oh) and width (ow) query parameters.
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
+ * @param messageDateSeparatorTheme Theme of the message date separator.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param content The content shown within the theme wrapper.
  */
@@ -190,6 +193,10 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
+    messageDateSeparatorTheme: MessageDateSeparatorTheme = MessageDateSeparatorTheme.defaultTheme(
+        typography = typography,
+        colors = colors,
+    ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
@@ -212,6 +219,7 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
+        LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -379,6 +387,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalOtherMessageTheme.current
+
+    /**
+     * Retrieves the current [MessageDateSeparatorTheme] at the call site's position in the hierarchy.
+     */
+    public val messageDateSeparatorTheme: MessageDateSeparatorTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageDateSeparatorTheme.current
 
     /**
      * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.
