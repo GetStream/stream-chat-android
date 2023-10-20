@@ -34,10 +34,10 @@ jobs:
           name: stream-chat-android-ui-components-sample-release
           path: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
         with:
           appId: ${{secrets.FIREBASE_UI_SAMPLE_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk
 
@@ -66,9 +66,9 @@ jobs:
           name: stream-chat-android-compose-sample-release
           path: stream-chat-android-compose-sample/build/outputs/apk/release/
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
         with:
           appId: ${{secrets.FIREBASE_COMPOSE_SAMPLE_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-compose-sample/build/outputs/apk/release/stream-chat-android-compose-sample-release.apk
