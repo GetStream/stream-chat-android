@@ -129,7 +129,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
                     DateUtils.DAY_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,
                 ).toString(),
-                color = ChatTheme.colors.barsBackground,
+                color = ChatTheme.colors.textHighEmphasisInverse,
                 style = ChatTheme.typography.body,
             )
         }
