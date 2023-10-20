@@ -118,9 +118,10 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
         Surface(
             modifier = Modifier
                 .padding(vertical = 8.dp),
-            color = ChatTheme.colors.overlayDark,
+            color = ChatTheme.messageDateSeparatorTheme.backgroundColor,
             shape = RoundedCornerShape(16.dp),
         ) {
+
             Text(
                 modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
                 text = DateUtils.getRelativeTimeSpanString(
@@ -129,8 +130,7 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
                     DateUtils.DAY_IN_MILLIS,
                     DateUtils.FORMAT_ABBREV_RELATIVE,
                 ).toString(),
-                color = ChatTheme.colors.textHighEmphasisInverse,
-                style = ChatTheme.typography.body,
+                style = ChatTheme.messageDateSeparatorTheme.textStyle,
             )
         }
     }
