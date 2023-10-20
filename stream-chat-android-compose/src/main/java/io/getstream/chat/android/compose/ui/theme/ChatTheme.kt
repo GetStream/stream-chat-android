@@ -98,6 +98,9 @@ private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
 private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
     error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSeparatorTheme> {
+    error("No MessageDateSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
@@ -129,6 +132,7 @@ private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
+ * @param messageDateSeparatorTheme Theme of the message date separator.
  * @param content The content shown within the theme wrapper.
  */
 @Composable
@@ -165,6 +169,10 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
+    messageDateSeparatorTheme: MessageDateSeparatorTheme = MessageDateSeparatorTheme.defaultTheme(
+        typography = typography,
+        colors = colors,
+    ),
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
@@ -186,6 +194,7 @@ public fun ChatTheme(
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
+        LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -329,6 +338,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalOtherMessageTheme.current
+
+    /**
+     * Retrieves the current [MessageDateSeparatorTheme] at the call site's position in the hierarchy.
+     */
+    public val messageDateSeparatorTheme: MessageDateSeparatorTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageDateSeparatorTheme.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
