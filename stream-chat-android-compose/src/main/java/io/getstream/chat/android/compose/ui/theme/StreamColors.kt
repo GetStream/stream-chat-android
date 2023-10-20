@@ -26,6 +26,8 @@ import io.getstream.chat.android.compose.R
  * Contains all the colors in our palette. Each color is used for various things an can be changed to
  * customize the app design style.
  * @param textHighEmphasis Used for main text and active icon status.
+ * @param textHighEmphasisInverse Used for contrasting backgrounds or elements against the main text and active icon
+ * status, providing better visibility and readability.
  * @param textLowEmphasis Used for secondary text, default icon state, deleted messages text and datestamp background.
  * @param disabled Used for disabled icons and empty states.
  * @param borders Used for borders, the background of self messages, selected items, pressed state, button dividers.
@@ -55,6 +57,7 @@ import io.getstream.chat.android.compose.R
 @Immutable
 public data class StreamColors(
     public val textHighEmphasis: Color,
+    public val textHighEmphasisInverse: Color,
     public val textLowEmphasis: Color,
     public val disabled: Color,
     public val borders: Color,
@@ -100,6 +103,7 @@ public data class StreamColors(
         @Composable
         public fun defaultColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis),
+            textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse),
             textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis),
             disabled = colorResource(R.color.stream_compose_disabled),
             borders = colorResource(R.color.stream_compose_borders),
@@ -131,6 +135,7 @@ public data class StreamColors(
         @Composable
         public fun defaultDarkColors(): StreamColors = StreamColors(
             textHighEmphasis = colorResource(R.color.stream_compose_text_high_emphasis_dark),
+            textHighEmphasisInverse = colorResource(R.color.stream_compose_text_high_emphasis_inverse_dark),
             textLowEmphasis = colorResource(R.color.stream_compose_text_low_emphasis_dark),
             disabled = colorResource(R.color.stream_compose_disabled_dark),
             borders = colorResource(R.color.stream_compose_borders_dark),

@@ -17,6 +17,7 @@
 <resources>
     <!-- Default colors -->
     <color name="stream_compose_text_high_emphasis">#000000</color>
+    <color name="stream_compose_text_high_emphasis_inverse">#FFFFFF</color>
     <color name="stream_compose_text_low_emphasis">#72767E</color>
     <color name="stream_compose_disabled">#B4B7BB</color>
     <color name="stream_compose_borders">#DBDDE1</color>
@@ -33,6 +34,7 @@
 
     <!-- Default Dark colors -->
     <color name="stream_compose_text_high_emphasis_dark">#FFFFFF</color>
+    <color name="stream_compose_text_high_emphasis_inverse_dark">#000000</color>
     <color name="stream_compose_text_low_emphasis_dark">#72767E</color>
     <color name="stream_compose_disabled_dark">#4C525C</color>
     <color name="stream_compose_borders_dark">#272A30</color>
