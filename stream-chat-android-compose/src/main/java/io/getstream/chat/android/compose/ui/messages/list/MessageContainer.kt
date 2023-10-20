@@ -121,7 +121,6 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
             color = ChatTheme.messageDateSeparatorTheme.backgroundColor,
             shape = RoundedCornerShape(16.dp),
         ) {
-
             Text(
                 modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
                 text = DateUtils.getRelativeTimeSpanString(

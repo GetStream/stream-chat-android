@@ -79,6 +79,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageDateSeparatorTheme` to customize the date separator component. [#5013](https://github.com/GetStream/stream-chat-android/pull/5013)
 
 ### ⚠️ Changed
 
