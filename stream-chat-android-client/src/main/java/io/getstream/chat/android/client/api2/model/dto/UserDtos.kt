@@ -58,6 +58,7 @@ internal data class DownstreamUserDto(
     val image: String?,
     val role: String,
     val invisible: Boolean = false,
+    val language: String?,
     val banned: Boolean,
     val devices: List<DeviceDto>?,
     val online: Boolean,
