@@ -6,7 +6,6 @@
     <ID>ComplexMethod:Message.kt$Message$override fun toString(): String</ID>
     <ID>ComplexMethod:User.kt$User$override fun getComparableField(fieldName: String): Comparable&lt;*>?</ID>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
-    <ID>LongParameterList:BaseChatModule.kt$BaseChatModule$( private val appContext: Context, private val clientScope: ClientScope, private val userScope: UserScope, private val config: ChatClientConfig, private val notificationsHandler: NotificationHandler, private val notificationConfig: NotificationConfig, private val fileUploader: FileUploader? = null, private val tokenManager: TokenManager = TokenManagerImpl(), private val customOkHttpClient: OkHttpClient? = null, private val lifecycle: Lifecycle, private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it }, )</ID>
     <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
     <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$100</ID>
     <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$10000</ID>

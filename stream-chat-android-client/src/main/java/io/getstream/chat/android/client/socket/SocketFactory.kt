@@ -99,6 +99,7 @@ internal class SocketFactory(
                 put("banned", user.banned)
                 put("invisible", user.invisible)
                 put("teams", user.teams)
+                if (user.language.isNotBlank()) put("language", user.language)
                 if (user.image.isNotBlank()) put("image", user.image)
                 if (user.name.isNotBlank()) put("name", user.name)
                 putAll(user.extraData)

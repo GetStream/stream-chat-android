@@ -48,6 +48,7 @@ public data class User(
     var name: String = "",
     var image: String = "",
     var invisible: Boolean = false,
+    var language: String = "",
     var banned: Boolean = false,
     var devices: List<Device> = mutableListOf(),
     var online: Boolean = false,
@@ -70,6 +71,7 @@ public data class User(
             "name" -> name
             "image" -> image
             "invisible" -> invisible
+            "language" -> language
             "banned" -> banned
             "online" -> online
             "totalUnreadCount" -> totalUnreadCount
