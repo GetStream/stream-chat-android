@@ -43,7 +43,7 @@ object Versions {
     internal const val FLIPPER_SO_LOADER = "0.10.4"
     internal const val GITVERSIONER = "0.5.0"
     internal const val GOOGLE_SERVICES = "4.3.14"
-    internal const val GRADLE_NEXUS_PUBLISH_PLUGIN = "1.1.0"
+    internal const val GRADLE_NEXUS_PUBLISH_PLUGIN = "1.3.0"
     internal const val GRADLE_VERSIONS_PLUGIN = "0.47.0"
     internal const val HUAWEI_PUSH = "6.7.0.300"
     internal const val JSON = "20230227"
