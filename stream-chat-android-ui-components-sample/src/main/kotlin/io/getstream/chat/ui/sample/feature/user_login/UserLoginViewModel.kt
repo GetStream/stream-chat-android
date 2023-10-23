@@ -27,6 +27,7 @@ import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.AppConfig
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.logging.StreamLog
+import java.util.Locale
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class UserLoginViewModel : ViewModel() {
@@ -68,6 +69,7 @@ class UserLoginViewModel : ViewModel() {
             id = user.id
             image = user.image
             name = user.name
+            language = Locale.getDefault().language
         }
 
         ChatClient.instance().run {

@@ -24,6 +24,7 @@ import io.getstream.chat.ui.sample.application.App
 import io.getstream.chat.ui.sample.application.FirebaseLogger
 import io.getstream.chat.ui.sample.data.user.SampleUser
 import io.getstream.logging.StreamLog
+import java.util.Locale
 import io.getstream.chat.android.client.models.User as ChatUser
 
 class CustomLoginViewModel : ViewModel() {
@@ -55,6 +56,7 @@ class CustomLoginViewModel : ViewModel() {
         val chatUser = ChatUser().apply {
             id = loginCredentials.userId
             name = loginCredentials.userName
+            language = Locale.getDefault().language
         }
 
         ChatClient.instance().connectUser(chatUser, loginCredentials.userToken)
