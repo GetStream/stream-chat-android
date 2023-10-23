@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.getstream.sdk.chat.utils.extensions.isMine
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
@@ -71,7 +72,12 @@ public fun MessageText(
     } else {
         ChatTheme.otherMessageTheme.textStyle.color
     }
-    val styledText = buildAnnotatedMessageText(message.text, textColor)
+    val userLanguage = currentUser?.language.orEmpty()
+    val displayedText = when (ChatTheme.autoTranslationEnabled) {
+        true -> message.getTranslation(userLanguage).ifEmpty { message.text }
+        else -> message.text
+    }
+    val styledText = buildAnnotatedMessageText(displayedText, textColor)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808

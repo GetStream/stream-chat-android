@@ -98,12 +98,19 @@ private val LocalOwnMessageTheme = compositionLocalOf<MessageTheme> {
 private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
     error("No OtherMessageTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No AutoTranslationEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
 
 /**
  * Our theme that provides all the important properties for styling to the user.
  *
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
+ * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
@@ -127,6 +134,7 @@ private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
+    autoTranslationEnabled: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -141,8 +149,9 @@ public fun ChatTheme(
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
         context = LocalContext.current,
+        autoTranslationEnabled = autoTranslationEnabled,
         typography = typography,
-        attachmentFactories = attachmentFactories
+        attachmentFactories = attachmentFactories,
     ),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
@@ -181,6 +190,7 @@ public fun ChatTheme(
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
+        LocalAutoTranslationEnabled provides autoTranslationEnabled,
     ) {
         content()
     }
@@ -319,4 +329,12 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalOtherMessageTheme.current
+
+    /**
+     * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
+     */
+    public val autoTranslationEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAutoTranslationEnabled.current
 }
