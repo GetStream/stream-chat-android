@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,9 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.models.getTranslation
+import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
+import io.getstream.chat.android.compose.ui.components.TranslatedLabel
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -87,6 +92,10 @@ public fun MessageFooter(
             if (date != null) {
                 Timestamp(date = date, formatType = DateFormatType.TIME)
             }
+
+            MessageTranslatedLabel(messageItem)
         }
+    } else {
+        MessageTranslatedLabel(messageItem)
     }
 }
