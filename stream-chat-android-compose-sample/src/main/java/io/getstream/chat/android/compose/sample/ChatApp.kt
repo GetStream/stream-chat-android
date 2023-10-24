@@ -30,7 +30,7 @@ class ChatApp : Application() {
         // Done for simplicity, use a DI framework instead
         credentialsRepository = UserCredentialsRepository(this)
         dateFormatter = DateFormatter.from(this)
-        auoTranslationEnabled = true
+        autoTranslationEnabled = true
 
         initializeToggleService()
 
@@ -57,7 +57,7 @@ class ChatApp : Application() {
         lateinit var dateFormatter: DateFormatter
             private set
 
-        var auoTranslationEnabled: Boolean = false
+        var autoTranslationEnabled: Boolean = false
             private set
     }
 }

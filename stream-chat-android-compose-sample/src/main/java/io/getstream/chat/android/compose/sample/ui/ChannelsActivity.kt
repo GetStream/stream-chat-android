@@ -90,7 +90,7 @@ class ChannelsActivity : BaseConnectedActivity() {
         setContent {
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
-                autoTranslationEnabled = ChatApp.auoTranslationEnabled
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled
             ) {
                 ChannelsScreen(
                     title = stringResource(id = R.string.app_name),
