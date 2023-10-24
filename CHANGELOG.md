@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `User.language` property. [#5020](https://github.com/GetStream/stream-chat-android/pull/5020)
+- Supported user's `language` property in `ChatClient.connectUser`. [#5020](https://github.com/GetStream/stream-chat-android/pull/5020)
 
 ### ⚠️ Changed
 
@@ -72,6 +74,8 @@
 
 ### ✅ Added
 - Added `MessageDateSeparatorTheme` to customize the date separator component. [#5014](https://github.com/GetStream/stream-chat-android/pull/5014)
+- Add support for automatic translations [#5020](https://github.com/GetStream/stream-chat-android/pull/5020)
+  * Enabled by `ChatTheme.autoTranslationEnabled`
 
 ### ⚠️ Changed
 
