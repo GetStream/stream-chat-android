@@ -5,7 +5,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `User.language` property. [#5003](https://github.com/GetStream/stream-chat-android/pull/5003)
 
 ### ⚠️ Changed
 
@@ -13,16 +12,12 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix background service used to sync data when a Push Notification is received on Android 14. [#4997](https://github.com/GetStream/stream-chat-android/pull/4997)
-- Fix `Message.addOwnReaction()` process. [#5000](https://github.com/GetStream/stream-chat-android/pull/5000)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Supported user's `language` property in `ChatClient.connectUser`. [#5003](https://github.com/GetStream/stream-chat-android/pull/5003)
 
 ### ⚠️ Changed
-- Disconnect user on `UnrecoverableError`. [#5000](https://github.com/GetStream/stream-chat-android/pull/5004)
 
 ### ❌ Removed
 
@@ -41,7 +36,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improved `SyncManger`, which now does not retry outdated messages/reactions [#4991](https://github.com/GetStream/stream-chat-android/pull/4991)
 
 ### ✅ Added
 
@@ -62,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed the message list gap. [#4998](https://github.com/GetStream/stream-chat-android/pull/4998)
 
 ### ⬆️ Improved
 
@@ -74,7 +67,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed the message list gap. [#4998](https://github.com/GetStream/stream-chat-android/pull/4998)
 
 ### ⬆️ Improved
 
@@ -95,6 +87,34 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# October 23th, 2023 - 6.0.5
+## Common changes for all artifacts
+### ✅ Added
+- Added `User.language` property. [#5003](https://github.com/GetStream/stream-chat-android/pull/5003)
+
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix background service used to sync data when a Push Notification is received on Android 14. [#4997](https://github.com/GetStream/stream-chat-android/pull/4997)
+- Fix `Message.addOwnReaction()` process. [#5000](https://github.com/GetStream/stream-chat-android/pull/5000)
+
+### ✅ Added
+- Supported user's `language` property in `ChatClient.connectUser`. [#5003](https://github.com/GetStream/stream-chat-android/pull/5003)
+
+### ⚠️ Changed
+- Disconnect user on `UnrecoverableError`. [#5000](https://github.com/GetStream/stream-chat-android/pull/5004)
+
+## stream-chat-android-state
+### ⬆️ Improved
+- Improved `SyncManger`, which now does not retry outdated messages/reactions [#4991](https://github.com/GetStream/stream-chat-android/pull/4991)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed the message list gap. [#4998](https://github.com/GetStream/stream-chat-android/pull/4998)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed the message list gap. [#4998](https://github.com/GetStream/stream-chat-android/pull/4998)
 
 # October 03th, 2023 - 6.0.4
 ## stream-chat-android-client
