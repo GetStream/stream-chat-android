@@ -125,6 +125,18 @@
 
 ### ❌ Removed
 
+# October 24th, 2023 - 5.17.15
+## stream-chat-android-client
+### ✅ Added
+- Added `User.language` property. [#5020](https://github.com/GetStream/stream-chat-android/pull/5020)
+- Supported user's `language` property in `ChatClient.connectUser`. [#5020](https://github.com/GetStream/stream-chat-android/pull/5020)
+
+## stream-chat-android-compose
+### ✅ Added
+- Added `MessageDateSeparatorTheme` to customize the date separator component. [#5014](https://github.com/GetStream/stream-chat-android/pull/5014)
+- Add support for automatic translations [#5020](https://github.com/GetStream/stream-chat-android/pull/5020)
+  * Enabled by `ChatTheme.autoTranslationEnabled`
+
 # October 19th, 2023 - 5.17.14
 ## stream-chat-android-client
 ### 🐞 Fixed
