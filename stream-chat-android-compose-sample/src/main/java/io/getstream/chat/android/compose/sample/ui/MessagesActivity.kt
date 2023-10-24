@@ -96,7 +96,7 @@ class MessagesActivity : BaseConnectedActivity() {
         setContent {
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
-                autoTranslationEnabled = ChatApp.auoTranslationEnabled,
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             ) {
                 MessagesScreen(
                     channelId = channelId,
