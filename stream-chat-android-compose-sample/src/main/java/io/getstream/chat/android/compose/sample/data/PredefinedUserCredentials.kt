@@ -140,6 +140,7 @@ object PredefinedUserCredentials {
                 id = "tommaso"
                 name = "Tommaso Barbugli"
                 image = "https://ca.slack-edge.com/T02RM6X6B-U02U7SJP4-0f65a5997877-128"
+                language = "en"
             },
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidG9tbWFzbyJ9.lNaWC2Opyq6gmV50a2BGxK-5gm5mwCpefnUA30_k9YA"
         ),
@@ -149,6 +150,7 @@ object PredefinedUserCredentials {
                 id = "kanat"
                 name = "Kanat"
                 image = "https://ca.slack-edge.com/T02RM6X6B-U034NG4FPNG-688fab30cc42-72"
+                language = "fr"
             },
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.MVoS7rCos7o3D7fkUcCFHVThKrN0sAaENupmXHYX3vw"
         ),

@@ -48,4 +48,9 @@ public data class NotificationConfig @JvmOverloads constructor(
      * Allows SDK to request [android.Manifest.permission.POST_NOTIFICATIONS] permission for a connected user.
      */
     val requestPermissionOnAppLaunch: () -> Boolean = { true },
+
+    /**
+     * Whether or not the auto-translation feature is enabled.
+     */
+    val autoTranslationEnabled: Boolean = false,
 )

@@ -72,9 +72,10 @@ public fun MessageText(
     } else {
         ChatTheme.otherMessageTheme.textStyle.color
     }
-    val userLanguage = currentUser?.language.orEmpty()
     val displayedText = when (ChatTheme.autoTranslationEnabled) {
-        true -> message.getTranslation(userLanguage).ifEmpty { message.text }
+        true -> currentUser?.language?.let { userLanguage ->
+            message.getTranslation(userLanguage).ifEmpty { message.text }
+        } ?: message.text
         else -> message.text
     }
     val styledText = buildAnnotatedMessageText(displayedText, textColor)

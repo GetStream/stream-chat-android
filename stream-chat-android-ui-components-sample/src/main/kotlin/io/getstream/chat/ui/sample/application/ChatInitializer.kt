@@ -38,16 +38,6 @@ class ChatInitializer(private val context: Context) {
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
         FirebaseApp.initializeApp(context)
-        val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
-            context = context,
-            newMessageIntent = {
-                    messageId: String,
-                    channelType: String,
-                    channelId: String,
-                ->
-                HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
-            }
-        )
         val notificationConfig =
             NotificationConfig(
                 pushDeviceGenerators = listOf(
@@ -62,6 +52,17 @@ class ChatInitializer(private val context: Context) {
                 ),
                 requestPermissionOnAppLaunch = { true }
             )
+        val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
+            context = context,
+            newMessageIntent = {
+                    messageId: String,
+                    channelType: String,
+                    channelId: String,
+                ->
+                HostActivity.createLaunchIntent(context, messageId, channelType, channelId)
+            },
+            notificationConfig = notificationConfig,
+        )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 
         val offlinePlugin = StreamOfflinePluginFactory(
