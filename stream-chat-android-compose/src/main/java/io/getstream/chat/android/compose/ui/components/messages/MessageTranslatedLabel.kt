@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.models.originalLanguage
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.components.TranslatedLabel
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.isDeleted
+import io.getstream.chat.android.compose.ui.util.isGiphy
 
 /**
  * A composable function that displays a label indicating that a message has been translated.
@@ -45,8 +47,10 @@ public fun MessageTranslatedLabel(
     }
     val userLanguage = messageItem.currentUser?.language.orEmpty()
     val i18nLanguage = messageItem.message.originalLanguage
+    val isGiphy = messageItem.message.isGiphy()
+    val isDeleted = messageItem.message.isDeleted()
     val translatedText = messageItem.message.getTranslation(userLanguage).ifEmpty { messageItem.message.text }
-    if (userLanguage != i18nLanguage && translatedText != messageItem.message.text) {
+    if (!isGiphy && !isDeleted && userLanguage != i18nLanguage && translatedText != messageItem.message.text) {
         Spacer(modifier = Modifier.width(4.dp))
         TranslatedLabel(translatedTo = userLanguage)
     }

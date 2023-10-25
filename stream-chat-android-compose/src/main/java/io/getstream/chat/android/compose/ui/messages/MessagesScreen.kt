@@ -149,6 +149,7 @@ public fun MessagesScreen(
         messageFooterVisibility = messageFooterVisibility,
         messageId = messageId,
         navigateToThreadViaNotification = navigateToThreadViaNotification,
+        autoTranslationEnabled = ChatTheme.autoTranslationEnabled,
     )
 
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -668,6 +669,7 @@ private fun buildViewModelFactory(
     messageFooterVisibility: MessageFooterVisibility,
     messageId: String? = null,
     navigateToThreadViaNotification: Boolean = false,
+    autoTranslationEnabled: Boolean = false,
 ): MessagesViewModelFactory {
     return MessagesViewModelFactory(
         context = context,
@@ -680,5 +682,6 @@ private fun buildViewModelFactory(
         messageFooterVisibility = messageFooterVisibility,
         messageId = messageId,
         navigateToThreadViaNotification = navigateToThreadViaNotification,
+        autoTranslationEnabled = autoTranslationEnabled,
     )
 }

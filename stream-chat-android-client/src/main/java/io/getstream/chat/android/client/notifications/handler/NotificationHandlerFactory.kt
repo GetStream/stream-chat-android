@@ -25,6 +25,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.permissions.DefaultNotificationPermissionHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import kotlin.reflect.full.primaryConstructor
@@ -44,6 +45,7 @@ public object NotificationHandlerFactory {
      * Used in SDK_INT >= VERSION_CODES.O.
      * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
+     * @param notificationConfig Configuration for push notifications.
      */
     @SuppressLint("NewApi")
     @JvmOverloads
@@ -54,6 +56,39 @@ public object NotificationHandlerFactory {
         notificationChannel: (() -> NotificationChannel)? = null,
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
         permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
+        notificationConfig: NotificationConfig,
+    ): NotificationHandler {
+        return createNotificationHandler(
+            context = context,
+            newMessageIntent = newMessageIntent,
+            notificationChannel = notificationChannel,
+            userIconBuilder = userIconBuilder,
+            permissionHandler = permissionHandler,
+            autoTranslationEnabled = notificationConfig.autoTranslationEnabled,
+        )
+    }
+
+    /**
+     * Method that creates a [NotificationHandler].
+     *
+     * @param context The [Context] to build the [NotificationHandler] with.
+     * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
+     * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
+     * Used in SDK_INT >= VERSION_CODES.O.
+     * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
+     * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
+     * @param autoTranslationEnabled Enables automatic translation of push notifications.
+     */
+    @SuppressLint("NewApi")
+    @JvmOverloads
+    @JvmStatic
+    public fun createNotificationHandler(
+        context: Context,
+        newMessageIntent: ((messageId: String, channelType: String, channelId: String) -> Intent)? = null,
+        notificationChannel: (() -> NotificationChannel)? = null,
+        userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
+        permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
+        autoTranslationEnabled: Boolean = false,
     ): NotificationHandler {
         val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
         (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
@@ -63,10 +98,11 @@ public object NotificationHandlerFactory {
                     newMessageIntentFun,
                     notificationChannelFun,
                     userIconBuilder,
-                    permissionHandler
+                    permissionHandler,
+                    autoTranslationEnabled,
                 )
             } else {
-                ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun)
+                ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun, autoTranslationEnabled)
             }
         }
     }

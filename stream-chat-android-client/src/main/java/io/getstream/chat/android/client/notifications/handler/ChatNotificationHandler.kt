@@ -27,10 +27,12 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.getTranslation
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 
@@ -43,6 +45,7 @@ internal class ChatNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
+    private val autoTranslationEnabled: Boolean = false,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -82,9 +85,17 @@ internal class ChatNotificationHandler(
         channel: Channel,
         message: Message,
     ): NotificationCompat.Builder {
+        val currentUser = ChatClient.instance().getCurrentUser()
+            ?: ChatClient.instance().getStoredUser()
+        val displayedText = when (autoTranslationEnabled) {
+            true -> currentUser?.language?.let { userLanguage ->
+                message.getTranslation(userLanguage).ifEmpty { message.text }
+            } ?: message.text
+            else -> message.text
+        }
         return getNotificationBuilder(
             contentTitle = channel.getNotificationContentTitle(),
-            contentText = message.text,
+            contentText = displayedText,
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(messageId = message.id, channelType = channel.type, channelId = channel.id),
         ).apply {

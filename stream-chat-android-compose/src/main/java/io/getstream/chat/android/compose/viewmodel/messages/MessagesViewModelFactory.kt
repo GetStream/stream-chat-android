@@ -66,6 +66,7 @@ public class MessagesViewModelFactory(
     private val dateSeparatorThresholdMillis: Long = TimeUnit.HOURS.toMillis(MessageListViewModel.DateSeparatorDefaultHourThreshold),
     private val messageId: String? = null,
     private val navigateToThreadViaNotification: Boolean = false,
+    private val autoTranslationEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -89,7 +90,11 @@ public class MessagesViewModelFactory(
                 messageLimit = messageLimit,
                 enforceUniqueReactions = enforceUniqueReactions,
                 clipboardHandler =
-                ClipboardHandlerImpl(context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager),
+                ClipboardHandlerImpl(
+                    clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager,
+                    autoTranslationEnabled = autoTranslationEnabled,
+                    getCurrentUser = { chatClient.getCurrentUser() }
+                ),
                 showDateSeparators = showDateSeparators,
                 showSystemMessages = showSystemMessages,
                 deletedMessageVisibility = deletedMessageVisibility,

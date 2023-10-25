@@ -57,7 +57,7 @@ class ChatApp : Application() {
         lateinit var dateFormatter: DateFormatter
             private set
 
-        var autoTranslationEnabled: Boolean = false
+        var autoTranslationEnabled: Boolean = true
             private set
     }
 }

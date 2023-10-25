@@ -19,6 +19,8 @@ package io.getstream.chat.android.compose.handlers
 import android.content.ClipData
 import android.content.ClipboardManager
 import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.models.getTranslation
 
 /**
  * Abstraction over the [ClipboardHandlerImpl] that allows users to copy messages.
@@ -37,7 +39,11 @@ public fun interface ClipboardHandler {
  * @param clipboardManager System service that allows for clipboard operations, such as putting
  * new data on the clipboard.
  */
-public class ClipboardHandlerImpl(private val clipboardManager: ClipboardManager) : ClipboardHandler {
+public class ClipboardHandlerImpl(
+    private val clipboardManager: ClipboardManager,
+    private val autoTranslationEnabled: Boolean = false,
+    private val getCurrentUser: () -> User? = { null },
+) : ClipboardHandler {
 
     /**
      * Allows users to copy the message text.
@@ -45,6 +51,12 @@ public class ClipboardHandlerImpl(private val clipboardManager: ClipboardManager
      * @param message Message to copy the text from.
      */
     override fun copyMessage(message: Message) {
-        clipboardManager.setPrimaryClip(ClipData.newPlainText("message", message.text))
+        val displayedText = when (autoTranslationEnabled) {
+            true -> getCurrentUser()?.language?.let { userLanguage ->
+                message.getTranslation(userLanguage).ifEmpty { message.text }
+            } ?: message.text
+            else -> message.text
+        }
+        clipboardManager.setPrimaryClip(ClipData.newPlainText("message", displayedText))
     }
 }
