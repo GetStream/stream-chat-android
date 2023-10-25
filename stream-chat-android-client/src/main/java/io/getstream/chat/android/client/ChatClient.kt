@@ -3161,15 +3161,18 @@ internal constructor(
             val userScope = UserScope(clientScope)
             val module =
                 ChatModule(
-                    appContext,
-                    clientScope,
-                    userScope,
-                    config,
-                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
-                    fileUploader,
-                    tokenManager,
-                    customOkHttpClient,
-                    lifecycle,
+                    appContext = appContext,
+                    clientScope = clientScope,
+                    userScope = userScope,
+                    config = config,
+                    notificationsHandler = notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(
+                        context = appContext,
+                        notificationConfig = notificationConfig,
+                    ),
+                    uploader = fileUploader,
+                    tokenManager = tokenManager,
+                    customOkHttpClient = customOkHttpClient,
+                    lifecycle = lifecycle,
                 )
 
             val appSettingsManager = AppSettingManager(module.api())
