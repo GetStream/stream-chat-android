@@ -25,7 +25,6 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.graphics.drawable.IconCompat
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.notifications.permissions.DefaultNotificationPermissionHandler
 import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
 import kotlin.reflect.full.primaryConstructor

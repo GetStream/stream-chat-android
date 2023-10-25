@@ -11,7 +11,8 @@ public abstract interface class io/getstream/chat/android/compose/handlers/Clipb
 
 public final class io/getstream/chat/android/compose/handlers/ClipboardHandlerImpl : io/getstream/chat/android/compose/handlers/ClipboardHandler {
 	public static final field $stable I
-	public fun <init> (Landroid/content/ClipboardManager;)V
+	public fun <init> (Landroid/content/ClipboardManager;ZLkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Landroid/content/ClipboardManager;ZLkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun copyMessage (Lio/getstream/chat/android/client/models/Message;)V
 }
 
@@ -2094,8 +2095,8 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessagesViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
-	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;JLjava/lang/String;Z)V
-	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;JLjava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;JLjava/lang/String;ZZ)V
+	public synthetic fun <init> (Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/client/ChatClient;ZIIJZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;Lio/getstream/chat/android/common/state/MessageFooterVisibility;JLjava/lang/String;ZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 
