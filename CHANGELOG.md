@@ -18,6 +18,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Make `ChatClient.addDevice` and `ChatClient.deleteDevice` public. [#5024](https://github.com/GetStream/stream-chat-android/pull/5024)
 
 ### ❌ Removed
 
