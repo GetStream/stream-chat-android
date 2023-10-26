@@ -185,6 +185,7 @@ public fun ChatTheme(
         context = LocalContext.current,
         typography = typography,
         attachmentFactories = attachmentFactories,
+        autoTranslationEnabled = autoTranslationEnabled,
     ),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
