@@ -1093,6 +1093,7 @@ internal constructor(
                         "Socket is connected, can't fetch current user",
                     ),
                 )
+
                 else -> currentUserFetcher.fetch(getCurrentUser()!!)
             }
         }.doOnResult(userScope) { result ->
@@ -2987,7 +2988,9 @@ internal constructor(
         public fun notifications(
             notificationConfig: NotificationConfig,
             notificationsHandler: NotificationHandler =
-                NotificationHandlerFactory.createNotificationHandler(context = appContext),
+                NotificationHandlerFactory.createNotificationHandler(
+                    context = appContext, notificationConfig = notificationConfig
+                ),
         ): Builder = apply {
             this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
@@ -3164,16 +3167,19 @@ internal constructor(
             val userScope = UserScope(clientScope)
             val module =
                 ChatModule(
-                    appContext,
-                    clientScope,
-                    userScope,
-                    config,
-                    notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(appContext),
-                    fileUploader,
-                    tokenManager,
-                    customOkHttpClient,
-                    clientDebugger,
-                    lifecycle,
+                    appContext = appContext,
+                    clientScope = clientScope,
+                    userScope = userScope,
+                    config = config,
+                    notificationsHandler = notificationsHandler ?: NotificationHandlerFactory.createNotificationHandler(
+                        context = appContext,
+                        notificationConfig = notificationConfig,
+                    ),
+                    uploader = fileUploader,
+                    tokenManager = tokenManager,
+                    customOkHttpClient = customOkHttpClient,
+                    clientDebugger = clientDebugger,
+                    lifecycle = lifecycle,
                 )
 
             val appSettingsManager = AppSettingManager(module.api())

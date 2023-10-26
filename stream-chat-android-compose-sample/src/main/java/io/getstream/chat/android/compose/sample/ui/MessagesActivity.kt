@@ -85,6 +85,7 @@ class MessagesActivity : BaseConnectedActivity() {
         MessagesViewModelFactory(
             context = this,
             channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
@@ -100,7 +101,10 @@ class MessagesActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
+            ChatTheme(
+                dateFormatter = ChatApp.dateFormatter,
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+            ) {
                 MessagesScreen(
                     viewModelFactory = factory,
                     testTagsAsResourceId = true,

@@ -64,8 +64,15 @@ public fun QuotedMessageText(
         }
     }
 
+    val displayedText = when (ChatTheme.autoTranslationEnabled) {
+        true -> currentUser?.language?.let { userLanguage ->
+            message.getTranslation(userLanguage).ifEmpty { message.text }
+        } ?: message.text
+        else -> message.text
+    }
+
     val quotedMessageText = when {
-        message.text.isNotBlank() -> message.text
+        displayedText.isNotBlank() -> displayedText
 
         attachment != null -> when {
             attachment.name != null -> attachment.name
@@ -81,10 +88,10 @@ public fun QuotedMessageText(
             attachment.isAnyFileType() -> {
                 stringResource(R.string.stream_compose_quoted_message_file_tag)
             }
-            else -> message.text
+            else -> displayedText
         }
 
-        else -> message.text
+        else -> displayedText
     }
 
     checkNotNull(quotedMessageText) {

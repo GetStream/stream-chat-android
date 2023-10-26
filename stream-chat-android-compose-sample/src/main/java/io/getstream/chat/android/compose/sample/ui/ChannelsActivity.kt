@@ -88,7 +88,10 @@ class ChannelsActivity : BaseConnectedActivity() {
          * or build a custom component yourself, like [MyCustomUi].
          */
         setContent {
-            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
+            ChatTheme(
+                dateFormatter = ChatApp.dateFormatter,
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+            ) {
                 ChannelsScreen(
                     viewModelFactory = factory,
                     title = stringResource(id = R.string.app_name),

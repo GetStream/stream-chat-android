@@ -74,6 +74,7 @@
     </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
     <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
+    <string name="stream_compose_message_list_translated">Translated to %s</string>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_resend_message">Resend</string>
