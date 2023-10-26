@@ -28,6 +28,8 @@ import io.getstream.chat.android.client.utils.toUnitResult
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 internal class StreamFileUploader(
     private val retrofitCdnApi: RetrofitCdnApi,
@@ -41,7 +43,8 @@ internal class StreamFileUploader(
         callback: ProgressCallback,
     ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
-        val part = MultipartBody.Part.createFormData("file", file.name, body)
+        val filename = URLEncoder.encode(file.name, StandardCharsets.UTF_8.name())
+        val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendFile(
             channelType = channelType,
@@ -60,7 +63,8 @@ internal class StreamFileUploader(
         file: File,
     ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
-        val part = MultipartBody.Part.createFormData("file", file.name, body)
+        val filename = URLEncoder.encode(file.name, StandardCharsets.UTF_8.name())
+        val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendFile(
             channelType = channelType,
@@ -80,7 +84,8 @@ internal class StreamFileUploader(
         callback: ProgressCallback,
     ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
-        val part = MultipartBody.Part.createFormData("file", file.name, body)
+        val filename = URLEncoder.encode(file.name, StandardCharsets.UTF_8.name())
+        val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendImage(
             channelType = channelType,
@@ -99,7 +104,8 @@ internal class StreamFileUploader(
         file: File,
     ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
-        val part = MultipartBody.Part.createFormData("file", file.name, body)
+        val filename = URLEncoder.encode(file.name, StandardCharsets.UTF_8.name())
+        val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendImage(
             channelType = channelType,
