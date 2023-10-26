@@ -2989,7 +2989,8 @@ internal constructor(
             notificationConfig: NotificationConfig,
             notificationsHandler: NotificationHandler =
                 NotificationHandlerFactory.createNotificationHandler(
-                    context = appContext, notificationConfig = notificationConfig
+                    context = appContext,
+                    notificationConfig = notificationConfig,
                 ),
         ): Builder = apply {
             this.notificationConfig = notificationConfig

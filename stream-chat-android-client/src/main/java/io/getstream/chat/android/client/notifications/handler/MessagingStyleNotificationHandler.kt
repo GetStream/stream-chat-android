@@ -169,7 +169,6 @@ internal class MessagingStyleNotificationHandler(
         return NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
     }
 
-
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)
 
     private val Message.timestamp: Long

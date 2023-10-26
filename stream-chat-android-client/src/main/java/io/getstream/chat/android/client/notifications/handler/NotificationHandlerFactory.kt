@@ -101,7 +101,7 @@ public object NotificationHandlerFactory {
                     notificationChannelFun,
                     userIconBuilder,
                     permissionHandler,
-                    autoTranslationEnabled
+                    autoTranslationEnabled,
                 )
             } else {
                 ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun, autoTranslationEnabled)
