@@ -45,6 +45,7 @@ internal fun DownstreamUserDto.toDomain(): User =
         image = image ?: "",
         role = role,
         invisible = invisible,
+        language = language ?: "",
         banned = banned,
         devices = devices.orEmpty().map(DeviceDto::toDomain),
         online = online,

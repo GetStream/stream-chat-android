@@ -75,6 +75,8 @@ internal data class ReplyMessageInnerEntity(
     val command: String? = null,
     /** if the message was sent by shadow banned user */
     val shadowed: Boolean = false,
+    /** message internationalization mapping.*/
+    val i18n: Map<String, String> = emptyMap(),
     /** if the message is also shown in the channel **/
     val showInChannel: Boolean = false,
     @Embedded(prefix = "channel_info")
