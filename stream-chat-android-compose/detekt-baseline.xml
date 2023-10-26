@@ -4,6 +4,7 @@
   <CurrentIssues>
     <ID>ComplexCondition:MessageItem.kt$!messageItem.isMine &amp;&amp; ( messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(MessagePosition.NONE) )</ID>
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
+    <ID>ComplexCondition:MessageTranslatedLabel.kt$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != messageItem.message.text</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
@@ -22,6 +23,7 @@
     <ID>LongMethod:MessageItem.kt$@Composable internal fun DefaultMessageItemHeaderContent( messageItem: MessageItemState, onReactionsClick: (Message) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageItem.kt$@Composable internal fun RegularMessageContent( messageItem: MessageItemState, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
+    <ID>LongMethod:MessageText.kt$@Composable public fun MessageText( message: Message, currentUser: User?, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit, )</ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
     <ID>LongParameterList:MediaAttachmentContent.kt$( attachment: Attachment, message: Message, skipEnrichUrl: Boolean, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, onLongItemClick: (Message) -> Unit, onContentItemClick: ( mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>, message: Message, attachmentPosition: Int, videoThumbnailsEnabled: Boolean, streamCdnImageResizing: StreamCdnImageResizing, skipEnrichUrl: Boolean, ) -> Unit, overlayContent: @Composable (attachmentType: String?) -> Unit, )</ID>
     <ID>LongParameterList:MediaAttachmentContent.kt$( mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>, message: Message, attachmentPosition: Int, videoThumbnailsEnabled: Boolean, streamCdnImageResizing: StreamCdnImageResizing, skipEnrichUrl: Boolean, )</ID>
