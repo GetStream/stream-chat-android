@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Encode filename before uploading. [#5026](https://github.com/GetStream/stream-chat-android/pull/5026)
 
 ### ⬆️ Improved
 
