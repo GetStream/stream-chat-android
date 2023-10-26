@@ -51,6 +51,7 @@ internal class MessagingStyleNotificationHandler(
     private val notificationChannel: (() -> NotificationChannel),
     private val userIconBuilder: UserIconBuilder,
     private val permissionHandler: NotificationPermissionHandler?,
+    private val autoTranslationEnabled: Boolean = false,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -92,7 +93,7 @@ internal class MessagingStyleNotificationHandler(
             val notification = NotificationCompat.Builder(context, getNotificationChannelId())
                 .setSmallIcon(R.drawable.stream_ic_notification)
                 .setColor(ContextCompat.getColor(context, R.color.stream_ic_notification))
-                .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context)))
+                .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context, currentUser)))
                 .setContentIntent(contentPendingIntent)
                 .addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
                 .addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
@@ -155,8 +156,19 @@ internal class MessagingStyleNotificationHandler(
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_NOTIFICATIONS_SHOWN = "KEY_NOTIFICATIONS_SHOWN"
     }
-    private suspend fun Message.toMessagingStyleMessage(context: Context): NotificationCompat.MessagingStyle.Message =
-        NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
+    private suspend fun Message.toMessagingStyleMessage(
+        context: Context,
+        currentUser: User?,
+    ): NotificationCompat.MessagingStyle.Message {
+        val displayedText = when (autoTranslationEnabled) {
+            true -> currentUser?.language?.let { userLanguage ->
+                getTranslation(userLanguage).ifEmpty { text }
+            } ?: text
+            else -> text
+        }
+        return NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
+    }
+
 
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)
 

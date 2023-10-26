@@ -71,7 +71,13 @@ public fun MessageText(
     } else {
         ChatTheme.otherMessageTheme.textStyle.color
     }
-    val styledText = buildAnnotatedMessageText(message.text, textColor)
+    val displayedText = when (ChatTheme.autoTranslationEnabled) {
+        true -> currentUser?.language?.let { userLanguage ->
+            message.getTranslation(userLanguage).ifEmpty { message.text }
+        } ?: message.text
+        else -> message.text
+    }
+    val styledText = buildAnnotatedMessageText(displayedText, textColor)
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808

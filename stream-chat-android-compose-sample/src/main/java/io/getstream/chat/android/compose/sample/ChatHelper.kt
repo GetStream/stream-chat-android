@@ -51,6 +51,7 @@ object ChatHelper {
         Log.d(TAG, "[init] apiKey: $apiKey")
         val notificationConfig = NotificationConfig(
             pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "Firebase")),
+            autoTranslationEnabled = ChatApp.autoTranslationEnabled,
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
@@ -62,6 +63,7 @@ object ChatHelper {
                     parentMessageId = message.parentId,
                 )
             },
+            notificationConfig = notificationConfig,
         )
 
         val offlinePlugin = StreamOfflinePluginFactory(context)

@@ -52,5 +52,7 @@ class ChatApp : Application() {
 
         lateinit var dateFormatter: DateFormatter
             private set
+
+        public const val autoTranslationEnabled: Boolean = true
     }
 }

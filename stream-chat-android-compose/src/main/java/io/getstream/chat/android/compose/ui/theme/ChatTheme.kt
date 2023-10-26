@@ -123,6 +123,12 @@ private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
 private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSeparatorTheme> {
     error("No MessageDateSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No AutoTranslationEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -132,6 +138,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  *
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
+ * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
@@ -161,6 +168,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
 @Composable
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
+    autoTranslationEnabled: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -395,6 +403,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageDateSeparatorTheme.current
+
+    /**
+     * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
+     */
+    public val autoTranslationEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAutoTranslationEnabled.current
 
     /**
      * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.

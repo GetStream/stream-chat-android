@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
@@ -59,34 +60,37 @@ public fun MessageFooter(
         )
     }
 
-    if (messageItem.showMessageFooter) {
-        Row(
-            modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (!messageItem.isMine) {
-                Text(
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .weight(1f, fill = false),
-                    text = message.user.name,
-                    style = ChatTheme.typography.footnote,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    color = ChatTheme.colors.textLowEmphasis,
-                )
-            } else {
-                MessageReadStatusIcon(
-                    modifier = Modifier.padding(end = 4.dp),
-                    message = messageItem.message,
-                    isMessageRead = messageItem.isMessageRead,
-                    readCount = messageItem.messageReadBy.size,
-                )
-            }
+    Column {
+        MessageTranslatedLabel(messageItem)
+        if (messageItem.showMessageFooter) {
+            Row(
+                modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (!messageItem.isMine) {
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .weight(1f, fill = false),
+                        text = message.user.name,
+                        style = ChatTheme.typography.footnote,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                } else {
+                    MessageReadStatusIcon(
+                        modifier = Modifier.padding(end = 4.dp),
+                        message = messageItem.message,
+                        isMessageRead = messageItem.isMessageRead,
+                        readCount = messageItem.messageReadBy.size,
+                    )
+                }
 
-            val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
-            if (date != null) {
-                Timestamp(date = date, formatType = DateFormatType.TIME)
+                val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
+                if (date != null) {
+                    Timestamp(date = date, formatType = DateFormatType.TIME)
+                }
             }
         }
     }
