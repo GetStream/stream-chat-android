@@ -97,6 +97,7 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -194,6 +195,7 @@ public class MessageListController(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [ChannelCapabilities].
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     public val ownCapabilities: StateFlow<Set<String>> = channelState.filterNotNull()
         .flatMapLatest { it.channelData }
         .map { it.ownCapabilities }
@@ -202,8 +204,17 @@ public class MessageListController(
     /**
      * The information for the current [Channel].
      */
+    @OptIn(ExperimentalCoroutinesApi::class)
     public val channel: StateFlow<Channel> = channelState.filterNotNull()
-        .map { it.toChannel() }
+        .flatMapLatest { state ->
+            combine(
+                state.channelData,
+                state.membersCount,
+                state.watcherCount,
+            ) { _, _, _ ->
+                state.toChannel()
+            }
+        }
         .onEach { channel ->
             chatClient.dismissChannelNotifications(
                 channelType = channel.type,
