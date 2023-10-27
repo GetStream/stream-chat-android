@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed channel update emissions in `MessageListController`. [#5029](https://github.com/GetStream/stream-chat-android/pull/5029)
 
 ### ⬆️ Improved
 
