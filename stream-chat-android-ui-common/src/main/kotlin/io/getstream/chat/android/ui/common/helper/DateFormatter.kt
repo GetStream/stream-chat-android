@@ -51,10 +51,15 @@ public interface DateFormatter {
          * Builds the default date formatter.
          *
          * @param context The context of the application.
+         * @param locale The locale to use for formatting.
          * @return The default implementation of [DateFormatter].
          */
         @JvmStatic
-        public fun from(context: Context): DateFormatter = DefaultDateFormatter(context)
+        @JvmOverloads
+        public fun from(context: Context, locale: Locale = Locale.getDefault()): DateFormatter = DefaultDateFormatter(
+            context,
+            locale,
+        )
     }
 }
 
@@ -63,16 +68,17 @@ public interface DateFormatter {
  */
 internal class DefaultDateFormatter(
     private val dateContext: DateContext,
+    private val locale: Locale,
 ) : DateFormatter {
 
-    constructor(context: Context) : this(DefaultDateContext(context))
+    constructor(context: Context, locale: Locale) : this(DefaultDateContext(context, locale), locale)
 
-    private val timeFormatter12h: SimpleDateFormat = SimpleDateFormat("h:mm a")
-    private val timeFormatter24h: SimpleDateFormat = SimpleDateFormat("HH:mm")
-    private val dateFormatterDayOfWeek: SimpleDateFormat = SimpleDateFormat("EEEE")
+    private val timeFormatter12h: SimpleDateFormat = SimpleDateFormat("h:mm a", locale)
+    private val timeFormatter24h: SimpleDateFormat = SimpleDateFormat("HH:mm", locale)
+    private val dateFormatterDayOfWeek: SimpleDateFormat = SimpleDateFormat("EEEE", locale)
     private val dateFormatterFullDate: SimpleDateFormat
         // Re-evaluated every time to account for runtime Locale changes
-        get() = SimpleDateFormat(dateContext.dateTimePattern())
+        get() = SimpleDateFormat(dateContext.dateTimePattern(), locale)
 
     /**
      * Formats the given date as a String.
@@ -176,6 +182,7 @@ internal class DefaultDateFormatter(
 
     private class DefaultDateContext(
         private val context: Context,
+        private val locale: Locale,
     ) : DateContext {
         override fun now(): Date = Date()
 
@@ -190,7 +197,7 @@ internal class DefaultDateFormatter(
         override fun dateTimePattern(): String {
             // Gets a localized pattern that contains 2 digit representations of
             // the year, month, and day of month
-            return DateFormat.getBestDateTimePattern(Locale.getDefault(), "yy MM dd")
+            return DateFormat.getBestDateTimePattern(locale, "yy MM dd")
         }
     }
 }

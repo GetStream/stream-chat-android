@@ -28,6 +28,7 @@ import org.threeten.bp.LocalDateTime
 import org.threeten.bp.LocalTime
 import org.threeten.bp.ZoneId
 import java.util.Date
+import java.util.Locale
 
 @RunWith(TestParameterInjector::class)
 internal class DefaultDateFormatterTest {
@@ -47,6 +48,7 @@ internal class DefaultDateFormatterTest {
     fun `Date formatting is correct`(@TestParameter testCase: TestCase) {
         val formatter: DateFormatter = DefaultDateFormatter(
             TestDateContext(testCase.now.toDate(), testCase.is24Hour, testCase.dateTimePattern),
+            Locale.US,
         )
 
         val formattedDate = formatter.formatDate(testCase.dateToFormat?.toDate())
