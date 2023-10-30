@@ -237,6 +237,7 @@ public fun ChatTheme(
         LocalStreamCdnImageResizing provides streamCdnImageResizing,
         LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
+        LocalAutoTranslationEnabled provides autoTranslationEnabled,
     ) {
         content()
     }
