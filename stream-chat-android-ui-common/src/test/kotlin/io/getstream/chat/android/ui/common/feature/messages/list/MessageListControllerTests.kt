@@ -25,10 +25,13 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -47,11 +50,16 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
+import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
@@ -64,11 +72,11 @@ internal class MessageListControllerTests {
 
     @Test
     fun `Given no messages When no one is Typing Should return an empty message list`() = runTest {
-        val messageState = MessagesState.Result(emptyList())
+        val messagesState = MutableStateFlow(emptyList<Message>())
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenChannelState(messageState = messageState)
+            .givenChannelState(messagesState = messagesState)
             .get()
 
         val expectedResult = MessageListState(
@@ -103,12 +111,12 @@ internal class MessageListControllerTests {
 
     @Test
     fun `Given other users are typing When there are messages Should add typing indicator to end`() = runTest {
-        val messageState = MessagesState.Result(randomMessageList())
+        val messagesState = MutableStateFlow(randomMessageList())
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(
-                messageState = messageState,
+                messagesState = messagesState,
                 typingUsers = listOf(user2),
             )
             .get(dateSeparatorHandler = { _, _ -> false })
@@ -124,11 +132,11 @@ internal class MessageListControllerTests {
     fun `Given regular message followed and preceded by current user message When grouping messages Should add middle position to message`() =
         runTest {
             val messages = randomMessageList(3) { randomMessage(user = user1) }
-            val messageState = MessagesState.Result(messages)
+            val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(messageState = messageState)
+                .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val expectedPosition = listOf(MessagePosition.MIDDLE)
@@ -145,11 +153,11 @@ internal class MessageListControllerTests {
                 message++
                 randomMessage(user = if (message % 2 == 0) user1 else user2)
             }
-            val messageState = MessagesState.Result(messages)
+            val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(messageState = messageState)
+                .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
@@ -166,11 +174,11 @@ internal class MessageListControllerTests {
                 message++
                 randomMessage(user = if (message % 2 == 0) user1 else user2)
             }
-            val messageState = MessagesState.Result(messages)
+            val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(messageState = messageState)
+                .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val expectedPosition = listOf(MessagePosition.TOP, MessagePosition.BOTTOM)
@@ -187,11 +195,11 @@ internal class MessageListControllerTests {
             message++
             randomMessage(createdAt = createDate(2022, 5, message))
         }
-        val messageState = MessagesState.Result(messages)
+        val messagesState = MutableStateFlow(messages)
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenChannelState(messageState = messageState)
+            .givenChannelState(messagesState = messagesState)
             .get()
 
         val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorItemState }
@@ -206,11 +214,11 @@ internal class MessageListControllerTests {
             message++
             randomMessage(createdAt = createDate(2022, 5, message))
         }
-        val messageState = MessagesState.Result(messages)
+        val messagesState = MutableStateFlow(messages)
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenChannelState(messageState = messageState)
+            .givenChannelState(messagesState = messagesState)
             .get(dateSeparatorHandler = { _, _ -> false })
 
         val dateSeparatorCount = controller.messageListState.value.messageItems.count { it is DateSeparatorItemState }
@@ -226,11 +234,11 @@ internal class MessageListControllerTests {
             message++
             randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
         }
-        val messageState = MessagesState.Result(messages)
+        val messagesState = MutableStateFlow(messages)
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenChannelState(messageState = messageState)
+            .givenChannelState(messagesState = messagesState)
             .get(deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN)
 
         val deletedMessageCount =
@@ -245,11 +253,11 @@ internal class MessageListControllerTests {
             message++
             randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
         }
-        val messageState = MessagesState.Result(messages)
+        val messagesState = MutableStateFlow(messages)
         val controller = Fixture()
             .givenCurrentUser()
             .givenChannelQuery()
-            .givenChannelState(messageState = messageState)
+            .givenChannelState(messagesState = messagesState)
             .get()
 
         val messagesCount = controller.messageListState.value.messageItems.count { it is MessageItemState }
@@ -264,11 +272,11 @@ internal class MessageListControllerTests {
                 message++
                 randomMessage(deletedAt = if (message % 2 == 0) randomDate() else null)
             }
-            val messageState = MessagesState.Result(messages)
+            val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(messageState = messageState)
+                .givenChannelState(messagesState = messagesState)
                 .get(deletedMessageVisibility = DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER)
 
             val deletedMessageCount =
@@ -285,11 +293,11 @@ internal class MessageListControllerTests {
                 message++
                 randomMessage(createdAt = createDate(2022, 5, message))
             }
-            val messageState = MessagesState.Result(messages)
+            val messagesState = MutableStateFlow(messages)
             val controller = Fixture()
                 .givenCurrentUser()
                 .givenChannelQuery()
-                .givenChannelState(messageState = messageState)
+                .givenChannelState(messagesState = messagesState)
                 .get(dateSeparatorHandler = { _, _ -> false })
 
             val dateSeparatorCount =
@@ -306,12 +314,12 @@ internal class MessageListControllerTests {
             randomMessage(id = "2"),
             randomMessage(id = "3"),
         )
-        val messageState = MessagesState.Result(messages)
+        val messagesState = MutableStateFlow(messages)
         val controller = Fixture(chatClient = chatClient)
             .givenCurrentUser()
             .givenChannelQuery()
             .givenMarkRead()
-            .givenChannelState(messageState = messageState)
+            .givenChannelState(messagesState = messagesState)
             .get()
 
         controller.markLastMessageRead()
@@ -326,6 +334,99 @@ internal class MessageListControllerTests {
         delay(1000)
 
         verify(chatClient, times(1)).markRead(any(), any())
+    }
+
+    @Test
+    fun `When channelData changes the updated Channel instance must be emitted`() = runTest {
+        val chatClient: ChatClient = mock()
+        val channelData = ChannelData(
+            type = CHANNEL_TYPE,
+            id = CHANNEL_ID,
+        )
+        val channelDataState = MutableStateFlow(channelData)
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(channelDataState = channelDataState)
+            .get()
+
+        delay(1000)
+
+        channelDataState.value = channelData.copy(
+            name = "channel_name",
+            image = "http://new.image.jpg",
+        )
+
+        delay(1000)
+
+        val channel = controller.channel.value
+        channel.id `should be equal to` CHANNEL_ID
+        channel.type `should be equal to` CHANNEL_TYPE
+        channel.name `should be equal to` "channel_name"
+        channel.image `should be equal to` "http://new.image.jpg"
+    }
+
+    @Test
+    fun `When watcherCount changes the updated Channel instance must be emitted`() = runTest {
+        val chatClient: ChatClient = mock()
+        val watchersCountState = MutableStateFlow(2)
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(watchersCountState = watchersCountState)
+            .get()
+
+        delay(1000)
+
+        watchersCountState.value = 4
+
+        delay(1000)
+
+        val channel = controller.channel.value
+        channel.watcherCount `should be equal to` watchersCountState.value
+    }
+
+    @Test
+    fun `When memberCount changes the updated Channel instance must be emitted`() = runTest {
+        val chatClient: ChatClient = mock()
+        val channelData = ChannelData(
+            type = CHANNEL_TYPE,
+            id = CHANNEL_ID,
+            memberCount = 2,
+        )
+        val membersState = MutableStateFlow(listOf(randomMember(), randomMember()))
+        val channelDataState = MutableStateFlow(channelData)
+        val membersCountState = MutableStateFlow(2)
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(
+                channelDataState = channelDataState,
+                membersState = membersState,
+                membersCountState = membersCountState,
+            )
+            .get()
+
+        delay(1000)
+
+        controller.channel.value.members.size `should be equal to` 2
+
+        delay(1000)
+
+        membersState.value = listOf(randomMember(), randomMember(), randomMember(), randomMember())
+
+        delay(1000)
+
+        controller.channel.value.members.size `should be equal to` 2
+
+        membersCountState.value = 4
+
+        delay(1000)
+
+        controller.channel.value.members.size `should be equal to` 4
     }
 
     private class Fixture(
@@ -366,30 +467,43 @@ internal class MessageListControllerTests {
         }
 
         fun givenChannelState(
-            channelData: ChannelData = ChannelData(
-                type = CHANNEL_TYPE,
-                id = CHANNEL_ID,
+            channelDataState: StateFlow<ChannelData> = MutableStateFlow(
+                ChannelData(
+                    type = CHANNEL_TYPE,
+                    id = CHANNEL_ID,
+                ),
             ),
-            messageState: MessagesState = MessagesState.Result(
-                messages = emptyList(),
-            ),
+            messagesState: StateFlow<List<Message>> = MutableStateFlow(emptyList()),
+            membersState: StateFlow<List<Member>> = MutableStateFlow(emptyList()),
+            membersCountState: StateFlow<Int> = MutableStateFlow(0),
+            watchersState: StateFlow<List<User>> = MutableStateFlow(emptyList()),
+            watchersCountState: StateFlow<Int> = MutableStateFlow(0),
             typingUsers: List<User> = listOf(),
         ) = apply {
-            val channelState: ChannelState = mock {
-                whenever(it.cid) doReturn CID
-                whenever(it.channelData) doReturn MutableStateFlow(channelData)
-                whenever(it.channelConfig) doReturn MutableStateFlow(Config())
-                whenever(it.members) doReturn MutableStateFlow(listOf())
-                whenever(it.messagesState) doReturn MutableStateFlow(messageState)
-                whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
-                whenever(it.reads) doReturn MutableStateFlow(listOf())
-                whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
-                whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
-                whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
-                whenever(it.unreadCount) doReturn MutableStateFlow(0)
-                whenever(it.insideSearch) doReturn MutableStateFlow(false)
-                whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
-                whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
+            val channelState: ChannelState = mock { channelState ->
+                whenever(channelState.cid) doReturn CID
+                whenever(channelState.channelData) doReturn channelDataState
+                whenever(channelState.channelConfig) doReturn MutableStateFlow(Config())
+                whenever(channelState.members) doReturn membersState
+                whenever(channelState.membersCount) doReturn membersCountState
+                whenever(channelState.watchers) doReturn watchersState
+                whenever(channelState.watcherCount) doReturn watchersCountState
+                whenever(channelState.messages) doReturn messagesState
+                whenever(channelState.messagesState) doReturn messagesState.map { messages ->
+                    MessagesState.Result(messages)
+                }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
+                whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
+                whenever(channelState.reads) doReturn MutableStateFlow(listOf())
+                whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
+                whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
+                whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
+                whenever(channelState.insideSearch) doReturn MutableStateFlow(false)
+                whenever(channelState.loadingNewerMessages) doReturn MutableStateFlow(false)
+                whenever(channelState.loadingOlderMessages) doReturn MutableStateFlow(false)
+                whenever(channelState.hidden) doReturn MutableStateFlow(false)
+                whenever(channelState.toChannel()) doAnswer {
+                    channelState.convertToChannel()
+                }
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
@@ -419,5 +533,32 @@ internal class MessageListControllerTests {
 
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
         private val user2 = User(id = "NotJc", name = "Not Jc Miñarro")
+
+        private fun ChannelState.convertToChannel(): Channel {
+            val channelData = channelData.value
+
+            val messages = messages.value
+            val members = members.value
+            val watchers = watchers.value
+            val reads = reads.value
+            val watcherCount = watcherCount.value
+            val insideSearch = insideSearch.value
+
+            val channel = channelData.toChannel(
+                messages,
+                emptyList(),
+                members,
+                reads,
+                watchers,
+                watcherCount,
+                insideSearch,
+            )
+            return channel.copy(
+                config = channelConfig.value,
+                unreadCount = unreadCount.value,
+                hidden = hidden.value,
+                isInsideSearch = insideSearch,
+            )
+        }
     }
 }
