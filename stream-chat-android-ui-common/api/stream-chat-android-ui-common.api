@@ -220,10 +220,13 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/DateF
 	public abstract fun formatDate (Ljava/util/Date;)Ljava/lang/String;
 	public abstract fun formatTime (Ljava/util/Date;)Ljava/lang/String;
 	public static fun from (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
+	public static fun from (Landroid/content/Context;Ljava/util/Locale;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 }
 
 public final class io/getstream/chat/android/ui/common/helper/DateFormatter$Companion {
 	public final fun from (Landroid/content/Context;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
+	public final fun from (Landroid/content/Context;Ljava/util/Locale;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
+	public static synthetic fun from$default (Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;Landroid/content/Context;Ljava/util/Locale;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/ImageHeadersProvider {
