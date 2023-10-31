@@ -113,6 +113,6 @@ dependencies {
     implementation Dependencies.shimmer
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.huaweiPush
-    compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_1-G_3rd.aar')
+    compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar')
     implementation Dependencies.coil
 }
