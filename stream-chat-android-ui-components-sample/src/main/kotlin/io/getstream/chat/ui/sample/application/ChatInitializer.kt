@@ -62,6 +62,7 @@ class ChatInitializer(private val context: Context) {
             )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
+            notificationConfig = notificationConfig,
             newMessageIntent = {
                     message: Message,
                     channel: Channel,
@@ -74,7 +75,6 @@ class ChatInitializer(private val context: Context) {
                     channelId = channel.id,
                 )
             },
-            notificationConfig = notificationConfig,
         )
         val logLevel = if (BuildConfig.DEBUG) ChatLogLevel.ALL else ChatLogLevel.NOTHING
 

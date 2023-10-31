@@ -42,23 +42,23 @@ public object NotificationHandlerFactory {
      * Method that creates a [NotificationHandler].
      *
      * @param context The [Context] to build the [NotificationHandler] with.
+     * @param notificationConfig Configuration for push notifications.
      * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
      * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
      * Used in SDK_INT >= VERSION_CODES.O.
      * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
-     * @param notificationConfig Configuration for push notifications.
      */
     @SuppressLint("NewApi")
     @JvmOverloads
     @JvmStatic
     public fun createNotificationHandler(
         context: Context,
+        notificationConfig: NotificationConfig,
         newMessageIntent: ((message: Message, channel: Channel) -> Intent)? = null,
         notificationChannel: (() -> NotificationChannel)? = null,
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
         permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
-        notificationConfig: NotificationConfig,
     ): NotificationHandler {
         return createNotificationHandler(
             context = context,

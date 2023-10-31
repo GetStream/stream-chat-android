@@ -55,6 +55,7 @@ object ChatHelper {
         )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
+            notificationConfig = notificationConfig,
             newMessageIntent = { message: Message, channel: Channel ->
                 StartupActivity.createIntent(
                     context = context,
@@ -63,7 +64,6 @@ object ChatHelper {
                     parentMessageId = message.parentId,
                 )
             },
-            notificationConfig = notificationConfig,
         )
 
         val offlinePlugin = StreamOfflinePluginFactory(context)
