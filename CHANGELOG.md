@@ -1,95 +1,18 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# October 31th, 2023 - 6.0.6
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Encode filename before uploading. [#5026](https://github.com/GetStream/stream-chat-android/pull/5026)
 
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Make `ChatClient.addDevice` and `ChatClient.deleteDevice` public. [#5024](https://github.com/GetStream/stream-chat-android/pull/5024)
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fixed channel update emissions in `MessageListController`. [#5029](https://github.com/GetStream/stream-chat-android/pull/5029)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `MessageDateSeparatorTheme` to customize the date separator component. [#5013](https://github.com/GetStream/stream-chat-android/pull/5013)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # October 23th, 2023 - 6.0.5
 ## Common changes for all artifacts
