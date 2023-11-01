@@ -89,6 +89,9 @@
 
 # October 31th, 2023 - 6.0.6
 ## stream-chat-android-client
+### ✅ Added
+- Display translated text in push notifications. [#5028](https://github.com/GetStream/stream-chat-android/pull/5028)
+
 ### 🐞 Fixed
 - Encode filename before uploading. [#5026](https://github.com/GetStream/stream-chat-android/pull/5026)
 
@@ -102,6 +105,8 @@
 ## stream-chat-android-compose
 ### ✅ Added
 - Added `MessageDateSeparatorTheme` to customize the date separator component. [#5013](https://github.com/GetStream/stream-chat-android/pull/5013)
+- Added support for automatic translations [#5028](https://github.com/GetStream/stream-chat-android/pull/5028)
+  * Enabled by `ChatTheme.autoTranslationEnabled`
 
 # October 23th, 2023 - 6.0.5
 ## Common changes for all artifacts
