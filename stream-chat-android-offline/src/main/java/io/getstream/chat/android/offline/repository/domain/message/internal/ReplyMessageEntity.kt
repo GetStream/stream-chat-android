@@ -95,6 +95,8 @@ internal data class ReplyMessageInnerEntity(
     val pinnedByUserId: String?,
     /** participants of thread replies */
     val threadParticipantsIds: List<String> = emptyList(),
+    /** Contains moderation details of the message **/
+    val moderationDetails: ModerationDetailsEntity? = null,
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"

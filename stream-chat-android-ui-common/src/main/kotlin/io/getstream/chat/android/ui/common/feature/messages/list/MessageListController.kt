@@ -25,6 +25,8 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.client.utils.message.isModerationBounce
+import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -88,7 +90,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparat
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
 import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -721,7 +722,7 @@ public class MessageListController(
                 groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
             }
 
-            if (message.isSystem() || message.isError()) {
+            if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
                 groupedMessages.add(SystemMessageItemState(message = message))
             } else {
                 val isMessageRead = message.createdAt
@@ -1161,7 +1162,8 @@ public class MessageListController(
     public fun selectMessage(message: Message?) {
         changeSelectMessageState(
             message?.let {
-                if (it.isModerationFailed(chatClient.getCurrentUser())) {
+                val currentUserId = chatClient.getCurrentUser()?.id
+                if (it.isModerationError(currentUserId)) {
                     SelectedMessageFailedModerationState(
                         message = it,
                         ownCapabilities = ownCapabilities.value,

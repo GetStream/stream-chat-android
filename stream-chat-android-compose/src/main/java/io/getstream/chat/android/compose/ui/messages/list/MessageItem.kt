@@ -71,7 +71,7 @@ import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
-import io.getstream.chat.android.compose.ui.util.isFailed
+import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -443,7 +443,7 @@ internal fun EmojiMessageContent(
 ) {
     val message = messageItem.message
 
-    if (!messageItem.isFailed()) {
+    if (!messageItem.isErrorOrFailed()) {
         MessageContent(
             message = message,
             currentUser = messageItem.currentUser,
@@ -511,13 +511,14 @@ internal fun RegularMessageContent(
             true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
             else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
         }
+
         else -> when (ownsMessage) {
             true -> ChatTheme.ownMessageTheme.backgroundColor
             else -> ChatTheme.otherMessageTheme.backgroundColor
         }
     }
 
-    if (!messageItem.isFailed()) {
+    if (!messageItem.isErrorOrFailed()) {
         MessageBubble(
             modifier = modifier,
             shape = messageBubbleShape,

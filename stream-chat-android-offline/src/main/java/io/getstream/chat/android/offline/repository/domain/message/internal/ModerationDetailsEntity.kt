@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.ui.util
+package io.getstream.chat.android.offline.repository.domain.message.internal
 
-import io.getstream.chat.android.client.utils.message.isErrorOrFailed
-import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import com.squareup.moshi.JsonClass
 
 /**
- * @return If the current message failed to send.
+ * Moderation details embedded within a message.
  */
-internal fun MessageItemState.isErrorOrFailed(): Boolean = isMine && message.isErrorOrFailed()
+@JsonClass(generateAdapter = true)
+internal class ModerationDetailsEntity(
+    val originalText: String,
+    val action: String,
+    val errorMsg: String,
+)

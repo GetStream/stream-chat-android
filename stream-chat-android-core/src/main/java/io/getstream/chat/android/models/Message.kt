@@ -223,10 +223,15 @@ public data class Message(
      */
     val skipEnrichUrl: Boolean = false,
 
+    /**
+     * Contains moderation details of the message.
+     */
+    val moderationDetails: MessageModerationDetails? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
         public const val TYPE_EPHEMERAL: String = "ephemeral"
+        public const val TYPE_ERROR: String = "error"
     }
 
     @Suppress("ComplexMethod")

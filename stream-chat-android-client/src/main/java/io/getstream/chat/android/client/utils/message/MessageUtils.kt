@@ -22,7 +22,10 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.utils.date.after
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageModerationAction
+import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.SyncStatus
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
 
@@ -51,6 +54,18 @@ public fun Message.createdAfter(that: Message): Boolean {
     val thatDate = that.createdAt ?: that.createdLocallyAt
     return thisDate after thatDate
 }
+
+/**
+ * @return If the current message failed to send.
+ */
+@InternalStreamChatApi
+public fun Message.isFailed(): Boolean = this.syncStatus == SyncStatus.FAILED_PERMANENTLY
+
+/**
+ * @return If the message type is error or failed to send.
+ */
+@InternalStreamChatApi
+public fun Message.isErrorOrFailed(): Boolean = isError() || isFailed()
 
 /**
  * @return If the message is deleted.
@@ -101,3 +116,36 @@ public fun Message.isThreadReply(): Boolean = !parentId.isNullOrEmpty()
  * @return If the message contains quoted message.
  */
 public fun Message.isReply(): Boolean = replyTo != null
+
+/**
+ * @return If the message belongs to the current user.
+ */
+@InternalStreamChatApi
+public fun Message.isMine(currentUserId: String?): Boolean = currentUserId == user.id
+
+/**
+ * @return If the message has moderation bounce action.
+ */
+@InternalStreamChatApi
+public fun Message.isModerationBounce(): Boolean = moderationDetails?.action == MessageModerationAction.bounce
+
+/**
+ * @return If the message has moderation block action.
+ */
+@InternalStreamChatApi
+public fun Message.isModerationBlock(): Boolean = moderationDetails?.action == MessageModerationAction.block
+
+/**
+ * @return If the message has moderation flag action.
+ */
+@InternalStreamChatApi
+public fun Message.isModerationFlag(): Boolean = moderationDetails?.action == MessageModerationAction.flag
+
+/**
+ * @return if the message failed at moderation or not.
+ */
+public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(currentUserId) &&
+    (
+        (isFailed() && syncDescription?.type == MessageSyncType.FAILED_MODERATION) ||
+            (isError() && isModerationBounce())
+        )

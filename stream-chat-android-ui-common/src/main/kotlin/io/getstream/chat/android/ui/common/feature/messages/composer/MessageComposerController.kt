@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
@@ -39,7 +40,6 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
-import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.uiutils.extension.containsLinks
@@ -548,11 +548,12 @@ public class MessageComposerController(
         logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
         val activeMessage = activeAction?.message ?: message
 
-        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationFailed(currentUser = chatClient.getCurrentUser())) {
+        val currentUserId = chatClient.getCurrentUser()?.id
+        val sendMessageCall = if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
             getEditMessageCall(message)
         } else {
             val (channelType, channelId) = message.cid.cidToTypeAndId()
-            if (activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
+            if (activeMessage.isModerationError(currentUserId)) {
                 chatClient.deleteMessage(activeMessage.id, true).enqueue()
             }
 
@@ -584,12 +585,13 @@ public class MessageComposerController(
     ): Message {
         val activeAction = activeAction
 
+        val currentUserId = chatClient.getCurrentUser()?.id
         val trimmedMessage = message.trim()
         val activeMessage = activeAction?.message ?: Message()
         val replyMessageId = (activeAction as? Reply)?.message?.id
         val mentions = filterMentions(selectedMentions, trimmedMessage)
 
-        return if (isInEditMode && !activeMessage.isModerationFailed(chatClient.getCurrentUser())) {
+        return if (isInEditMode && !activeMessage.isModerationError(currentUserId)) {
             activeMessage.copy(
                 text = trimmedMessage,
                 attachments = attachments.toMutableList(),

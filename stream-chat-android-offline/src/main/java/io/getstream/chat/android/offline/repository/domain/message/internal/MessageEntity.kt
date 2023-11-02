@@ -129,6 +129,9 @@ internal data class MessageInnerEntity(
      * Note: This property is local only, it is not sent to the backend.
      */
     var skipEnrichUrl: Boolean = false,
+
+    /** Contains moderation details of the message **/
+    val moderationDetails: ModerationDetailsEntity? = null,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

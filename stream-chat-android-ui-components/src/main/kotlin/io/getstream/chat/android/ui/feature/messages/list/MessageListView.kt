@@ -36,6 +36,7 @@ import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
+import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
@@ -65,7 +66,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
-import io.getstream.chat.android.ui.common.utils.extensions.isModerationFailed
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
@@ -356,7 +356,8 @@ public class MessageListView : ConstraintLayout {
     private val defaultMessageLongClickListener =
         MessageLongClickListener { message ->
             context.getFragmentManager()?.let { fragmentManager ->
-                if (message.isModerationFailed(currentUser = ChatClient.instance().getCurrentUser())) {
+                val currentUserId = ChatClient.instance().getCurrentUser()?.id
+                if (message.isModerationError(currentUserId)) {
                     moderatedMessageLongClickListener?.onModeratedMessageLongClick(message)
                 } else {
                     val style = requireStyle()

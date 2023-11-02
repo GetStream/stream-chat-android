@@ -80,5 +80,6 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         type = type,
         updatedAt = updated_at,
         user = user.toDomain(),
+        moderationDetails = moderation_details?.toDomain(),
         extraData = extraData.toMutableMap(),
     )
