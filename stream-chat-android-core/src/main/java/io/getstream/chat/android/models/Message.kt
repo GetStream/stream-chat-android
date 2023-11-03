@@ -323,6 +323,7 @@ public data class Message(
         if (threadParticipants.isNotEmpty()) append(", threadParticipants=").append(threadParticipants)
         append(", skipPushNotification=").append(skipPushNotification)
         append(", skipEnrichUrl=").append(skipEnrichUrl)
+        if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -372,6 +373,7 @@ public data class Message(
         private var threadParticipants: List<User> = emptyList()
         private var skipPushNotification: Boolean = false
         private var skipEnrichUrl: Boolean = false
+        private var moderationDetails: MessageModerationDetails? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -413,6 +415,7 @@ public data class Message(
             threadParticipants = message.threadParticipants
             skipPushNotification = message.skipPushNotification
             skipEnrichUrl = message.skipEnrichUrl
+            moderationDetails = message.moderationDetails
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -475,6 +478,9 @@ public data class Message(
             this.skipPushNotification = skipPushNotification
         }
         public fun withSkipEnrichUrl(skipEnrichUrl: Boolean): Builder = apply { this.skipEnrichUrl = skipEnrichUrl }
+        public fun withModerationDetails(moderationDetails: MessageModerationDetails): Builder = apply {
+            this.moderationDetails = moderationDetails
+        }
 
         public fun build(): Message {
             return Message(
@@ -517,6 +523,7 @@ public data class Message(
                 threadParticipants = threadParticipants,
                 skipPushNotification = skipPushNotification,
                 skipEnrichUrl = skipEnrichUrl,
+                moderationDetails = moderationDetails,
             )
         }
     }
