@@ -22,7 +22,7 @@ import com.squareup.moshi.JsonClass
  * Moderation details embedded within a message.
  */
 @JsonClass(generateAdapter = true)
-internal class ModerationDetailsEntity(
+internal data class ModerationDetailsEntity(
     val originalText: String,
     val action: String,
     val errorMsg: String,

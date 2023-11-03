@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -53,6 +54,30 @@ internal object MessageDtoTestData {
           "type": "regular",
           "updated_at": "2020-06-10T11:04:31.588Z",
           "user": ${UserDtoTestData.downstreamJson},
+          "moderation_details": {
+            "original_text": "spam_text",
+            "action": "bounce",
+            "error_msg": "this_message_did_not_meet_our_content_guidelines",
+            "harms": [
+              {
+                "name": "spam_commercial",
+                "phrase_list_ids": [],
+                "details": [
+                  {
+                    "spam_commercial": {
+                      "threshold": 0.7,
+                      "language": "en",
+                      "lang_score": 0.8328282,
+                      "clean_msg": "spam_text",
+                      "pred_score": {
+                        "spam_commercial": 0.993
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
           "extraData": {
             "key1": "value1",
             "key2": true,
@@ -116,6 +141,32 @@ internal object MessageDtoTestData {
         pinned_at = null,
         pin_expires = null,
         channel = null,
+        moderation_details = DownstreamModerationDetailsDto(
+            original_text = "spam_text",
+            action = "bounce",
+            error_msg = "this_message_did_not_meet_our_content_guidelines",
+            extraData = mapOf(
+                "harms" to listOf(
+                    mapOf(
+                        "name" to "spam_commercial",
+                        "phrase_list_ids" to emptyList<String>(),
+                        "details" to listOf(
+                            mapOf(
+                                "spam_commercial" to mapOf(
+                                    "threshold" to 0.7,
+                                    "language" to "en",
+                                    "lang_score" to 0.8328282,
+                                    "clean_msg" to "spam_text",
+                                    "pred_score" to mapOf(
+                                        "spam_commercial" to 0.993,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
     )
 
     @Language("JSON")
@@ -142,7 +193,31 @@ internal object MessageDtoTestData {
           "thread_participants" : [],
           "type": "",
           "updated_at": "2020-06-10T11:04:31.588Z",
-          "user": ${UserDtoTestData.downstreamJson}
+          "user": ${UserDtoTestData.downstreamJson},
+          "moderation_details": {
+            "original_text": "spam_text",
+            "action": "bounce",
+            "error_msg": "this_message_did_not_meet_our_content_guidelines",
+            "harms": [
+              {
+                "name": "spam_commercial",
+                "phrase_list_ids": [],
+                "details": [
+                  {
+                    "spam_commercial": {
+                      "threshold": 0.7,
+                      "language": "en",
+                      "lang_score": 0.8328282,
+                      "clean_msg": "spam_text",
+                      "pred_score": {
+                        "spam_commercial": 0.993
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
         }""".withoutWhitespace()
     val downstreamMessageWithoutExtraData = DownstreamMessageDto(
         id = "8584452-6d711169-0224-41c2-b9aa-1adbe624521b",
@@ -177,6 +252,32 @@ internal object MessageDtoTestData {
         pinned_at = null,
         pin_expires = null,
         channel = null,
+        moderation_details = DownstreamModerationDetailsDto(
+            original_text = "spam_text",
+            action = "bounce",
+            error_msg = "this_message_did_not_meet_our_content_guidelines",
+            extraData = mapOf(
+                "harms" to listOf(
+                    mapOf(
+                        "name" to "spam_commercial",
+                        "phrase_list_ids" to emptyList<String>(),
+                        "details" to listOf(
+                            mapOf(
+                                "spam_commercial" to mapOf(
+                                    "threshold" to 0.7,
+                                    "language" to "en",
+                                    "lang_score" to 0.8328282,
+                                    "clean_msg" to "spam_text",
+                                    "pred_score" to mapOf(
+                                        "spam_commercial" to 0.993,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
     )
 
     @Language("JSON")

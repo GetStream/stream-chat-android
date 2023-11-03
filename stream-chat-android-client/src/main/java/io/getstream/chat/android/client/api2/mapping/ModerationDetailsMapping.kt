@@ -25,8 +25,8 @@ import io.getstream.chat.android.models.MessageModerationDetails
  */
 internal fun DownstreamModerationDetailsDto.toDomain(): MessageModerationDetails {
     return MessageModerationDetails(
-        originalText = original_text,
-        action = MessageModerationAction.fromRawValue(action),
-        errorMsg = error_msg,
+        originalText = original_text.orEmpty(),
+        action = MessageModerationAction.fromRawValue(action.orEmpty()),
+        errorMsg = error_msg.orEmpty(),
     )
 }

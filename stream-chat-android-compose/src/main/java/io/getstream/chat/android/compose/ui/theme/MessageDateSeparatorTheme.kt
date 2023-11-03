@@ -29,7 +29,7 @@ import androidx.compose.ui.text.TextStyle
  * @param backgroundColor The background color for the date separator.
  */
 @Immutable
-public class MessageDateSeparatorTheme(
+public data class MessageDateSeparatorTheme(
     public val textStyle: TextStyle,
     public val backgroundColor: Color,
 ) {

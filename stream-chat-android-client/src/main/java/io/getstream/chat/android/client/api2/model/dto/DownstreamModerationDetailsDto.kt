@@ -25,8 +25,8 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
 )
 @JsonClass(generateAdapter = true)
 internal data class DownstreamModerationDetailsDto(
-    val original_text: String,
-    val action: String,
-    val error_msg: String,
+    val original_text: String?,
+    val action: String?,
+    val error_msg: String? = null,
     val extraData: Map<String, Any>,
 )
