@@ -35,7 +35,6 @@ import java.util.Date
  */
 internal class DeleteMessageListenerDatabase(
     private val clientState: ClientState,
-    private val currentUserId: String?,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
 ) : DeleteMessageListener {
@@ -47,6 +46,7 @@ internal class DeleteMessageListenerDatabase(
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return messageRepository.selectMessage(messageId)?.let { message ->
+            val currentUserId = clientState.user.value?.id
             val isModerationFailed = message.isModerationError(currentUserId)
 
             if (isModerationFailed) {

@@ -133,7 +133,6 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
 
         val deleteMessageListener: DeleteMessageListener = DeleteMessageListenerDatabase(
             clientState = clientState,
-            currentUserId = chatClient.getCurrentUser()?.id,
             messageRepository = repositoryFacade,
             userRepository = repositoryFacade,
         )
