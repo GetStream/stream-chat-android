@@ -28,20 +28,5 @@ internal data class DownstreamModerationDetailsDto(
     val original_text: String,
     val action: String,
     val error_msg: String,
-    // val harms: List<DownstreamModerationHarmDto>,
     val extraData: Map<String, Any>,
-)
-
-internal data class DownstreamModerationHarmDto(
-    val name: String,
-    val phraseListIds: List<Int>,
-    val details: List<Map<String, DownstreamModerationHarmDetailDto>>,
-)
-
-internal data class DownstreamModerationHarmDetailDto(
-    val threshold: Double,
-    val language: String,
-    val lang_score: Double,
-    val clean_msg: String,
-    val pred_score: Map<String, Double>,
 )

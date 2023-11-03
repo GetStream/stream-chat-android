@@ -17,7 +17,6 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageSyncDescription
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
@@ -54,7 +53,6 @@ internal suspend fun MessageEntity.toModel(
         reactionCounts = reactionCounts.toMutableMap(),
         reactionScores = reactionScores.toMutableMap(),
         syncStatus = syncStatus,
-        syncDescription = buildMessageSyncDescription(),
         shadowed = shadowed,
         i18n = i18n,
         latestReactions = (latestReactions.map { it.toModel(getUser) }).toMutableList(),
@@ -85,8 +83,6 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         text = text,
         html = html,
         syncStatus = syncStatus,
-        syncType = syncDescription?.type,
-        syncContent = syncDescription?.content?.toEntity(),
         type = type,
         replyCount = replyCount,
         deletedReplyCount = deletedReplyCount,
@@ -174,7 +170,6 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             text = text,
             html = html,
             syncStatus = syncStatus,
-            syncType = syncDescription?.type,
             type = type,
             replyCount = replyCount,
             deletedReplyCount = deletedReplyCount,
@@ -200,13 +195,3 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
-
-private fun MessageEntity.buildMessageSyncDescription(): MessageSyncDescription? = with(messageInnerEntity) {
-    if (syncType == null || syncContent == null) {
-        return null
-    }
-    return MessageSyncDescription(
-        syncType,
-        syncContent.toModel(),
-    )
-}

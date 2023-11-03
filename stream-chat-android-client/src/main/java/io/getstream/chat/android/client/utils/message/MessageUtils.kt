@@ -23,7 +23,6 @@ import io.getstream.chat.android.core.utils.date.after
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
-import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
 
@@ -42,6 +41,7 @@ public fun List<Message>.latestOrNull(): Message? = when (size >= ITEM_COUNT_OF_
             else -> first
         }
     }
+
     else -> lastOrNull()
 }
 
@@ -145,7 +145,4 @@ public fun Message.isModerationFlag(): Boolean = moderationDetails?.action == Me
  * @return if the message failed at moderation or not.
  */
 public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(currentUserId) &&
-    (
-        (isFailed() && syncDescription?.type == MessageSyncType.FAILED_MODERATION) ||
-            (isError() && isModerationBounce())
-        )
+    (isError() && isModerationBounce())

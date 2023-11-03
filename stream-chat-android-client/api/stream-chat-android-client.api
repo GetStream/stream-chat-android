@@ -785,33 +785,6 @@ public final class io/getstream/chat/android/client/errors/cause/MessageModerati
 	public fun <init> (Ljava/lang/String;)V
 }
 
-public final class io/getstream/chat/android/client/errors/cause/MessageModerationFailedException : io/getstream/chat/android/client/errors/cause/StreamCodeException {
-	public fun <init> (Ljava/util/List;Ljava/lang/String;)V
-	public synthetic fun <init> (Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun copy (Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/client/errors/cause/MessageModerationFailedException;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/cause/MessageModerationFailedException;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/cause/MessageModerationFailedException;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDetails ()Ljava/util/List;
-	public fun getMessage ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/client/errors/cause/MessageModerationFailedException$Detail {
-	public fun <init> (ILjava/util/List;)V
-	public final fun component1 ()I
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/client/errors/cause/MessageModerationFailedException$Detail;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/cause/MessageModerationFailedException$Detail;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/cause/MessageModerationFailedException$Detail;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCode ()I
-	public final fun getMessages ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract class io/getstream/chat/android/client/errors/cause/StreamCodeException : io/getstream/chat/android/client/errors/cause/StreamException {
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -2576,9 +2549,6 @@ public final class io/getstream/chat/android/client/utils/attachment/AttachmentU
 public final class io/getstream/chat/android/client/utils/channel/ChannelUtilsKt {
 }
 
-public final class io/getstream/chat/android/client/utils/internal/ChatErrorMapperKt {
-}
-
 public final class io/getstream/chat/android/client/utils/internal/MessageUtilsKt {
 }
 
@@ -2594,6 +2564,7 @@ public final class io/getstream/chat/android/client/utils/message/MessageUtils {
 	public static final fun isError (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isGiphy (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isGiphyEphemeral (Lio/getstream/chat/android/models/Message;)Z
+	public static final fun isModerationError (Lio/getstream/chat/android/models/Message;Ljava/lang/String;)Z
 	public static final fun isRegular (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isReply (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isSystem (Lio/getstream/chat/android/models/Message;)Z

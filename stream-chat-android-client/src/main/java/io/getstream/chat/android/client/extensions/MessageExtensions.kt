@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.extensions
 
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -42,7 +41,6 @@ public fun Message.updateFailedMessage(error: Error): Message {
         } else {
             SyncStatus.SYNC_NEEDED
         },
-        syncDescription = error.toMessageSyncDescription(),
         updatedLocallyAt = Date(),
     )
 }

@@ -48,11 +48,6 @@ public enum class SyncStatus(public val status: Int) {
 
     /**
      * When message waits its' attachments to be sent.
-     *
-     * Notes:
-     * SyncStatus is not a Message related only to store Attachment status here.
-     * SyncStatus is also a property of Channel and Reaction.
-     * AWAITING_ATTACHMENTS should be replace with MessageSyncType.IN_PROGRESS_AWAIT_ATTACHMENTS
      */
     AWAITING_ATTACHMENTS(AWAITING_ATTACHMENTS_STATUS_CODE),
     ;

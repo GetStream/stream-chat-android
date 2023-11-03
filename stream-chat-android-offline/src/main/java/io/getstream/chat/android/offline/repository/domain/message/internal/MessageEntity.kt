@@ -21,7 +21,6 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
@@ -45,8 +44,6 @@ internal data class MessageEntity(
     indices = [
         Index(value = ["cid", "createdAt"]),
         Index(value = ["syncStatus"]),
-        Index(value = ["syncType"]),
-        Index(value = ["syncStatus", "syncType"]),
     ],
 )
 internal data class MessageInnerEntity(
@@ -62,11 +59,6 @@ internal data class MessageInnerEntity(
     val type: String = "",
     /** if the message has been synced to the servers, default is synced */
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
-
-    val syncType: MessageSyncType? = null,
-
-    val syncContent: MessageSyncContentEntity? = null,
-
     /** the number of replies */
     val replyCount: Int = 0,
     /** the number of deleted replies */

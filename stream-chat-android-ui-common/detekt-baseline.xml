@@ -18,7 +18,6 @@
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$20</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$31</ID>
     <ID>MagicNumber:DurationFormatter.kt$DurationFormatter$1000</ID>
-    <ID>MaxLineLength:MessageComposerController.kt$MessageComposerController$val</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun completeRecording()</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun toggleRecordingPlayback()</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Exception</ID>

@@ -166,7 +166,7 @@ internal class MessagingStyleNotificationHandler(
             } ?: text
             else -> text
         }
-        return NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
+        return NotificationCompat.MessagingStyle.Message(displayedText, timestamp, person(context))
     }
 
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)

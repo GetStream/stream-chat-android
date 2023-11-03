@@ -94,11 +94,6 @@ public data class Message(
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     /**
-     * Contains details related to [syncStatus].
-     */
-    val syncDescription: MessageSyncDescription? = null,
-
-    /**
      * Contains type of the message. Can be one of the following: regular, ephemeral,
      * error, reply, system, deleted.
      */
@@ -300,7 +295,6 @@ public data class Message(
         if (reactionCounts.isNotEmpty()) append(", reactionCounts=").append(reactionCounts)
         if (reactionScores.isNotEmpty()) append(", reactionScores=").append(reactionScores)
         append(", syncStatus=").append(syncStatus)
-        if (syncDescription != null) append(", syncDescription=").append(syncDescription)
         if (latestReactions.isNotEmpty()) append(", latestReactions=").append(latestReactions)
         if (ownReactions.isNotEmpty()) append(", ownReactions=").append(ownReactions)
         if (createdAt != null) append(", createdAt=").append(createdAt)
@@ -348,7 +342,6 @@ public data class Message(
         private var reactionCounts: Map<String, Int> = mapOf()
         private var reactionScores: Map<String, Int> = mapOf()
         private var syncStatus: SyncStatus = SyncStatus.COMPLETED
-        private var syncDescription: MessageSyncDescription? = null
         private var type: String = ""
         private var latestReactions: List<Reaction> = listOf()
         private var ownReactions: List<Reaction> = listOf()
@@ -390,7 +383,6 @@ public data class Message(
             reactionCounts = message.reactionCounts
             reactionScores = message.reactionScores
             syncStatus = message.syncStatus
-            syncDescription = message.syncDescription
             type = message.type
             latestReactions = message.latestReactions
             ownReactions = message.ownReactions
@@ -441,9 +433,6 @@ public data class Message(
             this.reactionScores = reactionScores
         }
         public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
-        public fun withSyncDescription(syncDescription: MessageSyncDescription?): Builder = apply {
-            this.syncDescription = syncDescription
-        }
         public fun withType(type: String): Builder = apply { this.type = type }
         public fun withLatestReactions(latestReactions: List<Reaction>): Builder = apply {
             this.latestReactions = latestReactions
@@ -498,7 +487,6 @@ public data class Message(
                 reactionCounts = reactionCounts,
                 reactionScores = reactionScores,
                 syncStatus = syncStatus,
-                syncDescription = syncDescription,
                 type = type,
                 latestReactions = latestReactions,
                 ownReactions = ownReactions,

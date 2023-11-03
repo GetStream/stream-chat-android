@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.MessageSyncContent
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelsPaginationRequest
@@ -60,14 +59,6 @@ internal class ChannelExtensionsTest {
                     // Dummy adapter because reflective serialization can't deal with sealed classes
                     override fun fromJson(reader: JsonReader): Attachment.UploadState? = null
                     override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
-                },
-            )
-            .add(
-                MessageSyncContent::class.java,
-                object : JsonAdapter<MessageSyncContent>() {
-                    // Dummy adapter because reflective serialization can't deal with sealed classes
-                    override fun fromJson(reader: JsonReader): MessageSyncContent? = null
-                    override fun toJson(writer: JsonWriter, value: MessageSyncContent?) = TODO("Not implemented")
                 },
             )
             .add(KotlinJsonAdapterFactory())
