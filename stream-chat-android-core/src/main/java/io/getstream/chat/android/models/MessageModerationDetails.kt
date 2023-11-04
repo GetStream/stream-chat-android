@@ -16,9 +16,12 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
+
 /**
  * Describes the details of a message which was moderated.
  */
+@Immutable
 public data class MessageModerationDetails(
     val originalText: String,
     val action: MessageModerationAction,
@@ -28,6 +31,7 @@ public data class MessageModerationDetails(
 /**
  * The type of moderation performed to a message.
  */
+@Immutable
 public data class MessageModerationAction(
     public val rawValue: String,
 ) {
