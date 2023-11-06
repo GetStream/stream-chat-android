@@ -162,9 +162,9 @@ internal class ChatClientDebuggerTest {
         verify(sendMessageDebugger, Times(1)).onStart(any())
         verify(sendMessageDebugger, Times(1)).onInterceptionStart(any())
         verify(sendMessageDebugger, Times(1)).onInterceptionUpdate(any())
-        verify(sendMessageDebugger, Times(1)).onInterceptionStop(any())
+        verify(sendMessageDebugger, Times(1)).onInterceptionStop(any(), any())
         verify(sendMessageDebugger, Times(1)).onSendStart(any())
-        verify(sendMessageDebugger, Times(1)).onSendStop(any())
-        verify(sendMessageDebugger, Times(1)).onStop(any())
+        verify(sendMessageDebugger, Times(1)).onSendStop(any(), any())
+        verify(sendMessageDebugger, Times(1)).onStop(any(), any())
     }
 }

@@ -1686,15 +1686,16 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        val debugger = clientDebugger.debugSendMessage(channelType, channelId, message, isRetrying)
         return CoroutineCall(userScope) {
+            val debugger = clientDebugger.debugSendMessage(channelType, channelId, message, isRetrying)
             debugger.onStart(message)
             sendAttachments(channelType, channelId, message, isRetrying, debugger)
                 .flatMapSuspend { newMessage ->
-                    doSendMessage(channelType, channelId, newMessage, debugger)
-                }
-                .also { result ->
-                    debugger.onStop(result)
+                    debugger.onSendStart(newMessage)
+                    doSendMessage(channelType, channelId, newMessage).also { result ->
+                        debugger.onSendStop(result, newMessage)
+                        debugger.onStop(result, newMessage)
+                    }
                 }
         }
     }
@@ -1703,9 +1704,7 @@ internal constructor(
         channelType: String,
         channelId: String,
         message: Message,
-        debugger: SendMessageDebugger,
     ): Result<Message> {
-        debugger.onSendStart(message)
         return api.sendMessage(channelType, channelId, message)
             .retry(userScope, retryPolicy)
             .doOnResult(userScope) { result ->
@@ -1715,9 +1714,6 @@ internal constructor(
                     listener.onMessageSendResult(result, channelType, channelId, message)
                 }
             }.await()
-            .also { result ->
-                debugger.onSendStop(result)
-            }
     }
 
     private suspend fun sendAttachments(
@@ -1740,7 +1736,7 @@ internal constructor(
         return attachmentsSender
             .sendAttachments(preparedMessage, channelType, channelId, isRetrying, repositoryFacade)
             .also { result ->
-                debugger.onInterceptionStop(result)
+                debugger.onInterceptionStop(result, preparedMessage)
             }
     }
 

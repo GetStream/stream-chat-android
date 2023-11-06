@@ -70,7 +70,7 @@ public class Debugging {
             }
 
             @Override
-            public void onInterceptionStop(@NonNull Result<Message> result) {
+            public void onInterceptionStop(@NonNull Result<Message> result, @NonNull Message message) {
                 // handle onInterceptionStop
             }
 
@@ -81,13 +81,13 @@ public class Debugging {
             }
 
             @Override
-            public void onSendStop(@NonNull Result<Message> result) {
+            public void onSendStop(@NonNull Result<Message> result, @NonNull Message message) {
                 // handle onSendStop
             }
 
 
             @Override
-            public void onStop(@NonNull Result<Message> result) {
+            public void onStop(@NonNull Result<Message> result, @NonNull Message message) {
                 // handle onStop
             }
 

@@ -57,7 +57,7 @@ class Debugging {
             // handle onInterceptionUpdate
         }
 
-        override fun onInterceptionStop(result: Result<Message>) {
+        override fun onInterceptionStop(result: Result<Message>, message: Message) {
             // handle onInterceptionStop
         }
 
@@ -65,11 +65,11 @@ class Debugging {
             // handle onSendStart
         }
 
-        override fun onSendStop(result: Result<Message>) {
+        override fun onSendStop(result: Result<Message>, message: Message) {
             // handle onSendStop
         }
 
-        override fun onStop(result: Result<Message>) {
+        override fun onStop(result: Result<Message>, message: Message) {
             // handle onStop
         }
     }

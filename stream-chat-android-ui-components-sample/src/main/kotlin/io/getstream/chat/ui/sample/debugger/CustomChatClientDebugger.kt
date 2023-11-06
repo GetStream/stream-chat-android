@@ -66,19 +66,19 @@ class CustomSendMessageDebugger(
         logger.d { "[onInterceptionUpdate] #debug; message: $message" }
     }
 
-    override fun onInterceptionStop(result: Result<Message>) {
-        logger.v { "[onInterceptionStop] #debug; result: $result" }
+    override fun onInterceptionStop(result: Result<Message>, message: Message) {
+        logger.v { "[onInterceptionStop] #debug; result: $result, message: $message" }
     }
 
     override fun onSendStart(message: Message) {
         logger.d { "[onSendStart] #debug; message: $message" }
     }
 
-    override fun onSendStop(result: Result<Message>) {
-        logger.v { "[onSendStop] #debug; result: $result" }
+    override fun onSendStop(result: Result<Message>, message: Message) {
+        logger.v { "[onSendStop] #debug; result: $result, message: $message" }
     }
 
-    override fun onStop(result: Result<Message>) {
-        logger.v { "[onStop] #debug; result: $result" }
+    override fun onStop(result: Result<Message>, message: Message) {
+        logger.v { "[onStop] #debug; result: $result, message: $message" }
     }
 }
