@@ -258,3 +258,19 @@ internal fun MarkReadIdentifier(
     result = 31 * result + channelId.hashCode()
     return result
 }
+
+/**
+ * Identifier for a [ChatClient.sendMessage] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun SendMessageIdentifier(
+    channelType: String,
+    channelId: String,
+    messageId: String,
+): Int {
+    var result = "SendMessage".hashCode()
+    result = 31 * result + channelType.hashCode()
+    result = 31 * result + channelId.hashCode()
+    result = 31 * result + messageId.hashCode()
+    return result
+}

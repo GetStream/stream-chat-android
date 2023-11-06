@@ -41,6 +41,8 @@ import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.result.Result
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -157,6 +159,32 @@ internal class ChatClientDebuggerTest {
 
         /* When */
         client.sendMessage(channelType, channelId, message, isRetrying).await()
+
+        /* Then */
+        verify(sendMessageDebugger, Times(1)).onStart(any())
+        verify(sendMessageDebugger, Times(1)).onInterceptionStart(any())
+        verify(sendMessageDebugger, Times(1)).onInterceptionUpdate(any())
+        verify(sendMessageDebugger, Times(1)).onInterceptionStop(any(), any())
+        verify(sendMessageDebugger, Times(1)).onSendStart(any())
+        verify(sendMessageDebugger, Times(1)).onSendStop(any(), any())
+        verify(sendMessageDebugger, Times(1)).onStop(any(), any())
+    }
+
+    @Test
+    fun `Verify that sendMessageDebugger was invoked once on sending the same message 2 times`() = runTest {
+        /* Given */
+        val channelType = "messaging"
+        val channelId = "general"
+        val message = Message(id = "id_1", text = "test-message")
+        val isRetrying = false
+        whenever(attachmentsSender.sendAttachments(any(), any(), any(), any(), any())) doReturn Result.Success(message)
+        whenever(api.sendMessage(any(), any(), any())) doReturn message.asCall()
+
+        /* When */
+        listOf(
+            async { client.sendMessage(channelType, channelId, message, isRetrying).await() },
+            async { client.sendMessage(channelType, channelId, message, isRetrying).await() },
+        ).awaitAll()
 
         /* Then */
         verify(sendMessageDebugger, Times(1)).onStart(any())
