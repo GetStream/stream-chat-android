@@ -544,7 +544,7 @@ public class MessageComposerController(
      *
      * @param message The message to send.
      */
-    public fun sendMessage(message: Message) {
+    public fun sendMessage(message: Message, callback: Call.Callback<Message>) {
         logger.i { "[sendMessage] message.attachments.size: ${message.attachments.size}" }
         val activeMessage = activeAction?.message ?: message
 
@@ -564,7 +564,7 @@ public class MessageComposerController(
         }
         dismissMessageActions()
         clearData()
-        sendMessageCall.enqueue()
+        sendMessageCall.enqueue(callback)
     }
 
     /**

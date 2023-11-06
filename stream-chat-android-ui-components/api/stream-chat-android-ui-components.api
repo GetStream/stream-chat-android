@@ -3347,7 +3347,8 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageCompos
 	public final fun selectMention (Lio/getstream/chat/android/models/User;)V
 	public final fun sendMessage ()V
 	public final fun sendMessage (Lio/getstream/chat/android/models/Message;)V
-	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)V
+	public final fun sendMessage (Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;)V
+	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageComposerViewModel;Lio/getstream/chat/android/models/Message;Lio/getstream/result/call/Call$Callback;ILjava/lang/Object;)V
 	public final fun sendRecording ()V
 	public final fun setAlsoSendToChannel (Z)V
 	public final fun setMessageInput (Ljava/lang/String;)V

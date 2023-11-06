@@ -30,6 +30,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
+import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -174,7 +175,10 @@ public class MessageComposerViewModel(
      * @param message The message to send.
      */
     @JvmOverloads
-    public fun sendMessage(message: Message = buildNewMessage()): Unit = messageComposerController.sendMessage(message)
+    public fun sendMessage(
+        message: Message = buildNewMessage(),
+        callback: Call.Callback<Message> = Call.Callback { /* no-op */ },
+    ): Unit = messageComposerController.sendMessage(message, callback)
 
     /**
      * Builds a new [Message] to send to our API. Based on the internal state, we use the current action's message and
