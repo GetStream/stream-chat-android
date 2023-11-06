@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `callback` param to `MessageComposerController.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
 
@@ -60,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
 
@@ -71,6 +73,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
 
