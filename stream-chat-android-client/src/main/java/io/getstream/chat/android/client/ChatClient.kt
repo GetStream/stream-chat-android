@@ -1693,8 +1693,8 @@ internal constructor(
                 .flatMapSuspend { newMessage ->
                     debugger.onSendStart(newMessage)
                     doSendMessage(channelType, channelId, newMessage).also { result ->
-                        debugger.onStop(result, newMessage)
                         debugger.onSendStop(result, newMessage)
+                        debugger.onStop(result, newMessage)
                     }
                 }
         }
