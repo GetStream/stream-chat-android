@@ -755,22 +755,22 @@ public final class io/getstream/chat/android/client/debugger/ChatClientDebugger$
 
 public abstract interface class io/getstream/chat/android/client/debugger/SendMessageDebugger {
 	public abstract fun onInterceptionStart (Lio/getstream/chat/android/models/Message;)V
-	public abstract fun onInterceptionStop (Lio/getstream/result/Result;)V
+	public abstract fun onInterceptionStop (Lio/getstream/result/Result;Lio/getstream/chat/android/models/Message;)V
 	public abstract fun onInterceptionUpdate (Lio/getstream/chat/android/models/Message;)V
 	public abstract fun onSendStart (Lio/getstream/chat/android/models/Message;)V
-	public abstract fun onSendStop (Lio/getstream/result/Result;)V
+	public abstract fun onSendStop (Lio/getstream/result/Result;Lio/getstream/chat/android/models/Message;)V
 	public abstract fun onStart (Lio/getstream/chat/android/models/Message;)V
-	public abstract fun onStop (Lio/getstream/result/Result;)V
+	public abstract fun onStop (Lio/getstream/result/Result;Lio/getstream/chat/android/models/Message;)V
 }
 
 public final class io/getstream/chat/android/client/debugger/SendMessageDebugger$DefaultImpls {
 	public static fun onInterceptionStart (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/models/Message;)V
-	public static fun onInterceptionStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/result/Result;)V
+	public static fun onInterceptionStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/result/Result;Lio/getstream/chat/android/models/Message;)V
 	public static fun onInterceptionUpdate (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/models/Message;)V
 	public static fun onSendStart (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/models/Message;)V
-	public static fun onSendStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/result/Result;)V
+	public static fun onSendStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/result/Result;Lio/getstream/chat/android/models/Message;)V
 	public static fun onStart (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/chat/android/models/Message;)V
-	public static fun onStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/result/Result;)V
+	public static fun onStop (Lio/getstream/chat/android/client/debugger/SendMessageDebugger;Lio/getstream/result/Result;Lio/getstream/chat/android/models/Message;)V
 }
 
 public final class io/getstream/chat/android/client/errorhandler/ErrorHandler$Companion {

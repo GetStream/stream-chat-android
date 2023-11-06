@@ -130,7 +130,7 @@ class CustomSendMessageDebugger(
         // Called when there are intermediate message data updates.
     }
 
-    override fun onInterceptionStop(result: Result<Message>) {
+    override fun onInterceptionStop(result: Result<Message>, message: Message) {
         // Called when the message interception before sending it to the API stops.
     }
 
@@ -138,11 +138,11 @@ class CustomSendMessageDebugger(
         // Called when the message sending to the API starts.
     }
 
-    override fun onSendStop(result: Result<Message>) {
+    override fun onSendStop(result: Result<Message>, message: Message) {
         // Called when the message sending to the API stops.
     }
 
-    override fun onStop(result: Result<Message>) {
+    override fun onStop(result: Result<Message>, message: Message) {
         // Called when the message sending flow stops.
     }
 }
@@ -193,7 +193,7 @@ public class CustomSendMessageDebugger implements SendMessageDebugger {
     }
 
     @Override
-    public void onInterceptionStop(@NonNull Result<Message> result) {
+    public void onInterceptionStop(@NonNull Result<Message> result, @NonNull Message message) {
         // Called when the message interception before sending it to the API stops.
     }
 
@@ -203,12 +203,12 @@ public class CustomSendMessageDebugger implements SendMessageDebugger {
     }
 
     @Override
-    public void onSendStop(@NonNull Result<Message> result) {
+    public void onSendStop(@NonNull Result<Message> result, @NonNull Message message) {
         // Called when the message sending to the API stops.
     }
 
     @Override
-    public void onStop(@NonNull Result<Message> result) {
+    public void onStop(@NonNull Result<Message> result, @NonNull Message message) {
         // Called when the message sending flow stops.
     }
 }
