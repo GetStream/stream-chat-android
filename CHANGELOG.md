@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed duplicate send message requests. [5039](https://github.com/GetStream/stream-chat-android/pull/5039)
 
 ### ⬆️ Improved
 - Pass `message` with `result` in `SendMessageDebugger`. [#5037](https://github.com/GetStream/stream-chat-android/pull/5037)

@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.api.models.identifier.QueryChannelsIdent
 import io.getstream.chat.android.client.api.models.identifier.QueryMembersIdentifier
 import io.getstream.chat.android.client.api.models.identifier.SendEventIdentifier
 import io.getstream.chat.android.client.api.models.identifier.SendGiphyIdentifier
+import io.getstream.chat.android.client.api.models.identifier.SendMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
@@ -1697,6 +1698,8 @@ internal constructor(
                         debugger.onStop(result, newMessage)
                     }
                 }
+        }.share(userScope) {
+            SendMessageIdentifier(channelType, channelId, message.id)
         }
     }
 
