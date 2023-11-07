@@ -20,7 +20,10 @@ import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.doOnLayout
 import androidx.core.view.doOnNextLayout
+import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.getstream.sdk.chat.utils.extensions.isDirectMessaging
@@ -51,6 +54,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemBackgroun
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemForegroundViewBinding
 import io.getstream.chat.android.ui.databinding.StreamUiChannelListItemViewBinding
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
+import kotlin.math.abs
 import kotlin.math.absoluteValue
 
 @Suppress("LongParameterList")
@@ -223,15 +227,14 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     private fun configureForeground(diff: ChannelListPayloadDiff, channelItem: ChannelListItem.ChannelItem) {
         binding.itemForegroundView.apply {
             diff.run {
+                val lastMessage = channelItem.channel.getLastMessage()
                 if (nameChanged || (channelItem.channel.isAnonymousChannel() && diff.usersChanged)) {
-                    configureChannelNameLabel()
+                    configureChannelNameLabel(lastMessage)
                 }
 
                 if (avatarViewChanged) {
                     configureAvatarView()
                 }
-
-                val lastMessage = channelItem.channel.getLastMessage()
                 if (lastMessageChanged || typingUsersChanged) {
                     lastMessageLabel.isVisible = channelItem.typingUsers.isEmpty() && lastMessage.isNotNull()
                     configureLastMessageLabelAndTimestamp(lastMessage)
@@ -251,11 +254,30 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         }
     }
 
-    private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel() {
+    private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(
+        lastMessage: Message?,
+    ) {
         channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
             currentUser = ChatClient.instance().getCurrentUser()
         )
+
+        if (lastMessage != null) {
+            channelNameLabel.translationY = 0f
+        } else if (channelNameLabel.height > 0) {
+            channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
+        } else {
+            channelNameLabel.doOnLayout {
+                channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
+            }
+        }
+    }
+
+    private fun yDiffBetweenCenters(view1: View, view2: View): Float {
+        val cy1 = view1.top + view1.height / 2f
+        val cy2 = view2.top + view2.height / 2f
+
+        return abs(cy2 - cy1)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
