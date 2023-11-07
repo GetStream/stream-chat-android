@@ -20,7 +20,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -90,11 +90,11 @@ internal class LoadNotificationDataWorker(
             notificationChannelId = context.getString(R.string.stream_chat_other_notifications_channel_id),
             notificationChannelName = context.getString(R.string.stream_chat_other_notifications_channel_name),
         )
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             ForegroundInfo(
                 NOTIFICATION_ID,
                 foregroundNotification,
-                FOREGROUND_SERVICE_TYPE_DATA_SYNC,
+                FOREGROUND_SERVICE_TYPE_SHORT_SERVICE,
             )
         } else {
             ForegroundInfo(
