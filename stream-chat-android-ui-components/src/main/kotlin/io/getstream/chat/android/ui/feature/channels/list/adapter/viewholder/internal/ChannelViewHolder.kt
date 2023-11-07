@@ -26,7 +26,6 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
@@ -208,8 +207,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             }
         }
         binding.itemBackgroundView.deleteImageView.apply {
-            val canDeleteChannel = channel.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
-            if (style.deleteEnabled && canDeleteChannel && isDeleteOptionVisible(channel)) {
+            if (style.deleteEnabled && isDeleteOptionVisible(channel)) {
                 isVisible = true
                 getDeleteOptionIcon.invoke(channel)?.also { setImageDrawable(it) }
                 optionsCount++
