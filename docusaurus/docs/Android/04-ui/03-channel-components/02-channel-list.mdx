@@ -106,6 +106,12 @@ channelListView.setChannelItemClickListener { channel ->
 channelListView.setChannelInfoClickListener { channel ->
     // Handle channel info click
 }
+channelListView.setChannelLongClickListener { channel ->
+    // Handle channel long click
+}
+channelListView.setChannelListUpdateListener { channels ->
+    // Handle channel list updates
+}
 channelListView.setUserClickListener { user ->
     // Handle member click
 }
@@ -120,6 +126,12 @@ channelListView.setChannelItemClickListener(channel -> {
 });
 channelListView.setChannelInfoClickListener(channel -> {
     // Handle channel info click
+});
+channelListView.setChannelLongClickListener(channel -> {
+    // Handle channel info click
+});
+channelListView.setChannelListUpdateListener(channels -> {
+    // Handle channel list updates
 });
 channelListView.setUserClickListener(user -> {
     // Handle member click
@@ -203,6 +215,86 @@ These changes should have the following results:
 :::note
 The transformer should be set before the View is rendered to make sure that the new style was applied.
 :::
+
+## Customizing Swipe Actions
+
+By default `ChannelListView` supports **two** swipe actions: 
+* `More Options` - available for every channel.
+* `Delete` - available for the channels where `Channel.ownCapbilities` contains `"delete-channel"`
+
+Here is the **default** implementation:
+
+| Swipe Actions                                             |
+|-----------------------------------------------------------|
+| ![before](../../assets/xml_customizing_swipe_actions.png) |
+
+:::note
+You can customize the swipe actions as shown below.
+:::
+
+### Customizing Icons
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+channelsView.setMoreOptionsIconProvider { channel ->
+    // You can generate the icon Drawable based on the channel object
+    ContextCompat.getDrawable(context, R.drawable.custom_action_icon_more)
+}
+channelsView.setDeleteOptionIconProvider { channel ->
+    // You can generate the icon Drawable based on the channel object
+    ContextCompat.getDrawable(context, R.drawable.custom_action_icon_delete)
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+channelsView.setDeleteOptionIconProvider(channel -> {
+    // You can generate icon Drawable based on the channel object
+    return ContextCompat.getDrawable(context, R.drawable.custom_action_icon_more);
+});
+channelsView.setDeleteOptionIconProvider(channel -> { 
+    // You can generate icon Drawable based on the channel object
+    return ContextCompat.getDrawable(context, R.drawable.custom_action_icon_delete);
+});
+```
+</TabItem>
+</Tabs>
+
+### Customizing Visibility
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+channelsView.setIsMoreOptionsVisible { channel ->
+    // You can determine visibility based on the channel object.
+    true
+}
+channelsView.setIsDeleteOptionVisible { channel ->
+    // You can determine visibility based on the channel object.
+    // Here is the default implementation:
+    channel.ownCapabilities.contains("delete-channel")
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+channelsView.setIsMoreOptionsVisible(channel -> {
+    // you generate icon based on the channel object
+    return true;
+});
+channelsView.setIsDeleteOptionVisible(channel -> {
+    // You can determine visibility based on the channel object.
+    // Here is the default implementation:
+    return channel.getOwnCapabilities().contains("delete-channel");
+});
+```
+</TabItem>
+</Tabs>
 
 ## Creating a Custom ViewHolder Factory
 
