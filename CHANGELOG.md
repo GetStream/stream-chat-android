@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Use shortService instead of dataSync for our workmanager job. [#5042](https://github.com/GetStream/stream-chat-android/pull/5042)
 
 ### ✅ Added
 
