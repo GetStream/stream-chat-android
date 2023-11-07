@@ -20,8 +20,6 @@ import android.content.res.ColorStateList
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.doOnLayout
 import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
@@ -266,18 +264,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             channelNameLabel.translationY = 0f
         } else if (channelNameLabel.height > 0) {
             channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
-        } else {
-            channelNameLabel.doOnLayout {
-                channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
-            }
+        } else channelNameLabel.doOnPreDraw {
+            channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
         }
-    }
-
-    private fun yDiffBetweenCenters(view1: View, view2: View): Float {
-        val cy1 = view1.top + view1.height / 2f
-        val cy2 = view2.top + view2.height / 2f
-
-        return abs(cy2 - cy1)
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureAvatarView() {
@@ -389,5 +378,13 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             height = style.itemVerticalSpacerHeight
         }
         guideline.setGuidelinePercent(style.itemVerticalSpacerPosition)
+    }
+
+    private companion object {
+        private fun yDiffBetweenCenters(view1: View, view2: View): Float {
+            val cy1 = view1.paddingTop + view1.top + view1.height / 2f
+            val cy2 = view2.paddingTop + view2.top + view2.height / 2f
+            return abs(cy2 - cy1)
+        }
     }
 }
