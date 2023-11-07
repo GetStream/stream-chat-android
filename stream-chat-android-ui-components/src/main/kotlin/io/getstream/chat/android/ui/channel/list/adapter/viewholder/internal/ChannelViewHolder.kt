@@ -29,7 +29,6 @@ import com.getstream.sdk.chat.utils.formatDate
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.SyncStatus
@@ -112,6 +111,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
                                 ?.user
                                 ?.let(userClickListener::onClick)
                         }
+
                         else -> channelClickListener.onClick(channel)
                     }
                 }
@@ -209,8 +209,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             }
         }
         binding.itemBackgroundView.deleteImageView.apply {
-            val canDeleteChannel = channel.ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
-            if (style.deleteEnabled && canDeleteChannel && isDeleteOptionVisible(channel)) {
+            if (style.deleteEnabled && isDeleteOptionVisible(channel)) {
                 isVisible = true
                 getDeleteOptionIcon.invoke(channel)?.also { setImageDrawable(it) }
                 optionsCount++
