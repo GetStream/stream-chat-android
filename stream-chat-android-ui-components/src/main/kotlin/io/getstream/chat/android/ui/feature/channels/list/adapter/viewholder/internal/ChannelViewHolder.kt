@@ -263,8 +263,10 @@ internal class ChannelViewHolder @JvmOverloads constructor(
             channelNameLabel.translationY = 0f
         } else if (channelNameLabel.height > 0) {
             channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
-        } else channelNameLabel.doOnPreDraw {
-            channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
+        } else {
+            channelNameLabel.doOnPreDraw {
+                channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)
+            }
         }
     }
 
