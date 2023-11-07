@@ -60,6 +60,7 @@
 - Fixed channel title not being centered vertically when mo last message exists. [#5040](https://github.com/GetStream/stream-chat-android/pull/5040)
 
 ### ⬆️ Improved
+- Allow override channel's delete option visibility. [#5044](https://github.com/GetStream/stream-chat-android/pull/5044)
 
 ### ✅ Added
 
