@@ -16,6 +16,7 @@
 
 ### ⬆️ Improved
 - Pass `message` with `result` in `SendMessageDebugger`. [#5037](https://github.com/GetStream/stream-chat-android/pull/5037)
+- Use shortService instead of dataSync for our workmanager job. [#5041](https://github.com/GetStream/stream-chat-android/pull/5041)
 
 ### ✅ Added
 
