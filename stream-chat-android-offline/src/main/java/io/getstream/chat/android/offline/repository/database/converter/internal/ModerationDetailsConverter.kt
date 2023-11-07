@@ -17,16 +17,25 @@
 package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
-import io.getstream.chat.android.models.MessageSyncType
+import com.squareup.moshi.adapter
+import io.getstream.chat.android.offline.repository.domain.message.internal.ModerationDetailsEntity
 
-internal class MessageSyncTypeConverter {
+internal class ModerationDetailsConverter {
+
+    @OptIn(ExperimentalStdlibApi::class)
+    private val entityAdapter = moshi.adapter<ModerationDetailsEntity>()
+
     @TypeConverter
-    fun stringToMessageSyncType(data: Int): MessageSyncType {
-        return MessageSyncType.fromInt(data) ?: error("unexpected MessageSyncType: $data")
+    fun stringToModerationDetails(data: String?): ModerationDetailsEntity? {
+        return data?.let {
+            entityAdapter.fromJson(it)
+        }
     }
 
     @TypeConverter
-    fun messageSyncTypeToString(type: MessageSyncType): Int {
-        return type.type
+    fun moderationDetailsToString(entity: ModerationDetailsEntity?): String? {
+        return entity?.let {
+            entityAdapter.toJson(it)
+        }
     }
 }

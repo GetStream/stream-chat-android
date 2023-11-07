@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomMessage
-import io.getstream.chat.android.randomUser
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
@@ -38,12 +37,11 @@ internal class DeleteMessageListenerDatabaseTest {
 
     private val clientState: ClientState = mock()
 
-    private val currentUser = randomUser()
     private val messageRepository: MessageRepository = mock()
     private val userRepository: UserRepository = mock()
 
     private val deleteMessageListenerState: DeleteMessageListenerDatabase =
-        DeleteMessageListenerDatabase(clientState, currentUser.id, messageRepository, userRepository)
+        DeleteMessageListenerDatabase(clientState, messageRepository, userRepository)
 
     @Test
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {

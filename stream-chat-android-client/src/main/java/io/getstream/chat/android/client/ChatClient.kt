@@ -2886,20 +2886,11 @@ internal constructor(
     internal fun <R, T : Any> Call<T>.precondition(
         pluginsList: List<R>,
         preconditionCheck: suspend R.() -> Result<Unit>,
-    ): Call<T> =
-        withPrecondition(userScope) {
-            pluginsList.fold(Result.Success(Unit) as Result<Unit>) { result, plugin ->
-                when (result) {
-                    is Result.Failure -> result
-                    is Result.Success -> {
-                        when (val preconditionResult = preconditionCheck(plugin)) {
-                            is Result.Failure -> preconditionResult
-                            is Result.Success -> result
-                        }
-                    }
-                }
-            }
-        }
+    ): Call<T> = withPrecondition(userScope) {
+        pluginsList.map { plugin ->
+            plugin.preconditionCheck()
+        }.firstOrNull { it is Result.Failure } ?: Result.Success(Unit)
+    }
 
     /**
      * Builder to initialize the singleton [ChatClient] instance and configure its parameters.

@@ -18,9 +18,9 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import androidx.room.Embedded
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
@@ -32,7 +32,13 @@ internal data class ReplyMessageEntity(
     val attachments: List<ReplyAttachmentEntity>,
 )
 
-@Entity(tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME)
+@Entity(
+    tableName = REPLY_MESSAGE_ENTITY_TABLE_NAME,
+    indices = [
+        Index(value = ["cid", "createdAt"]),
+        Index(value = ["syncStatus"]),
+    ],
+)
 internal data class ReplyMessageInnerEntity(
     @PrimaryKey
     val id: String,
@@ -46,11 +52,6 @@ internal data class ReplyMessageInnerEntity(
     val type: String = "",
     /** if the message has been synced to the servers, default is synced */
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
-
-    val syncType: MessageSyncType? = null,
-
-    // val syncContent: MessageSyncContentEntity? = null,
-
     /** the number of replies */
     val replyCount: Int = 0,
     /** the number of deleted replies */
@@ -95,6 +96,8 @@ internal data class ReplyMessageInnerEntity(
     val pinnedByUserId: String?,
     /** participants of thread replies */
     val threadParticipantsIds: List<String> = emptyList(),
+    /** Contains moderation details of the message **/
+    val moderationDetails: ModerationDetailsEntity? = null,
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"

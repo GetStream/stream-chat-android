@@ -29,6 +29,14 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import java.util.Date
 
+@Deprecated(
+    message = "Use the `isErrorOrFailed()` from `stream-chat-android-client` module instead.",
+    replaceWith = ReplaceWith(
+        expression = "Message.isErrorOrFailed()",
+        imports = ["io.getstream.chat.android.client.utils.message.isErrorOrFailed"],
+    ),
+    level = DeprecationLevel.WARNING,
+)
 public fun Message.isFailed(): Boolean {
     return this.syncStatus == SyncStatus.FAILED_PERMANENTLY || isError()
 }

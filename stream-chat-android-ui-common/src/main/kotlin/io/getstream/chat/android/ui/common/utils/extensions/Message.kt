@@ -19,8 +19,7 @@ package io.getstream.chat.android.ui.common.utils.extensions
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageSyncType
-import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.User
 import java.util.Date
 
@@ -51,6 +50,13 @@ public fun Message.getCreatedAtOrNull(): Date? {
 /**
  * @return if the message failed at moderation or not.
  */
+@Deprecated(
+    message = "Use the one from stream-chat-android-client",
+    replaceWith = ReplaceWith(
+        expression = "isModerationFailed(currentUserId)",
+        imports = ["io.getstream.chat.android.client.utils.message.isModerationError"],
+    ),
+    level = DeprecationLevel.WARNING,
+)
 public fun Message.isModerationFailed(currentUser: User?): Boolean = isMine(currentUser) &&
-    syncStatus == SyncStatus.FAILED_PERMANENTLY &&
-    syncDescription?.type == MessageSyncType.FAILED_MODERATION
+    (type == Message.TYPE_ERROR && moderationDetails?.action == MessageModerationAction.bounce)

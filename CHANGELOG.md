@@ -5,10 +5,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `Message.moderationDetails` due to support of the new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
+  - Added `MessageModerationDetails` class.
 
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `Message.syncDescription` due to removal of the old moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
+  - Removed `MessageSyncContent` class and its subclasses.
+  - Removed `MessageSyncType` class.
 
 ## stream-chat-android-client
 ### 🐞 Fixed
@@ -67,6 +72,7 @@
 - Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
+- Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
 
 ### ❌ Removed
 
@@ -79,6 +85,7 @@
 - Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
+- Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
 
 ### ❌ Removed
 

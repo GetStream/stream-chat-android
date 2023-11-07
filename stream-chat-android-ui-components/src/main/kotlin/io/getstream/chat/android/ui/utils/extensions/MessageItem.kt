@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
+import io.getstream.chat.android.client.utils.message.isErrorOrFailed
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
@@ -29,3 +30,9 @@ public fun MessageListItem.MessageItem.isBottomPosition(): Boolean {
 public fun MessageListItem.MessageItem.isNotBottomPosition(): Boolean {
     return !isBottomPosition()
 }
+
+/**
+ * @return If the mine message is the type of error or failed to send.
+ */
+@InternalStreamChatApi
+internal fun MessageListItem.MessageItem.isErrorOrFailed(): Boolean = isMine && message.isErrorOrFailed()

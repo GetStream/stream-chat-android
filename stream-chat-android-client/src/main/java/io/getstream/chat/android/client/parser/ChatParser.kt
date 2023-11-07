@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.parser
 
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.cause.MessageModerationFailedException
 import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.socket.ErrorDetail
 import io.getstream.chat.android.client.socket.ErrorResponse
@@ -66,14 +65,12 @@ internal interface ChatParser {
                 } catch (_: Throwable) {
                     ErrorResponse().apply { message = body }
                 }
-                val cause = error.extractCause()
                 Error.NetworkError(
                     serverErrorCode = error.code,
                     message = error.message +
                         moreInfoTemplate(error.moreInfo) +
                         buildDetailsTemplate(error.details),
                     statusCode = statusCode,
-                    cause = cause,
                 )
             }
         } catch (expected: Throwable) {
@@ -119,20 +116,5 @@ internal interface ChatParser {
         } else {
             ""
         }
-    }
-
-    private fun ErrorResponse.extractCause(): Throwable? {
-        if (code == ChatErrorCode.MESSAGE_MODERATION_FAILED.code) {
-            return MessageModerationFailedException(
-                details = details.map { detail ->
-                    MessageModerationFailedException.Detail(
-                        code = detail.code,
-                        messages = detail.messages,
-                    )
-                },
-                message = message,
-            )
-        }
-        return null
     }
 }

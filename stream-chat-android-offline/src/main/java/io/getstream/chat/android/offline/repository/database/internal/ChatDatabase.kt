@@ -28,8 +28,7 @@ import io.getstream.chat.android.offline.repository.database.converter.internal.
 import io.getstream.chat.android.offline.repository.database.converter.internal.ListConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.MapConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.MemberConverter
-import io.getstream.chat.android.offline.repository.database.converter.internal.MessageSyncDescriptionConverter
-import io.getstream.chat.android.offline.repository.database.converter.internal.MessageSyncTypeConverter
+import io.getstream.chat.android.offline.repository.database.converter.internal.ModerationDetailsConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.QuerySortConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.SetConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.SyncStatusConverter
@@ -68,7 +67,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         CommandInnerEntity::class,
         SyncStateEntity::class,
     ],
-    version = 68,
+    version = 69,
     exportSchema = false,
 )
 @TypeConverters(
@@ -79,10 +78,9 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
     ExtraDataConverter::class,
     SetConverter::class,
     SyncStatusConverter::class,
-    MessageSyncDescriptionConverter::class,
-    MessageSyncTypeConverter::class,
     DateConverter::class,
     MemberConverter::class,
+    ModerationDetailsConverter::class,
 )
 internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsDao(): QueryChannelsDao

@@ -19,8 +19,8 @@ package io.getstream.chat.android.state.plugin.listener.internal
 import io.getstream.chat.android.client.errors.cause.MessageModerationDeletedException
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
@@ -48,9 +48,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         return channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
-                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
-                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
+            val isModerationFailed = message.isModerationError(clientState.user.value?.id)
 
             if (isModerationFailed) {
                 deleteMessage(message)
@@ -77,9 +75,7 @@ internal class DeleteMessageListenerState(
         val channelLogic: ChannelLogic? = logic.channelFromMessageId(messageId)
 
         channelLogic?.getMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == clientState.user.value?.id &&
-                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
-                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
+            val isModerationFailed = message.isModerationError(clientState.user.value?.id)
 
             if (isModerationFailed) {
                 deleteMessage(message)

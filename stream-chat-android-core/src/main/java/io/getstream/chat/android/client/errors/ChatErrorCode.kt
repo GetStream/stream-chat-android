@@ -33,7 +33,6 @@ private const val TOKEN_NOT_VALID_ERROR_CODE = 41
 private const val TOKEN_DATE_INCORRECT_ERROR_CODE = 42
 private const val TOKEN_SIGNATURE_INCORRECT_ERROR_CODE = 43
 private const val API_KEY_NOT_FOUND_ERROR_CODE = 2
-private const val MESSAGE_MODERATION_FAILED_ERROR_CODE = 73
 
 /**
  * Enumerable that associates code returned by the Stream backend with description.
@@ -66,7 +65,6 @@ public enum class ChatErrorCode(public val code: Int, public val description: St
     TOKEN_DATE_INCORRECT(TOKEN_DATE_INCORRECT_ERROR_CODE, "Unauthenticated, token date incorrect"),
     TOKEN_SIGNATURE_INCORRECT(TOKEN_SIGNATURE_INCORRECT_ERROR_CODE, "Unauthenticated, token signature invalid"),
     API_KEY_NOT_FOUND(API_KEY_NOT_FOUND_ERROR_CODE, "Api key is not found, verify it if it's correct or was created."),
-    MESSAGE_MODERATION_FAILED(MESSAGE_MODERATION_FAILED_ERROR_CODE, "Message moderation failed."),
     ;
 
     public companion object {

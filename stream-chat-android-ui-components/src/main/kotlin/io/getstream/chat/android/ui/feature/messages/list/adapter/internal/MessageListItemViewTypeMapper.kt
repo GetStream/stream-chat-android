@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
+import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
@@ -81,7 +82,7 @@ internal object MessageListItemViewTypeMapper {
 
         return when {
             attachmentFactoryManager.canHandle(message) -> CUSTOM_ATTACHMENTS
-            message.isError() -> ERROR_MESSAGE
+            message.isError() && !message.isModerationBounce() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
             message.isDeleted() -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY

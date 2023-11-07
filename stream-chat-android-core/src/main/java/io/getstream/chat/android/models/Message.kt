@@ -94,11 +94,6 @@ public data class Message(
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
 
     /**
-     * Contains details related to [syncStatus].
-     */
-    val syncDescription: MessageSyncDescription? = null,
-
-    /**
      * Contains type of the message. Can be one of the following: regular, ephemeral,
      * error, reply, system, deleted.
      */
@@ -223,10 +218,15 @@ public data class Message(
      */
     val skipEnrichUrl: Boolean = false,
 
+    /**
+     * Contains moderation details of the message.
+     */
+    val moderationDetails: MessageModerationDetails? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
         public const val TYPE_EPHEMERAL: String = "ephemeral"
+        public const val TYPE_ERROR: String = "error"
     }
 
     @Suppress("ComplexMethod")
@@ -295,7 +295,6 @@ public data class Message(
         if (reactionCounts.isNotEmpty()) append(", reactionCounts=").append(reactionCounts)
         if (reactionScores.isNotEmpty()) append(", reactionScores=").append(reactionScores)
         append(", syncStatus=").append(syncStatus)
-        if (syncDescription != null) append(", syncDescription=").append(syncDescription)
         if (latestReactions.isNotEmpty()) append(", latestReactions=").append(latestReactions)
         if (ownReactions.isNotEmpty()) append(", ownReactions=").append(ownReactions)
         if (createdAt != null) append(", createdAt=").append(createdAt)
@@ -318,6 +317,7 @@ public data class Message(
         if (threadParticipants.isNotEmpty()) append(", threadParticipants=").append(threadParticipants)
         append(", skipPushNotification=").append(skipPushNotification)
         append(", skipEnrichUrl=").append(skipEnrichUrl)
+        if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -342,7 +342,6 @@ public data class Message(
         private var reactionCounts: Map<String, Int> = mapOf()
         private var reactionScores: Map<String, Int> = mapOf()
         private var syncStatus: SyncStatus = SyncStatus.COMPLETED
-        private var syncDescription: MessageSyncDescription? = null
         private var type: String = ""
         private var latestReactions: List<Reaction> = listOf()
         private var ownReactions: List<Reaction> = listOf()
@@ -367,6 +366,7 @@ public data class Message(
         private var threadParticipants: List<User> = emptyList()
         private var skipPushNotification: Boolean = false
         private var skipEnrichUrl: Boolean = false
+        private var moderationDetails: MessageModerationDetails? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -383,7 +383,6 @@ public data class Message(
             reactionCounts = message.reactionCounts
             reactionScores = message.reactionScores
             syncStatus = message.syncStatus
-            syncDescription = message.syncDescription
             type = message.type
             latestReactions = message.latestReactions
             ownReactions = message.ownReactions
@@ -408,6 +407,7 @@ public data class Message(
             threadParticipants = message.threadParticipants
             skipPushNotification = message.skipPushNotification
             skipEnrichUrl = message.skipEnrichUrl
+            moderationDetails = message.moderationDetails
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -433,9 +433,6 @@ public data class Message(
             this.reactionScores = reactionScores
         }
         public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
-        public fun withSyncDescription(syncDescription: MessageSyncDescription?): Builder = apply {
-            this.syncDescription = syncDescription
-        }
         public fun withType(type: String): Builder = apply { this.type = type }
         public fun withLatestReactions(latestReactions: List<Reaction>): Builder = apply {
             this.latestReactions = latestReactions
@@ -470,6 +467,9 @@ public data class Message(
             this.skipPushNotification = skipPushNotification
         }
         public fun withSkipEnrichUrl(skipEnrichUrl: Boolean): Builder = apply { this.skipEnrichUrl = skipEnrichUrl }
+        public fun withModerationDetails(moderationDetails: MessageModerationDetails): Builder = apply {
+            this.moderationDetails = moderationDetails
+        }
 
         public fun build(): Message {
             return Message(
@@ -487,7 +487,6 @@ public data class Message(
                 reactionCounts = reactionCounts,
                 reactionScores = reactionScores,
                 syncStatus = syncStatus,
-                syncDescription = syncDescription,
                 type = type,
                 latestReactions = latestReactions,
                 ownReactions = ownReactions,
@@ -512,6 +511,7 @@ public data class Message(
                 threadParticipants = threadParticipants,
                 skipPushNotification = skipPushNotification,
                 skipEnrichUrl = skipEnrichUrl,
+                moderationDetails = moderationDetails,
             )
         }
     }

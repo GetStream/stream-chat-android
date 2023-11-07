@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.models
+package io.getstream.chat.android.offline.repository.domain.message.internal
 
-import androidx.compose.runtime.Immutable
+import com.squareup.moshi.JsonClass
 
 /**
- * An addition to [SyncStatus] to cover message related statuses in detail.
- *
- * @param type Represents the type of message sync description.
- * @param content May contain a detailed information for the specified [type].
+ * Moderation details embedded within a message.
  */
-@Immutable
-public data class MessageSyncDescription(
-    val type: MessageSyncType,
-    val content: MessageSyncContent,
+@JsonClass(generateAdapter = true)
+internal data class ModerationDetailsEntity(
+    val originalText: String,
+    val action: String,
+    val errorMsg: String,
 )

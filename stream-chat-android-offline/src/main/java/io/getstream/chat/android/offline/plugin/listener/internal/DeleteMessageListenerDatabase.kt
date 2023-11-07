@@ -22,8 +22,8 @@ import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.MessageSyncType
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -35,7 +35,6 @@ import java.util.Date
  */
 internal class DeleteMessageListenerDatabase(
     private val clientState: ClientState,
-    private val currentUserId: String?,
     private val messageRepository: MessageRepository,
     private val userRepository: UserRepository,
 ) : DeleteMessageListener {
@@ -47,9 +46,8 @@ internal class DeleteMessageListenerDatabase(
      */
     override suspend fun onMessageDeletePrecondition(messageId: String): Result<Unit> {
         return messageRepository.selectMessage(messageId)?.let { message ->
-            val isModerationFailed = message.user.id == currentUserId &&
-                message.syncStatus == SyncStatus.FAILED_PERMANENTLY &&
-                message.syncDescription?.type == MessageSyncType.FAILED_MODERATION
+            val currentUserId = clientState.user.value?.id
+            val isModerationFailed = message.isModerationError(currentUserId)
 
             if (isModerationFailed) {
                 messageRepository.deleteChannelMessage(message)

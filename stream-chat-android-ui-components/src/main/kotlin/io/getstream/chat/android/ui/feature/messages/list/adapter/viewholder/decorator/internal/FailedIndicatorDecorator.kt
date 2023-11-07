@@ -18,7 +18,6 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.de
 
 import android.widget.ImageView
 import androidx.core.view.isVisible
-import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
@@ -29,6 +28,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.utils.extensions.isErrorOrFailed
 
 internal class FailedIndicatorDecorator(
     private val listViewStyle: MessageListItemStyle,
@@ -142,7 +142,7 @@ internal class FailedIndicatorDecorator(
         deliveryFailedIcon: ImageView,
         data: MessageListItem.MessageItem,
     ) {
-        val isFailed = data.isMine && data.message.syncStatus == SyncStatus.FAILED_PERMANENTLY
+        val isFailed = data.isErrorOrFailed()
         val isBanned = isFailed && isCurrentUserBanned()
         when {
             isBanned -> deliveryFailedIcon.setImageDrawable(listViewStyle.iconBannedMessage)

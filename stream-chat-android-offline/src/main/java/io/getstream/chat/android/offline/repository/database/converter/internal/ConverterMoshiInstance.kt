@@ -18,27 +18,12 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.MultiMapJsonAdapter
-import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.addAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
-import io.getstream.chat.android.models.MessageSyncType
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageAwaitingAttachmentsEntity
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageModerationFailedEntity
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageSyncContentEntity
-import io.getstream.chat.android.offline.repository.domain.message.internal.MessageSyncNoneEntity
 
 @OptIn(ExperimentalStdlibApi::class)
 internal val moshi: Moshi = Moshi.Builder()
-    .add(
-        PolymorphicJsonAdapterFactory.of(MessageSyncContentEntity::class.java, MessageSyncType.TYPE)
-            .withSubtype(MessageSyncNoneEntity::class.java, MessageSyncType.NONE.alias)
-            .withSubtype(
-                MessageAwaitingAttachmentsEntity::class.java,
-                MessageSyncType.IN_PROGRESS_AWAIT_ATTACHMENTS.alias,
-            )
-            .withSubtype(MessageModerationFailedEntity::class.java, MessageSyncType.FAILED_MODERATION.alias),
-    )
     .addAdapter(DateAdapter())
     .add(KotlinJsonAdapterFactory())
     .add(MultiMapJsonAdapter.FACTORY)
