@@ -65,6 +65,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed channel title not being centered vertically when mo last message exists. [#5043](https://github.com/GetStream/stream-chat-android/pull/5043)
 
 ### ⬆️ Improved
 
