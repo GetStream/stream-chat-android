@@ -28,6 +28,7 @@ import android.widget.LinearLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updateMargins
+import androidx.core.view.updateMarginsRelative
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.Message
@@ -38,6 +39,7 @@ import io.getstream.chat.android.common.state.MessageAction
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.extensions.internal.dpToPx
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.internal.FullScreenDialogFragment
 import io.getstream.chat.android.ui.databinding.StreamUiDialogMessageOptionsBinding
@@ -53,6 +55,7 @@ import io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.in
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.message.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsDecoratorProvider
+import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
 
 /**
  * An overlay with available message options to the selected message. Also, allows leaving a reaction.
@@ -230,7 +233,12 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
             }
 
             val params = (layoutParams as ViewGroup.MarginLayoutParams)
-            params.updateMargins(bottom = style.optionsOverlayEditReactionsMargin)
+            params.updateMarginsRelative(
+                bottom = style.optionsOverlayEditReactionsMargin,
+                start = EDIT_REACTIONS_MARGIN_START_DP.dpToPx(),
+                end = EDIT_REACTIONS_MARGIN_END_DP.dpToPx(),
+            )
+            (params as? LinearLayout.LayoutParams)?.gravity = if (messageItem.isMine) Gravity.END else Gravity.START
         }
     }
 
@@ -305,20 +313,25 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      * Positions the reactions bubble near the message bubble according to the design.
      */
     private fun anchorReactionsViewToMessageView() {
-        val reactionsWidth = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_total_width)
-        val reactionsOffset = requireContext().getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
+        val context = requireContext()
+        val reactionsOffset = context.getDimension(R.dimen.stream_ui_edit_reactions_horizontal_offset)
 
-        viewHolder.messageContainerView()
-            ?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
-                with(binding) {
-                    val maxTranslation = messageContainer.width / 2 - reactionsWidth / 2
-                    editReactionsView.translationX = if (messageItem.isMine) {
-                        left - messageContainer.width / 2 - reactionsOffset
-                    } else {
-                        right - messageContainer.width / 2 + reactionsOffset
-                    }.coerceIn(-maxTranslation, maxTranslation).toFloat()
-                }
+        viewHolder.messageContainerView()?.addOnLayoutChangeListener { _, left, _, right, _, _, _, _, _ ->
+            with(binding) {
+                val rightAlignment = right + reactionsOffset - editReactionsView.left
+                val leftAlignment = left + reactionsOffset - editReactionsView.left
+                val isRtl = context.isRtlLayout
+
+                editReactionsView.positionBubbleTail(
+                    when {
+                        messageItem.isMine && !isRtl -> leftAlignment
+                        messageItem.isMine && isRtl -> rightAlignment
+                        !messageItem.isMine && !isRtl -> rightAlignment
+                        else -> leftAlignment
+                    }.toFloat(),
+                )
             }
+        }
     }
 
     /**
@@ -380,6 +393,9 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
 
     public companion object {
         public const val TAG: String = "MessageOptionsDialogFragment"
+
+        private const val EDIT_REACTIONS_MARGIN_START_DP = 50
+        private const val EDIT_REACTIONS_MARGIN_END_DP = 8
 
         /**
          * Creates a new instance of [MessageOptionsDialogFragment].
