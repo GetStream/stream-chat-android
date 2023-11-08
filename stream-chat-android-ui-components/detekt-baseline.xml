@@ -49,7 +49,7 @@
     <ID>LongMethod:SearchResultListViewStyle.kt$SearchResultListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle</ID>
     <ID>LongMethod:SuggestionListViewStyle.kt$SuggestionListViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): SuggestionListViewStyle</ID>
     <ID>LongMethod:SwipeViewHolder.kt$SwipeViewHolder$@SuppressLint("ClickableViewAccessibility") public fun setSwipeListener(view: View, swipeListener: ChannelListView.SwipeListener?)</ID>
-    <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, )</ID>
+    <ID>LongParameterList:EditReactionsBubbleDrawer.kt$EditReactionsBubbleDrawer$( context: Context, canvas: Canvas, bubbleWidth: Int, bubbleHeight: Int, isMyMessage: Boolean, isSingleReaction: Boolean, messageAnchorPosition: Float, canvasBounds: IntRange, )</ID>
     <ID>LongParameterList:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle$( public val progressIcon: Drawable, public val giphyIcon: Drawable, public val placeholderIcon: Drawable, @ColorInt public val imageBackgroundColor: Int, public val giphyType: GiphyInfoType, public val scaleType: ImageView.ScaleType, public val sizingMode: GiphySizingMode, public val width: Int, public val height: Int, public val dimensionRatio: Float, )</ID>
     <ID>MagicNumber:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$500</ID>
     <ID>MagicNumber:AvatarBitmapCombiner.kt$AvatarBitmapCombiner$3</ID>

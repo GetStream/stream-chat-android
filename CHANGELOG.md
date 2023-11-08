@@ -58,6 +58,7 @@
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed channel title not being centered vertically when mo last message exists. [#5040](https://github.com/GetStream/stream-chat-android/pull/5040)
+- Fixed reactions bubble being cut of in UI. [5049](https://github.com/GetStream/stream-chat-android/pull/5049)
 
 ### ⬆️ Improved
 - Allow override channel's delete option visibility. [#5044](https://github.com/GetStream/stream-chat-android/pull/5044)
