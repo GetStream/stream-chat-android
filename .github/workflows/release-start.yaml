@@ -17,7 +17,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.1.0
         with:
-          ref: develop
+          ref: jcdevelop
       - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
@@ -42,5 +42,5 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-          branch: release
+          branch: jcrelease
           force: true
