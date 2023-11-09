@@ -73,6 +73,10 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @property iconOnlyVisibleToYou Icon for message's pending status. Default value is [R.drawable.stream_ui_ic_icon_eye_off].
  * @property textStyleMessageDeleted Appearance for message deleted text.
  * @property messageDeletedBackground Background color for deleted message. Default value is [R.color.stream_ui_grey_whisper].
+ * @property textStyleMessageDeletedMine Appearance for mine message deleted text. Default value is [textStyleMessageDeleted].
+ * @property messageDeletedBackgroundMine Background color for mine deleted message. Default value is [messageDeletedBackground].
+ * @property textStyleMessageDeletedTheirs Appearance for theirs message deleted text. Default value is [textStyleMessageDeleted].
+ * @property messageDeletedBackgroundTheirs Background color for theirs deleted message. Default value is [messageDeletedBackground].
  * @property messageStrokeColorMine Stroke color for message sent by the current user. Default value is [MESSAGE_STROKE_COLOR_MINE].
  * @property messageStrokeWidthMine Stroke width for message sent by the current user. Default value is [MESSAGE_STROKE_WIDTH_MINE].
  * @property messageStrokeColorTheirs Stroke color for message sent by other user. Default value is [MESSAGE_STROKE_COLOR_THEIRS].
@@ -115,6 +119,10 @@ public data class MessageListItemStyle(
     public val iconOnlyVisibleToYou: Drawable,
     public val textStyleMessageDeleted: TextStyle,
     @ColorInt public val messageDeletedBackground: Int,
+    public val textStyleMessageDeletedMine: TextStyle = textStyleMessageDeleted,
+    @ColorInt public val messageDeletedBackgroundMine: Int = messageDeletedBackground,
+    public val textStyleMessageDeletedTheirs: TextStyle = textStyleMessageDeleted,
+    @ColorInt public val messageDeletedBackgroundTheirs: Int = messageDeletedBackground,
     @ColorInt public val messageStrokeColorMine: Int,
     @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
