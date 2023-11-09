@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.message.composer
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.text.InputType
@@ -30,11 +31,13 @@ import io.getstream.chat.android.ui.TransformStyle
 import io.getstream.chat.android.ui.ViewStyle
 import io.getstream.chat.android.ui.common.extensions.internal.getColorCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getColorOrNull
+import io.getstream.chat.android.ui.common.extensions.internal.getColorStateListCompat
 import io.getstream.chat.android.ui.common.extensions.internal.getDimension
 import io.getstream.chat.android.ui.common.extensions.internal.getDrawableCompat
 import io.getstream.chat.android.ui.common.extensions.internal.use
 import io.getstream.chat.android.ui.common.style.TextStyle
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
+import io.getstream.chat.android.ui.utils.extensions.getColorStateListCompat
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 /**
@@ -68,11 +71,13 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param messageInputShowReplyView Whether to show the default reply view inside the message input or not.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
+ * @param attachmentsButtonIconTintList The tint list for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
  * @param takeImageEnabled If starting image capture is enabled.
  * @param recordVideoEnabled If starting video capture is enabled.
  * @param commandsButtonVisible If the button to select commands is displayed.
  * @param commandsButtonIconDrawable The icon for the commands button.
+ * @param commandsButtonIconTintList The tint list for the commands button.
  * @param commandsButtonRippleColor Ripple color of the commands button.
  * @param alsoSendToChannelCheckboxVisible If the checkbox to send a message to the channel is displayed.
  * @param alsoSendToChannelCheckboxDrawable The drawable that will be used for the checkbox.
@@ -85,6 +90,7 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param dismissModeIconDrawable The icon for the button that dismisses edit or reply mode.
  * @param sendMessageButtonEnabled If the button to send message is enabled.
  * @param sendMessageButtonIconDrawable The icon for the button to send message.
+ * @param sendMessageButtonIconTintList The tint list for the button to send message.
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
  * @param cooldownTimerBackgroundDrawable Background drawable for cooldown timer.
  * @param messageReplyBackgroundColor Sets the background color of the quoted message bubble visible in the composer
@@ -130,11 +136,13 @@ public data class MessageComposerViewStyle(
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
+    public val attachmentsButtonIconTintList: ColorStateList?,
     @ColorInt public val attachmentsButtonRippleColor: Int?,
     public val takeImageEnabled: Boolean,
     public val recordVideoEnabled: Boolean,
     public val commandsButtonVisible: Boolean,
     public val commandsButtonIconDrawable: Drawable,
+    public val commandsButtonIconTintList: ColorStateList?,
     @ColorInt public val commandsButtonRippleColor: Int?,
     // Footer content
     public val alsoSendToChannelCheckboxVisible: Boolean,
@@ -150,6 +158,7 @@ public data class MessageComposerViewStyle(
     // Trailing content
     public val sendMessageButtonEnabled: Boolean,
     public val sendMessageButtonIconDrawable: Drawable,
+    public val sendMessageButtonIconTintList: ColorStateList?,
     public val cooldownTimerTextStyle: TextStyle,
     public val cooldownTimerBackgroundDrawable: Drawable,
     // Message reply customization, by default belongs to center content as well
@@ -421,6 +430,11 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
 
+                val attachmentsButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconTintList
+                )
+
                 val attachmentsButtonRippleColor = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonRippleColor
                 )
@@ -434,6 +448,11 @@ public data class MessageComposerViewStyle(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
+
+                val commandsButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconTintList
+                )
 
                 val commandsButtonRippleColor = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonRippleColor
@@ -509,6 +528,11 @@ public data class MessageComposerViewStyle(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
+
+                val sendMessageButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconTintList
+                )
 
                 val cooldownTimerTextStyle = TextStyle.Builder(a)
                     .size(
@@ -651,9 +675,11 @@ public data class MessageComposerViewStyle(
                     takeImageEnabled = takeImageEnabled,
                     recordVideoEnabled = recordVideoEnabled,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
+                    attachmentsButtonIconTintList = attachmentsButtonIconTintList,
                     attachmentsButtonRippleColor = attachmentsButtonRippleColor,
                     commandsButtonVisible = commandsButtonVisible,
                     commandsButtonIconDrawable = commandsButtonIconDrawable,
+                    commandsButtonIconTintList = commandsButtonIconTintList,
                     commandsButtonRippleColor = commandsButtonRippleColor,
                     // Footer content
                     alsoSendToChannelCheckboxVisible = alsoSendToChannelCheckboxVisible,
@@ -669,6 +695,7 @@ public data class MessageComposerViewStyle(
                     // Trailing content
                     sendMessageButtonEnabled = sendMessageButtonEnabled,
                     sendMessageButtonIconDrawable = sendMessageButtonIconDrawable,
+                    sendMessageButtonIconTintList = sendMessageButtonIconTintList,
                     cooldownTimerTextStyle = cooldownTimerTextStyle,
                     cooldownTimerBackgroundDrawable = cooldownTimerBackgroundDrawable,
                     messageReplyBackgroundColor = messageReplyBackgroundColor,

@@ -110,9 +110,11 @@
         <attr name="streamUiMessageComposerTakeImageEnabled" format="boolean" />
         <attr name="streamUiMessageComposerRecordVideoEnabled" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsButtonRippleColor" format="color|reference" />
         <attr name="streamUiMessageComposerCommandsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerCommandsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerCommandsButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerCommandsButtonRippleColor" format="color|reference" />
 
         <!-- Footer content -->
@@ -140,6 +142,7 @@
         <!-- Trailing content -->
         <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerSendMessageButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerSendMessageButtonIconTintList" format="reference" />
 
         <attr name="streamUiMessageComposerCooldownTimerTextSize" format="dimension" />
         <attr name="streamUiMessageComposerCooldownTimerTextColor" format="reference|color" />

@@ -1132,9 +1132,11 @@
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
         <item name="streamUiMessageComposerAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_attach</item>
+        <item name="streamUiMessageComposerAttachmentsButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerAttachmentsButtonRippleColor">@null</item>
         <item name="streamUiMessageComposerCommandsButtonVisible">true</item>
         <item name="streamUiMessageComposerCommandsButtonIconDrawable">@drawable/stream_ui_ic_command</item>
+        <item name="streamUiMessageComposerCommandsButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerCommandsButtonRippleColor">@null</item>
 
         <!-- Footer content -->
@@ -1154,6 +1156,7 @@
         <!-- Trailing content -->
         <item name="streamUiMessageComposerSendMessageButtonEnabled">true</item>
         <item name="streamUiMessageComposerSendMessageButtonIconDrawable">@drawable/stream_ui_ic_send_message</item>
+        <item name="streamUiMessageComposerSendMessageButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerCooldownTimerTextSize">@dimen/stream_ui_text_large</item>
         <item name="streamUiMessageComposerCooldownTimerTextColor">@color/stream_ui_literal_white</item>
         <item name="streamUiMessageComposerCooldownTimerBackgroundDrawable">@drawable/stream_ui_cooldown_badge_background</item>
