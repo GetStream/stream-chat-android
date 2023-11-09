@@ -130,7 +130,6 @@
     <dimen name="stream_ui_view_reactions_small_tail_bubble_offset">9dp</dimen>
 
     <!--EditReactionsView-->
-    <dimen name="stream_ui_edit_reactions_total_width">216dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_offset">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_horizontal_padding">8dp</dimen>
     <dimen name="stream_ui_edit_reactions_vertical_padding">0dp</dimen>

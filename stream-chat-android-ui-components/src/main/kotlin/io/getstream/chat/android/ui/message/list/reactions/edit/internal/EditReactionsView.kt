@@ -44,6 +44,7 @@ public class EditReactionsView : RecyclerView {
 
     private var reactionClickListener: ReactionClickListener? = null
     private var isMyMessage: Boolean = false
+    private var messageAnchorPosition: Float = 0f
 
     public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
@@ -56,7 +57,7 @@ public class EditReactionsView : RecyclerView {
     public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(context, attrs)
     }
@@ -71,7 +72,7 @@ public class EditReactionsView : RecyclerView {
             ReactionItem(
                 type = type,
                 isMine = message.ownReactions.any { it.type == type },
-                reactionDrawable = reactionDrawable
+                reactionDrawable = reactionDrawable,
             )
         }
 
@@ -91,8 +92,22 @@ public class EditReactionsView : RecyclerView {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        val canvasWidth = width
+        val bubbleDrawOffset = 12.dpToPx()
+        val boundsEnd = canvasWidth - bubbleDrawOffset
 
-        bubbleDrawer.drawReactionsBubble(context, canvas, width, bubbleHeight, isMyMessage, true)
+        val canvasBounds = bubbleDrawOffset..boundsEnd
+
+        bubbleDrawer.drawReactionsBubble(
+            context = context,
+            canvas = canvas,
+            bubbleWidth = width,
+            bubbleHeight = bubbleHeight,
+            isMyMessage = isMyMessage,
+            isSingleReaction = true,
+            messageAnchorPosition = messageAnchorPosition,
+            canvasBounds = canvasBounds,
+        )
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
@@ -115,7 +130,7 @@ public class EditReactionsView : RecyclerView {
             reactionsViewStyle.horizontalPadding,
             reactionsViewStyle.verticalPadding,
             reactionsViewStyle.horizontalPadding,
-            reactionsViewStyle.verticalPadding
+            reactionsViewStyle.verticalPadding,
         )
 
         layoutManager = GridLayoutManager(context, reactionsColumns)
@@ -123,5 +138,11 @@ public class EditReactionsView : RecyclerView {
         adapter = ReactionsAdapter(reactionsViewStyle.itemSize) {
             reactionClickListener?.onReactionClick(it)
         }.also { reactionsAdapter = it }
+    }
+
+    internal fun positionBubbleTail(messageAnchorPosition: Float) {
+        this.messageAnchorPosition = messageAnchorPosition
+
+        requestLayout()
     }
 }
