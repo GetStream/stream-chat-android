@@ -1,4 +1,4 @@
-command_file="unit-tests-command.sh"
+command_file="build/tmp/unit-tests-command.sh"
 
 ./gradlew test-debug && \
 chmod +x $command_file && \

@@ -73,11 +73,11 @@ allprojects {
 }
 
 versionPrint {
-    printFilePath = "temp-version"
+    printFilePath = "build/tmp/temp-version"
 }
 
 unitTestDebugScript {
-    outputPath = "unit-tests-command.sh"
+    outputPath = "build/tmp/unit-tests-command.sh"
 }
 
 releaseScript {

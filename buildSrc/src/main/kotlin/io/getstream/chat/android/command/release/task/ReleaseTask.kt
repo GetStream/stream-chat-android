@@ -20,7 +20,8 @@ open class ReleaseTask : DefaultTask() {
         println("changelogPath: $changeLogFile")
 
         val releaseDocument = parseChangelogFile(changeLogFile)
-        FilePrinter.fromFileName("CHANGELOG_PARSED.md").use { printer -> releaseDocument.print(printer) }
+        val outputFile = File(project.rootDir, "build/tmp/CHANGELOG_PARSED.md").also { it.parentFile.mkdirs() }
+        FilePrinter(outputFile).use { printer -> releaseDocument.print(printer) }
 
         println("CHANGELOG_PARSED.md generated")
     }
