@@ -1,96 +1,11 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# November 09th, 2023 - 6.0.8
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added UI customizations for deleted message. [#5050](https://github.com/GetStream/stream-chat-android/pull/5050)
   * `MessageListItemStyle.textStyleMessageDeletedMine`
   * `MessageListItemStyle.messageDeletedBackgroundMine`
   * `MessageListItemStyle.textStyleMessageDeletedTheirs`
   * `MessageListItemStyle.messageDeletedBackgroundTheirs`
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 08th, 2023 - 6.0.7
 ## Common changes for all artifacts
