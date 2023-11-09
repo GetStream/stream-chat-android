@@ -44,7 +44,12 @@ internal class MessageDeletedViewHolder(
 
         if (diff?.deleted == false) return
 
-        binding.deleteLabel.setTextStyle(style.textStyleMessageDeleted)
+        binding.deleteLabel.setTextStyle(
+            when (data.isTheirs) {
+                true -> style.textStyleMessageDeletedTheirs
+                else -> style.textStyleMessageDeletedMine
+            },
+        )
 
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f
