@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.drawable.Drawable
 import androidx.annotation.StyleableRes
@@ -35,6 +36,21 @@ internal fun TypedArray.getDrawableCompat(context: Context, @StyleableRes id: In
     val resource = getResourceId(id, 0)
     if (resource != 0) {
         return AppCompatResources.getDrawable(context, resource)
+    }
+    return null
+}
+
+/**
+ * Retrieves the ColorStateList for the attribute.
+ *
+ * @param context The context to inflate against.
+ * @param id The index of attribute to retrieve.
+ * @return An object that can be used to draw this resource.
+ */
+internal fun TypedArray.getColorStateListCompat(context: Context, @StyleableRes id: Int): ColorStateList? {
+    val resource = getResourceId(id, 0)
+    if (resource != 0) {
+        return AppCompatResources.getColorStateList(context, resource)
     }
     return null
 }

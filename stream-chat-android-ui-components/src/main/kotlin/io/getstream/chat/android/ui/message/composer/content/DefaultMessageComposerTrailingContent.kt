@@ -84,12 +84,19 @@ public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageCo
         this.style = messageComposerContext.style
 
         binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
-        style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.sendMessageButton.imageTintList = getColorList(
+
+        val getStateListColor = { tintColor: Int ->
+            getColorList(
                 normalColor = tintColor,
                 selectedColor = tintColor,
                 disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
             )
+        }
+
+        style.sendMessageButtonIconTintList?.also { tintList ->
+            binding.sendMessageButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.sendMessageButton.imageTintList = getStateListColor(tintColor)
         }
 
         binding.cooldownBadgeTextView.setTextStyle(style.cooldownTimerTextStyle)
