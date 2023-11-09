@@ -65,7 +65,12 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
         return shapeAppearanceModel(context, DEFAULT_CORNER_RADIUS, 0F, data.isMine, data.isBottomPosition())
             .let(::MaterialShapeDrawable)
             .apply {
-                setTint(style.messageDeletedBackground)
+                setTint(
+                    when (data.isTheirs) {
+                        true -> style.messageDeletedBackgroundTheirs
+                        else -> style.messageDeletedBackgroundMine
+                    },
+                )
             }
     }
 

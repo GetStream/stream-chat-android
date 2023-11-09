@@ -5,23 +5,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `Message.moderationDetails` due to support of the new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
-  - Added `MessageModerationDetails` class.
 
 ### ⚠️ Changed
 
 ### ❌ Removed
-- Removed `Message.syncDescription` due to removal of the old moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
-  - Removed `MessageSyncContent` class and its subclasses.
-  - Removed `MessageSyncType` class.
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed duplicate send message requests. [5039](https://github.com/GetStream/stream-chat-android/pull/5039)
 
 ### ⬆️ Improved
-- Pass `message` with `result` in `SendMessageDebugger`. [#5037](https://github.com/GetStream/stream-chat-android/pull/5037)
-- Use shortService instead of dataSync for our workmanager job. [#5041](https://github.com/GetStream/stream-chat-android/pull/5041)
 
 ### ✅ Added
 
@@ -57,7 +49,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `callback` param to `MessageComposerController.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
 
@@ -65,15 +56,17 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed channel title not being centered vertically when mo last message exists. [#5043](https://github.com/GetStream/stream-chat-android/pull/5043)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
+- Added UI customizations for deleted message. [#5050](https://github.com/GetStream/stream-chat-android/pull/5050)
+  * `MessageListItemStyle.textStyleMessageDeletedMine`
+  * `MessageListItemStyle.messageDeletedBackgroundMine`
+  * `MessageListItemStyle.textStyleMessageDeletedTheirs`
+  * `MessageListItemStyle.messageDeletedBackgroundTheirs`
 
 ### ⚠️ Changed
-- Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
 
 ### ❌ Removed
 
@@ -83,10 +76,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
 
 ### ⚠️ Changed
-- Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
 
 ### ❌ Removed
 
