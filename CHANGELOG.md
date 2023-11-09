@@ -63,6 +63,11 @@
 - Allow override channel's delete option visibility. [#5044](https://github.com/GetStream/stream-chat-android/pull/5044)
 
 ### ✅ Added
+- Added UI customizations for deleted message. [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
+  * `MessageListItemStyle.textStyleMessageDeletedMine`
+  * `MessageListItemStyle.messageDeletedBackgroundMine`
+  * `MessageListItemStyle.textStyleMessageDeletedTheirs`
+  * `MessageListItemStyle.messageDeletedBackgroundTheirs`
 
 ### ⚠️ Changed
 
