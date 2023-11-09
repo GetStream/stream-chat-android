@@ -1,4 +1,4 @@
-# UNRELEASED CHANGELOG
+# November 09th, 2023 - 6.0.8
 ## Common changes for all artifacts
 ### ✅ Added
 - Added `Message.moderationDetails` due to support of the new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
@@ -9,7 +9,6 @@
 - Removed `MessageSyncContent` class and its subclasses.
 - Removed `MessageSyncType` class.
 
-
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed duplicate send message requests. [5039](https://github.com/GetStream/stream-chat-android/pull/5039)
@@ -17,29 +16,6 @@
 ### ⬆️ Improved
 - Pass `message` with `result` in `SendMessageDebugger`. [#5037](https://github.com/GetStream/stream-chat-android/pull/5037)
 - Use shortService instead of dataSync for our workmanager job. [#5041](https://github.com/GetStream/stream-chat-android/pull/5041)
-
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### ✅ Added
@@ -57,7 +33,6 @@
   * `MessageListItemStyle.textStyleMessageDeletedTheirs`
   * `MessageListItemStyle.messageDeletedBackgroundTheirs`
 
-
 ### ⚠️ Changed
 - Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
 
@@ -67,17 +42,6 @@
 
 ### ⚠️ Changed
 - Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 08th, 2023 - 6.0.7
 ## Common changes for all artifacts
