@@ -45,7 +45,7 @@ private fun List<String>.parseReleaseDocument(): Document {
                 currentSectionLines = mutableListOf(line)
             }
 
-            line.startsWith("-") -> {
+            line.isNotBlank() -> {
                 currentSectionLines.add(line)
             }
         }
