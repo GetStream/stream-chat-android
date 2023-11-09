@@ -23,7 +23,7 @@ jobs:
           java-version: 17
       - name: Sync main
         run: | 
-          git pull
+          git fetch origin release
           git merge --ff-only origin/release
       - name: Push changes
         uses: ad-m/github-push-action@master

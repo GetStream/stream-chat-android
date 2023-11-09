@@ -36,3 +36,18 @@ jobs:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
           SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
           SONATYPE_STAGING_PROFILE_ID: ${{ secrets.SONATYPE_STAGING_PROFILE_ID }}
+      - name: Create GITHUB_TAG_RELEASE_VERSION
+        run: |
+          ./gradlew version-print
+          version="$(cat build/tmp/temp-version)"
+          echo GITHUB_TAG_RELEASE_VERSION=v$version >> $GITHUB_ENV
+      - name: Generate release file
+        run: ./gradlew generate-release
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "release.tar.gz,foo/*.txt"
+          bodyFile: "build/tmp/CHANGELOG_PARSED.md"
+          token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
+          commit: release

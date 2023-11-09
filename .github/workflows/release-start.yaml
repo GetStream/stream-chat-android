@@ -7,10 +7,6 @@ on:
         type: boolean
       skip_version_bump:
         type: boolean
-      skip_changelog_update:
-        type: boolean
-      skip_github_release:
-        type: boolean
 
 jobs:
   start_release:
@@ -21,7 +17,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3.1.0
         with:
-          ref: release
+          ref: develop
       - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
@@ -34,7 +30,6 @@ jobs:
         if: "${{ github.event.inputs.force_bump_minor_version != 'true' && github.event.inputs.skip_version_bump != 'true' }}"
         run: ./gradlew version-bump
       - name: Parse release section in changelog
-        if: "${{ github.event.inputs.skip_changelog_update != 'true' }}"
         run: ./gradlew changelog-release-section
       - name: Commit changes
         uses: EndBug/add-and-commit@v8
@@ -48,22 +43,4 @@ jobs:
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: release
-      - name: Create GITHUB_TAG_RELEASE_VERSION 
-        run: |
-          ./gradlew version-print
-          version="$(cat temp-version)"
-          echo GITHUB_TAG_RELEASE_VERSION=v$version >> $GITHUB_ENV
-      - name: Generate release file
-        if: "${{ github.event.inputs.skip_github_release != 'true' }}"
-        run: ./gradlew generate-release
-      - name: Create release
-        uses: ncipollo/release-action@v1
-        if: "${{ github.event.inputs.skip_github_release != 'true' }}"
-        with:
-          artifacts: "release.tar.gz,foo/*.txt"
-          bodyFile: "CHANGELOG_PARSED.md"
-          token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-          tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
-          commit: release
-
-
+          force: true
