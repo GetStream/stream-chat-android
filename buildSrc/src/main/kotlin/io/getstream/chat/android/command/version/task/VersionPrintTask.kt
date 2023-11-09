@@ -18,7 +18,12 @@ open class VersionPrintTask: DefaultTask() {
     private fun command() {
         val currentVersion = getCurrentVersion()
 
-        FilePrinter(File(config.printFilePath)).use { printer ->
+        println("JcLog: ${config.printFilePath}")
+
+        val file = File(project.rootDir, config.printFilePath).also {
+            it.parentFile.mkdirs()
+        }
+        FilePrinter(file).use { printer ->
             printer.printline(currentVersion)
         }
 

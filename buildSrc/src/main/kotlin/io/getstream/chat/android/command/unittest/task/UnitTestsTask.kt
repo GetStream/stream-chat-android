@@ -18,7 +18,9 @@ open class UnitTestsTask : DefaultTask() {
         val modules = project.subprojects.map { project -> project.name }
 
         val command = modules.selectedUnitTestCommand(project)
-        File(config.outputPath).writeText(command)
+        File(project.rootDir, config.outputPath)
+            .also { it.parentFile.mkdirs() }
+            .writeText(command)
 
         println("Command generated: $command")
         println("Command written in: ${config.outputPath}")
