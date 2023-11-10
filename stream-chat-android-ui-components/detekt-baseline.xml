@@ -110,6 +110,9 @@
     <ID>MaxLineLength:MediaAttachmentDialogFragment.kt$MediaAttachmentDialogFragment$viewModel.attachmentGalleryItemsLiveData.observe(viewLifecycleOwner, mediaAttachmentGridView::setAttachments)</ID>
     <ID>MaxLineLength:MessageBackgroundFactoryImpl.kt$MessageBackgroundFactoryImpl$// however, if a user has specified a background color attribute, we use it for _all_ message backgrounds.</ID>
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
+    <ID>MaxLineLength:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }</ID>
+    <ID>MaxLineLength:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }</ID>
+    <ID>MaxLineLength:MessageComposerViewModelBinding.kt$alsoSendToChannelSelectionListener = this.alsoSendToChannelSelectionListener and alsoSendToChannelSelectionListener</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextColor</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFont</ID>
     <ID>MaxLineLength:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionItemCommandDescriptionTextFontAssets</ID>
