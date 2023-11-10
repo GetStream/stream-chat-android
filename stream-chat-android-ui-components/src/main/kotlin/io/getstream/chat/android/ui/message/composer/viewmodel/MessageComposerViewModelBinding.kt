@@ -88,6 +88,24 @@ public fun MessageComposerViewModel.bindView(
     }
 }
 
+/**
+ * Function which connects [MessageComposerView] to [MessageComposerViewModel]. As a result the view
+ * renders the state delivered by the ViewModel, and the ViewModel intercepts the user's actions automatically.
+ * The main difference with [bindView] is that listeners in this function do not override the default behaviour.
+ *
+ * @param view An instance of [MessageComposerView] to bind to the ViewModel.
+ * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param sendMessageButtonClickListener Click listener for the send message button.
+ * @param textInputChangeListener Text change listener invoked each time after text was changed.
+ * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
+ * @param attachmentRemovalListener Click listener for the remove attachment button.
+ * @param mentionSelectionListener Selection listener invoked when a mention suggestion item is selected.
+ * @param commandSelectionListener Selection listener invoked when a command suggestion item is selected.
+ * @param alsoSendToChannelSelectionListener Selection listener for the "also send to channel" checkbox.
+ * @param dismissActionClickListener Click listener for the dismiss action button.
+ * @param commandsButtonClickListener Click listener for the pick commands button.
+ * @param dismissSuggestionsListener Click listener invoked when suggestion popup is dismissed.
+ */
 @JvmName("bindDefaults")
 @JvmOverloads
 @ExperimentalStreamChatApi
@@ -123,18 +141,22 @@ public fun MessageComposerViewModel.bindViewDefaults(
 
 private infix fun <T> ((T) -> Unit).and(that: ((T) -> Unit)?): (T) -> Unit = when (that) {
     null -> this
-    else -> ({
-        this(it)
-        that(it)
-    })
+    else -> {
+        {
+            this(it)
+            that(it)
+        }
+    }
 }
 
 private infix fun (() -> Unit).and(that: (() -> Unit)?): () -> Unit = when (that) {
     null -> this
-    else -> ({
-        this()
-        that()
-    })
+    else -> {
+        {
+            this()
+            that()
+        }
+    }
 }
 
 private object MessageComposerViewModelDefaults {
