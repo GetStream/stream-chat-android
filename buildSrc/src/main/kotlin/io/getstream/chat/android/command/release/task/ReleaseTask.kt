@@ -22,7 +22,6 @@ open class ReleaseTask : DefaultTask() {
         val releaseDocument = parseChangelogFile(changeLogFile)
         val outputFile = File(project.rootDir, "build/tmp/CHANGELOG_PARSED.md").also { it.parentFile.mkdirs() }
         FilePrinter(outputFile).use { printer -> releaseDocument.print(printer) }
-        FilePrinter.fromFileName("CHANGELOG_PARSED.md").use { printer -> releaseDocument.print(printer) }
 
         println("CHANGELOG_PARSED.md generated")
     }
