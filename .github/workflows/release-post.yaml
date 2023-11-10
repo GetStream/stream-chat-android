@@ -32,14 +32,15 @@ jobs:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           branch: main
   update_changelog:
+    needs: release_to_main
     name: Update Changelog - Model
     runs-on: ubuntu-22.04
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
         with:
-          ref: release
+          ref: main
+          fetch-depth: 0
           persist-credentials: false
       - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
@@ -48,22 +49,16 @@ jobs:
           java-version: 17
       - name: Update changelog
         run: ./gradlew changelog-add-model-section
-      - name: Commit changes
+      - name: Commit CHANGELOG.md and merge to develop
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add CHANGELOG.md
           git commit -m "AUTOMATION: Changelog update"
+          git checkout -t origin/develop
+          git merge --ff main -m "AUTOMATION: Merge main into develop"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
-          branch: release
-      - name: Create Pull Request
-        uses: repo-sync/pull-request@v2
-        with: 
-          source_branch: "release"
-          destination_branch: "develop"
-          pr_title: "Release sync"
-          pr_body: "Sync with release branch after the release happened"
-          github_token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
+          branch: develop
