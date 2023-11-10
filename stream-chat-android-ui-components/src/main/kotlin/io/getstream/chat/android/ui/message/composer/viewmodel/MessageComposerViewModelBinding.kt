@@ -26,6 +26,16 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.ui.message.composer.MessageComposerView
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.attachmentRemovalListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.attachmentSelectionListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.commandSelectionListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.commandsButtonClickListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.dismissActionClickListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.dismissSuggestionsListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.mentionSelectionListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.sendMessageButtonClickListener
+import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelDefaults.textInputChangeListener
 import kotlinx.coroutines.launch
 
 /**
@@ -51,16 +61,16 @@ import kotlinx.coroutines.launch
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
-    sendMessageButtonClickListener: (Message) -> Unit = { sendMessage(it) },
-    textInputChangeListener: (String) -> Unit = { setMessageInput(it) },
-    attachmentSelectionListener: (List<Attachment>) -> Unit = { addSelectedAttachments(it) },
-    attachmentRemovalListener: (Attachment) -> Unit = { removeSelectedAttachment(it) },
-    mentionSelectionListener: (User) -> Unit = { selectMention(it) },
-    commandSelectionListener: (Command) -> Unit = { selectCommand(it) },
-    alsoSendToChannelSelectionListener: (Boolean) -> Unit = { setAlsoSendToChannel(it) },
-    dismissActionClickListener: () -> Unit = { dismissMessageActions() },
-    commandsButtonClickListener: () -> Unit = { toggleCommandsVisibility() },
-    dismissSuggestionsListener: () -> Unit = { dismissSuggestionsPopup() },
+    sendMessageButtonClickListener: (Message) -> Unit = this.sendMessageButtonClickListener,
+    textInputChangeListener: (String) -> Unit = this.textInputChangeListener,
+    attachmentSelectionListener: (List<Attachment>) -> Unit = this.attachmentSelectionListener,
+    attachmentRemovalListener: (Attachment) -> Unit = this.attachmentRemovalListener,
+    mentionSelectionListener: (User) -> Unit = this.mentionSelectionListener,
+    commandSelectionListener: (Command) -> Unit = this.commandSelectionListener,
+    alsoSendToChannelSelectionListener: (Boolean) -> Unit = this.alsoSendToChannelSelectionListener,
+    dismissActionClickListener: () -> Unit = this.dismissActionClickListener,
+    commandsButtonClickListener: () -> Unit = this.commandsButtonClickListener,
+    dismissSuggestionsListener: () -> Unit = this.dismissSuggestionsListener,
 ) {
     view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
     view.textInputChangeListener = textInputChangeListener
@@ -76,4 +86,74 @@ public fun MessageComposerViewModel.bindView(
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect(view::renderState)
     }
+}
+
+@JvmName("bindDefaults")
+@JvmOverloads
+@ExperimentalStreamChatApi
+public fun MessageComposerViewModel.bindViewDefaults(
+    view: MessageComposerView,
+    lifecycleOwner: LifecycleOwner,
+    sendMessageButtonClickListener: ((Message) -> Unit)? = null,
+    textInputChangeListener: ((String) -> Unit)? = null,
+    attachmentSelectionListener: ((List<Attachment>) -> Unit)? = null,
+    attachmentRemovalListener: ((Attachment) -> Unit)? = null,
+    mentionSelectionListener: ((User) -> Unit)? = null,
+    commandSelectionListener: ((Command) -> Unit)? = null,
+    alsoSendToChannelSelectionListener: ((Boolean) -> Unit)? = null,
+    dismissActionClickListener: (() -> Unit)? = null,
+    commandsButtonClickListener: (() -> Unit)? = null,
+    dismissSuggestionsListener: (() -> Unit)? = null,
+) {
+    bindView(
+        view = view,
+        lifecycleOwner = lifecycleOwner,
+        sendMessageButtonClickListener = this.sendMessageButtonClickListener and sendMessageButtonClickListener,
+        textInputChangeListener = this.textInputChangeListener and textInputChangeListener,
+        attachmentSelectionListener = this.attachmentSelectionListener and attachmentSelectionListener,
+        attachmentRemovalListener = this.attachmentRemovalListener and attachmentRemovalListener,
+        mentionSelectionListener = this.mentionSelectionListener and mentionSelectionListener,
+        commandSelectionListener = this.commandSelectionListener and commandSelectionListener,
+        alsoSendToChannelSelectionListener = this.alsoSendToChannelSelectionListener and alsoSendToChannelSelectionListener,
+        dismissActionClickListener = this.dismissActionClickListener and dismissActionClickListener,
+        commandsButtonClickListener = this.commandsButtonClickListener and commandsButtonClickListener,
+        dismissSuggestionsListener = this.dismissSuggestionsListener and dismissSuggestionsListener,
+    )
+}
+
+private infix fun <T> ((T) -> Unit).and(that: ((T) -> Unit)?): (T) -> Unit = when (that) {
+    null -> this
+    else -> ({
+        this(it)
+        that(it)
+    })
+}
+
+private infix fun (() -> Unit).and(that: (() -> Unit)?): () -> Unit = when (that) {
+    null -> this
+    else -> ({
+        this()
+        that()
+    })
+}
+
+private object MessageComposerViewModelDefaults {
+    val MessageComposerViewModel.sendMessageButtonClickListener: (Message) -> Unit
+        get() = {
+            sendMessage(it)
+        }
+    val MessageComposerViewModel.textInputChangeListener: (String) -> Unit get() = { setMessageInput(it) }
+    val MessageComposerViewModel.attachmentSelectionListener: (List<Attachment>) -> Unit
+        get() = {
+            addSelectedAttachments(
+                it,
+            )
+        }
+    val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }
+    val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
+    val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }
+    val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }
+    val MessageComposerViewModel.dismissActionClickListener: () -> Unit get() = { dismissMessageActions() }
+    val MessageComposerViewModel.commandsButtonClickListener: () -> Unit get() = { toggleCommandsVisibility() }
+    val MessageComposerViewModel.dismissSuggestionsListener: () -> Unit get() = { dismissSuggestionsPopup() }
 }
