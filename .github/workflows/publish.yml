@@ -17,6 +17,7 @@ jobs:
         uses: actions/checkout@v3.1.0
         with:
           ref: release
+          persist-credentials: false
       - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
@@ -51,3 +52,4 @@ jobs:
           token: ${{ secrets.STREAM_PUBLIC_BOT_TOKEN }}
           tag: ${{ env.GITHUB_TAG_RELEASE_VERSION }}
           commit: release
+          makeLatest: true
