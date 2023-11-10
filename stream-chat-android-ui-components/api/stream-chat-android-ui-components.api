@@ -3530,6 +3530,13 @@ public final class io/getstream/chat/android/ui/message/list/adapter/view/ImageA
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/message/list/adapter/view/MessageReplyView : android/widget/FrameLayout {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setMessage (Lio/getstream/chat/android/client/models/Message;ZLio/getstream/chat/android/ui/message/list/MessageReplyStyle;)V
+}
+
 public final class io/getstream/chat/android/ui/message/list/adapter/view/internal/GiphyMediaAttachmentView : androidx/constraintlayout/widget/ConstraintLayout {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
