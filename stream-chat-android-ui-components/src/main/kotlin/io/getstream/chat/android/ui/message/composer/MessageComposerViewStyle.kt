@@ -49,12 +49,16 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @param commandSuggestionsTitleText The text for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
+ * @param commandSuggestionsTitleIconDrawableTintColor The tint applied to the icon for the title at the top
+ * of the command suggestions dialog.
  * @param commandSuggestionsBackgroundColor The background color of the command suggestions dialog.
  * @param commandSuggestionItemCommandNameTextStyle The text style for the command name.
  * @param commandSuggestionItemCommandDescriptionText The command description template with two placeholders.
  * @param commandSuggestionItemCommandDescriptionTextStyle The text style for the command description.
  * @param mentionSuggestionsBackgroundColor The background color of the mention suggestions dialog.
  * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
+ * @param mentionSuggestionItemIconDrawableTintColor The tint applied to the icon for each command icon
+ * in the suggestion list.
  * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
  * @param mentionSuggestionItemMentionText The mention template that will be used for the mention preview.
  * @param mentionSuggestionItemMentionTextStyle The text style that will be used for the mention preview.
@@ -105,12 +109,24 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 @ExperimentalStreamChatApi
 public data class MessageComposerViewStyle(
     @ColorInt public val backgroundColor: Int,
+    @Deprecated(
+        message = "Use the " +
+            "commandSuggestionsTitleIconDrawableTintColor" +
+            "/mentionSuggestionItemIconDrawableTintColor " +
+            "/attachmentsButtonIconTintList " +
+            "/commandsButtonIconTintList " +
+            "/sendMessageButtonIconTintList " +
+            "property instead.",
+        replaceWith = ReplaceWith("proper button tint property"),
+        level = DeprecationLevel.WARNING,
+    )
     @ColorInt public val buttonIconDrawableTintColor: Int?,
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
     public val commandSuggestionsTitleText: String,
     public val commandSuggestionsTitleTextStyle: TextStyle,
     public val commandSuggestionsTitleIconDrawable: Drawable,
+    public val commandSuggestionsTitleIconDrawableTintColor: Int?,
     @ColorInt public val commandSuggestionsBackgroundColor: Int,
     public val commandSuggestionItemCommandNameTextStyle: TextStyle,
     public val commandSuggestionItemCommandDescriptionText: String,
@@ -118,6 +134,7 @@ public data class MessageComposerViewStyle(
     // Mention suggestions content
     @ColorInt public val mentionSuggestionsBackgroundColor: Int,
     public val mentionSuggestionItemIconDrawable: Drawable,
+    public val mentionSuggestionItemIconDrawableTintColor: Int?,
     public val mentionSuggestionItemUsernameTextStyle: TextStyle,
     public val mentionSuggestionItemMentionText: String,
     public val mentionSuggestionItemMentionTextStyle: TextStyle,
@@ -242,6 +259,10 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_blue)!!
 
+                val commandSuggestionsTitleIconDrawableTintColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor
+                )
+
                 val commandSuggestionsBackgroundColor = a.getColor(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_white)
@@ -300,6 +321,10 @@ public data class MessageComposerViewStyle(
                 val mentionSuggestionItemIconDrawable: Drawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawable
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
+
+                val mentionSuggestionItemIconDrawableTintColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor
+                )
 
                 val mentionSuggestionItemUsernameTextStyle = TextStyle.Builder(a)
                     .size(
@@ -648,6 +673,7 @@ public data class MessageComposerViewStyle(
                     commandSuggestionsTitleText = commandSuggestionsTitleText,
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
                     commandSuggestionsTitleIconDrawable = commandSuggestionsTitleIconDrawable,
+                    commandSuggestionsTitleIconDrawableTintColor = commandSuggestionsTitleIconDrawableTintColor,
                     commandSuggestionsBackgroundColor = commandSuggestionsBackgroundColor,
                     commandSuggestionItemCommandNameTextStyle = commandSuggestionItemCommandNameTextStyle,
                     commandSuggestionItemCommandDescriptionText = commandSuggestionItemCommandDescriptionText,
@@ -655,6 +681,7 @@ public data class MessageComposerViewStyle(
                     // Mention suggestions content
                     mentionSuggestionsBackgroundColor = mentionSuggestionsBackgroundColor,
                     mentionSuggestionItemIconDrawable = mentionSuggestionItemIconDrawable,
+                    mentionSuggestionItemIconDrawableTintColor = mentionSuggestionItemIconDrawableTintColor,
                     mentionSuggestionItemUsernameTextStyle = mentionSuggestionItemUsernameTextStyle,
                     mentionSuggestionItemMentionText = mentionSuggestionItemMentionText,
                     mentionSuggestionItemMentionTextStyle = mentionSuggestionItemMentionTextStyle,
