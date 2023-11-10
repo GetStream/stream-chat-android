@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.message.list.adapter.viewholder.decorator.i
 import androidx.core.view.isVisible
 import com.getstream.sdk.chat.adapter.MessageListItem
 import io.getstream.chat.android.ui.message.list.MessageReplyStyle
-import io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
+import io.getstream.chat.android.ui.message.list.adapter.view.MessageReplyView
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.message.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
