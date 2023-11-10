@@ -33,6 +33,7 @@
         </attr>
 
         <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawableTintColor" format="reference|color" />
         <attr name="streamUiMessageComposerCommandSuggestionsBackgroundColor" format="reference|color" />
 
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize" format="dimension" />
@@ -59,6 +60,7 @@
         <!-- Mention suggestions content -->
         <attr name="streamUiMessageComposerMentionSuggestionsBackgroundColor" format="reference|color" />
         <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor" format="reference|color" />
 
         <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextSize" format="dimension" />
         <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextColor" format="reference|color" />

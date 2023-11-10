@@ -7,6 +7,7 @@
     <ID>ForbiddenComment:ChatInfoViewModel.kt$ChatInfoViewModel$// TODO: Handle error</ID>
     <ID>ForbiddenComment:CustomChatClientDebugger.kt$CustomChatClientDebugger$// TODO: Implement your custom logic here</ID>
     <ID>LongMethod:ChatFragment.kt$ChatFragment$private fun initMessagesViewModel()</ID>
+    <ID>LongMethod:ChatInitializer.kt$ChatInitializer$@OptIn(ExperimentalStreamChatApi::class) @Suppress("UNUSED_VARIABLE") fun init(apiKey: String)</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$OnlyMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>

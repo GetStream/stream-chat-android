@@ -43,10 +43,11 @@ internal class MessageDeletedViewHolder(
 
         if (diff?.deleted == false) return
 
-        when (data.isTheirs) {
+        val deletedLabelTextStyle = when (data.isTheirs) {
             true -> style.textStyleMessageDeletedTheirs
             else -> style.textStyleMessageDeletedMine
-        }.apply(binding.deleteLabel)
+        } ?: style.textStyleMessageDeleted
+        deletedLabelTextStyle.apply(binding.deleteLabel)
 
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             horizontalBias = if (data.isTheirs) 0f else 1f

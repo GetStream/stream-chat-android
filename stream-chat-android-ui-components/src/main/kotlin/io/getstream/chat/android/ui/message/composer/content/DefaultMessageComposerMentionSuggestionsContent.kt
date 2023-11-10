@@ -178,7 +178,9 @@ private class MentionsViewHolder(
         binding.usernameTextView.setTextStyle(style.mentionSuggestionItemUsernameTextStyle)
         binding.mentionNameTextView.setTextStyle(style.mentionSuggestionItemMentionTextStyle)
         binding.mentionsIcon.setImageDrawable(
-            style.mentionSuggestionItemIconDrawable.applyTint(style.buttonIconDrawableTintColor)
+            style.mentionSuggestionItemIconDrawable.applyTint(
+                tintColor = style.mentionSuggestionItemIconDrawableTintColor ?: style.buttonIconDrawableTintColor
+            )
         )
     }
 

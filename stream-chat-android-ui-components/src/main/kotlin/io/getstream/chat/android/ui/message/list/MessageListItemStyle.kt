@@ -117,12 +117,22 @@ public data class MessageListItemStyle(
     public val iconIndicatorRead: Drawable,
     public val iconIndicatorPendingSync: Drawable,
     public val iconOnlyVisibleToYou: Drawable,
+    @Deprecated(
+        message = "Use textStyleMessageDeletedMine and textStyleMessageDeletedTheirs instead.",
+        replaceWith = ReplaceWith("textStyleMessageDeletedMine and textStyleMessageDeletedTheirs"),
+        level = DeprecationLevel.WARNING,
+    )
     public val textStyleMessageDeleted: TextStyle,
+    @Deprecated(
+        message = "Use messageDeletedBackgroundMine and messageDeletedBackgroundTheirs instead.",
+        replaceWith = ReplaceWith("messageDeletedBackgroundMine and messageDeletedBackgroundTheirs"),
+        level = DeprecationLevel.WARNING,
+    )
     @ColorInt public val messageDeletedBackground: Int,
-    public val textStyleMessageDeletedMine: TextStyle = textStyleMessageDeleted,
-    @ColorInt public val messageDeletedBackgroundMine: Int = messageDeletedBackground,
-    public val textStyleMessageDeletedTheirs: TextStyle = textStyleMessageDeleted,
-    @ColorInt public val messageDeletedBackgroundTheirs: Int = messageDeletedBackground,
+    public val textStyleMessageDeletedMine: TextStyle?,
+    @ColorInt public val messageDeletedBackgroundMine: Int?,
+    public val textStyleMessageDeletedTheirs: TextStyle?,
+    @ColorInt public val messageDeletedBackgroundTheirs: Int?,
     @ColorInt public val messageStrokeColorMine: Int,
     @Px public val messageStrokeWidthMine: Float,
     @ColorInt public val messageStrokeColorTheirs: Int,
@@ -496,6 +506,64 @@ public data class MessageListItemStyle(
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleMessageDeleted, Typeface.ITALIC)
                 .build()
 
+            val messageDeletedBackgroundMine =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiDeletedMessageBackgroundColorMine,
+                    VALUE_NOT_SET
+                )
+
+            val textStyleMessageDeletedMine = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeMessageDeletedMine,
+                    textStyleMessageDeleted.size
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorMessageDeletedMine,
+                    textStyleMessageDeleted.color
+                )
+                .fontAssetsPath(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsMessageDeletedMine,
+                    textStyleMessageDeleted.fontAssetsPath
+                )
+                .fontResource(
+                    R.styleable.MessageListView_streamUiMessageTextFontMessageDeletedMine,
+                    textStyleMessageDeleted.fontResource
+                )
+                .style(
+                    R.styleable.MessageListView_streamUiMessageTextStyleMessageDeletedMine,
+                    textStyleMessageDeleted.style,
+                )
+                .build()
+
+            val messageDeletedBackgroundTheirs =
+                attributes.getColor(
+                    R.styleable.MessageListView_streamUiDeletedMessageBackgroundColorTheirs,
+                    VALUE_NOT_SET
+                )
+
+            val textStyleMessageDeletedTheirs = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeMessageDeletedTheirs,
+                    textStyleMessageDeleted.size
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorMessageDeletedTheirs,
+                    textStyleMessageDeleted.color
+                )
+                .fontAssetsPath(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsMessageDeletedTheirs,
+                    textStyleMessageDeleted.fontAssetsPath
+                )
+                .fontResource(
+                    R.styleable.MessageListView_streamUiMessageTextFontMessageDeletedTheirs,
+                    textStyleMessageDeleted.fontResource
+                )
+                .style(
+                    R.styleable.MessageListView_streamUiMessageTextStyleMessageDeletedTheirs,
+                    textStyleMessageDeleted.style,
+                )
+                .build()
+
             val messageStrokeColorMine = attributes.getColor(
                 R.styleable.MessageListView_streamUiMessageStrokeColorMine,
                 context.getColorCompat(MESSAGE_STROKE_COLOR_MINE)
@@ -631,6 +699,10 @@ public data class MessageListItemStyle(
                 iconOnlyVisibleToYou = iconOnlyVisibleToYou,
                 messageDeletedBackground = messageDeletedBackground,
                 textStyleMessageDeleted = textStyleMessageDeleted,
+                messageDeletedBackgroundMine = messageDeletedBackgroundMine.nullIfNotSet(),
+                textStyleMessageDeletedMine = textStyleMessageDeletedMine.nullIfEqualsTo(textStyleMessageDeleted),
+                messageDeletedBackgroundTheirs = messageDeletedBackgroundTheirs.nullIfNotSet(),
+                textStyleMessageDeletedTheirs = textStyleMessageDeletedTheirs.nullIfEqualsTo(textStyleMessageDeleted),
                 messageStrokeColorMine = messageStrokeColorMine,
                 messageStrokeWidthMine = messageStrokeWidthMine,
                 messageStrokeColorTheirs = messageStrokeColorTheirs,
@@ -654,6 +726,10 @@ public data class MessageListItemStyle(
 
         private fun Int.nullIfNotSet(): Int? {
             return if (this == VALUE_NOT_SET) null else this
+        }
+
+        private fun TextStyle.nullIfEqualsTo(defaultValue: TextStyle): TextStyle? {
+            return if (this == defaultValue) null else this
         }
 
         private fun MessageListItemStyle.checkMessageMaxWidthFactorsRange() {
