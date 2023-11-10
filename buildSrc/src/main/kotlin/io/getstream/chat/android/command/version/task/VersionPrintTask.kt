@@ -24,9 +24,6 @@ open class VersionPrintTask: DefaultTask() {
         FilePrinter(file).use { printer ->
             printer.printline(currentVersion)
         }
-        FilePrinter(File("temp-version")).use { printer ->
-            printer.printline(currentVersion)
-        }
 
         println("File: ${config.printFilePath} generated")
     }
