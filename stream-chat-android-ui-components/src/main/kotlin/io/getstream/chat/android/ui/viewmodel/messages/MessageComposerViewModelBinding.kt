@@ -20,6 +20,7 @@ package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
@@ -123,6 +124,107 @@ public fun MessageComposerViewModel.bindView(
 
     lifecycleOwner.lifecycleScope.launch {
         messageComposerState.collect(view::renderState)
+    }
+}
+
+/**
+ * Function which connects [MessageComposerView] to [MessageComposerViewModel]. As a result the view
+ * renders the state delivered by the ViewModel, and the ViewModel intercepts the user's actions automatically.
+ * The main difference with [bindView] is that listeners in this function do not override the default behaviour.
+ *
+ * @param view An instance of [MessageComposerView] to bind to the ViewModel.
+ * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param sendMessageButtonClickListener Click listener for the send message button.
+ * @param textInputChangeListener Text change listener invoked each time after text was changed.
+ * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
+ * @param attachmentRemovalListener Click listener for the remove attachment button.
+ * @param mentionSelectionListener Selection listener invoked when a mention suggestion item is selected.
+ * @param commandSelectionListener Selection listener invoked when a command suggestion item is selected.
+ * @param alsoSendToChannelSelectionListener Selection listener for the "also send to channel" checkbox.
+ * @param dismissActionClickListener Click listener for the dismiss action button.
+ * @param commandsButtonClickListener Click listener for the pick commands button.
+ * @param dismissSuggestionsListener Click listener invoked when suggestion popup is dismissed.
+ * @param audioRecordButtonHoldListener Hold listener invoked when the microphone button gets pressed down.
+ * @param audioRecordButtonLockListener Lock listener invoked when the audio recording gets locked.
+ * @param audioRecordButtonCancelListener Cancel listener invoked when the audio recording gets cancelled.
+ * @param audioRecordButtonReleaseListener Release listener invoked when the microphone button gets released.
+ * @param audioDeleteButtonClickListener Click listener for the audio recording delete button.
+ * @param audioStopButtonClickListener Click listener for the audio recording stop button.
+ * @param audioPlaybackButtonClickListener Click listener for the audio recording playback button.
+ * @param audioCompleteButtonClickListener Click listener for the audio recording complete button.
+ * @param audioSliderDragStartListener Drag start listener invoked when the audio slider starts being dragged.
+ * @param audioSliderDragStopListener Drag stop listener invoked when the audio slider stops being dragged.
+ */
+@JvmName("bindDefaults")
+@JvmOverloads
+@ExperimentalStreamChatApi
+public fun MessageComposerViewModel.bindViewDefaults(
+    view: MessageComposerView,
+    lifecycleOwner: LifecycleOwner,
+    sendMessageButtonClickListener: ((Message) -> Unit)? = null,
+    textInputChangeListener: ((String) -> Unit)? = null,
+    attachmentSelectionListener: ((List<Attachment>) -> Unit)? = null,
+    attachmentRemovalListener: ((Attachment) -> Unit)? = null,
+    mentionSelectionListener: ((User) -> Unit)? = null,
+    commandSelectionListener: ((Command) -> Unit)? = null,
+    alsoSendToChannelSelectionListener: ((Boolean) -> Unit)? = null,
+    dismissActionClickListener: (() -> Unit)? = null,
+    commandsButtonClickListener: (() -> Unit)? = null,
+    dismissSuggestionsListener: (() -> Unit)? = null,
+    audioRecordButtonHoldListener: (() -> Unit)? = null,
+    audioRecordButtonLockListener: (() -> Unit)? = null,
+    audioRecordButtonCancelListener: (() -> Unit)? = null,
+    audioRecordButtonReleaseListener: (() -> Unit)? = null,
+    audioDeleteButtonClickListener: (() -> Unit)? = null,
+    audioStopButtonClickListener: (() -> Unit)? = null,
+    audioPlaybackButtonClickListener: (() -> Unit)? = null,
+    audioCompleteButtonClickListener: (() -> Unit)? = null,
+    audioSliderDragStartListener: ((Float) -> Unit)? = null,
+    audioSliderDragStopListener: ((Float) -> Unit)? = null,
+) {
+    bindView(
+        view = view,
+        lifecycleOwner = lifecycleOwner,
+        sendMessageButtonClickListener = this.sendMessageButtonClickListener and sendMessageButtonClickListener,
+        textInputChangeListener = this.textInputChangeListener and textInputChangeListener,
+        attachmentSelectionListener = this.attachmentSelectionListener and attachmentSelectionListener,
+        attachmentRemovalListener = this.attachmentRemovalListener and attachmentRemovalListener,
+        mentionSelectionListener = this.mentionSelectionListener and mentionSelectionListener,
+        commandSelectionListener = this.commandSelectionListener and commandSelectionListener,
+        alsoSendToChannelSelectionListener = this.alsoSendToChannelSelectionListener and alsoSendToChannelSelectionListener,
+        dismissActionClickListener = this.dismissActionClickListener and dismissActionClickListener,
+        commandsButtonClickListener = this.commandsButtonClickListener and commandsButtonClickListener,
+        dismissSuggestionsListener = this.dismissSuggestionsListener and dismissSuggestionsListener,
+        audioRecordButtonHoldListener = this.audioRecordButtonHoldListener and audioRecordButtonHoldListener,
+        audioRecordButtonLockListener = this.audioRecordButtonLockListener and audioRecordButtonLockListener,
+        audioRecordButtonCancelListener = this.audioRecordButtonCancelListener and audioRecordButtonCancelListener,
+        audioRecordButtonReleaseListener = this.audioRecordButtonReleaseListener and audioRecordButtonReleaseListener,
+        audioDeleteButtonClickListener = this.audioDeleteButtonClickListener and audioDeleteButtonClickListener,
+        audioStopButtonClickListener = this.audioStopButtonClickListener and audioStopButtonClickListener,
+        audioPlaybackButtonClickListener = this.audioPlaybackButtonClickListener and audioPlaybackButtonClickListener,
+        audioCompleteButtonClickListener = this.audioCompleteButtonClickListener and audioCompleteButtonClickListener,
+        audioSliderDragStartListener = this.audioSliderDragStartListener and audioSliderDragStartListener,
+        audioSliderDragStopListener = this.audioSliderDragStopListener and audioSliderDragStopListener,
+    )
+}
+
+private infix fun <T> ((T) -> Unit).and(that: ((T) -> Unit)?): (T) -> Unit = when (that) {
+    null -> this
+    else -> {
+        {
+            this(it)
+            that(it)
+        }
+    }
+}
+
+private infix fun (() -> Unit).and(that: (() -> Unit)?): () -> Unit = when (that) {
+    null -> this
+    else -> {
+        {
+            this()
+            that()
+        }
     }
 }
 
