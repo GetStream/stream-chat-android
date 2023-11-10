@@ -70,10 +70,24 @@
   * `MessageListItemStyle.textStyleMessageDeletedTheirs`
   * `MessageListItemStyle.messageDeletedBackgroundTheirs`
 - Added `MessageComposerViewModel.bindViewDefaults` which preserves the default view bindings. [#5059](https://github.com/GetStream/stream-chat-android/pull/5059)
+- Added UI customizations for message composer. [#5056](https://github.com/GetStream/stream-chat-android/pull/5056)
+  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
+  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
+  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
+  * `MessageComposerViewStyle.commandsButtonIconTintList`
+  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
 
 ### ⚠️ Changed
 - Made `MessageReplyView` publicly available. [#5057](https://github.com/GetStream/stream-chat-android/pull/5057)
 - Made `MessageComposerContent` descendants extensible/reusable. [#5061](https://github.com/GetStream/stream-chat-android/pull/5061) 
+- Deprecated `MessageListItemStyle.textStyleMessageDeleted`. Use `MessageListItemStyle.textStyleMessageDeletedMine` and `MessageListItemStyle.textStyleMessageDeletedTheirs` instead.  [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
+- Deprecated `MessageListItemStyle.messageDeletedBackground`. Use `MessageListItemStyle.messageDeletedBackgroundMine` and `MessageListItemStyle.messageDeletedBackgroundTheirs` instead.  [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
+- Deprecated `MessageListItemStyle.buttonIconDrawableTintColor`. Use one of the params listed below instead. [#5056](https://github.com/GetStream/stream-chat-android/pull/5056)
+  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
+  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
+  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
+  * `MessageComposerViewStyle.commandsButtonIconTintList`
+  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
 
 ### ❌ Removed
 
