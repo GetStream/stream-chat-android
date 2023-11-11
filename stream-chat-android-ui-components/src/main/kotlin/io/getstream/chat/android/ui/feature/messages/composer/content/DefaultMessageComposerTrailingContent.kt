@@ -43,28 +43,43 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
- * Represents the default content shown at the end of [MessageComposerView].
+ * Represents the content shown at the end of [MessageComposerView].
  */
-public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerContent {
-    /**
-     * Generated binding class for the XML layout.
-     */
-    internal lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
-
-    /**
-     * The style for [MessageComposerView].
-     */
-    private lateinit var style: MessageComposerViewStyle
-
+public interface MessageComposerTrailingContent : MessageComposerContent {
     /**
      * Click listener for the send message button.
      */
-    public var sendMessageButtonClickListener: () -> Unit = {}
+    public var sendMessageButtonClickListener: (() -> Unit)?
 
     /**
      * Touch listener for the mic button.
      */
-    public var recordAudioButtonTouchListener: (event: MotionEvent) -> Boolean = { false }
+    public var recordAudioButtonTouchListener: ((event: MotionEvent) -> Boolean)?
+}
+
+/**
+ * Represents the default content shown at the end of [MessageComposerView].
+ */
+public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerTrailingContent {
+    /**
+     * Generated binding class for the XML layout.
+     */
+    protected lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    protected lateinit var style: MessageComposerViewStyle
+
+    /**
+     * Click listener for the send message button.
+     */
+    public override var sendMessageButtonClickListener: (() -> Unit)? = null
+
+    /**
+     * Touch listener for the mic button.
+     */
+    public override var recordAudioButtonTouchListener: ((event: MotionEvent) -> Boolean)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -84,8 +99,10 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
-        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
-        binding.recordAudioButton.setOnTouchListener { _, event -> recordAudioButtonTouchListener(event) }
+        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener?.invoke() }
+        binding.recordAudioButton.setOnTouchListener { _, event ->
+            recordAudioButtonTouchListener?.invoke(event) ?: false
+        }
         binding.recordAudioButton.tag = RECORD_AUDIO_TAG
     }
 

@@ -45,7 +45,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -65,9 +64,66 @@ import io.getstream.log.taggedLogger
 
 private const val TAG = "OverlappingContent"
 
-@InternalStreamChatApi
+/**
+ * Represents the content which overlaps [MessageComposerCenterContent] in [MessageComposerView].
+ */
+public interface MessageComposerOverlappingContent : MessageComposerContent {
+    /**
+     * Hold listener for the record button.
+     */
+    public var recordButtonHoldListener: (() -> Unit)?
+
+    /**
+     * Lock listener for the record button.
+     */
+    public var recordButtonLockListener: (() -> Unit)?
+
+    /**
+     * Cancel listener for the record button.
+     */
+    public var recordButtonCancelListener: (() -> Unit)?
+
+    /**
+     * Release listener for the record button.
+     */
+    public var recordButtonReleaseListener: (() -> Unit)?
+
+    /**
+     * Click listener for the playback button.
+     */
+    public var playbackButtonClickListener: (() -> Unit)?
+
+    /**
+     * Click listener for the stop button.
+     */
+    public var stopButtonClickListener: (() -> Unit)?
+
+    /**
+     * Click listener for the delete button.
+     */
+    public var deleteButtonClickListener: (() -> Unit)?
+
+    /**
+     * Click listener for the complete button.
+     */
+    public var completeButtonClickListener: (() -> Unit)?
+
+    /**
+     * Drag start listener for the slider.
+     */
+    public var sliderDragStartListener: ((Float) -> Unit)?
+
+    /**
+     * Drag stop listener for the slider.
+     */
+    public var sliderDragStopListener: ((Float) -> Unit)?
+}
+
+/**
+ * Represents the content which overlaps [MessageComposerCenterContent] in [MessageComposerView].
+ */
 @Suppress("TooManyFunctions")
-public class DefaultMessageComposerOverlappingContent : ConstraintLayout, MessageComposerContent {
+public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, MessageComposerOverlappingContent {
 
     public constructor(context: Context) : super(context)
     public constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -79,17 +135,17 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         defStyleRes,
     )
 
-    public var recordButtonHoldListener: () -> Unit = {}
-    public var recordButtonLockListener: () -> Unit = {}
-    public var recordButtonCancelListener: () -> Unit = {}
-    public var recordButtonReleaseListener: () -> Unit = {}
+    public override var recordButtonHoldListener: (() -> Unit)? = null
+    public override var recordButtonLockListener: (() -> Unit)? = null
+    public override var recordButtonCancelListener: (() -> Unit)? = null
+    public override var recordButtonReleaseListener: (() -> Unit)? = null
 
-    public var playbackButtonClickListener: () -> Unit = {}
-    public var stopButtonClickListener: () -> Unit = {}
-    public var deleteButtonClickListener: () -> Unit = {}
-    public var completeButtonClickListener: () -> Unit = {}
-    public var sliderDragStartListener: (Float) -> Unit = {}
-    public var sliderDragStopListener: (Float) -> Unit = {}
+    public override var playbackButtonClickListener: (() -> Unit)? = null
+    public override var stopButtonClickListener: (() -> Unit)? = null
+    public override var deleteButtonClickListener: (() -> Unit)? = null
+    public override var completeButtonClickListener: (() -> Unit)? = null
+    public override var sliderDragStartListener: ((Float) -> Unit)? = null
+    public override var sliderDragStopListener: ((Float) -> Unit)? = null
 
     private val logger by taggedLogger(TAG)
 
@@ -155,23 +211,23 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
         binding = StreamUiMessageComposerDefaultCenterOverlapContentBinding.inflate(inflater, this)
 
         binding.recordingDelete.setOnClickListener {
-            deleteButtonClickListener()
+            deleteButtonClickListener?.invoke()
         }
 
         binding.recordingStop.setOnClickListener {
-            stopButtonClickListener()
+            stopButtonClickListener?.invoke()
         }
         binding.recordingComplete.setOnClickListener {
-            completeButtonClickListener()
+            completeButtonClickListener?.invoke()
         }
         binding.recordingPlayback.setOnClickListener {
-            playbackButtonClickListener()
+            playbackButtonClickListener?.invoke()
         }
         binding.recordingWaveform.onSliderDragStart = { progress ->
-            sliderDragStartListener(progress)
+            sliderDragStartListener?.invoke(progress)
         }
         binding.recordingWaveform.onSliderDragStop = { progress ->
-            sliderDragStopListener(progress)
+            sliderDragStopListener?.invoke(progress)
         }
         centerContentHeight = context.getDimension(R.dimen.stream_ui_message_composer_center_content_height)
         parentWidth = displayMetrics().widthPixels
@@ -181,12 +237,12 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
     /**
      * The composer context.
      */
-    private lateinit var composerContext: MessageComposerContext
+    protected lateinit var composerContext: MessageComposerContext
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         composerContext = messageComposerContext
@@ -420,7 +476,7 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 showMicPopup()
                 showLockPopup()
                 vibrateDevice(VIBRATE_MS)
-                recordButtonHoldListener()
+                recordButtonHoldListener?.invoke()
             }
 
             MotionEvent.ACTION_MOVE -> {
@@ -456,20 +512,20 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 if (micLastRect.left == micMoveRect.left) {
                     logger.w { "[onMove] cancelled; micLastRect: $micLastRect, micMoveRect: $micMoveRect" }
                     renderIdle()
-                    recordButtonCancelListener()
+                    recordButtonCancelListener?.invoke()
                     return false
                 }
 
                 if (micLastRect.top == micMoveRect.top) {
                     logger.w { "[onMove] locked" }
-                    recordButtonLockListener()
+                    recordButtonLockListener?.invoke()
                     return false
                 }
             }
 
             MotionEvent.ACTION_CANCEL -> {
                 logger.d { "[onTouchEvent] ACTION_CANCEL" }
-                recordButtonCancelListener()
+                recordButtonCancelListener?.invoke()
                 return true
             }
 
@@ -478,10 +534,10 @@ public class DefaultMessageComposerOverlappingContent : ConstraintLayout, Messag
                 logger.d { "[onTouchEvent] ACTION_UP ($duration)" }
                 vibrateDevice(VIBRATE_MS)
                 if (duration > HOLD_TIMEOUT_MS) {
-                    recordButtonReleaseListener()
+                    recordButtonReleaseListener?.invoke()
                 } else {
                     showHoldPopup()
-                    recordButtonCancelListener()
+                    recordButtonCancelListener?.invoke()
                 }
                 return true
             }

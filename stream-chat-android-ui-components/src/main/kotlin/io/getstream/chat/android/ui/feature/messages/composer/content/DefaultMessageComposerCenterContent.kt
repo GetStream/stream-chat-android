@@ -44,41 +44,49 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
- * Represents the default content shown at the center of [MessageComposerView].
+ * Represents the content shown at the center of [MessageComposerView].
  */
-@OptIn(InternalStreamChatApi::class)
-public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerContent {
-    /**
-     * Generated binding class for the XML layout.
-     */
-    private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
-
-    /**
-     * The style for [MessageComposerView].
-     */
-    private lateinit var style: MessageComposerViewStyle
-
+public interface MessageComposerCenterContent : MessageComposerContent {
     /**
      * Text change listener invoked after each input change.
      */
-    public var textInputChangeListener: (String) -> Unit = {}
+    public var textInputChangeListener: ((String) -> Unit)?
 
     /**
      * Click listener for the remove attachment button.
      */
-    public var attachmentRemovalListener: (Attachment) -> Unit = {}
+    public var attachmentRemovalListener: ((Attachment) -> Unit)?
+}
+
+/**
+ * Represents the default content shown at the center of [MessageComposerView].
+ */
+@OptIn(InternalStreamChatApi::class)
+public open class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerCenterContent {
+    /**
+     * Generated binding class for the XML layout.
+     */
+    protected lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Adapter used to render attachments previews list.
      */
-    private val attachmentsAdapter: AttachmentPreviewAdapter by lazy {
-        AttachmentPreviewAdapter(
-            factoryManager = ChatUI.attachmentPreviewFactoryManager,
-            style = style,
-        ) { attachment ->
-            attachmentRemovalListener(attachment)
-        }
-    }
+    protected lateinit var attachmentsAdapter: AttachmentAdapter
+
+    /**
+     * Text change listener invoked after each input change.
+     */
+    public override var textInputChangeListener: ((String) -> Unit)? = null
+
+    /**
+     * Click listener for the remove attachment button.
+     */
+    public override var attachmentRemovalListener: ((Attachment) -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -99,8 +107,20 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
         binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
 
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
-            textInputChangeListener(editable?.toString() ?: "")
+            textInputChangeListener?.invoke(editable?.toString() ?: "")
         }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected open fun <T, VH> buildAdapter(
+        style: MessageComposerViewStyle,
+    ): T where T : RecyclerView.Adapter<VH>, T : AttachmentAdapter, VH : RecyclerView.ViewHolder {
+        return AttachmentPreviewAdapter(
+            factoryManager = ChatUI.attachmentPreviewFactoryManager,
+            style = style,
+        ) { attachment ->
+            attachmentRemovalListener?.invoke(attachment)
+        } as T
     }
 
     /**
@@ -110,8 +130,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      */
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
-
-        binding.attachmentsRecyclerView.adapter = attachmentsAdapter
+        val rvAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = buildAdapter(messageComposerContext.style)
+        attachmentsAdapter = rvAdapter as AttachmentAdapter
+        binding.attachmentsRecyclerView.adapter = rvAdapter
         binding.messageInputContainer.background = style.messageInputBackgroundDrawable
         binding.messageEditText.setTextStyle(style.messageInputTextStyle)
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
@@ -200,6 +221,22 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
 }
 
 /**
+ * Adapter used to render attachments.
+ */
+public interface AttachmentAdapter {
+
+    /**
+     * Sets the list of attachments to be displayed.
+     */
+    public fun setAttachments(attachments: List<Attachment>)
+
+    /**
+     * Returns the number of attachment items.
+     */
+    public fun getItemCount(): Int
+}
+
+/**
  * [RecyclerView.Adapter] responsible for displaying attachment previews in a RecyclerView.
  *
  * @param factoryManager A manager for registered attachment preview factories.
@@ -209,7 +246,7 @@ private class AttachmentPreviewAdapter(
     private val factoryManager: AttachmentPreviewFactoryManager,
     private val style: MessageComposerViewStyle,
     private val attachmentRemovalListener: (Attachment) -> Unit,
-) : RecyclerView.Adapter<AttachmentPreviewViewHolder>() {
+) : RecyclerView.Adapter<AttachmentPreviewViewHolder>(), AttachmentAdapter {
 
     /**
      * The attachments that will be displayed in the list.
@@ -222,7 +259,7 @@ private class AttachmentPreviewAdapter(
      * @param attachments
      */
     @SuppressLint("NotifyDataSetChanged")
-    fun setAttachments(attachments: List<Attachment>) {
+    override fun setAttachments(attachments: List<Attachment>) {
         this.attachments.clear()
         this.attachments.addAll(attachments)
         notifyDataSetChanged()
