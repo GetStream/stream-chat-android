@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerLeadingContent
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
@@ -52,13 +53,13 @@ class AddingCustomAttachments {
         private lateinit var messageComposerView: MessageComposerView
         private lateinit var messageComposerViewModel: MessageComposerViewModel
 
-        private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+        private class CustomMessageComposerLeadingContent : FrameLayout, MessageComposerLeadingContent {
 
             private lateinit var binding: CustomMessageComposerLeadingContentBinding
             private lateinit var style: MessageComposerViewStyle
 
-            var attachmentsButtonClickListener: () -> Unit = {}
-            var commandsButtonClickListener: () -> Unit = {}
+            override var attachmentsButtonClickListener: (() -> Unit)? = {}
+            override var commandsButtonClickListener: (() -> Unit)? = {}
 
             // Click listener for the date picker button
             var calendarButtonClickListener: () -> Unit = {}
@@ -73,8 +74,8 @@ class AddingCustomAttachments {
                 defStyleAttr
             ) {
                 binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(context), this)
-                binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener() }
-                binding.commandsButton.setOnClickListener { commandsButtonClickListener() }
+                binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener?.invoke() }
+                binding.commandsButton.setOnClickListener { commandsButtonClickListener?.invoke() }
 
                 // Set click listener for the date picker button
                 binding.calendarButton.setOnClickListener { calendarButtonClickListener() }

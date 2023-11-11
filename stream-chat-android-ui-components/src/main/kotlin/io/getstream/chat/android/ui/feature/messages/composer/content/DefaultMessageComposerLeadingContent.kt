@@ -36,28 +36,43 @@ import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
- * Represents the default content shown at the start of [MessageComposerView].
+ * Represents the content shown at the start of [MessageComposerView].
  */
-public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
-    /**
-     * Generated binding class for the XML layout.
-     */
-    private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
-
-    /**
-     * The style for [MessageComposerView].
-     */
-    private lateinit var style: MessageComposerViewStyle
-
+public interface MessageComposerLeadingContent : MessageComposerContent {
     /**
      * Click listener for the pick attachments button.
      */
-    public var attachmentsButtonClickListener: () -> Unit = {}
+    public var attachmentsButtonClickListener: (() -> Unit)?
 
     /**
      * Click listener for the pick commands button.
      */
-    public var commandsButtonClickListener: () -> Unit = {}
+    public var commandsButtonClickListener: (() -> Unit)?
+}
+
+/**
+ * Represents the default content shown at the start of [MessageComposerView].
+ */
+public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerLeadingContent {
+    /**
+     * Generated binding class for the XML layout.
+     */
+    protected lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    protected lateinit var style: MessageComposerViewStyle
+
+    /**
+     * Click listener for the pick attachments button.
+     */
+    public override var attachmentsButtonClickListener: (() -> Unit)? = null
+
+    /**
+     * Click listener for the pick commands button.
+     */
+    public override var commandsButtonClickListener: (() -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -76,8 +91,8 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
-        binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener() }
-        binding.commandsButton.setOnClickListener { commandsButtonClickListener() }
+        binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener?.invoke() }
+        binding.commandsButton.setOnClickListener { commandsButtonClickListener?.invoke() }
     }
 
     /**
