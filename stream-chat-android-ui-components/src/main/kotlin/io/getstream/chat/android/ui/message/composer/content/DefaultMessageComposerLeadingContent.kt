@@ -39,26 +39,26 @@ import io.getstream.chat.android.ui.utils.extensions.setBorderlessRipple
  * Represents the default content shown at the start of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
+    protected lateinit var binding: StreamUiMessageComposerDefaultLeadingContentBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the pick attachments button.
      */
-    public var attachmentsButtonClickListener: () -> Unit = {}
+    public var attachmentsButtonClickListener: (() -> Unit)? = null
 
     /**
      * Click listener for the pick commands button.
      */
-    public var commandsButtonClickListener: () -> Unit = {}
+    public var commandsButtonClickListener: (() -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -77,8 +77,8 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultLeadingContentBinding.inflate(streamThemeInflater, this)
-        binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener() }
-        binding.commandsButton.setOnClickListener { commandsButtonClickListener() }
+        binding.attachmentsButton.setOnClickListener { attachmentsButtonClickListener?.invoke() }
+        binding.commandsButton.setOnClickListener { commandsButtonClickListener?.invoke() }
     }
 
     /**

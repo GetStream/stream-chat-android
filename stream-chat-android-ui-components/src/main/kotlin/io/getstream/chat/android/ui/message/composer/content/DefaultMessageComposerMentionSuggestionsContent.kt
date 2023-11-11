@@ -41,28 +41,26 @@ import io.getstream.chat.android.ui.utils.extensions.applyTint
  * Represents the default mention suggestion list popup shown above [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiSuggestionListViewBinding
+    protected lateinit var binding: StreamUiSuggestionListViewBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Adapter used to render mention suggestions.
      */
-    private val adapter: MentionsAdapter by lazy {
-        MentionsAdapter(style) { mentionSelectionListener(it) }
-    }
+    protected lateinit var adapter: MentionSuggestionsAdapter
 
     /**
      * Selection listener invoked when a mention is selected.
      */
-    public var mentionSelectionListener: (User) -> Unit = {}
+    public var mentionSelectionListener: ((User) -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -84,6 +82,13 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
         binding.suggestionsCardView.isVisible = true
     }
 
+    @Suppress("UNCHECKED_CAST")
+    protected open fun <T, VH> buildAdapter(
+        style: MessageComposerViewStyle
+    ): T where T : RecyclerView.Adapter<VH>, T : MentionSuggestionsAdapter, VH : RecyclerView.ViewHolder {
+        return MentionsAdapter(style) { mentionSelectionListener?.invoke(it) } as T
+    }
+
     /**
      * Initializes the content view with [MessageComposerContext].
      *
@@ -91,8 +96,9 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
      */
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
-
-        binding.suggestionsRecyclerView.adapter = adapter
+        val rvAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = buildAdapter(messageComposerContext.style)
+        adapter = rvAdapter as MentionSuggestionsAdapter
+        binding.suggestionsRecyclerView.adapter = rvAdapter
         binding.suggestionsCardView.setCardBackgroundColor(style.mentionSuggestionsBackgroundColor)
     }
 
@@ -107,6 +113,22 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
 }
 
 /**
+ * Adapter used to render mention suggestions.
+ */
+public interface MentionSuggestionsAdapter {
+
+    /**
+     * Sets the list of mention suggestions to be displayed.
+     */
+    public fun setItems(items: List<User>)
+
+    /**
+     * Returns the number of items in the adapter.
+     */
+    public fun getItemCount(): Int
+}
+
+/**
  * [RecyclerView.Adapter] responsible for displaying mention suggestions in a RecyclerView.
  *
  * @param style The style for [MessageComposerView].
@@ -115,7 +137,7 @@ public class DefaultMessageComposerMentionSuggestionsContent : FrameLayout, Mess
 private class MentionsAdapter(
     private val style: MessageComposerViewStyle,
     private inline val mentionSelectionListener: (User) -> Unit,
-) : SimpleListAdapter<User, MentionsViewHolder>() {
+) : SimpleListAdapter<User, MentionsViewHolder>(), MentionSuggestionsAdapter {
 
     /**
      * Creates and instantiates a new instance of [MentionsViewHolder].

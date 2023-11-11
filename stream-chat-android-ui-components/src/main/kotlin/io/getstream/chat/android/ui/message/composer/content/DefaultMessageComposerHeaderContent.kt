@@ -35,21 +35,21 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the top of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultHeaderContentBinding
+    protected lateinit var binding: StreamUiMessageComposerDefaultHeaderContentBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the dismiss action button.
      */
-    public var dismissActionClickListener: () -> Unit = {}
+    public var dismissActionClickListener: (() -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -68,7 +68,7 @@ public class DefaultMessageComposerHeaderContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultHeaderContentBinding.inflate(streamThemeInflater, this)
-        binding.dismissInputModeButton.setOnClickListener { dismissActionClickListener() }
+        binding.dismissInputModeButton.setOnClickListener { dismissActionClickListener?.invoke() }
     }
 
     /**
