@@ -35,21 +35,21 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the bottom of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultFooterContentBinding
+    protected lateinit var binding: StreamUiMessageComposerDefaultFooterContentBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Selection listener for the "also send to channel" checkbox.
      */
-    public var alsoSendToChannelSelectionListener: (Boolean) -> Unit = {}
+    public var alsoSendToChannelSelectionListener: ((Boolean) -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -69,7 +69,7 @@ public class DefaultMessageComposerFooterContent : FrameLayout, MessageComposerC
     private fun init() {
         binding = StreamUiMessageComposerDefaultFooterContentBinding.inflate(streamThemeInflater, this)
         binding.alsoSendToChannelCheckBox.setOnCheckedChangeListener { _, _ ->
-            alsoSendToChannelSelectionListener(binding.alsoSendToChannelCheckBox.isChecked)
+            alsoSendToChannelSelectionListener?.invoke(binding.alsoSendToChannelCheckBox.isChecked)
         }
     }
 

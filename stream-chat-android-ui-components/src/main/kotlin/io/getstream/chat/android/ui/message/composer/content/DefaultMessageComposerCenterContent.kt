@@ -46,35 +46,31 @@ import io.getstream.chat.android.ui.message.composer.attachment.AttachmentPrevie
  * Represents the default content shown at the center of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
+    protected lateinit var binding: StreamUiMessageComposerDefaultCenterContentBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
-
-    /**
-     * Text change listener invoked after each input change.
-     */
-    public var textInputChangeListener: (String) -> Unit = {}
-
-    /**
-     * Click listener for the remove attachment button.
-     */
-    public var attachmentRemovalListener: (Attachment) -> Unit = {}
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Adapter used to render attachments previews list.
      */
-    private val attachmentsAdapter: AttachmentPreviewAdapter by lazy {
-        AttachmentPreviewAdapter(ChatUI.attachmentPreviewFactoryManager) { attachment ->
-            attachmentRemovalListener(attachment)
-        }
-    }
+    protected lateinit var attachmentsAdapter: AttachmentAdapter
+
+    /**
+     * Text change listener invoked after each input change.
+     */
+    public var textInputChangeListener: ((String) -> Unit)? = null
+
+    /**
+     * Click listener for the remove attachment button.
+     */
+    public var attachmentRemovalListener: ((Attachment) -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -93,11 +89,18 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultCenterContentBinding.inflate(streamThemeInflater, this)
-
         binding.messageEditText.doAfterTextChanged { editable: Editable? ->
-            textInputChangeListener(editable?.toString() ?: "")
+            textInputChangeListener?.invoke(editable?.toString() ?: "")
         }
-        binding.attachmentsRecyclerView.adapter = attachmentsAdapter
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    protected open fun <T, VH> buildAdapter(
+        style: MessageComposerViewStyle
+    ): T where T : RecyclerView.Adapter<VH>, T : AttachmentAdapter, VH : RecyclerView.ViewHolder {
+        return AttachmentPreviewAdapter(ChatUI.attachmentPreviewFactoryManager) { attachment ->
+            attachmentRemovalListener?.invoke(attachment)
+        } as T
     }
 
     /**
@@ -107,7 +110,9 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      */
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
-
+        val rvAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = buildAdapter(messageComposerContext.style)
+        attachmentsAdapter = rvAdapter as AttachmentAdapter
+        binding.attachmentsRecyclerView.adapter = rvAdapter
         binding.messageInputContainer.background = style.messageInputBackgroundDrawable
         binding.messageEditText.setTextStyle(style.messageInputTextStyle)
         binding.messageEditText.isVerticalScrollBarEnabled = style.messageInputScrollbarEnabled
@@ -136,7 +141,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      *
      * @param state The state that will be used to render the updated UI.
      */
-    private fun renderTextInputState(state: MessageComposerState) {
+    protected open fun renderTextInputState(state: MessageComposerState) {
         binding.messageEditText.apply {
             val currentValue = text.toString()
             val newValue = state.inputValue
@@ -165,7 +170,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      *
      * @param state The state that will be used to render the updated UI.
      */
-    private fun renderReplyState(state: MessageComposerState) {
+    protected open fun renderReplyState(state: MessageComposerState) {
         if (!style.messageInputShowReplyView) return
 
         val action = state.action
@@ -187,10 +192,26 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
      *
      * @param state The state that will be used to render the updated UI.
      */
-    private fun renderAttachmentState(state: MessageComposerState) {
+    protected open fun renderAttachmentState(state: MessageComposerState) {
         binding.attachmentsRecyclerView.isVisible = state.attachments.isNotEmpty()
         attachmentsAdapter.setAttachments(state.attachments)
     }
+}
+
+/**
+ * Adapter used to render attachments.
+ */
+public interface AttachmentAdapter {
+
+    /**
+     * Sets the list of attachments to be displayed.
+     */
+    public fun setAttachments(attachments: List<Attachment>)
+
+    /**
+     * Returns the number of attachment items.
+     */
+    public fun getItemCount(): Int
 }
 
 /**
@@ -202,7 +223,7 @@ public class DefaultMessageComposerCenterContent : FrameLayout, MessageComposerC
 private class AttachmentPreviewAdapter(
     private val factoryManager: AttachmentPreviewFactoryManager,
     private val attachmentRemovalListener: (Attachment) -> Unit,
-) : RecyclerView.Adapter<AttachmentPreviewViewHolder>() {
+) : RecyclerView.Adapter<AttachmentPreviewViewHolder>(), AttachmentAdapter {
 
     /**
      * The attachments that will be displayed in the list.
@@ -215,7 +236,7 @@ private class AttachmentPreviewAdapter(
      * @param attachments
      */
     @SuppressLint("NotifyDataSetChanged")
-    fun setAttachments(attachments: List<Attachment>) {
+    override fun setAttachments(attachments: List<Attachment>) {
         this.attachments.clear()
         this.attachments.addAll(attachments)
         notifyDataSetChanged()

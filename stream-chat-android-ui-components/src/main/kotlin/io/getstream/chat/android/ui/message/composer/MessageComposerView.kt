@@ -294,6 +294,14 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.leadingContent.removeAllViews()
         binding.leadingContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is DefaultMessageComposerLeadingContent) {
+            if (contentView.attachmentsButtonClickListener == null) {
+                contentView.attachmentsButtonClickListener = { attachmentsButtonClickListener() }
+            }
+            if (contentView.commandsButtonClickListener == null) {
+                contentView.commandsButtonClickListener = { commandsButtonClickListener() }
+            }
+        }
     }
 
     /**
@@ -315,6 +323,14 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.centerContent.removeAllViews()
         binding.centerContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is DefaultMessageComposerCenterContent) {
+            if (contentView.textInputChangeListener == null) {
+                contentView.textInputChangeListener = { textInputChangeListener(it) }
+            }
+            if (contentView.attachmentRemovalListener == null) {
+                contentView.attachmentRemovalListener = { attachmentRemovalListener(it) }
+            }
+        }
     }
 
     /**
@@ -337,6 +353,11 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is DefaultMessageComposerTrailingContent) {
+            if (contentView.sendMessageButtonClickListener == null) {
+                contentView.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
+            }
+        }
     }
 
     /**
@@ -358,6 +379,11 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.footerContent.removeAllViews()
         binding.footerContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is DefaultMessageComposerFooterContent) {
+            if (contentView.alsoSendToChannelSelectionListener == null) {
+                contentView.alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
+            }
+        }
     }
 
     /**
@@ -379,6 +405,11 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.headerContent.removeAllViews()
         binding.headerContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is DefaultMessageComposerHeaderContent) {
+            if (contentView.dismissActionClickListener == null) {
+                contentView.dismissActionClickListener = { dismissActionClickListener() }
+            }
+        }
     }
 
     /**
@@ -392,6 +423,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public fun <V> setMentionSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
         mentionSuggestionsContentOverride = contentView.attachContext()
+        if (contentView is DefaultMessageComposerMentionSuggestionsContent) {
+            if (contentView.mentionSelectionListener == null) {
+                contentView.mentionSelectionListener = { mentionSelectionListener(it) }
+            }
+        }
     }
 
     /**
@@ -405,6 +441,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public fun <V> setCommandSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
         commandSuggestionsContentOverride = contentView.attachContext()
+        if (contentView is DefaultMessageComposerCommandSuggestionsContent) {
+            if (contentView.commandSelectionListener == null) {
+                contentView.commandSelectionListener = { commandSelectionListener(it) }
+            }
+        }
     }
 
     /**

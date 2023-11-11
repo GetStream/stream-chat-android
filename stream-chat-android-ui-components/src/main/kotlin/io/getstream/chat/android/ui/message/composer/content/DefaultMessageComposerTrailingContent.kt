@@ -39,21 +39,21 @@ import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle
  * Represents the default content shown at the end of [MessageComposerView].
  */
 @ExperimentalStreamChatApi
-public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
+    protected lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Click listener for the send message button.
      */
-    public var sendMessageButtonClickListener: () -> Unit = {}
+    public var sendMessageButtonClickListener: (() -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -72,7 +72,7 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      */
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
-        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
+        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener?.invoke() }
     }
 
     /**

@@ -2232,78 +2232,147 @@ public final class io/getstream/chat/android/ui/message/composer/attachment/fact
 	public fun onCreateViewHolder (Landroid/view/ViewGroup;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/message/composer/attachment/AttachmentPreviewViewHolder;
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCenterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public abstract interface class io/getstream/chat/android/ui/message/composer/content/AttachmentAdapter {
+	public abstract fun getItemCount ()I
+	public abstract fun setAttachments (Ljava/util/List;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/composer/content/CommandSuggestionsAdapter {
+	public abstract fun getItemCount ()I
+	public abstract fun setItems (Ljava/util/List;)V
+}
+
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCenterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field attachmentsAdapter Lio/getstream/chat/android/ui/message/composer/content/AttachmentAdapter;
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultCenterContentBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
+	protected fun buildAdapter (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)Landroidx/recyclerview/widget/RecyclerView$Adapter;
 	public final fun getAttachmentRemovalListener ()Lkotlin/jvm/functions/Function1;
+	protected final fun getAttachmentsAdapter ()Lio/getstream/chat/android/ui/message/composer/content/AttachmentAdapter;
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultCenterContentBinding;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public final fun getTextInputChangeListener ()Lkotlin/jvm/functions/Function1;
+	protected fun renderAttachmentState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	protected fun renderReplyState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	protected fun renderTextInputState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
 	public final fun setAttachmentRemovalListener (Lkotlin/jvm/functions/Function1;)V
+	protected final fun setAttachmentsAdapter (Lio/getstream/chat/android/ui/message/composer/content/AttachmentAdapter;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultCenterContentBinding;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
 	public final fun setTextInputChangeListener (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCommandSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerCommandSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiSuggestionListViewBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
+	protected fun buildAdapter (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)Landroidx/recyclerview/widget/RecyclerView$Adapter;
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiSuggestionListViewBinding;
 	public final fun getCommandSelectionListener ()Lkotlin/jvm/functions/Function1;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiSuggestionListViewBinding;)V
 	public final fun setCommandSelectionListener (Lkotlin/jvm/functions/Function1;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerFooterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerFooterContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultFooterContentBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
 	public final fun getAlsoSendToChannelSelectionListener ()Lkotlin/jvm/functions/Function1;
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultFooterContentBinding;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
 	public final fun setAlsoSendToChannelSelectionListener (Lkotlin/jvm/functions/Function1;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultFooterContentBinding;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerHeaderContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerHeaderContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultHeaderContentBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultHeaderContentBinding;
 	public final fun getDismissActionClickListener ()Lkotlin/jvm/functions/Function0;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultHeaderContentBinding;)V
 	public final fun setDismissActionClickListener (Lkotlin/jvm/functions/Function0;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerLeadingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerLeadingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultLeadingContentBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
 	public final fun getAttachmentsButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultLeadingContentBinding;
 	public final fun getCommandsButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
 	public final fun setAttachmentsButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultLeadingContentBinding;)V
 	public final fun setCommandsButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerMentionSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerMentionSuggestionsContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field adapter Lio/getstream/chat/android/ui/message/composer/content/MentionSuggestionsAdapter;
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiSuggestionListViewBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
+	protected fun buildAdapter (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)Landroidx/recyclerview/widget/RecyclerView$Adapter;
+	protected final fun getAdapter ()Lio/getstream/chat/android/ui/message/composer/content/MentionSuggestionsAdapter;
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiSuggestionListViewBinding;
 	public final fun getMentionSelectionListener ()Lkotlin/jvm/functions/Function1;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	protected final fun setAdapter (Lio/getstream/chat/android/ui/message/composer/content/MentionSuggestionsAdapter;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiSuggestionListViewBinding;)V
 	public final fun setMentionSelectionListener (Lkotlin/jvm/functions/Function1;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
 }
 
-public final class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerTrailingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+public class io/getstream/chat/android/ui/message/composer/content/DefaultMessageComposerTrailingContent : android/widget/FrameLayout, io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
+	protected field binding Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultTrailingContentBinding;
+	protected field style Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun attachContext (Lio/getstream/chat/android/ui/message/composer/MessageComposerContext;)V
+	protected final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultTrailingContentBinding;
 	public final fun getSendMessageButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	protected final fun getStyle ()Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;
 	public fun renderState (Lio/getstream/chat/android/common/composer/MessageComposerState;)V
+	protected final fun setBinding (Lio/getstream/chat/android/ui/databinding/StreamUiMessageComposerDefaultTrailingContentBinding;)V
 	public final fun setSendMessageButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	protected final fun setStyle (Lio/getstream/chat/android/ui/message/composer/MessageComposerViewStyle;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/message/composer/content/MentionSuggestionsAdapter {
+	public abstract fun getItemCount ()I
+	public abstract fun setItems (Ljava/util/List;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/message/composer/content/MessageComposerContent {
