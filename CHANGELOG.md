@@ -73,6 +73,7 @@
 
 ### ⚠️ Changed
 - Made `MessageReplyView` publicly available. [#5057](https://github.com/GetStream/stream-chat-android/pull/5057)
+- Made `MessageComposerContent` descendants extensible/reusable. [#5061](https://github.com/GetStream/stream-chat-android/pull/5061) 
 
 ### ❌ Removed
 
