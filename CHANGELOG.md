@@ -60,11 +60,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added UI customizations for deleted message. [#5050](https://github.com/GetStream/stream-chat-android/pull/5050)
-  * `MessageListItemStyle.textStyleMessageDeletedMine`
-  * `MessageListItemStyle.messageDeletedBackgroundMine`
-  * `MessageListItemStyle.textStyleMessageDeletedTheirs`
-  * `MessageListItemStyle.messageDeletedBackgroundTheirs`
 
 ### ⚠️ Changed
 
@@ -92,7 +87,7 @@
 
 ### ❌ Removed
 
-# November 08th, 2023 - 6.0.7
+# November 09th, 2023 - 6.0.8
 ## Common changes for all artifacts
 ### ✅ Added
 - Added `Message.moderationDetails` due to support of the new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
@@ -121,6 +116,11 @@
 
 ### ✅ Added
 - Added `callback` param to `MessageComposerViewModel.sendMessage` method. [#5038](https://github.com/GetStream/stream-chat-android/pull/5038)
+- Added UI customizations for deleted message. [#5050](https://github.com/GetStream/stream-chat-android/pull/5050)
+  * `MessageListItemStyle.textStyleMessageDeletedMine`
+  * `MessageListItemStyle.messageDeletedBackgroundMine`
+  * `MessageListItemStyle.textStyleMessageDeletedTheirs`
+  * `MessageListItemStyle.messageDeletedBackgroundTheirs`
 
 ### ⚠️ Changed
 - Supported new moderation API. [#5035](https://github.com/GetStream/stream-chat-android/pull/5035)
