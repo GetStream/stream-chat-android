@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.messages.composer
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.content.res.TypedArray
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -53,12 +54,16 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param commandSuggestionsTitleText The text for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleTextStyle The text style for the title at the top of the command suggestions dialog.
  * @param commandSuggestionsTitleIconDrawable The icon for the title at the top of the command suggestions dialog.
+ * @param commandSuggestionsTitleIconDrawableTintColor The tint applied to the icon for the title at the top
+ * of the command suggestions dialog.
  * @param commandSuggestionsBackgroundColor The background color of the command suggestions dialog.
  * @param commandSuggestionItemCommandNameTextStyle The text style for the command name.
  * @param commandSuggestionItemCommandDescriptionText The command description template with two placeholders.
  * @param commandSuggestionItemCommandDescriptionTextStyle The text style for the command description.
  * @param mentionSuggestionsBackgroundColor The background color of the mention suggestions dialog.
  * @param mentionSuggestionItemIconDrawable The icon for each command icon in the suggestion list.
+ * @param mentionSuggestionItemIconDrawableTintColor The tint applied to the icon for each command icon
+ * in the suggestion list.
  * @param mentionSuggestionItemUsernameTextStyle The text style that will be used for the user name.
  * @param mentionSuggestionItemMentionText The mention template that will be used for the mention preview.
  * @param mentionSuggestionItemMentionTextStyle The text style that will be used for the mention preview.
@@ -121,9 +126,11 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param audioRecordingFloatingLockedIconDrawableTint The tint color that will be used for the the locked icon.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
+ * @param attachmentsButtonIconTintList The tint list for the attachments button.
  * @param attachmentsButtonRippleColor Ripple color of the attachments button.
  * @param commandsButtonVisible If the button to select commands is displayed.
  * @param commandsButtonIconDrawable The icon for the commands button.
+ * @param commandsButtonIconTintList The tint list for the commands button.
  * @param commandsButtonRippleColor Ripple color of the commands button.
  * @param alsoSendToChannelCheckboxVisible If the checkbox to send a message to the channel is displayed.
  * @param alsoSendToChannelCheckboxDrawable The drawable that will be used for the checkbox.
@@ -136,6 +143,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param dismissModeIconDrawable The icon for the button that dismisses edit or reply mode.
  * @param sendMessageButtonEnabled If the button to send message is enabled.
  * @param sendMessageButtonIconDrawable The icon for the button to send message.
+ * @param sendMessageButtonIconTintList The tint list for the button to send message.
  * @param cooldownTimerTextStyle The text style that will be used for cooldown timer.
  * @param cooldownTimerBackgroundDrawable Background drawable for cooldown timer.
  * @param messageReplyBackgroundColor Sets the background color of the quoted message bubble visible in the composer
@@ -157,12 +165,24 @@ import io.getstream.chat.android.ui.utils.extensions.use
  */
 public data class MessageComposerViewStyle(
     @ColorInt public val backgroundColor: Int,
+    @Deprecated(
+        message = "Use the " +
+            "commandSuggestionsTitleIconDrawableTintColor" +
+            "/mentionSuggestionItemIconDrawableTintColor " +
+            "/attachmentsButtonIconTintList " +
+            "/commandsButtonIconTintList " +
+            "/sendMessageButtonIconTintList " +
+            "property instead.",
+        replaceWith = ReplaceWith("proper button tint property"),
+        level = DeprecationLevel.WARNING,
+    )
     @ColorInt public val buttonIconDrawableTintColor: Int?,
     public val dividerBackgroundDrawable: Drawable,
     // Command suggestions content
     public val commandSuggestionsTitleText: String,
     public val commandSuggestionsTitleTextStyle: TextStyle,
     public val commandSuggestionsTitleIconDrawable: Drawable,
+    public val commandSuggestionsTitleIconDrawableTintColor: Int?,
     @ColorInt public val commandSuggestionsBackgroundColor: Int,
     public val commandSuggestionItemCommandNameTextStyle: TextStyle,
     public val commandSuggestionItemCommandDescriptionText: String,
@@ -170,6 +190,7 @@ public data class MessageComposerViewStyle(
     // Mention suggestions content
     @ColorInt public val mentionSuggestionsBackgroundColor: Int,
     public val mentionSuggestionItemIconDrawable: Drawable,
+    public val mentionSuggestionItemIconDrawableTintColor: Int?,
     public val mentionSuggestionItemUsernameTextStyle: TextStyle,
     public val mentionSuggestionItemMentionText: String,
     public val mentionSuggestionItemMentionTextStyle: TextStyle,
@@ -214,9 +235,11 @@ public data class MessageComposerViewStyle(
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
+    public val attachmentsButtonIconTintList: ColorStateList?,
     @ColorInt public val attachmentsButtonRippleColor: Int?,
     public val commandsButtonVisible: Boolean,
     public val commandsButtonIconDrawable: Drawable,
+    public val commandsButtonIconTintList: ColorStateList?,
     @ColorInt public val commandsButtonRippleColor: Int?,
     // Footer content
     public val alsoSendToChannelCheckboxVisible: Boolean,
@@ -232,6 +255,7 @@ public data class MessageComposerViewStyle(
     // Trailing content
     public val sendMessageButtonEnabled: Boolean,
     public val sendMessageButtonIconDrawable: Drawable,
+    public val sendMessageButtonIconTintList: ColorStateList?,
     @Px public val sendMessageButtonWidth: Int,
     @Px public val sendMessageButtonHeight: Int,
     @Px public val sendMessageButtonPadding: Int,
@@ -239,6 +263,7 @@ public data class MessageComposerViewStyle(
     public val audioRecordingButtonEnabled: Boolean,
     public val audioRecordingButtonPreferred: Boolean,
     public val audioRecordingButtonIconDrawable: Drawable,
+    public val audioRecordingButtonIconTintList: ColorStateList?,
     @Px public val audioRecordingButtonWidth: Int,
     @Px public val audioRecordingButtonHeight: Int,
     @Px public val audioRecordingButtonPadding: Int,
@@ -328,6 +353,10 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsTitleIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command_blue)!!
 
+                val commandSuggestionsTitleIconDrawableTintColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor,
+                )
+
                 val commandSuggestionsBackgroundColor = a.getColor(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandSuggestionsBackgroundColor,
                     context.getColorCompat(R.color.stream_ui_white),
@@ -386,6 +415,10 @@ public data class MessageComposerViewStyle(
                 val mentionSuggestionItemIconDrawable: Drawable = a.getDrawable(
                     R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mention)!!
+
+                val mentionSuggestionItemIconDrawableTintColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor,
+                )
 
                 val mentionSuggestionItemUsernameTextStyle = TextStyle.Builder(a)
                     .size(
@@ -603,6 +636,11 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_attach)!!
 
+                val attachmentsButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonIconTintList,
+                )
+
                 val attachmentsButtonRippleColor = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsButtonRippleColor,
                 )
@@ -616,6 +654,11 @@ public data class MessageComposerViewStyle(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_command)!!
+
+                val commandsButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonIconTintList,
+                )
 
                 val commandsButtonRippleColor = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerCommandsButtonRippleColor,
@@ -692,6 +735,11 @@ public data class MessageComposerViewStyle(
                     R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_send_message)!!
 
+                val sendMessageButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonIconTintList,
+                )
+
                 val sendMessageButtonWidth: Int =
                     a.getDimensionPixelSize(
                         R.styleable.MessageComposerView_streamUiMessageComposerSendMessageButtonWidth,
@@ -724,6 +772,11 @@ public data class MessageComposerViewStyle(
                     context,
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonIconDrawable,
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!
+
+                val audioRecordingButtonIconTintList = a.getColorStateListCompat(
+                    context,
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingButtonIconTintList,
+                )
 
                 val audioRecordingButtonWidth: Int =
                     a.getDimensionPixelSize(
@@ -908,6 +961,7 @@ public data class MessageComposerViewStyle(
                     commandSuggestionsTitleText = commandSuggestionsTitleText,
                     commandSuggestionsTitleTextStyle = commandSuggestionsTitleTextStyle,
                     commandSuggestionsTitleIconDrawable = commandSuggestionsTitleIconDrawable,
+                    commandSuggestionsTitleIconDrawableTintColor = commandSuggestionsTitleIconDrawableTintColor,
                     commandSuggestionsBackgroundColor = commandSuggestionsBackgroundColor,
                     commandSuggestionItemCommandNameTextStyle = commandSuggestionItemCommandNameTextStyle,
                     commandSuggestionItemCommandDescriptionText = commandSuggestionItemCommandDescriptionText,
@@ -915,6 +969,7 @@ public data class MessageComposerViewStyle(
                     // Mention suggestions content
                     mentionSuggestionsBackgroundColor = mentionSuggestionsBackgroundColor,
                     mentionSuggestionItemIconDrawable = mentionSuggestionItemIconDrawable,
+                    mentionSuggestionItemIconDrawableTintColor = mentionSuggestionItemIconDrawableTintColor,
                     mentionSuggestionItemUsernameTextStyle = mentionSuggestionItemUsernameTextStyle,
                     mentionSuggestionItemMentionText = mentionSuggestionItemMentionText,
                     mentionSuggestionItemMentionTextStyle = mentionSuggestionItemMentionTextStyle,
@@ -963,9 +1018,11 @@ public data class MessageComposerViewStyle(
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
+                    attachmentsButtonIconTintList = attachmentsButtonIconTintList,
                     attachmentsButtonRippleColor = attachmentsButtonRippleColor,
                     commandsButtonVisible = commandsButtonVisible,
                     commandsButtonIconDrawable = commandsButtonIconDrawable,
+                    commandsButtonIconTintList = commandsButtonIconTintList,
                     commandsButtonRippleColor = commandsButtonRippleColor,
                     // Footer content
                     alsoSendToChannelCheckboxVisible = alsoSendToChannelCheckboxVisible,
@@ -981,6 +1038,7 @@ public data class MessageComposerViewStyle(
                     // Trailing content
                     sendMessageButtonEnabled = sendMessageButtonEnabled,
                     sendMessageButtonIconDrawable = sendMessageButtonIconDrawable,
+                    sendMessageButtonIconTintList = sendMessageButtonIconTintList,
                     sendMessageButtonWidth = sendMessageButtonWidth,
                     sendMessageButtonHeight = sendMessageButtonHeight,
                     sendMessageButtonPadding = sendMessageButtonPadding,
@@ -988,6 +1046,7 @@ public data class MessageComposerViewStyle(
                     audioRecordingButtonVisible = audioRecordingButtonVisible,
                     audioRecordingButtonPreferred = audioRecordingButtonPreferred,
                     audioRecordingButtonIconDrawable = audioRecordingButtonIconDrawable,
+                    audioRecordingButtonIconTintList = audioRecordingButtonIconTintList,
                     audioRecordingButtonWidth = audioRecordingButtonWidth,
                     audioRecordingButtonHeight = audioRecordingButtonHeight,
                     audioRecordingButtonPadding = audioRecordingButtonPadding,

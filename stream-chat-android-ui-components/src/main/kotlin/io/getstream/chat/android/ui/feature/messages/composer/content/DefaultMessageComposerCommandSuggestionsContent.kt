@@ -96,7 +96,9 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
         binding.commandsTitleTextView.text = style.commandSuggestionsTitleText
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(
-            style.commandSuggestionsTitleIconDrawable.applyTint(style.buttonIconDrawableTintColor),
+            style.commandSuggestionsTitleIconDrawable.applyTint(
+                tintColor = style.commandSuggestionsTitleIconDrawableTintColor ?: style.buttonIconDrawableTintColor,
+            ),
         )
     }
 

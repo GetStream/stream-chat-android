@@ -33,6 +33,7 @@
         </attr>
 
         <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerCommandSuggestionsTitleIconDrawableTintColor" format="reference|color" />
         <attr name="streamUiMessageComposerCommandSuggestionsBackgroundColor" format="reference|color" />
 
         <attr name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize" format="dimension" />
@@ -59,6 +60,7 @@
         <!-- Mention suggestions content -->
         <attr name="streamUiMessageComposerMentionSuggestionsBackgroundColor" format="reference|color" />
         <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor" format="reference|color" />
 
         <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextSize" format="dimension" />
         <attr name="streamUiMessageComposerMentionSuggestionItemUsernameTextColor" format="reference|color" />
@@ -166,9 +168,11 @@
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAttachmentsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAttachmentsButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsButtonRippleColor" format="color|reference" />
         <attr name="streamUiMessageComposerCommandsButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerCommandsButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerCommandsButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerCommandsButtonRippleColor" format="color|reference" />
 
         <!-- Footer content -->
@@ -196,6 +200,7 @@
         <!-- Trailing content -->
         <attr name="streamUiMessageComposerSendMessageButtonEnabled" format="boolean" />
         <attr name="streamUiMessageComposerSendMessageButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerSendMessageButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerSendMessageButtonWidth" format="dimension|reference" />
         <attr name="streamUiMessageComposerSendMessageButtonHeight" format="dimension|reference" />
         <attr name="streamUiMessageComposerSendMessageButtonPadding" format="dimension|reference" />
@@ -203,6 +208,7 @@
         <attr name="streamUiMessageComposerAudioRecordingButtonVisible" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonPreferred" format="boolean" />
         <attr name="streamUiMessageComposerAudioRecordingButtonIconDrawable" format="reference" />
+        <attr name="streamUiMessageComposerAudioRecordingButtonIconTintList" format="reference" />
         <attr name="streamUiMessageComposerAudioRecordingButtonWidth" format="dimension|reference" />
         <attr name="streamUiMessageComposerAudioRecordingButtonHeight" format="dimension|reference" />
         <attr name="streamUiMessageComposerAudioRecordingButtonPadding" format="dimension|reference" />
