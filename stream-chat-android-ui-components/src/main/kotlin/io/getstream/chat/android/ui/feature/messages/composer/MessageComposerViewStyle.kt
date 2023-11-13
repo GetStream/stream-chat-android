@@ -98,6 +98,11 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param audioRecordingButtonEnabled If the button to record audio is enabled.
  * @param audioRecordingButtonPreferred If the button to record audio is displayed over send button while input is
  * empty.
+ * @param audioRecordingButtonIconDrawable The icon for the button to record audio.
+ * @param audioRecordingButtonIconTintList The tint list for the button to record audio.
+ * @param audioRecordingButtonWidth The width of the button to record audio.
+ * @param audioRecordingButtonHeight The height of the button to record audio.
+ * @param audioRecordingButtonPadding The padding of the button to record audio.
  * @param audioRecordingHoldToRecordText The info text that will be shown if touch event on audio button was too short.
  * @param audioRecordingHoldToRecordTextStyle The text style that will be used for the "hold to record" text.
  * @param audioRecordingHoldToRecordBackgroundDrawable The drawable will be used as a background for the "hold to
