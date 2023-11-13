@@ -14,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Use shortService instead of dataSync for our workmanager job. [#5042](https://github.com/GetStream/stream-chat-android/pull/5042)
 
 ### ✅ Added
 
@@ -57,37 +56,12 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed channel title not being centered vertically when mo last message exists. [#5040](https://github.com/GetStream/stream-chat-android/pull/5040)
-- Fixed reactions bubble being cut of in UI. [5049](https://github.com/GetStream/stream-chat-android/pull/5049)
 
 ### ⬆️ Improved
-- Allow override channel's delete option visibility. [#5044](https://github.com/GetStream/stream-chat-android/pull/5044)
 
 ### ✅ Added
-- Added UI customizations for deleted message. [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
-  * `MessageListItemStyle.textStyleMessageDeletedMine`
-  * `MessageListItemStyle.messageDeletedBackgroundMine`
-  * `MessageListItemStyle.textStyleMessageDeletedTheirs`
-  * `MessageListItemStyle.messageDeletedBackgroundTheirs`
-- Added `MessageComposerViewModel.bindViewDefaults` which preserves the default view bindings. [#5059](https://github.com/GetStream/stream-chat-android/pull/5059)
-- Added UI customizations for message composer. [#5056](https://github.com/GetStream/stream-chat-android/pull/5056)
-  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
-  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
-  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
-  * `MessageComposerViewStyle.commandsButtonIconTintList`
-  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
 
 ### ⚠️ Changed
-- Made `MessageReplyView` publicly available. [#5057](https://github.com/GetStream/stream-chat-android/pull/5057)
-- Made `MessageComposerContent` descendants extensible/reusable. [#5061](https://github.com/GetStream/stream-chat-android/pull/5061) 
-- Deprecated `MessageListItemStyle.textStyleMessageDeleted`. Use `MessageListItemStyle.textStyleMessageDeletedMine` and `MessageListItemStyle.textStyleMessageDeletedTheirs` instead.  [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
-- Deprecated `MessageListItemStyle.messageDeletedBackground`. Use `MessageListItemStyle.messageDeletedBackgroundMine` and `MessageListItemStyle.messageDeletedBackgroundTheirs` instead.  [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
-- Deprecated `MessageListItemStyle.buttonIconDrawableTintColor`. Use one of the params listed below instead. [#5056](https://github.com/GetStream/stream-chat-android/pull/5056)
-  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
-  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
-  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
-  * `MessageComposerViewStyle.commandsButtonIconTintList`
-  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
 
 ### ❌ Removed
 
@@ -145,6 +119,45 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# November 13th, 2023 - 5.17.18
+## stream-chat-android-client
+### ⬆️ Improved
+- Use shortService instead of dataSync for our workmanager job. [#5042](https://github.com/GetStream/stream-chat-android/pull/5042)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed channel title not being centered vertically when mo last message exists. [#5040](https://github.com/GetStream/stream-chat-android/pull/5040)
+- Fixed reactions bubble being cut of in UI. [5049](https://github.com/GetStream/stream-chat-android/pull/5049)
+
+### ⬆️ Improved
+- Allow override channel's delete option visibility. [#5044](https://github.com/GetStream/stream-chat-android/pull/5044)
+
+### ✅ Added
+- Added UI customizations for deleted message. [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
+  * `MessageListItemStyle.textStyleMessageDeletedMine`
+  * `MessageListItemStyle.messageDeletedBackgroundMine`
+  * `MessageListItemStyle.textStyleMessageDeletedTheirs`
+  * `MessageListItemStyle.messageDeletedBackgroundTheirs`
+- Added `MessageComposerViewModel.bindViewDefaults` which preserves the default view bindings. [#5059](https://github.com/GetStream/stream-chat-android/pull/5059)
+- Added UI customizations for message composer. [#5056](https://github.com/GetStream/stream-chat-android/pull/5056)
+  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
+  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
+  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
+  * `MessageComposerViewStyle.commandsButtonIconTintList`
+  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
+
+### ⚠️ Changed
+- Made `MessageReplyView` publicly available. [#5057](https://github.com/GetStream/stream-chat-android/pull/5057)
+- Made `MessageComposerContent` descendants extensible/reusable. [#5061](https://github.com/GetStream/stream-chat-android/pull/5061)
+- Deprecated `MessageListItemStyle.textStyleMessageDeleted`. Use `MessageListItemStyle.textStyleMessageDeletedMine` and `MessageListItemStyle.textStyleMessageDeletedTheirs` instead.  [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
+- Deprecated `MessageListItemStyle.messageDeletedBackground`. Use `MessageListItemStyle.messageDeletedBackgroundMine` and `MessageListItemStyle.messageDeletedBackgroundTheirs` instead.  [#5051](https://github.com/GetStream/stream-chat-android/pull/5051)
+- Deprecated `MessageListItemStyle.buttonIconDrawableTintColor`. Use one of the params listed below instead. [#5056](https://github.com/GetStream/stream-chat-android/pull/5056)
+  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
+  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
+  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
+  * `MessageComposerViewStyle.commandsButtonIconTintList`
+  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
 
 # October 31th, 2023 - 5.17.17
 ## stream-chat-android-client
