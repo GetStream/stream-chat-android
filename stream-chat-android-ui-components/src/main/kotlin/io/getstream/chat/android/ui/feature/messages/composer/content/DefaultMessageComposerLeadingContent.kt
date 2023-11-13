@@ -96,14 +96,24 @@ public class DefaultMessageComposerLeadingContent : FrameLayout, MessageComposer
         binding.commandsButton.setImageDrawable(style.commandsButtonIconDrawable)
         binding.commandsButton.setBorderlessRipple(style.commandsButtonRippleColor)
 
-        style.buttonIconDrawableTintColor?.let { tintColor ->
-            val colorStateList = getColorList(
+        val getStateListColor = { tintColor: Int ->
+            getColorList(
                 normalColor = context.getColorCompat(R.color.stream_ui_grey),
                 selectedColor = tintColor,
                 disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
             )
-            binding.attachmentsButton.imageTintList = colorStateList
-            binding.commandsButton.imageTintList = colorStateList
+        }
+
+        style.attachmentsButtonIconTintList?.also { tintList ->
+            binding.attachmentsButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.attachmentsButton.imageTintList = getStateListColor(tintColor)
+        }
+
+        style.commandsButtonIconTintList?.also { tintList ->
+            binding.commandsButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.commandsButton.imageTintList = getStateListColor(tintColor)
         }
     }
 

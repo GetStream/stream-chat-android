@@ -290,6 +290,30 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message deleted style mine -->
+        <attr name="streamUiDeletedMessageBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageTextSizeMessageDeletedMine" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMessageDeletedMine" format="color" />
+        <attr name="streamUiMessageTextFontMessageDeletedMine" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMessageDeletedMine" format="string" />
+        <attr name="streamUiMessageTextStyleMessageDeletedMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message deleted style theirs -->
+        <attr name="streamUiDeletedMessageBackgroundColorTheirs" format="color" />
+        <attr name="streamUiMessageTextSizeMessageDeletedTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMessageDeletedTheirs" format="color" />
+        <attr name="streamUiMessageTextFontMessageDeletedTheirs" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMessageDeletedTheirs" format="string" />
+        <attr name="streamUiMessageTextStyleMessageDeletedTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- System message style -->
         <attr name="streamUiSystemMessageTextSize" format="dimension|reference" />
         <attr name="streamUiSystemMessageTextColor" format="color" />
