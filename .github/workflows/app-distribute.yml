@@ -5,8 +5,6 @@ on:
     branches:
       - develop
       - main
-      - release
-      - v5
 
 jobs:
   build_ui_components_sample_app:
