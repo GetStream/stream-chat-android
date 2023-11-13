@@ -86,6 +86,7 @@
   * `MessageComposerViewStyle.commandsButtonIconTintList`
   * `MessageComposerViewStyle.sendMessageButtonIconTintList`
   * `MessageComposerViewStyle.audioRecordingButtonIconTintList`
+- Made `MessageComposerContent` descendants extensible/reusable. [#5065](https://github.com/GetStream/stream-chat-android/pull/5065)
 
 ### ❌ Removed
 
