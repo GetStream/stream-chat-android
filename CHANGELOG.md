@@ -72,6 +72,7 @@
 - Added `MessageComposerViewModel.bindViewDefaults` which preserves the default view bindings. [#5059](https://github.com/GetStream/stream-chat-android/pull/5059)
 
 ### ⚠️ Changed
+- Made `MessageReplyView` publicly available. [#5057](https://github.com/GetStream/stream-chat-android/pull/5057)
 
 ### ❌ Removed
 
