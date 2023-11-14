@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed audio recording not being uploaded [#5067](https://github.com/GetStream/stream-chat-android/pull/5067)
 
 ### ⬆️ Improved
 
