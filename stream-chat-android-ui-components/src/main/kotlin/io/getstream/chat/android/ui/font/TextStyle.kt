@@ -96,6 +96,14 @@ public data class TextStyle(
             this.fontResource = array.getResourceId(resId, -1)
         }
 
+        public fun fontAssetsPath(@StyleableRes assetsPath: Int, defValue: String?): Builder = apply {
+            this.fontAssetsPath = array.getString(assetsPath) ?: defValue
+        }
+
+        public fun fontResource(@StyleableRes resId: Int, defValue: Int): Builder = apply {
+            this.fontResource = array.getResourceId(resId, defValue)
+        }
+
         public fun font(
             @StyleableRes assetsPath: Int,
             @StyleableRes resId: Int,

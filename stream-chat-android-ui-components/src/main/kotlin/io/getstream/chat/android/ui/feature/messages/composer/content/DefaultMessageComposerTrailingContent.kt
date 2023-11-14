@@ -97,6 +97,14 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
 
+        val getStateListColor = { tintColor: Int ->
+            getColorList(
+                normalColor = tintColor,
+                selectedColor = tintColor,
+                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
+            )
+        }
+
         binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
         binding.sendMessageButton.updateLayoutParams {
             width = style.sendMessageButtonWidth
@@ -108,20 +116,17 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
             style.sendMessageButtonPadding,
             style.sendMessageButtonPadding,
         )
-        style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.sendMessageButton.imageTintList = getColorList(
-                normalColor = tintColor,
-                selectedColor = tintColor,
-                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
-            )
+        style.sendMessageButtonIconTintList?.also { tintList ->
+            binding.sendMessageButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.sendMessageButton.imageTintList = getStateListColor(tintColor)
         }
+
         binding.recordAudioButton.setImageDrawable(style.audioRecordingButtonIconDrawable)
-        style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.recordAudioButton.imageTintList = getColorList(
-                normalColor = tintColor,
-                selectedColor = tintColor,
-                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
-            )
+        style.audioRecordingButtonIconTintList?.also { tintList ->
+            binding.recordAudioButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.recordAudioButton.imageTintList = getStateListColor(tintColor)
         }
         binding.recordAudioButton.updateLayoutParams {
             width = style.audioRecordingButtonWidth
