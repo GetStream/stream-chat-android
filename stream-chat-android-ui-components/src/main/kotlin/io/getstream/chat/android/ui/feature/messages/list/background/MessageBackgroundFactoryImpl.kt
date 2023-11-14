@@ -69,7 +69,7 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
                     when (data.isTheirs) {
                         true -> style.messageDeletedBackgroundTheirs
                         else -> style.messageDeletedBackgroundMine
-                    },
+                    } ?: style.messageDeletedBackground,
                 )
             }
     }
