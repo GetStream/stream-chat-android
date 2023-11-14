@@ -5,7 +5,6 @@ on:
     branches:
       - develop
       - main
-      - v4
 
 concurrency:
   group: ${{ github.ref }}
