@@ -28,11 +28,12 @@ import io.getstream.chat.android.client.utils.toUnitResult
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
-import java.net.URI
 
 internal class StreamFileUploader(
     private val retrofitCdnApi: RetrofitCdnApi,
 ) : FileUploader {
+
+    private val filenameSanitizer = FilenameSanitizer()
 
     override fun sendFile(
         channelType: String,
@@ -42,7 +43,7 @@ internal class StreamFileUploader(
         callback: ProgressCallback,
     ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
-        val filename = URI(null, null, file.name, null).toASCIIString()
+        val filename = filenameSanitizer.sanitize(file.name)
         val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendFile(
@@ -62,7 +63,7 @@ internal class StreamFileUploader(
         file: File,
     ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
-        val filename = URI(null, null, file.name, null).toASCIIString()
+        val filename = filenameSanitizer.sanitize(file.name)
         val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendFile(
@@ -83,7 +84,7 @@ internal class StreamFileUploader(
         callback: ProgressCallback,
     ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
-        val filename = URI(null, null, file.name, null).toASCIIString()
+        val filename = filenameSanitizer.sanitize(file.name)
         val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendImage(
@@ -103,7 +104,7 @@ internal class StreamFileUploader(
         file: File,
     ): Result<UploadedImage> {
         val body = file.asRequestBody(file.getMediaType())
-        val filename = URI(null, null, file.name, null).toASCIIString()
+        val filename = filenameSanitizer.sanitize(file.name)
         val part = MultipartBody.Part.createFormData("file", filename, body)
 
         return retrofitCdnApi.sendImage(
@@ -140,5 +141,38 @@ internal class StreamFileUploader(
             channelId = channelId,
             url = url
         ).execute().toUnitResult()
+    }
+}
+
+private class FilenameSanitizer {
+    companion object {
+        private const val MAX_NAME_LEN = 255
+        private const val EMPTY = ""
+    }
+
+    private val allowedChars = ('a'..'z') + ('A'..'Z') + ('0'..'9') + '-' + '_'
+
+    fun sanitize(filename: String): String = try {
+        sanitizeInternal(filename)
+    } catch (_: Throwable) {
+        filename
+    }
+
+    private fun sanitizeInternal(filename: String): String {
+        // Separate the extension and the base name
+        val extension = filename.substringAfterLast(delimiter = '.', missingDelimiterValue = EMPTY)
+        val baseName = if (extension.isNotEmpty()) filename.removeSuffix(suffix = ".$extension") else filename
+
+        // Replace invalid characters in the base name
+        var sanitizedBaseName = baseName.map { if (it in allowedChars) it else '_' }.joinToString(EMPTY)
+
+        // Truncate the base name if it is too long
+        val maxBaseNameLength = MAX_NAME_LEN - extension.length - 1 // Adjust for the extension and dot
+        if (sanitizedBaseName.length > maxBaseNameLength) {
+            sanitizedBaseName = sanitizedBaseName.substring(0, maxBaseNameLength)
+        }
+
+        // Reconstruct the filename with the extension
+        return if (extension.isNotEmpty()) "$sanitizedBaseName.$extension" else sanitizedBaseName
     }
 }
