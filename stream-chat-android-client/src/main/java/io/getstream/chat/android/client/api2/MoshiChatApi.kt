@@ -51,6 +51,7 @@ import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.MarkReadRequest
+import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
@@ -652,6 +653,14 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             request = MarkReadRequest(messageId),
+        ).toUnitCall()
+    }
+
+    override fun markUnread(channelType: String, channelId: String, messageId: String): Call<Unit> {
+        return channelApi.markUnread(
+            channelType = channelType,
+            channelId = channelId,
+            request = MarkUnreadRequest(messageId),
         ).toUnitCall()
     }
 
