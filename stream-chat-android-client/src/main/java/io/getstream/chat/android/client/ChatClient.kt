@@ -2219,6 +2219,28 @@ internal constructor(
             .share(userScope) { MarkReadIdentifier(channelType, channelId) }
     }
 
+    /**
+     * Marks the specified channel as unread.
+     *
+     * @param channelType Type of the channel.
+     * @param channelId Id of the channel.
+     * @param messageId Id of the message.
+     */
+    @CheckResult
+    public fun markUnread(
+        channelType: String,
+        channelId: String,
+        messageId: String,
+    ): Call<Unit> {
+        return api.markUnread(channelType, channelId, messageId)
+            .doOnStart(userScope) {
+                logger.d { "[markUnread] #doOnStart; cid: $channelType:$channelId, msgId: $messageId" }
+            }
+            .doOnResult(userScope) {
+                logger.v { "[markUnread] #doOnResult; completed($channelType:$channelId, $messageId): $it" }
+            }
+    }
+
     @CheckResult
     public fun updateUsers(users: List<User>): Call<List<User>> {
         return api.updateUsers(users)

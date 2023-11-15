@@ -369,6 +369,11 @@ public class ChannelClient internal constructor(
     }
 
     @CheckResult
+    public fun markUnread(messageId: String): Call<Unit> {
+        return client.markUnread(channelType, channelId, messageId)
+    }
+
+    @CheckResult
     public fun markRead(): Call<Unit> {
         return client.markRead(channelType, channelId)
     }
