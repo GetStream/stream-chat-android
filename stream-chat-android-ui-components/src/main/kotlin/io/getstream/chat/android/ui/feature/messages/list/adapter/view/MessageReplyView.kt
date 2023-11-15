@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.view
 
 import android.content.Context
 import android.graphics.Paint
@@ -45,20 +45,20 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.utils.extensions.use
 
-internal class MessageReplyView : FrameLayout {
+public class MessageReplyView : FrameLayout {
     private val binding: StreamUiMessageReplyViewBinding =
         StreamUiMessageReplyViewBinding.inflate(streamThemeInflater, this, true)
     private var ellipsize = false
 
-    constructor(context: Context) : super(context.createStreamThemeWrapper()) {
+    public constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(context, null)
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
+    public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
         init(context, attrs)
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    public constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context.createStreamThemeWrapper(),
         attrs,
         defStyleAttr,
@@ -77,7 +77,7 @@ internal class MessageReplyView : FrameLayout {
      * @param isMine If the message containing the reply was current users or not.
      * @param style The style to be applied to the view.
      */
-    fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
+    public fun setMessage(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         setUserAvatar(message)
         setAvatarPosition(message.isMine(ChatClient.instance().getCurrentUser()))
         setReplyBackground(message, isMine, style)

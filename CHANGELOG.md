@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed audio recording not being uploaded [#5066](https://github.com/GetStream/stream-chat-android/pull/5066)
 
 ### ⬆️ Improved
 
@@ -60,8 +61,26 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageComposerViewModel.bindViewDefaults` which preserves the default view bindings. [#5060](https://github.com/GetStream/stream-chat-android/pull/5060)
+- Added UI customizations for message composer. [#5064](https://github.com/GetStream/stream-chat-android/pull/5064)
+  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
+  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
+  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
+  * `MessageComposerViewStyle.commandsButtonIconTintList`
+  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
+  * `MessageComposerViewStyle.audioRecordingButtonIconTintList`
 
 ### ⚠️ Changed
+- Made `MessageReplyView` publicly available. [#5058](https://github.com/GetStream/stream-chat-android/pull/5058)
+- Deprecated `MessageListItemStyle.textStyleMessageDeleted`. Use `MessageListItemStyle.textStyleMessageDeletedMine` and `MessageListItemStyle.textStyleMessageDeletedTheirs` instead.  [#5050](https://github.com/GetStream/stream-chat-android/pull/5050)
+- Deprecated `MessageListItemStyle.messageDeletedBackground`. Use `MessageListItemStyle.messageDeletedBackgroundMine` and `MessageListItemStyle.messageDeletedBackgroundTheirs` instead.  [#5050](https://github.com/GetStream/stream-chat-android/pull/5050)
+- Deprecated `MessageListItemStyle.buttonIconDrawableTintColor`. Use one of the params listed below instead. [#5064](https://github.com/GetStream/stream-chat-android/pull/5064)
+  * `MessageComposerViewStyle.commandSuggestionsTitleIconDrawableTintColor`
+  * `MessageComposerViewStyle.mentionSuggestionItemIconDrawableTintColor`
+  * `MessageComposerViewStyle.attachmentsButtonIconTintList`
+  * `MessageComposerViewStyle.commandsButtonIconTintList`
+  * `MessageComposerViewStyle.sendMessageButtonIconTintList`
+  * `MessageComposerViewStyle.audioRecordingButtonIconTintList`
 
 ### ❌ Removed
 
