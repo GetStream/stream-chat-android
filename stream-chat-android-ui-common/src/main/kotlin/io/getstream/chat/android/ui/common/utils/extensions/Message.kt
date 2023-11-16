@@ -36,7 +36,7 @@ public fun Message.isMine(currentUser: User?): Boolean = currentUser?.id == user
  * @return when the message was created or throw an exception.
  */
 public fun Message.getCreatedAtOrThrow(): Date {
-    val created = createdAt ?: createdLocallyAt
+    val created = getCreatedAtOrNull()
     return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
 }
 
@@ -45,6 +45,13 @@ public fun Message.getCreatedAtOrThrow(): Date {
  */
 public fun Message.getCreatedAtOrNull(): Date? {
     return createdAt ?: createdLocallyAt
+}
+
+/**
+ * @return when the message was created or `default`.
+ */
+public fun Message.getCreatedAtOrDefault(default: Date): Date {
+    return getCreatedAtOrNull() ?: default
 }
 
 /**

@@ -89,7 +89,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
+import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -719,7 +720,9 @@ public class MessageListController(
             )
 
             if (shouldAddDateSeparator) {
-                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
+                message.getCreatedAtOrNull()?.let { createdAt ->
+                    groupedMessages.add(DateSeparatorItemState(createdAt))
+                }
             }
 
             if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
@@ -754,7 +757,9 @@ public class MessageListController(
             }
 
             if (shouldAddDateSeparatorInEmptyThread) {
-                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
+                message.getCreatedAtOrNull()?.let { createdAt ->
+                    groupedMessages.add(DateSeparatorItemState(createdAt))
+                }
             }
 
             if (isThreadWithNoReplies) {
@@ -764,7 +769,7 @@ public class MessageListController(
             if (index == 0 && isInThread && isThreadWithNoReplies) {
                 groupedMessages.add(
                     ThreadDateSeparatorItemState(
-                        date = message.createdAt ?: message.createdLocallyAt ?: Date(),
+                        date = message.getCreatedAtOrDefault(Date()),
                         replyCount = message.replyCount,
                     ),
                 )
