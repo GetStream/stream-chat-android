@@ -3,6 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.type == ModelType.attach_file || attachment.type == ModelType.attach_video || attachment.type == ModelType.attach_audio || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
+    <ID>ComplexCondition:ChannelViewHolder.kt$ChannelViewHolder$nameChanged || typingUsersChanged || lastMessageChanged || anonymousNameChanged</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$FileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:MessageInputFieldView.kt$MessageInputFieldView$!hasValidContent() &amp;&amp; (mode is Mode.CustomAttachmentMode || mode is Mode.FileAttachmentMode || mode is Mode.MediaAttachmentMode)</ID>
     <ID>ComplexCondition:MessageListScrollHelper.kt$MessageListScrollHelper$isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom</ID>
@@ -13,6 +14,7 @@
     <ID>ComplexCondition:MessageOptionItemsFactory.kt$DefaultMessageOptionItemsFactory$style.threadsEnabled &amp;&amp; !isInThread &amp;&amp; isMessageSynced &amp;&amp; canThreadReply</ID>
     <ID>ComplexMethod:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ComplexMethod:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): AttachmentsPickerDialogStyle</ID>
+    <ID>ComplexMethod:ChannelViewHolder.kt$ChannelViewHolder$private fun configureForeground(diff: ChannelListPayloadDiff, channelItem: ChannelListItem.ChannelItem)</ID>
     <ID>ComplexMethod:MessageComposerViewStyle.kt$MessageComposerViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageComposerViewStyle</ID>
     <ID>ComplexMethod:MessageInputViewStyle.kt$MessageInputViewStyle.Companion$internal operator fun invoke(context: Context, attrs: AttributeSet?): MessageInputViewStyle</ID>
     <ID>ComplexMethod:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean</ID>
