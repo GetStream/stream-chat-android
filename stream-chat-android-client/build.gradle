@@ -73,6 +73,7 @@ dependencies {
     implementation Dependencies.coroutinesCore
     implementation Dependencies.coroutinesAndroid
     implementation Dependencies.retrofit
+    implementation Dependencies.ituDate
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
     ksp Dependencies.moshiCodegen
