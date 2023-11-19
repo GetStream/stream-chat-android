@@ -31,11 +31,14 @@ import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.offline.plugin.state.querychannels.internal.QueryChannelsMutableState
 import io.getstream.logging.StreamLog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
     private val stateRegistry: StateRegistry,
     private val logicRegistry: LogicRegistry,
+    private val coroutineScope: CoroutineScope,
 ) {
 
     private val logger = StreamLog.getLogger("QueryChannelsStateLogic")
@@ -132,16 +135,20 @@ internal class QueryChannelsStateLogic(
      *
      * @param channels List<Channel>.
      */
-    internal fun addChannelsState(channels: List<Channel>) {
+    internal suspend fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
         val existingChannels = mutableState.rawChannels
         mutableState.setChannels((existingChannels ?: emptyMap()) + channels.map { it.cid to it })
-        channels.forEach { channel ->
-            logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
-                channel,
-                shouldRefreshMessages = false,
-                scrollUpdate = false
-            )
+        channels.map { channel ->
+            coroutineScope.async {
+                logicRegistry.channelState(channel.type, channel.id).updateDataFromChannel(
+                    channel,
+                    shouldRefreshMessages = false,
+                    scrollUpdate = false
+                )
+            }
+        }.map {
+            it.await()
         }
     }
 
