@@ -443,6 +443,7 @@ public final class io/getstream/chat/android/models/ChannelCapabilities {
 	public static final field SEND_REPLY Ljava/lang/String;
 	public static final field SEND_TYPING_EVENTS Ljava/lang/String;
 	public static final field SET_CHANNEL_COOLDOWN Ljava/lang/String;
+	public static final field SKIP_SLOW_MODE Ljava/lang/String;
 	public static final field SLOW_MODE Ljava/lang/String;
 	public static final field TYPING_EVENTS Ljava/lang/String;
 	public static final field UPDATE_ANY_MESSAGE Ljava/lang/String;
