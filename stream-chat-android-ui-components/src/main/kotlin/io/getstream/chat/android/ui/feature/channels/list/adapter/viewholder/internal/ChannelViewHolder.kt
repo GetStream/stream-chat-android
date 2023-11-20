@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.extensions.internal.context
@@ -223,8 +224,9 @@ internal class ChannelViewHolder @JvmOverloads constructor(
         binding.itemForegroundView.apply {
             diff.run {
                 val lastMessage = channelItem.channel.getLastMessage()
-                if (nameChanged || (channelItem.channel.isAnonymousChannel() && diff.usersChanged)) {
-                    configureChannelNameLabel(lastMessage)
+                val anonymousNameChanged = channelItem.channel.isAnonymousChannel() && diff.usersChanged
+                if (nameChanged || typingUsersChanged || lastMessageChanged || anonymousNameChanged) {
+                    configureChannelNameLabel(lastMessage, channelItem.typingUsers)
                 }
 
                 if (avatarViewChanged) {
@@ -251,13 +253,14 @@ internal class ChannelViewHolder @JvmOverloads constructor(
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureChannelNameLabel(
         lastMessage: Message?,
+        typingUsers: List<User>,
     ) {
         channelNameLabel.text = ChatUI.channelNameFormatter.formatChannelName(
             channel = channel,
             currentUser = ChatUI.currentUserProvider.getCurrentUser(),
         )
 
-        if (lastMessage != null) {
+        if (lastMessage != null || typingUsers.isNotEmpty()) {
             channelNameLabel.translationY = 0f
         } else if (channelNameLabel.height > 0) {
             channelNameLabel.translationY = yDiffBetweenCenters(channelNameLabel, foregroundView)

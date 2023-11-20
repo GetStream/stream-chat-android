@@ -51,6 +51,11 @@ import io.getstream.chat.android.client.api.models.identifier.SendMessageIdentif
 import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
+import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.attachment.AttachmentsSender
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.NativeMediaPlayerImpl
@@ -97,6 +102,7 @@ import io.getstream.chat.android.client.notifications.PushNotificationReceivedLi
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.client.parser2.adapters.CustomObjectDtoAdapter
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
@@ -3156,6 +3162,11 @@ internal constructor(
             }
             val clientScope = ClientScope()
             val userScope = UserScope(clientScope)
+
+            clientScope.launch {
+                warmUpReflection()
+            }
+
             val module =
                 ChatModule(
                     appContext = appContext,
@@ -3230,6 +3241,20 @@ internal constructor(
                     ),
                 )
             }
+        }
+
+        /**
+         * Our [CustomObjectDtoAdapter] is using KClass.members - the first call for
+         * each class is quite slow (can be hundreds of milliseconds). We can launch this
+         * asynchronously while the Chat SDK is being prepared. This will save us from
+         * the reflection delay later.
+         */
+        private fun warmUpReflection() {
+            DownstreamUserDto::class.members
+            DownstreamChannelDto::class.members
+            DownstreamMessageDto::class.members
+            DownstreamReactionDto::class.members
+            AttachmentDto::class.members
         }
     }
 
