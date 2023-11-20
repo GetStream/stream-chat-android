@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ComplexCondition:MessageComposerController.kt$MessageComposerController$cooldownInterval > 0 &amp;&amp; isSlowModeActive.value &amp;&amp; !isInEditMode &amp;&amp; !isSlowModeDisabled.value</ID>
     <ID>MaxLineLength:MessageComposerController.kt$MessageComposerController$val</ID>
   </CurrentIssues>
 </SmellBaseline>
