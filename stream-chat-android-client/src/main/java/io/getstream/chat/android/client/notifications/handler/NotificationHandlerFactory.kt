@@ -133,11 +133,14 @@ public object NotificationHandlerFactory {
     private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
         // We search for the StreamCoilUserIconBuilder by reflection and this is slow - we need
         // to postpone to not block the SDK initialisation
-        return object: UserIconBuilder {
+        return object : UserIconBuilder {
             private val builder by lazy {
                 val appContext = context.applicationContext
                 runCatching {
-                    Class.forName("io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder")
+                    Class.forName(
+                        "io.getstream.chat.android.ui.common.notifications." +
+                            "StreamCoilUserIconBuilder",
+                    )
                         .kotlin.primaryConstructor
                         ?.call(appContext) as UserIconBuilder
                 }.getOrDefault(DefaultUserIconBuilder(appContext))
@@ -150,9 +153,9 @@ public object NotificationHandlerFactory {
     }
 
     private fun provideDefaultNotificationPermissionHandler(context: Context): NotificationPermissionHandler {
-        // We search for the StreamCoilUserIconBuilder by reflection and this is slow - we need
+        // We search for the SnackbarNotificationPermissionHandler by reflection and this is slow - we need
         // to postpone to not block the SDK initialisation
-        return object: NotificationPermissionHandler {
+        return object : NotificationPermissionHandler {
             private val handler by lazy {
                 val appContext = context.applicationContext
                 runCatching {
@@ -160,7 +163,8 @@ public object NotificationHandlerFactory {
                         "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler",
                     ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
                 }.getOrDefault(
-                    DefaultNotificationPermissionHandler.createDefaultNotificationPermissionHandler(appContext as Application),
+                    DefaultNotificationPermissionHandler
+                        .createDefaultNotificationPermissionHandler(appContext as Application),
                 )
             }
 
