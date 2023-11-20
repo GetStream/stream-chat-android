@@ -30,6 +30,7 @@ import io.getstream.android.push.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import kotlin.reflect.full.primaryConstructor
 
 /**
@@ -130,22 +131,58 @@ public object NotificationHandlerFactory {
     }
 
     private fun provideDefaultUserIconBuilder(context: Context): UserIconBuilder {
-        val appContext = context.applicationContext
-        return runCatching {
-            Class.forName("io.getstream.chat.android.ui.common.notifications.StreamCoilUserIconBuilder")
-                .kotlin.primaryConstructor
-                ?.call(appContext) as UserIconBuilder
-        }.getOrDefault(DefaultUserIconBuilder(appContext))
+        // We search for the StreamCoilUserIconBuilder by reflection and this is slow - we need
+        // to postpone to not block the SDK initialisation
+        return object : UserIconBuilder {
+            private val builder by lazy {
+                val appContext = context.applicationContext
+                runCatching {
+                    Class.forName(
+                        "io.getstream.chat.android.ui.common.notifications." +
+                            "StreamCoilUserIconBuilder",
+                    )
+                        .kotlin.primaryConstructor
+                        ?.call(appContext) as UserIconBuilder
+                }.getOrDefault(DefaultUserIconBuilder(appContext))
+            }
+
+            override suspend fun buildIcon(user: User): IconCompat? {
+                return builder.buildIcon(user)
+            }
+        }
     }
 
     private fun provideDefaultNotificationPermissionHandler(context: Context): NotificationPermissionHandler {
-        val appContext = context.applicationContext
-        return runCatching {
-            Class.forName(
-                "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler",
-            ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
-        }.getOrDefault(
-            DefaultNotificationPermissionHandler.createDefaultNotificationPermissionHandler(appContext as Application),
-        )
+        // We search for the SnackbarNotificationPermissionHandler by reflection and this is slow - we need
+        // to postpone to not block the SDK initialisation
+        return object : NotificationPermissionHandler {
+            private val handler by lazy {
+                val appContext = context.applicationContext
+                runCatching {
+                    Class.forName(
+                        "io.getstream.android.push.permissions.snackbar.SnackbarNotificationPermissionHandler",
+                    ).kotlin.primaryConstructor?.call(appContext) as NotificationPermissionHandler
+                }.getOrDefault(
+                    DefaultNotificationPermissionHandler
+                        .createDefaultNotificationPermissionHandler(appContext as Application),
+                )
+            }
+
+            override fun onPermissionDenied() {
+                handler.onPermissionDenied()
+            }
+
+            override fun onPermissionGranted() {
+                handler.onPermissionGranted()
+            }
+
+            override fun onPermissionRationale() {
+                handler.onPermissionRationale()
+            }
+
+            override fun onPermissionRequested() {
+                handler.onPermissionRequested()
+            }
+        }
     }
 }
