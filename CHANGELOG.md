@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix channel title position when typing. [#5073](https://github.com/GetStream/stream-chat-android/pull/5073)
 
 ### ⬆️ Improved
 
