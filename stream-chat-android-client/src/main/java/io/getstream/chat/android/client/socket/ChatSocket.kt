@@ -39,6 +39,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlin.coroutines.EmptyCoroutineContext
 
 @Suppress("TooManyFunctions", "LongParameterList")
 internal open class ChatSocket(
@@ -301,7 +302,12 @@ internal open class ChatSocket(
     private fun callListeners(call: (SocketListener) -> Unit) {
         synchronized(listeners) {
             listeners.forEach { listener ->
-                userScope.launch(DispatcherProvider.Main) { call(listener) }
+                val context = if (listener.deliverOnMainThread) {
+                    DispatcherProvider.Main
+                } else {
+                    EmptyCoroutineContext
+                }
+                userScope.launch(context) { call(listener) }
             }
         }
     }
