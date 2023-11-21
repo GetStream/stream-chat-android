@@ -238,6 +238,11 @@ internal class DefaultDateFormatter(
         private val context: Context,
         private val locale: Locale,
     ) : DateContext {
+
+        private val dateTimePatternLazy by lazy {
+            DateFormat.getBestDateTimePattern(locale, "yy MM dd")
+        }
+
         override fun now(): Date = Date()
 
         override fun yesterdayString(): String {
@@ -251,7 +256,7 @@ internal class DefaultDateFormatter(
         override fun dateTimePattern(): String {
             // Gets a localized pattern that contains 2 digit representations of
             // the year, month, and day of month
-            return DateFormat.getBestDateTimePattern(locale, "yy MM dd")
+            return dateTimePatternLazy
         }
     }
 }
