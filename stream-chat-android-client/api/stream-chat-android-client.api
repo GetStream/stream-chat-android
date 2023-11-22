@@ -1933,6 +1933,9 @@ public final class io/getstream/chat/android/client/extensions/FlowExtensions {
 
 public final class io/getstream/chat/android/client/extensions/MessageExtensionsKt {
 	public static final fun enrichWithCid (Lio/getstream/chat/android/models/Message;Ljava/lang/String;)Lio/getstream/chat/android/models/Message;
+	public static final fun getCreatedAtOrDefault (Lio/getstream/chat/android/models/Message;Ljava/util/Date;)Ljava/util/Date;
+	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
+	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 }
 
 public final class io/getstream/chat/android/client/extensions/SharedPreferencesKt {

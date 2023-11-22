@@ -16,9 +16,10 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 
 /**
  * A SAM designed to evaluate if a date separator should be added between messages.
@@ -78,7 +79,12 @@ public fun interface DateSeparatorHandler {
             message: Message,
             separatorTimeMillis: Long,
         ): Boolean {
-            return (message.getCreatedAtOrThrow().time - (previousMessage?.getCreatedAtOrThrow()?.time ?: NEVER.time)) >
+            return (
+                message.getCreatedAtOrDefault(NEVER).time - (
+                    previousMessage?.getCreatedAtOrNull()?.time
+                        ?: NEVER.time
+                    )
+                ) >
                 separatorTimeMillis
         }
 

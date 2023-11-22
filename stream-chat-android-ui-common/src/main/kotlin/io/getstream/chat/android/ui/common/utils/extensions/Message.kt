@@ -21,7 +21,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.User
-import java.util.Date
 
 /**
  * @return if the message was sent by current user.
@@ -31,28 +30,6 @@ public fun Message.isMine(chatClient: ChatClient): Boolean = chatClient.clientSt
 
 @InternalStreamChatApi
 public fun Message.isMine(currentUser: User?): Boolean = currentUser?.id == user.id
-
-/**
- * @return when the message was created or throw an exception.
- */
-public fun Message.getCreatedAtOrThrow(): Date {
-    val created = getCreatedAtOrNull()
-    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
-}
-
-/**
- * @return when the message was created or null.
- */
-public fun Message.getCreatedAtOrNull(): Date? {
-    return createdAt ?: createdLocallyAt
-}
-
-/**
- * @return when the message was created or `default`.
- */
-public fun Message.getCreatedAtOrDefault(default: Date): Date {
-    return getCreatedAtOrNull() ?: default
-}
 
 /**
  * @return if the message failed at moderation or not.
