@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.utils.extensions
 
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
@@ -70,8 +72,8 @@ private fun isFooterVisibleWithTimeDifference(
         message.isDeleted() -> false
         message.user != nextMessage?.user ||
             nextMessage.isDeleted() ||
-            (nextMessage.getCreatedAtOrNull()?.time ?: 0) -
-            (message.getCreatedAtOrNull()?.time ?: 0) >
+            (nextMessage.getCreatedAtOrDefault(NEVER).time) -
+            (message.getCreatedAtOrDefault(NEVER).time) >
             timeDifferenceMillis -> true
         else -> false
     }

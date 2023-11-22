@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -89,8 +91,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrDefault
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
