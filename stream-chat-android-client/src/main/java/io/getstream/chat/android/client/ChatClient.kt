@@ -1693,20 +1693,23 @@ internal constructor(
         message: Message,
         isRetrying: Boolean = false,
     ): Call<Message> {
-        return CoroutineCall(userScope) {
-            val debugger = clientDebugger.debugSendMessage(channelType, channelId, message, isRetrying)
-            debugger.onStart(message)
-            sendAttachments(channelType, channelId, message, isRetrying, debugger)
-                .flatMapSuspend { newMessage ->
-                    debugger.onSendStart(newMessage)
-                    doSendMessage(channelType, channelId, newMessage).also { result ->
-                        debugger.onSendStop(result, newMessage)
-                        debugger.onStop(result, newMessage)
-                    }
+        return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+            .let { processedMessage ->
+                CoroutineCall(userScope) {
+                    val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)
+                    debugger.onStart(processedMessage)
+                    sendAttachments(channelType, channelId, processedMessage, isRetrying, debugger)
+                        .flatMapSuspend { newMessage ->
+                            debugger.onSendStart(newMessage)
+                            doSendMessage(channelType, channelId, newMessage).also { result ->
+                                debugger.onSendStop(result, newMessage)
+                                debugger.onStop(result, newMessage)
+                            }
+                        }
+                }.share(userScope) {
+                    SendMessageIdentifier(channelType, channelId, processedMessage.id)
                 }
-        }.share(userScope) {
-            SendMessageIdentifier(channelType, channelId, message.id)
-        }
+            }
     }
 
     private suspend fun doSendMessage(
