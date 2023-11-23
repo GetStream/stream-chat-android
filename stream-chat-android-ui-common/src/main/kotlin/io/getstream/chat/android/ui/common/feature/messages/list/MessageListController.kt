@@ -385,9 +385,6 @@ public class MessageListController(
     }
 
     private fun observeChannelState(): StateFlow<ChannelState?> {
-        // Using 0 as limit will skip insertion of new messages if we are loading a specific message when
-        // opening the MessageList screen. Prevents race condition where wrong messages might get loaded.
-        val messageLimit = if (messageId != null) 0 else messageLimit
         logger.d { "[observeChannelState] cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(
             cid = cid,
