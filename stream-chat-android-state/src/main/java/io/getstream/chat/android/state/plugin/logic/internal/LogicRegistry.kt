@@ -117,6 +117,7 @@ internal class LogicRegistry internal constructor(
                 repos = repos,
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
+                coroutineScope = coroutineScope,
             )
         }
     }

@@ -92,6 +92,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             repos,
             false,
             channelStateLogic,
+            testCoroutines.scope,
         )
     }
 
