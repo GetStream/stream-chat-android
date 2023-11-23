@@ -59,8 +59,8 @@ internal class RetrofitCall<T : Any>(
         }
     }
 
-    private fun notifyResult(result: Result<T>, callback: Call.Callback<T>) =
-        callScope.launch(DispatcherProvider.Main) {
+    private suspend fun notifyResult(result: Result<T>, callback: Call.Callback<T>) =
+        withContext(DispatcherProvider.Main) {
             callback.onResult(result)
         }
 
