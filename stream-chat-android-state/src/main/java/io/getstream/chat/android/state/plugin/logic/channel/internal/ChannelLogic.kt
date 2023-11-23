@@ -67,6 +67,9 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
+import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
@@ -80,6 +83,8 @@ import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.util.Date
 
 /**
@@ -95,6 +100,7 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
+    private val coroutineScope: CoroutineScope,
 ) {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
@@ -192,17 +198,78 @@ internal class ChannelLogic(
         request: WatchChannelRequest,
     ): Result<Channel> {
         logger.d { "[runChannelQuery] #$src; request: $request" }
+        val loadedMessages = mutableState.messageList.value
         val offlineChannel = runChannelQueryOffline(request)
 
-        val onlineResult =
-            ChatClient.instance()
-                .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
-                .await()
+        val onlineResult = runChannelQueryOnline(request)
+            .onSuccess { fillTheGap(request.messagesLimit(), loadedMessages, it.messages) }
 
         return when {
             onlineResult is Result.Success -> onlineResult
             offlineChannel != null -> Result.Success(offlineChannel)
             else -> onlineResult
+        }
+    }
+
+    /**
+     * Query the API and return a channel object.
+     *
+     * @param request The request object for the query.
+     */
+    private suspend fun runChannelQueryOnline(request: WatchChannelRequest): Result<Channel> =
+        ChatClient.instance()
+            .queryChannel(mutableState.channelType, mutableState.channelId, request, skipOnRequest = true)
+            .await()
+
+    /**
+     * Fills the gap between the loaded messages and the requested messages.
+     * This is used to keep the messages sorted by date and avoid gaps in the pagination.
+     *
+     * @param messageLimit The limit of messages inside the channel that should be requested.
+     * @param loadedMessages The list of messages that were loaded before the request.
+     * @param requestedMessages The list of messages that were loaded by the previous request.
+     */
+    private fun fillTheGap(
+        messageLimit: Int,
+        loadedMessages: List<Message>,
+        requestedMessages: List<Message>,
+    ) {
+        if (loadedMessages.isEmpty() || requestedMessages.isEmpty() || messageLimit <= 0) return
+        coroutineScope.launch {
+            val loadedMessageIds = loadedMessages
+                .filter { it.getCreatedAtOrNull() != null }
+                .sortedBy { it.getCreatedAtOrDefault(NEVER) }
+                .map { it.id }
+            val requestedMessageIds = requestedMessages
+                .filter { it.getCreatedAtOrNull() != null }
+                .sortedBy { it.getCreatedAtOrDefault(NEVER) }
+                .map { it.id }
+            val intersection = loadedMessageIds.intersect(requestedMessageIds.toSet())
+            val loadedMessagesOlderDate = loadedMessages.minOf { it.getCreatedAtOrDefault(Date()) }
+            val loadedMessagesNewerDate = loadedMessages.maxOf { it.getCreatedAtOrDefault(NEVER) }
+            val requestedMessagesOlderDate = requestedMessages.minOf { it.getCreatedAtOrDefault(Date()) }
+            val requestedMessagesNewerDate = requestedMessages.maxOf { it.getCreatedAtOrDefault(NEVER) }
+            if (intersection.isEmpty()) {
+                when {
+                    loadedMessagesOlderDate > requestedMessagesNewerDate ->
+                        runChannelQueryOnline(
+                            newerWatchChannelRequest(
+                                messageLimit,
+                                requestedMessageIds.last(),
+                            ),
+                        )
+
+                    loadedMessagesNewerDate < requestedMessagesOlderDate ->
+                        runChannelQueryOnline(
+                            olderWatchChannelRequest(
+                                messageLimit,
+                                requestedMessageIds.first(),
+                            ),
+                        )
+
+                    else -> null
+                }?.onSuccess { fillTheGap(messageLimit, loadedMessages, it.messages) }
+            }
         }
     }
 
