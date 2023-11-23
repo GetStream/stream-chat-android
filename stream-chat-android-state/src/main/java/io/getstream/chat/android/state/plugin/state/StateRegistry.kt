@@ -85,7 +85,7 @@ public class StateRegistry constructor(
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, scope, userStateFlow, latestUsers)
+            ChannelMutableState(channelType, channelId, userStateFlow, latestUsers)
         }
     }
 
