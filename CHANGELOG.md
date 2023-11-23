@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed audio recording not being uploaded [#5066](https://github.com/GetStream/stream-chat-android/pull/5066)
+- All sent messages are initialized with a non-null `createdLocallyAt` property. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
 
 ### ⬆️ Improved
 
@@ -39,6 +40,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Fix issue on the pagination process when querying a channel by filling the messages list gap. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
 
 ### ✅ Added
 
