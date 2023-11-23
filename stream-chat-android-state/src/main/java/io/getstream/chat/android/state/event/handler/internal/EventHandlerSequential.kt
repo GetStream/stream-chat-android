@@ -89,6 +89,7 @@ import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventC
 import io.getstream.chat.android.state.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.state.event.handler.internal.utils.realType
 import io.getstream.chat.android.state.event.handler.internal.utils.updateCurrentUser
+import io.getstream.chat.android.state.event.handler.internal.utils.updateGlobalState
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -277,13 +278,13 @@ internal class EventHandlerSequential(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection && event.me.id == currentUserId) {
-                    updateUserGlobalState(event.me)
+                    mutableGlobalState.updateGlobalState(event.me)
                 }
                 is NotificationMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    updateUserGlobalState(event.me)
+                    mutableGlobalState.updateGlobalState(event.me)
                 }
                 is NotificationChannelMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    updateUserGlobalState(event.me)
+                    mutableGlobalState.updateGlobalState(event.me)
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     mutableGlobalState.updateCurrentUser(currentUser, SelfUserPart(event.user))
@@ -311,12 +312,6 @@ internal class EventHandlerSequential(
         }
 
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
-    }
-
-    private fun updateUserGlobalState(user: User) {
-        mutableGlobalState.setBanned(user.banned)
-        mutableGlobalState.setMutedUsers(user.mutes)
-        mutableGlobalState.setChannelMutes(user.channelMutes)
     }
 
     private fun updateGlobalState(chatEvent: HasUnreadCounts) {
