@@ -14,8 +14,16 @@
 ### 🐞 Fixed
 - Fixed audio recording not being uploaded [#5066](https://github.com/GetStream/stream-chat-android/pull/5066)
 - All sent messages are initialized with a non-null `createdLocallyAt` property. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
+- Fix GZIP compression not working [5068](https://github.com/GetStream/stream-chat-android/pull/5068)
 
 ### ⬆️ Improved
+- Performance fixes:
+  - Faster ISO Date parser (5070)[https://github.com/GetStream/stream-chat-android/pull/5070]
+  - Preload KClass classes for parsing [5074](https://github.com/GetStream/stream-chat-android/pull/5074)
+  - Faster asynchronous `ChannelMutableState` creation [5076](https://github.com/GetStream/stream-chat-android/pull/5076)
+  - Delay reflection in `NotificationHandlerFactory` (5078)[https://github.com/GetStream/stream-chat-android/pull/5078]
+  - Faster `SocketListener` callback delivery (5082)[https://github.com/GetStream/stream-chat-android/pull/5082]
+  - Use `DerivedStateFlow` instead of `stateIn` (5083[https://github.com/GetStream/stream-chat-android/pull/5083]
 
 ### ✅ Added
 - Added `SocketListener.deliverOnMainthread`. This allows you to disabled the default delivery on Main thread in case you are already handling it asynchronously in your code. `SocketListener` with `deliverOnMainthread` set to `false` will deliver the events a bit faster because there is no overhead of thread switching.
@@ -38,6 +46,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix unread count, muted channel list and banned user list being incorrect in some cases [5084](https://github.com/GetStream/stream-chat-android/pull/5084)
 
 ### ⬆️ Improved
 - Fix issue on the pagination process when querying a channel by filling the messages list gap. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
