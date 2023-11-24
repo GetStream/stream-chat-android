@@ -17,6 +17,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `SocketListener.deliverOnMainthread`. This allows you to disabled the default delivery on Main thread in case you are already handling it asynchronously in your code. `SocketListener` with `deliverOnMainthread` set to `false` will deliver the events a bit faster because there is no overhead of thread switching.
 
 ### ⚠️ Changed
 
@@ -28,6 +29,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support for `skip_slow_mode` in the `ChannelCapabilities`. This allows the server to completely disable slow mode in messaging for specific users.
 
 ### ⚠️ Changed
 

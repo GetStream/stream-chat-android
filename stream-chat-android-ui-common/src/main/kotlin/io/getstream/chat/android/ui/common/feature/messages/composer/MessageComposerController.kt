@@ -205,6 +205,22 @@ public class MessageComposerController(
         )
 
     /**
+     * Signals whether slow-mode should be ignored (even if it's active).
+     *
+     * Some users can have an exceptions (e.g. moderators) and in this case we should ignore
+     * slow-mode completely.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val isSlowModeDisabled = ownCapabilities.map { it.contains(ChannelCapabilities.SKIP_SLOW_MODE) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false,
+        )
+
+    /**
      * Full message composer state holding all the required information.
      */
     public val state: MutableStateFlow<MessageComposerState> = MutableStateFlow(MessageComposerState())
@@ -881,7 +897,7 @@ public class MessageComposerController(
      * @param lastSentMessageDate The date of the last message.
      */
     private fun handleLastSentMessageDate(cooldownInterval: Int, lastSentMessageDate: Date?) {
-        val isSlowModeActive = cooldownInterval > 0 && isSlowModeActive.value
+        val isSlowModeActive = cooldownInterval > 0 && isSlowModeActive.value && !isSlowModeDisabled.value
 
         if (isSlowModeActive && lastSentMessageDate != null && !isInEditMode) {
             // Time passed since the last message was successfully sent to the server
