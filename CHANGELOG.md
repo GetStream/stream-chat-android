@@ -13,10 +13,12 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed audio recording not being uploaded [#5066](https://github.com/GetStream/stream-chat-android/pull/5066)
+- All sent messages are initialized with a non-null `createdLocallyAt` property. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `SocketListener.deliverOnMainthread`. This allows you to disabled the default delivery on Main thread in case you are already handling it asynchronously in your code. `SocketListener` with `deliverOnMainthread` set to `false` will deliver the events a bit faster because there is no overhead of thread switching.
 
 ### ⚠️ Changed
 
@@ -28,6 +30,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support for `skip_slow_mode` in the `ChannelCapabilities`. This allows the server to completely disable slow mode in messaging for specific users.
 
 ### ⚠️ Changed
 
@@ -37,6 +40,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Fix issue on the pagination process when querying a channel by filling the messages list gap. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
 
 ### ✅ Added
 
@@ -57,6 +61,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix channel title position when typing. [#5073](https://github.com/GetStream/stream-chat-android/pull/5073)
 
 ### ⬆️ Improved
 

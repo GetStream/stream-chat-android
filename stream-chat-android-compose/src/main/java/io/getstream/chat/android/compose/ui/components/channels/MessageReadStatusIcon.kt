@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -34,7 +35,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 
 /**
  * Shows a delivery status indicator for a particular message.

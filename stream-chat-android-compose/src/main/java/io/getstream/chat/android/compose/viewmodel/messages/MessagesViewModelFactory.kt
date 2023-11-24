@@ -105,6 +105,7 @@ public class MessagesViewModelFactory(
                     mediaRecorder = mediaRecorder,
                     fileToUri = fileToUriConverter,
                     channelId = channelId,
+                    messageLimit = messageLimit,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
                     messageId = messageId,

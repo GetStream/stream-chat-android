@@ -413,6 +413,7 @@ internal class MessageComposerViewModelTest {
                     fileToUri = { it.path },
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
+                    messageLimit = 30,
                 ),
             )
         }
