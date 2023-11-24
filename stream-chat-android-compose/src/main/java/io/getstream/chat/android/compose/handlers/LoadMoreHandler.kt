@@ -31,7 +31,7 @@ import kotlinx.coroutines.flow.filter
  *
  * @param listState The state of the list used to control scrolling.
  * @param loadMoreThreshold The number if items before the end of the list.
- * @param channelCount Total channel count (optional). If provided taken into account when considering if more items should be loaded.
+ * @param channelCount Total channel count (optional).
  * @param loadMore Handler for load more action.
  */
 @Composable
