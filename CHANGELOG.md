@@ -29,6 +29,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Support for `skip_slow_mode` in the `ChannelCapabilities`. This allows the server to completely disable slow mode in messaging for specific users.
 
 ### ⚠️ Changed
 

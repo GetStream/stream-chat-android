@@ -111,6 +111,9 @@ public object ChannelCapabilities {
     /** Indicates that channel slow mode is active. */
     public const val SLOW_MODE: String = "slow-mode"
 
+    /** Indicates that slow-mode should be skipped. */
+    public const val SKIP_SLOW_MODE: String = "skip-slow-mode"
+
     /** Ability to join a call. */
     public const val JOIN_CALL: String = "join-call"
 
