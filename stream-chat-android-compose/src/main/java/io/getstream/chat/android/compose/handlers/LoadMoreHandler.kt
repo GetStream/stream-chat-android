@@ -31,12 +31,14 @@ import kotlinx.coroutines.flow.filter
  *
  * @param listState The state of the list used to control scrolling.
  * @param loadMoreThreshold The number if items before the end of the list.
+ * @param channelCount Total channel count (optional). If provided taken into account when considering if more items should be loaded.
  * @param loadMore Handler for load more action.
  */
 @Composable
 public fun LoadMoreHandler(
     listState: LazyListState,
     loadMoreThreshold: Int = 3,
+    channelCount: Int? = null,
     loadMore: () -> Unit,
 ) {
     val shouldLoadMore = remember {
@@ -45,7 +47,19 @@ public fun LoadMoreHandler(
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
                 ?: return@derivedStateOf false
 
-            lastVisibleItem.index > (totalItemsCount - loadMoreThreshold - 1)
+            val result = lastVisibleItem.index > (totalItemsCount - loadMoreThreshold - 1)
+
+            if (channelCount == null) {
+                // Return the result, there is no channel count provided
+                return@derivedStateOf result
+            }
+
+            val visibleItemsCount = listState.layoutInfo.visibleItemsInfo.size
+            if (channelCount <= visibleItemsCount) {
+                false
+            } else {
+                result
+            }
         }
     }
 

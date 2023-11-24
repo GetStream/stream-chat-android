@@ -248,6 +248,7 @@ public class ChannelListViewModel(
                         ChannelsStateData.Loading,
                         -> channelsState.copy(
                             isLoading = true,
+                            isLoadingMore = false,
                             searchQuery = searchQuery,
                         ).also {
                             logger.d { "Loading state for query" }
@@ -256,6 +257,7 @@ public class ChannelListViewModel(
                             logger.d { "No offline results. Channels are empty" }
                             channelsState.copy(
                                 isLoading = false,
+                                isLoadingMore = false,
                                 channelItems = emptyList(),
                                 searchQuery = searchQuery,
                             )
