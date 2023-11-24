@@ -16,11 +16,17 @@
 
 package io.getstream.chat.android.ui.common.helper
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Build
 import android.text.format.DateFormat
 import android.text.format.DateUtils
+import androidx.annotation.RequiresApi
 import io.getstream.chat.android.ui.common.R
 import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
@@ -73,12 +79,45 @@ internal class DefaultDateFormatter(
 
     constructor(context: Context, locale: Locale) : this(DefaultDateContext(context, locale), locale)
 
-    private val timeFormatter12h: SimpleDateFormat = SimpleDateFormat("h:mm a", locale)
-    private val timeFormatter24h: SimpleDateFormat = SimpleDateFormat("HH:mm", locale)
-    private val dateFormatterDayOfWeek: SimpleDateFormat = SimpleDateFormat("EEEE", locale)
+    private companion object {
+        const val TIME_FORMAT_12H = "h:mm a"
+        const val TIME_FORMAT_24H = "HH:mm"
+        const val DATE_FORMAT_DAY_OF_WEEK = "EEEE"
+    }
+
+    private val timeFormatter12h: SimpleDateFormat = SimpleDateFormat(TIME_FORMAT_12H, locale)
+    private val timeFormatter24h: SimpleDateFormat = SimpleDateFormat(TIME_FORMAT_24H, locale)
+    private val dateFormatterDayOfWeek: SimpleDateFormat = SimpleDateFormat(DATE_FORMAT_DAY_OF_WEEK, locale)
     private val dateFormatterFullDate: SimpleDateFormat
         // Re-evaluated every time to account for runtime Locale changes
         get() = SimpleDateFormat(dateContext.dateTimePattern(), locale)
+
+    @delegate:RequiresApi(Build.VERSION_CODES.O)
+    private val timeFormatter12hNew: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern(TIME_FORMAT_12H)
+            .withLocale(locale)
+            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+    }
+
+    @delegate:RequiresApi(Build.VERSION_CODES.O)
+    private val timeFormatter24hNew: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern(TIME_FORMAT_24H)
+            .withLocale(locale)
+            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+    }
+
+    @delegate:RequiresApi(Build.VERSION_CODES.O)
+    private val dateFormatterDayOfWeekNew: DateTimeFormatter by lazy {
+        DateTimeFormatter.ofPattern(DATE_FORMAT_DAY_OF_WEEK)
+            .withLocale(locale)
+            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+    }
+
+    private val dateFormatterFullDateNew: DateTimeFormatter
+        @SuppressLint("NewApi")
+        get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern())
+            .withLocale(locale)
+            .withZone(ZoneId.of(ZoneOffset.UTC.id))
 
     /**
      * Formats the given date as a String.
@@ -92,8 +131,18 @@ internal class DefaultDateFormatter(
         return when {
             date.isToday() -> formatTime(date)
             date.isYesterday() -> dateContext.yesterdayString()
-            date.isWithinLastWeek() -> dateFormatterDayOfWeek.format(date)
-            else -> dateFormatterFullDate.format(date)
+            date.isWithinLastWeek() -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    dateFormatterDayOfWeekNew.format(date.toInstant())
+                } else {
+                    dateFormatterDayOfWeek.format(date)
+                }
+            }
+            else -> if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                dateFormatterFullDateNew.format(date.toInstant())
+            } else {
+                dateFormatterFullDate.format(date)
+            }
         }
     }
 
@@ -106,8 +155,13 @@ internal class DefaultDateFormatter(
     override fun formatTime(date: Date?): String {
         date ?: return ""
 
-        val dateFormat = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
-        return dateFormat.format(date)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val dateFormat = if (dateContext.is24Hour()) timeFormatter24hNew else timeFormatter12hNew
+            dateFormat.format(date.toInstant())
+        } else {
+            val dateFormat = if (dateContext.is24Hour()) timeFormatter24h else timeFormatter12h
+            dateFormat.format(date)
+        }
     }
 
     /**
@@ -184,6 +238,11 @@ internal class DefaultDateFormatter(
         private val context: Context,
         private val locale: Locale,
     ) : DateContext {
+
+        private val dateTimePatternLazy by lazy {
+            DateFormat.getBestDateTimePattern(locale, "yy MM dd")
+        }
+
         override fun now(): Date = Date()
 
         override fun yesterdayString(): String {
@@ -197,7 +256,7 @@ internal class DefaultDateFormatter(
         override fun dateTimePattern(): String {
             // Gets a localized pattern that contains 2 digit representations of
             // the year, month, and day of month
-            return DateFormat.getBestDateTimePattern(locale, "yy MM dd")
+            return dateTimePatternLazy
         }
     }
 }

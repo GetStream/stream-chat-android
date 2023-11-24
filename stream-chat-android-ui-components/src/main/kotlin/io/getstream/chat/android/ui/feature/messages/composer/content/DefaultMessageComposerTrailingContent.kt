@@ -43,28 +43,43 @@ import io.getstream.chat.android.ui.utils.extensions.getColorCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
- * Represents the default content shown at the end of [MessageComposerView].
+ * Represents the content shown at the end of [MessageComposerView].
  */
-public class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerContent {
-    /**
-     * Generated binding class for the XML layout.
-     */
-    internal lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
-
-    /**
-     * The style for [MessageComposerView].
-     */
-    private lateinit var style: MessageComposerViewStyle
-
+public interface MessageComposerTrailingContent : MessageComposerContent {
     /**
      * Click listener for the send message button.
      */
-    public var sendMessageButtonClickListener: () -> Unit = {}
+    public var sendMessageButtonClickListener: (() -> Unit)?
 
     /**
      * Touch listener for the mic button.
      */
-    public var recordAudioButtonTouchListener: (event: MotionEvent) -> Boolean = { false }
+    public var recordAudioButtonTouchListener: ((event: MotionEvent) -> Boolean)?
+}
+
+/**
+ * Represents the default content shown at the end of [MessageComposerView].
+ */
+public open class DefaultMessageComposerTrailingContent : FrameLayout, MessageComposerTrailingContent {
+    /**
+     * Generated binding class for the XML layout.
+     */
+    protected lateinit var binding: StreamUiMessageComposerDefaultTrailingContentBinding
+
+    /**
+     * The style for [MessageComposerView].
+     */
+    protected lateinit var style: MessageComposerViewStyle
+
+    /**
+     * Click listener for the send message button.
+     */
+    public override var sendMessageButtonClickListener: (() -> Unit)? = null
+
+    /**
+     * Touch listener for the mic button.
+     */
+    public override var recordAudioButtonTouchListener: ((event: MotionEvent) -> Boolean)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -84,8 +99,10 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
     @SuppressLint("ClickableViewAccessibility")
     private fun init() {
         binding = StreamUiMessageComposerDefaultTrailingContentBinding.inflate(streamThemeInflater, this)
-        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener() }
-        binding.recordAudioButton.setOnTouchListener { _, event -> recordAudioButtonTouchListener(event) }
+        binding.sendMessageButton.setOnClickListener { sendMessageButtonClickListener?.invoke() }
+        binding.recordAudioButton.setOnTouchListener { _, event ->
+            recordAudioButtonTouchListener?.invoke(event) ?: false
+        }
         binding.recordAudioButton.tag = RECORD_AUDIO_TAG
     }
 
@@ -96,6 +113,14 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
      */
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
+
+        val getStateListColor = { tintColor: Int ->
+            getColorList(
+                normalColor = tintColor,
+                selectedColor = tintColor,
+                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
+            )
+        }
 
         binding.sendMessageButton.setImageDrawable(style.sendMessageButtonIconDrawable)
         binding.sendMessageButton.updateLayoutParams {
@@ -108,20 +133,17 @@ public class DefaultMessageComposerTrailingContent : FrameLayout, MessageCompose
             style.sendMessageButtonPadding,
             style.sendMessageButtonPadding,
         )
-        style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.sendMessageButton.imageTintList = getColorList(
-                normalColor = tintColor,
-                selectedColor = tintColor,
-                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
-            )
+        style.sendMessageButtonIconTintList?.also { tintList ->
+            binding.sendMessageButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.sendMessageButton.imageTintList = getStateListColor(tintColor)
         }
+
         binding.recordAudioButton.setImageDrawable(style.audioRecordingButtonIconDrawable)
-        style.buttonIconDrawableTintColor?.let { tintColor ->
-            binding.recordAudioButton.imageTintList = getColorList(
-                normalColor = tintColor,
-                selectedColor = tintColor,
-                disabledColor = context.getColorCompat(R.color.stream_ui_grey_gainsboro),
-            )
+        style.audioRecordingButtonIconTintList?.also { tintList ->
+            binding.recordAudioButton.imageTintList = tintList
+        } ?: style.buttonIconDrawableTintColor?.let { tintColor ->
+            binding.recordAudioButton.imageTintList = getStateListColor(tintColor)
         }
         binding.recordAudioButton.updateLayoutParams {
             width = style.audioRecordingButtonWidth

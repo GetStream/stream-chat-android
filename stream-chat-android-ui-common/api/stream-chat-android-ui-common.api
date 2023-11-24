@@ -1251,8 +1251,6 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/MessageF
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/MessageKt {
-	public static final fun getCreatedAtOrNull (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
-	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 	public static final fun isModerationFailed (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;)Z
 }
 

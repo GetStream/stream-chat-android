@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
+import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
@@ -89,7 +91,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
-import io.getstream.chat.android.ui.common.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -384,9 +385,6 @@ public class MessageListController(
     }
 
     private fun observeChannelState(): StateFlow<ChannelState?> {
-        // Using 0 as limit will skip insertion of new messages if we are loading a specific message when
-        // opening the MessageList screen. Prevents race condition where wrong messages might get loaded.
-        val messageLimit = if (messageId != null) 0 else messageLimit
         logger.d { "[observeChannelState] cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(
             cid = cid,
@@ -719,7 +717,9 @@ public class MessageListController(
             )
 
             if (shouldAddDateSeparator) {
-                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
+                message.getCreatedAtOrNull()?.let { createdAt ->
+                    groupedMessages.add(DateSeparatorItemState(createdAt))
+                }
             }
 
             if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
@@ -754,7 +754,9 @@ public class MessageListController(
             }
 
             if (shouldAddDateSeparatorInEmptyThread) {
-                groupedMessages.add(DateSeparatorItemState(message.getCreatedAtOrThrow()))
+                message.getCreatedAtOrNull()?.let { createdAt ->
+                    groupedMessages.add(DateSeparatorItemState(createdAt))
+                }
             }
 
             if (isThreadWithNoReplies) {
@@ -764,7 +766,7 @@ public class MessageListController(
             if (index == 0 && isInThread && isThreadWithNoReplies) {
                 groupedMessages.add(
                     ThreadDateSeparatorItemState(
-                        date = message.createdAt ?: message.createdLocallyAt ?: Date(),
+                        date = message.getCreatedAtOrDefault(Date()),
                         replyCount = message.replyCount,
                     ),
                 )

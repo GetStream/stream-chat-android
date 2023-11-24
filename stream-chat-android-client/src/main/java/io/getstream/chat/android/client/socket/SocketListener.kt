@@ -27,6 +27,14 @@ import io.getstream.result.Error
 public open class SocketListener {
 
     /**
+     * The callbacks are by default delivered on the main thread. Changing this property to false will deliver
+     * the callbacks on their originating threads.
+     *
+     * Set to false for faster callback delivery on the original thread (no unnecessary context switching).
+     */
+    public open val deliverOnMainThread: Boolean = true
+
+    /**
      * Invoked when the connection begins to establish and socket state changes to Connecting.
      */
     public open fun onConnecting() {

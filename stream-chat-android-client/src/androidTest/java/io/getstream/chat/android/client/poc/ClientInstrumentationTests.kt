@@ -112,7 +112,8 @@ internal class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.getGuestToken("test-user-id", "Test name").enqueue {
-                client.connectUser(it.data().user, it.data().token).enqueue(initCallback)
+                val data = it.getOrThrow()
+                client.connectUser(data.user, data.token).enqueue(initCallback)
             }
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {

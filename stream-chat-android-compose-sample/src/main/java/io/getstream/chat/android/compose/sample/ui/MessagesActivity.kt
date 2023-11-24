@@ -104,10 +104,10 @@ class MessagesActivity : BaseConnectedActivity() {
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+                allowUIAutomationTest = true,
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
-                    testTagsAsResourceId = true,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
                     // TODO

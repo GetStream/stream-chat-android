@@ -52,8 +52,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -78,7 +76,7 @@ class UserLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme {
+            ChatTheme(allowUIAutomationTest = true) {
                 UserLoginScreen(
                     onUserItemClick = { userCredentials ->
                         lifecycleScope.launch {
@@ -103,9 +101,7 @@ class UserLoginActivity : AppCompatActivity() {
         onCustomLoginClick: () -> Unit,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .semantics { testTagsAsResourceId = true },
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(32.dp))

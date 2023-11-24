@@ -91,13 +91,13 @@ class ChannelsActivity : BaseConnectedActivity() {
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+                allowUIAutomationTest = true,
             ) {
                 ChannelsScreen(
                     viewModelFactory = factory,
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
                     isShowingSearch = true,
-                    testTagsAsResourceId = true,
                     onItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
@@ -134,7 +134,7 @@ class ChannelsActivity : BaseConnectedActivity() {
             },
         ) {
             ChannelList(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(it),
                 itemContent = {
                     CustomChannelListItem(channelItem = it, user = user)
                 },

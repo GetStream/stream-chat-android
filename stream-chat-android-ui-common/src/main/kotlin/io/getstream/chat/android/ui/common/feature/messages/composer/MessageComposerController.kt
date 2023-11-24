@@ -96,6 +96,7 @@ public class MessageComposerController(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val mediaRecorder: StreamMediaRecorder,
     private val fileToUri: (File) -> String,
+    private val messageLimit: Int,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val messageId: String? = null,
@@ -198,6 +199,22 @@ public class MessageComposerController(
      * ever read directly.
      */
     private val isSlowModeActive = ownCapabilities.map { it.contains(ChannelCapabilities.SLOW_MODE) }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = false,
+        )
+
+    /**
+     * Signals whether slow-mode should be ignored (even if it's active).
+     *
+     * Some users can have an exceptions (e.g. moderators) and in this case we should ignore
+     * slow-mode completely.
+     *
+     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
+     * ever read directly.
+     */
+    private val isSlowModeDisabled = ownCapabilities.map { it.contains(ChannelCapabilities.SKIP_SLOW_MODE) }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -343,7 +360,6 @@ public class MessageComposerController(
     }
 
     private fun observeChannelState(): Flow<ChannelState> {
-        val messageLimit = if (messageId != null) 0 else DefaultMessageLimit
         logger.d { "[observeChannelState] cid: $channelId, messageId: $messageId, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(
             cid = channelId,
@@ -881,7 +897,7 @@ public class MessageComposerController(
      * @param lastSentMessageDate The date of the last message.
      */
     private fun handleLastSentMessageDate(cooldownInterval: Int, lastSentMessageDate: Date?) {
-        val isSlowModeActive = cooldownInterval > 0 && isSlowModeActive.value
+        val isSlowModeActive = cooldownInterval > 0 && isSlowModeActive.value && !isSlowModeDisabled.value
 
         if (isSlowModeActive && lastSentMessageDate != null && !isInEditMode) {
             // Time passed since the last message was successfully sent to the server
@@ -951,11 +967,6 @@ public class MessageComposerController(
          * The regex pattern used to check if the message ends with incomplete command.
          */
         private val CommandPattern = Pattern.compile("^/[a-z]*$")
-
-        /**
-         * The default limit for messages count in requests.
-         */
-        private const val DefaultMessageLimit: Int = 30
 
         private const val OneSecond = 1000L
 

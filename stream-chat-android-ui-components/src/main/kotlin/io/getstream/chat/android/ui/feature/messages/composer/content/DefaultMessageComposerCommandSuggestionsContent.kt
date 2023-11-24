@@ -37,30 +37,40 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.widgets.internal.SimpleListAdapter
 
 /**
+ * Represents the command suggestion list popup shown above [MessageComposerView].
+ */
+public interface MessageComposerCommandSuggestionsContent : MessageComposerContent {
+    /**
+     * Selection listener invoked when a command is selected.
+     */
+    public var commandSelectionListener: ((Command) -> Unit)?
+}
+
+/**
  * Represents the default command suggestion list popup shown above [MessageComposerView].
  */
-public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, MessageComposerContent {
+public open class DefaultMessageComposerCommandSuggestionsContent :
+    FrameLayout,
+    MessageComposerCommandSuggestionsContent {
     /**
      * Generated binding class for the XML layout.
      */
-    private lateinit var binding: StreamUiSuggestionListViewBinding
+    protected lateinit var binding: StreamUiSuggestionListViewBinding
 
     /**
      * The style for [MessageComposerView].
      */
-    private lateinit var style: MessageComposerViewStyle
+    protected lateinit var style: MessageComposerViewStyle
 
     /**
      * Adapter used to render command suggestions.
      */
-    private val adapter: CommandsAdapter by lazy {
-        CommandsAdapter(style) { commandSelectionListener(it) }
-    }
+    private lateinit var adapter: CommandSuggestionsAdapter
 
     /**
      * Selection listener invoked when a command is selected.
      */
-    public var commandSelectionListener: (Command) -> Unit = {}
+    public override var commandSelectionListener: ((Command) -> Unit)? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -83,6 +93,13 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
         binding.commandsTitleTextView.isVisible = true
     }
 
+    @Suppress("UNCHECKED_CAST")
+    protected open fun <T, VH> buildAdapter(
+        style: MessageComposerViewStyle,
+    ): T where T : RecyclerView.Adapter<VH>, T : CommandSuggestionsAdapter, VH : RecyclerView.ViewHolder {
+        return CommandsAdapter(style) { commandSelectionListener?.invoke(it) } as T
+    }
+
     /**
      * Initializes the content view with [MessageComposerContext].
      *
@@ -90,13 +107,16 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
      */
     override fun attachContext(messageComposerContext: MessageComposerContext) {
         this.style = messageComposerContext.style
-
-        binding.suggestionsRecyclerView.adapter = adapter
+        val rvAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder> = buildAdapter(messageComposerContext.style)
+        adapter = rvAdapter as CommandSuggestionsAdapter
+        binding.suggestionsRecyclerView.adapter = rvAdapter
         binding.suggestionsCardView.setCardBackgroundColor(style.commandSuggestionsBackgroundColor)
         binding.commandsTitleTextView.text = style.commandSuggestionsTitleText
         binding.commandsTitleTextView.setTextStyle(style.commandSuggestionsTitleTextStyle)
         binding.commandsTitleTextView.setStartDrawable(
-            style.commandSuggestionsTitleIconDrawable.applyTint(style.buttonIconDrawableTintColor),
+            style.commandSuggestionsTitleIconDrawable.applyTint(
+                tintColor = style.commandSuggestionsTitleIconDrawableTintColor ?: style.buttonIconDrawableTintColor,
+            ),
         )
     }
 
@@ -111,6 +131,22 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
 }
 
 /**
+ * Adapter used to render command suggestions.
+ */
+public interface CommandSuggestionsAdapter {
+
+    /**
+     * Sets the list of command suggestions to be displayed.
+     */
+    public fun setItems(items: List<Command>)
+
+    /**
+     * Returns the number of items in the adapter.
+     */
+    public fun getItemCount(): Int
+}
+
+/**
  * [RecyclerView.Adapter] responsible for displaying command suggestions in a RecyclerView.
  *
  * @param style The style for [MessageComposerView].
@@ -119,7 +155,7 @@ public class DefaultMessageComposerCommandSuggestionsContent : FrameLayout, Mess
 private class CommandsAdapter(
     private val style: MessageComposerViewStyle,
     private val commandSelectionListener: (Command) -> Unit,
-) : SimpleListAdapter<Command, CommandViewHolder>() {
+) : SimpleListAdapter<Command, CommandViewHolder>(), CommandSuggestionsAdapter {
 
     /**
      * Creates and instantiates a new instance of [CommandViewHolder].
