@@ -25,7 +25,7 @@ public final class io/getstream/chat/android/compose/handlers/DownloadPermission
 }
 
 public final class io/getstream/chat/android/compose/handlers/LoadMoreHandlerKt {
-	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+	public static final fun LoadMoreHandler (Landroidx/compose/foundation/lazy/LazyListState;ILjava/lang/Integer;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 
 public abstract interface class io/getstream/chat/android/compose/handlers/PermissionHandler {
