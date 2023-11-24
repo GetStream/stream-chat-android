@@ -116,6 +116,9 @@ internal class ChatEventsObservable(
      */
     private class EventsMapper(private val observable: ChatEventsObservable) : SocketListener() {
 
+        override val deliverOnMainThread: Boolean
+            get() = false
+
         override fun onConnecting() {
             observable.onNext(ConnectingEvent(EventType.CONNECTION_CONNECTING, Date(), null))
         }

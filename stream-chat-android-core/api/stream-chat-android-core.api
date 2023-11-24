@@ -66,9 +66,6 @@ public final class io/getstream/chat/android/core/utils/Debouncer {
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class io/getstream/chat/android/core/utils/MutableValueKt {
-}
-
 public final class io/getstream/chat/android/core/utils/date/DateUtils {
 }
 
