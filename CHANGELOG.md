@@ -1,15 +1,4 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# November 24th, 2023 - 6.0.9
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed audio recording not being uploaded [#5066](https://github.com/GetStream/stream-chat-android/pull/5066)
@@ -28,21 +17,9 @@
 ### ✅ Added
 - Added `SocketListener.deliverOnMainthread`. This allows you to disabled the default delivery on Main thread in case you are already handling it asynchronously in your code. `SocketListener` with `deliverOnMainthread` set to `false` will deliver the events a bit faster because there is no overhead of thread switching.
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Support for `skip_slow_mode` in the `ChannelCapabilities`. This allows the server to completely disable slow mode in messaging for specific users.
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
@@ -51,28 +28,9 @@
 ### ⬆️ Improved
 - Fix issue on the pagination process when querying a channel by filling the messages list gap. [#5086](https://github.com/GetStream/stream-chat-android/pull/5086)
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fix channel title position when typing. [#5073](https://github.com/GetStream/stream-chat-android/pull/5073)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added `MessageComposerViewModel.bindViewDefaults` which preserves the default view bindings. [#5060](https://github.com/GetStream/stream-chat-android/pull/5060)
@@ -96,30 +54,6 @@
   * `MessageComposerViewStyle.sendMessageButtonIconTintList`
   * `MessageComposerViewStyle.audioRecordingButtonIconTintList`
 - Made `MessageComposerContent` descendants extensible/reusable. [#5065](https://github.com/GetStream/stream-chat-android/pull/5065)
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 09th, 2023 - 6.0.8
 ## Common changes for all artifacts
