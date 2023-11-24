@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFacto
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
+import io.getstream.chat.ui.sample.feature.chat.composer.CustomMessageComposerLeadingContent
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import io.getstream.result.Error
@@ -157,6 +158,7 @@ class ChatFragment : Fragment() {
                     }
                 }
             }
+
             binding.messageListView.setMessageReplyHandler { _, message ->
                 messageComposerViewModel.performMessageAction(Reply(message))
             }
@@ -168,6 +170,12 @@ class ChatFragment : Fragment() {
                     messageComposerViewModel.performMessageAction(Reply(message))
                 }
             }
+        }
+
+        if (OVERRIDE_LEADING_CONTENT) {
+            binding.messageComposerView.setLeadingContent(
+                CustomMessageComposerLeadingContent(requireContext()),
+            )
         }
     }
 
@@ -257,5 +265,9 @@ class ChatFragment : Fragment() {
             is Result.Success -> false
             is Result.Failure -> (value as Error.NetworkError).serverErrorCode == 4
         }
+    }
+
+    private companion object {
+        private const val OVERRIDE_LEADING_CONTENT = false
     }
 }

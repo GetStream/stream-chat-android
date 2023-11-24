@@ -1023,6 +1023,7 @@
         <item name="streamUiMessageComposerCommandSuggestionsTitleTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageComposerCommandSuggestionsTitleTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiMessageComposerCommandSuggestionsTitleIconDrawable">@drawable/stream_ui_ic_command_blue</item>
+        <item name="streamUiMessageComposerCommandSuggestionsTitleIconDrawableTintColor">@null</item>
         <item name="streamUiMessageComposerCommandSuggestionsBackgroundColor">@color/stream_ui_white</item>
         <item name="streamUiMessageComposerCommandSuggestionItemCommandNameTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageComposerCommandSuggestionItemCommandNameTextColor">@color/stream_ui_text_color_primary</item>
@@ -1033,6 +1034,7 @@
         <!-- Mention suggestions content -->
         <item name="streamUiMessageComposerMentionSuggestionsBackgroundColor">@color/stream_ui_white</item>
         <item name="streamUiMessageComposerMentionSuggestionItemIconDrawable">@drawable/stream_ui_ic_mention</item>
+        <item name="streamUiMessageComposerMentionSuggestionItemIconDrawableTintColor">@null</item>
         <item name="streamUiMessageComposerMentionSuggestionItemUsernameTextSize">@dimen/stream_ui_text_medium</item>
         <item name="streamUiMessageComposerMentionSuggestionItemUsernameTextColor">@color/stream_ui_text_color_primary</item>
         <item name="streamUiMessageComposerMentionSuggestionItemMentionText">@string/stream_ui_message_composer_mention_template</item>
@@ -1085,9 +1087,11 @@
         <!-- Leading content -->
         <item name="streamUiMessageComposerAttachmentsButtonVisible">true</item>
         <item name="streamUiMessageComposerAttachmentsButtonIconDrawable">@drawable/stream_ui_ic_attach</item>
+        <item name="streamUiMessageComposerAttachmentsButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerAttachmentsButtonRippleColor">@null</item>
         <item name="streamUiMessageComposerCommandsButtonVisible">true</item>
         <item name="streamUiMessageComposerCommandsButtonIconDrawable">@drawable/stream_ui_ic_command</item>
+        <item name="streamUiMessageComposerCommandsButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerCommandsButtonRippleColor">@null</item>
 
         <!-- Footer content -->
@@ -1107,6 +1111,7 @@
         <!-- Trailing content -->
         <item name="streamUiMessageComposerSendMessageButtonEnabled">true</item>
         <item name="streamUiMessageComposerSendMessageButtonIconDrawable">@drawable/stream_ui_ic_send_message</item>
+        <item name="streamUiMessageComposerSendMessageButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerSendMessageButtonWidth">@dimen/stream_ui_message_composer_trailing_content_button_send_message_width</item>
         <item name="streamUiMessageComposerSendMessageButtonHeight">@dimen/stream_ui_message_composer_trailing_content_button_send_message_height</item>
         <item name="streamUiMessageComposerSendMessageButtonPadding">@dimen/stream_ui_message_composer_trailing_content_button_send_message_padding</item>
@@ -1114,6 +1119,7 @@
         <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
         <item name="streamUiMessageComposerAudioRecordingButtonPreferred">false</item>
         <item name="streamUiMessageComposerAudioRecordingButtonIconDrawable">@drawable/stream_ui_ic_mic</item>
+        <item name="streamUiMessageComposerAudioRecordingButtonIconTintList">@null</item>
         <item name="streamUiMessageComposerAudioRecordingButtonWidth">@dimen/stream_ui_message_composer_trailing_content_button_record_audio_width</item>
         <item name="streamUiMessageComposerAudioRecordingButtonHeight">@dimen/stream_ui_message_composer_trailing_content_button_record_audio_height</item>
         <item name="streamUiMessageComposerAudioRecordingButtonPadding">@dimen/stream_ui_message_composer_trailing_content_button_record_audio_padding</item>

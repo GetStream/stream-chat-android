@@ -3,6 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ComplexCondition:AttachmentDestination.kt$AttachmentDestination$attachment.isFile() || attachment.isVideo() || attachment.isAudio() || attachment.mimeType?.contains(VIDEO_MIME_TYPE_PREFIX) == true</ID>
+    <ID>ComplexCondition:ChannelViewHolder.kt$ChannelViewHolder$nameChanged || typingUsersChanged || lastMessageChanged || anonymousNameChanged</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$GeneralFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:FileAttachmentsView.kt$RecordingFileAttachmentViewHolder$item.uploadState is Attachment.UploadState.Idle || item.uploadState is Attachment.UploadState.InProgress || (item.uploadState is Attachment.UploadState.Success &amp;&amp; item.fileSize == 0)</ID>
     <ID>ComplexCondition:MediaAttachmentView.kt$MediaAttachmentView$attachment.isImage() || (attachment.isVideo() &amp;&amp; ChatUI.videoThumbnailsEnabled &amp;&amp; attachment.thumbUrl != null)</ID>
@@ -105,6 +106,7 @@
     <ID>MaxLineLength:MessageComposerViewModel.kt$MessageComposerViewModel$*</ID>
     <ID>MaxLineLength:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$val MessageComposerViewModel.alsoSendToChannelSelectionListener: (Boolean) -> Unit get() = { setAlsoSendToChannel(it) }</ID>
     <ID>MaxLineLength:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }</ID>
+    <ID>MaxLineLength:MessageComposerViewModelBinding.kt$alsoSendToChannelSelectionListener = this.alsoSendToChannelSelectionListener and alsoSendToChannelSelectionListener</ID>
     <ID>MaxLineLength:MessageListHeaderViewStyle.kt$MessageListHeaderViewStyle$*</ID>
     <ID>MaxLineLength:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$*</ID>
     <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date</ID>

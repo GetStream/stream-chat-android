@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.runtime.Composable
@@ -24,8 +27,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import coil.ImageLoader
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.header.VersionPrefixHeader
@@ -148,6 +155,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
+ * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
@@ -179,6 +187,7 @@ public fun ChatTheme(
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
+    allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
@@ -239,7 +248,15 @@ public fun ChatTheme(
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
     ) {
-        content()
+        if (allowUIAutomationTest) {
+            Box(
+                modifier = Modifier.semantics { testTagsAsResourceId = allowUIAutomationTest },
+            ) {
+                content()
+            }
+        } else {
+            content()
+        }
     }
 }
 

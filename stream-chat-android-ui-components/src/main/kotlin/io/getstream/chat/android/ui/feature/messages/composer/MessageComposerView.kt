@@ -42,8 +42,16 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMes
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerMentionSuggestionsContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerOverlappingContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerCenterContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerCommandSuggestionsContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContentContainer
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerFooterContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerHeaderContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerLeadingContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerMentionSuggestionsContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerOverlappingContent
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerTrailingContent
 import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageComposerSuggestionsPopup
 import io.getstream.chat.android.ui.feature.messages.composer.internal.ValidationErrorRenderer
 import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
@@ -380,6 +388,14 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.leadingContent.removeAllViews()
         binding.leadingContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is MessageComposerLeadingContent) {
+            if (contentView.attachmentsButtonClickListener == null) {
+                contentView.attachmentsButtonClickListener = { attachmentsButtonClickListener() }
+            }
+            if (contentView.commandsButtonClickListener == null) {
+                contentView.commandsButtonClickListener = { commandsButtonClickListener() }
+            }
+        }
     }
 
     /**
@@ -401,6 +417,14 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.centerContent.removeAllViews()
         binding.centerContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is MessageComposerCenterContent) {
+            if (contentView.textInputChangeListener == null) {
+                contentView.textInputChangeListener = { textInputChangeListener(it) }
+            }
+            if (contentView.attachmentRemovalListener == null) {
+                contentView.attachmentRemovalListener = { attachmentRemovalListener(it) }
+            }
+        }
     }
 
     /**
@@ -423,6 +447,14 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.trailingContent.removeAllViews()
         binding.trailingContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is MessageComposerTrailingContent) {
+            if (contentView.sendMessageButtonClickListener == null) {
+                contentView.sendMessageButtonClickListener = { sendMessageButtonClickListener() }
+            }
+            if (contentView.recordAudioButtonTouchListener == null) {
+                contentView.recordAudioButtonTouchListener = { audioRecordButtonTouchListener(it) }
+            }
+        }
     }
 
     /**
@@ -444,6 +476,11 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.footerContent.removeAllViews()
         binding.footerContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is MessageComposerFooterContent) {
+            if (contentView.alsoSendToChannelSelectionListener == null) {
+                contentView.alsoSendToChannelSelectionListener = { alsoSendToChannelSelectionListener(it) }
+            }
+        }
     }
 
     /**
@@ -465,6 +502,11 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.headerContent.removeAllViews()
         binding.headerContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is MessageComposerHeaderContent) {
+            if (contentView.dismissActionClickListener == null) {
+                contentView.dismissActionClickListener = { dismissActionClickListener() }
+            }
+        }
     }
 
     /**
@@ -486,6 +528,38 @@ public class MessageComposerView : ConstraintLayout {
     ) where V : View, V : MessageComposerContent {
         binding.centerOverlapContent.removeAllViews()
         binding.centerOverlapContent.addView(contentView.attachContext(), layoutParams)
+        if (contentView is MessageComposerOverlappingContent) {
+            if (contentView.recordButtonHoldListener == null) {
+                contentView.recordButtonHoldListener = { audioRecordButtonHoldListener() }
+            }
+            if (contentView.recordButtonLockListener == null) {
+                contentView.recordButtonLockListener = { audioRecordButtonLockListener() }
+            }
+            if (contentView.recordButtonCancelListener == null) {
+                contentView.recordButtonCancelListener = { audioRecordButtonCancelListener() }
+            }
+            if (contentView.recordButtonReleaseListener == null) {
+                contentView.recordButtonReleaseListener = { audioRecordButtonReleaseListener() }
+            }
+            if (contentView.deleteButtonClickListener == null) {
+                contentView.deleteButtonClickListener = { audioDeleteButtonClickListener() }
+            }
+            if (contentView.stopButtonClickListener == null) {
+                contentView.stopButtonClickListener = { audioStopButtonClickListener() }
+            }
+            if (contentView.playbackButtonClickListener == null) {
+                contentView.playbackButtonClickListener = { audioPlaybackButtonClickListener() }
+            }
+            if (contentView.completeButtonClickListener == null) {
+                contentView.completeButtonClickListener = { audioCompleteButtonClickListener() }
+            }
+            if (contentView.sliderDragStartListener == null) {
+                contentView.sliderDragStartListener = { audioSliderDragStartListener(it) }
+            }
+            if (contentView.sliderDragStopListener == null) {
+                contentView.sliderDragStopListener = { audioSliderDragStopListener(it) }
+            }
+        }
     }
 
     /**
@@ -499,6 +573,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public fun <V> setMentionSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
         mentionSuggestionsContentOverride = contentView.attachContext()
+        if (contentView is MessageComposerMentionSuggestionsContent) {
+            if (contentView.mentionSelectionListener == null) {
+                contentView.mentionSelectionListener = { mentionSelectionListener(it) }
+            }
+        }
     }
 
     /**
@@ -512,6 +591,11 @@ public class MessageComposerView : ConstraintLayout {
      */
     public fun <V> setCommandSuggestionsContent(contentView: V) where V : View, V : MessageComposerContent {
         commandSuggestionsContentOverride = contentView.attachContext()
+        if (contentView is MessageComposerCommandSuggestionsContent) {
+            if (contentView.commandSelectionListener == null) {
+                contentView.commandSelectionListener = { commandSelectionListener(it) }
+            }
+        }
     }
 
     /**

@@ -118,6 +118,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     maxAttachmentSize = maxAttachmentSize,
                     fileToUri = fileToUri,
                     messageId = messageId,
+                    messageLimit = messageLimit,
                 ),
             )
         },

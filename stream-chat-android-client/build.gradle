@@ -51,6 +51,7 @@ android {
 }
 
 baselineProfile {
+    baselineProfileOutputDir = "."
     filter {
         include("io.getstream.chat.android.client.**")
     }
@@ -87,6 +88,7 @@ dependencies {
     debugImplementation Dependencies.streamLogAndroidFile
     implementation Dependencies.streamPushDelegate
     api Dependencies.streamPushPermissions
+    implementation Dependencies.ituDate
     implementation Dependencies.moshi
     implementation Dependencies.retrofitMoshiConverter
     ksp Dependencies.moshiCodegen

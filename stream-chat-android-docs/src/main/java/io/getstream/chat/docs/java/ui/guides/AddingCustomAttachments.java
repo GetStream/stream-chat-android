@@ -36,6 +36,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerLeadingContent;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager;
@@ -49,6 +50,7 @@ import io.getstream.chat.docs.databinding.ItemDateAttachmentBinding;
 import io.getstream.chat.docs.databinding.ItemDateAttachmentPreviewBinding;
 import io.getstream.chat.docs.databinding.ViewQuotedDateAttachmentBinding;
 import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import kotlin.jvm.functions.Function1;
 
 /**
@@ -64,13 +66,13 @@ public class AddingCustomAttachments extends Fragment {
         private MessageComposerView messageComposerView;
         private MessageComposerViewModel messageComposerViewModel;
 
-        class CustomMessageComposerLeadingContent extends FrameLayout implements MessageComposerContent {
+        class CustomMessageComposerLeadingContent extends FrameLayout implements MessageComposerLeadingContent {
 
             private CustomMessageComposerLeadingContentBinding binding;
             private MessageComposerViewStyle style;
 
-            public Function1<Unit, Unit> attachmentsButtonClickListener;
-            public Function1<Unit, Unit> commandsButtonClickListener;
+            public Function0<Unit> attachmentsButtonClickListener;
+            public Function0<Unit> commandsButtonClickListener;
 
             // Click listener for the date picker button
             public Function1<Unit, Unit> calendarButtonClickListener;
@@ -86,8 +88,16 @@ public class AddingCustomAttachments extends Fragment {
             public CustomMessageComposerLeadingContent(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
                 super(context, attrs, defStyleAttr);
                 binding = CustomMessageComposerLeadingContentBinding.inflate(LayoutInflater.from(getContext()), this);
-                binding.attachmentsButton.setOnClickListener(v -> attachmentsButtonClickListener.invoke(Unit.INSTANCE));
-                binding.commandsButton.setOnClickListener(v -> commandsButtonClickListener.invoke(Unit.INSTANCE));
+                binding.attachmentsButton.setOnClickListener(v -> {
+                    if (attachmentsButtonClickListener != null) {
+                        attachmentsButtonClickListener.invoke();
+                    }
+                });
+                binding.commandsButton.setOnClickListener(v -> {
+                    if (commandsButtonClickListener != null) {
+                        commandsButtonClickListener.invoke();
+                    }
+                });
 
                 // Set click listener for the date picker button
                 binding.calendarButton.setOnClickListener(v -> calendarButtonClickListener.invoke(Unit.INSTANCE));
@@ -138,12 +148,34 @@ public class AddingCustomAttachments extends Fragment {
                         return null;
                 }
             }
+
+            @Nullable
+            @Override
+            public Function0<Unit> getAttachmentsButtonClickListener() {
+                return attachmentsButtonClickListener;
+            }
+
+            @Override
+            public void setAttachmentsButtonClickListener(@Nullable Function0<Unit> unitFunction0) {
+                this.attachmentsButtonClickListener = unitFunction0;
+            }
+
+            @Nullable
+            @Override
+            public Function0<Unit> getCommandsButtonClickListener() {
+                return commandsButtonClickListener;
+            }
+
+            @Override
+            public void setCommandsButtonClickListener(@Nullable Function0<Unit> unitFunction0) {
+                this.commandsButtonClickListener = unitFunction0;
+            }
         }
 
         private void setLeadingContent(Context context) {
             CustomMessageComposerLeadingContent leadingContent = new CustomMessageComposerLeadingContent(context);
-            leadingContent.attachmentsButtonClickListener = unit -> messageComposerView.getAttachmentsButtonClickListener().invoke();
-            leadingContent.commandsButtonClickListener = unit -> messageComposerView.getCommandsButtonClickListener().invoke();
+            leadingContent.attachmentsButtonClickListener = () -> messageComposerView.getAttachmentsButtonClickListener().invoke();
+            leadingContent.commandsButtonClickListener = () -> messageComposerView.getCommandsButtonClickListener().invoke();
             leadingContent.calendarButtonClickListener = unit -> {
                 // Create an instance of a date picker dialog
                 MaterialDatePicker<Long> datePickerDialog = MaterialDatePicker.Builder

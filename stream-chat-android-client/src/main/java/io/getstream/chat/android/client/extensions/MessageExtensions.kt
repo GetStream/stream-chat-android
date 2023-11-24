@@ -57,3 +57,25 @@ public fun Message.updateMessageOnlineState(isOnline: Boolean): Message {
         updatedLocallyAt = Date(),
     )
 }
+
+/**
+ * @return when the message was created or throw an exception.
+ */
+public fun Message.getCreatedAtOrThrow(): Date {
+    val created = getCreatedAtOrNull()
+    return checkNotNull(created) { "a message needs to have a non null value for either createdAt or createdLocallyAt" }
+}
+
+/**
+ * @return when the message was created or null.
+ */
+public fun Message.getCreatedAtOrNull(): Date? {
+    return createdAt ?: createdLocallyAt
+}
+
+/**
+ * @return when the message was created or `default`.
+ */
+public fun Message.getCreatedAtOrDefault(default: Date): Date {
+    return getCreatedAtOrNull() ?: default
+}

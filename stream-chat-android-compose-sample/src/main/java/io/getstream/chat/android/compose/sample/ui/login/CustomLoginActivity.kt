@@ -72,7 +72,7 @@ class CustomLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme {
+            ChatTheme(allowUIAutomationTest = true) {
                 CustomLoginScreen(
                     onBackButtonClick = ::finish,
                     onLoginButtonClick = { userCredentials ->
@@ -102,6 +102,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(it)
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,

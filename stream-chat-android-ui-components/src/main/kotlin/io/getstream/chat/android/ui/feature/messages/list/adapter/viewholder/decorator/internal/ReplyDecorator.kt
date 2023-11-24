@@ -19,7 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.de
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
-import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.MessageReplyView
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MessageReplyView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
