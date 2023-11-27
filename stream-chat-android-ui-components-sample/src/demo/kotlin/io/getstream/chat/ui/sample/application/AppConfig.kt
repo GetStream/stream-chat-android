@@ -16,7 +16,6 @@
 
 package io.getstream.chat.ui.sample.application
 
-import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.data.user.SampleUser
 
 object AppConfig {
@@ -28,17 +27,17 @@ object AppConfig {
     val availableUsers: List<SampleUser> = listOf(
         SampleUser(
             apiKey = apiKey,
-            id ="aapostol",
+            id = "aapostol",
             name = "Aleksandar Apostolov",
             image = "https://ca.slack-edge.com/T02RM6X6B-U05UD37MA1G-f062f8b7afc2-72",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWFwb3N0b2wifQ.kjeSx_Zyj84NDl37FLuEiEgZEdfpa4AKfhRFkonPP9A"
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWFwb3N0b2wifQ.kjeSx_Zyj84NDl37FLuEiEgZEdfpa4AKfhRFkonPP9A",
         ),
         SampleUser(
             apiKey = apiKey,
             id = "dnovak",
             name = "Daniel Novak",
             image = "https://ca.slack-edge.com/T02RM6X6B-U05DKELFBB8-a8641b819de8-192",
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG5vdmFrIn0.HuUyFkiXjHRk7hk4g2FLOg0szEi5Zq1u6CRC9t2Mwj8"
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZG5vdmFrIn0.HuUyFkiXjHRk7hk4g2FLOg0szEi5Zq1u6CRC9t2Mwj8",
         ),
         SampleUser(
             apiKey = apiKey,
