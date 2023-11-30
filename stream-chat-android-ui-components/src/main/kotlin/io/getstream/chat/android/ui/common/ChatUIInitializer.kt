@@ -38,7 +38,7 @@ import kotlinx.coroutines.runBlocking
 public class ChatUIInitializer : Initializer<Unit> {
 
     override fun create(context: Context): Unit = runBlocking(DispatcherProvider.IO) {
-        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UI_COMPONENTS
+        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UiComponents
         ChatUI.appContext = context
 
         setImageLoader(context)
