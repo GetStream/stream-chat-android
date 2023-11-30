@@ -79,6 +79,9 @@ class MessageListViewSnippets : Fragment() {
         messageListView.setMessageUnpinHandler { message: Message ->
             // Handle when message is going to be unpinned
         }
+        messageListView.setMessageMarkAsUnreadHandler() { message: Message ->
+            // Handle when message is going to be marked as unread
+        }
         messageListView.setGiphySendHandler { giphyAction: GiphyAction ->
             // Handle when some giphyAction is going to be performed
         }

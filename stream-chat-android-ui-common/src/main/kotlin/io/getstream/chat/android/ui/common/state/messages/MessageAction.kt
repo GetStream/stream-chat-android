@@ -66,6 +66,10 @@ public data class Copy(
     override val message: Message,
 ) : MessageAction()
 
+public data class MarkAsUnread(
+    override val message: Message,
+) : MessageAction()
+
 /**
  * Start editing an owned message.
  */
@@ -111,6 +115,7 @@ public fun MessageAction.updateMessage(message: Message): MessageAction {
         is Reply -> copy(message = message)
         is ThreadReply -> copy(message = message)
         is Copy -> copy(message = message)
+        is MarkAsUnread -> copy(message = message)
         is Edit -> copy(message = message)
         is Pin -> copy(message = message)
         is Delete -> copy(message = message)

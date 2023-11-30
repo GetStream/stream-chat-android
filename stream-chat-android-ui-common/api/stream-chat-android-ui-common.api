@@ -79,6 +79,8 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun loadOlderMessages (I)V
 	public static synthetic fun loadOlderMessages$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;IILjava/lang/Object;)V
 	public final fun markLastMessageRead ()V
+	public final fun markUnread (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun markUnread$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun muteUser (Lio/getstream/chat/android/models/User;)V
 	public final fun muteUser (Ljava/lang/String;Ljava/lang/Integer;)V
 	public static synthetic fun muteUser$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)V
@@ -141,6 +143,18 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun component1 ()Lio/getstream/result/Error;
 	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$FlagMessageError;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$FlagMessageError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$FlagMessageError;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getStreamError ()Lio/getstream/result/Error;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$MarkUnreadError : io/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/result/Error;)V
+	public final fun component1 ()Lio/getstream/result/Error;
+	public final fun copy (Lio/getstream/result/Error;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$MarkUnreadError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$MarkUnreadError;Lio/getstream/result/Error;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController$ErrorEvent$MarkUnreadError;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getStreamError ()Lio/getstream/result/Error;
 	public fun hashCode ()I
@@ -446,6 +460,18 @@ public final class io/getstream/chat/android/ui/common/state/messages/Flag : io/
 	public final fun component1 ()Lio/getstream/chat/android/models/Message;
 	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/Flag;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/Flag;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/Flag;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MarkAsUnread : io/getstream/chat/android/ui/common/state/messages/MessageAction {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/MarkAsUnread;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/MarkAsUnread;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/MarkAsUnread;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public fun hashCode ()I
