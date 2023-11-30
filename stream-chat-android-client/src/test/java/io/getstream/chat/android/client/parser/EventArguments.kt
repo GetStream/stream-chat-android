@@ -47,6 +47,7 @@ import io.getstream.chat.android.client.createNotificationInviteAcceptedEventStr
 import io.getstream.chat.android.client.createNotificationInviteRejectedEventStringJson
 import io.getstream.chat.android.client.createNotificationInvitedEventStringJson
 import io.getstream.chat.android.client.createNotificationMarkReadEventStringJson
+import io.getstream.chat.android.client.createNotificationMarkUnreadEventStringJson
 import io.getstream.chat.android.client.createNotificationMessageNewEventStringJson
 import io.getstream.chat.android.client.createNotificationMutesUpdatedEventStringJson
 import io.getstream.chat.android.client.createNotificationRemovedFromChannelEventStringJson
@@ -90,6 +91,7 @@ import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -129,6 +131,7 @@ internal object EventArguments {
     private const val parentMessageId = "parentMessageId"
     private const val watcherCount = 3
     private const val unreadChannels = 5
+    private const val unreadMessages = 1
     private const val totalUnreadCount = 4
     private val user = User(
         id = "bender",
@@ -431,6 +434,21 @@ internal object EventArguments {
         totalUnreadCount = totalUnreadCount,
         unreadChannels = unreadChannels,
     )
+    private val notificationMarkUnreadEvent = NotificationMarkUnreadEvent(
+        type = EventType.NOTIFICATION_MARK_UNREAD,
+        createdAt = date,
+        rawCreatedAt = streamDateFormatter.format(date),
+        user = user,
+        cid = cid,
+        channelType = channelType,
+        channelId = channelId,
+        totalUnreadCount = totalUnreadCount,
+        unreadChannels = unreadChannels,
+        unreadMessages = unreadMessages,
+        firstUnreadMessageId = message.id,
+        lastReadMessageAt = date,
+        lastReadMessageId = parentMessageId,
+    )
     private val notificationMessageNewEvent = NotificationMessageNewEvent(
         type = EventType.NOTIFICATION_MESSAGE_NEW,
         createdAt = date,
@@ -667,6 +685,7 @@ internal object EventArguments {
         notificationInviteRejectedEvent,
         notificationInvitedEvent,
         notificationMarkReadEvent,
+        notificationMarkUnreadEvent,
         notificationMessageNewEvent,
         notificationRemovedFromChannelEvent,
         reactionDeletedEvent,
@@ -712,6 +731,7 @@ internal object EventArguments {
         Arguments.of(createNotificationInviteRejectedEventStringJson(), notificationInviteRejectedEvent),
         Arguments.of(createNotificationInvitedEventStringJson(), notificationInvitedEvent),
         Arguments.of(createNotificationMarkReadEventStringJson(), notificationMarkReadEvent),
+        Arguments.of(createNotificationMarkUnreadEventStringJson(), notificationMarkUnreadEvent),
         Arguments.of(createNotificationMessageNewEventStringJson(), notificationMessageNewEvent),
         Arguments.of(createNotificationRemovedFromChannelEventStringJson(), notificationRemovedFromChannelEvent),
         Arguments.of(createReactionDeletedEventStringJson(), reactionDeletedEvent),
