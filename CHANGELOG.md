@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed `MessageClickListener` never being called. [#5096](https://github.com/GetStream/stream-chat-android/pull/5096)
 
 ### ⬆️ Improved
 
