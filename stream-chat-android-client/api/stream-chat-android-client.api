@@ -2319,6 +2319,21 @@ public final class io/getstream/chat/android/client/extensions/internal/Reaction
 public final class io/getstream/chat/android/client/extensions/internal/UserKt {
 }
 
+public final class io/getstream/chat/android/client/header/VersionPrefixHeader$Compose : io/getstream/chat/android/client/header/VersionPrefixHeader {
+	public static final field INSTANCE Lio/getstream/chat/android/client/header/VersionPrefixHeader$Compose;
+	public fun getPrefix ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/header/VersionPrefixHeader$Default : io/getstream/chat/android/client/header/VersionPrefixHeader {
+	public static final field INSTANCE Lio/getstream/chat/android/client/header/VersionPrefixHeader$Default;
+	public fun getPrefix ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/header/VersionPrefixHeader$UiComponents : io/getstream/chat/android/client/header/VersionPrefixHeader {
+	public static final field INSTANCE Lio/getstream/chat/android/client/header/VersionPrefixHeader$UiComponents;
+	public fun getPrefix ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/interceptor/SendMessageInterceptor$DefaultImpls {
 	public static synthetic fun interceptMessage$default (Lio/getstream/chat/android/client/interceptor/SendMessageInterceptor;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/models/Message;ZLkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 }

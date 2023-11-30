@@ -176,7 +176,7 @@ public fun ChatTheme(
     content: @Composable () -> Unit,
 ) {
     LaunchedEffect(Unit) {
-        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.COMPOSE
+        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.Compose
     }
 
     CompositionLocalProvider(
