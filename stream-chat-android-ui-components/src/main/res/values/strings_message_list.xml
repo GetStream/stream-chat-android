@@ -46,6 +46,7 @@
     <string name="stream_ui_message_list_thread_reply">Thread reply</string>
     <string name="stream_ui_message_list_resend_message">Resend</string>
     <string name="stream_ui_message_list_copy_message">Copy Message</string>
+    <string name="stream_ui_message_list_mark_as_unread">Mark as Unread</string>
     <string name="stream_ui_message_list_edit_message">Edit Message</string>
     <string name="stream_ui_message_list_flag_message">Flag Message</string>
     <string name="stream_ui_message_list_pin_message">Pin to Conversation</string>
