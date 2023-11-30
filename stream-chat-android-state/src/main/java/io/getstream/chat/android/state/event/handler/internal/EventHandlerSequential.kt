@@ -265,6 +265,7 @@ internal class EventHandlerSequential(
         }
     }
 
+    @SuppressWarnings("LongMethod", "NestedBlockDepth")
     private suspend fun updateGlobalState(batchEvent: BatchEvent) {
         logger.v { "[updateGlobalState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
 
@@ -272,14 +273,15 @@ internal class EventHandlerSequential(
         var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
         var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
 
-        val modifyValues = { event: HasUnreadCounts ->
-            me =
-                me?.copy(
-                    totalUnreadCount = event.totalUnreadCount,
-                    unreadChannels = event.unreadChannels,
-                )
-            totalUnreadCount = (event.totalUnreadCount)
-            channelUnreadCount = (event.unreadChannels)
+        val modifyValuesFromEvent = { event: HasUnreadCounts ->
+            totalUnreadCount = event.totalUnreadCount
+            channelUnreadCount = event.unreadChannels
+        }
+
+        val modifyValuesFromUser = { user: User ->
+            me = user
+            totalUnreadCount = user.totalUnreadCount
+            channelUnreadCount = user.unreadChannels
         }
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
@@ -287,46 +289,38 @@ internal class EventHandlerSequential(
             repos.hasReadEventsCapability(cid)
         }
 
-        val currentUser = clientState.user.value
-
         batchEvent.sortedEvents.forEach { event: ChatEvent ->
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection && event.me.id == currentUserId) {
-                    me = event.me
-                    totalUnreadCount = event.me.totalUnreadCount
-                    channelUnreadCount = event.me.unreadChannels
+                    modifyValuesFromUser(event.me)
                 }
                 is NotificationMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    me = event.me
-                    totalUnreadCount = event.me.totalUnreadCount
-                    channelUnreadCount = event.me.unreadChannels
+                    modifyValuesFromUser(event.me)
                 }
                 is NotificationChannelMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    me = event.me
-                    totalUnreadCount = event.me.totalUnreadCount
-                    channelUnreadCount = event.me.unreadChannels
+                    modifyValuesFromUser(event.me)
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    mutableGlobalState.updateCurrentUser(currentUser, SelfUserPart(event.user))
+                    mutableGlobalState.updateCurrentUser(me, SelfUserPart(event.user))
                     me = me?.mergePartially(event.user) ?: event.user
                 }
                 is MarkAllReadEvent -> {
-                    modifyValues(event)
+                    modifyValuesFromEvent(event)
                 }
                 is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
-                        modifyValues(event)
+                        modifyValuesFromEvent(event)
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
-                        modifyValues(event)
+                        modifyValuesFromEvent(event)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
-                        modifyValues(event)
+                        modifyValuesFromEvent(event)
                     }
                 }
                 else -> Unit
@@ -340,13 +334,7 @@ internal class EventHandlerSequential(
         }
         mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
         mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
-
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
-    }
-
-    private fun updateGlobalState(chatEvent: HasUnreadCounts) {
-        mutableGlobalState.setTotalUnreadCount(chatEvent.totalUnreadCount)
-        mutableGlobalState.setChannelUnreadCount(chatEvent.unreadChannels)
     }
 
     private suspend fun updateChannelsState(batchEvent: BatchEvent) {
