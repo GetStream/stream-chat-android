@@ -1973,6 +1973,30 @@ public final class io/getstream/chat/android/client/extensions/internal/Reaction
 public final class io/getstream/chat/android/client/extensions/internal/UserKt {
 }
 
+public final class io/getstream/chat/android/client/header/VersionPrefixHeader$Compose : io/getstream/chat/android/client/header/VersionPrefixHeader {
+	public static final field INSTANCE Lio/getstream/chat/android/client/header/VersionPrefixHeader$Compose;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPrefix ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/header/VersionPrefixHeader$Default : io/getstream/chat/android/client/header/VersionPrefixHeader {
+	public static final field INSTANCE Lio/getstream/chat/android/client/header/VersionPrefixHeader$Default;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPrefix ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/header/VersionPrefixHeader$UiComponents : io/getstream/chat/android/client/header/VersionPrefixHeader {
+	public static final field INSTANCE Lio/getstream/chat/android/client/header/VersionPrefixHeader$UiComponents;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getPrefix ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/client/interceptor/message/PrepareMessageLogic {
 	public abstract fun prepareMessage (Lio/getstream/chat/android/models/Message;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 }

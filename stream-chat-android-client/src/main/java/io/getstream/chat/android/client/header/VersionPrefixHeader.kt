@@ -24,19 +24,27 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  * @param prefix Header for particular SDK.
  */
 @InternalStreamChatApi
-public enum class VersionPrefixHeader(public val prefix: String) {
+public sealed class VersionPrefixHeader {
+    public abstract val prefix: String
+
     /**
      * Low-level client.
      */
-    DEFAULT("stream-chat-android-"),
+    public data object Default : VersionPrefixHeader() {
+        override val prefix: String = "stream-chat-android-"
+    }
 
     /**
      * XML based UI components.
      */
-    UI_COMPONENTS("stream-chat-android-ui-components-"),
+    public data object UiComponents : VersionPrefixHeader() {
+        override val prefix: String = "stream-chat-android-ui-components-"
+    }
 
     /**
      * Compose UI components.
      */
-    COMPOSE("stream-chat-android-compose-"),
+    public data object Compose : VersionPrefixHeader() {
+        override val prefix: String = "stream-chat-android-compose-"
+    }
 }

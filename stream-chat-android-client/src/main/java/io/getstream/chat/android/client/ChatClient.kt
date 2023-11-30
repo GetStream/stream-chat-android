@@ -3293,7 +3293,7 @@ internal constructor(
          */
         @InternalStreamChatApi
         @JvmStatic
-        public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.DEFAULT
+        public var VERSION_PREFIX_HEADER: VersionPrefixHeader = VersionPrefixHeader.Default
 
         /**
          * Flag used to track whether offline support is enabled.

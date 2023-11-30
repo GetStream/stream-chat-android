@@ -28,7 +28,7 @@ import io.getstream.chat.android.ui.ChatUI
 public class ChatUIInitializer : Initializer<Unit> {
 
     override fun create(context: Context) {
-        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UI_COMPONENTS
+        ChatClient.VERSION_PREFIX_HEADER = VersionPrefixHeader.UiComponents
         ChatUI.appContext = context
     }
 
