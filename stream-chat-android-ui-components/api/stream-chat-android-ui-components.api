@@ -1975,6 +1975,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setMessageItemTransformer (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageListItemTransformer;)V
 	public final fun setMessageListItemPredicate (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageListItemPredicate;)V
 	public final fun setMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageLongClickListener;)V
+	public final fun setMessageMarkAsUnreadHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageMarkAsUnreadHandler;)V
 	public final fun setMessageOptionItemsFactory (Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory;)V
 	public final fun setMessagePinHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagePinHandler;)V
 	public final fun setMessageReactionHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageReactionHandler;)V
@@ -2094,6 +2095,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageLongClickListener {
 	public abstract fun onMessageLongClick (Lio/getstream/chat/android/models/Message;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$MessageMarkAsUnreadHandler {
+	public abstract fun onMessageMarkAsUnread (Lio/getstream/chat/android/models/Message;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$MessagePinHandler {
@@ -3811,6 +3816,17 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$LastMessageRead : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$LastMessageRead;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MarkAsUnreadMessage : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MarkAsUnreadMessage;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MarkAsUnreadMessage;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MarkAsUnreadMessage;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

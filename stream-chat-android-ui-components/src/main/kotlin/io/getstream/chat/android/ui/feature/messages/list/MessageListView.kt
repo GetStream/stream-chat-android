@@ -55,6 +55,7 @@ import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
+import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.React
@@ -218,6 +219,9 @@ public class MessageListView : ConstraintLayout {
     private var messagePinHandler = MessagePinHandler {
         throw IllegalStateException("onMessagePinHandler must be set.")
     }
+    private var messageMarkAsUnreadHandler = MessageMarkAsUnreadHandler {
+        throw IllegalStateException("onMessageMarkAsUnreadHandler must be set.")
+    }
     private var messageUnpinHandler = MessageUnpinHandler {
         throw IllegalStateException("onMessageUnpinHandler must be set.")
     }
@@ -310,6 +314,8 @@ public class MessageListView : ConstraintLayout {
             is MessageListController.ErrorEvent.FlagMessageError -> R.string.stream_ui_message_list_error_flag_message
             is MessageListController.ErrorEvent.PinMessageError -> R.string.stream_ui_message_list_error_pin_message
             is MessageListController.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
+            is MessageListController.ErrorEvent.MarkUnreadError ->
+                R.string.stream_ui_message_list_error_mark_as_unread_message
         }.let(::showToast)
     }
 
@@ -1428,6 +1434,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used to handle when the message is going to be marked as read.
+     *
+     * @param MessageMarkAsUnreadHandler The handler to use.
+     */
+    public fun setMessageMarkAsUnreadHandler(messageMarkAsUnreadHandler: MessageMarkAsUnreadHandler) {
+        this.messageMarkAsUnreadHandler = messageMarkAsUnreadHandler
+    }
+
+    /**
      * Sets the handler used to handle when the message is going to be unpinned.
      *
      * @param messageUnpinHandler The handler to use.
@@ -1632,6 +1647,7 @@ public class MessageListView : ConstraintLayout {
                     messagePinHandler.onMessagePin(message)
                 }
             }
+            is MarkAsUnread -> messageMarkAsUnreadHandler.onMessageMarkAsUnread(message)
             is Delete -> {
                 if (style.deleteConfirmationEnabled) {
                     confirmDeleteMessageHandler.onConfirmDeleteMessage(message) {
@@ -1759,6 +1775,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessagePinHandler {
         public fun onMessagePin(message: Message)
+    }
+
+    public fun interface MessageMarkAsUnreadHandler {
+        public fun onMessageMarkAsUnread(message: Message)
     }
 
     public fun interface MessageUnpinHandler {
