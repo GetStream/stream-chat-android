@@ -62,6 +62,9 @@ internal class MessagePlainTextViewHolder(
                 avatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
+                messageText.setOnClickListener {
+                    container.messageClickListener.onMessageClick(data.message)
+                }
                 LongClickFriendlyLinkMovementMethod.set(
                     textView = messageText,
                     longClickTarget = messageContainer,
