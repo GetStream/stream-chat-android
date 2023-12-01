@@ -12,7 +12,6 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fixed audio recording not being uploaded [#5067](https://github.com/GetStream/stream-chat-android/pull/5067)
 
 ### ⬆️ Improved
 
@@ -57,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed `MessageClickListener` never being called. [#5095](https://github.com/GetStream/stream-chat-android/pull/5095)
 
 ### ⬆️ Improved
 
@@ -121,6 +119,15 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 1st, 2023 - 5.17.19
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed audio recording not being uploaded [#5067](https://github.com/GetStream/stream-chat-android/pull/5067)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed `MessageClickListener` never being called. [#5095](https://github.com/GetStream/stream-chat-android/pull/5095)
 
 # November 13th, 2023 - 5.17.18
 ## stream-chat-android-client
