@@ -87,9 +87,7 @@ import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventCollector
-import io.getstream.chat.android.state.event.handler.internal.model.SelfUserPart
 import io.getstream.chat.android.state.event.handler.internal.utils.realType
-import io.getstream.chat.android.state.event.handler.internal.utils.updateCurrentUser
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -302,8 +300,7 @@ internal class EventHandlerSequential(
                     modifyValuesFromUser(event.me)
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    mutableGlobalState.updateCurrentUser(me, SelfUserPart(event.user))
-                    me = me?.mergePartially(event.user) ?: event.user
+                    modifyValuesFromUser(me?.mergePartially(event.user) ?: event.user)
                 }
                 is MarkAllReadEvent -> {
                     modifyValuesFromEvent(event)
