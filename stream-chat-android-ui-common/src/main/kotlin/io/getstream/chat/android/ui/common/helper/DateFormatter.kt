@@ -25,7 +25,6 @@ import androidx.annotation.RequiresApi
 import io.getstream.chat.android.ui.common.R
 import java.text.SimpleDateFormat
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
