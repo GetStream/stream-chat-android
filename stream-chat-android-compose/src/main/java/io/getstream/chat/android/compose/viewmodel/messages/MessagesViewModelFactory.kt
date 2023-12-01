@@ -93,8 +93,8 @@ public class MessagesViewModelFactory(
     private val threadDateSeparatorHandler: DateSeparatorHandler =
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
-    private val showDateSeparatorInEmptyThread: Boolean = true,
-    private val showThreadSeparatorInEmptyThread: Boolean = true,
+    private val showDateSeparatorInEmptyThread: Boolean = false,
+    private val showThreadSeparatorInEmptyThread: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
