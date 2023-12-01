@@ -697,8 +697,8 @@ public class MessageListController(
         val isThreadWithNoReplies = isInThread && messages.size == 1
         val isThreadWithReplies = isInThread && messages.size > 1
         val shouldAddDateSeparatorInEmptyThread = isThreadWithNoReplies && showDateSeparatorInEmptyThread
-        val shouldAddThreadSeparator = isThreadWithReplies
-            || (isThreadWithNoReplies && showThreadSeparatorInEmptyThread)
+        val shouldAddThreadSeparator = isThreadWithReplies ||
+            (isThreadWithNoReplies && showThreadSeparatorInEmptyThread)
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
