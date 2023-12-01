@@ -105,9 +105,6 @@ public final class io/getstream/chat/android/core/internal/fsm/FiniteStateMachin
 public final class io/getstream/chat/android/core/internal/lazy/ParameterizedLazyKt {
 }
 
-public final class io/getstream/chat/android/core/internal/utils/MutableValueKt {
-}
-
 public final class io/getstream/chat/android/core/utils/date/DateUtils {
 }
 

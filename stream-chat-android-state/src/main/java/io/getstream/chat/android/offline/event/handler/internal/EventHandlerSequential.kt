@@ -84,8 +84,6 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
-import io.getstream.chat.android.core.internal.utils.MutableValue
-import io.getstream.chat.android.core.internal.utils.useIfModified
 import io.getstream.chat.android.offline.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.offline.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.offline.event.handler.internal.utils.realType
@@ -275,19 +273,23 @@ internal class EventHandlerSequential(
     private suspend fun updateGlobalState(batchEvent: BatchEvent) {
         logger.v { "[updateGlobalState] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size}" }
 
-        val me = MutableValue(mutableGlobalState.clientState.user.value)
-        val totalUnreadCount = MutableValue(mutableGlobalState.totalUnreadCount.value)
-        val channelUnreadCount = MutableValue(mutableGlobalState.channelUnreadCount.value)
+        var me = mutableGlobalState.clientState.user.value
+        var totalUnreadCount = mutableGlobalState.totalUnreadCount.value
+        var channelUnreadCount = mutableGlobalState.channelUnreadCount.value
 
-        val modifyValues = { event: HasUnreadCounts ->
-            me.modify {
-                it?.copy(
-                    totalUnreadCount = event.totalUnreadCount,
-                    unreadChannels = event.unreadChannels
-                )
-            }
-            totalUnreadCount.set(event.totalUnreadCount)
-            channelUnreadCount.set(event.unreadChannels)
+        val modifyValuesFromEvent = { event: HasUnreadCounts ->
+            me = me?.copy(
+                totalUnreadCount = event.totalUnreadCount,
+                unreadChannels = event.unreadChannels
+            )
+            totalUnreadCount = event.totalUnreadCount
+            channelUnreadCount = event.unreadChannels
+        }
+
+        val modifyValuesFromUser = { user: User ->
+            me = user
+            totalUnreadCount = user.totalUnreadCount
+            channelUnreadCount = user.unreadChannels
         }
 
         val hasReadEventsCapability = parameterizedLazy<String, Boolean> { cid ->
@@ -299,59 +301,48 @@ internal class EventHandlerSequential(
             // connection events are never send on the recovery endpoint, so handle them 1 by 1
             when (event) {
                 is ConnectedEvent -> if (batchEvent.isFromSocketConnection && event.me.id == currentUserId) {
-                    me.set(event.me)
-                    totalUnreadCount.set(event.me.totalUnreadCount)
-                    channelUnreadCount.set(event.me.unreadChannels)
+                    modifyValuesFromUser(event.me)
                 }
                 is NotificationMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    me.set(event.me)
-                    totalUnreadCount.set(event.me.totalUnreadCount)
-                    channelUnreadCount.set(event.me.unreadChannels)
+                    modifyValuesFromUser(event.me)
                 }
                 is NotificationChannelMutesUpdatedEvent -> if (event.me.id == currentUserId) {
-                    me.set(event.me)
-                    totalUnreadCount.set(event.me.totalUnreadCount)
-                    channelUnreadCount.set(event.me.unreadChannels)
+                    modifyValuesFromUser(event.me)
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
-                    me.modify { it?.mergePartially(event.user) ?: event.user }
+                    modifyValuesFromUser(me?.mergePartially(event.user) ?: event.user)
                 }
                 is MarkAllReadEvent -> {
-                    modifyValues(event)
+                    modifyValuesFromEvent(event)
                 }
                 is NotificationMessageNewEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
-                        modifyValues(event)
+                        modifyValuesFromEvent(event)
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
-                        modifyValues(event)
+                        modifyValuesFromEvent(event)
                     }
                 }
                 is NewMessageEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
-                        modifyValues(event)
+                        modifyValuesFromEvent(event)
                     }
                 }
                 else -> Unit
             }
         }
 
-        me.useIfModified {
-            if (it == null) return@useIfModified
+        me?.also {
             mutableGlobalState.clientState.toMutableState()?.setUser(it)
             mutableGlobalState.setBanned(it.banned)
             mutableGlobalState.setMutedUsers(it.mutes)
             mutableGlobalState.setChannelMutes(it.channelMutes)
         }
 
-        totalUnreadCount.useIfModified {
-            mutableGlobalState.setTotalUnreadCount(it)
-        }
-        channelUnreadCount.useIfModified {
-            mutableGlobalState.setChannelUnreadCount(it)
-        }
+        mutableGlobalState.setTotalUnreadCount(totalUnreadCount)
+        mutableGlobalState.setChannelUnreadCount(channelUnreadCount)
         logger.v { "[updateGlobalState] completed batchId: ${batchEvent.id}" }
     }
 
