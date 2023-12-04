@@ -45,6 +45,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed broken date formatting. [#5101](https://github.com/GetStream/stream-chat-android/pull/5101)
 
 ### ⬆️ Improved
 

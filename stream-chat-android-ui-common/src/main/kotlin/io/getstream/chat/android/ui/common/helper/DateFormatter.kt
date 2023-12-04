@@ -25,7 +25,6 @@ import androidx.annotation.RequiresApi
 import io.getstream.chat.android.ui.common.R
 import java.text.SimpleDateFormat
 import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -96,28 +95,28 @@ internal class DefaultDateFormatter(
     private val timeFormatter12hNew: DateTimeFormatter by lazy {
         DateTimeFormatter.ofPattern(TIME_FORMAT_12H)
             .withLocale(locale)
-            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+            .withZone(ZoneId.systemDefault())
     }
 
     @delegate:RequiresApi(Build.VERSION_CODES.O)
     private val timeFormatter24hNew: DateTimeFormatter by lazy {
         DateTimeFormatter.ofPattern(TIME_FORMAT_24H)
             .withLocale(locale)
-            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+            .withZone(ZoneId.systemDefault())
     }
 
     @delegate:RequiresApi(Build.VERSION_CODES.O)
     private val dateFormatterDayOfWeekNew: DateTimeFormatter by lazy {
         DateTimeFormatter.ofPattern(DATE_FORMAT_DAY_OF_WEEK)
             .withLocale(locale)
-            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+            .withZone(ZoneId.systemDefault())
     }
 
     private val dateFormatterFullDateNew: DateTimeFormatter
         @SuppressLint("NewApi")
         get() = DateTimeFormatter.ofPattern(dateContext.dateTimePattern())
             .withLocale(locale)
-            .withZone(ZoneId.of(ZoneOffset.UTC.id))
+            .withZone(ZoneId.systemDefault())
 
     /**
      * Formats the given date as a String.
