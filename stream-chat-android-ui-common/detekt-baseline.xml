@@ -20,6 +20,7 @@
     <ID>MagicNumber:DurationFormatter.kt$DurationFormatter$1000</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun completeRecording()</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun toggleRecordingPlayback()</ID>
+    <ID>ReturnCount:StorageHelper.kt$StorageHelper$public fun getCachedFileFromUri( context: Context, attachmentMetaData: AttachmentMetaData, ): File?</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$exception: Exception</ID>

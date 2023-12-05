@@ -148,7 +148,6 @@ private fun AttachmentPickerOptions(
     onTabClick: (Int, AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
-
     Row(
         Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
