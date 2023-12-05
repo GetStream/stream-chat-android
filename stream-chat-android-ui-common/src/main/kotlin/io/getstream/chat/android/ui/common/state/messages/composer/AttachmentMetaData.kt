@@ -35,6 +35,7 @@ public data class AttachmentMetaData(
     var mimeType: String? = null,
     var title: String? = null,
     var file: File? = null,
+    var extraData: Map<String, Any> = mapOf(),
 ) {
     var size: Long = 0
     var isSelected: Boolean = false

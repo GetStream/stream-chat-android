@@ -26,7 +26,7 @@ internal fun AttachmentMetaData.toAttachment(context: Context): Attachment {
     return Attachment(
         upload = fileFromUri,
         type = type,
-        name = title ?: fileFromUri.name ?: "",
+        name = title ?: fileFromUri?.name ?: "",
         fileSize = size.toInt(),
         mimeType = mimeType,
         title = title,

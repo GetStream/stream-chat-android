@@ -81,9 +81,10 @@ public class StorageHelperWrapper(
             Attachment(
                 upload = fileFromUri,
                 type = it.type,
-                name = it.title ?: fileFromUri.name ?: "",
+                name = it.title ?: fileFromUri?.name ?: "",
                 fileSize = it.size.toInt(),
                 mimeType = it.mimeType,
+                extraData = it.extraData,
             )
         }
     }
