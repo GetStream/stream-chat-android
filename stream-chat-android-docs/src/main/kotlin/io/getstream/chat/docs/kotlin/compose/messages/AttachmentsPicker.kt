@@ -216,6 +216,11 @@ private object AttachmentsPickerCustomizationSnippet {
             override val attachmentsPickerMode: AttachmentsPickerMode
                 get() = CustomPickerMode()
 
+            override fun isPickerTabEnabled(): Boolean {
+                // Return true if the tab should be enabled
+                return true
+            }
+
             @Composable
             override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
                 Icon(
