@@ -62,7 +62,9 @@ import java.io.File
  * @param dateSeparatorHandler Handler that determines when the date separators should be visible.
  * @param threadDateSeparatorHandler Handler that determines when the thread date separators should be visible.
  * @param messagePositionHandler Determines the position of the message inside a group.
- * @param showDateSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
+ * @param showDateSeparatorInEmptyThread Configures if we show a date separator when threads are empty.
+ * Adds the separator item when the value is `true`.
+ * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
  */
 public class MessagesViewModelFactory(
@@ -92,6 +94,7 @@ public class MessagesViewModelFactory(
         DateSeparatorHandler.getDefaultThreadDateSeparatorHandler(),
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
     private val showDateSeparatorInEmptyThread: Boolean = false,
+    private val showThreadSeparatorInEmptyThread: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -130,6 +133,7 @@ public class MessagesViewModelFactory(
                     threadDateSeparatorHandler = threadDateSeparatorHandler,
                     messagePositionHandler = messagePositionHandler,
                     showDateSeparatorInEmptyThread = showDateSeparatorInEmptyThread,
+                    showThreadSeparatorInEmptyThread = showThreadSeparatorInEmptyThread,
                 ),
             )
         },
