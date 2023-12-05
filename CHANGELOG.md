@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Create new feature to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
+- Add a new `NotificationMarkUnreadEvent` event type. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
 
 ### ⚠️ Changed
 
@@ -60,6 +62,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add a new menu option to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
 
 ### ⚠️ Changed
 
