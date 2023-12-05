@@ -33,7 +33,9 @@ public interface AttachmentsPickerTabFactory {
     public val attachmentsPickerMode: AttachmentsPickerMode
 
     /**
-     * Returns if the tab is enabled.
+     * Determines if the picker tab is enabled.
+     *
+     * @return True if the tab is enabled, false otherwise.
      */
     public fun isPickerTabEnabled(): Boolean = true
 
