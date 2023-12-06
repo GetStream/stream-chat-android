@@ -10,6 +10,21 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+- 🚨Breaking change: The following properties in `User` class are now **nullable**: `banned`, `invisible`. [#5107](https://github.com/GetStream/stream-chat-android/pull/5107)
+  * Please use `User.isBanned` as non-nullable version.
+  * Please use `User.isInvisible` as non-nullable version.
+  * Properties such as `invisible`, `banned`, `teams` and `role` are not being used to establish WS connection flow if not specified.
+
+### ❌ Removed
+
 ## stream-chat-android-client
 ### 🐞 Fixed
 
