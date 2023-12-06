@@ -64,8 +64,14 @@ public data class User(
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
 
+    /**
+     * Determines if the user is banned or not.
+     */
     val isBanned: Boolean get() = banned == true
 
+    /**
+     * Determines if the user should share its online status.
+     */
     val isInvisible: Boolean get() = invisible == true
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
