@@ -95,10 +95,10 @@ internal class SocketFactory(
     private fun ConnectionConf.reduceUserDetails(): Map<String, Any> = mutableMapOf<String, Any>("id" to id)
         .apply {
             if (!isReconnection) {
-                put("role", user.role)
-                put("banned", user.banned)
-                put("invisible", user.invisible)
-                put("teams", user.teams)
+                if (user.role.isNotBlank()) put("role", user.role)
+                user.banned?.also { put("banned", it) }
+                if (user.teams.isNotEmpty()) put("teams", user.teams)
+                user.invisible?.also { put("invisible", it) }
                 if (user.language.isNotBlank()) put("language", user.language)
                 if (user.image.isNotBlank()) put("image", user.image)
                 if (user.name.isNotBlank()) put("name", user.name)

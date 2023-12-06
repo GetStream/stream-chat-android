@@ -118,8 +118,8 @@ internal class DatabaseUserRepository(
             createdAt = createdAt,
             updatedAt = updatedAt,
             lastActive = lastActive,
-            invisible = invisible,
-            banned = banned,
+            invisible = isInvisible,
+            banned = isBanned,
             extraData = extraData,
             mutes = mutes.map { mute -> mute.target.id }
         )
