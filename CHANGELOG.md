@@ -34,6 +34,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix wrong Message.ownReactions. [#5106](https://github.com/GetStream/stream-chat-android/pull/5106)
 
 ### ⬆️ Improved
 
