@@ -336,7 +336,7 @@ internal class EventHandlerSequential(
 
         me?.also {
             mutableGlobalState.clientState.toMutableState()?.setUser(it)
-            mutableGlobalState.setBanned(it.banned)
+            mutableGlobalState.setBanned(it.isBanned)
             mutableGlobalState.setMutedUsers(it.mutes)
             mutableGlobalState.setChannelMutes(it.channelMutes)
         }

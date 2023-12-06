@@ -123,9 +123,8 @@ internal class SocketFactoryTest {
                 mapOf(
                     "id" to userId,
                     "role" to user.role,
-                    "banned" to user.banned,
-                    "invisible" to user.invisible,
-                    "teams" to user.teams,
+                    "banned" to user.isBanned,
+                    "invisible" to user.isInvisible,
                     "language" to user.language,
                     "image" to user.image,
                     "name" to user.name,

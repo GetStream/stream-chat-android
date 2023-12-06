@@ -47,9 +47,9 @@ public data class User(
     var role: String = "",
     var name: String = "",
     var image: String = "",
-    var invisible: Boolean = false,
+    var invisible: Boolean? = null,
     var language: String = "",
-    var banned: Boolean = false,
+    var banned: Boolean? = null,
     var devices: List<Device> = mutableListOf(),
     var online: Boolean = false,
     var createdAt: Date? = null,
@@ -63,6 +63,16 @@ public data class User(
     override var extraData: MutableMap<String, Any> = mutableMapOf(),
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
+
+    /**
+     * Determines if the user is banned or not.
+     */
+    val isBanned: Boolean get() = banned == true
+
+    /**
+     * Determines if the user should share its online status.
+     */
+    val isInvisible: Boolean get() = invisible == true
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {

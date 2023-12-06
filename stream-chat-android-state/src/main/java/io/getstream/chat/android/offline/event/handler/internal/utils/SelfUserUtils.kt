@@ -35,8 +35,7 @@ internal fun MutableGlobalState.updateCurrentUser(self: SelfUser) {
     }
 
     clientState.toMutableState()?.setUser(me)
-    setBanned(me.banned)
-    setBanned(me.banned)
+    setBanned(me.isBanned)
     setMutedUsers(me.mutes)
     setChannelMutes(me.channelMutes)
     setTotalUnreadCount(me.totalUnreadCount)
