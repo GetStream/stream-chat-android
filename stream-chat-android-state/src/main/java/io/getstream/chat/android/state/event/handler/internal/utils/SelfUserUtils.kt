@@ -32,7 +32,7 @@ internal fun MutableGlobalState.updateCurrentUser(currentUser: User?, receivedUs
         is SelfUserPart -> currentUser?.mergePartially(receivedUser.me) ?: receivedUser.me
     }
 
-    setBanned(me.banned)
+    setBanned(me.isBanned)
     setMutedUsers(me.mutes)
     setChannelMutes(me.channelMutes)
     setTotalUnreadCount(me.totalUnreadCount)
