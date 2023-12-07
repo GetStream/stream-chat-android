@@ -35,7 +35,7 @@ internal val String.Companion.EMPTY: String
 internal fun String.getOccurrenceRanges(items: List<String>? = null, ignoreCase: Boolean = false): List<IntRange> {
     val regexOptions: Set<RegexOption> = setOfNotNull(RegexOption.IGNORE_CASE.takeIf { ignoreCase })
     return items?.flatMap { item ->
-        Regex(item, regexOptions).findAll(this).map { it.range }
+        Regex(Regex.escape(item), regexOptions).findAll(this).map { it.range }
     } ?: listOf(0 until length)
 }
 
