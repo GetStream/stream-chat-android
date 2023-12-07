@@ -60,6 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix: Regex was not correctly escaped in getOccurrenceRanges [#5108](https://github.com/GetStream/stream-chat-android/pull/5108)
 
 ### ⬆️ Improved
 
