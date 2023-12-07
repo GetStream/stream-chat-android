@@ -63,6 +63,7 @@
 - Fixed `MessageClickListener` never being called. [#5096](https://github.com/GetStream/stream-chat-android/pull/5096)
 - Fixed thread separator ui order. [#5098](https://github.com/GetStream/stream-chat-android/pull/5098)
   * `MessageListViewModelFactory.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads.
+- Fixed: Regex was not correctly escaped in getOccurrenceRanges [#5109](https://github.com/GetStream/stream-chat-android/pull/5109)
 
 ### ⬆️ Improved
 
