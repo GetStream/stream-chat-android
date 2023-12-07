@@ -18,10 +18,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- 🚨Breaking change: The following properties in `User` class are now **nullable**: `banned`, `invisible`. [#5105](https://github.com/GetStream/stream-chat-android/pull/5105)
-  * Please use `User.isBanned` as non-nullable version. 
-  * Please use `User.isInvisible` as non-nullable version. 
-  * Properties such as `invisible`, `banned`, `teams` and `role` are not being used to establish WS connection flow if not specified.
 
 ### ❌ Removed
 
@@ -60,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fix: Regex was not correctly escaped in getOccurrenceRanges [#5108](https://github.com/GetStream/stream-chat-android/pull/5108)
 
 ### ⬆️ Improved
 
@@ -124,6 +119,18 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# December 7th, 2023 - 5.17.20
+## stream-chat-android-client
+### ⚠️ Changed
+- 🚨Breaking change: The following properties in `User` class are now **nullable**: `banned`, `invisible`. [#5105](https://github.com/GetStream/stream-chat-android/pull/5105)
+  * Please use `User.isBanned` as non-nullable version.
+  * Please use `User.isInvisible` as non-nullable version.
+  * Properties such as `invisible`, `banned`, `teams` and `role` are not being used to establish WS connection flow if not specified.
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fix: Regex was not correctly escaped in getOccurrenceRanges [#5108](https://github.com/GetStream/stream-chat-android/pull/5108)
 
 # December 1st, 2023 - 5.17.19
 ## stream-chat-android-client
