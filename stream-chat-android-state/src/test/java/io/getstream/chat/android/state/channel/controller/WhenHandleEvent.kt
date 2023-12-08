@@ -71,6 +71,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
     private val channelMutableState: ChannelMutableState = ChannelMutableState(
         "type1",
         channelId,
+        testCoroutines.scope,
         userFlow,
         MutableStateFlow(
             mapOf(currentUser.id to currentUser),

@@ -35,6 +35,7 @@
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fix wrong Message.ownReactions. [#5106](https://github.com/GetStream/stream-chat-android/pull/5106)
+- Fix scroll to last message doesn't work (revert [#5083](https://github.com/GetStream/stream-chat-android/pull/5083)) [#5111](https://github.com/GetStream/stream-chat-android/pull/5111)
 
 ### ⬆️ Improved
 
