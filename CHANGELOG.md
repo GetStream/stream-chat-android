@@ -14,6 +14,11 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Protected PN related requests from repeated usage. [#5110](https://github.com/GetStream/stream-chat-android/pull/5110)
+  * Prevented `ChatClient.getDevices` from duplicate requests.
+  * Prevented `ChatClient.addDevice` from duplicate requests.
+  * Prevented `ChatClient.deleteDevice` from duplicate requests.
+  * Added debouncing logic `PushTokenUpdateHandler`
 
 ### ✅ Added
 
