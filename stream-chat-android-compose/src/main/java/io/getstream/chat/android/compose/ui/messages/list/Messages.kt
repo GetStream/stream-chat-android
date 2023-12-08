@@ -283,7 +283,7 @@ internal fun BoxScope.DefaultMessagesHelperContent(
 
         if (shouldScrollToBottom) {
             coroutineScope.launch {
-                if (newMessageState == MyOwn && firstVisibleItemIndex.value > 5) {
+                if (newMessageState is MyOwn && firstVisibleItemIndex.value > 5) {
                     lazyListState.scrollToItem(5)
                 }
                 lazyListState.animateScrollToItem(0)
