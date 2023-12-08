@@ -18,7 +18,7 @@
   * Prevented `ChatClient.getDevices` from duplicate requests.
   * Prevented `ChatClient.addDevice` from duplicate requests.
   * Prevented `ChatClient.deleteDevice` from duplicate requests.
-  * Added debouncing logic `PushTokenUpdateHandler`
+  * Added debouncing logic into `PushTokenUpdateHandler`
 
 ### ✅ Added
 
