@@ -7,6 +7,7 @@
     <ID>ComplexMethod:User.kt$User$override fun getComparableField(fieldName: String): Comparable&lt;*>?</ID>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
     <ID>MagicNumber:Attachment.kt$Attachment$9</ID>
+    <ID>MagicNumber:Identifiers.kt$31</ID>
     <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$100</ID>
     <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$10000</ID>
     <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$100f</ID>
@@ -15,6 +16,7 @@
     <ID>MaxLineLength:Reaction.kt$*</ID>
     <ID>MaxLineLength:UserStateServiceTests.kt$UserStateServiceTests.Fixture$suspend fun givenUserSetState(user: User = Mother.randomUser())</ID>
     <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
+    <ID>ReturnCount:PushTokenUpdateHandler.kt$PushTokenUpdateHandler$private suspend fun removeStoredDeviceInternal(): Boolean</ID>
     <ID>TooGenericExceptionCaught:StreamPayloadParser.kt$StreamPayloadParser$e: Throwable</ID>
     <ID>UnusedPrivateMember:BaseChatModule.kt$BaseChatModule$private val clientScope: ClientScope</ID>
     <ID>UnusedPrivateMember:ChatEventsObservable.kt$ChatEventsObservable$private val logger = StreamLog.getLogger("Chat:EventsObservable")</ID>
