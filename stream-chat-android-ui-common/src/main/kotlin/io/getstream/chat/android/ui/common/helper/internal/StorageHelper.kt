@@ -40,12 +40,9 @@ public class StorageHelper {
     public fun getCachedFileFromUri(
         context: Context,
         attachmentMetaData: AttachmentMetaData,
-    ): File {
+    ): File? {
         if (attachmentMetaData.file == null && attachmentMetaData.uri == null) {
-            throw IllegalStateException(
-                "Unable to create cache file for attachment: $attachmentMetaData. " +
-                    "Either file or URI cannot be null.",
-            )
+            return null
         }
         if (attachmentMetaData.file != null) {
             return attachmentMetaData.file!!

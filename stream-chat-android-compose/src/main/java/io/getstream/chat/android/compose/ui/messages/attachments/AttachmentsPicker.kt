@@ -33,7 +33,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,7 +73,8 @@ public fun AttachmentsPicker(
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    val defaultTabIndex = tabFactories.indexOfFirst { it.isPickerTabEnabled() }.takeIf { it >= 0 } ?: 0
+    var selectedTabIndex by remember { mutableIntStateOf(defaultTabIndex) }
 
     Box(
         modifier = Modifier
@@ -155,7 +156,7 @@ private fun AttachmentPickerOptions(
             tabFactories.forEachIndexed { index, tabFactory ->
 
                 val isSelected = index == tabIndex
-                val isEnabled = isSelected || (!isSelected && !hasPickedAttachments)
+                val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled())
 
                 IconButton(
                     enabled = isEnabled,

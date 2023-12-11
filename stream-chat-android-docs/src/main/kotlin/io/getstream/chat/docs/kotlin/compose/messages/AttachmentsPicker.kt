@@ -14,6 +14,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -215,6 +216,11 @@ private object AttachmentsPickerCustomizationSnippet {
             override val attachmentsPickerMode: AttachmentsPickerMode
                 get() = CustomPickerMode()
 
+            override fun isPickerTabEnabled(): Boolean {
+                // Return true if the tab should be enabled
+                return true
+            }
+
             @Composable
             override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
                 Icon(
@@ -235,6 +241,11 @@ private object AttachmentsPickerCustomizationSnippet {
                 onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
                 onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
             ) {
+
+                LaunchedEffect(Unit) {
+                    onAttachmentsChanged(emptyList())
+                }
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center

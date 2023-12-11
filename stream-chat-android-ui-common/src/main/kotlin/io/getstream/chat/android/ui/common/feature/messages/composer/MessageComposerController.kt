@@ -515,7 +515,7 @@ public class MessageComposerController(
     public fun addSelectedAttachments(attachments: List<Attachment>) {
         logger.d { "[addSelectedAttachments] attachments: $attachments" }
         val newAttachments = (selectedAttachments.value + attachments).distinctBy {
-            if (it.name != null) {
+            if (it.name != null && it.mimeType?.isNotEmpty() == true) {
                 it.name
             } else {
                 it

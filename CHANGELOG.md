@@ -96,6 +96,7 @@
   * `MessagesViewModelFactory.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads.
 
 ### ⬆️ Improved
+- Removed attachment picker customization limitation for `AttachmentsPickerTabFactory` non-file implementations. [#5104](https://github.com/GetStream/stream-chat-android/pull/5104)
 
 ### ✅ Added
 

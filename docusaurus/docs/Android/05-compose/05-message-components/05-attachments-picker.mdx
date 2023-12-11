@@ -87,6 +87,8 @@ This is a very simple way to customize the behavior and connect the `AttachmentP
 
 ## Customization
 
+### Customizing the existing UI
+
 You can customize the `AttachmentsPicker` using the following parameters:
 
 ```kotlin
@@ -126,6 +128,8 @@ This snippet will provide the following UI:
 
 As you can see, the `AttachmentsPicker` component now occupies the whole screen.
 
+### Providing a custom tab
+
 Now let's see how to use the `tabFactories` parameter to replace the media capture tab in the picker with a custom one.
 
 We'll need to create a custom `AttachmentsPickerTabFactory` for our custom tab and implement the methods to render the icon and the content of the tab:
@@ -135,6 +139,12 @@ class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
 
     override val attachmentsPickerMode: AttachmentsPickerMode
         get() = CustomPickerMode()
+
+    override fun isPickerTabEnabled(): Boolean {
+        // Place your custom logic here to be able to disable the tab if needed.
+        // Return true if the tab should be enabled.
+        return true
+    }
 
     @Composable
     override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
@@ -156,6 +166,11 @@ class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
+
+        LaunchedEffect(Unit) {
+            onAttachmentsChanged(emptyList())
+        }
+        
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -169,9 +184,37 @@ class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
     }
 }
 ```
+#### Setup initial attachments list
+Please take into account that for the `AttachmentsPicker` component to work correctly, you need to call `onAttachmentsChanged()` with a list of attachments to select from when the tab is first rendered. 
+In case you don't have any attachments to select from, you can simply pass an `emptyList()` as shown below:
+```kotlin
+LaunchedEffect(Unit) {
+    onAttachmentsChanged(emptyList())
+}
+```
+
+#### Attachments selection
+The `onAttachmentItemSelected()` is supposed to be used to select attachments from the list you passed to `onAttachmentsChanged()`, but if you don't have any attachments to select from, you can simply ignore this callback.
+
+#### Submitting attachments
+Finally, the `onAttachmentsSubmitted()` callback is used to submit the selected attachments to the `MessageComposer` component. This will also dismiss the `AttachmentsPicker`.
+
+```kotlin
+val selectedAttachment = AttachmentMetaData(
+    type = "custom_type",
+    title = "custom_title",
+    extraData = hashMapOf(
+        "custom_key" to "custom_value",
+        // other custom data
+    )
+)
+val selectedAttachments = listOf(selectedAttachment)
+onAttachmentsSubmitted(selectedAttachments)
+```
+
+### Replacing an existing tab with a custom one
 
 Next, we'll remove the factory for the media capture tab, add a factory for our custom tab and pass the resulting factory list to the picker:
-
 ```kotlin
 val defaultTabFactories = AttachmentsPickerTabFactories.defaultFactories(takeImageEnabled = false, recordVideoEnabled = false)
 val customTabFactories = listOf(AttachmentsPickerCustomTabFactory())
