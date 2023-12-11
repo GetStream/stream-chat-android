@@ -1,63 +1,14 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# December 11th, 2023 - 6.0.10
 ## stream-chat-android-core
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - 🚨Breaking change: The following properties in `User` class are now **nullable**: `banned`, `invisible`. [#5107](https://github.com/GetStream/stream-chat-android/pull/5107)
   * Please use `User.isBanned` as non-nullable version.
   * Please use `User.isInvisible` as non-nullable version.
   * Properties such as `invisible`, `banned`, `teams` and `role` are not being used to establish WS connection flow if not specified.
 
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fix wrong Message.ownReactions. [#5106](https://github.com/GetStream/stream-chat-android/pull/5106)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
@@ -67,28 +18,12 @@
 - Fixed `MessageList` scrolling behaviour while receiving a new message. [#5112](https://github.com/GetStream/stream-chat-android/pull/5112)
   * `NewMessageState.MyOwn` and `NewMessageState.Other` are now data classes. 
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed `MessageClickListener` never being called. [#5096](https://github.com/GetStream/stream-chat-android/pull/5096)
 - Fixed thread separator ui order. [#5098](https://github.com/GetStream/stream-chat-android/pull/5098)
   * `MessageListViewModelFactory.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads.
 - Fixed: Regex was not correctly escaped in getOccurrenceRanges [#5109](https://github.com/GetStream/stream-chat-android/pull/5109)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -97,23 +32,6 @@
 
 ### ⬆️ Improved
 - Removed attachment picker customization limitation for `AttachmentsPickerTabFactory` non-file implementations. [#5104](https://github.com/GetStream/stream-chat-android/pull/5104)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # November 24th, 2023 - 6.0.9
 ## stream-chat-android-client
