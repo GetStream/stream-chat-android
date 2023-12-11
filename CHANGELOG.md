@@ -10,6 +10,21 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+- 🚨Breaking change: The following properties in `User` class are now **nullable**: `banned`, `invisible`. [#5107](https://github.com/GetStream/stream-chat-android/pull/5107)
+  * Please use `User.isBanned` as non-nullable version.
+  * Please use `User.isInvisible` as non-nullable version.
+  * Properties such as `invisible`, `banned`, `teams` and `role` are not being used to establish WS connection flow if not specified.
+
+### ❌ Removed
+
 ## stream-chat-android-client
 ### 🐞 Fixed
 
@@ -34,6 +49,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fix wrong Message.ownReactions. [#5106](https://github.com/GetStream/stream-chat-android/pull/5106)
 
 ### ⬆️ Improved
 
@@ -47,7 +63,9 @@
 ### 🐞 Fixed
 - Fixed broken date formatting. [#5101](https://github.com/GetStream/stream-chat-android/pull/5101)
 - Fixed thread separator ui order. [#5098](https://github.com/GetStream/stream-chat-android/pull/5098)
-  * `MessageListController.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads. 
+  * `MessageListController.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads.
+- Fixed `MessageList` scrolling behaviour while receiving a new message. [#5112](https://github.com/GetStream/stream-chat-android/pull/5112)
+  * `NewMessageState.MyOwn` and `NewMessageState.Other` are now data classes. 
 
 ### ⬆️ Improved
 
@@ -62,6 +80,7 @@
 - Fixed `MessageClickListener` never being called. [#5096](https://github.com/GetStream/stream-chat-android/pull/5096)
 - Fixed thread separator ui order. [#5098](https://github.com/GetStream/stream-chat-android/pull/5098)
   * `MessageListViewModelFactory.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads.
+- Fixed: Regex was not correctly escaped in getOccurrenceRanges [#5109](https://github.com/GetStream/stream-chat-android/pull/5109)
 
 ### ⬆️ Improved
 

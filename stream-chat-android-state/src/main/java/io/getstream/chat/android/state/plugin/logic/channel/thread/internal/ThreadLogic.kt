@@ -89,12 +89,16 @@ internal class ThreadLogic(
     internal fun handleEvents(events: List<HasMessage>) {
         val messages = events
             .map { event ->
+                val ownReactions = getMessage(event.message.id)?.ownReactions ?: event.message.ownReactions
                 if (event is MessageUpdatedEvent) {
                     event.message.copy(
                         replyTo = mutableState.messages.value.firstOrNull { it.id == event.message.replyMessageId },
+                        ownReactions = ownReactions,
                     )
                 } else {
-                    event.message
+                    event.message.copy(
+                        ownReactions = ownReactions,
+                    )
                 }
             }
         upsertMessages(messages)
