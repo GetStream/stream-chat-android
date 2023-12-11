@@ -325,7 +325,7 @@ internal class EventHandlerSequential(
         }
 
         me?.let {
-            mutableGlobalState.setBanned(it.banned)
+            mutableGlobalState.setBanned(it.isBanned)
             mutableGlobalState.setMutedUsers(it.mutes)
             mutableGlobalState.setChannelMutes(it.channelMutes)
         }

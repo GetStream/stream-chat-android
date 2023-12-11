@@ -49,9 +49,9 @@ public data class User(
     val role: String = "",
     val name: String = "",
     val image: String = "",
-    val invisible: Boolean = false,
+    val invisible: Boolean? = null,
     val language: String = "",
-    val banned: Boolean = false,
+    val banned: Boolean? = null,
     val devices: List<Device> = listOf(),
     val online: Boolean = false,
     val createdAt: Date? = null,
@@ -65,6 +65,16 @@ public data class User(
     override val extraData: Map<String, Any> = mapOf(),
     val deactivatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
+
+    /**
+     * Determines if the user is banned or not.
+     */
+    val isBanned: Boolean get() = banned == true
+
+    /**
+     * Determines if the user should share its online status.
+     */
+    val isInvisible: Boolean get() = invisible == true
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
@@ -95,9 +105,9 @@ public data class User(
         private var role: String = ""
         private var name: String = ""
         private var image: String = ""
-        private var invisible: Boolean = false
+        private var invisible: Boolean? = null
         private var language: String = ""
-        private var banned: Boolean = false
+        private var banned: Boolean? = null
         private var devices: List<Device> = listOf()
         private var online: Boolean = false
         private var createdAt: Date? = null
@@ -136,9 +146,9 @@ public data class User(
         public fun withRole(role: String): Builder = apply { this.role = role }
         public fun withName(name: String): Builder = apply { this.name = name }
         public fun withImage(image: String): Builder = apply { this.image = image }
-        public fun withInvisible(invisible: Boolean): Builder = apply { this.invisible = invisible }
+        public fun withInvisible(invisible: Boolean?): Builder = apply { this.invisible = invisible }
         public fun withLanguage(language: String): Builder = apply { this.language = language }
-        public fun withBanned(banned: Boolean): Builder = apply { this.banned = banned }
+        public fun withBanned(banned: Boolean?): Builder = apply { this.banned = banned }
         public fun withDevices(devices: List<Device>): Builder = apply { this.devices = devices }
         public fun withOnline(online: Boolean): Builder = apply { this.online = online }
         public fun withCreatedAt(createdAt: Date?): Builder = apply { this.createdAt = createdAt }

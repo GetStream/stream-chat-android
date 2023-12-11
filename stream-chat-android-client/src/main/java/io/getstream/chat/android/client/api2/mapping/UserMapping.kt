@@ -26,11 +26,11 @@ import io.getstream.chat.android.models.User
 
 internal fun User.toDto(): UpstreamUserDto =
     UpstreamUserDto(
-        banned = banned,
+        banned = isBanned,
         id = id,
         name = name,
         image = image,
-        invisible = invisible,
+        invisible = isInvisible,
         language = language,
         role = role,
         devices = devices.map(Device::toDto),
