@@ -847,7 +847,7 @@ public class MessageListController(
     private fun getNewMessageStateForMessage(message: Message): NewMessageState {
         val currentUser = user.value
         return when (message.user.id == currentUser?.id) {
-            true -> MyOwn(ts = message.createdAt?.time ?: message.createdLocallyAt?.time)
+            true -> MyOwn(ts = message.getCreatedAtOrNull()?.time)
             else -> Other(ts = message.createdAt?.time)
         }
     }
