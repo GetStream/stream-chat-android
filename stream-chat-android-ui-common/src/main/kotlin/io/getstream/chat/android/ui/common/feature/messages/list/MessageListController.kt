@@ -835,7 +835,7 @@ public class MessageListController(
                 (lastMessage.isGiphy() || lastLoadedMessage.id != lastMessage.id) -> {
                 getNewMessageStateForMessage(lastMessage)
             }
-            else -> null
+            else -> getNewMessageStateForMessage(lastMessage)
         }
     }
 
@@ -846,7 +846,10 @@ public class MessageListController(
      */
     private fun getNewMessageStateForMessage(message: Message): NewMessageState {
         val currentUser = user.value
-        return if (message.user.id == currentUser?.id) MyOwn else Other
+        return when (message.user.id == currentUser?.id) {
+            true -> MyOwn(ts = message.getCreatedAtOrNull()?.time)
+            else -> Other(ts = message.createdAt?.time)
+        }
     }
 
     /**
