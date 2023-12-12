@@ -77,3 +77,13 @@ public fun Channel.countUnreadMentionsForUser(user: User): Int {
 
     return messagesToCheck.count { message -> message.containsUserMention(user) }
 }
+
+/**
+ * Returns the number of unread messages in the channel for the current user.
+ *
+ * @return The number of unread messages in the channel for the current user.
+ */
+public val Channel.unreadCount: Int
+    get() = ChatClient.instance().getCurrentUser()?.let { currentUser ->
+        read.firstOrNull { it.user.id == currentUser.id }?.unreadMessages
+    } ?: 0

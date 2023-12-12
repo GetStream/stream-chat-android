@@ -85,7 +85,6 @@ internal object PreviewChannelData {
             PreviewMessageData.message1,
             PreviewMessageData.message2,
         ),
-        unreadCount = 2,
         lastMessageAt = Date(),
     )
 }

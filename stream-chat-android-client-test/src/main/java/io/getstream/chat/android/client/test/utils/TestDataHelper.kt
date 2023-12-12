@@ -159,7 +159,6 @@ public class TestDataHelper {
         watchers = listOf(watcher1),
         members = listOf(member1),
         config = config1,
-        unreadCount = 0,
         hidden = false,
     )
 

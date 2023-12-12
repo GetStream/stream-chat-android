@@ -208,7 +208,6 @@ internal class ChannelMutableState(
             .toChannel(messages, cachedMessages, members, reads, watchers, watcherCount, insideSearch)
         return channel.copy(
             config = channelConfig.value,
-            unreadCount = unreadCount.value,
             hidden = hidden.value,
             isInsideSearch = insideSearch,
             cachedLatestMessages = cachedLatestMessages.value.values.toList(),
