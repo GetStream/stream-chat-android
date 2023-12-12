@@ -222,7 +222,7 @@ public fun randomChannel(
     read: List<ChannelUserRead> = mutableListOf(),
     config: Config = Config(),
     createdBy: User = randomUser(),
-    unreadCount: Int? = randomInt(),
+    unreadCount: Int = randomInt(),
     team: String = randomString(),
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
