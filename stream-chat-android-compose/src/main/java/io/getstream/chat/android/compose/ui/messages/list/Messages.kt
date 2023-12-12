@@ -45,6 +45,7 @@ import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.state.messages.MessagesState
 import io.getstream.chat.android.compose.state.messages.MyOwn
 import io.getstream.chat.android.compose.state.messages.Other
+import io.getstream.chat.android.compose.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageListItemState
@@ -100,7 +101,7 @@ public fun Messages(
     OnLastVisibleItemChanged(lazyListState) { messageIndex ->
         val message = messagesState.messageItems.getOrNull(messageIndex)
 
-        if (message is MessageItemState) {
+        if (message is HasMessageListItemState) {
             onLastVisibleMessageChanged(message.message)
         }
     }

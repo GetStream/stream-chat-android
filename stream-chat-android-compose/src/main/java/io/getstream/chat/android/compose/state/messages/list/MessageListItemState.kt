@@ -27,6 +27,17 @@ import java.util.Date
 public sealed class MessageListItemState
 
 /**
+ * Represents either regular or system message item inside a message list.
+ */
+public sealed class HasMessageListItemState : MessageListItemState() {
+
+    /**
+     * The [Message] to show in the list.
+     */
+    public abstract val message: Message
+}
+
+/**
  * Represents a date separator in the list.
  *
  * @param date The date of the message that we're showing a separator for.
@@ -45,7 +56,7 @@ public data class ThreadSeparatorState(val replyCount: Int) : MessageListItemSta
  *
  * @param message The message to show.
  */
-public data class SystemMessageState(val message: Message) : MessageListItemState()
+public data class SystemMessageState(override val message: Message) : HasMessageListItemState()
 
 /**
  * Represents each message item we show in the list of messages.
@@ -62,7 +73,7 @@ public data class SystemMessageState(val message: Message) : MessageListItemStat
  * @param deletedMessageVisibility The deleted message visibility logic used to show or hide messages in the list.
  */
 public data class MessageItemState(
-    val message: Message,
+    override val message: Message,
     val groupPosition: MessageItemGroupPosition = MessageItemGroupPosition.None,
     val parentMessageId: String? = null,
     val isMine: Boolean = false,
@@ -72,4 +83,4 @@ public data class MessageItemState(
     val isMessageRead: Boolean = false,
     val shouldShowFooter: Boolean = false,
     val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
-) : MessageListItemState()
+) : HasMessageListItemState()

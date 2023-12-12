@@ -379,6 +379,11 @@ public abstract class io/getstream/chat/android/compose/state/messages/list/Giph
 	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 }
 
+public abstract class io/getstream/chat/android/compose/state/messages/list/HasMessageListItemState : io/getstream/chat/android/compose/state/messages/list/MessageListItemState {
+	public static final field $stable I
+	public abstract fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+}
+
 public final class io/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved : io/getstream/chat/android/compose/state/messages/list/MessageFocusState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/list/MessageFocusRemoved;
@@ -423,7 +428,7 @@ public final class io/getstream/chat/android/compose/state/messages/list/Message
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/messages/list/MessageItemState : io/getstream/chat/android/compose/state/messages/list/MessageListItemState {
+public final class io/getstream/chat/android/compose/state/messages/list/MessageItemState : io/getstream/chat/android/compose/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/messages/list/MessageFocusState;ZLio/getstream/chat/android/client/models/User;ZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/models/Message;Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;Ljava/lang/String;ZLio/getstream/chat/android/compose/state/messages/list/MessageFocusState;ZLio/getstream/chat/android/client/models/User;ZZLio/getstream/chat/android/common/state/DeletedMessageVisibility;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -444,7 +449,7 @@ public final class io/getstream/chat/android/compose/state/messages/list/Message
 	public final fun getDeletedMessageVisibility ()Lio/getstream/chat/android/common/state/DeletedMessageVisibility;
 	public final fun getFocusState ()Lio/getstream/chat/android/compose/state/messages/list/MessageFocusState;
 	public final fun getGroupPosition ()Lio/getstream/chat/android/compose/state/messages/list/MessageItemGroupPosition;
-	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getShouldShowFooter ()Z
 	public fun hashCode ()I
@@ -468,14 +473,14 @@ public final class io/getstream/chat/android/compose/state/messages/list/Shuffle
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 }
 
-public final class io/getstream/chat/android/compose/state/messages/list/SystemMessageState : io/getstream/chat/android/compose/state/messages/list/MessageListItemState {
+public final class io/getstream/chat/android/compose/state/messages/list/SystemMessageState : io/getstream/chat/android/compose/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/models/Message;)V
 	public final fun component1 ()Lio/getstream/chat/android/client/models/Message;
 	public final fun copy (Lio/getstream/chat/android/client/models/Message;)Lio/getstream/chat/android/compose/state/messages/list/SystemMessageState;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/messages/list/SystemMessageState;Lio/getstream/chat/android/client/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/messages/list/SystemMessageState;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMessage ()Lio/getstream/chat/android/client/models/Message;
+	public fun getMessage ()Lio/getstream/chat/android/client/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
