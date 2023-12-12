@@ -844,10 +844,17 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/EditM
 public final class io/getstream/chat/android/ui/common/state/messages/list/EmptyThreadPlaceholderItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/list/EmptyThreadPlaceholderItemState;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/ui/common/state/messages/list/GiphyAction {
+	public static final field $stable I
+	public abstract fun getMessage ()Lio/getstream/chat/android/models/Message;
+}
+
+public abstract class io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
 	public static final field $stable I
 	public abstract fun getMessage ()Lio/getstream/chat/android/models/Message;
 }
@@ -904,7 +911,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/messages/list/MessageItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
+public final class io/getstream/chat/android/ui/common/state/messages/list/MessageItemState : io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
 	public fun <init> ()V
 	public fun <init> (Lio/getstream/chat/android/models/Message;Ljava/lang/String;ZZZLio/getstream/chat/android/models/User;Ljava/util/List;ZLio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;Ljava/util/List;)V
@@ -927,7 +934,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Messa
 	public final fun getDeletedMessageVisibility ()Lio/getstream/chat/android/ui/common/state/messages/list/DeletedMessageVisibility;
 	public final fun getFocusState ()Lio/getstream/chat/android/ui/common/state/messages/list/MessageFocusState;
 	public final fun getGroupPosition ()Ljava/util/List;
-	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessageReadBy ()Ljava/util/List;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getShowMessageFooter ()Z
@@ -1130,14 +1137,14 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Shuff
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
+public final class io/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState : io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Message;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/Message;
 	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.components.messages.MessagesScrollingOption
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
@@ -199,7 +200,7 @@ public fun Messages(
     OnLastVisibleItemChanged(lazyListState) { messageIndex ->
         val message = messagesState.messageItems.getOrNull(messageIndex)
 
-        if (message is MessageItemState) {
+        if (message is HasMessageListItemState) {
             onLastVisibleMessageChanged(message.message)
         }
     }

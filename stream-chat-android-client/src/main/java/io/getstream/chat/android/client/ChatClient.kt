@@ -2195,7 +2195,7 @@ internal constructor(
                 plugins.forEach { it.onMarkAllReadRequest() }
             }
             .doOnResult(userScope) {
-                logger.v { "[markAllRead] #doOnStart; completed" }
+                logger.v { "[markAllRead] #doOnResult; completed" }
             }
             .share(userScope) { MarkAllReadIdentifier() }
     }

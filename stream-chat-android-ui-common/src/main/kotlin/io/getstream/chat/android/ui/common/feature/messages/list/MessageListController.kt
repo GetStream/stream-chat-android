@@ -1328,8 +1328,12 @@ public class MessageListController(
      */
     public fun updateLastSeenMessage(message: Message) {
         val lastLoadedMessage = if (isInThread) lastLoadedThreadMessage else lastLoadedMessage
+        logger.d {
+            "[updateLastSeenMessage] isInThread: $isInThread, message: ${message.id}('${message.text}'), " +
+                "lastLoadedMessage: ${lastLoadedMessage?.id}('${lastLoadedMessage?.text}')"
+        }
         if (message.id == lastLoadedMessage?.id) {
-            logger.d { "[updateLastSeenMessage] matched($isInThread); message.id: ${message.id}" }
+            logger.v { "[updateLastSeenMessage] matched(isInThread: $isInThread)" }
             markLastMessageRead()
         }
     }
