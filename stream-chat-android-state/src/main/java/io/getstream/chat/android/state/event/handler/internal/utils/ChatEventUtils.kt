@@ -31,14 +31,14 @@ internal val ChatEvent.realType get() = when (this) {
 
 internal fun MessageReadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
-    lastMessageSeenDate = createdAt,
+    lastReceivedEventDate = createdAt,
     lastRead = createdAt,
 // TODO: remove this once the backend is fixed and is sending us the number of unread messages
     unreadMessages = 0,
 )
 internal fun NotificationMarkReadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
-    lastMessageSeenDate = createdAt,
+    lastReceivedEventDate = createdAt,
     lastRead = createdAt,
 // TODO: remove this once the backend is fixed and is sending us the number of unread messages
     unreadMessages = 0,
@@ -46,14 +46,14 @@ internal fun NotificationMarkReadEvent.toChannelUserRead() = ChannelUserRead(
 
 internal fun NotificationMarkUnreadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
-    lastMessageSeenDate = createdAt,
+    lastReceivedEventDate = createdAt,
     lastRead = lastReadMessageAt,
     unreadMessages = unreadMessages,
 )
 
 internal fun MarkAllReadEvent.toChannelUserRead() = ChannelUserRead(
     user = user,
-    lastMessageSeenDate = createdAt,
+    lastReceivedEventDate = createdAt,
     lastRead = createdAt,
     unreadMessages = 0,
 )

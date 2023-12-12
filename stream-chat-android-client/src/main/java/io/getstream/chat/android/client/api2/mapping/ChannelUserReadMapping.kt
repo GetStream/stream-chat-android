@@ -18,10 +18,12 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.models.ChannelUserRead
+import java.util.Date
 
-internal fun DownstreamChannelUserRead.toDomain(): ChannelUserRead =
+internal fun DownstreamChannelUserRead.toDomain(lastReceivedEventDate: Date): ChannelUserRead =
     ChannelUserRead(
         user = user.toDomain(),
+        lastReceivedEventDate = lastReceivedEventDate,
         lastRead = last_read,
         unreadMessages = unread_messages,
     )

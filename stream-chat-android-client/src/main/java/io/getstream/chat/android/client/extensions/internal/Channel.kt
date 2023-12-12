@@ -46,17 +46,29 @@ public val Channel.lastMessage: Message?
     get() = messages.maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
 
 @InternalStreamChatApi
-public fun Channel.updateLastMessage(message: Message): Channel {
+public fun Channel.updateLastMessage(
+    message: Message,
+    currentUserId: String,
+): Channel {
     val createdAt = message.createdAt ?: message.createdLocallyAt
     val messageCreatedAt =
         checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
     val updateNeeded = message.id == lastMessage?.id
     val newLastMessage = lastMessageAt == null || messageCreatedAt.after(lastMessageAt)
+    val newReads = read.map { read ->
+        read.takeUnless { it.user.id == currentUserId }
+            ?: read.copy(
+                lastReceivedEventDate = messageCreatedAt,
+                unreadMessages = read.unreadMessages + 1,
+            )
+    }
     return this.takeUnless { updateNeeded || newLastMessage }
         ?: copy(
             lastMessageAt = messageCreatedAt,
             messages = messages + message,
+            read = newReads,
+            unreadCount = newReads.firstOrNull { it.user.id == currentUserId }?.unreadMessages ?: unreadCount,
         )
 }
 
@@ -177,25 +189,6 @@ public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
             read - oldRead + newRead
         } else {
             read + newRead
-        },
-    )
-}
-
-/**
- * Increments channel's unread for the specific user.
- *
- * @param currentUserId The id of the user that should have the unread count incremented for this Channel.
- * @param lastMessageSeenDate The Date of the last message that the SDK is aware of.
- */
-@InternalStreamChatApi
-public fun Channel.incrementUnreadCount(currentUserId: String, lastMessageSeenDate: Date?): Channel {
-    return copy(
-        read = read.map { read ->
-            read.takeUnless { it.user.id == currentUserId }
-                ?: read.copy(
-                    lastMessageSeenDate = lastMessageSeenDate,
-                    unreadMessages = read.unreadMessages + 1,
-                )
         },
     )
 }

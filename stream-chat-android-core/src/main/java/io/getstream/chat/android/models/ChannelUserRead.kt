@@ -23,15 +23,14 @@ import java.util.Date
  * Information about how many messages are unread in the channel by a given user.
  *
  * @property user The user which has read some of the messages and may have some unread messages.
+ * @property lastReceivedEventDate The time of the event that updated this [ChannelUserRead] object.
  * @property lastRead The time of the last read message.
  * @property unreadMessages How many messages are unread.
- * @property lastMessageSeenDate The time of the last message that the SDK is aware of. If new messages arrive with
- * the createdAt newer than this one, that means that the count of unread messages should be incremented.
  */
 @Immutable
 public data class ChannelUserRead(
     override val user: User,
-    val lastRead: Date? = null,
-    val unreadMessages: Int = 0,
-    val lastMessageSeenDate: Date? = null,
+    val lastReceivedEventDate: Date,
+    val unreadMessages: Int,
+    val lastRead: Date,
 ) : UserEntity

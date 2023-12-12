@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.state.event.handler.internal
 
-import io.getstream.chat.android.client.extensions.internal.incrementUnreadCount
-import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
 import io.getstream.chat.android.client.extensions.internal.updateLastMessage
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.users
@@ -27,7 +25,6 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 
@@ -53,7 +50,7 @@ import io.getstream.log.taggedLogger
 @Suppress("LongParameterList")
 internal class EventBatchUpdate private constructor(
     private val id: Int,
-    private val currentUserId: String?,
+    private val currentUserId: String,
     private val globalState: GlobalState,
     private val repos: RepositoryFacade,
     private val channelMap: MutableMap<String, Channel>,
@@ -67,27 +64,11 @@ internal class EventBatchUpdate private constructor(
      * Adds the message and updates the last message for the given channel.
      * Increments the unread count if the right conditions apply.
      */
-    fun addMessageData(cid: String, message: Message, isNewMessage: Boolean = false) {
+    fun addMessageData(cid: String, message: Message) {
         addMessage(message)
         getCurrentChannel(cid)
-            ?.updateLastMessage(message)
-            ?.also { channel ->
-                addChannel(channel)
-                val currentUserId = currentUserId ?: return
-
-                if (isNewMessage) {
-                    val lastReadDate = channel.read.firstOrNull { it.user.id == currentUserId }?.lastMessageSeenDate
-
-                    if (message.shouldIncrementUnreadCount(
-                            currentUserId = currentUserId,
-                            lastMessageAtDate = lastReadDate,
-                            isChannelMuted = globalState.isChannelMutedForCurrentUser(channel.cid),
-                        )
-                    ) {
-                        addChannel(channel.incrementUnreadCount(currentUserId, message.createdAt))
-                    }
-                }
-            }
+            ?.updateLastMessage(message, currentUserId)
+            ?.let(::addChannel)
     }
 
     fun addChannel(channel: Channel) {
@@ -178,7 +159,7 @@ internal class EventBatchUpdate private constructor(
         suspend fun build(
             globalState: GlobalState,
             repos: RepositoryFacade,
-            currentUserId: String?,
+            currentUserId: String,
         ): EventBatchUpdate {
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)

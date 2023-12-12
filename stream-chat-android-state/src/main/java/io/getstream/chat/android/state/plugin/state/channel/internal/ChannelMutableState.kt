@@ -18,9 +18,9 @@ package io.getstream.chat.android.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.events.TypingStartEvent
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
-import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -436,34 +436,9 @@ internal class ChannelMutableState(
             ?.let { upsertWatchers(listOf(it), watcherCount.value) }
     }
 
-    fun increaseReadWith(message: Message) {
-        val user = userFlow.value ?: return
-        val newUserRead = (read.value ?: ChannelUserRead(user)).let { currentUserRead ->
-            currentUserRead.copy(
-                user = user,
-                unreadMessages = currentUserRead.unreadMessages + 1,
-                lastMessageSeenDate = message.createdAt,
-            )
-        }
-        _rawReads?.apply { value = value + (user.id to newUserRead) }
-    }
-
     fun upsertReads(reads: List<ChannelUserRead>) {
-        val currentUser = userFlow.value
-        val currentUserRead = read.value
-        val lastRead = currentUserRead?.lastRead
-        val incomingUserRead = currentUser?.id?.let { userId -> reads.firstOrNull { it.user.id == userId } }
-        val newUserRead = when {
-            incomingUserRead == null -> currentUserRead
-            currentUserRead == null -> incomingUserRead
-            lastRead == null -> incomingUserRead
-            incomingUserRead.lastRead?.inOffsetWith(lastRead, OFFSET_EVENT_TIME) == true -> incomingUserRead
-            else -> currentUserRead
-        }
         _rawReads?.apply {
-            value = value +
-                reads.associateBy(ChannelUserRead::getUserId) +
-                listOfNotNull(newUserRead).associateBy(ChannelUserRead::getUserId)
+            value = value + reads.associateBy(ChannelUserRead::getUserId)
         }
     }
 
@@ -481,7 +456,11 @@ internal class ChannelMutableState(
             messages.value.lastOrNull()?.let { lastMessage ->
                 upsertReads(
                     listOf(
-                        currentUserRead.copy(lastRead = lastMessage.let { it.createdAt ?: it.createdLocallyAt }),
+                        currentUserRead.copy(
+                            lastReceivedEventDate = lastMessage.getCreatedAtOrDefault(Date()),
+                            lastRead = lastMessage.getCreatedAtOrDefault(Date()),
+                            unreadMessages = 0,
+                        ),
                     ),
                 )
                 true
@@ -522,8 +501,6 @@ internal class ChannelMutableState(
     fun insertCountedMessages(ids: List<String>) {
         _countedMessage?.addAll(ids)
     }
-
-    fun isMessageAlreadyCounted(messageId: String): Boolean = _countedMessage?.contains(messageId) == true
 
     override fun getMessageById(id: String): Message? = _messages?.value?.get(id)
 

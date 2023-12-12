@@ -17,7 +17,6 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
@@ -40,7 +39,7 @@ internal fun DownstreamChannelDto.toDomain(): Channel =
         messages = messages.map(DownstreamMessageDto::toDomain),
         members = members.map(DownstreamMemberDto::toDomain),
         watchers = watchers.map(DownstreamUserDto::toDomain),
-        read = read.map(DownstreamChannelUserRead::toDomain),
+        read = read.map { it.toDomain(last_message_at ?: it.last_read) },
         config = config.toDomain(),
         createdBy = created_by?.toDomain() ?: User(),
         team = team,
