@@ -68,7 +68,6 @@ public fun Channel.updateLastMessage(
             lastMessageAt = messageCreatedAt,
             messages = messages + message,
             read = newReads,
-            unreadCount = newReads.firstOrNull { it.user.id == currentUserId }?.unreadMessages ?: unreadCount,
         )
 }
 

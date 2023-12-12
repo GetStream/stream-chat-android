@@ -25,6 +25,7 @@ import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
+import io.getstream.chat.android.client.extensions.unreadCount
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus

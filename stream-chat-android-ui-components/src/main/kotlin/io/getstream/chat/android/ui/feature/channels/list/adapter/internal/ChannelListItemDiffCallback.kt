@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.channels.list.adapter.internal
 
 import androidx.recyclerview.widget.DiffUtil
 import io.getstream.chat.android.client.extensions.getMembersExcludingCurrent
+import io.getstream.chat.android.client.extensions.unreadCount
 import io.getstream.chat.android.ui.common.extensions.internal.cast
 import io.getstream.chat.android.ui.common.extensions.internal.safeCast
 import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
@@ -67,7 +68,7 @@ internal object ChannelListItemDiffCallback : DiffUtil.ItemCallback<ChannelListI
             usersChanged = usersChanged,
             readStateChanged = channel.read != other.channel.read,
             lastMessageChanged = channel.getLastMessage() != other.channel.getLastMessage(),
-            unreadCountChanged = channel.unreadCount != other.channel.unreadCount && other.channel.unreadCount != null,
+            unreadCountChanged = channel.unreadCount != other.channel.unreadCount,
             extraDataChanged = channel.extraData != other.channel.extraData,
             typingUsersChanged = typingUsers != other.typingUsers,
         )

@@ -69,7 +69,6 @@ internal data class ChannelEntity(
     val memberCount: Int,
     val watcherIds: List<String>,
     val watcherCount: Int,
-    val unreadCount: Int,
     val reads: Map<String, ChannelUserReadEntity>,
     val lastMessageAt: Date?,
     val lastMessageId: String?,

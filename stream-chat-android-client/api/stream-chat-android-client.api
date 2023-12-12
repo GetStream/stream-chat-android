@@ -1933,6 +1933,7 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 
 public final class io/getstream/chat/android/client/extensions/ChannelExtensionKt {
 	public static final fun countUnreadMentionsForUser (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)I
+	public static final fun getUnreadCount (Lio/getstream/chat/android/models/Channel;)I
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Z
 }
