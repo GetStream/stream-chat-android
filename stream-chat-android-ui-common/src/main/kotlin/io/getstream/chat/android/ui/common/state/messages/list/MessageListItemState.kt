@@ -27,6 +27,17 @@ import java.util.Date
 public sealed class MessageListItemState
 
 /**
+ * Represents either regular or system message item inside a message list.
+ */
+public sealed class HasMessageListItemState : MessageListItemState() {
+
+    /**
+     * The [Message] to show in the list.
+     */
+    public abstract val message: Message
+}
+
+/**
  * Represents a message item inside the messages list.
  *
  * @param message The [Message] to show in the list.
@@ -42,7 +53,7 @@ public sealed class MessageListItemState
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
  */
 public data class MessageItemState(
-    public val message: Message = Message(),
+    public override val message: Message = Message(),
     public val parentMessageId: String? = null,
     public val isMine: Boolean = false,
     public val isInThread: Boolean = false,
@@ -53,7 +64,7 @@ public data class MessageItemState(
     public val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_HIDDEN,
     public val focusState: MessageFocusState? = null,
     public val messageReadBy: List<ChannelUserRead> = emptyList(),
-) : MessageListItemState()
+) : HasMessageListItemState()
 
 /**
  * Represents a date separator inside the message list.
@@ -81,8 +92,8 @@ public data class ThreadDateSeparatorItemState(
  * @param message The [Message] to show as the system message inside the list.
  */
 public data class SystemMessageItemState(
-    public val message: Message,
-) : MessageListItemState()
+    public override val message: Message,
+) : HasMessageListItemState()
 
 /**
  * Represents a typing indicator item inside a message list.
@@ -96,6 +107,4 @@ public data class TypingItemState(
 /**
  * Represents an empty thread placeholder item inside thread messages list.
  */
-public object EmptyThreadPlaceholderItemState : MessageListItemState() {
-    override fun toString(): String = "EmptyThreadPlaceholderItemState"
-}
+public data object EmptyThreadPlaceholderItemState : MessageListItemState()
