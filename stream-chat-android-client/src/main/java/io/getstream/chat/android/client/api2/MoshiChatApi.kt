@@ -36,7 +36,6 @@ import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
@@ -712,7 +711,7 @@ constructor(
         return response.channel.toDomain().let { channel ->
             channel.copy(
                 watcherCount = response.watcher_count,
-                read = response.read.map(DownstreamChannelUserRead::toDomain),
+                read = response.read.map { it.toDomain(channel.lastMessageAt ?: it.last_read) },
                 members = response.members.map(DownstreamMemberDto::toDomain),
                 membership = response.membership?.toDomain(),
                 messages = response.messages.map { it.toDomain().enrichWithCid(channel.cid) },

@@ -22,19 +22,15 @@ import io.getstream.chat.android.client.events.MessageReadEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.extensions.internal.shouldIncrementUnreadCount
+import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
-import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
-import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.StateFlow
-import java.text.SimpleDateFormat
-import java.util.Locale
+import java.util.Date
 
 private const val COUNT_BUFFER_LIMIT = 100
 
@@ -112,39 +108,22 @@ internal class UnreadCountLogic(
      * Perform count the a new message arrive.
      */
     private fun performCount(message: Message) {
-        val user = clientState.user.value ?: return
-        val currentUserId = user.id
-
-        /* Only one thread can access this logic per time. If two messages pass the shouldIncrementUnreadCount at the
-         * same time, one increment can be lost.
-         */
         synchronized(this) {
-            val readState = mutableState.read.value?.copy() ?: ChannelUserRead(user)
-            val unreadCount: Int = readState.unreadMessages
-            val lastMessageSeenDate = readState.lastMessageSeenDate
-
-            val isMessageAlreadyCounted = mutableState.isMessageAlreadyCounted(message.id)
-            val shouldIncrementUnreadCount =
-                !isMessageAlreadyCounted &&
-                    message.shouldIncrementUnreadCount(
-                        currentUserId = currentUserId,
-                        lastMessageAtDate = lastMessageSeenDate,
-                        isChannelMuted = globalState.isChannelMutedForCurrentUser(mutableState.cid),
+            val messageCreateAt = message.getCreatedAtOrDefault(Date(0))
+            mutableState
+                .read
+                .value
+                ?.takeUnless { it.lastReceivedEventDate.after(messageCreateAt) }
+                ?.let {
+                    mutableState.upsertReads(
+                        listOf(
+                            it.copy(
+                                lastReceivedEventDate = messageCreateAt,
+                                unreadMessages = it.unreadMessages + 1,
+                            ),
+                        ),
                     )
-
-            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss''SSS", Locale.ENGLISH)
-
-            if (shouldIncrementUnreadCount) {
-                StreamLog.d(TAG) {
-                    "It is necessary to increment the unread count for channel: " +
-                        "${mutableState.channelData.value.id}. The last seen message was " +
-                        "at: ${lastMessageSeenDate?.let(formatter::format)}. " +
-                        "the new message is: ${message.createdAt?.let(formatter::format)} " +
-                        "New unread count: ${unreadCount + 1} " +
-                        "Message text: ${message.text}"
                 }
-                mutableState.increaseReadWith(message)
-            }
         }
     }
 
