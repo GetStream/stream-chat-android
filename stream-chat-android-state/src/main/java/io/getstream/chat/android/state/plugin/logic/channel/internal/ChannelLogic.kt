@@ -75,9 +75,9 @@ import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
@@ -631,14 +631,7 @@ internal class ChannelLogic(
                 channelStateLogic.enqueueUpdateRead(event)
             }
             is NotificationMarkUnreadEvent -> {
-                channelStateLogic.updateRead(
-                    ChannelUserRead(
-                        user = event.user,
-                        lastRead = event.lastReadMessageAt,
-                        unreadMessages = event.unreadMessages,
-                        event.createdAt,
-                    ),
-                )
+                channelStateLogic.updateRead(event.toChannelUserRead())
             }
             is NotificationInviteAcceptedEvent -> {
                 channelStateLogic.addMember(event.member)
