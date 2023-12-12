@@ -44,6 +44,7 @@ import io.getstream.chat.android.client.api.models.identifier.GetRepliesIdentifi
 import io.getstream.chat.android.client.api.models.identifier.GetRepliesMoreIdentifier
 import io.getstream.chat.android.client.api.models.identifier.HideChannelIdentifier
 import io.getstream.chat.android.client.api.models.identifier.MarkAllReadIdentifier
+import io.getstream.chat.android.client.api.models.identifier.MarkReadIdentifier
 import io.getstream.chat.android.client.api.models.identifier.QueryChannelIdentifier
 import io.getstream.chat.android.client.api.models.identifier.QueryChannelsIdentifier
 import io.getstream.chat.android.client.api.models.identifier.QueryMembersIdentifier
@@ -2184,10 +2185,13 @@ internal constructor(
         val relevantPlugins = plugins.filterIsInstance<MarkAllReadListener>().also(::logPlugins)
         return api.markAllRead()
             .doOnStart(userScope) {
+                logger.d { "[markAllRead] #doOnStart; no args" }
                 relevantPlugins.forEach { plugin ->
-                    logger.v { "[markAllRead] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onMarkAllReadRequest()
                 }
+            }
+            .doOnResult(userScope) {
+                logger.v { "[markAllRead] #doOnResult; completed" }
             }
             .share(userScope) { MarkAllReadIdentifier() }
     }
@@ -2204,6 +2208,13 @@ internal constructor(
 
         return api.markRead(channelType, channelId)
             .precondition(relevantPlugins) { onChannelMarkReadPrecondition(channelType, channelId) }
+            .doOnStart(userScope) {
+                logger.d { "[markRead] #doOnStart; cid: $channelType:$channelId" }
+            }
+            .doOnResult(userScope) {
+                logger.v { "[markRead] #doOnResult; completed($channelType:$channelId): $it" }
+            }
+            .share(userScope) { MarkReadIdentifier(channelType, channelId) }
     }
 
     @CheckResult

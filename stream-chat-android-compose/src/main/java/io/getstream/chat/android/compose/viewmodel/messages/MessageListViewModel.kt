@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.state.messages.SelectedMessageState
 import io.getstream.chat.android.compose.state.messages.list.CancelGiphy
 import io.getstream.chat.android.compose.state.messages.list.DateSeparatorState
 import io.getstream.chat.android.compose.state.messages.list.GiphyAction
+import io.getstream.chat.android.compose.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.compose.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.compose.state.messages.list.MessageFocused
 import io.getstream.chat.android.compose.state.messages.list.MessageItemGroupPosition
@@ -528,9 +529,9 @@ public class MessageListViewModel(
 
         val (channelType, id) = channelId.cidToTypeAndId()
 
-        val latestMessage: MessageItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
-            messageItem is MessageItemState
-        } as? MessageItemState
+        val latestMessage: HasMessageListItemState? = currentMessagesState.messageItems.firstOrNull { messageItem ->
+            messageItem is HasMessageListItemState
+        } as? HasMessageListItemState
 
         if (currentMessage.id == latestMessage?.message?.id) {
             chatClient.markRead(channelType, id).enqueue()
