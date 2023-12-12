@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed unread count not being cleared. [#5115](https://github.com/GetStream/stream-chat-android/pull/5115)
 
 ### ⬆️ Improved
 
