@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.utils.internal.isChannelMutedForCurrentUser
@@ -90,15 +91,15 @@ internal class UnreadCountLogic(
             }
 
             is MessageReadEvent -> {
-                mutableState.upsertReads(ChannelUserRead(chatEvent.user, chatEvent.createdAt).let(::listOf))
+                mutableState.upsertReads(chatEvent.toChannelUserRead().let(::listOf))
             }
 
             is NotificationMarkReadEvent -> {
-                mutableState.upsertReads(ChannelUserRead(chatEvent.user, chatEvent.createdAt).let(::listOf))
+                mutableState.upsertReads(chatEvent.toChannelUserRead().let(::listOf))
             }
 
             is MarkAllReadEvent -> {
-                mutableState.upsertReads(ChannelUserRead(chatEvent.user, chatEvent.createdAt).let(::listOf))
+                mutableState.upsertReads(chatEvent.toChannelUserRead().let(::listOf))
             }
 
             else -> throw IllegalArgumentException(

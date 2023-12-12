@@ -80,7 +80,6 @@ import io.getstream.chat.android.client.utils.mergePartially
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.lazy.parameterizedLazy
 import io.getstream.chat.android.models.ChannelCapabilities
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -89,6 +88,7 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventCollector
 import io.getstream.chat.android.state.event.handler.internal.utils.realType
+import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
 import io.getstream.chat.android.state.plugin.logic.querychannels.internal.QueryChannelsLogic
@@ -594,24 +594,17 @@ internal class EventHandlerSequential(
                 // get the channel, update reads, write the channel
                 is MessageReadEvent ->
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                        ?.updateReads(event.toChannelUserRead())
                         ?.let(batch::addChannel)
 
                 is NotificationMarkReadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                        ?.updateReads(event.toChannelUserRead())
                         ?.let(batch::addChannel)
                 }
                 is NotificationMarkUnreadEvent -> {
                     batch.getCurrentChannel(event.cid)
-                        ?.updateReads(
-                            ChannelUserRead(
-                                user = event.user,
-                                lastRead = event.lastReadMessageAt,
-                                unreadMessages = event.unreadMessages,
-                                event.createdAt,
-                            ),
-                        )
+                        ?.updateReads(event.toChannelUserRead())
                         ?.let(batch::addChannel)
                 }
                 is GlobalUserBannedEvent -> {
