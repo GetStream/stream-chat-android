@@ -251,7 +251,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
         ) {
             val unreadCount = channel.unreadCount
 
-            if (unreadCount != null && unreadCount > 0) {
+            if (unreadCount > 0) {
                 UnreadCountIndicator(
                     modifier = Modifier.padding(bottom = 4.dp),
                     unreadCount = unreadCount,
