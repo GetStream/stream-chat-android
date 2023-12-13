@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import io.getstream.chat.android.client.extensions.internal.lastMessage
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
@@ -86,4 +87,4 @@ internal suspend fun ChannelEntity.toModel(
     team = team,
     ownCapabilities = ownCapabilities,
     membership = membership?.toModel(getUser),
-)
+).syncUnreadCountWithReads()

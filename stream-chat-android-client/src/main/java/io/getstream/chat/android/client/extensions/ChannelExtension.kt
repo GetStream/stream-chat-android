@@ -87,3 +87,6 @@ public val Channel.currentUserUnreadCount: Int
     get() = ChatClient.instance().getCurrentUser()?.let { currentUser ->
         read.firstOrNull { it.user.id == currentUser.id }?.unreadMessages
     } ?: 0
+
+public fun Channel.syncUnreadCountWithReads(): Channel =
+    copy(unreadCount = currentUserUnreadCount)

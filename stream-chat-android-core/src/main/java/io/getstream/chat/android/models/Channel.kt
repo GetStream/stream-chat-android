@@ -76,6 +76,15 @@ public data class Channel(
     val read: List<ChannelUserRead> = listOf(),
     val config: Config = Config(),
     val createdBy: User = User(),
+    @Deprecated(
+        message = "Use the extension property Channel.currentUserUnreadCount instead",
+        replaceWith = ReplaceWith(
+            expression = "currentUserUnreadCount",
+            imports = ["io.getstream.chat.android.client.extensions.currentUserUnreadCount"],
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    val unreadCount: Int = 0,
     val team: String = "",
     val hidden: Boolean? = null,
     val hiddenMessagesBefore: Date? = null,
@@ -105,6 +114,12 @@ public data class Channel(
     val lastUpdated: Date?
         get() = lastMessageAt?.takeIf { createdAt == null || it.after(createdAt) } ?: createdAt
 
+    /**
+     * Whether a channel contains unread messages or not.
+     */
+    val hasUnread: Boolean
+        get() = unreadCount > 0
+
     @Suppress("ComplexMethod")
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
@@ -124,6 +139,8 @@ public data class Channel(
             "hidden" -> hidden
             "cooldown" -> cooldown
             "lastUpdated" -> lastUpdated
+            "unreadCount" -> unreadCount
+            "hasUnread" -> hasUnread
             else -> extraData[fieldName] as? Comparable<*>
         }
     }
@@ -152,6 +169,7 @@ public data class Channel(
         private var read: List<ChannelUserRead> = listOf()
         private var config: Config = Config()
         private var createdBy: User = User()
+        private var unreadCount: Int = 0
         private var team: String = ""
         private var hidden: Boolean? = null
         private var hiddenMessagesBefore: Date? = null
@@ -182,6 +200,7 @@ public data class Channel(
             read = channel.read
             config = channel.config
             createdBy = channel.createdBy
+            unreadCount = channel.unreadCount
             team = channel.team
             hidden = channel.hidden
             hiddenMessagesBefore = channel.hiddenMessagesBefore
@@ -212,6 +231,7 @@ public data class Channel(
         public fun withRead(read: List<ChannelUserRead>): Builder = apply { this.read = read }
         public fun withConfig(config: Config): Builder = apply { this.config = config }
         public fun withCreatedBy(createdBy: User): Builder = apply { this.createdBy = createdBy }
+        public fun withUnreadCount(unreadCount: Int): Builder = apply { this.unreadCount = unreadCount }
         public fun withTeam(team: String): Builder = apply { this.team = team }
         public fun withHidden(hidden: Boolean?): Builder = apply { this.hidden = hidden }
         public fun withHiddenMessagesBefore(hiddenMessagesBefore: Date?): Builder = apply {
@@ -250,6 +270,7 @@ public data class Channel(
             read = read,
             config = config,
             createdBy = createdBy,
+            unreadCount = unreadCount,
             team = team,
             hidden = hidden,
             hiddenMessagesBefore = hiddenMessagesBefore,

@@ -18,6 +18,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.offline.MockChatClientBuilder
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomUser
@@ -29,6 +31,7 @@ import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Rule
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.mockito.kotlin.any
 import org.mockito.kotlin.check
 import org.mockito.kotlin.doReturn
@@ -42,6 +45,11 @@ import java.util.Date
 internal class ChannelRepositoryImplTest {
     @get:Rule
     val testCoroutines: TestCoroutineRule = TestCoroutineRule()
+    private val chatClient: ChatClient = MockChatClientBuilder {
+        Mockito.mock<ChatClient>().also {
+            whenever(it.getCurrentUser()) doReturn randomUser()
+        }
+    }.build()
 
     private val channelDao: ChannelDao = mock()
     private val channelRepository: DatabaseChannelRepository =
