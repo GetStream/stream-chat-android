@@ -45,7 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.getstream.chat.android.client.extensions.unreadCount
+import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
@@ -250,7 +250,7 @@ internal fun RowScope.DefaultChannelItemTrailingContent(
                 .align(Alignment.Bottom),
             horizontalAlignment = Alignment.End,
         ) {
-            val unreadCount = channel.unreadCount
+            val unreadCount = channel.currentUserUnreadCount
 
             if (unreadCount > 0) {
                 UnreadCountIndicator(

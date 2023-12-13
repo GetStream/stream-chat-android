@@ -103,7 +103,7 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread count for the current user
-                    Integer unreadCount = ChannelExtensionKt.getUnreadCount(result.getOrNull());
+                    Integer unreadCount = ChannelExtensionKt.getCurrentUserUnreadCount(result.getOrNull());
                 } else {
                     // Handle error
                 }
