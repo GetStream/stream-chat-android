@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
@@ -68,7 +69,7 @@ public fun Channel.updateLastMessage(
             lastMessageAt = messageCreatedAt,
             messages = messages + message,
             read = newReads,
-        )
+        ).syncUnreadCountWithReads()
 }
 
 /**
@@ -189,7 +190,7 @@ public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
         } else {
             read + newRead
         },
-    )
+    ).syncUnreadCountWithReads()
 }
 
 @InternalStreamChatApi

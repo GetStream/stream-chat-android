@@ -51,6 +51,8 @@ internal class QueryChannelsSortTest {
             updatedAtSortArguments() +
             createdAtSortArguments() +
             memberCountSortArguments() +
+            unreadCountSortArguments() +
+            hasUnreadSortArguments() +
             nameSortArguments() +
             unsupportedSortArguments() +
             multiSortByFieldReferencesArguments() +
@@ -209,6 +211,106 @@ internal class QueryChannelsSortTest {
         )
 
         @JvmStatic
+        fun unreadCountSortArguments() = listOf(
+            sortArguments(
+                testName = "Sorting by unreadCount field reference in ascending order",
+                querySort = QuerySortByField.ascByName("unreadCount"),
+            ) {
+                randomChannel(unreadCount = it)
+            },
+            sortArguments(
+                testName = "Sorting by unreadCount field reference in descending order",
+                querySort = QuerySortByField.descByName("unreadCount"),
+            ) {
+                randomChannel(unreadCount = 9 - it)
+            },
+            sortArguments(
+                testName = "Sorting by unread_count field name in ascending order",
+                querySort = QuerySortByField.ascByName("unread_count"),
+            ) {
+                randomChannel(unreadCount = it)
+            },
+            sortArguments(
+                testName = "Sorting by unread_count field name in descending order",
+                querySort = QuerySortByField.descByName("unread_count"),
+            ) {
+                randomChannel(unreadCount = 9 - it)
+            },
+        )
+
+        @JvmStatic
+        fun hasUnreadSortArguments() = listOf(
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) 0 else it)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by hasUnread field reference in ascending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5],
+                    ),
+                    QuerySortByField.ascByName<Channel>("hasUnread"),
+                    expectedList,
+                )
+            },
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) 6 - it else 0)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by hasUnread field reference in descending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5],
+                    ),
+                    QuerySortByField.descByName<Channel>("hasUnread"),
+                    expectedList,
+                )
+            },
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) 0 else it)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by has_unread field name in ascending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5],
+                    ),
+                    QuerySortByField.ascByName<Channel>("has_unread"),
+                    expectedList,
+                )
+            },
+            List(6) {
+                randomChannel(unreadCount = if (it < 3) 6 - it else 0)
+            }.let { expectedList ->
+                Arguments.of(
+                    "Sorting by has_unread field name in descending order",
+                    listOf(
+                        expectedList[0],
+                        expectedList[3],
+                        expectedList[1],
+                        expectedList[4],
+                        expectedList[2],
+                        expectedList[5],
+                    ),
+                    QuerySortByField.descByName<Channel>("has_unread"),
+                    expectedList,
+                )
+            },
+        )
+
+        @JvmStatic
         fun nameSortArguments() = listOf(
             sortArguments(
                 testName = "Sorting by name extra data field in ascending order",
@@ -249,12 +351,12 @@ internal class QueryChannelsSortTest {
             sortArguments(
                 testName = "Sorting by unreadCount field reference in descending order and by memberCount field reference in ascending order",
                 querySort = QuerySortByField
-                    .descByName<Channel>("created_at")
+                    .descByName<Channel>("unreadCount")
                     .ascByName("memberCount"),
             ) {
                 randomChannel(
                     memberCount = it,
-                    createdAt = dateWithOffset(offsetSeconds = -it),
+                    unreadCount = if (it < 3) 6 - it else 0,
                 )
             },
         )
@@ -264,12 +366,12 @@ internal class QueryChannelsSortTest {
             sortArguments(
                 testName = "Sorting by unread_count field name in descending order and by name extra data field in ascending order",
                 querySort = QuerySortByField
-                    .descByName<Channel>("created_at")
+                    .descByName<Channel>("unreadCount")
                     .ascByName("name"),
             ) {
                 randomChannel(
                     name = "$it",
-                    createdAt = dateWithOffset(offsetSeconds = -it),
+                    unreadCount = if (it < 5) 9 - it else 0,
                 )
             },
         )

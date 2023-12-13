@@ -1936,6 +1936,7 @@ public final class io/getstream/chat/android/client/extensions/ChannelExtensionK
 	public static final fun getCurrentUserUnreadCount (Lio/getstream/chat/android/models/Channel;)I
 	public static final fun isAnonymousChannel (Lio/getstream/chat/android/models/Channel;)Z
 	public static final fun isMutedFor (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Z
+	public static final fun syncUnreadCountWithReads (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Channel;
 }
 
 public final class io/getstream/chat/android/client/extensions/FlowExtensions {

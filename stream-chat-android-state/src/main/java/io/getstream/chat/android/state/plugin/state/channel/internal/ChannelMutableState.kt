@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -211,7 +212,7 @@ internal class ChannelMutableState(
             hidden = hidden.value,
             isInsideSearch = insideSearch,
             cachedLatestMessages = cachedLatestMessages.value.values.toList(),
-        )
+        ).syncUnreadCountWithReads()
     }
 
     /**

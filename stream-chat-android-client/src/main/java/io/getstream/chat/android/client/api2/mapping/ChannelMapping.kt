@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 
@@ -48,4 +49,4 @@ internal fun DownstreamChannelDto.toDomain(): Channel =
         ownCapabilities = own_capabilities.toSet(),
         membership = membership?.toDomain(),
         extraData = extraData.toMutableMap(),
-    )
+    ).syncUnreadCountWithReads()

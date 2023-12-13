@@ -80,6 +80,7 @@ import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequ
 import io.getstream.chat.android.client.api2.model.response.VideoCallTokenResponse
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
@@ -718,7 +719,7 @@ constructor(
                 watchers = response.watchers.map(DownstreamUserDto::toDomain),
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,
-            )
+            ).syncUnreadCountWithReads()
         }
     }
 
