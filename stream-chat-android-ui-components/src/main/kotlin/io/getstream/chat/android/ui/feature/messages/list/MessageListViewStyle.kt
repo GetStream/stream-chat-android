@@ -371,7 +371,7 @@ public data class MessageListViewStyle(
                     attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
 
                 val markAsUnreadEnabled =
-                    attributes.getBoolean(R.styleable.MessageListView_streamUiMarkAsUnreadEnabled, false)
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiMarkAsUnreadEnabled, true)
 
                 val retryMessageEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiRetryMessageEnabled, true)
