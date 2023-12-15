@@ -23,13 +23,13 @@ import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
-import androidx.core.view.marginStart
-import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.style.AudioRecordPlayerViewStyle
+import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
+import io.getstream.chat.android.ui.utils.extensions.setPaddingCompat
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
 
@@ -70,9 +70,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
 
         background = style.tintedBackgroundDrawable
 
-        ViewCompat.setPaddingRelative(
-            this, style.padding.start, style.padding.top, style.padding.end, style.padding.bottom
-        )
+        setPaddingCompat(style.padding)
 
         with(binding) {
             playbackProgressContainer.updateLayoutParams {
@@ -80,37 +78,44 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
                 height = style.playbackProgressContainerSize.height
             }
 
+            progressBar.indeterminateDrawable = style.progressBarDrawable
             progressBar.updateLayoutParams {
                 width = style.progressBarSize.width
                 height = style.progressBarSize.height
             }
-            progressBar.indeterminateDrawable = style.progressBarDrawable
 
+            playButton.setPaddingCompat(style.playbackButtonPadding)
+            playButton.setImageDrawable(style.tintedPlayIconDrawable)
+            playButton.elevation = style.playbackButtonElevation.toFloat()
             playButton.updateLayoutParams {
                 width = style.playbackButtonSize.width
                 height = style.playbackButtonSize.height
             }
-            playButton.setImageDrawable(style.tintedPlayIconDrawable)
 
+            duration.setTextStyle(style.durationTextStyle)
             duration.updateLayoutParams<MarginLayoutParams> {
                 width = style.durationTextViewSize.width
                 height = style.durationTextViewSize.height
                 marginStart = style.durationTextMarginStart
             }
-            style.durationTextStyle.apply(duration)
 
+            audioSeekBar.setPlayedWaveBarColor(style.waveBarColorPlayed)
+            audioSeekBar.setFutureWaveBarColor(style.waveBarColorFuture)
+            audioSeekBar.setScrubberDrawable(style.tintedScrubberDrawable)
+            audioSeekBar.setScrubberWidth(style.scrubberWidthDefault, style.scrubberWidthPressed)
             audioSeekBar.updateLayoutParams<MarginLayoutParams> {
                 height = style.waveBarHeight
                 marginStart = style.waveBarMarginStart
             }
-            audioSeekBar.setPlayedWaveBarColor(style.playedWaveBarColor)
-            audioSeekBar.setFutureWaveBarColor(style.futureWaveBarColor)
-            audioSeekBar.setScrubberDrawable(style.tintedScrubberDrawable)
-            audioSeekBar.setScrubberWidth(style.defaultScrubberWidth, style.pressedScrubberWidth)
 
+            audioFileIconContainer.updateLayoutParams { width = style.fileIconContainerWidth }
             audioFileIconContainer.isVisible = style.isFileIconContainerVisible
-            style.speedButtonTextStyle.apply(audioSpeedButton)
+
+            audioFileIcon.setImageDrawable(style.audioFileIconDrawable)
+
+            audioSpeedButton.setTextStyle(style.speedButtonTextStyle)
             audioSpeedButton.background = style.speedButtonBackground
+            audioSpeedButton.elevation = style.speedButtonElevation.toFloat()
             audioSpeedButton.updateLayoutParams {
                 width = style.speedButtonSize.width
                 height = style.speedButtonSize.height

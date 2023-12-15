@@ -38,8 +38,6 @@ import kotlin.math.max
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
-private const val EXPAND_TRACKER_WIDTH = 10
-private const val DEFAULT_BAR_PADDING = 5
 private const val DEFAULT_BAR_SPACING = 0.4
 private const val DEFAULT_BAR_NUMBER = 40
 private const val DEFAULT_BAR_VALUE = 0F

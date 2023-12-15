@@ -2,14 +2,9 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.previe
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.util.AttributeSet
-import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
-import androidx.core.content.ContextCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.list.background.ShapeAppearanceModelFactory
 import io.getstream.chat.android.ui.font.TextStyle
@@ -17,15 +12,19 @@ import io.getstream.chat.android.ui.helper.ViewPadding
 import io.getstream.chat.android.ui.helper.ViewSize
 import io.getstream.chat.android.ui.helper.ViewStyle
 import io.getstream.chat.android.ui.utils.extensions.applyTint
-import io.getstream.chat.android.ui.utils.extensions.dpToPx
+import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getDimension
+import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 
 public data class AudioRecordPlayerViewStyle(
     @Px public val height: Int,
     public val padding: ViewPadding,
-    public val backgroundBackground: Drawable?,
-    @ColorInt public val backgroundBackgroundTint: Int?,
+    public val backgroundDrawable: Drawable?,
+    @ColorInt public val backgroundDrawableTint: Int?,
     public val playbackProgressContainerSize: ViewSize,
     public val playbackButtonSize: ViewSize,
+    public val playbackButtonPadding: ViewPadding,
+    @Px public val playbackButtonElevation: Int,
     public val playbackButtonBackground: Drawable?,
     public val progressBarDrawable: Drawable?,
     public val progressBarSize: ViewSize,
@@ -36,23 +35,25 @@ public data class AudioRecordPlayerViewStyle(
     public val speedButtonTextStyle: TextStyle,
     public val speedButtonBackground: Drawable?,
     public val speedButtonSize: ViewSize,
-    public val audioIconDrawable: Drawable?,
+    @Px public val speedButtonElevation: Int,
+    public val audioFileIconDrawable: Drawable?,
     public val durationTextViewSize: ViewSize,
     @Px public val durationTextMarginStart: Int,
     public val durationTextStyle: TextStyle,
     @Px public val waveBarHeight: Int,
     @Px public val waveBarMarginStart: Int,
-    @ColorInt public val playedWaveBarColor: Int,
-    @ColorInt public val futureWaveBarColor: Int,
+    @ColorInt public val waveBarColorPlayed: Int,
+    @ColorInt public val waveBarColorFuture: Int,
     public val scrubberDrawable: Drawable?,
     @ColorInt public val scrubberDrawableTint: Int?,
-    @Px public val defaultScrubberWidth: Int,
-    @Px public val pressedScrubberWidth: Int,
+    @Px public val scrubberWidthDefault: Int,
+    @Px public val scrubberWidthPressed: Int,
+    @Px public val fileIconContainerWidth: Int,
     public val isFileIconContainerVisible: Boolean,
 ) : ViewStyle {
 
     val tintedBackgroundDrawable: Drawable?
-        get() = backgroundBackground?.applyTint(backgroundBackgroundTint)
+        get() = backgroundDrawable?.applyTint(backgroundDrawableTint)
 
     val tintedPlayIconDrawable: Drawable?
         get() = playIconDrawable?.applyTint(playIconDrawableTint)
@@ -64,58 +65,149 @@ public data class AudioRecordPlayerViewStyle(
         get() = scrubberDrawable?.applyTint(scrubberDrawableTint)
 
     internal companion object {
+
+        // operator fun invoke(context: Context, attributes: AttributeSet?): AudioRecordPlayerViewStyle {
+        //     val typedArray = context.obtainStyledAttributes(
+        //         attributes,
+        //         R.styleable.AudioRecordPlayerView,
+        //         R.attr.streamUiAudioRecordPlayerViewStyle,
+        //         R.style.StreamUi_AudioRecordPlayerView,
+        //     )
+        //     return invoke(context, typedArray)
+        //         .also { typedArray.recycle() }
+        // }
+
         operator fun invoke(context: Context, attributes: TypedArray?): AudioRecordPlayerViewStyle {
 
+            val height = context.getDimension(R.dimen.stream_ui_audio_record_player_height)
+
+            val paddingStart = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_start)
+            val paddingTop = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_top)
+            val paddingEnd = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_end)
+            val paddingBottom = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_bottom)
+
+            val backgroundDrawable = ShapeAppearanceModelFactory.audioBackground(context)
+            val backgroundDrawableTint: Int? = null
+
+            val playbackProgressContainerWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_progress_container_width)
+            val playbackProgressContainerHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_progress_container_height)
+
+            val playbackButtonWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_width)
+            val playbackButtonHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_height)
+            val playbackButtonElevation = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_elevation)
+            val playbackButtonPadding = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_padding)
+            val playbackButtonBackground = context.getDrawableCompat(R.drawable.stream_ui_white_shape_circular)
+
+            val progressBarDrawable = context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)
+            val progressBarWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_progress_bar_width)
+            val progressBarHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_progress_bar_height)
+
+            val playIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_play)
+            val playIconDrawableTint: Int? = null
+
+            val pauseIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_pause)
+            val pauseIconDrawableTint: Int? = null
+
+
+            val speedButtonTextStyle = TextStyle(
+                size = context.getDimension(R.dimen.stream_ui_audio_record_player_speed_text_size),
+                color = context.getColorCompat(R.color.stream_ui_audio_record_player_speed_text_color),
+            )
+            val speedButtonBackground = context.getDrawableCompat(R.drawable.stream_ui_literal_white_shape_16dp_corners)
+            val speedButtonWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_speed_button_width)
+            val speedButtonHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_speed_button_height)
+            val speedButtonElevation = context.getDimension(R.dimen.stream_ui_audio_record_player_speed_button_elevation)
+
+            val audioFileIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_file_aac)
+
+            val durationTextViewWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_view_width)
+            val durationTextViewHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_view_height)
+            val durationTextViewMarginStart = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_view_margin_start)
+            val durationTextStyle = TextStyle(
+                size = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_size),
+                color = context.getColorCompat(R.color.stream_ui_audio_record_player_duration_text_color),
+            )
+
+            val waveBarHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_wave_bar_height)
+            val waveBarMarginStart = context.getDimension(R.dimen.stream_ui_audio_record_player_wave_bar_margin_start)
+            val waveBarColorPlayed = context.getColorCompat(R.color.stream_ui_accent_blue)
+            val waveBarColorFuture = context.getColorCompat(R.color.stream_ui_grey)
+
+            val scrubberDrawable = context.getDrawableCompat(R.drawable.stream_ui_share_rectangle)
+            val scrubberDrawableTint: Int? = null
+            val scrubberWidthDefault = context.getDimension(R.dimen.stream_ui_audio_record_player_scrubber_width_default)
+            val scrubberWidthPressed = context.getDimension(R.dimen.stream_ui_audio_record_player_scrubber_width_pressed)
+
+            val fileIconContainerWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_file_icon_container_width)
+            val fileIconContainerVisible = context.resources.getBoolean(R.bool.stream_ui_audio_record_player_file_icon_container_visible)
+
             return AudioRecordPlayerViewStyle(
-                height = 60.dpToPx(),
+                height = height,
                 padding = ViewPadding(
-                    start = 8.dpToPx(),
-                    top = 2.dpToPx(),
-                    end = 8.dpToPx(),
-                    bottom = 2.dpToPx(),
+                    start = paddingStart,
+                    top = paddingTop,
+                    end = paddingEnd,
+                    bottom = paddingBottom,
                 ),
-                backgroundBackground = ShapeAppearanceModelFactory.audioBackground(context),
-                backgroundBackgroundTint = Color.YELLOW,
-                playbackProgressContainerSize = ViewSize(44.dpToPx(), 44.dpToPx()),
-                playbackButtonSize = ViewSize(36.dpToPx(), 36.dpToPx()),
-                playbackButtonBackground = ContextCompat.getDrawable(
-                    context,
-                    R.drawable.stream_ui_white_shape_circular
+                backgroundDrawable = backgroundDrawable,
+                backgroundDrawableTint = backgroundDrawableTint,
+                // Playback Progress Container
+                playbackProgressContainerSize = ViewSize(
+                    width = playbackProgressContainerWidth,
+                    height = playbackProgressContainerHeight,
                 ),
-                progressBarDrawable = ContextCompat.getDrawable(
-                    context,
-                    R.drawable.stream_ui_rotating_indeterminate_progress_gradient
+                // Playback Button
+                playbackButtonSize = ViewSize(
+                    width = playbackButtonWidth,
+                    height = playbackButtonHeight,
                 ),
-                progressBarSize = ViewSize(36.dpToPx(), 36.dpToPx()),
-                playIconDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_play),
-                playIconDrawableTint = Color.RED,
-                pauseIconDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_pause),
-                pauseIconDrawableTint = Color.BLUE,
-                speedButtonTextStyle = TextStyle(
-                    size = 14.dpToPx(),
-                    color = 0xFF080707.toInt(),
+                playbackButtonPadding = ViewPadding(
+                    start = playbackButtonPadding,
+                    top = playbackButtonPadding,
+                    end = playbackButtonPadding,
+                    bottom = playbackButtonPadding,
                 ),
-                speedButtonBackground = ContextCompat.getDrawable(
-                    context,
-                    R.drawable.stream_ui_literal_white_shape_16dp_corners
+                playbackButtonElevation = playbackButtonElevation,
+                playbackButtonBackground = playbackButtonBackground,
+                playIconDrawable = playIconDrawable,
+                playIconDrawableTint = playIconDrawableTint,
+                pauseIconDrawable = pauseIconDrawable,
+                pauseIconDrawableTint = pauseIconDrawableTint,
+                // Progress Bar
+                progressBarDrawable = progressBarDrawable,
+                progressBarSize = ViewSize(
+                    width = progressBarWidth,
+                    height = progressBarHeight,
                 ),
-                speedButtonSize = ViewSize(36.dpToPx(), 32.dpToPx()),
-                audioIconDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_file_aac),
-                durationTextViewSize = ViewSize(48.dpToPx(), ViewGroup.LayoutParams.MATCH_PARENT),
-                durationTextMarginStart = 0.dpToPx(),
-                durationTextStyle = TextStyle(
-                    size = 14.dpToPx(),
-                    color = 0xFF747881.toInt(),
+                // Duration Text
+                durationTextViewSize = ViewSize(
+                    width = durationTextViewWidth,
+                    height = durationTextViewHeight,
                 ),
-                waveBarHeight = 36.dpToPx(),
-                waveBarMarginStart = 0.dpToPx(),
-                playedWaveBarColor = ContextCompat.getColor(context, R.color.stream_ui_accent_blue),
-                futureWaveBarColor = ContextCompat.getColor(context, R.color.stream_ui_grey),
-                scrubberDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_share_rectangle),
-                scrubberDrawableTint = Color.MAGENTA,
-                defaultScrubberWidth = 7.dpToPx(),
-                pressedScrubberWidth = 10.dpToPx(),
-                isFileIconContainerVisible = false,
+                durationTextMarginStart = durationTextViewMarginStart,
+                durationTextStyle = durationTextStyle,
+                // Wave Bar
+                waveBarHeight = waveBarHeight,
+                waveBarMarginStart = waveBarMarginStart,
+                waveBarColorPlayed = waveBarColorPlayed,
+                waveBarColorFuture = waveBarColorFuture,
+                // Scrubber
+                scrubberDrawable = scrubberDrawable,
+                scrubberDrawableTint = scrubberDrawableTint,
+                scrubberWidthDefault = scrubberWidthDefault,
+                scrubberWidthPressed = scrubberWidthPressed,
+                // File Icon Container
+                fileIconContainerWidth = fileIconContainerWidth,
+                isFileIconContainerVisible = fileIconContainerVisible,
+                audioFileIconDrawable = audioFileIconDrawable,
+                // Speed Button
+                speedButtonTextStyle = speedButtonTextStyle,
+                speedButtonBackground = speedButtonBackground,
+                speedButtonSize = ViewSize(
+                    width = speedButtonWidth,
+                    height = speedButtonHeight,
+                ),
+                speedButtonElevation = speedButtonElevation,
             )
         }
     }
