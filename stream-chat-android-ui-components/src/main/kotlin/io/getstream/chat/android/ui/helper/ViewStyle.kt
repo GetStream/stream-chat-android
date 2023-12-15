@@ -16,4 +16,7 @@
 
 package io.getstream.chat.android.ui.helper
 
-internal interface ViewStyle
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
+@InternalStreamChatApi
+public interface ViewStyle

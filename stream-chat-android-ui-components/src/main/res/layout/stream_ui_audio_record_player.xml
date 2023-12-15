@@ -18,20 +18,26 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="60dp"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:padding="6dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
     tools:parentTag="androidx.appcompat.widget.LinearLayoutCompat"
     >
 
     <FrameLayout
-        android:layout_width="36dp"
-        android:layout_height="56dp"
-        android:layout_marginStart="6dp"
+        android:id="@+id/playbackProgressContainer"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         >
 
         <ProgressBar
-            android:id="@+id/loadingView"
+            android:id="@+id/progressBar"
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_gravity="center"
@@ -48,40 +54,41 @@
             android:elevation="2dp"
             android:padding="6dp"
             android:src="@drawable/stream_ui_ic_play"
-            android:tint="@color/stream_ui_literal_black"
             android:visibility="visible"
             />
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/duration"
-        android:layout_width="wrap_content"
+        android:layout_width="48dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:paddingHorizontal="6dp"
+        android:layout_marginStart="0dp"
         android:textAlignment="center"
         android:textColor="#747881"
         android:textSize="14sp"
         android:visibility="visible"
-        tools:text="4:19"
+        tools:text="04:19"
         />
 
     <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioWavesSeekBar
         android:id="@+id/audioSeekBar"
         android:layout_width="0dp"
         android:layout_height="36dp"
+        android:layout_marginStart="0dp"
         android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:background="@android:color/transparent"
         />
 
     <FrameLayout
+        android:id="@+id/audioFileIconContainer"
         android:layout_width="48dp"
         android:layout_height="match_parent"
         >
 
         <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/fileView"
+            android:id="@+id/audioFileIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -90,7 +97,7 @@
             />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/speedButton"
+            android:id="@+id/audioSpeedButton"
             android:layout_width="36dp"
             android:layout_height="32dp"
             android:layout_gravity="center"
