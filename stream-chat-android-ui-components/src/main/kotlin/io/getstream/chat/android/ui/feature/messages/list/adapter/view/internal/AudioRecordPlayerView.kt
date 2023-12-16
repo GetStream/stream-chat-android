@@ -53,7 +53,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
 
     private fun init(context: Context, attrs: AttributeSet?) {
         binding = StreamUiAudioRecordPlayerBinding.inflate(streamThemeInflater, this)
-        setStyle(AudioRecordPlayerViewStyle(context, null))
+        setStyle(AudioRecordPlayerViewStyle(context, attrs))
     }
 
     private val logger by taggedLogger("Chat:PlayerView")
@@ -78,7 +78,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
                 height = style.playbackProgressContainerSize.height
             }
 
-            progressBar.indeterminateDrawable = style.progressBarDrawable
+            progressBar.indeterminateDrawable = style.tintedProgressBarDrawable
             progressBar.updateLayoutParams {
                 width = style.progressBarSize.width
                 height = style.progressBarSize.height
@@ -86,6 +86,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
 
             playButton.setPaddingCompat(style.playbackButtonPadding)
             playButton.setImageDrawable(style.tintedPlayIconDrawable)
+            playButton.setBackgroundDrawable(style.tintedPlaybackButtonBackground)
             playButton.elevation = style.playbackButtonElevation.toFloat()
             playButton.updateLayoutParams {
                 width = style.playbackButtonSize.width
@@ -114,7 +115,7 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
             audioFileIcon.setImageDrawable(style.audioFileIconDrawable)
 
             audioSpeedButton.setTextStyle(style.speedButtonTextStyle)
-            audioSpeedButton.background = style.speedButtonBackground
+            audioSpeedButton.background = style.tintedSpeedButtonBackground
             audioSpeedButton.elevation = style.speedButtonElevation.toFloat()
             audioSpeedButton.updateLayoutParams {
                 width = style.speedButtonSize.width
