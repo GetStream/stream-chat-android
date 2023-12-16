@@ -275,31 +275,38 @@ public data class MessageListViewStyle(
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
 
-                var audioRecordViewStyleOwn: AudioRecordPlayerViewStyle
-                context.obtainStyledAttributes(
-                    attributes.getResourceId(
-                        R.styleable.MessageListView_streamUiMessageListAudioRecordPlayerViewStyleOwn,
-                        R.style.StreamUi_AudioRecordPlayerView,
-                    ),
-                    R.styleable.AudioRecordPlayerView,
-                ).use {
-                    audioRecordViewStyleOwn = AudioRecordPlayerViewStyle(
-                        context = context, attributes = it
-                    )
+                var audioRecordViewStyleOwn: AudioRecordPlayerViewStyle? = null
+                val audioRecordViewStyleOwnResId = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMessageListAudioRecordPlayerViewStyleOwn,
+                    R.style.StreamUi_AudioRecordPlayerView,
+                )
+                if (audioRecordViewStyleOwnResId != R.style.StreamUi_AudioRecordPlayerView) {
+                    context.obtainStyledAttributes(
+                        audioRecordViewStyleOwnResId,
+                        R.styleable.AudioRecordPlayerView,
+                    ).use {
+                        audioRecordViewStyleOwn = AudioRecordPlayerViewStyle(
+                            context = context, attributes = it
+                        )
+                    }
                 }
 
-                var audioRecordViewStyleTheirs: AudioRecordPlayerViewStyle
-                context.obtainStyledAttributes(
-                    attributes.getResourceId(
-                        R.styleable.MessageListView_streamUiMessageListAudioRecordPlayerViewStyleTheirs,
-                        R.style.StreamUi_AudioRecordPlayerView,
-                    ),
-                    R.styleable.AudioRecordPlayerView,
-                ).use {
-                    audioRecordViewStyleTheirs = AudioRecordPlayerViewStyle(
-                        context = context, attributes = it
-                    )
+                var audioRecordViewStyleTheirs: AudioRecordPlayerViewStyle? = null
+                val audioRecordViewStyleTheirsResId = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMessageListAudioRecordPlayerViewStyleTheirs,
+                    R.style.StreamUi_AudioRecordPlayerView,
+                )
+                if (audioRecordViewStyleTheirsResId != R.style.StreamUi_AudioRecordPlayerView) {
+                    context.obtainStyledAttributes(
+                        audioRecordViewStyleTheirsResId,
+                        R.styleable.AudioRecordPlayerView,
+                    ).use {
+                        audioRecordViewStyleTheirs = AudioRecordPlayerViewStyle(
+                            context = context, attributes = it
+                        )
+                    }
                 }
+
                 val replyMessageStyle = MessageReplyStyle(context = context, attributes = attributes)
 
                 val replyIcon = attributes.getResourceId(

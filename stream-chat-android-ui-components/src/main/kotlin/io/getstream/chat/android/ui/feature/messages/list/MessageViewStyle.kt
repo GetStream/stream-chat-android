@@ -9,6 +9,6 @@ import io.getstream.chat.android.ui.helper.ViewStyle
  * @param theirs Style for messages sent by other users.
  */
 public data class MessageViewStyle<T : ViewStyle>(
-    val own: T,
-    val theirs: T,
+    val own: T?,
+    val theirs: T?,
 ) : ViewStyle

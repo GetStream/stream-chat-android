@@ -19,9 +19,11 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter
 import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
+import io.getstream.chat.android.ui.feature.messages.list.MessageViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.CUSTOM_ATTACHMENTS
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.DATE_DIVIDER
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.ERROR_MESSAGE
@@ -88,6 +90,11 @@ public open class MessageListItemViewHolderFactory {
     private lateinit var giphyViewHolderStyle: GiphyViewHolderStyle
 
     /**
+     * Sets the style for the Media ViewHolder.
+     */
+    private lateinit var audioRecordViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>
+
+    /**
      * A container containing listeners used by the ViewHolders for
      * setting reactions, opening message options, etc.
      */
@@ -127,6 +134,13 @@ public open class MessageListItemViewHolderFactory {
      */
     internal fun setGiphyViewHolderStyle(style: GiphyViewHolderStyle) {
         this.giphyViewHolderStyle = style
+    }
+
+    /**
+     * Setter for [audioRecordViewStyle].
+     */
+    internal fun setAudioRecordViewStyle(style: MessageViewStyle<AudioRecordPlayerViewStyle>) {
+        this.audioRecordViewStyle = style
     }
 
     /**
@@ -222,6 +236,7 @@ public open class MessageListItemViewHolderFactory {
             decoratorProvider.decorators,
             listenerContainer,
             textTransformer,
+            audioRecordViewStyle,
         )
     }
 

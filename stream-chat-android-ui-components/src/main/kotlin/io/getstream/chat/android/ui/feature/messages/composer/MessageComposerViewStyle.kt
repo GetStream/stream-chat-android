@@ -960,17 +960,17 @@ public data class MessageComposerViewStyle(
                         DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH,
                     )
 
-                var audioRecordPlayerViewStyle: AudioRecordPlayerViewStyle? = null
-                context.obtainStyledAttributes(
-                    a.getResourceId(
-                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordPlayerViewStyle,
-                        R.style.StreamUi_AudioRecordPlayerView,
-                    ),
-                    R.styleable.AudioRecordPlayerView,
-                ).use {
-                    audioRecordPlayerViewStyle = AudioRecordPlayerViewStyle(
-                        context = context, attributes = it
-                    )
+                var playerViewStyle: AudioRecordPlayerViewStyle? = null
+                val playerViewStyleResId: Int = a.getResourceId(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordPlayerViewStyle,
+                    R.style.StreamUi_AudioRecordPlayerView,
+                )
+                if (playerViewStyleResId != R.style.StreamUi_AudioRecordPlayerView) {
+                    context.obtainStyledAttributes(playerViewStyleResId, R.styleable.AudioRecordPlayerView).use {
+                        playerViewStyle = AudioRecordPlayerViewStyle(
+                            context = context, attributes = it
+                        )
+                    }
                 }
 
                 return MessageComposerViewStyle(
@@ -1080,7 +1080,7 @@ public data class MessageComposerViewStyle(
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
                     attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, a),
-                    audioRecordPlayerViewStyle = audioRecordPlayerViewStyle,
+                    audioRecordPlayerViewStyle = playerViewStyle,
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
         }

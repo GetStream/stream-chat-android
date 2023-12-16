@@ -21,6 +21,7 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.view.doOnAttach
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.extensions.isInt
@@ -63,14 +64,15 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
     public fun setStyle(style: AudioRecordPlayerViewStyle) {
         this.style = style
 
-        layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, style.height)
         orientation = HORIZONTAL
         gravity = Gravity.CENTER_VERTICAL
-
         background = style.tintedBackgroundDrawable
 
         setPaddingCompat(style.padding)
 
+        doOnAttach {
+            it.updateLayoutParams { height = style.height }
+        }
         with(binding) {
             playbackProgressContainer.updateLayoutParams {
                 width = style.playbackProgressContainerSize.width

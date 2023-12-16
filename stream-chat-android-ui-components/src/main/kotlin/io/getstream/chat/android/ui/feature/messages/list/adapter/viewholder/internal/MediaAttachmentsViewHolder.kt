@@ -26,6 +26,8 @@ import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageMediaAttachmentBinding
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.MessageViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
@@ -53,6 +55,7 @@ internal class MediaAttachmentsViewHolder(
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
     private val messageTextTransformer: ChatMessageTextTransformer,
+    private val audioRecordViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
     internal val binding: StreamUiItemMessageMediaAttachmentBinding = StreamUiItemMessageMediaAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
@@ -122,6 +125,11 @@ internal class MediaAttachmentsViewHolder(
             binding.audioRecordsView.showAudioAttachments(data.message.attachments)
         } else {
             binding.audioRecordsView.isVisible = false
+        }
+
+        val finalAudioRecordViewStyle = if (data.isMine) audioRecordViewStyle.own else audioRecordViewStyle.theirs
+        finalAudioRecordViewStyle?.also {
+            binding.audioRecordsView.setStyle(it)
         }
     }
 
