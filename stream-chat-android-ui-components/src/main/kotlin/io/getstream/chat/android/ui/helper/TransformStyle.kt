@@ -23,9 +23,9 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryViewMediaSt
 import io.getstream.chat.android.ui.feature.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListViewStyle
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
-import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.DefaultQuotedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.FileAttachmentViewStyle

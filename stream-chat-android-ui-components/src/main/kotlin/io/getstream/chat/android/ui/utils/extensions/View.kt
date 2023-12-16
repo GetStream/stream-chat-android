@@ -76,6 +76,10 @@ internal fun View.setPaddingStart(@Px start: Int) {
 
 internal fun View.setPaddingCompat(padding: ViewPadding) {
     ViewCompat.setPaddingRelative(
-        this, padding.start, padding.top, padding.end, padding.bottom
+        this,
+        padding.start,
+        padding.top,
+        padding.end,
+        padding.bottom,
     )
 }

@@ -28,9 +28,9 @@ import androidx.annotation.Px
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
-import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
@@ -968,7 +968,7 @@ public data class MessageComposerViewStyle(
                 if (playerViewStyleResId != R.style.StreamUi_AudioRecordPlayerView) {
                     context.obtainStyledAttributes(playerViewStyleResId, R.styleable.AudioRecordPlayerView).use {
                         playerViewStyle = AudioRecordPlayerViewStyle(
-                            context = context, attributes = it
+                            context = context, attributes = it,
                         )
                     }
                 }

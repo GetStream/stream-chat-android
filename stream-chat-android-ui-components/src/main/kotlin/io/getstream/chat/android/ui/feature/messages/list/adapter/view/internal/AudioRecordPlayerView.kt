@@ -43,7 +43,9 @@ internal class AudioRecordPlayerView : LinearLayoutCompat {
     public constructor(context: Context) : this(context, null)
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     public constructor(
-        context: Context, attrs: AttributeSet?, defStyleAttr: Int
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
     ) : super(context.createStreamThemeWrapper(), attrs, defStyleAttr) {
         init(context, attrs)
     }

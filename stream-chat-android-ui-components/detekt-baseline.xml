@@ -17,6 +17,8 @@
     <ID>LargeClass:MessageListView.kt$MessageListView : ConstraintLayout</ID>
     <ID>LongMethod:AttachmentGalleryOptionsViewStyle.kt$AttachmentGalleryOptionsViewStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryOptionsViewStyle</ID>
     <ID>LongMethod:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$operator fun invoke(context: Context, it: TypedArray): AttachmentGalleryViewMediaStyle</ID>
+    <ID>LongMethod:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$internal operator fun invoke(context: Context, attributes: TypedArray): AudioRecordPlayerViewStyle</ID>
+    <ID>LongMethod:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$public fun default(context: Context): AudioRecordPlayerViewStyle</ID>
     <ID>LongMethod:AvatarStyle.kt$AvatarStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): AvatarStyle</ID>
     <ID>LongMethod:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle.Companion$operator fun invoke(context: Context, attrs: AttributeSet?): ChannelActionsDialogViewStyle</ID>
     <ID>LongMethod:ChannelAvatarView.kt$ChannelAvatarView$private fun createImageViews(count: Int): List&lt;ImageView></ID>
@@ -81,6 +83,20 @@
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart</ID>
     <ID>MaxLineLength:AttachmentGalleryViewMediaStyle.kt$AttachmentGalleryViewMediaStyle.Companion$R.styleable.AttachmentGalleryVideoAttachments_streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop</ID>
     <ID>MaxLineLength:AttachmentsPickerDialogStyle.kt$AttachmentsPickerDialogStyle$*</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val durationTextViewHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_view_height)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val durationTextViewMarginStart = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_view_margin_start)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val durationTextViewWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_duration_text_view_width)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val fileIconContainerVisible = context.resources.getBoolean(R.bool.stream_ui_audio_record_player_file_icon_container_visible)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val fileIconContainerWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_file_icon_container_width)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val playbackButtonElevation = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_elevation)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val playbackButtonHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_height)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val playbackButtonPadding = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_button_padding)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val playbackProgressContainerHeight = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_progress_container_height)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val playbackProgressContainerWidth = context.getDimension(R.dimen.stream_ui_audio_record_player_playback_progress_container_width)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val progressBarDrawable = context.getDrawableCompat(R.drawable.stream_ui_rotating_indeterminate_progress_gradient)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val scrubberWidthDefault = context.getDimension(R.dimen.stream_ui_audio_record_player_scrubber_width_default)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val scrubberWidthPressed = context.getDimension(R.dimen.stream_ui_audio_record_player_scrubber_width_pressed)</ID>
+    <ID>MaxLineLength:AudioRecordPlayerViewStyle.kt$AudioRecordPlayerViewStyle.Companion$val speedButtonElevation = context.getDimension(R.dimen.stream_ui_audio_record_player_speed_button_elevation)</ID>
     <ID>MaxLineLength:AutoLinkableTextTransformer.kt$AutoLinkableTextTransformer$*</ID>
     <ID>MaxLineLength:AvatarDecorator.kt$AvatarDecorator$setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)</ID>
     <ID>MaxLineLength:ChannelActionsDialogViewStyle.kt$ChannelActionsDialogViewStyle$*</ID>
