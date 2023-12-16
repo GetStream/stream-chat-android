@@ -511,7 +511,8 @@
         <item name="streamUiMessageMaxWidthFactorTheirs">75%</item>
 
         <!-- Audio record player view style -->
-        <item name="streamUiMessageListAudioRecordPlayerViewStyle">@style/StreamUi.AudioRecordPlayerView</item>
+        <item name="streamUiMessageListAudioRecordPlayerViewStyleOwn">@style/StreamUi.AudioRecordPlayerView</item>
+        <item name="streamUiMessageListAudioRecordPlayerViewStyleTheirs">@style/StreamUi.AudioRecordPlayerView</item>
     </style>
 
     <style name="StreamUi.MessageList.MediaAttachment" parent="StreamUi">

@@ -552,6 +552,7 @@
         <attr name="streamUiReadCount" format="boolean" />
 
         <!-- Audio record player view style -->
-        <attr name="streamUiMessageListAudioRecordPlayerViewStyle" format="reference" />
+        <attr name="streamUiMessageListAudioRecordPlayerViewStyleOwn" format="reference" />
+        <attr name="streamUiMessageListAudioRecordPlayerViewStyleTheirs" format="reference" />
     </declare-styleable>
 </resources>

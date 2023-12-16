@@ -30,8 +30,6 @@ import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.R
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.style.AudioRecordPlayerViewStyle
-import io.getstream.chat.android.ui.utils.extensions.applyTint
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import java.lang.Float.min
 import kotlin.math.max

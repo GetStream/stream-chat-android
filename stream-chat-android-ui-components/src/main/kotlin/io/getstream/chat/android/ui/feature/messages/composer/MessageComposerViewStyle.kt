@@ -30,6 +30,7 @@ import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle
@@ -283,6 +284,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
     public val attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle,
+    public val audioRecordPlayerViewStyle: AudioRecordPlayerViewStyle?,
 ) : ViewStyle {
 
     /**
@@ -958,6 +960,19 @@ public data class MessageComposerViewStyle(
                         DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH,
                     )
 
+                var audioRecordPlayerViewStyle: AudioRecordPlayerViewStyle? = null
+                context.obtainStyledAttributes(
+                    a.getResourceId(
+                        R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordPlayerViewStyle,
+                        R.style.StreamUi_AudioRecordPlayerView,
+                    ),
+                    R.styleable.AudioRecordPlayerView,
+                ).use {
+                    audioRecordPlayerViewStyle = AudioRecordPlayerViewStyle(
+                        context = context, attributes = it
+                    )
+                }
+
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
                     buttonIconDrawableTintColor = buttonIconDrawableTintColor,
@@ -1065,6 +1080,7 @@ public data class MessageComposerViewStyle(
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
                     attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, a),
+                    audioRecordPlayerViewStyle = audioRecordPlayerViewStyle,
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
         }

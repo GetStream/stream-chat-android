@@ -21,12 +21,11 @@ import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.ui.databinding.StreamUiAudioRecordPlayerBinding
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.style.AudioRecordPlayerViewStyle
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.setPaddingCompat
