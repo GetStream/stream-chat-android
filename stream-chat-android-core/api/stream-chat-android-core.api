@@ -553,15 +553,17 @@ public final class io/getstream/chat/android/models/ChannelMute {
 }
 
 public final class io/getstream/chat/android/models/ChannelUserRead : io/getstream/chat/android/models/UserEntity {
-	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;)V
+	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/User;
 	public final fun component2 ()Ljava/util/Date;
 	public final fun component3 ()I
 	public final fun component4 ()Ljava/util/Date;
-	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;)Lio/getstream/chat/android/models/ChannelUserRead;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChannelUserRead;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChannelUserRead;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun copy (Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;)Lio/getstream/chat/android/models/ChannelUserRead;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ChannelUserRead;Lio/getstream/chat/android/models/User;Ljava/util/Date;ILjava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/models/ChannelUserRead;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getLastRead ()Ljava/util/Date;
+	public final fun getLastReadMessageId ()Ljava/lang/String;
 	public final fun getLastReceivedEventDate ()Ljava/util/Date;
 	public final fun getUnreadMessages ()I
 	public fun getUser ()Lio/getstream/chat/android/models/User;

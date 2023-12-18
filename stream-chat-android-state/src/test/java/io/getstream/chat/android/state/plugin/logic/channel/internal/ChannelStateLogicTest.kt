@@ -92,6 +92,7 @@ internal class ChannelStateLogicTest {
             lastReceivedEventDate = Date(Long.MIN_VALUE),
             unreadMessages = unreadCount,
             lastRead = Date(Long.MIN_VALUE),
+            lastReadMessageId = randomString(),
         )
         _channelData.value = ChannelData(randomChannel(), emptySet())
         _reads = emptyMap()
@@ -111,6 +112,7 @@ internal class ChannelStateLogicTest {
             lastReceivedEventDate = Date(Long.MIN_VALUE),
             unreadMessages = unreadCount,
             lastRead = Date(Long.MIN_VALUE),
+            lastReadMessageId = randomString(),
         ),
     )
     private val _channelData: MutableStateFlow<ChannelData> =
@@ -202,6 +204,7 @@ internal class ChannelStateLogicTest {
                 lastReceivedEventDate = Date(Long.MIN_VALUE),
                 unreadMessages = newUnreadCount,
                 lastRead = Date(Long.MIN_VALUE),
+                lastReadMessageId = randomString(),
             ),
         )
 
@@ -231,6 +234,7 @@ internal class ChannelStateLogicTest {
                 lastReceivedEventDate = Date(Long.MAX_VALUE),
                 unreadMessages = randomInt(),
                 lastRead = Date(Long.MIN_VALUE),
+                lastReadMessageId = randomString(),
             ),
         )
         val oldMessages = List(positiveRandomInt(20)) { randomMessage() }

@@ -127,7 +127,8 @@ internal object ChannelDtoTestData {
            {
             "user": ${UserDtoTestData.downstreamJson},
             "last_read": "2020-06-10T11:04:31.0Z",
-            "unread_messages": 1
+            "unread_messages": 1,
+            "last_read_message_id": "messageId"
            }
           ],
           "config": $configJson,
@@ -183,6 +184,7 @@ internal object ChannelDtoTestData {
                 user = UserDtoTestData.downstreamUser,
                 last_read = Date(1591787071000),
                 unread_messages = 1,
+                last_read_message_id = "messageId",
             ),
         ),
         config = configDto,

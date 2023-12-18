@@ -257,11 +257,13 @@ public fun randomChannelUserRead(
     lastReceivedEventDate: Date = randomDate(),
     unreadMessages: Int = positiveRandomInt(),
     lastRead: Date = randomDate(),
+    lastReadMessageId: String? = randomString(),
 ): ChannelUserRead = ChannelUserRead(
     user = user,
     lastReceivedEventDate = lastReceivedEventDate,
     unreadMessages = unreadMessages,
     lastRead = lastRead,
+    lastReadMessageId = lastReadMessageId,
 )
 
 public fun randomMessageList(
