@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
@@ -494,6 +495,7 @@ internal class MessageListControllerTests {
                 }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
                 whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
                 whenever(channelState.reads) doReturn MutableStateFlow(listOf())
+                whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead())
                 whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
                 whenever(channelState.unreadCount) doReturn MutableStateFlow(0)

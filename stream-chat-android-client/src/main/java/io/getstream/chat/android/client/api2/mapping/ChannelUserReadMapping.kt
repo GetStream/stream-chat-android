@@ -26,4 +26,5 @@ internal fun DownstreamChannelUserRead.toDomain(lastReceivedEventDate: Date): Ch
         lastReceivedEventDate = lastReceivedEventDate,
         lastRead = last_read,
         unreadMessages = unread_messages,
+        lastReadMessageId = last_read_message_id,
     )

@@ -2,6 +2,7 @@
 <SmellBaseline>
   <ManuallySuppressedIssues/>
   <CurrentIssues>
+    <ID>ForbiddenComment:ChatEventUtils.kt$// TODO: Backend should send us the last read message id</ID>
     <ID>ForbiddenComment:ChatEventUtils.kt$// TODO: remove this once the backend is fixed and is sending us the number of unread messages</ID>
     <ID>ForbiddenComment:EventBatchUpdate.kt$EventBatchUpdate$// TODO: this overwrites members which in the case when you have > 100 members isn't the right behaviour</ID>
     <ID>LargeClass:CustomObjectFilteringTest.kt$CustomObjectFilteringTest$Companion</ID>

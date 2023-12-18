@@ -28,6 +28,7 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
@@ -289,6 +290,7 @@ internal class MessageListViewModelTest {
                 whenever(it.messagesState) doReturn MutableStateFlow(messageState)
                 whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
                 whenever(it.reads) doReturn MutableStateFlow(listOf())
+                whenever(it.read) doReturn MutableStateFlow(randomChannelUserRead())
                 whenever(it.insideSearch) doReturn MutableStateFlow(false)
                 whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)

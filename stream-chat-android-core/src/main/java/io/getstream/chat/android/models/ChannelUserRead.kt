@@ -33,4 +33,5 @@ public data class ChannelUserRead(
     val lastReceivedEventDate: Date,
     val unreadMessages: Int,
     val lastRead: Date,
+    val lastReadMessageId: String?,
 ) : UserEntity
