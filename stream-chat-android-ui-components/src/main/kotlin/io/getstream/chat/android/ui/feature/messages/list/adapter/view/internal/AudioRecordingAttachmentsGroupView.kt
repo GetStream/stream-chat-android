@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
 
-private const val NULL_DURATION = 0.0
+private const val NULL_DURATION = 0.0f
 
 /**
  * A LinearLayoutCompat that present the list of audio messages.
@@ -211,16 +211,20 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             logger.v { "[onSeekBarStart] audioHash: $audioHash" }
             audioPlayer.startSeek(attachment.hashCode())
         }, { progress ->
-            logger.v { "[onSeekBarStop] audioHash: $audioHash" }
+            val durationInSeconds = attachment.duration ?: NULL_DURATION
+            val positionInMs = progressToMillis(progress, durationInSeconds)
+            logger.v { "[onSeekBarStop] audioHash: $audioHash, progress: $progress, duration: $durationInSeconds" }
             audioPlayer.seekTo(
-                progressToDecimal(progress, attachment.extraData["duration"] as? Double),
+                positionInMs,
                 attachment.hashCode(),
             )
         })
     }
 
-    private fun progressToDecimal(progress: Int, totalDuration: Double?): Int =
-        progress * (totalDuration ?: NULL_DURATION).toInt() / 100
+    private fun progressToMillis(progress: Int, durationInSeconds: Float): Int {
+        val durationInMs = durationInSeconds * 1000
+        return (progress * durationInMs / 100).toInt()
+    }
 
     /**
      * Unbinds the view.

@@ -31,24 +31,27 @@ internal class NativeMediaPlayerMock(
     private var _duration: Int = Int.MAX_VALUE
 
     private var _onCompletionListener: (() -> Unit)? = null
-    private var _onErrorListener: ((mp: NativeMediaPlayer, what: Int, extra: Int) -> Boolean)? = null
+    private var _onErrorListener: ((what: Int, extra: Int) -> Boolean)? = null
     private var _onPreparedListener: (() -> Unit)? = null
 
     private val validStates = hashSetOf(
-        State.PREPARED,
-        State.STARTED,
-        State.PAUSED,
-        State.PLAYBACK_COMPLETED,
+        NativeMediaPlayerState.PREPARED,
+        NativeMediaPlayerState.STARTED,
+        NativeMediaPlayerState.PAUSED,
+        NativeMediaPlayerState.PLAYBACK_COMPLETED,
     )
 
-    private var _state: State = State.IDLE
+    private var _state: NativeMediaPlayerState = NativeMediaPlayerState.IDLE
         set(value) {
-            if (field == State.END) {
+            if (field == NativeMediaPlayerState.END) {
                 logger.e(IllegalStateException()) { "[setState] rejected (player is released): $value" }
                 return
             }
             field = value
         }
+
+    override val state: NativeMediaPlayerState
+        get() = _state
 
     override var speed: Float = 1.0f
         set(value) {
@@ -74,18 +77,18 @@ internal class NativeMediaPlayerMock(
         }
 
     override fun setDataSource(path: String) {
-        publishState(State.INITIALIZED)
+        publishState(NativeMediaPlayerState.INITIALIZED)
     }
 
     override fun prepare() {
-        publishState(State.PREPARED)
+        publishState(NativeMediaPlayerState.PREPARED)
     }
 
     override fun prepareAsync() {
-        publishState(State.PREPARING)
+        publishState(NativeMediaPlayerState.PREPARING)
         userScope.launch {
             delay(1000L)
-            publishState(State.PREPARED)
+            publishState(NativeMediaPlayerState.PREPARED)
             _onPreparedListener?.invoke()
         }
     }
@@ -95,34 +98,34 @@ internal class NativeMediaPlayerMock(
     }
 
     override fun start() {
-        if (_state != State.PREPARED) {
+        if (_state != NativeMediaPlayerState.PREPARED) {
             onError("[start] invalid state: $_state", what = 4)
             return
         }
-        publishState(State.STARTED)
+        publishState(NativeMediaPlayerState.STARTED)
     }
 
     override fun pause() {
-        publishState(State.PAUSED)
+        publishState(NativeMediaPlayerState.PAUSED)
     }
 
     override fun stop() {
-        publishState(State.STOPPED)
+        publishState(NativeMediaPlayerState.STOPPED)
     }
 
     override fun reset() {
-        publishState(State.IDLE)
+        publishState(NativeMediaPlayerState.IDLE)
     }
 
     override fun release() {
-        publishState(State.END)
+        publishState(NativeMediaPlayerState.END)
     }
 
     override fun setOnCompletionListener(listener: () -> Unit) {
         _onCompletionListener = listener
     }
 
-    override fun setOnErrorListener(listener: (mp: NativeMediaPlayer, what: Int, extra: Int) -> Boolean) {
+    override fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean) {
         _onErrorListener = listener
     }
 
@@ -132,29 +135,16 @@ internal class NativeMediaPlayerMock(
 
     private fun onError(message: String, what: Int = 0, extra: Int = 0) {
         // logger.e { message }
-        if (publishState(State.ERROR)) {
-            _onErrorListener?.invoke(this, what, extra)
+        if (publishState(NativeMediaPlayerState.ERROR)) {
+            _onErrorListener?.invoke(what, extra)
         }
     }
 
-    private fun publishState(state: State): Boolean {
+    private fun publishState(state: NativeMediaPlayerState): Boolean {
         if (_state == state) {
             return false
         }
         _state = state
         return true
-    }
-
-    internal enum class State {
-        IDLE,
-        PREPARING,
-        PREPARED,
-        INITIALIZED,
-        STARTED,
-        PAUSED,
-        STOPPED,
-        PLAYBACK_COMPLETED,
-        END,
-        ERROR,
     }
 }

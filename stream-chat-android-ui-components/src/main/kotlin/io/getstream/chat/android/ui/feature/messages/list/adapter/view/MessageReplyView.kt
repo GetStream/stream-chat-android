@@ -26,6 +26,7 @@ import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.shape.MaterialShapeDrawable
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isLink
 import io.getstream.chat.android.models.Message
@@ -194,13 +195,12 @@ public class MessageReplyView : FrameLayout {
         if (message.attachments.any { it.isAudioRecording() }) {
             binding.additionalInfo.isVisible = true
             binding.additionalInfo.text =
-                DurationFormatter.formatDurationInMillis(
+                DurationFormatter.formatDurationInSeconds(
                     (
                         message.attachments
                             .first { it.isAudioRecording() }
-                            .extraData["duration"] as? Double
-                        )
-                        ?.toInt() ?: 0,
+                            .duration
+                        ) ?: 0f,
                 )
         } else {
             binding.additionalInfo.isVisible = false

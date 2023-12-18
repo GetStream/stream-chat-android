@@ -24,8 +24,8 @@ import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.concurrent.atomic.AtomicInteger
 
 private const val INITIAL_SPEED = 1F
@@ -40,7 +40,11 @@ internal class StreamMediaPlayer(
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
-    private val logger by taggedLogger("StreamMediaPlayer")
+    companion object {
+        private const val DEBUG_POLLING = false
+    }
+
+    private val logger by taggedLogger("Chat:StreamMediaPlayer")
 
     private val onStateListeners: MutableMap<Int, MutableList<(AudioState) -> Unit>> = mutableMapOf()
     private val onProgressListeners: MutableMap<Int, MutableList<(ProgressData) -> Unit>> = mutableMapOf()
@@ -155,14 +159,16 @@ internal class StreamMediaPlayer(
         if (isMarshmallowOrHigher()) mediaPlayer.speed else 1F
 
     override fun dispose() {
-        logger.i { "[dispose] no args" }
-        stopPolling()
-        onStateListeners.clear()
-        onProgressListeners.clear()
-        onSpeedListeners.clear()
-        seekMap.clear()
-        audioTracks.clear()
-        mediaPlayer.release()
+        userScope.launch(DispatcherProvider.Main) {
+            logger.i { "[dispose] playerState: $playerState" }
+            stopPolling()
+            onStateListeners.clear()
+            onProgressListeners.clear()
+            onSpeedListeners.clear()
+            seekMap.clear()
+            audioTracks.clear()
+            mediaPlayer.release()
+        }
     }
 
     override fun removeAudio(audioHash: Int) {
@@ -183,7 +189,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun resetAudio(audioHash: Int) {
-        logger.i { "[resetAudio] audioHash: $audioHash" }
+        logger.i { "[resetAudio] playerState: $playerState, audioHash: $audioHash" }
         if (audioHash == currentAudioHash) {
             resetPlayer(audioHash)
         }
@@ -191,7 +197,7 @@ internal class StreamMediaPlayer(
     }
 
     private fun resetPlayer(audioHash: Int) {
-        logger.v { "[resetPlayer] audioHash: $audioHash" }
+        logger.v { "[resetPlayer] playerState: $playerState, audioHash: $audioHash" }
         stopPolling()
         mediaPlayer.reset()
         playerState = PlayerState.UNSET
@@ -215,7 +221,7 @@ internal class StreamMediaPlayer(
                 onComplete(audioHash)
             }
 
-            setOnErrorListener { mp, what, extra ->
+            setOnErrorListener { what, extra ->
                 onError(audioHash, what, extra)
             }
 
@@ -316,49 +322,59 @@ internal class StreamMediaPlayer(
 
     private fun complete(audioHash: Int) {
         logger.d { "[complete] audioHash: $audioHash" }
-        stopPolling()
         publishProgress(audioHash, ProgressData(0, 0f, mediaPlayer.duration))
+        stopPolling()
+        mediaPlayer.reset()
         playerState = PlayerState.IDLE
         publishAudioState(audioHash, AudioState.IDLE)
         seekMap[audioHash] = 0
 
-        if (currentIndex >= audioTracks.lastIndex) {
-            playerState = PlayerState.IDLE
-        } else {
+        logger.v { "[complete] currentIndex: $currentIndex, lastIndex: ${audioTracks.lastIndex}" }
+        if (currentIndex < audioTracks.lastIndex) {
             val trackInfo = audioTracks[currentIndex + 1]
-            mediaPlayer.reset()
             setAudio(trackInfo.url, trackInfo.hash)
         }
     }
 
     private fun pollProgress() {
-        val prevCurrentPosition = AtomicInteger(-1)
+        val audioHash: Int = currentAudioHash
+        val prevCurPosition = AtomicInteger(-1)
         val prevPosition = AtomicInteger(-1)
-        logger.d { "[pollProgress] #1; currentPosition: ${mediaPlayer.currentPosition}" }
-        pollJob = userScope.launch(DispatcherProvider.IO) {
-            logger.d { "[pollProgress] #2; currentPosition: ${mediaPlayer.currentPosition}" }
-            while (true) {
-                val currentPosition = mediaPlayer.currentPosition
-                val finalPosition = when (currentPosition > 0 && currentPosition == prevCurrentPosition.get()) {
+        logger.d {
+            "[pollProgress] #1; audioHash: $audioHash, currentPosition: ${mediaPlayer.currentPosition}, " +
+                "duration: ${mediaPlayer.duration}"
+        }
+        pollJob = userScope.launch(DispatcherProvider.Main) {
+            while (isActive) {
+                val curPosition = mediaPlayer.currentPosition
+                val finalPosition = when (curPosition > 0 && curPosition == prevCurPosition.get()) {
                     true -> prevPosition.addAndGet(progressUpdatePeriod.toInt())
-                    else -> prevPosition.set(currentPosition).let {
-                        currentPosition
+                    else -> prevPosition.set(curPosition).let {
+                        curPosition
                     }
                 }
                 val durationMs = mediaPlayer.duration
                 val progress = finalPosition.toFloat() / durationMs
-                logger.v { "[pollProgress] #3; finalPosition: $finalPosition($currentPosition), prevPosition: $prevPosition" }
-                withContext(DispatcherProvider.Main) {
-                    publishProgress(
-                        currentAudioHash,
-                        ProgressData(
-                            currentPosition = finalPosition,
-                            progress = progress,
-                            duration = durationMs,
-                        ),
-                    )
+                if (DEBUG_POLLING) {
+                    logger.v {
+                        "[pollProgress] #2; finalPosition: $finalPosition($durationMs), " +
+                            "curPosition: $curPosition($prevPosition)"
+                    }
                 }
-                prevCurrentPosition.set(currentPosition)
+                publishProgress(
+                    audioHash,
+                    ProgressData(
+                        currentPosition = finalPosition,
+                        progress = progress,
+                        duration = durationMs,
+                    ),
+                )
+                prevCurPosition.set(curPosition)
+                if (finalPosition >= durationMs) {
+                    logger.i { "[pollProgress] #3; finalPosition($finalPosition) >= durationMs($durationMs)" }
+                    complete(audioHash)
+                    break
+                }
                 delay(progressUpdatePeriod)
             }
         }

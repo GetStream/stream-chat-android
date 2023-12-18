@@ -3190,14 +3190,14 @@ internal constructor(
             val appSettingsManager = AppSettingManager(module.api())
 
             val audioPlayer: AudioPlayer = StreamMediaPlayer(
-                mediaPlayer = NativeMediaPlayerImpl(
+                mediaPlayer = NativeMediaPlayerImpl {
                     MediaPlayer().apply {
                         AudioAttributes.Builder()
                             .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
                             .build()
                             .let(this::setAudioAttributes)
-                    },
-                ),
+                    }
+                },
                 userScope = userScope,
                 isMarshmallowOrHigher = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.M },
             )
