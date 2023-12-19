@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.TYPING_INDICATOR
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.UNREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.chat.android.uiutils.extension.isFailed
@@ -58,6 +59,7 @@ internal object MessageListItemViewTypeMapper {
             is MessageListItem.MessageItem -> messageItemToViewType(messageListItem, attachmentFactoryManager)
             is MessageListItem.TypingItem -> TYPING_INDICATOR
             is MessageListItem.ThreadPlaceholderItem -> THREAD_PLACEHOLDER
+            is MessageListItem.UnreadSeparatorItem -> UNREAD_SEPARATOR
         }
     }
 

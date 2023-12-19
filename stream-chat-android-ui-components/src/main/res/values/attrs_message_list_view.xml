@@ -339,6 +339,18 @@
         </attr>
 
 
+        <!-- Unread Separator text style -->
+        <attr name="streamUiUnreadSeparatorBackgroundColor" format="color" />
+        <attr name="streamUiUnreadSeparatorTextSize" format="dimension|reference" />
+        <attr name="streamUiUnreadSeparatorTextColor" format="color" />
+        <attr name="streamUiUnreadSeparatorTextFont" format="reference" />
+        <attr name="streamUiUnreadSeparatorTextFontAssets" format="string" />
+        <attr name="streamUiUnreadSeparatorTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Error message text style -->
         <attr name="streamUiErrorMessageTextSize" format="dimension|reference" />
         <attr name="streamUiErrorMessageTextColor" format="color" />

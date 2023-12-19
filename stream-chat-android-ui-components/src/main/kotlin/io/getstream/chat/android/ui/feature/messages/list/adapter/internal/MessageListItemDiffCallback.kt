@@ -57,6 +57,8 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 User::id,
             )
             is MessageListItem.ThreadPlaceholderItem -> true
+            is MessageListItem.UnreadSeparatorItem ->
+                oldItem.unreadCount == (newItem as? MessageListItem.UnreadSeparatorItem)?.unreadCount
         }
     }
 

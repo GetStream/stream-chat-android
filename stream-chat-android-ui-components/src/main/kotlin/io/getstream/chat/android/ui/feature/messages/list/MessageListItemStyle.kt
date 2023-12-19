@@ -152,6 +152,8 @@ public data class MessageListItemStyle(
     public val iconBannedMessage: Drawable,
     public val systemMessageAlignment: Int,
     @LayoutRes public val loadingMoreView: Int,
+    @ColorInt public val unreadSeparatorBackgroundColor: Int,
+    public val unreadSeparatorTextStyle: TextStyle,
 ) : ViewStyle {
 
     @ColorInt
@@ -679,6 +681,27 @@ public data class MessageListItemStyle(
                 R.layout.stream_ui_message_list_loading_more_view,
             )
 
+            val unreadSeparatorBackgroundColor = attributes.getColor(
+                R.styleable.MessageListView_streamUiUnreadSeparatorBackgroundColor,
+                context.getColorCompat(R.color.stream_ui_unread_label_background_color),
+            )
+
+            val unreadSeparatorTextStyle = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiUnreadSeparatorTextSize,
+                    context.getDimension(R.dimen.stream_ui_text_small),
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiUnreadSeparatorTextColor,
+                    context.getColorCompat(R.color.stream_ui_unread_label_text_color),
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiUnreadSeparatorTextFontAssets,
+                    R.styleable.MessageListView_streamUiUnreadSeparatorTextFont,
+                )
+                .style(R.styleable.MessageListView_streamUiUnreadSeparatorTextStyle, Typeface.BOLD)
+                .build()
+
             return MessageListItemStyle(
                 messageBackgroundColorMine = messageBackgroundColorMine.nullIfNotSet(),
                 messageBackgroundColorTheirs = messageBackgroundColorTheirs.nullIfNotSet(),
@@ -728,6 +751,8 @@ public data class MessageListItemStyle(
                 iconBannedMessage = iconBannedMessage,
                 systemMessageAlignment = systemMessageGravity,
                 loadingMoreView = loadingMoreView,
+                unreadSeparatorBackgroundColor = unreadSeparatorBackgroundColor,
+                unreadSeparatorTextStyle = unreadSeparatorTextStyle,
             ).let(TransformStyle.messageListItemStyleTransformer::transform)
                 .also { style -> style.checkMessageMaxWidthFactorsRange() }
         }
