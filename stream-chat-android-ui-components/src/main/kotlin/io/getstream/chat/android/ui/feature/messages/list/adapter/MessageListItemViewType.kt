@@ -38,4 +38,5 @@ public object MessageListItemViewType {
     public const val MEDIA_ATTACHMENT: Int = OFFSET + 13
     public const val FILE_ATTACHMENTS: Int = OFFSET + 14
     public const val LINK_ATTACHMENTS: Int = OFFSET + 15
+    public const val UNREAD_SEPARATOR: Int = OFFSET + 16
 }

@@ -44,6 +44,8 @@
     <color name="stream_ui_background_gradient_end">#FCFCFC</color>
     <color name="stream_ui_message_list_image_attachment_background">#E9EAED</color>
     <color name="stream_ui_message_list_video_attachment_background">#E9EAED</color>
+    <color name="stream_ui_unread_label_background_color">#E9EAED</color>
+    <color name="stream_ui_unread_label_text_color">#747881</color>
 
     <!-- Other -->
     <color name="stream_ui_icon_button_background">#FFFFFF</color>

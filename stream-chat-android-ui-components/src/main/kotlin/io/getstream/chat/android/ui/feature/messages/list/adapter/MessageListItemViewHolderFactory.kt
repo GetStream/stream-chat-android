@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.TYPING_INDICATOR
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.UNREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.DecoratorProvider
@@ -55,6 +56,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.int
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessagePlainTextViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.SystemMessageViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.ThreadSeparatorViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.UnreadSeparatorViewHolder
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 
 /**
@@ -182,6 +184,7 @@ public open class MessageListItemViewHolderFactory {
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
             FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
             MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
+            UNREAD_SEPARATOR -> createUnreadSeparatorViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -238,6 +241,12 @@ public open class MessageListItemViewHolderFactory {
             textTransformer,
             audioRecordViewStyle,
         )
+    }
+
+    private fun createUnreadSeparatorViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.UnreadSeparatorItem> {
+        return UnreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
     }
 
     /**

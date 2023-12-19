@@ -40,6 +40,10 @@
         <item quantity="one">%d Reply</item>
         <item quantity="other">%d Replies</item>
     </plurals>
+    <plurals name="stream_ui_message_list_unread_separator">
+        <item quantity="one">%d Unread Message</item>
+        <item quantity="other">%d Unread Messages</item>
+    </plurals>
 
     <!-- Message Actions Dialog -->
     <string name="stream_ui_message_list_reply">Reply</string>

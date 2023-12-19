@@ -49,6 +49,7 @@ public sealed class MessageListItem {
             is DateSeparatorItem -> date.time
             is LoadingMoreIndicatorItem -> LOADING_MORE_INDICATOR_STABLE_ID
             is ThreadPlaceholderItem -> THREAD_PLACEHOLDER_STABLE_ID
+            is UnreadSeparatorItem -> UNREAD_SEPARATOR_STABLE_ID
         }
     }
 
@@ -93,10 +94,15 @@ public sealed class MessageListItem {
         override fun toString(): String = "ThreadPlaceholderItem"
     }
 
+    public data class UnreadSeparatorItem(
+        val unreadCount: Int,
+    ) : MessageListItem()
+
     private companion object {
         private const val TYPING_ITEM_STABLE_ID = 1L
         private const val THREAD_SEPARATOR_ITEM_STABLE_ID = 2L
         private const val LOADING_MORE_INDICATOR_STABLE_ID = 3L
         private const val THREAD_PLACEHOLDER_STABLE_ID = 4L
+        private const val UNREAD_SEPARATOR_STABLE_ID = 5L
     }
 }
