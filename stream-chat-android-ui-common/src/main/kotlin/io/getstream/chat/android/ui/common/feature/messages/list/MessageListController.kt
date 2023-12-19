@@ -91,6 +91,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
+import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
@@ -110,6 +111,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
@@ -194,6 +196,8 @@ public class MessageListController(
      * Gives us information about the logged in user state.
      */
     public val user: StateFlow<User?> = clientState.user
+
+    private val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -414,6 +418,7 @@ public class MessageListController(
                 typingUsers,
                 focusedMessage,
                 channelState.endOfNewerMessages,
+                unreadLabelState,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -425,6 +430,7 @@ public class MessageListController(
                 val typingUsers = data[7] as List<User>
                 val focusedMessage = data[8] as Message?
                 val endOfNewerMessages = data[9] as Boolean
+                val unreadLabel = data[10] as UnreadLabel?
 
                 when (state) {
                     is MessagesState.Loading,
@@ -447,6 +453,7 @@ public class MessageListController(
                             messagePositionHandler = messagePositionHandler,
                             typingUsers = typingUsers,
                             focusedMessage = focusedMessage,
+                            unreadLabel = unreadLabel,
                         ),
                         endOfNewMessagesReached = endOfNewerMessages,
                     )
@@ -480,6 +487,26 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
+        refreshUnreadLabel(null)
+    }
+
+    private fun refreshUnreadLabel(expectedMessageId: String?) {
+        val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
+        channelState.filterNotNull()
+            .flatMapLatest {
+                it.read
+                    .filterNotNull()
+                    .filter {
+                        it.unreadMessages > 0 &&
+                            it.lastReadMessageId != null &&
+                            previousUnreadMessageId?.equals(it.lastReadMessageId)?.not() ?: true
+                    }
+            }
+            .onFirst { channelUserRead ->
+                unreadLabelState.value = channelUserRead.lastReadMessageId?.let {
+                    UnreadLabel(channelUserRead.unreadMessages, it)
+                }
+            }.launchIn(scope)
     }
 
     private fun processMessageId() {
@@ -634,6 +661,7 @@ public class MessageListController(
                         messagePositionHandler = messagePositionHandler,
                         typingUsers = typingUsers,
                         focusedMessage = focusedMessage,
+                        unreadLabel = null,
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true,
@@ -669,9 +697,11 @@ public class MessageListController(
      * @param messagePositionHandler Determines the message position inside a group of messages.
      * @param typingUsers The list of the users currently typing.
      * @param focusedMessage The message we wish to scroll/focus in center of the screen.
+     * @param unreadLabel The label that shows the unread count.
      *
      * @return A list of [MessageListItemState]s, each containing a position.
      */
+    @Suppress("LongParameterList", "LongMethod")
     private fun groupMessages(
         messages: List<Message>,
         isInThread: Boolean,
@@ -682,6 +712,7 @@ public class MessageListController(
         messagePositionHandler: MessagePositionHandler,
         typingUsers: List<User>,
         focusedMessage: Message?,
+        unreadLabel: UnreadLabel?,
     ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -759,6 +790,10 @@ public class MessageListController(
                     ),
                 )
             }
+
+            unreadLabel
+                ?.takeIf { it.lastReadMessageId == message.id }
+                ?.let { groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (index == 0 && shouldAddThreadSeparator) {
                 groupedMessages.add(
@@ -1420,6 +1455,8 @@ public class MessageListController(
                     onActionResult(response.value) {
                         ErrorEvent.MarkUnreadError(it)
                     }
+                } else {
+                    refreshUnreadLabel(message.id)
                 }
             }
         }
@@ -1899,6 +1936,11 @@ public class MessageListController(
         public data class UnpinMessageError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
+    private data class UnreadLabel(
+        val unreadCount: Int,
+        val lastReadMessageId: String,
+    )
+
     public companion object {
         /**
          * The default limit of messages to load.
@@ -1921,5 +1963,6 @@ private fun MessageListItemState.stringify(): String {
         is SystemMessageItemState -> message.text
         is ThreadDateSeparatorItemState -> "ThreadDateSeparator"
         is TypingItemState -> "Typing"
+        is UnreadSeparatorItemState -> "UnreadSeparator"
     }
 }

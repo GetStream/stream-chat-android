@@ -108,3 +108,7 @@ public data class TypingItemState(
  * Represents an empty thread placeholder item inside thread messages list.
  */
 public data object EmptyThreadPlaceholderItemState : MessageListItemState()
+
+public data class UnreadSeparatorItemState(
+    val unreadCount: Int,
+) : MessageListItemState()
