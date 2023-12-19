@@ -815,7 +815,7 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.setAttachmentFactoryManager(this.attachmentFactoryManager)
         messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
         messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
-        messageListItemViewHolderFactory.setAudioRecordViewStyle(requireStyle().audioRecordViewStyle)
+        messageListItemViewHolderFactory.setAudioRecordViewStyle(requireStyle().audioRecordPlayerViewStyle)
         messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(requireStyle().replyMessageStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)

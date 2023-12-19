@@ -164,6 +164,7 @@
         <attr name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint" format="reference|color" />
         <attr name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingWaveformColor" format="reference|color" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />

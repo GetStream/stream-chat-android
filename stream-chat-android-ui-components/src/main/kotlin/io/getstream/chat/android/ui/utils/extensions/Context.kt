@@ -35,6 +35,7 @@ import androidx.annotation.Px
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.ui.R
 
 /**
@@ -44,7 +45,8 @@ internal val Context.isRtlLayout: Boolean
     get() = resources.configuration.layoutDirection == View.LAYOUT_DIRECTION_RTL
 
 @Px
-internal fun Context.getDimension(@DimenRes dimen: Int): Int {
+@InternalStreamChatApi
+public fun Context.getDimension(@DimenRes dimen: Int): Int {
     return resources.getDimensionPixelSize(dimen)
 }
 
@@ -53,15 +55,18 @@ internal fun Context.getIntArray(@ArrayRes id: Int): IntArray {
 }
 
 @ColorInt
-internal fun Context.getColorCompat(@ColorRes color: Int): Int {
+@InternalStreamChatApi
+public fun Context.getColorCompat(@ColorRes color: Int): Int {
     return ContextCompat.getColor(this, color)
 }
 
-internal fun Context.getColorStateListCompat(@ColorRes color: Int): ColorStateList? {
+@InternalStreamChatApi
+public fun Context.getColorStateListCompat(@ColorRes color: Int): ColorStateList? {
     return ContextCompat.getColorStateList(this, color)
 }
 
-internal fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {
+@InternalStreamChatApi
+public fun Context.getDrawableCompat(@DrawableRes id: Int): Drawable? {
     return ContextCompat.getDrawable(this, id)
 }
 

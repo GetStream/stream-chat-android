@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
  * @property itemStyle Style for message list view holders.
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
+ * @property audioRecordPlayerViewStyle Style for [AudioRecordPlayerViewStyle].
  * @property replyMessageStyle Styles messages that are replies.
  * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
  * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
@@ -101,7 +102,7 @@ public data class MessageListViewStyle(
     public val scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
     public val itemStyle: MessageListItemStyle,
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
-    public val audioRecordViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
+    public val audioRecordPlayerViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
     public val replyMessageStyle: MessageReplyStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
@@ -577,7 +578,7 @@ public data class MessageListViewStyle(
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
-                    audioRecordViewStyle = MessageViewStyle(
+                    audioRecordPlayerViewStyle = MessageViewStyle(
                         own = audioRecordViewStyleOwn,
                         theirs = audioRecordViewStyleTheirs,
                     ),

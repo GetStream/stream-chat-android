@@ -37,6 +37,46 @@ import io.getstream.chat.android.ui.utils.extensions.getDimension
 import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
 import io.getstream.chat.android.ui.utils.extensions.use
 
+/**
+ * Style for [io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AudioRecordPlayerView].
+ *
+ * @param height Height of the view.
+ * @param padding Padding of the view.
+ * @param backgroundDrawable Background drawable of the view.
+ * @param backgroundDrawableTint Background drawable tint of the view.
+ * @param playbackProgressContainerSize Size of the playback progress container.
+ * @param playbackButtonSize Size of the playback button.
+ * @param playbackButtonPadding Padding of the playback button.
+ * @param playbackButtonElevation Elevation of the playback button.
+ * @param playbackButtonBackground Background of the playback button.
+ * @param playbackButtonBackgroundTint Background tint of the playback button.
+ * @param playIconDrawable Play icon drawable.
+ * @param playIconDrawableTint Play icon drawable tint.
+ * @param pauseIconDrawable Pause icon drawable.
+ * @param pauseIconDrawableTint Pause icon drawable tint.
+ * @param progressBarDrawable Progress bar drawable.
+ * @param progressBarDrawableTint Progress bar drawable tint.
+ * @param progressBarSize Size of the progress bar.
+ * @param durationTextViewSize Size of the duration text view.
+ * @param durationTextMarginStart Margin start of the duration text view.
+ * @param durationTextStyle Style of the duration text.
+ * @param waveBarHeight Height of the wave bar.
+ * @param waveBarMarginStart Margin start of the wave bar.
+ * @param waveBarColorPlayed Color of the played wave bar.
+ * @param waveBarColorFuture Color of the future wave bar.
+ * @param scrubberDrawable Scrubber drawable.
+ * @param scrubberDrawableTint Scrubber drawable tint.
+ * @param scrubberWidthDefault Default width of the scrubber.
+ * @param scrubberWidthPressed Pressed width of the scrubber.
+ * @param isFileIconContainerVisible Is file icon container visible.
+ * @param fileIconContainerWidth Width of the file icon container.
+ * @param audioFileIconDrawable Audio file icon drawable.
+ * @param speedButtonSize Size of the speed button.
+ * @param speedButtonElevation Elevation of the speed button.
+ * @param speedButtonBackground Background of the speed button.
+ * @param speedButtonBackgroundTint Background tint of the speed button.
+ * @param speedButtonTextStyle Style of the speed button text.
+ */
 public data class AudioRecordPlayerViewStyle(
     @Px public val height: Int,
     public val padding: ViewPadding,

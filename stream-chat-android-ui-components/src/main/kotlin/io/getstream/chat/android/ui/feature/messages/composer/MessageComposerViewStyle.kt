@@ -130,6 +130,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param audioRecordingFloatingLockedIconDrawable The floating icon that will be displayed above recording view
  * when locked.
  * @param audioRecordingFloatingLockedIconDrawableTint The tint color that will be used for the the locked icon.
+ * @param audioRecordingWaveformColor The color of the waveform.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonIconTintList The tint list for the attachments button.
@@ -238,6 +239,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val audioRecordingFloatingLockIconDrawableTint: Int?,
     public val audioRecordingFloatingLockedIconDrawable: Drawable,
     @ColorInt public val audioRecordingFloatingLockedIconDrawableTint: Int?,
+    @ColorInt public val audioRecordingWaveformColor: Int?,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -628,6 +630,9 @@ public data class MessageComposerViewStyle(
                 ) ?: context.getDrawableCompat(R.drawable.stream_ui_ic_mic_locked)!!
                 val audioRecordingFloatingLockedIconDrawableTint = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint,
+                )
+                val audioRecordingWaveformColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingWaveformColor,
                 )
 
                 /**
@@ -1035,6 +1040,7 @@ public data class MessageComposerViewStyle(
                     audioRecordingFloatingLockIconDrawableTint = audioRecordingFloatingLockIconDrawableTint,
                     audioRecordingFloatingLockedIconDrawable = audioRecordingFloatingLockedIconDrawable,
                     audioRecordingFloatingLockedIconDrawableTint = audioRecordingFloatingLockedIconDrawableTint,
+                    audioRecordingWaveformColor = audioRecordingWaveformColor,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
