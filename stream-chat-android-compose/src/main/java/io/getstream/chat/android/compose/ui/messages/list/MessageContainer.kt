@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemSt
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
+import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
@@ -104,6 +105,9 @@ public fun MessageContainer(
         is MessageItemState -> messageItemContent(messageListItemState)
         is TypingItemState -> typingIndicatorContent(messageListItemState)
         is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
+        is UnreadSeparatorItemState -> {
+            // Not implemented yet
+        }
     }
 }
 

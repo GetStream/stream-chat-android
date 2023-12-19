@@ -1201,6 +1201,18 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Typin
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
+	public static final field $stable I
+	public fun <init> (I)V
+	public final fun component1 ()I
+	public final fun copy (I)Lio/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState;IILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/UnreadSeparatorItemState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getUnreadCount ()I
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/utils/ChannelNameFormatter {
 	public static final field Companion Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter$Companion;
 	public abstract fun formatChannelName (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Ljava/lang/String;
