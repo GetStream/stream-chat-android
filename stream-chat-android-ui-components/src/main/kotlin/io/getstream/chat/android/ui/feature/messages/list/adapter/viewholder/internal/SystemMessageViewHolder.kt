@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.font.setTextStyle
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class SystemMessageViewHolder(
@@ -37,8 +38,8 @@ internal class SystemMessageViewHolder(
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (diff?.text == false) return
-
-        binding.messageTextView.text = data.message.text
+        val displayedText = data.message.getTranslatedText()
+        binding.messageTextView.text = displayedText
         binding.messageTextView.setTextStyle(style.textStyleSystemMessage)
         binding.messageTextView.gravity = style.systemMessageAlignment
     }

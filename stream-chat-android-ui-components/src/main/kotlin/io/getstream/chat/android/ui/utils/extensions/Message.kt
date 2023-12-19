@@ -25,8 +25,10 @@ import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.helper.CurrentUserProvider
 import java.util.Date
 
 @Deprecated(
@@ -123,3 +125,25 @@ private fun getAttachmentPrefix(attachment: Attachment): String? =
         AttachmentType.GIPHY -> "/giphy"
         else -> null
     }
+
+internal fun Message.getTranslatedText(currentUser: User?): String {
+    return when (ChatUI.autoTranslationEnabled) {
+        true -> currentUser?.language?.let { userLanguage ->
+            getTranslation(userLanguage).ifEmpty { text }
+        } ?: text
+        else -> text
+    }
+}
+
+internal fun Message.getTranslatedText(getCurrentUser: () -> User?): String {
+    return when (ChatUI.autoTranslationEnabled) {
+        true -> getCurrentUser()?.language?.let { userLanguage ->
+            getTranslation(userLanguage).ifEmpty { text }
+        } ?: text
+        else -> text
+    }
+}
+
+internal fun Message.getTranslatedText(currentUserProvider: CurrentUserProvider = ChatUI.currentUserProvider): String {
+    return getTranslatedText(currentUserProvider::getCurrentUser)
+}

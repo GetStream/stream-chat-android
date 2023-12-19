@@ -73,7 +73,7 @@ class UserLoginViewModel : ViewModel() {
             id = user.id,
             image = user.image,
             name = user.name,
-            language = Locale.getDefault().language,
+            language = user.language,
         )
 
         ChatClient.instance().run {

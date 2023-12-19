@@ -131,6 +131,7 @@ import io.getstream.chat.android.ui.utils.extensions.copyToClipboard
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
@@ -1639,7 +1640,10 @@ public class MessageListView : ConstraintLayout {
             is Resend -> messageRetryHandler.onMessageRetry(message)
             is Reply -> messageReplyHandler.onMessageReply(message.cid, message)
             is ThreadReply -> threadStartHandler.onStartThread(message)
-            is Copy -> context.copyToClipboard(message.text)
+            is Copy -> {
+                val displayedText = message.getTranslatedText()
+                context.copyToClipboard(displayedText)
+            }
             is Edit -> messageEditHandler.onMessageEdit(message)
             is Pin -> {
                 if (message.pinned) {

@@ -57,7 +57,6 @@ class CustomLoginViewModel : ViewModel() {
         val chatUser = ChatUser(
             id = loginCredentials.userId,
             name = loginCredentials.userName,
-            language = Locale.getDefault().language,
         )
 
         ChatClient.instance().connectUser(chatUser, loginCredentials.userToken)

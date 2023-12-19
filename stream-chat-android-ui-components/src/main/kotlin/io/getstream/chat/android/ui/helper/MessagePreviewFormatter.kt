@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
 import io.getstream.chat.android.ui.utils.extensions.getSenderDisplayName
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.italicize
 
 /**
@@ -87,15 +88,16 @@ private class DefaultMessagePreviewFormatter(
         message: Message,
         currentUser: User?,
     ): CharSequence {
+        val displayedText = message.getTranslatedText(currentUser)
         return if (message.isSystem()) {
-            SpannableStringBuilder(message.text.trim().italicize())
+            SpannableStringBuilder(displayedText.trim().italicize())
         } else {
             val sender = message.getSenderDisplayName(context, channel.isDirectMessaging())
 
             // bold mentions of the current user
             val currentUserMention = currentUser?.asMention(context)
             val previewText: SpannableString =
-                message.text.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
+                displayedText.trim().bold(currentUserMention?.singletonList(), ignoreCase = true)
 
             val attachmentsText: SpannableString? = message.getAttachmentsText()
 
