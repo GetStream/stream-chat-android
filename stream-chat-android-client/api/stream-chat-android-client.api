@@ -508,34 +508,6 @@ public final class io/getstream/chat/android/client/api/models/WatchChannelReque
 	public fun withWatchers (II)Lio/getstream/chat/android/client/api/models/WatchChannelRequest;
 }
 
-public abstract interface class io/getstream/chat/android/client/audio/NativeMediaPlayer {
-	public static final field Companion Lio/getstream/chat/android/client/audio/NativeMediaPlayer$Companion;
-	public static final field MEDIA_ERROR_IO I
-	public static final field MEDIA_ERROR_MALFORMED I
-	public static final field MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK I
-	public static final field MEDIA_ERROR_SERVER_DIED I
-	public static final field MEDIA_ERROR_SYSTEM I
-	public static final field MEDIA_ERROR_TIMED_OUT I
-	public static final field MEDIA_ERROR_UNKNOWN I
-	public static final field MEDIA_ERROR_UNSUPPORTED I
-	public abstract fun getCurrentPosition ()I
-	public abstract fun getDuration ()I
-	public abstract fun getSpeed ()F
-	public abstract fun pause ()V
-	public abstract fun prepare ()V
-	public abstract fun prepareAsync ()V
-	public abstract fun release ()V
-	public abstract fun reset ()V
-	public abstract fun seekTo (I)V
-	public abstract fun setDataSource (Ljava/lang/String;)V
-	public abstract fun setOnCompletionListener (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun setOnErrorListener (Lkotlin/jvm/functions/Function3;)V
-	public abstract fun setOnPreparedListener (Lkotlin/jvm/functions/Function0;)V
-	public abstract fun setSpeed (F)V
-	public abstract fun start ()V
-	public abstract fun stop ()V
-}
-
 public final class io/getstream/chat/android/client/audio/NativeMediaPlayer$Companion {
 	public static final field MEDIA_ERROR_IO I
 	public static final field MEDIA_ERROR_MALFORMED I

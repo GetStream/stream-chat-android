@@ -19,8 +19,11 @@ package io.getstream.chat.android.client.audio
 import android.media.MediaPlayer
 import android.os.Build
 import androidx.annotation.RequiresApi
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.log.taggedLogger
 import java.io.IOException
 
+@InternalStreamChatApi
 public interface NativeMediaPlayer {
 
     public companion object {
@@ -76,6 +79,13 @@ public interface NativeMediaPlayer {
     @get:Throws(IllegalStateException::class)
     @set:Throws(IllegalStateException::class, IllegalArgumentException::class)
     public var speed: Float
+
+    /**
+     * Gets the current player state.
+     *
+     * @return the current position in milliseconds
+     */
+    public val state: NativeMediaPlayerState
 
     /**
      * Gets the current playback position.
@@ -202,7 +212,7 @@ public interface NativeMediaPlayer {
      * Returning false, or not having an OnErrorListener at all, will
      * cause the OnCompletionListener to be called.
      */
-    public fun setOnErrorListener(listener: (mp: NativeMediaPlayer, what: Int, extra: Int) -> Boolean)
+    public fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean)
 
     /**
      * Register a callback to be invoked when the media source is ready
@@ -213,9 +223,52 @@ public interface NativeMediaPlayer {
     public fun setOnPreparedListener(listener: () -> Unit)
 }
 
+@InternalStreamChatApi
+public enum class NativeMediaPlayerState {
+    IDLE,
+    INITIALIZED,
+    PREPARING,
+    PREPARED,
+    STARTED,
+    PAUSED,
+    STOPPED,
+    PLAYBACK_COMPLETED,
+    END,
+    ERROR,
+}
+
 internal class NativeMediaPlayerImpl(
-    private val mediaPlayer: MediaPlayer,
+    private val builder: () -> MediaPlayer,
 ) : NativeMediaPlayer {
+
+    companion object {
+        private const val DEBUG = false
+    }
+
+    private val logger by taggedLogger("Chat:NativeMediaPlayer")
+
+    private var _mediaPlayer: MediaPlayer? = null
+        set(value) {
+            if (DEBUG) logger.i { "[setMediaPlayerInstance] instance: $value" }
+            field = value
+        }
+
+    private val mediaPlayer: MediaPlayer get() {
+        return _mediaPlayer ?: builder().also {
+            _mediaPlayer = it.setupListeners()
+            state = NativeMediaPlayerState.IDLE
+        }
+    }
+
+    private var onCompletionListener: (() -> Unit)? = null
+    private var onErrorListener: ((what: Int, extra: Int) -> Boolean)? = null
+    private var onPreparedListener: (() -> Unit)? = null
+
+    override var state: NativeMediaPlayerState = NativeMediaPlayerState.END
+        set(value) {
+            if (DEBUG) logger.d { "[setMediaPlayerState] state: $value <= $field" }
+            field = value
+        }
 
     override var speed: Float
         @RequiresApi(Build.VERSION_CODES.M)
@@ -225,6 +278,7 @@ internal class NativeMediaPlayerImpl(
         @RequiresApi(Build.VERSION_CODES.M)
         @Throws(IllegalStateException::class, IllegalArgumentException::class)
         set(value) {
+            if (DEBUG) logger.d { "[setSpeed] speed: $value" }
             mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(value)
         }
     override val currentPosition: Int
@@ -239,45 +293,98 @@ internal class NativeMediaPlayerImpl(
         SecurityException::class,
         IllegalStateException::class,
     )
-    override fun setDataSource(path: String) = mediaPlayer.setDataSource(path)
+    override fun setDataSource(path: String) {
+        if (DEBUG) logger.d { "[setDataSource] path: $path" }
+        mediaPlayer.setDataSource(path)
+        state = NativeMediaPlayerState.INITIALIZED
+    }
 
     @Throws(IllegalStateException::class)
-    override fun prepareAsync() = mediaPlayer.prepareAsync()
+    override fun prepareAsync() {
+        if (DEBUG) logger.d { "[prepareAsync] no args" }
+        mediaPlayer.prepareAsync()
+        state = NativeMediaPlayerState.PREPARING
+    }
 
     @Throws(IOException::class, IllegalStateException::class)
-    override fun prepare() = mediaPlayer.prepare()
+    override fun prepare() {
+        if (DEBUG) logger.d { "[prepare] no args" }
+        mediaPlayer.prepare()
+        state = NativeMediaPlayerState.PREPARED
+    }
 
     @Throws(IllegalStateException::class)
-    override fun seekTo(msec: Int) = mediaPlayer.seekTo(msec)
+    override fun seekTo(msec: Int) {
+        if (DEBUG) logger.d { "[seekTo] msec: $msec" }
+        mediaPlayer.seekTo(msec)
+    }
 
     @Throws(IllegalStateException::class)
-    override fun start() = mediaPlayer.start()
+    override fun start() {
+        if (DEBUG) logger.d { "[start] no args" }
+        mediaPlayer.start()
+        state = NativeMediaPlayerState.STARTED
+    }
 
     @Throws(IllegalStateException::class)
-    override fun pause() = mediaPlayer.pause()
+    override fun pause() {
+        if (DEBUG) logger.d { "[pause] no args" }
+        mediaPlayer.pause()
+        state = NativeMediaPlayerState.PAUSED
+    }
 
     @Throws(IllegalStateException::class)
-    override fun stop() = mediaPlayer.stop()
+    override fun stop() {
+        if (DEBUG) logger.d { "[stop] no args" }
+        mediaPlayer.stop()
+        state = NativeMediaPlayerState.STOPPED
+    }
 
-    override fun reset() = mediaPlayer.reset()
+    override fun reset() {
+        if (DEBUG) logger.d { "[reset] no args" }
+        mediaPlayer.reset()
+        state = NativeMediaPlayerState.IDLE
+    }
 
-    override fun release() = mediaPlayer.release()
+    override fun release() {
+        if (DEBUG) logger.d { "[release] no args" }
+        mediaPlayer.release()
+        state = NativeMediaPlayerState.END
+        _mediaPlayer = null
+    }
 
     override fun setOnPreparedListener(listener: () -> Unit) {
-        mediaPlayer.setOnPreparedListener {
-            listener()
-        }
+        if (DEBUG) logger.d { "[setOnPreparedListener] listener: $listener" }
+        this.onPreparedListener = listener
     }
 
     override fun setOnCompletionListener(listener: () -> Unit) {
-        mediaPlayer.setOnCompletionListener {
-            listener()
-        }
+        if (DEBUG) logger.d { "[setOnCompletionListener] listener: $listener" }
+        this.onCompletionListener = listener
     }
 
-    override fun setOnErrorListener(listener: (mp: NativeMediaPlayer, what: Int, extra: Int) -> Boolean) {
-        mediaPlayer.setOnErrorListener { mp, what, extra ->
-            listener(NativeMediaPlayerImpl(mp), what, extra)
+    override fun setOnErrorListener(listener: (what: Int, extra: Int) -> Boolean) {
+        if (DEBUG) logger.d { "[setOnErrorListener] listener: $listener" }
+        this.onErrorListener = listener
+    }
+
+    private fun MediaPlayer.setupListeners(): MediaPlayer {
+        setOnErrorListener { _, what, extra ->
+            if (DEBUG) logger.e { "[onError] what: $what, extra: $extra" }
+            state = NativeMediaPlayerState.ERROR
+            _mediaPlayer = null
+            onErrorListener?.invoke(what, extra) ?: false
         }
+        setOnPreparedListener {
+            if (DEBUG) logger.d { "[onPrepared] no args" }
+            state = NativeMediaPlayerState.PREPARED
+            onPreparedListener?.invoke()
+        }
+        setOnCompletionListener {
+            if (DEBUG) logger.d { "[onCompletion] no args" }
+            state = NativeMediaPlayerState.PLAYBACK_COMPLETED
+            onCompletionListener?.invoke()
+        }
+        return this
     }
 }

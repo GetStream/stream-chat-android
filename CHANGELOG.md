@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed crash in `StreamMediaPlayer` when playing audio after re-login. [#5120](https://github.com/GetStream/stream-chat-android/pull/5120)
 
 ### ⬆️ Improved
 
