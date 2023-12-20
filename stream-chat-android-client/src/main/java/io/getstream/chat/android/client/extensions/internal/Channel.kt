@@ -171,7 +171,7 @@ public fun Channel.removeMembership(currentUserId: String?): Channel =
 
 @InternalStreamChatApi
 public fun Channel.updateReads(newRead: ChannelUserRead): Channel {
-    val oldRead = read.firstOrNull { it.user == newRead.user }
+    val oldRead = read.firstOrNull { it.user.id == newRead.user.id }
     return copy(
         read = if (oldRead != null) {
             read - oldRead + newRead

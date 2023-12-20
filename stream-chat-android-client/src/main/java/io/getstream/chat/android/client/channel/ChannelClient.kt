@@ -56,6 +56,7 @@ import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -212,6 +213,7 @@ public class ChannelClient internal constructor(
             is NotificationInviteRejectedEvent -> event.cid == cid
             is NotificationInvitedEvent -> event.cid == cid
             is NotificationMarkReadEvent -> event.cid == cid
+            is NotificationMarkUnreadEvent -> event.cid == cid
             is NotificationMessageNewEvent -> event.cid == cid
             is NotificationRemovedFromChannelEvent -> event.cid == cid
             is ReactionDeletedEvent -> event.cid == cid
@@ -366,6 +368,11 @@ public class ChannelClient internal constructor(
     @CheckResult
     public fun markMessageRead(messageId: String): Call<Unit> {
         return client.markMessageRead(channelType, channelId, messageId)
+    }
+
+    @CheckResult
+    public fun markUnread(messageId: String): Call<Unit> {
+        return client.markUnread(channelType, channelId, messageId)
     }
 
     @CheckResult

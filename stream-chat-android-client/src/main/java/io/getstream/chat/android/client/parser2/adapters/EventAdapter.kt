@@ -52,6 +52,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAccepte
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -110,6 +111,7 @@ internal class EventDtoAdapter(
     private val userStopWatchingEventAdapter = moshi.adapter(UserStopWatchingEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMarkReadEventAdapter = moshi.adapter(NotificationMarkReadEventDto::class.java)
+    private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
     private val markAllReadEventAdapter = moshi.adapter(MarkAllReadEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationInvitedEventAdapter = moshi.adapter(NotificationInvitedEventDto::class.java)
@@ -175,6 +177,7 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> notificationMarkReadEventAdapter
                 else -> markAllReadEventAdapter
             }
+            EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
             EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter

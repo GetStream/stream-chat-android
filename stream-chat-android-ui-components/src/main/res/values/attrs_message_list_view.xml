@@ -359,8 +359,10 @@
         <attr name="streamUiReplyOptionIcon" format="reference" />
         <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
+        <attr name="streamUiMarkAsUnreadEnabled" format="boolean" />
         <attr name="streamUiRetryMessageEnabled" format="boolean" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
+        <attr name="streamUiMarkAsUnreadOptionIcon" format="reference" />
         <attr name="streamUiEditOptionIcon" format="reference" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiFlagOptionIcon" format="reference" />

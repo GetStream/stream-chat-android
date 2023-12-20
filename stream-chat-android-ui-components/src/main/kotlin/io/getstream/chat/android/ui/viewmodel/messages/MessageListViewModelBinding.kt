@@ -65,6 +65,7 @@ public fun MessageListViewModel.bindView(
     view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
     view.setMessagePinHandler { onEvent(MessageListViewModel.Event.PinMessage(it)) }
     view.setMessageUnpinHandler { onEvent(MessageListViewModel.Event.UnpinMessage(it)) }
+    view.setMessageMarkAsUnreadHandler { onEvent(MessageListViewModel.Event.MarkAsUnreadMessage(it)) }
     view.setGiphySendHandler { giphyAction ->
         onEvent(GiphyActionSelected(giphyAction))
     }

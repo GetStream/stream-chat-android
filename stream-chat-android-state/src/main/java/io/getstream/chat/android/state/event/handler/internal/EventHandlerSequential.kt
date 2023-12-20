@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -311,6 +312,11 @@ internal class EventHandlerSequential(
                     }
                 }
                 is NotificationMarkReadEvent -> if (batchEvent.isFromSocketConnection) {
+                    if (hasReadEventsCapability(event.cid)) {
+                        modifyValuesFromEvent(event)
+                    }
+                }
+                is NotificationMarkUnreadEvent -> if (batchEvent.isFromSocketConnection) {
                     if (hasReadEventsCapability(event.cid)) {
                         modifyValuesFromEvent(event)
                     }
@@ -594,6 +600,18 @@ internal class EventHandlerSequential(
                 is NotificationMarkReadEvent -> {
                     batch.getCurrentChannel(event.cid)
                         ?.updateReads(ChannelUserRead(user = event.user, lastRead = event.createdAt))
+                        ?.let(batch::addChannel)
+                }
+                is NotificationMarkUnreadEvent -> {
+                    batch.getCurrentChannel(event.cid)
+                        ?.updateReads(
+                            ChannelUserRead(
+                                user = event.user,
+                                lastRead = event.lastReadMessageAt,
+                                unreadMessages = event.unreadMessages,
+                                event.createdAt,
+                            ),
+                        )
                         ?.let(batch::addChannel)
                 }
                 is GlobalUserBannedEvent -> {

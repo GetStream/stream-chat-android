@@ -222,6 +222,9 @@ public class MessageListViewModel(
             is Event.BackButtonPressed -> {
                 onBackButtonPressed()
             }
+            is Event.MarkAsUnreadMessage -> {
+                messageListController.markUnread(event.message)
+            }
             is Event.DeleteMessage -> {
                 messageListController.deleteMessage(event.message, event.hard)
             }
@@ -584,6 +587,13 @@ public class MessageListViewModel(
          * @param message The message to be unpinned.
          */
         public data class UnpinMessage(val message: Message) : Event()
+
+        /**
+         * When the user marks a message as unread.
+         *
+         * @param message The message to be marked as unread.
+         */
+        public data class MarkAsUnreadMessage(val message: Message) : Event()
 
         /**
          * When the user selects a Giphy message.

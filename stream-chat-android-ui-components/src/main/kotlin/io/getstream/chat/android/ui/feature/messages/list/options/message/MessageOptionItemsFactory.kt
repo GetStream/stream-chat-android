@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
+import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
@@ -117,6 +118,7 @@ public open class DefaultMessageOptionItemsFactory(
         val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
         val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
         val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
+        val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
 
         return listOfNotNull(
             if (style.retryMessageEnabled && isOwnMessage && isMessageFailed) {
@@ -142,6 +144,15 @@ public open class DefaultMessageOptionItemsFactory(
                     optionText = context.getString(R.string.stream_ui_message_list_thread_reply),
                     optionIcon = context.getDrawableCompat(style.threadReplyIcon)!!,
                     messageAction = ThreadReply(selectedMessage),
+                )
+            } else {
+                null
+            },
+            if (style.markAsUnreadEnabled && canMarkAsUnread) {
+                MessageOptionItem(
+                    optionText = context.getString(R.string.stream_ui_message_list_mark_as_unread),
+                    optionIcon = context.getDrawableCompat(style.markAsUnreadIcon)!!,
+                    messageAction = MarkAsUnread(selectedMessage),
                 )
             } else {
                 null

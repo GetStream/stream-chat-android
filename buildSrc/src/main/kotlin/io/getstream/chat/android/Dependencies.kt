@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "8.1.3"
+    internal const val ANDROID_GRADLE_PLUGIN = "8.2.0"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.9.3.0"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_COMPOSE = "1.7.2"
@@ -11,7 +11,7 @@ object Versions {
     internal const val ANDROIDX_ANNOTATIONS = "1.6.0"
     internal const val ANDROIDX_APPCOMPAT = "1.6.1"
     internal const val ANDROIDX_COMPOSE = "1.5.4"
-    public const val ANDROIDX_COMPOSE_COMPILER = "1.5.4"
+    public const val ANDROIDX_COMPOSE_COMPILER = "1.5.7"
     internal const val ANDROIDX_CORE_TEST = "2.2.0"
     internal const val ANDROIDX_FRAGMENT = "1.6.1"
     internal const val ANDROIDX_KTX = "1.10.1"
@@ -52,9 +52,9 @@ object Versions {
     internal const val JUNIT5 = "5.10.0"
     internal const val KEYBOARD_VISIBILITY_EVENT = "2.3.0"
     internal const val KLUENT = "1.73"
-    internal const val KOTLIN = "1.9.20"
+    internal const val KOTLIN = "1.9.21"
     internal const val KOTLIN_BINARY_VALIDATOR = "0.13.2"
-    internal const val KSP = "1.9.20-1.0.13"
+    internal const val KSP = "1.9.21-1.0.16"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.8.0"
     internal const val MACRO_BENCHMARK = "1.2.0"

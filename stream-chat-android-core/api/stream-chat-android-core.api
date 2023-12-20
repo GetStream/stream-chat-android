@@ -757,6 +757,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field NOTIFICATION_INVITE_ACCEPTED Ljava/lang/String;
 	public static final field NOTIFICATION_INVITE_REJECTED Ljava/lang/String;
 	public static final field NOTIFICATION_MARK_READ Ljava/lang/String;
+	public static final field NOTIFICATION_MARK_UNREAD Ljava/lang/String;
 	public static final field NOTIFICATION_MESSAGE_NEW Ljava/lang/String;
 	public static final field NOTIFICATION_MUTES_UPDATED Ljava/lang/String;
 	public static final field NOTIFICATION_REMOVED_FROM_CHANNEL Ljava/lang/String;

@@ -109,6 +109,7 @@ public data class MessageListViewStyle(
     val threadsEnabled: Boolean,
     val retryIcon: Int,
     val copyIcon: Int,
+    val markAsUnreadIcon: Int,
     val editMessageEnabled: Boolean,
     val editIcon: Int,
     val flagIcon: Int,
@@ -119,6 +120,7 @@ public data class MessageListViewStyle(
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
     val copyTextEnabled: Boolean,
+    val markAsUnreadEnabled: Boolean,
     val retryMessageEnabled: Boolean,
     val deleteConfirmationEnabled: Boolean,
     val flagMessageConfirmationEnabled: Boolean,
@@ -294,6 +296,11 @@ public data class MessageListViewStyle(
                     R.drawable.stream_ui_ic_copy,
                 )
 
+                val markAsUnreadIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMarkAsUnreadOptionIcon,
+                    R.drawable.stream_ui_ic_mark_as_unread,
+                )
+
                 val editIcon = attributes.getResourceId(
                     R.styleable.MessageListView_streamUiEditOptionIcon,
                     R.drawable.stream_ui_ic_edit,
@@ -326,6 +333,9 @@ public data class MessageListViewStyle(
 
                 val copyTextEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiCopyMessageActionEnabled, true)
+
+                val markAsUnreadEnabled =
+                    attributes.getBoolean(R.styleable.MessageListView_streamUiMarkAsUnreadEnabled, false)
 
                 val retryMessageEnabled =
                     attributes.getBoolean(R.styleable.MessageListView_streamUiRetryMessageEnabled, true)
@@ -539,6 +549,7 @@ public data class MessageListViewStyle(
                     threadReplyIcon = threadReplyIcon,
                     retryIcon = retryIcon,
                     copyIcon = copyIcon,
+                    markAsUnreadIcon = markAsUnreadIcon,
                     editIcon = editIcon,
                     flagIcon = flagIcon,
                     flagEnabled = flagEnabled,
@@ -547,6 +558,7 @@ public data class MessageListViewStyle(
                     pinMessageEnabled = pinMessageEnabled,
                     deleteIcon = deleteIcon,
                     copyTextEnabled = copyTextEnabled,
+                    markAsUnreadEnabled = markAsUnreadEnabled,
                     retryMessageEnabled = retryMessageEnabled,
                     deleteConfirmationEnabled = deleteConfirmationEnabled,
                     flagMessageConfirmationEnabled = flagMessageConfirmationEnabled,

@@ -50,6 +50,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAccepte
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
@@ -97,6 +98,7 @@ import io.getstream.chat.android.client.events.NotificationInviteAcceptedEvent
 import io.getstream.chat.android.client.events.NotificationInviteRejectedEvent
 import io.getstream.chat.android.client.events.NotificationInvitedEvent
 import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
@@ -155,6 +157,7 @@ internal fun ChatEventDto.toDomain(): ChatEvent {
         is NotificationInviteRejectedEventDto -> toDomain()
         is NotificationInvitedEventDto -> toDomain()
         is NotificationMarkReadEventDto -> toDomain()
+        is NotificationMarkUnreadEventDto -> toDomain()
         is NotificationMessageNewEventDto -> toDomain()
         is NotificationMutesUpdatedEventDto -> toDomain()
         is NotificationRemovedFromChannelEventDto -> toDomain()
@@ -459,6 +462,24 @@ private fun NotificationMarkReadEventDto.toDomain(): NotificationMarkReadEvent {
         channelId = channel_id,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+    )
+}
+
+private fun NotificationMarkUnreadEventDto.toDomain(): NotificationMarkUnreadEvent {
+    return NotificationMarkUnreadEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        user = user.toDomain(),
+        cid = cid,
+        channelType = channel_type,
+        channelId = channel_id,
+        totalUnreadCount = total_unread_count,
+        unreadChannels = unread_channels,
+        firstUnreadMessageId = first_unread_message_id,
+        lastReadMessageId = last_read_message_id,
+        lastReadMessageAt = last_read_at.date,
+        unreadMessages = unread_messages,
     )
 }
 

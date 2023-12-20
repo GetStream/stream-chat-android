@@ -408,6 +408,25 @@ public data class NotificationMarkReadEvent(
 ) : CidEvent(), UserEvent, HasUnreadCounts
 
 /**
+ * Triggered when the the user mark as unread a conversation from a particular message
+ */
+public data class NotificationMarkUnreadEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    override val user: User,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val totalUnreadCount: Int = 0,
+    override val unreadChannels: Int = 0,
+    val unreadMessages: Int,
+    val firstUnreadMessageId: String,
+    val lastReadMessageAt: Date,
+    val lastReadMessageId: String,
+) : CidEvent(), UserEvent, HasUnreadCounts
+
+/**
  * Triggered when the total count of unread messages (across all channels the user is a member) changes
  */
 public data class MarkAllReadEvent(

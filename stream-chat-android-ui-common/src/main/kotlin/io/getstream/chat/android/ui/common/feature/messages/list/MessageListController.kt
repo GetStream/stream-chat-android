@@ -1405,6 +1405,25 @@ public class MessageListController(
     }
 
     /**
+     * Marks the selected message as unread.
+     *
+     * @param message Message to mark as unread.
+     * @param onResult Handler that notifies the result of the mark as unread action.
+     */
+    public fun markUnread(message: Message, onResult: (Result<Unit>) -> Unit = {}) {
+        cid.cidToTypeAndId().let { (channelType, channelId) ->
+            chatClient.markUnread(channelType, channelId, message.id).enqueue { response ->
+                onResult(response)
+                if (response is Result.Failure) {
+                    onActionResult(response.value) {
+                        ErrorEvent.MarkUnreadError(it)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Pins or unpins the message from the current channel based on its state.
      *
      * @param message The message to update the pin state of.
@@ -1848,6 +1867,13 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class FlagMessageError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while marking a message as read.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class MarkUnreadError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.
