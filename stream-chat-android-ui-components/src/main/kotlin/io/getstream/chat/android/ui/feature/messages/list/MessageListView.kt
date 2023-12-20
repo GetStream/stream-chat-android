@@ -145,6 +145,7 @@ import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.Locale
 import io.getstream.chat.android.ui.common.state.messages.Flag as FlagAction
 
 /**
@@ -455,6 +456,14 @@ public class MessageListView : ConstraintLayout {
             _attachmentDownloadOptionHandler,
             _attachmentDeleteOptionHandler,
         )
+
+    private val languageCache = hashMapOf<String, String>()
+
+    private val getLanguageDisplayName: (String) -> String = { code ->
+        languageCache.getOrPut(code) {
+            Locale(code).getDisplayName(Locale.getDefault())
+        }
+    }
 
     /**
      * Handles attachment clicks which by default open the attachment preview.
@@ -810,6 +819,7 @@ public class MessageListView : ConstraintLayout {
             messageBackgroundFactory = messageBackgroundFactory,
             deletedMessageVisibility = { deletedMessageVisibility },
             isCurrentUserBanned = { channel.isCurrentUserBanned() },
+            getLanguageDisplayName = getLanguageDisplayName,
         )
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)

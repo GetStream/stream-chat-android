@@ -44,6 +44,7 @@
         <item quantity="one">%d Unread Message</item>
         <item quantity="other">%d Unread Messages</item>
     </plurals>
+    <string name="stream_ui_message_list_translated">Translated to %s</string>
 
     <!-- Message Actions Dialog -->
     <string name="stream_ui_message_list_reply">Reply</string>

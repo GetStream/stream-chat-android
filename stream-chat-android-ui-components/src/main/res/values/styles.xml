@@ -343,6 +343,11 @@
         <item name="streamUiMessageTextColorDate">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiMessageTextStyleDate">normal</item>
 
+        <!-- Message text style language in footer -->
+        <item name="streamUiMessageTextSizeLanguage">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorLanguage">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleLanguage">normal</item>
+
         <!-- Message text style thread counter in footer -->
         <item name="streamUiMessageTextSizeThreadCounter">@dimen/stream_ui_text_small</item>
         <item name="streamUiMessageTextColorThreadCounter">@color/stream_ui_accent_blue</item>

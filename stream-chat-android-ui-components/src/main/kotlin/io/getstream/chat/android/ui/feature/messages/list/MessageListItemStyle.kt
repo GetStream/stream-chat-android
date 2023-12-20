@@ -105,6 +105,7 @@ public data class MessageListItemStyle(
     public val textStyleTheirs: TextStyle,
     public val textStyleUserName: TextStyle,
     public val textStyleMessageDate: TextStyle,
+    public val textStyleMessageLanguage: TextStyle,
     public val textStyleThreadCounter: TextStyle,
     public val threadSeparatorTextStyle: TextStyle,
     public val textStyleLinkLabel: TextStyle,
@@ -346,6 +347,22 @@ public data class MessageListItemStyle(
                     R.styleable.MessageListView_streamUiMessageTextFontDate,
                 )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleDate, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleMessageLanguage = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeLanguage,
+                    context.getDimension(DEFAULT_TEXT_SIZE_DATE),
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorLanguage,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_DATE),
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsLanguage,
+                    R.styleable.MessageListView_streamUiMessageTextFontLanguage,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleLanguage, DEFAULT_TEXT_STYLE)
                 .build()
 
             val textStyleThreadCounter = TextStyle.Builder(attributes)
@@ -714,6 +731,7 @@ public data class MessageListItemStyle(
                 textStyleTheirs = textStyleTheirs,
                 textStyleUserName = textStyleUserName,
                 textStyleMessageDate = textStyleMessageDate,
+                textStyleMessageLanguage = textStyleMessageLanguage,
                 textStyleThreadCounter = textStyleThreadCounter,
                 threadSeparatorTextStyle = textStyleThreadSeparator,
                 textStyleLinkTitle = textStyleLinkTitle,
