@@ -28,6 +28,7 @@ import androidx.annotation.Px
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.PickerMediaMode
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
@@ -129,6 +130,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param audioRecordingFloatingLockedIconDrawable The floating icon that will be displayed above recording view
  * when locked.
  * @param audioRecordingFloatingLockedIconDrawableTint The tint color that will be used for the the locked icon.
+ * @param audioRecordingWaveformColor The color of the waveform.
  * @param attachmentsButtonVisible If the button to pick attachments is displayed.
  * @param attachmentsButtonIconDrawable The icon for the attachments button.
  * @param attachmentsButtonIconTintList The tint list for the attachments button.
@@ -237,6 +239,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val audioRecordingFloatingLockIconDrawableTint: Int?,
     public val audioRecordingFloatingLockedIconDrawable: Drawable,
     @ColorInt public val audioRecordingFloatingLockedIconDrawableTint: Int?,
+    @ColorInt public val audioRecordingWaveformColor: Int?,
     // Leading content
     public val attachmentsButtonVisible: Boolean,
     public val attachmentsButtonIconDrawable: Drawable,
@@ -283,6 +286,7 @@ public data class MessageComposerViewStyle(
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
     public val attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle,
+    public val audioRecordPlayerViewStyle: AudioRecordPlayerViewStyle?,
 ) : ViewStyle {
 
     /**
@@ -627,6 +631,9 @@ public data class MessageComposerViewStyle(
                 val audioRecordingFloatingLockedIconDrawableTint = a.getColorOrNull(
                     R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint,
                 )
+                val audioRecordingWaveformColor = a.getColorOrNull(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordingWaveformColor,
+                )
 
                 /**
                  * Leading content
@@ -958,6 +965,19 @@ public data class MessageComposerViewStyle(
                         DEFAULT_MESSAGE_REPLY_BACKGROUND_STROKE_WIDTH,
                     )
 
+                var playerViewStyle: AudioRecordPlayerViewStyle? = null
+                val playerViewStyleResId: Int = a.getResourceId(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAudioRecordPlayerViewStyle,
+                    R.style.StreamUi_AudioRecordPlayerView,
+                )
+                if (playerViewStyleResId != R.style.StreamUi_AudioRecordPlayerView) {
+                    context.obtainStyledAttributes(playerViewStyleResId, R.styleable.AudioRecordPlayerView).use {
+                        playerViewStyle = AudioRecordPlayerViewStyle(
+                            context = context, attributes = it,
+                        )
+                    }
+                }
+
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
                     buttonIconDrawableTintColor = buttonIconDrawableTintColor,
@@ -1020,6 +1040,7 @@ public data class MessageComposerViewStyle(
                     audioRecordingFloatingLockIconDrawableTint = audioRecordingFloatingLockIconDrawableTint,
                     audioRecordingFloatingLockedIconDrawable = audioRecordingFloatingLockedIconDrawable,
                     audioRecordingFloatingLockedIconDrawableTint = audioRecordingFloatingLockedIconDrawableTint,
+                    audioRecordingWaveformColor = audioRecordingWaveformColor,
                     // Leading content
                     attachmentsButtonVisible = attachmentsButtonVisible,
                     attachmentsButtonIconDrawable = attachmentsButtonIconDrawable,
@@ -1065,6 +1086,7 @@ public data class MessageComposerViewStyle(
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
                     attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, a),
+                    audioRecordPlayerViewStyle = playerViewStyle,
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
         }

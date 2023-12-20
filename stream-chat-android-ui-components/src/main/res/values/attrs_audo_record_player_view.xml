@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <declare-styleable name="AudioRecordPlayerView" tools:ignore="ResourceName">
+
+        <attr name="streamUiAudioRecordPlayerHeight" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPaddingStart" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPaddingTop" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPaddingEnd" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPaddingBottom" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerBackgroundDrawable" format="reference" />
+        <attr name="streamUiAudioRecordPlayerBackgroundDrawableTint" format="reference|color" />
+
+        <!-- Playback Progress Container -->
+        <attr name="streamUiAudioRecordPlayerPlaybackProgressContainerWidth" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPlaybackProgressContainerHeight" format="dimension|reference" />
+
+        <!-- Playback Button -->
+        <attr name="streamUiAudioRecordPlayerPlaybackButtonWidth" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPlaybackButtonHeight" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPlaybackButtonElevation" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPlaybackButtonPadding" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerPlaybackButtonBackground" format="reference" />
+        <attr name="streamUiAudioRecordPlayerPlaybackButtonBackgroundTint" format="reference|color" />
+        <attr name="streamUiAudioRecordPlayerPlayIconDrawable" format="reference" />
+        <attr name="streamUiAudioRecordPlayerPlayIconDrawableTint" format="reference|color" />
+        <attr name="streamUiAudioRecordPlayerPauseIconDrawable" format="reference" />
+        <attr name="streamUiAudioRecordPlayerPauseIconDrawableTint" format="reference|color" />
+
+        <!-- Progress Bar -->
+        <attr name="streamUiAudioRecordPlayerProgressBarWidth" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerProgressBarHeight" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerProgressBarDrawable" format="reference" />
+        <attr name="streamUiAudioRecordPlayerProgressBarDrawableTint" format="reference|color" />
+
+        <!-- Duration Text -->
+        <attr name="streamUiAudioRecordPlayerDurationTextViewWidth" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerDurationTextViewHeight" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerDurationTextViewMarginStart" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerDurationTextSize" format="dimension" />
+        <attr name="streamUiAudioRecordPlayerDurationTextColor" format="reference|color" />
+        <attr name="streamUiAudioRecordPlayerDurationTextFontAssets" format="string" />
+        <attr name="streamUiAudioRecordPlayerDurationTextFont" format="string" />
+        <attr name="streamUiAudioRecordPlayerDurationTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+        <!-- Wave Bar -->
+        <attr name="streamUiAudioRecordPlayerWaveBarHeight" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerWaveBarMarginStart" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerWaveBarColorPlayed" format="reference|color" />
+        <attr name="streamUiAudioRecordPlayerWaveBarColorFuture" format="reference|color" />
+
+        <!-- Scrubber -->
+        <attr name="streamUiAudioRecordPlayerScrubberWidthDefault" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerScrubberWidthPressed" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerScrubberDrawable" format="reference" />
+        <attr name="streamUiAudioRecordPlayerScrubberDrawableTint" format="reference|color" />
+
+        <!-- File Icon Container -->
+        <attr name="streamUiAudioRecordPlayerFileIconContainerWidth" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerFileIconContainerVisible" format="reference|boolean" />
+        <attr name="streamUiAudioRecordPlayerAudioFileIconDrawable" format="reference" />
+
+        <!-- Speed button -->
+        <attr name="streamUiAudioRecordPlayerSpeedButtonWidth" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonHeight" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonElevation" format="dimension|reference" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonBackgroundDrawable" format="reference" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonBackgroundDrawableTint" format="reference|color" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonTextSize" format="dimension" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonTextColor" format="reference|color" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonTextFontAssets" format="string" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonTextFont" format="string" />
+        <attr name="streamUiAudioRecordPlayerSpeedButtonTextStyle" format="enum">
+            <enum name="normal" value="0" />
+            <enum name="bold" value="1" />
+            <enum name="italic" value="2" />
+        </attr>
+
+    </declare-styleable>
+</resources>

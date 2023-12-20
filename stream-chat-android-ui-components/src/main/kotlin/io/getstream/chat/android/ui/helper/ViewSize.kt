@@ -16,7 +16,15 @@
 
 package io.getstream.chat.android.ui.helper
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import androidx.annotation.Px
 
-@InternalStreamChatApi
-public interface ViewStyle
+/**
+ * Represents the view's size.
+ *
+ * @param width the width of the view
+ * @param height the height of the view
+ */
+public data class ViewSize(
+    @Px val width: Int,
+    @Px val height: Int,
+)

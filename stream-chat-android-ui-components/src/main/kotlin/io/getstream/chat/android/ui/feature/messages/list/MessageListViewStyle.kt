@@ -25,6 +25,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.GiphyViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.internal.ScrollButtonView
 import io.getstream.chat.android.ui.font.TextStyle
@@ -44,6 +45,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property scrollButtonBehaviour - On new messages always scroll to bottom or count new messages. Default - Count messages.
  * @property itemStyle Style for message list view holders.
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
+ * @property audioRecordPlayerViewStyle Style for [AudioRecordPlayerViewStyle].
  * @property replyMessageStyle Styles messages that are replies.
  * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
  * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
@@ -100,6 +102,7 @@ public data class MessageListViewStyle(
     public val scrollButtonBehaviour: MessageListView.NewMessagesBehaviour,
     public val itemStyle: MessageListItemStyle,
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
+    public val audioRecordPlayerViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
     public val replyMessageStyle: MessageReplyStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
@@ -272,6 +275,39 @@ public data class MessageListViewStyle(
                     .build()
 
                 val giphyViewHolderStyle = GiphyViewHolderStyle(context = context, attributes = attributes)
+
+                var audioRecordViewStyleOwn: AudioRecordPlayerViewStyle? = null
+                val audioRecordViewStyleOwnResId = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMessageListAudioRecordPlayerViewStyleOwn,
+                    R.style.StreamUi_AudioRecordPlayerView,
+                )
+                if (audioRecordViewStyleOwnResId != R.style.StreamUi_AudioRecordPlayerView) {
+                    context.obtainStyledAttributes(
+                        audioRecordViewStyleOwnResId,
+                        R.styleable.AudioRecordPlayerView,
+                    ).use {
+                        audioRecordViewStyleOwn = AudioRecordPlayerViewStyle(
+                            context = context, attributes = it,
+                        )
+                    }
+                }
+
+                var audioRecordViewStyleTheirs: AudioRecordPlayerViewStyle? = null
+                val audioRecordViewStyleTheirsResId = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiMessageListAudioRecordPlayerViewStyleTheirs,
+                    R.style.StreamUi_AudioRecordPlayerView,
+                )
+                if (audioRecordViewStyleTheirsResId != R.style.StreamUi_AudioRecordPlayerView) {
+                    context.obtainStyledAttributes(
+                        audioRecordViewStyleTheirsResId,
+                        R.styleable.AudioRecordPlayerView,
+                    ).use {
+                        audioRecordViewStyleTheirs = AudioRecordPlayerViewStyle(
+                            context = context, attributes = it,
+                        )
+                    }
+                }
+
                 val replyMessageStyle = MessageReplyStyle(context = context, attributes = attributes)
 
                 val replyIcon = attributes.getResourceId(
@@ -542,6 +578,10 @@ public data class MessageListViewStyle(
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,
+                    audioRecordPlayerViewStyle = MessageViewStyle(
+                        own = audioRecordViewStyleOwn,
+                        theirs = audioRecordViewStyleTheirs,
+                    ),
                     replyMessageStyle = replyMessageStyle,
                     backgroundColor = backgroundColor,
                     replyIcon = replyIcon,

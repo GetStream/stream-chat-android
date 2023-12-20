@@ -222,4 +222,32 @@
     <dimen name="stream_ui_message_composer_overlapping_content_floating_hold_height">48dp</dimen>
     <dimen name="stream_ui_message_composer_overlapping_content_floating_hold_padding">8dp</dimen>
 
+    <!--AudioRecordPlayerView-->
+    <dimen name="stream_ui_audio_record_player_height">60dp</dimen>
+    <dimen name="stream_ui_audio_record_player_padding_start">8dp</dimen>
+    <dimen name="stream_ui_audio_record_player_padding_top">2dp</dimen>
+    <dimen name="stream_ui_audio_record_player_padding_end">0dp</dimen>
+    <dimen name="stream_ui_audio_record_player_padding_bottom">2dp</dimen>
+    <dimen name="stream_ui_audio_record_player_playback_progress_container_width">44dp</dimen>
+    <dimen name="stream_ui_audio_record_player_playback_progress_container_height">44dp</dimen>
+    <dimen name="stream_ui_audio_record_player_playback_button_width">36dp</dimen>
+    <dimen name="stream_ui_audio_record_player_playback_button_height">36dp</dimen>
+    <dimen name="stream_ui_audio_record_player_playback_button_elevation">2dp</dimen>
+    <dimen name="stream_ui_audio_record_player_playback_button_padding">6dp</dimen>
+    <dimen name="stream_ui_audio_record_player_progress_bar_width">36dp</dimen>
+    <dimen name="stream_ui_audio_record_player_progress_bar_height">36dp</dimen>
+    <dimen name="stream_ui_audio_record_player_speed_button_width">36dp</dimen>
+    <dimen name="stream_ui_audio_record_player_speed_button_height">32dp</dimen>
+    <dimen name="stream_ui_audio_record_player_speed_button_elevation">0dp</dimen>
+    <dimen name="stream_ui_audio_record_player_speed_text_size">14sp</dimen>
+    <dimen name="stream_ui_audio_record_player_duration_text_view_width">48dp</dimen>
+    <dimen name="stream_ui_audio_record_player_duration_text_view_height">48dp</dimen>
+    <dimen name="stream_ui_audio_record_player_duration_text_view_margin_start">0dp</dimen>
+    <dimen name="stream_ui_audio_record_player_duration_text_size">14sp</dimen>
+    <dimen name="stream_ui_audio_record_player_wave_bar_height">36dp</dimen>
+    <dimen name="stream_ui_audio_record_player_wave_bar_margin_start">0dp</dimen>
+    <dimen name="stream_ui_audio_record_player_scrubber_width_default">7dp</dimen>
+    <dimen name="stream_ui_audio_record_player_scrubber_width_pressed">10dp</dimen>
+    <dimen name="stream_ui_audio_record_player_file_icon_container_width">48dp</dimen>
+
 </resources>

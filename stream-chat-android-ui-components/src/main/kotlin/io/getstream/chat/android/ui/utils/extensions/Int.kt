@@ -18,17 +18,20 @@ package io.getstream.chat.android.ui.utils.extensions
 
 import android.content.res.Resources
 import android.util.DisplayMetrics
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import kotlin.math.roundToInt
 
 /**
  * Transforms DP value integer to pixels, based on the screen density.
  */
-internal fun Int.dpToPx(): Int = dpToPxPrecise().roundToInt()
+@InternalStreamChatApi
+public fun Int.dpToPx(): Int = dpToPxPrecise().roundToInt()
 
 /**
  * Uses the display metrics to transform the value of DP to pixels.
  */
-internal fun Int.dpToPxPrecise(): Float = (this * displayMetrics().density)
+@InternalStreamChatApi
+public fun Int.dpToPxPrecise(): Float = (this * displayMetrics().density)
 
 /**
  * Fetches the current system display metrics based on [Resources].

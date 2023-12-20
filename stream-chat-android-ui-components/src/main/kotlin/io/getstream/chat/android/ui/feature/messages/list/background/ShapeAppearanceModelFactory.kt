@@ -30,6 +30,10 @@ import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
  */
 internal object ShapeAppearanceModelFactory {
 
+    private val CORNER_SIZE_FILE_PX = 16.dpToPxPrecise()
+    private val CORNER_SIZE_AUDIO_PX = 14.dpToPxPrecise()
+    private val STROKE_WIDTH_PX = 1.dpToPxPrecise()
+
     /**
      * Creates the ShapeAppearanceModel.
      *
@@ -90,7 +94,3 @@ internal object ShapeAppearanceModelFactory {
             setTint(ContextCompat.getColor(context, R.color.stream_ui_white))
         }
 }
-
-private val CORNER_SIZE_FILE_PX = 16.dpToPxPrecise()
-private val CORNER_SIZE_AUDIO_PX = 14.dpToPxPrecise()
-private val STROKE_WIDTH_PX = 1.dpToPxPrecise()

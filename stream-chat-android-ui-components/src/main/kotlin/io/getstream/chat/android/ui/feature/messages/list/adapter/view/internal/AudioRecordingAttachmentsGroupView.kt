@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationFormatter
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.log.taggedLogger
@@ -71,6 +72,17 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
                     playerView.invalidate()
                     playerView.requestLayout()
                 }
+            }
+        }
+    }
+
+    private var style: AudioRecordPlayerViewStyle? = null
+
+    fun setStyle(style: AudioRecordPlayerViewStyle) {
+        this.style = style
+        children.forEach {
+            if (it is AudioRecordPlayerView) {
+                it.setStyle(style)
             }
         }
     }
@@ -139,6 +151,8 @@ internal class AudioRecordingAttachmentsGroupView : LinearLayoutCompat {
             audioPlayer.registerStateChange(playerView, audioHash)
             playerView.registerButtonsListeners(audioPlayer, attachment, audioHash)
             playerView.audioHash = audioHash
+
+            style?.also { playerView.setStyle(it) }
         }
     }
 

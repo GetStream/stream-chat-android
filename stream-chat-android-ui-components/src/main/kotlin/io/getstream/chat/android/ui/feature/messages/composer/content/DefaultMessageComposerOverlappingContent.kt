@@ -255,6 +255,9 @@ public open class DefaultMessageComposerOverlappingContent : ConstraintLayout, M
                 style.audioRecordingSlideToCancelStartDrawableTint,
             ),
         )
+        style.audioRecordingWaveformColor?.also {
+            binding.recordingWaveform.setWaveformColor(it)
+        }
     }
 
     override fun renderState(state: MessageComposerState) {

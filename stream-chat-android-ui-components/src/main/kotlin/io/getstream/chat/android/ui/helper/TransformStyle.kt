@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryViewMediaSt
 import io.getstream.chat.android.ui.feature.gallery.MediaAttachmentGridViewStyle
 import io.getstream.chat.android.ui.feature.gallery.options.AttachmentGalleryOptionsViewStyle
 import io.getstream.chat.android.ui.feature.mentions.list.MentionListViewStyle
+import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderViewStyle
@@ -129,6 +130,9 @@ public object TransformStyle {
 
     @JvmStatic
     public var mediaAttachmentGridViewStyle: StyleTransformer<MediaAttachmentGridViewStyle> = noopTransformer()
+
+    @JvmStatic
+    public var audioRecordPlayerViewStyle: StyleTransformer<AudioRecordPlayerViewStyle> = noopTransformer()
 
     private fun <T> noopTransformer() = StyleTransformer<T> { it }
 }

@@ -70,7 +70,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
     ): AttachmentPreviewViewHolder =
         StreamUiAudioRecordPlayerPreviewBinding
             .inflate(parentView.context.streamThemeInflater, parentView, false)
-            .let { AudioRecordAttachmentPreviewHandler(it, attachmentRemovalListener) }
+            .let { AudioRecordAttachmentPreviewViewHolder(it, attachmentRemovalListener, style) }
 
     /**
      * A ViewHolder for file attachment preview.
@@ -78,9 +78,10 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
      * @param binding Binding generated for the layout.
      * @param attachmentRemovalListener Click listener for the remove attachment button.
      */
-    private class AudioRecordAttachmentPreviewHandler(
+    private class AudioRecordAttachmentPreviewViewHolder(
         private val binding: StreamUiAudioRecordPlayerPreviewBinding,
         attachmentRemovalListener: (Attachment) -> Unit,
+        private val style: MessageComposerViewStyle?,
     ) : AttachmentPreviewViewHolder(binding.root) {
 
         private val logger by taggedLogger("AttachRecordPreviewHolder")
@@ -89,6 +90,9 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
 
         init {
             binding.removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
+            style?.audioRecordPlayerViewStyle?.also {
+                binding.playerView.setStyle(it)
+            }
         }
 
         override fun bind(attachment: Attachment) {

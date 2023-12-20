@@ -164,6 +164,7 @@
         <attr name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint" format="reference|color" />
         <attr name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint" format="reference|color" />
+        <attr name="streamUiMessageComposerAudioRecordingWaveformColor" format="reference|color" />
 
         <!-- Leading content -->
         <attr name="streamUiMessageComposerAttachmentsButtonVisible" format="boolean" />
@@ -409,5 +410,8 @@
         <attr name="streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable" format="reference" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText" format="string" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable" format="reference" />
+
+        <!-- Audio record player view style -->
+        <attr name="streamUiMessageComposerAudioRecordPlayerViewStyle" format="reference" />
     </declare-styleable>
 </resources>

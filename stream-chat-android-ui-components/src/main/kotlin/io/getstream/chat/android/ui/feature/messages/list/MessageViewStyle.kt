@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.helper
+package io.getstream.chat.android.ui.feature.messages.list
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.helper.ViewStyle
 
-@InternalStreamChatApi
-public interface ViewStyle
+/**
+ * Styles container for a view that is used to display a message.
+ *
+ * @param own Style for messages sent by the current user.
+ * @param theirs Style for messages sent by other users.
+ */
+public data class MessageViewStyle<T : ViewStyle>(
+    val own: T?,
+    val theirs: T?,
+) : ViewStyle

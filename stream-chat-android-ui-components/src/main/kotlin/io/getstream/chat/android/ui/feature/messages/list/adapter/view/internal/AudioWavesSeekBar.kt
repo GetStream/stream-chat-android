@@ -20,10 +20,12 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -34,8 +36,6 @@ import kotlin.math.max
 
 private const val MIN_BAR_VALUE = 0.05F
 private const val DEFAULT_BAR_HEIGHT_RATIO = 0.9F
-private const val EXPAND_TRACKER_WIDTH = 10
-private const val DEFAULT_BAR_PADDING = 5
 private const val DEFAULT_BAR_SPACING = 0.4
 private const val DEFAULT_BAR_NUMBER = 40
 private const val DEFAULT_BAR_VALUE = 0F
@@ -60,7 +60,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         orientation = HORIZONTAL
 
         tracker = ImageView(context).apply {
-            setBackgroundResource(R.drawable.stream_ui_share_rectangle)
+            setImageResource(R.drawable.stream_ui_share_rectangle)
         }
 
         val layoutParamsButton = LayoutParams(
@@ -85,17 +85,20 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
 
     private fun seekWidth(): Int = width - realPaddingStart - realPaddingEnd
 
-    private val paintLeft = Paint().apply {
+    private val paintPlayed = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_accent_blue)
         style = Paint.Style.FILL
     }
 
-    private val paintRight = Paint().apply {
+    private val paintFuture = Paint().apply {
         color = ContextCompat.getColor(context, R.color.stream_ui_grey)
         style = Paint.Style.FILL
     }
 
     private var internalWaveBars: List<Float>? = null
+
+    private var defaultScrubberWidth: Int = 7.dpToPx()
+    private var pressedScrubberWidth: Int = 10.dpToPx()
 
     internal var waveBars: List<Float>
         set(value) {
@@ -109,6 +112,23 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
         }
 
     private var progress: Float = INITIAL_PROGRESS
+
+    fun setPlayedWaveBarColor(@ColorInt color: Int) {
+        paintPlayed.color = color
+    }
+
+    fun setFutureWaveBarColor(@ColorInt color: Int) {
+        paintFuture.color = color
+    }
+
+    fun setScrubberDrawable(drawable: Drawable?) {
+        tracker.setImageDrawable(drawable)
+    }
+
+    fun setScrubberWidth(default: Int, pressed: Int) {
+        defaultScrubberWidth = default
+        pressedScrubberWidth = pressed
+    }
 
     internal fun setProgress(progress: Float) {
         if (!isDragging) {
@@ -163,7 +183,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
                 onStartDrag()
                 parent.requestDisallowInterceptTouchEvent(true)
                 tracker.updateLayoutParams {
-                    width += EXPAND_TRACKER_WIDTH.dpToPx()
+                    width = pressedScrubberWidth
                 }
                 forceProgress(xToProgress(motionEvent.x))
                 true
@@ -179,7 +199,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
                 onEndDrag(xToProgress(motionEvent.x).toInt())
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
+                    width = defaultScrubberWidth
                 }
                 true
             }
@@ -188,7 +208,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
                 isDragging = false
                 parent.requestDisallowInterceptTouchEvent(false)
                 tracker.updateLayoutParams {
-                    width -= EXPAND_TRACKER_WIDTH.dpToPx()
+                    width = defaultScrubberWidth
                 }
                 true
             }
@@ -214,7 +234,7 @@ internal class AudioWavesSeekBar : LinearLayoutCompat {
             val bottom = top + barHeight
 
             rect.set(left, top, right, bottom)
-            val paint = if (progressToX(progress) > left + barWidth!! / 2) paintLeft else paintRight
+            val paint = if (progressToX(progress) > left + barWidth!! / 2) paintPlayed else paintFuture
 
             tracker.x = trackerPosition(progressToX(progress)) - tracker.width / 2
 

@@ -82,4 +82,8 @@
 
     <!-- Search Input -->
     <color name="stream_ui_search_input_background_outline_color">@color/stream_ui_grey_whisper</color>
+
+    <!-- Audio Record Player -->
+    <color name="stream_ui_audio_record_player_speed_text_color">#080707</color>
+    <color name="stream_ui_audio_record_player_duration_text_color">#747881</color>
 </resources>

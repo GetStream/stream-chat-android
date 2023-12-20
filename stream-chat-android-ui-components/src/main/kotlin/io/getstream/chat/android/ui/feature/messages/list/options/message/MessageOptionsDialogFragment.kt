@@ -430,6 +430,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                     setAttachmentFactoryManager(attachmentFactoryManager)
                     setMessageListItemStyle(style.itemStyle)
                     setGiphyViewHolderStyle(style.giphyViewHolderStyle)
+                    setAudioRecordViewStyle(style.audioRecordPlayerViewStyle)
                     setReplyMessageListItemViewStyle(style.replyMessageStyle)
                     decoratorProvider = object : DecoratorProvider {
                         override val decorators: List<Decorator> get() = emptyList()

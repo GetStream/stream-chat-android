@@ -24,8 +24,10 @@ import android.widget.Toast
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StringRes
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.FragmentActivity
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.helper.ViewPadding
 
 /**
  * Helper method for adding ripple effect to views
@@ -72,12 +74,12 @@ internal fun View.setPaddingStart(@Px start: Int) {
     }
 }
 
-internal fun View.setPaddingEnd(@Px start: Int) {
-    val isRtl = context.isRtlLayout
-
-    if (isRtl) {
-        setPadding(start, paddingTop, paddingRight, paddingBottom)
-    } else {
-        setPadding(paddingLeft, paddingTop, start, paddingBottom)
-    }
+internal fun View.setPaddingCompat(padding: ViewPadding) {
+    ViewCompat.setPaddingRelative(
+        this,
+        padding.start,
+        padding.top,
+        padding.end,
+        padding.bottom,
+    )
 }

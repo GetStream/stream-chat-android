@@ -25,6 +25,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.annotation.ColorInt
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -108,6 +109,10 @@ internal class WaveformView : LinearLayoutCompat {
     }
 
     private val _waveform = arrayListOf<Float>()
+
+    public fun setWaveformColor(@ColorInt color: Int) {
+        paintPassed.color = color
+    }
 
     public var progress: Float = INITIAL_PROGRESS
         set(value) {
