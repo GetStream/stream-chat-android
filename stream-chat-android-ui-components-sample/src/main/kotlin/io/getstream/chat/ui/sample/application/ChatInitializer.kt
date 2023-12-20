@@ -39,7 +39,7 @@ import io.getstream.chat.ui.sample.feature.HostActivity
 
 class ChatInitializer(
     private val context: Context,
-    private val autoTranslationEnabled: Boolean
+    private val autoTranslationEnabled: Boolean,
 ) {
 
     @Suppress("UNUSED_VARIABLE")

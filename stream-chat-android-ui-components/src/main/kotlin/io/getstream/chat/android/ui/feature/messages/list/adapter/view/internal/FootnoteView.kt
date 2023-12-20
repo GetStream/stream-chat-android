@@ -17,17 +17,12 @@
 package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.models.User
@@ -36,12 +31,9 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBindi
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.font.setTextStyle
-import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
-import java.util.Locale
 
 internal class FootnoteView : LinearLayoutCompat {
 
@@ -53,7 +45,8 @@ internal class FootnoteView : LinearLayoutCompat {
         defStyleAttr,
     )
 
-    private val footnote: StreamUiItemMessageFootnoteBinding = StreamUiItemMessageFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
+    private val footnote: StreamUiItemMessageFootnoteBinding =
+        StreamUiItemMessageFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
     private val threadsFootnote: StreamUiMessageThreadsFootnoteBinding =
         StreamUiMessageThreadsFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
 
