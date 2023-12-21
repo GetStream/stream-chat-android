@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
+import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
 import io.getstream.chat.android.ui.common.state.messages.Pin
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.Resend
@@ -142,6 +143,7 @@ public fun defaultMessageOptionsState(
     val canDeleteAnyMessage = ownCapabilities.contains(ChannelCapabilities.DELETE_ANY_MESSAGE)
     val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
     val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
+    val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
 
     return listOfNotNull(
         if (isOwnMessage && isMessageFailed) {
@@ -171,6 +173,17 @@ public fun defaultMessageOptionsState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
                 action = ThreadReply(selectedMessage),
+                titleColor = ChatTheme.colors.textHighEmphasis,
+                iconColor = ChatTheme.colors.textLowEmphasis,
+            )
+        } else {
+            null
+        },
+        if (canMarkAsUnread) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_mark_as_unread,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_mark_as_unread),
+                action = MarkAsUnread(selectedMessage),
                 titleColor = ChatTheme.colors.textHighEmphasis,
                 iconColor = ChatTheme.colors.textLowEmphasis,
             )
