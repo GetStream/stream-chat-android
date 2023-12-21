@@ -24,6 +24,7 @@ import androidx.core.view.doOnNextLayout
 import androidx.core.view.doOnPreDraw
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
@@ -294,7 +295,7 @@ internal class ChannelViewHolder @JvmOverloads constructor(
     }
 
     private fun StreamUiChannelListItemForegroundViewBinding.configureUnreadCountBadge() {
-        val count = channel.unreadCount ?: 0
+        val count = channel.currentUserUnreadCount
 
         val haveUnreadMessages = count > 0
         unreadCountBadge.isVisible = haveUnreadMessages

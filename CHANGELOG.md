@@ -3,10 +3,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Improve unread count behavior, it relies on `read` property. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
 
 ### ✅ Added
+- Add `Channel.currentUserUnreadCount` extension property to get the unread count for the current user. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
 
 ### ⚠️ Changed
+- Deprecate `Channel.unreadCount` property, use `Channel.currentUserUnreadCount` instead. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
 
 ### ❌ Removed
 

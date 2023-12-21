@@ -555,7 +555,6 @@ internal class MessageListControllerTests {
             )
             return channel.copy(
                 config = channelConfig.value,
-                unreadCount = unreadCount.value,
                 hidden = hidden.value,
                 isInsideSearch = insideSearch,
             )

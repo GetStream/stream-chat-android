@@ -18,8 +18,42 @@ package io.getstream.chat.android.state.event.handler.internal.utils
 
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.MarkAllReadEvent
+import io.getstream.chat.android.client.events.MessageReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkReadEvent
+import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
+import io.getstream.chat.android.models.ChannelUserRead
 
 internal val ChatEvent.realType get() = when (this) {
     is ConnectedEvent -> "connection.connected"
     else -> type
 }
+
+internal fun MessageReadEvent.toChannelUserRead() = ChannelUserRead(
+    user = user,
+    lastReceivedEventDate = createdAt,
+    lastRead = createdAt,
+// TODO: remove this once the backend is fixed and is sending us the number of unread messages
+    unreadMessages = 0,
+)
+internal fun NotificationMarkReadEvent.toChannelUserRead() = ChannelUserRead(
+    user = user,
+    lastReceivedEventDate = createdAt,
+    lastRead = createdAt,
+// TODO: remove this once the backend is fixed and is sending us the number of unread messages
+    unreadMessages = 0,
+)
+
+internal fun NotificationMarkUnreadEvent.toChannelUserRead() = ChannelUserRead(
+    user = user,
+    lastReceivedEventDate = createdAt,
+    lastRead = lastReadMessageAt,
+    unreadMessages = unreadMessages,
+)
+
+internal fun MarkAllReadEvent.toChannelUserRead() = ChannelUserRead(
+    user = user,
+    lastReceivedEventDate = createdAt,
+    lastRead = createdAt,
+    unreadMessages = 0,
+)

@@ -19,7 +19,6 @@ package io.getstream.chat.android.state.facade
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
@@ -27,6 +26,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomConfig
 import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
@@ -116,7 +116,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
         val channel = randomChannel(
             createdBy = channelUser,
             members = listOf(Member(memberUser)),
-            read = listOf(ChannelUserRead(userRead)),
+            read = listOf(randomChannelUserRead(user = userRead)),
             messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
         )
 
@@ -176,7 +176,7 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
                     val channel = randomChannel(
                         createdBy = channelUser,
                         members = listOf(Member(memberUser)),
-                        read = listOf(ChannelUserRead(userRead)),
+                        read = listOf(randomChannelUserRead(user = userRead)),
                         messages = listOf(randomMessage(user = messageUser, pinnedBy = pinnedByUser)),
                     )
                     acc.first + listOf(

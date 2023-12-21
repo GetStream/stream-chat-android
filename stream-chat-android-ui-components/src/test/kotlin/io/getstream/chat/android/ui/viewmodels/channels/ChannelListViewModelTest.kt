@@ -331,12 +331,10 @@ internal class ChannelListViewModelTest {
         private val channel1: Channel = Channel(
             type = "messaging",
             id = "channel1",
-            unreadCount = 0,
         )
         private val channel2: Channel = Channel(
             type = "messaging",
             id = "channel2",
-            unreadCount = 0,
         )
     }
 }

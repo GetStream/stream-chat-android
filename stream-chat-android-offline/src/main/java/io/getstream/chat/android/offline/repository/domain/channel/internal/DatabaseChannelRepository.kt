@@ -17,6 +17,7 @@
 package io.getstream.chat.android.offline.repository.domain.channel.internal
 
 import android.util.LruCache
+import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.core.utils.date.maxOf
 import io.getstream.chat.android.core.utils.date.minOf
@@ -237,7 +238,7 @@ internal class DatabaseChannelRepository(
             hiddenMessagesBefore = hideMessagesBefore,
             members = members,
             read = read,
-        )
+        ).syncUnreadCountWithReads()
     }
     private fun Message.after(date: Date?): Boolean =
         date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true

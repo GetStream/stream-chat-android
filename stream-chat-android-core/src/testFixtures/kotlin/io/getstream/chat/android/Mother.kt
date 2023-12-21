@@ -220,9 +220,9 @@ public fun randomChannel(
     members: List<Member> = mutableListOf(),
     watchers: List<User> = mutableListOf(),
     read: List<ChannelUserRead> = mutableListOf(),
+    unreadCount: Int = randomInt(),
     config: Config = Config(),
     createdBy: User = randomUser(),
-    unreadCount: Int? = randomInt(),
     team: String = randomString(),
     hidden: Boolean? = randomBoolean(),
     hiddenMessagesBefore: Date? = randomDate(),
@@ -254,9 +254,15 @@ public fun randomChannel(
 
 public fun randomChannelUserRead(
     user: User = randomUser(),
-    lastReadDate: Date = randomDate(),
+    lastReceivedEventDate: Date = randomDate(),
     unreadMessages: Int = positiveRandomInt(),
-): ChannelUserRead = ChannelUserRead(user, lastReadDate, unreadMessages)
+    lastRead: Date = randomDate(),
+): ChannelUserRead = ChannelUserRead(
+    user = user,
+    lastReceivedEventDate = lastReceivedEventDate,
+    unreadMessages = unreadMessages,
+    lastRead = lastRead,
+)
 
 public fun randomMessageList(
     size: Int = 10,

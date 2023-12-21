@@ -87,7 +87,12 @@ internal class ChannelStateLogicTest {
         )
         _messages = emptyMap()
         _unreadCount.value = 0
-        _read.value = ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount)
+        _read.value = ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(Long.MIN_VALUE),
+            unreadMessages = unreadCount,
+            lastRead = Date(Long.MIN_VALUE),
+        )
         _channelData.value = ChannelData(randomChannel(), emptySet())
         _reads = emptyMap()
         _insideSearch.value = false
@@ -101,7 +106,12 @@ internal class ChannelStateLogicTest {
     private val _unreadCount: MutableStateFlow<Int> = MutableStateFlow(0)
     private val unreadCount = randomInt()
     private val _read: MutableStateFlow<ChannelUserRead> = MutableStateFlow(
-        ChannelUserRead(user, lastMessageSeenDate = Date(Long.MIN_VALUE), unreadMessages = unreadCount),
+        ChannelUserRead(
+            user = user,
+            lastReceivedEventDate = Date(Long.MIN_VALUE),
+            unreadMessages = unreadCount,
+            lastRead = Date(Long.MIN_VALUE),
+        ),
     )
     private val _channelData: MutableStateFlow<ChannelData> =
         MutableStateFlow(ChannelData(randomChannel(), emptySet()))
@@ -189,8 +199,9 @@ internal class ChannelStateLogicTest {
         whenever(mutableState.read) doReturn MutableStateFlow(
             ChannelUserRead(
                 user = user,
-                lastMessageSeenDate = Date(Long.MIN_VALUE),
+                lastReceivedEventDate = Date(Long.MIN_VALUE),
                 unreadMessages = newUnreadCount,
+                lastRead = Date(Long.MIN_VALUE),
             ),
         )
 
@@ -215,7 +226,12 @@ internal class ChannelStateLogicTest {
     fun `old messages should NOT increment the unread count`() {
         // The last message is really new.
         whenever(mutableState.read) doReturn MutableStateFlow(
-            ChannelUserRead(user, lastMessageSeenDate = Date(Long.MAX_VALUE)),
+            ChannelUserRead(
+                user = user,
+                lastReceivedEventDate = Date(Long.MAX_VALUE),
+                unreadMessages = randomInt(),
+                lastRead = Date(Long.MIN_VALUE),
+            ),
         )
         val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
         whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))

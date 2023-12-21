@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.offline.repository.domain.channel.userread.internal
+package io.getstream.chat.android.client
 
-import io.getstream.chat.android.models.ChannelUserRead
-import io.getstream.chat.android.models.User
+import org.mockito.kotlin.mock
 
-internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity =
-    ChannelUserReadEntity(getUserId(), lastReceivedEventDate, unreadMessages, lastRead)
-
-internal suspend fun ChannelUserReadEntity.toModel(getUser: suspend (userId: String) -> User): ChannelUserRead =
-    ChannelUserRead(getUser(userId), lastReceivedEventDate, unreadMessages, lastRead)
+public class MockChatClientBuilder(
+    private val builderFunction: () -> ChatClient = {
+        mock()
+    },
+) : ChatClient.ChatClientBuilder() {
+    override fun internalBuild(): ChatClient = builderFunction()
+}

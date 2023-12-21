@@ -13,7 +13,6 @@ import io.getstream.chat.android.client.extensions.ChannelExtensionKt;
 import io.getstream.chat.android.models.Channel;
 import io.getstream.chat.android.models.ChannelUserRead;
 import io.getstream.chat.android.models.User;
-import io.getstream.chat.android.state.extensions.ChatClientExtensions;
 
 public class UnreadCounts {
     private ChatClient client;
@@ -104,7 +103,7 @@ public class UnreadCounts {
             client.queryChannel("channel-type", "channel-id", queryChannelRequest, false).enqueue((result) -> {
                 if (result.isSuccess()) {
                     // Unread count for the current user
-                    Integer unreadCount = result.getOrNull().getUnreadCount();
+                    Integer unreadCount = ChannelExtensionKt.getCurrentUserUnreadCount(result.getOrNull());
                 } else {
                     // Handle error
                 }

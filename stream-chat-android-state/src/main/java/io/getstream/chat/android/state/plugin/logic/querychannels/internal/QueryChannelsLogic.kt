@@ -24,7 +24,6 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.client.query.request.ChannelFilterRequest.filterWithOffset
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
-import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -32,7 +31,6 @@ import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.StateFlow
-import java.util.Date
 
 private const val MESSAGE_LIMIT = 1
 private const val MEMBER_LIMIT = 30
@@ -136,25 +134,12 @@ internal class QueryChannelsLogic(
 
         if (result is Result.Success) {
             logger.d { "Number of returned channels: ${result.value.size}" }
-            val channels = result.value.map { channel ->
-                channel.copy(
-                    read = channel.messages.lastOrNull()
-                        ?.createdAt?.let { updateLastMessageSeenOfReads(channel.read, it) }
-                        ?: channel.read,
-                )
-            }
-            updateOnlineChannels(request, channels)
+            updateOnlineChannels(request, result.value)
         } else {
             queryChannelsStateLogic.initializeChannelsIfNeeded()
         }
 
         loadingPerPage(false, request.offset > 0)
-    }
-
-    private fun updateLastMessageSeenOfReads(reads: List<ChannelUserRead>, lastSeenDate: Date): List<ChannelUserRead> {
-        return reads.map { channelUserRead ->
-            channelUserRead.copy(lastMessageSeenDate = lastSeenDate)
-        }
     }
 
     /**
