@@ -78,6 +78,9 @@ public fun MessageContainer(
     dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
+    unreadSeparatorContent: @Composable (UnreadSeparatorItemState) -> Unit = {
+        DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState = it)
+    },
     threadSeparatorContent: @Composable (ThreadDateSeparatorItemState) -> Unit = {
         DefaultMessageThreadSeparatorContent(threadSeparator = it)
     },
@@ -105,9 +108,7 @@ public fun MessageContainer(
         is MessageItemState -> messageItemContent(messageListItemState)
         is TypingItemState -> typingIndicatorContent(messageListItemState)
         is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
-        is UnreadSeparatorItemState -> {
-            // Not implemented yet
-        }
+        is UnreadSeparatorItemState -> unreadSeparatorContent(messageListItemState)
     }
 }
 
@@ -136,6 +137,31 @@ internal fun DefaultMessageDateSeparatorContent(dateSeparator: DateSeparatorItem
                 style = ChatTheme.messageDateSeparatorTheme.textStyle,
             )
         }
+    }
+}
+
+/**
+ * Represents an unread separator item that shows whenever there are unread messages in the channel.
+ *
+ * @param unreadSeparatorItemState The data used to show the separator text.
+ */
+@Composable
+internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: UnreadSeparatorItemState) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(ChatTheme.messageUnreadSeparatorTheme.backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_unread_separator,
+                unreadSeparatorItemState.unreadCount,
+                unreadSeparatorItemState.unreadCount,
+            ),
+            style = ChatTheme.messageUnreadSeparatorTheme.textStyle,
+        )
     }
 }
 
