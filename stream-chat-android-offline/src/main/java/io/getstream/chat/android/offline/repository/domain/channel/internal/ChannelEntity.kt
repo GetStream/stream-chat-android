@@ -41,7 +41,6 @@ import java.util.Date
  * @param memberCount Number of members in the channel.
  * @param watcherIds The list of watchers` ids.
  * @param watcherCount Number of watchers in the channel.
- * @param unreadCount Number of unread messages for the current user.
  * @param reads The list of read states.
  * @param lastMessageAt Date of the last message sent.
  * @param lastMessageId The id of the last message.
