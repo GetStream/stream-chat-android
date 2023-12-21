@@ -174,6 +174,17 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style read counter in footer -->
+        <attr name="streamUiMessageTextSizeReadCounter" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorReadCounter" format="color" />
+        <attr name="streamUiMessageTextFontReadCounter" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsReadCounter" format="string" />
+        <attr name="streamUiMessageTextStyleReadCounter">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Message text style thread separator -->
         <attr name="streamUiMessageTextSizeThreadSeparator" format="dimension|reference" />
         <attr name="streamUiMessageTextColorThreadSeparator" format="color" />

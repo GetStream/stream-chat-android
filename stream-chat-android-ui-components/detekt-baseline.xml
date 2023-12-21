@@ -113,7 +113,6 @@
     <ID>MaxLineLength:DefaultMessageComposerLeadingContent.kt$DefaultMessageComposerLeadingContent$binding.attachmentsButton.isVisible = style.attachmentsButtonVisible &amp;&amp; canSendMessage &amp;&amp; canUploadFile &amp;&amp; !isInEditMode</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$*</ID>
     <ID>MaxLineLength:FileAttachmentsViewHolder.kt$FileAttachmentsViewHolder$AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)</ID>
-    <ID>MaxLineLength:FootnoteDecorator.kt$FootnoteDecorator$SyncStatus.IN_PROGRESS</ID>
     <ID>MaxLineLength:GiphyAttachmentViewHolder.kt$GiphyAttachmentViewHolder$*</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentPlaceHolderIcon)</ID>
     <ID>MaxLineLength:GiphyMediaAttachmentViewStyle.kt$GiphyMediaAttachmentViewStyle.Companion$attributes.getDrawable(R.styleable.GiphyMediaAttachmentView_streamUiGiphyMediaAttachmentProgressIcon)</ID>

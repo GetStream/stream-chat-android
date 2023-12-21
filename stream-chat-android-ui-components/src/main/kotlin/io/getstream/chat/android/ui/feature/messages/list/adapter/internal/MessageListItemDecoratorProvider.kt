@@ -73,7 +73,6 @@ internal class MessageListItemDecoratorProvider(
             isDirectMessage,
             messageListViewStyle,
             deletedMessageVisibility,
-            messageListViewStyle.readCountEnabled,
             getLanguageDisplayName,
         ),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },

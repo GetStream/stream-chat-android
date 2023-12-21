@@ -353,6 +353,11 @@
         <item name="streamUiMessageTextColorThreadCounter">@color/stream_ui_accent_blue</item>
         <item name="streamUiMessageTextStyleThreadCounter">normal</item>
 
+        <!-- Message text style read counter in footer -->
+        <item name="streamUiMessageTextSizeReadCounter">@dimen/stream_ui_text_small</item>
+        <item name="streamUiMessageTextColorReadCounter">@color/stream_ui_text_color_secondary</item>
+        <item name="streamUiMessageTextStyleReadCounter">normal</item>
+
         <!-- Message text style thread separator -->
         <item name="streamUiMessageTextSizeThreadSeparator">@dimen/stream_ui_text_small</item>
         <item name="streamUiMessageTextColorThreadSeparator">@color/stream_ui_text_color_secondary</item>

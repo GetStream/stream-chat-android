@@ -150,21 +150,37 @@ internal class FootnoteView : LinearLayoutCompat {
         }
     }
 
-    fun hideStatusIndicator() {
-        footnote.deliveryStatusIcon.isVisible = false
+    /**
+     * Hides the the read counter.
+     */
+    fun hideReadCounter() {
         footnote.readCount.isVisible = false
     }
 
-    internal fun showStatusIndicator(drawableRes: Drawable, readCount: Int, readCountEnabled: Boolean) {
+    /**
+     * Shows the read counter.
+     *
+     * @param count The number of users that read the message.
+     * @param style [MessageListItemStyle] The style of the MessageListItem and its items.
+     */
+    fun showReadCounter(
+        count: Int,
+        style: MessageListItemStyle,
+    ) {
+        footnote.readCount.apply {
+            isVisible = true
+            text = count.toString()
+            setTextStyle(style.textStyleReadCounter)
+        }
+    }
+
+    fun hideStatusIndicator() {
+        footnote.deliveryStatusIcon.isVisible = false
+    }
+
+    internal fun showStatusIndicator(drawableRes: Drawable) {
         footnote.deliveryStatusIcon.isVisible = true
         footnote.deliveryStatusIcon.setImageDrawable(drawableRes)
-
-        if (readCount > 1 && readCountEnabled) {
-            footnote.readCount.isVisible = true
-            footnote.readCount.text = readCount.toString()
-        } else {
-            footnote.readCount.isVisible = false
-        }
     }
 
     fun showTime(time: String, style: MessageListItemStyle) {
@@ -190,9 +206,11 @@ internal class FootnoteView : LinearLayoutCompat {
      * @param style [MessageListItemStyle] The style of the MessageListItem and its items.
      */
     fun showTranslatedLabel(languageName: String, style: MessageListItemStyle) {
-        translatedLabel.isVisible = true
-        translatedLabel.text = context.getString(R.string.stream_ui_message_list_translated, languageName)
-        translatedLabel.setTextStyle(style.textStyleMessageDate)
+        translatedLabel.apply {
+            isVisible = true
+            text = context.getString(R.string.stream_ui_message_list_translated, languageName)
+            setTextStyle(style.textStyleMessageLanguage)
+        }
     }
 
     /**
