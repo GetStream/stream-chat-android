@@ -60,7 +60,9 @@ import io.getstream.chat.android.ui.utils.extensions.getDrawableCompat
  * @property textStyleTheirs Appearance for message text sent by other user.
  * @property textStyleUserName Appearance for user name text.
  * @property textStyleMessageDate Appearance for message date text.
+ * @property textStyleMessageLanguage Appearance for message language text.
  * @property textStyleThreadCounter Appearance for thread counter text.
+ * @property textStyleReadCounter Appearance for read counter text.
  * @property textStyleLinkTitle Appearance for link.
  * @property textStyleLinkDescription Appearance for link's description text.
  * @property dateSeparatorBackgroundColor Background color for data separator. Default value is [R.color.stream_ui_overlay_dark].
@@ -107,6 +109,7 @@ public data class MessageListItemStyle(
     public val textStyleMessageDate: TextStyle,
     public val textStyleMessageLanguage: TextStyle,
     public val textStyleThreadCounter: TextStyle,
+    public val textStyleReadCounter: TextStyle,
     public val threadSeparatorTextStyle: TextStyle,
     public val textStyleLinkLabel: TextStyle,
     public val textStyleLinkTitle: TextStyle,
@@ -184,6 +187,9 @@ public data class MessageListItemStyle(
 
         internal val DEFAULT_TEXT_COLOR_THREAD_COUNTER = R.color.stream_ui_accent_blue
         internal val DEFAULT_TEXT_SIZE_THREAD_COUNTER = R.dimen.stream_ui_text_small
+
+        internal val DEFAULT_TEXT_COLOR_READ_COUNTER = R.color.stream_ui_text_color_secondary
+        internal val DEFAULT_TEXT_SIZE_READ_COUNTER = R.dimen.stream_ui_text_small
 
         internal val DEFAULT_TEXT_COLOR_LINK_DESCRIPTION = R.color.stream_ui_text_color_secondary
         internal val DEFAULT_TEXT_SIZE_LINK_DESCRIPTION = R.dimen.stream_ui_text_small
@@ -380,6 +386,23 @@ public data class MessageListItemStyle(
                     mediumTypeface,
                 )
                 .style(R.styleable.MessageListView_streamUiMessageTextStyleThreadCounter, DEFAULT_TEXT_STYLE)
+                .build()
+
+            val textStyleReadCounter = TextStyle.Builder(attributes)
+                .size(
+                    R.styleable.MessageListView_streamUiMessageTextSizeReadCounter,
+                    context.getDimension(DEFAULT_TEXT_SIZE_READ_COUNTER),
+                )
+                .color(
+                    R.styleable.MessageListView_streamUiMessageTextColorReadCounter,
+                    context.getColorCompat(DEFAULT_TEXT_COLOR_READ_COUNTER),
+                )
+                .font(
+                    R.styleable.MessageListView_streamUiMessageTextFontAssetsReadCounter,
+                    R.styleable.MessageListView_streamUiMessageTextFontReadCounter,
+                    mediumTypeface,
+                )
+                .style(R.styleable.MessageListView_streamUiMessageTextStyleReadCounter, DEFAULT_TEXT_STYLE)
                 .build()
 
             val textStyleThreadSeparator = TextStyle.Builder(attributes)
@@ -733,6 +756,7 @@ public data class MessageListItemStyle(
                 textStyleMessageDate = textStyleMessageDate,
                 textStyleMessageLanguage = textStyleMessageLanguage,
                 textStyleThreadCounter = textStyleThreadCounter,
+                textStyleReadCounter = textStyleReadCounter,
                 threadSeparatorTextStyle = textStyleThreadSeparator,
                 textStyleLinkTitle = textStyleLinkTitle,
                 textStyleLinkDescription = textStyleLinkDescription,

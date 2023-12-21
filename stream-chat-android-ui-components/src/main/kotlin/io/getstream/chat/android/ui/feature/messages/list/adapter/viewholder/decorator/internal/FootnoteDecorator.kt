@@ -57,9 +57,10 @@ internal class FootnoteDecorator(
     private val isDirectMessage: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
     private val deletedMessageVisibilityHandler: () -> DeletedMessageVisibility,
-    private val readCountEnabled: Boolean,
     private val getLanguageDisplayName: (code: String) -> String,
 ) : BaseDecorator() {
+
+    private val itemStyle: MessageListItemStyle get() = listViewStyle.itemStyle
 
     /**
      * Decorates the footnote of the message containing custom attachments.
@@ -169,6 +170,7 @@ internal class FootnoteDecorator(
         with(viewHolder.binding.footnote) {
             applyGravity(data.isMine)
             hideStatusIndicator()
+            hideReadCounter()
         }
     }
 
@@ -241,7 +243,8 @@ internal class FootnoteDecorator(
         setupMessageFooterLabel(footnoteView.footerTextLabel, data, listViewStyle.itemStyle)
         setupMessageFooterTime(footnoteView, data)
         setupMessageFooterTranslatedLabel(footnoteView, data)
-        setupDeliveryStateIndicator(footnoteView, data)
+        setupMessageFooterStatusIndicator(footnoteView, data)
+        setupMessageFooterReadCounter(footnoteView, data)
     }
 
     private fun setupThreadFootnote(
@@ -321,6 +324,7 @@ internal class FootnoteDecorator(
                 ),
                 listViewStyle.itemStyle,
             )
+
             else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), listViewStyle.itemStyle)
         }
     }
@@ -343,37 +347,57 @@ internal class FootnoteDecorator(
         }
     }
 
-    private fun setupDeliveryStateIndicator(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
-        val status = data.message.syncStatus
-        when {
-            !listViewStyle.itemStyle.showMessageDeliveryStatusIndicator -> Unit
-            data.isNotBottomPosition() -> footnoteView.hideStatusIndicator()
-            data.isTheirs -> footnoteView.hideStatusIndicator()
-            data.message.isEphemeral() -> footnoteView.hideStatusIndicator()
-            data.message.isDeleted() -> footnoteView.hideStatusIndicator()
-            else -> when (status) {
-                SyncStatus.FAILED_PERMANENTLY -> footnoteView.hideStatusIndicator()
-                SyncStatus.IN_PROGRESS, SyncStatus.SYNC_NEEDED, SyncStatus.AWAITING_ATTACHMENTS -> footnoteView.showStatusIndicator(
-                    listViewStyle.itemStyle.iconIndicatorPendingSync,
-                    NO_READS,
-                    readCountEnabled,
-                )
-                SyncStatus.COMPLETED -> {
-                    if (data.isMessageRead) {
-                        footnoteView.showStatusIndicator(
-                            listViewStyle.itemStyle.iconIndicatorRead,
-                            data.messageReadBy.size,
-                            readCountEnabled,
-                        )
-                    } else {
-                        footnoteView.showStatusIndicator(
-                            listViewStyle.itemStyle.iconIndicatorSent,
-                            NO_READS,
-                            readCountEnabled,
-                        )
-                    }
-                }
-            }
+    private fun setupMessageFooterStatusIndicator(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
+        val indicatorDisabled = !listViewStyle.itemStyle.showMessageDeliveryStatusIndicator
+        val shouldHideReadRelatedInfo = shouldHideReadRelatedInfo(data)
+        if (indicatorDisabled || shouldHideReadRelatedInfo) {
+            footnoteView.hideStatusIndicator()
+            return
         }
+        val statusIndicator = when (data.message.syncStatus) {
+            SyncStatus.IN_PROGRESS,
+            SyncStatus.SYNC_NEEDED,
+            SyncStatus.AWAITING_ATTACHMENTS,
+            -> itemStyle.iconIndicatorPendingSync
+            SyncStatus.COMPLETED -> when (data.isMessageRead) {
+                true -> itemStyle.iconIndicatorRead
+                else -> itemStyle.iconIndicatorSent
+            }
+            else -> null
+        }
+        if (statusIndicator != null) {
+            footnoteView.showStatusIndicator(statusIndicator)
+        } else {
+            footnoteView.hideStatusIndicator()
+        }
+    }
+
+    private fun setupMessageFooterReadCounter(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
+        val isReadCountDisabled = !listViewStyle.readCountEnabled
+        val shouldHideReadRelatedInfo = shouldHideReadRelatedInfo(data)
+        if (isReadCountDisabled || shouldHideReadRelatedInfo) {
+            footnoteView.hideReadCounter()
+            return
+        }
+        val readCount = when (data.message.syncStatus == SyncStatus.COMPLETED && data.isMessageRead) {
+            true -> data.messageReadBy.size
+            else -> NO_READS
+        }
+        if (readCount > 0) {
+            footnoteView.showReadCounter(readCount, listViewStyle.itemStyle)
+        } else {
+            footnoteView.hideReadCounter()
+        }
+    }
+
+    private fun shouldHideReadRelatedInfo(data: MessageListItem.MessageItem): Boolean {
+        val status = data.message.syncStatus
+        val isNotBottomPosition = data.isNotBottomPosition()
+        val isTheirs = data.isTheirs
+        val isEphemeral = data.message.isEphemeral()
+        val isDeleted = data.message.isDeleted()
+        val isFailedPermanently = status == SyncStatus.FAILED_PERMANENTLY
+
+        return isNotBottomPosition || isTheirs || isEphemeral || isDeleted || isFailedPermanently
     }
 }
