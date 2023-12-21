@@ -34,8 +34,11 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
+import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteReactionIdentifier
+import io.getstream.chat.android.client.api.models.identifier.GetDevicesIdentifier
 import io.getstream.chat.android.client.api.models.identifier.GetMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.GetRepliesIdentifier
 import io.getstream.chat.android.client.api.models.identifier.GetRepliesMoreIdentifier
@@ -1364,16 +1367,19 @@ internal constructor(
     @CheckResult
     public fun getDevices(): Call<List<Device>> {
         return api.getDevices()
+            .share(userScope) { GetDevicesIdentifier() }
     }
 
     @CheckResult
     public fun deleteDevice(device: Device): Call<Unit> {
         return api.deleteDevice(device)
+            .share(userScope) { DeleteDeviceIdentifier(device) }
     }
 
     @CheckResult
     public fun addDevice(device: Device): Call<Unit> {
         return api.addDevice(device)
+            .share(userScope) { AddDeviceIdentifier(device) }
     }
 
     /**
