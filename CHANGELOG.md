@@ -77,6 +77,7 @@
 - Added `AudioRecordPlayerViewStyle` to customize the audio record player view. [#5119](https://github.com/GetStream/stream-chat-android/pull/5119)
 - Added support for automatic translations [#5123](https://github.com/GetStream/stream-chat-android/pull/5123)
   * Enabled by `ChatUI.autoTranslationEnabled`
+- Added `MessageListItemStyle.textStyleReadCounter` to customize the read counter text style. [#5131](https://github.com/GetStream/stream-chat-android/pull/5131)
 
 ### ⚠️ Changed
 
