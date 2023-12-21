@@ -81,6 +81,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add a new menu option to mark a channel as unread. [#5129](https://github.com/GetStream/stream-chat-android/pull/5129)
 
 ### ⚠️ Changed
 
