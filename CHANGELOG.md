@@ -120,7 +120,8 @@
 - Fixed thread separator ui order. [#5098](https://github.com/GetStream/stream-chat-android/pull/5098)
   * `MessageListController.showThreadSeparatorInEmptyThread` was added to control the visibility of the thread separator in empty threads.
 - Fixed `MessageList` scrolling behaviour while receiving a new message. [#5112](https://github.com/GetStream/stream-chat-android/pull/5112)
-  * `NewMessageState.MyOwn` and `NewMessageState.Other` are now data classes. 
+  * `NewMessageState.MyOwn` and `NewMessageState.Other` are now data classes.
+- Fixed old messages being marked as read by freshly added members. [#5132](https://github.com/GetStream/stream-chat-android/pull/5132)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
