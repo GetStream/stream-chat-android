@@ -130,6 +130,9 @@ private val LocalOtherMessageTheme = compositionLocalOf<MessageTheme> {
 private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSeparatorTheme> {
     error("No MessageDateSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageUnreadSeparatorTheme = compositionLocalOf<MessageUnreadSeparatorTheme> {
+    error("No MessageUnreadSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
@@ -215,6 +218,10 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
+    messageUnradSeparatorTheme: MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme.defaultTheme(
+        typography = typography,
+        colors = colors,
+    ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
@@ -238,6 +245,7 @@ public fun ChatTheme(
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
         LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
+        LocalMessageUnreadSeparatorTheme provides messageUnradSeparatorTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -422,6 +430,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageDateSeparatorTheme.current
+
+    /**
+     * Retrieves the current [MessageUnreadSeparatorTheme] at the call site's position in the hierarchy.
+     */
+    public val messageUnreadSeparatorTheme: MessageUnreadSeparatorTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageUnreadSeparatorTheme.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
