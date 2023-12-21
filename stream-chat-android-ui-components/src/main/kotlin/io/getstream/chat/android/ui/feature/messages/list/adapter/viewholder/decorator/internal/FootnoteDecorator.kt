@@ -23,7 +23,9 @@ import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
+import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -56,6 +58,7 @@ internal class FootnoteDecorator(
     private val listViewStyle: MessageListViewStyle,
     private val deletedMessageVisibilityHandler: () -> DeletedMessageVisibility,
     private val readCountEnabled: Boolean,
+    private val getLanguageDisplayName: (code: String) -> String,
 ) : BaseDecorator() {
 
     /**
@@ -237,6 +240,7 @@ internal class FootnoteDecorator(
         }
         setupMessageFooterLabel(footnoteView.footerTextLabel, data, listViewStyle.itemStyle)
         setupMessageFooterTime(footnoteView, data)
+        setupMessageFooterTranslatedLabel(footnoteView, data)
         setupDeliveryStateIndicator(footnoteView, data)
     }
 
@@ -259,6 +263,7 @@ internal class FootnoteDecorator(
             data.message.threadParticipants,
             listViewStyle.itemStyle,
         )
+        setupMessageFooterTranslatedLabel(footnoteView, data)
     }
 
     private fun setupMessageFooterLabel(
@@ -317,6 +322,24 @@ internal class FootnoteDecorator(
                 listViewStyle.itemStyle,
             )
             else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), listViewStyle.itemStyle)
+        }
+    }
+
+    private fun setupMessageFooterTranslatedLabel(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
+        if (!ChatUI.autoTranslationEnabled) {
+            footnoteView.hideTranslatedLabel()
+            return
+        }
+        val userLanguage = ChatUI.currentUserProvider.getCurrentUser()?.language.orEmpty()
+        val i18nLanguage = data.message.originalLanguage
+        val isGiphy = data.message.isGiphy()
+        val isDeleted = data.message.isDeleted()
+        val translatedText = data.message.getTranslation(userLanguage).ifEmpty { data.message.text }
+        if (!isGiphy && !isDeleted && userLanguage != i18nLanguage && translatedText != data.message.text) {
+            val languageDisplayName = getLanguageDisplayName(userLanguage)
+            footnoteView.showTranslatedLabel(languageDisplayName, listViewStyle.itemStyle)
+        } else {
+            footnoteView.hideTranslatedLabel()
         }
     }
 

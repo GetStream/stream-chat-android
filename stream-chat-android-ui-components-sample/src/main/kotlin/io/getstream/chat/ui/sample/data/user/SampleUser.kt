@@ -22,6 +22,7 @@ data class SampleUser(
     val name: String,
     val token: String,
     val image: String,
+    val language: String = "",
 ) {
 
     companion object {

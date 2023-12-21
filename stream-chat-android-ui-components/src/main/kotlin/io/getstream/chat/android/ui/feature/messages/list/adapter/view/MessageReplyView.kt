@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 import io.getstream.chat.android.ui.utils.extensions.getColorCompat
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.utils.extensions.use
@@ -209,11 +210,12 @@ public class MessageReplyView : FrameLayout {
 
     private fun setReplyText(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val attachment = message.attachments.lastOrNull()
-        binding.replyText.text = if (attachment == null || message.text.isNotBlank()) {
+        val displayedText = message.getTranslatedText()
+        binding.replyText.text = if (attachment == null || displayedText.isNotBlank()) {
             if (ellipsize) {
-                ellipsize(message.text)
+                ellipsize(displayedText)
             } else {
-                message.text
+                displayedText
             }
         } else {
             if (attachment.isLink()) {

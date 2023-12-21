@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.bold
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getAttachmentsText
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class MessagePreviewView : FrameLayout {
@@ -93,8 +94,8 @@ internal class MessagePreviewView : FrameLayout {
 
     private fun formatMessagePreview(message: Message, currentUserMention: String?): CharSequence {
         val attachmentsText = message.getAttachmentsText()
-
-        val previewText = message.text.trim().let {
+        val displayedText = message.getTranslatedText()
+        val previewText = displayedText.trim().let {
             if (currentUserMention != null) {
                 // bold mentions of the current user
                 it.bold(currentUserMention.singletonList(), ignoreCase = true)

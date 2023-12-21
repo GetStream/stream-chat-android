@@ -55,6 +55,7 @@ internal class MessageListItemDecoratorProvider(
     messageBackgroundFactory: MessageBackgroundFactory,
     deletedMessageVisibility: () -> DeletedMessageVisibility,
     isCurrentUserBanned: () -> Boolean,
+    getLanguageDisplayName: (code: String) -> String,
 ) : DecoratorProvider {
 
     private val messageListDecorators = listOfNotNull<Decorator>(
@@ -73,6 +74,7 @@ internal class MessageListItemDecoratorProvider(
             messageListViewStyle,
             deletedMessageVisibility,
             messageListViewStyle.readCountEnabled,
+            getLanguageDisplayName,
         ),
         PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
     )

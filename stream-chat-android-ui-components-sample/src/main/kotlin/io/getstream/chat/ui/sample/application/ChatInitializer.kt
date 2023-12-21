@@ -37,7 +37,10 @@ import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
 
-class ChatInitializer(private val context: Context) {
+class ChatInitializer(
+    private val context: Context,
+    private val autoTranslationEnabled: Boolean,
+) {
 
     @Suppress("UNUSED_VARIABLE")
     fun init(apiKey: String) {
@@ -58,7 +61,7 @@ class ChatInitializer(private val context: Context) {
                         providerName = "Xiaomi",
                     ),
                 ),
-                requestPermissionOnAppLaunch = { true },
+                autoTranslationEnabled = autoTranslationEnabled,
             )
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
@@ -103,7 +106,16 @@ class ChatInitializer(private val context: Context) {
             .build()
 
         // Using markdown as text transformer
-        ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
+        ChatUI.autoTranslationEnabled = autoTranslationEnabled
+        ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
+            if (autoTranslationEnabled) {
+                client.getCurrentUser()?.language?.let { language ->
+                    item.message.getTranslation(language).ifEmpty { item.message.text }
+                } ?: item.message.text
+            } else {
+                item.message.text
+            }
+        }
 
         // TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
         //     defaultStyle.copy(

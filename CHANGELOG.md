@@ -3,13 +3,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Improve unread count behavior, it relies on `read` property. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
+- Improved unread count behavior, it relies on `read` property. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
 
 ### ✅ Added
-- Add `Channel.currentUserUnreadCount` extension property to get the unread count for the current user. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
+- Added `Channel.currentUserUnreadCount` extension property to get the unread count for the current user. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
 
 ### ⚠️ Changed
-- Deprecate `Channel.unreadCount` property, use `Channel.currentUserUnreadCount` instead. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
+- Deprecated `Channel.unreadCount` property, use `Channel.currentUserUnreadCount` instead. [#5117](https://github.com/GetStream/stream-chat-android/pull/5117)
 
 ### ❌ Removed
 
@@ -21,7 +21,7 @@
 
 ### ✅ Added
 - Create new feature to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
-- Add a new `NotificationMarkUnreadEvent` event type. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
+- Added a new `NotificationMarkUnreadEvent` event type. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
 
 ### ⚠️ Changed
 
@@ -67,9 +67,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add a new menu option to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
+- Added a new menu option to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
+- Added a new Unread Separator component. [#5122](https://github.com/GetStream/stream-chat-android/pull/5122)
 - Added `AudioRecordPlayerViewStyle` to customize the audio record player view. [#5119](https://github.com/GetStream/stream-chat-android/pull/5119)
-- Add a new Unread Separator component. [#5122](https://github.com/GetStream/stream-chat-android/pull/5122)
+- Added support for automatic translations [#5123](https://github.com/GetStream/stream-chat-android/pull/5123)
+  * Enabled by `ChatUI.autoTranslationEnabled`
 
 ### ⚠️ Changed
 
@@ -82,8 +84,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add a new menu option to mark a channel as unread. [#5129](https://github.com/GetStream/stream-chat-android/pull/5129)
-- Add a new Unread Separator component. [#5122](https://github.com/GetStream/stream-chat-android/pull/5122)
+- Added a new menu option to mark a channel as unread. [#5129](https://github.com/GetStream/stream-chat-android/pull/5129)
+- Added a new Unread Separator component. [#5122](https://github.com/GetStream/stream-chat-android/pull/5122)
 
 ### ⚠️ Changed
 

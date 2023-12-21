@@ -152,6 +152,17 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style language in footer -->
+        <attr name="streamUiMessageTextSizeLanguage" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLanguage" format="color" />
+        <attr name="streamUiMessageTextFontLanguage" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLanguage" format="string" />
+        <attr name="streamUiMessageTextStyleLanguage">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Message text style thread counter in footer -->
         <attr name="streamUiMessageTextSizeThreadCounter" format="dimension|reference" />
         <attr name="streamUiMessageTextColorThreadCounter" format="color" />

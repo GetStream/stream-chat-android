@@ -114,6 +114,11 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      */
     private var messageOptionClickListener: MessageOptionClickListener? = null
 
+    /**
+     * The current user provider.
+     */
+    private var getCurrentUser: () -> User? = { null }
+
     private val optionsOffset: Int by lazy { requireContext().getDimension(R.dimen.stream_ui_spacing_medium) }
 
     private val messageItem: MessageListItem.MessageItem by lazy {

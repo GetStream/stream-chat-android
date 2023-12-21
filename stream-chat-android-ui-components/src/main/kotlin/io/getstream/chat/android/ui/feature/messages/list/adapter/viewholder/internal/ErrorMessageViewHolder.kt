@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.font.setTextStyle
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class ErrorMessageViewHolder(
@@ -38,7 +39,8 @@ internal class ErrorMessageViewHolder(
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
         if (diff?.syncStatus == false) return
 
-        binding.messageTextView.text = data.message.text
+        val displayedText = data.message.getTranslatedText()
+        binding.messageTextView.text = displayedText
         binding.messageTextView.setTextStyle(style.textStyleErrorMessage)
     }
 }

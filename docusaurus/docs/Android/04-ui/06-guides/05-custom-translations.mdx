@@ -101,5 +101,56 @@ With the configuration here, your app will include only _English_ and _Spanish_ 
 
 Stream Chat provides the ability to run users' messages through automatic translation.
 While machine translation is never perfect it can enable two users to communicate with
-each other without speaking the same language. For more information, see the full guide
-to [adding automatic translation](https://getstream.io/chat/docs/android/translation/).
+each other without speaking the same language.
+
+In order to enable automatic translation, the following steps are required to do in the Client SDKs:
+#### Enabling the feature in the UI Components SDK through:
+```kotlin
+ChatUI.autoTranslationEnabled = true
+```
+
+#### Supporting the auto-translation in the custom `ChatMessageTextTransformer`
+
+Please, take into account, that if you are using a custom `ChatMessageTextTransformer` you need to support the auto-translation feature by yourself.
+
+The following example shows how to do that:
+```kotlin
+ChatUI.messageTextTransformer = MarkdownTextTransformer(
+    context = context
+) { item: MessageListItem.MessageItem ->
+    if (ChatUI.autoTranslationEnabled) {
+        chatClient.getCurrentUser()?.language?.let { language ->
+            item.message.getTranslation(language).ifEmpty { item.message.text }
+        } ?: item.message.text
+    } else {
+        item.message.text
+    }
+}
+```
+
+#### Enabling the feature for Push Notifications through:
+```kotlin
+val notificationConfig = NotificationConfig(
+    //...
+    autoTranslationEnabled = true,
+    //...
+)
+val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
+    //...
+    notificationConfig = notificationConfig,
+    //...
+)
+ChatClient.Builder(apiKey, context)
+    //...
+    .notifications(notificationConfig, notificationHandler)
+    //...
+    .build()
+
+```
+#### Providing the language when connecting the user:
+```kotlin
+client.connectUser(user = User(id = "userId", language = "en"), token = "userToken").await()
+```
+
+For more information, see the full guide
+to [adding automatic translation](https://getstream.io/chat/docs/android/translation?language=kotlin).

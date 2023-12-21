@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.helper.SupportedReactions
 import io.getstream.chat.android.ui.helper.transformer.AutoLinkableTextTransformer
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.navigation.ChatNavigator
+import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.lazyVar
 
 /**
@@ -81,7 +82,8 @@ public object ChatUI {
     public var messageTextTransformer: ChatMessageTextTransformer by lazyVar {
         AutoLinkableTextTransformer { textView, messageItem ->
             // Customize the transformer if needed
-            textView.text = messageItem.message.text
+            val displayedText = messageItem.message.getTranslatedText()
+            textView.text = displayedText
         }
     }
 
@@ -162,4 +164,9 @@ public object ChatUI {
      */
     @JvmStatic
     public var streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing()
+
+    /**
+     * Whether or not the auto-translation feature is enabled.
+     */
+    public var autoTranslationEnabled: Boolean = false
 }

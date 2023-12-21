@@ -19,24 +19,23 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.View
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessageFootnoteBinding
 import io.getstream.chat.android.ui.databinding.StreamUiMessageThreadsFootnoteBinding
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.font.setTextStyle
-import io.getstream.chat.android.ui.utils.extensions.constrainViewToParentBySide
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
-import io.getstream.chat.android.ui.utils.extensions.updateConstraints
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
 
-internal class FootnoteView : ConstraintLayout {
+internal class FootnoteView : LinearLayoutCompat {
 
     constructor(context: Context) : super(context.createStreamThemeWrapper())
     constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs)
@@ -46,33 +45,34 @@ internal class FootnoteView : ConstraintLayout {
         defStyleAttr,
     )
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : super(
-        context.createStreamThemeWrapper(),
-        attrs,
-        defStyleAttr,
-        defStyleRes,
-    )
-
-    private val footnote = StreamUiItemMessageFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
-    private val threadsFootnote =
+    private val footnote: StreamUiItemMessageFootnoteBinding =
+        StreamUiItemMessageFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
+    private val threadsFootnote: StreamUiMessageThreadsFootnoteBinding =
         StreamUiMessageThreadsFootnoteBinding.inflate(streamThemeInflater).also { addView(it.root) }
+
+    private val translatedLabel = TextView(context).also {
+        it.id = View.generateViewId()
+        addView(it)
+    }
+
     val footerTextLabel: TextView = footnote.messageFooterLabel
 
     init {
-        ConstraintSet().apply {
-            constrainView(footnote.root)
-            constrainView(threadsFootnote.root)
-            applyTo(this@FootnoteView)
-        }
+        orientation = VERTICAL
         footnote.root.isVisible = false
         threadsFootnote.root.isVisible = false
+        translatedLabel.isVisible = false
     }
 
     fun applyGravity(isMine: Boolean) {
-        val bias = if (isMine) 1f else 0f
-        updateConstraints {
-            setHorizontalBias(footnote.root.id, bias)
-            setHorizontalBias(threadsFootnote.root.id, bias)
+        footnote.root.updateLayoutParams {
+            gravity = if (isMine) Gravity.END else Gravity.START
+        }
+        threadsFootnote.root.updateLayoutParams {
+            gravity = if (isMine) Gravity.END else Gravity.START
+        }
+        translatedLabel.updateLayoutParams {
+            gravity = if (isMine) Gravity.END else Gravity.START
         }
     }
 
@@ -184,15 +184,21 @@ internal class FootnoteView : ConstraintLayout {
     }
 
     /**
-     * Applies Constraints to a view.
+     * Shows the translated label.
      *
-     * @param view [View].
+     * @param languageName The name of the language to be shown.
+     * @param style [MessageListItemStyle] The style of the MessageListItem and its items.
      */
-    private fun ConstraintSet.constrainView(view: View) {
-        constrainViewToParentBySide(view, ConstraintSet.TOP)
-        constrainViewToParentBySide(view, ConstraintSet.START)
-        constrainViewToParentBySide(view, ConstraintSet.END)
-        constrainWidth(view.id, ConstraintSet.WRAP_CONTENT)
-        constrainHeight(view.id, ConstraintSet.WRAP_CONTENT)
+    fun showTranslatedLabel(languageName: String, style: MessageListItemStyle) {
+        translatedLabel.isVisible = true
+        translatedLabel.text = context.getString(R.string.stream_ui_message_list_translated, languageName)
+        translatedLabel.setTextStyle(style.textStyleMessageDate)
+    }
+
+    /**
+     * Hides the translated label.
+     */
+    fun hideTranslatedLabel() {
+        translatedLabel.isVisible = false
     }
 }
