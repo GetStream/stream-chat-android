@@ -86,6 +86,7 @@
     <string name="stream_compose_resend_message">Resend</string>
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
+    <string name="stream_compose_mark_as_unread">Mark as Unread</string>
     <string name="stream_compose_copy_message">Copy Message</string>
     <string name="stream_compose_edit_message">Edit Message</string>
     <string name="stream_compose_delete_message">Delete Message</string>
