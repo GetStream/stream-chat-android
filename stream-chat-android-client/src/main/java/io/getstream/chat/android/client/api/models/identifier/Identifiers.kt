@@ -20,6 +20,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
+import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -272,5 +273,37 @@ internal fun SendMessageIdentifier(
     result = 31 * result + channelType.hashCode()
     result = 31 * result + channelId.hashCode()
     result = 31 * result + messageId.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.getDevices] call.
+ */
+@Suppress("FunctionName", "FunctionOnlyReturningConstant")
+internal fun GetDevicesIdentifier(): Int {
+    return "GetDevices".hashCode()
+}
+
+/**
+ * Identifier for a [ChatClient.addDevice] call.
+ */
+@Suppress("FunctionName", "FunctionOnlyReturningConstant")
+internal fun AddDeviceIdentifier(
+    device: Device,
+): Int {
+    var result = "AddDevice".hashCode()
+    result = 31 * result + device.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.deleteDevice] call.
+ */
+@Suppress("FunctionName", "FunctionOnlyReturningConstant")
+internal fun DeleteDeviceIdentifier(
+    device: Device,
+): Int {
+    var result = "DeleteDevice".hashCode()
+    result = 31 * result + device.hashCode()
     return result
 }

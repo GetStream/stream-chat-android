@@ -21,18 +21,23 @@ import android.content.SharedPreferences
 import androidx.core.content.edit
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getNonNullString
+import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.log.taggedLogger
-import io.getstream.result.Result
 
 internal class PushTokenUpdateHandler(context: Context) {
-    private val logger by taggedLogger("Chat:Notifications")
+    private val logger by taggedLogger("Chat:Notifications-UH")
 
     private val prefs: SharedPreferences = context.applicationContext.getSharedPreferences(
         PREFS_NAME,
         Context.MODE_PRIVATE,
     )
+
+    private val chatClient: ChatClient get() = ChatClient.instance()
+
+    private val updateDebouncer = Debouncer(DEBOUNCE_TIMEOUT)
+    private val deleteDebouncer = Debouncer(DEBOUNCE_TIMEOUT)
 
     private var userPushToken: UserPushToken
         set(value) {
@@ -58,26 +63,42 @@ internal class PushTokenUpdateHandler(context: Context) {
      */
     suspend fun updateDeviceIfNecessary(device: Device) {
         val userPushToken = device.toUserPushToken()
-        if (device.isValid() && this.userPushToken != userPushToken) {
-            removeStoredDevice()
-            when (val result = ChatClient.instance().addDevice(device).await()) {
-                is Result.Success -> {
-                    this.userPushToken = userPushToken
-                    logger.i { "Device registered with token ${device.token} (${device.pushProvider.key})" }
-                }
-                is Result.Failure -> logger.e { "Error registering device ${result.value.message}" }
+        if (!device.isValid()) return
+        if (this.userPushToken == userPushToken) return
+        updateDebouncer.submitSuspendable {
+            logger.d { "[updateDeviceIfNecessary] device: $device" }
+            val removed = removeStoredDeviceInternal()
+            logger.v { "[updateDeviceIfNecessary] removed: $removed" }
+            val result = chatClient.addDevice(device).await()
+            if (result.isSuccess) {
+                this.userPushToken = userPushToken
+                val pushProvider = device.pushProvider.key
+                logger.i { "[updateDeviceIfNecessary] device registered with token($pushProvider): ${device.token}" }
+            } else {
+                logger.e { "[updateDeviceIfNecessary] failed registering device ${result.errorOrNull()?.message}" }
             }
         }
     }
 
     suspend fun removeStoredDevice() {
-        userPushToken.toDevice()
+        deleteDebouncer.submitSuspendable {
+            logger.v { "[removeStoredDevice] no args" }
+            val removed = removeStoredDeviceInternal()
+            logger.i { "[removeStoredDevice] removed: $removed" }
+        }
+    }
+
+    private suspend fun removeStoredDeviceInternal(): Boolean {
+        val device = userPushToken.toDevice()
             .takeIf { it.isValid() }
-            ?.let {
-                if (ChatClient.instance().deleteDevice(it).await() is Result.Success) {
-                    userPushToken = UserPushToken("", "", "", null)
-                }
-            }
+            ?: return false
+        val result = chatClient.deleteDevice(device).await()
+        if (result.isSuccess) {
+            userPushToken = UserPushToken("", "", "", null)
+            return true
+        }
+        logger.e { "[removeStoredDeviceInternal] failed: ${result.errorOrNull()}" }
+        return false
     }
 
     private data class UserPushToken(
@@ -93,10 +114,11 @@ internal class PushTokenUpdateHandler(context: Context) {
         private const val KEY_TOKEN = "token"
         private const val KEY_PUSH_PROVIDER = "push_provider"
         private const val KEY_PUSH_PROVIDER_NAME = "push_provider_name"
+        private const val DEBOUNCE_TIMEOUT = 200L
     }
 
     private fun Device.toUserPushToken() = UserPushToken(
-        userId = ChatClient.instance().getCurrentUser()?.id ?: "",
+        userId = chatClient.getCurrentUser()?.id ?: "",
         token = token,
         pushProvider = pushProvider.key,
         providerName = providerName,
