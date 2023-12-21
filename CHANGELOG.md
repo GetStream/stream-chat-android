@@ -69,6 +69,7 @@
 ### ✅ Added
 - Add a new menu option to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
 - Added `AudioRecordPlayerViewStyle` to customize the audio record player view. [#5119](https://github.com/GetStream/stream-chat-android/pull/5119)
+- Add a new Unread Separator component. [#5122](https://github.com/GetStream/stream-chat-android/pull/5122)
 
 ### ⚠️ Changed
 
@@ -82,6 +83,7 @@
 
 ### ✅ Added
 - Add a new menu option to mark a channel as unread. [#5129](https://github.com/GetStream/stream-chat-android/pull/5129)
+- Add a new Unread Separator component. [#5122](https://github.com/GetStream/stream-chat-android/pull/5122)
 
 ### ⚠️ Changed
 
