@@ -2523,6 +2523,9 @@ public final class io/getstream/chat/android/client/sync/SyncState {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/sync/SyncStateKt {
+}
+
 public abstract interface class io/getstream/chat/android/client/token/TokenProvider {
 	public abstract fun loadToken ()Ljava/lang/String;
 }

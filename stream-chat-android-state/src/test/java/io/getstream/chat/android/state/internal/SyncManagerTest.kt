@@ -17,6 +17,7 @@
 package io.getstream.chat.android.state.internal
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.errors.ChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
@@ -43,12 +44,16 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.sync.internal.SyncManager
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.`should not be`
+import org.amshove.kluent.shouldBeGreaterThan
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -59,6 +64,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.never
 import org.mockito.kotlin.reset
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.mockito.kotlin.whenever
 import java.util.Date
 
@@ -80,6 +86,7 @@ internal class SyncManagerTest {
     private lateinit var user: User
 
     private val _syncEvents: Tube<List<ChatEvent>> = mock()
+    private val _syncState: MutableStateFlow<SyncState?> = MutableStateFlow(null)
 
     private val connectionState = MutableStateFlow(ConnectionState.Offline)
     private val streamDateFormatter = StreamDateFormatter()
@@ -142,7 +149,7 @@ internal class SyncManagerTest {
          *  This checks if the SDK is avoiding loops in the sync. We don't want to handle the same event on every sync,
          *  because this can waste resource and/or some events may not be idempotent.
          */
-        val createdAt = Date()
+        val createdAt = localDate()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
         val testSyncState = SyncState(
             userId = randomString(),
@@ -281,6 +288,57 @@ internal class SyncManagerTest {
         verify(chatClient, never()).deleteReaction(any(), any(), any())
     }
 
+    @Test
+    fun `test too many events to sync error`() = runTest {
+        /* Given */
+        val createdAt = localDate()
+        val rawCreatedAt = streamDateFormatter.format(createdAt)
+        val testSyncState = SyncState(
+            userId = randomString(),
+            activeChannelIds = emptyList(),
+            lastSyncedAt = createdAt,
+            rawLastSyncedAt = rawCreatedAt,
+            markedAllReadAt = createdAt,
+        )
+
+        val connectingEvent = ConnectedEvent(
+            type = "type",
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            connectionId = randomString(),
+            me = randomUser(),
+        )
+
+        val error = Error.NetworkError(
+            serverErrorCode = ChatErrorCode.VALIDATION_ERROR.code,
+            message = "Too many events to sync, please use a more recent last_sync_at parameter",
+            statusCode = 400,
+        )
+        val result = Result.Failure(error)
+
+        whenever(repositoryFacade.selectMessages(any())) doReturn listOf(randomMessage())
+        whenever(repositoryFacade.selectChannels(any())) doReturn listOf(randomChannel())
+        whenever(repositoryFacade.selectSyncState(any())) doReturn testSyncState
+        whenever(chatClient.getSyncHistory(any(), any<String>())) doReturn TestCall(result)
+        whenever(chatClient.getSyncHistory(any(), any<Date>())) doReturn TestCall(result)
+
+        val syncManager = buildSyncManager()
+
+        /* When */
+        delay(1000)
+        syncManager.onEvent(connectingEvent)
+        delay(1000)
+        syncManager.performSync(cids = listOf("1", "2"))
+        delay(1000)
+
+        /* Then */
+        verifyNoInteractions(_syncEvents)
+        _syncState.value `should not be` testSyncState
+        _syncState.value.shouldNotBeNull()
+        _syncState.value!!.lastSyncedAt.shouldNotBeNull()
+        _syncState.value!!.lastSyncedAt!! shouldBeGreaterThan testSyncState.lastSyncedAt!!
+    }
+
     private fun localRandomMessage() = randomMessage(
         createdLocallyAt = Date(testCoroutines.dispatcher.scheduler.currentTime),
         createdAt = null,
@@ -301,6 +359,7 @@ internal class SyncManagerTest {
             clientState = clientState,
             userPresence = true,
             events = _syncEvents,
+            syncState = _syncState,
             syncMaxThreshold = syncMaxThreshold,
             now = { testCoroutines.dispatcher.scheduler.currentTime },
         )
