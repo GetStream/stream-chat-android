@@ -34,12 +34,14 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.core.utils.Debouncer
+import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Reaction
@@ -419,6 +421,7 @@ public class MessageListController(
                 focusedMessage,
                 channelState.endOfNewerMessages,
                 unreadLabelState,
+                channelState.members,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -431,6 +434,7 @@ public class MessageListController(
                 val focusedMessage = data[8] as Message?
                 val endOfNewerMessages = data[9] as Boolean
                 val unreadLabel = data[10] as UnreadLabel?
+                val members = data[11] as List<Member>
 
                 when (state) {
                     is MessagesState.Loading,
@@ -454,6 +458,7 @@ public class MessageListController(
                             typingUsers = typingUsers,
                             focusedMessage = focusedMessage,
                             unreadLabel = unreadLabel,
+                            members = members,
                         ),
                         endOfNewMessagesReached = endOfNewerMessages,
                     )
@@ -601,6 +606,7 @@ public class MessageListController(
      * @param messages State flow source of thread messages.
      * @param endOfOlderMessages State flow which signals when end of older messages is reached.
      * @param reads State flow source of read states.
+     * @param members State flow source of members.
      */
     @Suppress("MagicNumber", "LongMethod")
     private fun observeThreadMessagesState(
@@ -608,6 +614,7 @@ public class MessageListController(
         messages: StateFlow<List<Message>>,
         endOfOlderMessages: StateFlow<Boolean>,
         reads: StateFlow<List<ChannelUserRead>>,
+        members: StateFlow<List<Member>>,
     ) {
         threadJob = scope.launch {
             user.onEach {
@@ -634,6 +641,7 @@ public class MessageListController(
                 _messagePositionHandler,
                 typingUsers,
                 focusedMessage,
+                members,
             ) { data ->
                 val messages = data[0] as List<Message>
                 val reads = data[1] as List<ChannelUserRead>
@@ -644,6 +652,7 @@ public class MessageListController(
                 val messagePositionHandler = data[6] as MessagePositionHandler
                 val typingUsers = data[7] as List<User>
                 val focusedMessage = data[8] as Message?
+                val members = data[9] as List<Member>
 
                 _threadListState.value.copy(
                     isLoading = false,
@@ -655,13 +664,14 @@ public class MessageListController(
                         ),
                         isInThread = true,
                         reads = reads,
-                        dateSeparatorHandler = dateSeparatorHandler,
                         deletedMessageVisibility = deletedMessageVisibility,
+                        dateSeparatorHandler = dateSeparatorHandler,
                         messageFooterVisibility = messageFooterVisibility,
                         messagePositionHandler = messagePositionHandler,
                         typingUsers = typingUsers,
                         focusedMessage = focusedMessage,
                         unreadLabel = null,
+                        members = members,
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true,
@@ -698,6 +708,7 @@ public class MessageListController(
      * @param typingUsers The list of the users currently typing.
      * @param focusedMessage The message we wish to scroll/focus in center of the screen.
      * @param unreadLabel The label that shows the unread count.
+     * @param members The list of members in the channel.
      *
      * @return A list of [MessageListItemState]s, each containing a position.
      */
@@ -713,18 +724,16 @@ public class MessageListController(
         typingUsers: List<User>,
         focusedMessage: Message?,
         unreadLabel: UnreadLabel?,
+        members: List<Member>,
     ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
         val groupedMessages = mutableListOf<MessageListItemState>()
-        val lastRead = reads
-            .filter { it.user.id != currentUser?.id }
-            .mapNotNull { it.lastRead }
-            .maxOrNull()
-
+        val membersMap = members.associateBy { it.user.id }
         val sortedReads = reads
-            .filter { it.user.id != currentUser?.id }
+            .filter { it.user.id != currentUser?.id && !it.belongsToFreshlyAddedMember(membersMap) }
             .sortedBy { it.lastRead }
+        val lastRead = sortedReads.lastOrNull()?.lastRead
 
         val isThreadWithNoReplies = isInThread && messages.size == 1
         val isThreadWithReplies = isInThread && messages.size > 1
@@ -768,7 +777,7 @@ public class MessageListController(
                     ?: false
 
                 val messageReadBy = message.createdAt?.let { messageCreatedAt ->
-                    sortedReads.filter { it.lastRead?.after(messageCreatedAt) ?: false }
+                    sortedReads.filter { it.lastRead.after(messageCreatedAt) ?: false }
                 } ?: emptyList()
 
                 val isMessageFocused = message.id == focusedMessage?.id
@@ -820,6 +829,19 @@ public class MessageListController(
         }
 
         return groupedMessages
+    }
+
+    /**
+     * Checks if [ChannelUserRead] belongs to a freshly added member.
+     *
+     * It is used to determine if this member explicitly read this channel using [ChatClient.markRead].
+     */
+    private fun ChannelUserRead.belongsToFreshlyAddedMember(
+        membersMap: Map<String, Member>,
+    ): Boolean {
+        val member = membersMap[user.id]
+        val membershipAndLastReadDiff = member?.createdAt?.diff(lastRead)?.millis ?: Long.MAX_VALUE
+        return membershipAndLastReadDiff < MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS
     }
 
     /**
@@ -998,6 +1020,7 @@ public class MessageListController(
             messages = state.messages,
             endOfOlderMessages = state.endOfOlderMessages,
             reads = channelState.reads,
+            members = channelState.members,
         )
     }
 
@@ -1025,6 +1048,7 @@ public class MessageListController(
             messages = threadState.messages,
             endOfOlderMessages = threadState.endOfOlderMessages,
             reads = channelState.reads,
+            members = channelState.members,
         )
     }
 
@@ -1952,6 +1976,13 @@ public class MessageListController(
          * Time after which the focus from message will be removed
          */
         internal const val REMOVE_MESSAGE_FOCUS_DELAY: Long = 2000
+
+        /**
+         * Threshold between [Member.createdAt] and corresponding [ChannelUserRead.lastRead] to determine if the member
+         * was freshly added to the channel.
+         * Meaning [ChannelUserRead] for this member has no relationship with the [ChatClient.markRead] invocation.
+         */
+        internal const val MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS = 100L
     }
 }
 

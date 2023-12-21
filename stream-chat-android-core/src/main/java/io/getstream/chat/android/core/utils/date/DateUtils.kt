@@ -70,3 +70,12 @@ public fun Date.diff(otherTime: Long): TimeDuration {
     val diff = abs(time - otherTime)
     return TimeDuration.millis(diff)
 }
+
+/**
+ * Returns difference between [this] date and [that] date in [TimeDuration].
+ */
+@InternalStreamChatApi
+public fun Date.diff(that: Date): TimeDuration {
+    val diff = abs(time - that.time)
+    return TimeDuration.millis(diff)
+}
