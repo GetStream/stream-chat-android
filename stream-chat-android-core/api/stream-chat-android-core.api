@@ -37,6 +37,9 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode$Compani
 public final class io/getstream/chat/android/client/errors/ChatErrorKt {
 }
 
+public final class io/getstream/chat/android/client/errors/NetworkErrorKt {
+}
+
 public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {
 }
 

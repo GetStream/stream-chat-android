@@ -21,6 +21,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.errors.isStatusBadRequest
+import io.getstream.chat.android.client.errors.isValidationError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -32,6 +34,7 @@ import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.sync.SyncState
+import io.getstream.chat.android.client.sync.stringify
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.core.internal.coroutines.Tube
@@ -86,6 +89,7 @@ internal class SyncManager(
     private val now: () -> Long,
     scope: CoroutineScope,
     private val events: Tube<List<ChatEvent>> = Tube(),
+    private val syncState: MutableStateFlow<SyncState?> = MutableStateFlow(null),
 ) : SyncHistoryManager {
 
     private val logger by taggedLogger("Chat:SyncManager")
@@ -96,7 +100,6 @@ internal class SyncManager(
         }
 
     private val entitiesRetryMutex = Mutex()
-    private val syncState = MutableStateFlow<SyncState?>(null)
     private val isFirstConnect = AtomicBoolean(true)
 
     private var eventsDisposable: Disposable? = null
@@ -165,19 +168,25 @@ internal class SyncManager(
         }
     }
 
+    private fun setSyncState(state: SyncState?) {
+        logger.v { "[setSyncState] state: ${state?.stringify()}" }
+        this.syncState.value = state
+    }
+
     /**
      * Handles connection recover in the SDK.
      * This method will sync the data, retry failed entities, update channels data, etc.
      */
     private suspend fun onConnectionEstablished(userId: String) = try {
-        logger.i { "[onConnectionEstablished] >>> isFirstConnect: $isFirstConnect" }
+        logger.i { "[onConnectionEstablished] >>> userId: $userId, isFirstConnect: $isFirstConnect" }
         state.value = State.Syncing
         val online = clientState.isOnline
         logger.v { "[onConnectionEstablished] online: $online" }
         retryFailedEntities()
 
         if (syncState.value == null && syncState.value?.userId != userId) {
-            updateAllReadStateForDate(userId, currentDate = Date())
+            logger.v { "[onConnectionEstablished] syncState: ${syncState.value?.stringify()}" }
+            updateAllReadStateForDate(userId, currentDate = Date(now()))
         }
         performSync()
         restoreActiveChannels()
@@ -185,7 +194,7 @@ internal class SyncManager(
 
         logger.i { "[onConnectionEstablished] <<< completed" }
     } catch (e: Throwable) {
-        logger.e { "[onConnectionEstablished] failed: $e" }
+        logger.e { "[onConnectionEstablished] <<< failed: $e" }
     }
 
     /**
@@ -200,14 +209,15 @@ internal class SyncManager(
             logger.d { "[connectionLost] activeCids.size: ${activeCids.size}" }
             val newSyncState = syncState.copy(activeChannelIds = activeCids)
             repos.insertSyncState(newSyncState)
-            this.syncState.value = newSyncState
+            setSyncState(newSyncState)
+            logger.v { "[connectionLost] syncState saved" }
         }
     } catch (e: Throwable) {
         logger.i { "[connectionLost] failed: $e" }
     }
 
     private suspend fun performSync() {
-        logger.d { "[performSync] no args" }
+        logger.i { "[performSync] no args" }
         val cids = logicRegistry.getActiveChannelsLogic().map { it.cid }.ifEmpty {
             logger.w { "[performSync] no active cids found" }
             repos.selectSyncState(currentUserId)?.activeChannelIds ?: emptyList()
@@ -219,32 +229,39 @@ internal class SyncManager(
 
     @VisibleForTesting
     internal suspend fun performSync(cids: List<String>) {
+        logger.d { "[performSync] cids.size: ${cids.size} " }
         if (cids.isEmpty()) {
             logger.w { "[performSync] rejected (cids is empty)" }
             return
         }
         val syncState = syncState.value ?: repos.selectSyncState(currentUserId)
-        val lastSyncAt = syncState?.lastSyncedAt ?: Date()
+        val lastSyncAt = syncState?.lastSyncedAt ?: Date(now())
         val rawLastSyncAt = syncState?.rawLastSyncedAt
-        logger.i { "[performSync] cids.size: ${cids.size}, lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
+        logger.v { "[performSync] lastSyncAt: $lastSyncAt, rawLastSyncAt: $rawLastSyncAt" }
         val result = if (rawLastSyncAt != null) {
             chatClient.getSyncHistory(cids, rawLastSyncAt).await()
         } else {
             chatClient.getSyncHistory(cids, lastSyncAt).await()
+        }
+        if (result.isTooManyEventsToSyncError()) {
+            logger.e { "[performSync] failed (too many events to sync): $result" }
+            updateLastSyncedDate(latestEventDate = Date(now()), rawLatestEventDate = null)
+            return
         }
         if (result !is Result.Success) {
             logger.e { "[performSync] failed($result)" }
             return
         }
         val sortedEvents = result.value.sortedBy { it.createdAt }
-        logger.d { "[performSync] succeed; events.size: ${sortedEvents.size}" }
+        logger.v { "[performSync] succeed; events.size: ${sortedEvents.size}" }
 
         val latestEvent = sortedEvents.lastOrNull()
-        val latestEventDate = latestEvent?.createdAt ?: Date()
+        val latestEventDate = latestEvent?.createdAt ?: Date(now())
         val rawLatestEventDate = latestEvent?.rawCreatedAt
         updateLastSyncedDate(latestEventDate, rawLatestEventDate)
         sortedEvents.forEach {
             if (it is MarkAllReadEvent) {
+                logger.v { "[performSync] found MarkAllReadEvent (in ${sortedEvents.size} events)" }
                 updateAllReadStateForDate(it.user.id, it.createdAt)
             }
         }
@@ -267,13 +284,12 @@ internal class SyncManager(
      * @param latestEventDate The date of the last event returned by the sync endpoint.
      */
     private suspend fun updateLastSyncedDate(latestEventDate: Date, rawLatestEventDate: String?) {
-        logger.d {
-            "[updateLastSyncedDate] latestEventDate: $latestEventDate, rawLatestEventDate: $rawLatestEventDate "
-        }
+        logger.d { "[updateLastSyncedDate] latestEventDate: $latestEventDate, rawLatestEventDate: $rawLatestEventDate" }
         syncState.value?.let { syncState ->
             val newSyncState = syncState.copy(lastSyncedAt = latestEventDate, rawLastSyncedAt = rawLatestEventDate)
             repos.insertSyncState(newSyncState)
-            this.syncState.value = newSyncState
+            setSyncState(newSyncState)
+            logger.v { "[updateLastSyncedDate] saved" }
         }
     }
 
@@ -286,10 +302,11 @@ internal class SyncManager(
      */
     private suspend fun updateAllReadStateForDate(userId: String, currentDate: Date) {
         if (currentUserId != userId) {
+            logger.w { "[updateAllReadStateForDate] rejected (userId mismatch): $userId != $currentDate" }
             return
         }
         logger.d { "[updateAllReadStateForDate] userId: $userId, currentDate: $currentDate" }
-        syncState.value = repos.selectSyncState(userId)?.let { selectedState ->
+        val syncState = repos.selectSyncState(userId)?.let { selectedState ->
             logger.v {
                 "[updateAllReadStateForDate] selectedState.activeCids.zie: ${selectedState.activeChannelIds.size}"
             }
@@ -300,6 +317,7 @@ internal class SyncManager(
                 else -> selectedState
             }
         } ?: SyncState(userId)
+        setSyncState(syncState)
     }
 
     /**
@@ -517,7 +535,7 @@ internal class SyncManager(
     }
 
     private suspend fun RepositoryFacade.markMessageAsFailed(message: Message) =
-        insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date()))
+        insertMessage(message.copy(syncStatus = SyncStatus.FAILED_PERMANENTLY, updatedLocallyAt = Date(now())))
 
     private suspend fun retryReactionDeletion(
         id: Int,
@@ -631,6 +649,19 @@ internal class SyncManager(
                 Result.Failure(Error.ThrowableError(e.message.orEmpty(), e))
             }
         }
+    }
+
+    /**
+     * Checks if the result is a too many events to sync error.
+     * This error happens when the user is offline for a long time and has more than 1000 events to sync.
+     *
+     * @return True if the error is related to too many events to sync, false otherwise.
+     */
+    private fun Result<List<ChatEvent>>.isTooManyEventsToSyncError(): Boolean {
+        val error = errorOrNull()
+        return error is Error.NetworkError &&
+            error.isStatusBadRequest() &&
+            error.isValidationError()
     }
 
     private fun Date?.exceedsSyncThreshold(): Boolean {

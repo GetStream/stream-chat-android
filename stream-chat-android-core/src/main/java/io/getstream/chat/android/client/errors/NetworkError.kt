@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.sync
+package io.getstream.chat.android.client.errors
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import java.util.Date
+import io.getstream.result.Error
 
-public data class SyncState(
-    val userId: String,
-    val activeChannelIds: List<String> = emptyList(),
-    val lastSyncedAt: Date? = null,
-    val rawLastSyncedAt: String? = null,
-    val markedAllReadAt: Date? = null,
-)
+private const val HTTP_BAD_REQUEST = 400
 
 @InternalStreamChatApi
-public fun SyncState.stringify(): String {
-    return "SyncState(userId='$userId', activeChannelIds.size=${activeChannelIds.size}, " +
-        "lastSyncedAt=$lastSyncedAt, rawLastSyncedAt=$rawLastSyncedAt, markedAllReadAt=$markedAllReadAt)"
+public fun Error.NetworkError.isStatusBadRequest(): Boolean {
+    return statusCode == HTTP_BAD_REQUEST
+}
+
+@InternalStreamChatApi
+public fun Error.NetworkError.isValidationError(): Boolean {
+    return serverErrorCode == ChatErrorCode.VALIDATION_ERROR.code
 }

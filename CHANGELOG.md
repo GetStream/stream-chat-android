@@ -42,6 +42,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `SyncManager` handles "Too many events to sync" error properly. [#5126](https://github.com/GetStream/stream-chat-android/pull/5126) 
 
 ### ✅ Added
 
