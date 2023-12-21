@@ -127,15 +127,10 @@ private fun getAttachmentPrefix(attachment: Attachment): String? =
     }
 
 internal fun Message.getTranslatedText(currentUser: User?): String {
-    return when (ChatUI.autoTranslationEnabled) {
-        true -> currentUser?.language?.let { userLanguage ->
-            getTranslation(userLanguage).ifEmpty { text }
-        } ?: text
-        else -> text
-    }
+    return getTranslatedText { currentUser }
 }
 
-internal fun Message.getTranslatedText(getCurrentUser: () -> User?): String {
+internal inline fun Message.getTranslatedText(getCurrentUser: () -> User?): String {
     return when (ChatUI.autoTranslationEnabled) {
         true -> getCurrentUser()?.language?.let { userLanguage ->
             getTranslation(userLanguage).ifEmpty { text }
