@@ -18,6 +18,11 @@
 - Fixed crash in `StreamMediaPlayer` when playing audio after re-login. [#5120](https://github.com/GetStream/stream-chat-android/pull/5120)
 
 ### ⬆️ Improved
+- Protected PN related requests from repeated usage. [#5130](https://github.com/GetStream/stream-chat-android/pull/5130)
+  * Prevented `ChatClient.getDevices` from duplicate requests.
+  * Prevented `ChatClient.addDevice` from duplicate requests.
+  * Prevented `ChatClient.deleteDevice` from duplicate requests.
+  * Added debouncing logic into `PushTokenUpdateHandler`
 
 ### ✅ Added
 - Create new feature to mark a channel as unread. [#5103](https://github.com/GetStream/stream-chat-android/pull/5103)
