@@ -4,8 +4,6 @@
   <CurrentIssues>
     <ID>LargeClass:MessageListController.kt$MessageListController</ID>
     <ID>LongMethod:MessageListController.kt$MessageListController$@Suppress("MagicNumber") private fun observeMessagesListState()</ID>
-    <ID>LongMethod:MessageListController.kt$MessageListController$private fun groupMessages( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, ): List&lt;MessageListItemState></ID>
-    <ID>LongParameterList:MessageListController.kt$MessageListController$( messages: List&lt;Message>, isInThread: Boolean, reads: List&lt;ChannelUserRead>, deletedMessageVisibility: DeletedMessageVisibility, dateSeparatorHandler: DateSeparatorHandler, messageFooterVisibility: MessageFooterVisibility, messagePositionHandler: MessagePositionHandler, typingUsers: List&lt;User>, focusedMessage: Message?, )</ID>
     <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$10</ID>
     <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$100</ID>
     <ID>MagicNumber:AudioRecordingController.kt$AudioRecordingController$20</ID>
