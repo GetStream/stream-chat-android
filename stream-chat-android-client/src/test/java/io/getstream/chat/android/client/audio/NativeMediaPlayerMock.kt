@@ -98,7 +98,10 @@ internal class NativeMediaPlayerMock(
     }
 
     override fun start() {
-        if (_state != NativeMediaPlayerState.PREPARED) {
+        if (_state != NativeMediaPlayerState.PREPARED &&
+            _state != NativeMediaPlayerState.PAUSED &&
+            _state != NativeMediaPlayerState.PLAYBACK_COMPLETED
+        ) {
             onError("[start] invalid state: $_state", what = 4)
             return
         }
@@ -121,6 +124,10 @@ internal class NativeMediaPlayerMock(
         publishState(NativeMediaPlayerState.END)
     }
 
+    fun complete() {
+        onComplete()
+    }
+
     override fun setOnCompletionListener(listener: () -> Unit) {
         _onCompletionListener = listener
     }
@@ -137,6 +144,13 @@ internal class NativeMediaPlayerMock(
         // logger.e { message }
         if (publishState(NativeMediaPlayerState.ERROR)) {
             _onErrorListener?.invoke(what, extra)
+        }
+    }
+
+    private fun onComplete() {
+        // logger.e { message }
+        if (publishState(NativeMediaPlayerState.PLAYBACK_COMPLETED)) {
+            _onCompletionListener?.invoke()
         }
     }
 
