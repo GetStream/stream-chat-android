@@ -37,7 +37,7 @@ internal class StreamMediaPlayerTest {
     }
 
     private lateinit var userScope: UserTestScope
-    private lateinit var mediaPlayer: NativeMediaPlayer
+    private lateinit var mediaPlayer: NativeMediaPlayerMock
     private lateinit var streamPlayer: StreamMediaPlayer
 
     @BeforeEach
@@ -69,6 +69,7 @@ internal class StreamMediaPlayerTest {
         delay(1000)
 
         /* Then */
+        mediaPlayer.state shouldBeEqualTo NativeMediaPlayerState.IDLE
         audioStates shouldBeEqualTo listOf(
             AudioState.UNSET,
             AudioState.LOADING,
@@ -105,6 +106,7 @@ internal class StreamMediaPlayerTest {
         delay(1000)
 
         /* Then */
+        mediaPlayer.state shouldBeEqualTo NativeMediaPlayerState.IDLE
         audioStates shouldBeEqualTo listOf(
             AudioState.UNSET,
             AudioState.LOADING,
@@ -117,6 +119,35 @@ internal class StreamMediaPlayerTest {
             AudioState.UNSET,
         )
         streamPlayer.currentState shouldBeEqualTo AudioState.UNSET
+    }
+
+    @Test
+    fun `test complete scenario`() = runTest {
+        /* Given */
+        val sourceUrl = randomString()
+        val audioHash = randomInt()
+        val audioStates = arrayListOf(streamPlayer.currentState)
+
+        /* When */
+        streamPlayer.registerOnAudioStateChange(audioHash) {
+            audioStates.add(it)
+        }
+        delay(1000)
+        streamPlayer.play(sourceUrl, audioHash)
+        delay(1000)
+        mediaPlayer.complete()
+        delay(1000)
+
+        /* Then */
+        mediaPlayer.state shouldBeEqualTo NativeMediaPlayerState.PLAYBACK_COMPLETED
+        audioStates shouldBeEqualTo listOf(
+            AudioState.UNSET,
+            AudioState.LOADING,
+            AudioState.IDLE,
+            AudioState.PLAYING,
+            AudioState.IDLE,
+        )
+        streamPlayer.currentState shouldBeEqualTo AudioState.IDLE
     }
 
     @AfterEach

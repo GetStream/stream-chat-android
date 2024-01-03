@@ -244,15 +244,11 @@ internal class StreamMediaPlayer(
             mediaPlayer.seekTo(seekTo)
             if (isMarshmallowOrHigher()) {
                 mediaPlayer.speed = playingSpeed
+                publishSpeed(currentAudioHash, playingSpeed)
             }
             mediaPlayer.start()
             playerState = PlayerState.PLAYING
             publishAudioState(currentAudioHash, AudioState.PLAYING)
-            if (isMarshmallowOrHigher()) {
-                mediaPlayer.speed = playingSpeed
-                publishSpeed(currentAudioHash, playingSpeed)
-            }
-            mediaPlayer.seekTo(seekTo)
             pollProgress()
         }
     }
@@ -324,7 +320,7 @@ internal class StreamMediaPlayer(
         logger.d { "[complete] audioHash: $audioHash" }
         publishProgress(audioHash, ProgressData(0, 0f, mediaPlayer.duration))
         stopPolling()
-        mediaPlayer.reset()
+
         playerState = PlayerState.IDLE
         publishAudioState(audioHash, AudioState.IDLE)
         seekMap[audioHash] = 0
@@ -332,6 +328,7 @@ internal class StreamMediaPlayer(
         logger.v { "[complete] currentIndex: $currentIndex, lastIndex: ${audioTracks.lastIndex}" }
         if (currentIndex < audioTracks.lastIndex) {
             val trackInfo = audioTracks[currentIndex + 1]
+            resetPlayer(audioHash)
             setAudio(trackInfo.url, trackInfo.hash)
         }
     }
