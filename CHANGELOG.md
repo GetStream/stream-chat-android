@@ -61,6 +61,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed old messages being marked as read by freshly added members. [#5138](https://github.com/GetStream/stream-chat-android/pull/5138)
 
 ### ⬆️ Improved
 
