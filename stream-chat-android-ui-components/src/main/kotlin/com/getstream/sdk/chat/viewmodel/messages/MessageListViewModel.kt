@@ -349,6 +349,7 @@ public class MessageListViewModel(
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = ::messagePositionHandler,
+            getMembers = { channelState.members.value },
         )
         _reads.addSource(channelState.reads.asLiveData()) { _reads.value = it }
         _loadMoreLiveData.addSource(channelState.loadingOlderMessages.asLiveData()) { _loadMoreLiveData.value = it }
@@ -397,6 +398,7 @@ public class MessageListViewModel(
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = ::messagePositionHandler,
+            getMembers = { channelState.value?.members?.value ?: emptyList() },
         )
         threadListData?.let { tld ->
             messageListData?.let { mld ->
