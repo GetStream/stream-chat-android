@@ -25,11 +25,14 @@ import com.getstream.sdk.chat.utils.extensions.combineWith
 import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
 import com.getstream.sdk.chat.utils.extensions.shouldShowMessageFooter
 import com.getstream.sdk.chat.view.messages.MessageListItemWrapper
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.models.ChannelUserRead
+import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.common.state.DeletedMessageVisibility
 import io.getstream.chat.android.common.state.MessageFooterVisibility
+import io.getstream.chat.android.core.utils.date.diff
 import io.getstream.chat.android.ui.ChatUI
 
 /**
@@ -88,6 +91,7 @@ internal class MessageListItemLiveData(
     private val deletedMessageVisibility: LiveData<DeletedMessageVisibility>,
     private val messageFooterVisibility: LiveData<MessageFooterVisibility>,
     private val messagePositionHandlerProvider: () -> MessageListViewModel.MessagePositionHandler,
+    private val getMembers: () -> List<Member>,
 ) : MediatorLiveData<MessageListItemWrapper>() {
 
     private var hasNewMessages: Boolean = false
@@ -339,8 +343,9 @@ internal class MessageListItemLiveData(
     ): List<MessageListItem> {
         if (reads == null || messages.isEmpty()) return messages
         // filter your own read status and sort by last read
+        val membersMap = getMembers().associateBy { it.user.id }
         val sortedReads = reads
-            .filter { it.user.id != currentUserId }
+            .filter { it.user.id != currentUserId && !it.belongsToFreshlyAddedMember(membersMap) }
             .filterNot { it.lastRead == null }
             .sortedBy { it.lastRead }
             .toMutableList()
@@ -388,8 +393,9 @@ internal class MessageListItemLiveData(
         reads: List<ChannelUserRead>,
         currentUserId: String,
     ): List<MessageListItem> {
+        val membersMap = getMembers().associateBy { it.user.id }
         val lastRead = reads
-            .filter { it.user.id != currentUserId }
+            .filter { it.user.id != currentUserId && !it.belongsToFreshlyAddedMember(membersMap) }
             .mapNotNull { it.lastRead }
             .maxOrNull() ?: return messages
 
@@ -447,5 +453,22 @@ internal class MessageListItemLiveData(
      */
     internal fun updateDateSeparatorHandlers(dateSeparatorHandler: MessageListViewModel.DateSeparatorHandler?) {
         this.dateSeparatorHandler = dateSeparatorHandler
+    }
+
+    /**
+     * Checks if [ChannelUserRead] belongs to a freshly added member.
+     *
+     * It is used to determine if this member explicitly read this channel using [ChatClient.markRead].
+     */
+    private fun ChannelUserRead.belongsToFreshlyAddedMember(
+        membersMap: Map<String, Member>,
+    ): Boolean {
+        val member = membersMap[user.id]
+        val membershipAndLastReadDiff = lastRead?.let { member?.createdAt?.diff(it) } ?: Long.MAX_VALUE
+        return membershipAndLastReadDiff < MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS
+    }
+
+    private companion object {
+        private const val MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS = 100L
     }
 }
