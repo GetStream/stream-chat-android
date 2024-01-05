@@ -73,15 +73,15 @@ public data class Member(
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
-            "userId" -> getUserId()
-            "createdAt" -> createdAt
-            "updatedAt" -> updatedAt
-            "isInvited" -> isInvited
-            "inviteAcceptedAt" -> inviteAcceptedAt
-            "inviteRejectedAt" -> inviteRejectedAt
-            "shadowBanned" -> shadowBanned
+            "user_id", "userId" -> getUserId()
+            "created_at", "createdAt" -> createdAt
+            "updated_at", "updatedAt" -> updatedAt
+            "is_invited", "isInvited" -> isInvited
+            "invite_accepted_at", "inviteAcceptedAt" -> inviteAcceptedAt
+            "invite_rejected_at", "inviteRejectedAt" -> inviteRejectedAt
+            "shadow_banned", "shadowBanned" -> shadowBanned
             "banned" -> banned
-            "channelRole" -> channelRole
+            "channel_role", "channelRole" -> channelRole
             else -> null
         }
     }

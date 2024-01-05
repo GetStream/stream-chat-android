@@ -236,21 +236,21 @@ public data class Message(
             "cid" -> cid
             "text" -> text
             "html" -> html
-            "parentId" -> parentId
+            "parent_id", "parentId" -> parentId
             "command" -> command
-            "replyCount" -> replyCount
-            "deletedReplyCount" -> deletedReplyCount
+            "reply_count", "replyCount" -> replyCount
+            "deleted_reply_count", "deletedReplyCount" -> deletedReplyCount
             "type" -> type
-            "createdAt" -> createdAt
-            "updatedAt" -> updatedAt
-            "deletedAt" -> deletedAt
-            "updatedLocallyAt" -> updatedLocallyAt
-            "createdLocallyAt" -> createdLocallyAt
+            "created_at", "createdAt" -> createdAt
+            "updated_at", "updatedAt" -> updatedAt
+            "deleted_at", "deletedAt" -> deletedAt
+            "updated_locally_at", "updatedLocallyAt" -> updatedLocallyAt
+            "created_locally_at", "createdLocallyAt" -> createdLocallyAt
             "silent" -> silent
             "shadowed" -> shadowed
             "pinned" -> pinned
-            "pinnedAt" -> pinnedAt
-            "pinExpires" -> pinExpires
+            "pinned_at", "pinnedAt" -> pinnedAt
+            "pin_expires", "pinExpires" -> pinExpires
             else -> extraData[fieldName] as? Comparable<*>
         }
 

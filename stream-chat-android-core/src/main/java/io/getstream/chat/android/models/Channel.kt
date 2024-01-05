@@ -128,19 +128,19 @@ public data class Channel(
             "type" -> type
             "name" -> name
             "image" -> image
-            "watcherCount" -> watcherCount
+            "watcher_count", "watcherCount" -> watcherCount
             "frozen" -> frozen
-            "lastMessageAt" -> lastMessageAt
-            "createdAt" -> createdAt
-            "updatedAt" -> updatedAt
-            "deletedAt" -> deletedAt
-            "memberCount" -> memberCount
+            "last_message_at", "lastMessageAt" -> lastMessageAt
+            "created_at", "createdAt" -> createdAt
+            "updated_at", "updatedAt" -> updatedAt
+            "deleted_at", "deletedAt" -> deletedAt
+            "member_count", "memberCount" -> memberCount
             "team" -> team
             "hidden" -> hidden
             "cooldown" -> cooldown
-            "lastUpdated" -> lastUpdated
-            "unreadCount" -> unreadCount
-            "hasUnread" -> hasUnread
+            "last_updated", "lastUpdated" -> lastUpdated
+            "unread_count", "unreadCount" -> unreadCount
+            "has_unread", "hasUnread" -> hasUnread
             else -> extraData[fieldName] as? Comparable<*>
         }
     }
