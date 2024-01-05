@@ -10,6 +10,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+- Removed field name notation transformation from `QuerySortByField`. Now `QuerySortByField` does not transform field name from snake case to camel case. [#5140](https://github.com/GetStream/stream-chat-android/pull/5140)
+
 ## stream-chat-android-client
 ### 🐞 Fixed
 
