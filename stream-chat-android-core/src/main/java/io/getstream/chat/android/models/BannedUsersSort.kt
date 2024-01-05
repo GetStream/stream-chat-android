@@ -25,7 +25,7 @@ public data class BannedUsersSort(val createdAt: Date) : ComparableFieldProvider
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
-            "createdAt" -> createdAt
+            "created_at", "createdAt" -> createdAt
             else -> null
         }
     }

@@ -86,12 +86,12 @@ public data class User(
             "language" -> language
             "banned" -> banned
             "online" -> online
-            "totalUnreadCount" -> totalUnreadCount
-            "unreadChannels" -> unreadChannels
-            "createdAt" -> createdAt
-            "deactivatedAt" -> deactivatedAt
-            "updatedAt" -> updatedAt
-            "lastActive" -> lastActive
+            "total_unread_count", "totalUnreadCount" -> totalUnreadCount
+            "unread_channels", "unreadChannels" -> unreadChannels
+            "created_at", "createdAt" -> createdAt
+            "deactivated_at", "deactivatedAt" -> deactivatedAt
+            "updated_at", "updatedAt" -> updatedAt
+            "last_active", "lastActive" -> lastActive
             else -> extraData[fieldName] as? Comparable<*>
         }
     }
