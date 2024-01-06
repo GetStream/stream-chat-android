@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.RelativeCornerSize
@@ -53,6 +54,11 @@ public class ChannelAvatarView : ViewGroup {
     private val borderPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
     }
+
+    /**
+     * Custom renderer for the channel avatar.
+     */
+    public var customAvatarRenderer: ChannelAvatarRenderer? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -107,6 +113,13 @@ public class ChannelAvatarView : ViewGroup {
         val memberCount = members.size
 
         when {
+            /**
+             * If the channel has a custom avatar renderer we use that.
+             */
+            customAvatarRenderer != null -> {
+                val target = createImageViews(1).first()
+                customAvatarRenderer?.render(channel, currentUser, target)
+            }
             /**
              * If the channel has an image we load that as a priority.
              */
@@ -191,7 +204,7 @@ public class ChannelAvatarView : ViewGroup {
     /**
      * Creates necessary amount of [ImageView]s to render the avatar.
      */
-    private fun createImageViews(count: Int): List<ImageView> {
+    private fun createImageViews(count: Int): List<ShapeableImageView> {
         removeAllViews()
 
         val imageViews: MutableList<ShapeableImageView> = ArrayList(count)
@@ -395,4 +408,19 @@ public class ChannelAvatarView : ViewGroup {
          */
         internal const val AVATAR_SIZE_EXTRA = 1
     }
+}
+
+/**
+ * Custom renderer for the channel avatar.
+ */
+public interface ChannelAvatarRenderer {
+
+    /**
+     * Renders the avatar for the given [channel] and [currentUser] into the [target].
+     */
+    public fun render(
+        channel: Channel,
+        currentUser: User?,
+        target: ShapeableImageView,
+    )
 }
