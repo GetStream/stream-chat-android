@@ -154,7 +154,7 @@ internal class ChatClientDebuggerTest {
         val channelId = "general"
         val message = Message(text = "test-message")
         val isRetrying = false
-        whenever(attachmentsSender.sendAttachments(any(), any(), any(), any(), any())) doReturn Result.Success(message)
+        whenever(attachmentsSender.sendAttachments(any(), any(), any(), any())) doReturn Result.Success(message)
         whenever(api.sendMessage(any(), any(), any())) doReturn message.asCall()
 
         /* When */
@@ -177,7 +177,7 @@ internal class ChatClientDebuggerTest {
         val channelId = "general"
         val message = Message(id = "id_1", text = "test-message")
         val isRetrying = false
-        whenever(attachmentsSender.sendAttachments(any(), any(), any(), any(), any())) doReturn Result.Success(message)
+        whenever(attachmentsSender.sendAttachments(any(), any(), any(), any())) doReturn Result.Success(message)
         whenever(api.sendMessage(any(), any(), any())) doReturn message.asCall()
 
         /* When */

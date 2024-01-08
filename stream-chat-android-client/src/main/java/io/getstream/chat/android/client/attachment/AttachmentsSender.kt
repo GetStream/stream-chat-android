@@ -19,7 +19,6 @@ package io.getstream.chat.android.client.attachment
 import android.content.Context
 import io.getstream.chat.android.client.attachment.worker.UploadAttachmentsAndroidWorker
 import io.getstream.chat.android.client.extensions.internal.hasPendingAttachments
-import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
@@ -58,7 +57,6 @@ internal class AttachmentsSender(
         channelType: String,
         channelId: String,
         isRetrying: Boolean,
-        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
         val result = if (!isRetrying) {
             if (message.hasPendingAttachments()) {
@@ -66,14 +64,14 @@ internal class AttachmentsSender(
                     "[sendAttachments] Message ${message.id}" +
                         " has ${message.attachments.size} pending attachments"
                 }
-                uploadAttachments(message, channelType, channelId, repositoryFacade)
+                uploadAttachments(message, channelType, channelId)
             } else {
                 logger.d { "[sendAttachments] Message ${message.id} without attachments" }
                 Result.Success(message)
             }
         } else {
             logger.d { "[sendAttachments] Retrying Message ${message.id}" }
-            retryMessage(message, channelType, channelId, repositoryFacade)
+            retryMessage(message, channelType, channelId)
         }
         return verifier.verifyAttachments(result)
     }
@@ -91,9 +89,8 @@ internal class AttachmentsSender(
         message: Message,
         channelType: String,
         channelId: String,
-        repositoryFacade: RepositoryFacade,
     ): Result<Message> =
-        uploadAttachments(message, channelType, channelId, repositoryFacade)
+        uploadAttachments(message, channelType, channelId)
 
     /**
      * Uploads the attachment of this message if there is any pending attachments and return the updated message.
@@ -106,10 +103,9 @@ internal class AttachmentsSender(
         message: Message,
         channelType: String,
         channelId: String,
-        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
         return if (clientState.isNetworkAvailable) {
-            waitForAttachmentsToBeSent(message, channelType, channelId, repositoryFacade)
+            waitForAttachmentsToBeSent(message, channelType, channelId)
         } else {
             enqueueAttachmentUpload(message, channelType, channelId)
             logger.d { "[uploadAttachments] Chat is offline, not sending message with id ${message.id}" }
@@ -130,7 +126,6 @@ internal class AttachmentsSender(
         newMessage: Message,
         channelType: String,
         channelId: String,
-        repositoryFacade: RepositoryFacade,
     ): Result<Message> {
         jobsMap[newMessage.id]?.cancel()
         var allAttachmentsUploaded = false
