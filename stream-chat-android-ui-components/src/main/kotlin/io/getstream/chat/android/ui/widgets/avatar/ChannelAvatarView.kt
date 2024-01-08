@@ -23,8 +23,6 @@ import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.widget.AppCompatImageView
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.RelativeCornerSize
 import com.google.android.material.shape.ShapeAppearanceModel
@@ -33,7 +31,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
-import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.widgets.avatar.internal.AvatarPlaceholderDrawable
 
 /**
@@ -56,9 +53,20 @@ public class ChannelAvatarView : ViewGroup {
     }
 
     /**
+     * Provides views for the channel avatar.
+     */
+    private val avatarViewProvider = object : ChannelAvatarViewProvider {
+        override fun regular(): AvatarImageView = createImageViews(1).first()
+
+        override fun singleUser(): UserAvatarView = createUserView()
+
+        override fun userGroup(userCount: Int): List<AvatarImageView> = createImageViews(userCount)
+    }
+
+    /**
      * Custom renderer for the channel avatar.
      */
-    public var customAvatarRenderer: ChannelAvatarRenderer? = null
+    public var avatarRenderer: ChannelAvatarRenderer? = null
 
     public constructor(context: Context) : this(context, null)
 
@@ -82,6 +90,8 @@ public class ChannelAvatarView : ViewGroup {
         borderPaint.strokeWidth = avatarStyle.avatarBorderWidth.toFloat()
 
         setWillNotDraw(false)
+
+        avatarRenderer = ChatUI.channelAvatarRenderer
     }
 
     override fun dispatchDraw(canvas: Canvas) {
@@ -116,9 +126,8 @@ public class ChannelAvatarView : ViewGroup {
             /**
              * If the channel has a custom avatar renderer we use that.
              */
-            customAvatarRenderer != null -> {
-                val target = createImageViews(1).first()
-                customAvatarRenderer?.render(channel, currentUser, target)
+            avatarRenderer != null -> {
+                avatarRenderer?.render(channel, currentUser, avatarViewProvider)
             }
             /**
              * If the channel has an image we load that as a priority.
@@ -160,9 +169,9 @@ public class ChannelAvatarView : ViewGroup {
      * @param channel The channel to show the avatar for.
      */
     private fun showChannelAvatar(channel: Channel) {
-        createImageViews(1).first().load(
-            channel.image,
-            placeholderDrawable = AvatarPlaceholderDrawable(
+        createImageViews(1).first().setAvatar(
+            avatar = channel.image,
+            placeholder = AvatarPlaceholderDrawable(
                 context = context,
                 initials = channel.initials,
                 initialsTextStyle = avatarStyle.avatarInitialsTextStyle,
@@ -174,12 +183,7 @@ public class ChannelAvatarView : ViewGroup {
      * Show user avatar.
      */
     private fun showUserAvatar(user: User) {
-        removeAllViews()
-
-        UserAvatarView(context, avatarStyle).apply {
-            addView(this)
-            setUser(user)
-        }
+        createUserView().setUser(user)
     }
 
     /**
@@ -187,12 +191,12 @@ public class ChannelAvatarView : ViewGroup {
      */
     private fun showGroupAvatar(user: List<User>) {
         val size = 4.coerceAtMost(user.size)
-        val imageViews: List<ImageView> = createImageViews(size)
+        val imageViews: List<AvatarImageView> = createImageViews(size)
 
         for (i in 0 until 4.coerceAtMost(user.size)) {
-            imageViews[i].load(
-                user[i].image,
-                placeholderDrawable = AvatarPlaceholderDrawable(
+            imageViews[i].setAvatar(
+                avatar = user[i].image,
+                placeholder = AvatarPlaceholderDrawable(
                     context,
                     user[i].initials,
                     avatarStyle.groupAvatarInitialsTextStyle,
@@ -201,15 +205,23 @@ public class ChannelAvatarView : ViewGroup {
         }
     }
 
+    private fun createUserView(): UserAvatarView {
+        removeAllViews()
+
+        return UserAvatarView(context, avatarStyle).apply {
+            addView(this)
+        }
+    }
+
     /**
      * Creates necessary amount of [ImageView]s to render the avatar.
      */
-    private fun createImageViews(count: Int): List<ShapeableImageView> {
+    private fun createImageViews(count: Int): List<AvatarImageView> {
         removeAllViews()
 
-        val imageViews: MutableList<ShapeableImageView> = ArrayList(count)
+        val imageViews: MutableList<AvatarImageView> = ArrayList(count)
         for (i in 0 until count) {
-            ShapeableImageView(context).apply {
+            AvatarImageView(context).apply {
                 scaleType = ImageView.ScaleType.CENTER_CROP
                 addView(this)
                 imageViews.add(this)
@@ -411,16 +423,37 @@ public class ChannelAvatarView : ViewGroup {
 }
 
 /**
+ * Provides views for the channel avatar.
+ */
+public interface ChannelAvatarViewProvider {
+
+    /**
+     * Provides a single view for the channel avatar.
+     */
+    public fun regular(): AvatarImageView
+
+    /**
+     * Provides a single view for the user avatar.
+     */
+    public fun singleUser(): UserAvatarView
+
+    /**
+     * Provides a list of views for the group avatar.
+     */
+    public fun userGroup(userCount: Int): List<AvatarImageView>
+}
+
+/**
  * Custom renderer for the channel avatar.
  */
 public interface ChannelAvatarRenderer {
 
     /**
-     * Renders the avatar for the given [channel] and [currentUser] into the [target].
+     * Renders the avatar for the given [channel] and [currentUser] into the target view provided by [targetProvider].
      */
     public fun render(
         channel: Channel,
         currentUser: User?,
-        target: ShapeableImageView,
+        targetProvider: ChannelAvatarViewProvider,
     )
 }
