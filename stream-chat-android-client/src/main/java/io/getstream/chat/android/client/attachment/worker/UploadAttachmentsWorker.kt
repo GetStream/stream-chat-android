@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.attachment.worker
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.attachment.AttachmentUploader
+import io.getstream.chat.android.client.attachment.AttachmentsUploadStates
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -154,6 +155,7 @@ public class UploadAttachmentsWorker(
         // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
         messageRepository.deleteChannelMessage(updatedMessage)
         messageRepository.insertMessage(updatedMessage)
+        AttachmentsUploadStates.updateMessageAttachments(updatedMessage)
     }
 
     private class ProgressCallbackImpl(

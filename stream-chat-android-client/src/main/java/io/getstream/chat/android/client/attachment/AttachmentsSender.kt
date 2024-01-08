@@ -136,16 +136,16 @@ internal class AttachmentsSender(
         var allAttachmentsUploaded = false
         var messageToBeSent = newMessage
 
+        AttachmentsUploadStates.updateMessageAttachments(messageToBeSent)
+
         jobsMap = jobsMap + (
             newMessage.id to scope.launch {
-                repositoryFacade.observeAttachmentsForMessage(newMessage.id)
+                AttachmentsUploadStates.observeAttachments(newMessage.id)
                     .filterNot(Collection<Attachment>::isEmpty)
                     .collect { attachments ->
                         when {
                             attachments.all { it.uploadState == Attachment.UploadState.Success } -> {
-                                messageToBeSent = repositoryFacade.selectMessage(newMessage.id) ?: newMessage.copy(
-                                    attachments = attachments.toMutableList(),
-                                )
+                                messageToBeSent = newMessage.copy(attachments = attachments.toMutableList())
                                 allAttachmentsUploaded = true
                                 jobsMap[newMessage.id]?.cancel()
                             }
@@ -168,6 +168,7 @@ internal class AttachmentsSender(
                 Error.GenericError("Could not upload attachments, not sending message with id ${newMessage.id}"),
             )
         }.also {
+            AttachmentsUploadStates.removeMessageAttachmentsState(newMessage.id)
             uploadIds.remove(newMessage.id)
         }
     }
@@ -184,6 +185,7 @@ internal class AttachmentsSender(
      * Cancels all the running job.
      */
     fun cancelJobs() {
+        AttachmentsUploadStates.clearStates()
         jobsMap.values.forEach { it.cancel() }
         uploadIds.values.forEach { UploadAttachmentsAndroidWorker.stop(context, it) }
     }
