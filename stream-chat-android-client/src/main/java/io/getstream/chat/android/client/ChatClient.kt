@@ -1751,7 +1751,7 @@ internal constructor(
         plugins.forEach { listener -> listener.onAttachmentSendRequest(channelType, channelId, preparedMessage) }
 
         return attachmentsSender
-            .sendAttachments(preparedMessage, channelType, channelId, isRetrying, repositoryFacade)
+            .sendAttachments(preparedMessage, channelType, channelId, isRetrying)
             .also { result ->
                 debugger.onInterceptionStop(result, preparedMessage)
             }
