@@ -149,6 +149,7 @@ internal class ChatClientTest {
             currentUserFetcher = mock(),
             audioPlayer = mock(),
         ).apply {
+            attachmentsSender = mock()
             connectUser(user, token).enqueue()
         }
 

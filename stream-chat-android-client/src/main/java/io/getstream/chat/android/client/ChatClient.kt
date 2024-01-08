@@ -1340,10 +1340,9 @@ internal constructor(
         }
 
         _repositoryFacade = null
+        attachmentsSender.cancelJobs()
         appSettingsManager.clear()
-
         mutableClientState.clearState()
-
         audioPlayer.dispose()
         logger.v { "[disconnectUserSuspend] completed('$userId')" }
     }
