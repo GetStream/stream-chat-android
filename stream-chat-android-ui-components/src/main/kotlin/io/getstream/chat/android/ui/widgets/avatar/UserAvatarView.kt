@@ -20,17 +20,16 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
-import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.shape.AbsoluteCornerSize
 import com.google.android.material.shape.RelativeCornerSize
 import com.google.android.material.shape.ShapeAppearanceModel
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.isRtlLayout
-import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.ui.widgets.avatar.internal.AvatarPlaceholderDrawable
 
 /**
@@ -38,7 +37,7 @@ import io.getstream.chat.android.ui.widgets.avatar.internal.AvatarPlaceholderDra
  *
  * Based on the state within the [User], we either show an image or their initials.
  */
-public class UserAvatarView : ShapeableImageView {
+public class UserAvatarView : AvatarImageView {
 
     /**
      * Style for the avatar.
@@ -71,6 +70,8 @@ public class UserAvatarView : ShapeableImageView {
      */
     private var online: Boolean = false
 
+    private var avatarRenderer: UserAvatarRenderer? = null
+
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -93,22 +94,34 @@ public class UserAvatarView : ShapeableImageView {
      * Sets the [User] we want to show the avatar for.
      *
      * @param user The user to display the avatar for.
+     * @param online If the user is online.
      */
-    public fun setUser(user: User) {
-        load(
-            data = user.image.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
-            placeholderDrawable = AvatarPlaceholderDrawable(
+    @JvmOverloads
+    public fun setUser(user: User, online: Boolean = user.online) {
+        avatarRenderer?.render(avatarStyle, user, this) ?: setAvatar(
+            avatar = user.image.applyStreamCdnImageResizingIfEnabled(ChatUI.streamCdnImageResizing),
+            placeholder = AvatarPlaceholderDrawable(
                 context,
                 user.initials,
                 avatarStyle.avatarInitialsTextStyle,
             ),
         )
-        this.online = user.online
+        setOnline(online)
+    }
+
+    /**
+     * Sets the [online] status for the user.
+     *
+     * @param online If the user is online.
+     */
+    public fun setOnline(online: Boolean) {
+        this.online = online
         invalidate()
     }
 
     private fun init(context: Context, attrs: AttributeSet?) {
         setAvatarStyle(AvatarStyle(context, attrs))
+        avatarRenderer = ChatUI.userAvatarRenderer
     }
 
     private fun setAvatarStyle(avatarStyle: AvatarStyle) {
@@ -229,4 +242,15 @@ public class UserAvatarView : ShapeableImageView {
     private companion object {
         private const val AVATAR_SIZE_EXTRA = 1
     }
+}
+
+public fun interface UserAvatarRenderer {
+    /**
+     * Renders the avatar for the given [user] into the [target].
+     */
+    public fun render(
+        style: AvatarStyle,
+        user: User,
+        target: UserAvatarView,
+    )
 }

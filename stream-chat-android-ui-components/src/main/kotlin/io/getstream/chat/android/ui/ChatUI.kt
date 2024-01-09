@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.navigation.ChatNavigator
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.lazyVar
 import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer
 
 /**
  * ChatUI handles any configuration for the Chat UI elements.
@@ -169,10 +170,18 @@ public object ChatUI {
     /**
      * Whether or not the auto-translation feature is enabled.
      */
+    @JvmStatic
     public var autoTranslationEnabled: Boolean = false
+
+    /**
+     * Provides a custom renderer for user avatars.
+     */
+    @JvmStatic
+    public var userAvatarRenderer: UserAvatarRenderer? = null
 
     /**
      * Provides a custom renderer for channel avatars.
      */
+    @JvmStatic
     public var channelAvatarRenderer: ChannelAvatarRenderer? = null
 }

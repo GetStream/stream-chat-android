@@ -117,6 +117,15 @@ class ChatInitializer(
             }
         }
 
+        // ChatUI.channelAvatarRenderer = ChannelAvatarRenderer { _, channel, _, targetProvider ->
+        //     val targetView: AvatarImageView = targetProvider.regular()
+        //     if (channel.image.isBlank()) {
+        //         targetView.setAvatar(R.drawable.ic_channel_avatar)
+        //     } else {
+        //         targetView.setAvatar(channel.image)
+        //     }
+        // }
+
         // TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
         //     defaultStyle.copy(
         //         audioRecordingHoldToRecordText = "Bla bla bla",

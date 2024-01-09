@@ -5,11 +5,14 @@ package io.getstream.chat.docs.kotlin.ui.general
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
@@ -27,6 +30,12 @@ import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransforme
 import io.getstream.chat.android.ui.navigation.ChatNavigationHandler
 import io.getstream.chat.android.ui.navigation.ChatNavigator
 import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
+import io.getstream.chat.android.ui.widgets.avatar.AvatarImageView
+import io.getstream.chat.android.ui.widgets.avatar.AvatarStyle
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
 import io.getstream.chat.docs.R
 import java.text.DateFormat
 import java.text.SimpleDateFormat
@@ -221,5 +230,42 @@ private class ChatUiSnippets {
      */
     private fun disablingVideoThumbnails() {
         ChatUI.videoThumbnailsEnabled = false
+    }
+
+    private fun customizingUserAvatarRenderer() {
+        ChatUI.userAvatarRenderer = object : UserAvatarRenderer {
+            override fun render(style: AvatarStyle, user: User, target: UserAvatarView) {
+                val placeholder = ColorDrawable(Color.RED)
+                target.setAvatar(avatar = user.image, placeholder = placeholder)
+                target.setOnline(user.online)
+            }
+        }
+    }
+
+    private fun customizingChannelAvatarRenderer() {
+        ChatUI.channelAvatarRenderer = object : ChannelAvatarRenderer {
+            override fun render(
+                style: AvatarStyle,
+                channel: Channel,
+                currentUser: User?,
+                targetProvider: ChannelAvatarViewProvider,
+            ) {
+                val placeholder = ColorDrawable(Color.RED)
+
+                val target1: AvatarImageView = targetProvider.regular()
+                target1.setAvatar(avatar = channel.image, placeholder = placeholder)
+
+                val user = channel.members.first { it.user.id != currentUser?.id }.user
+                val target2: UserAvatarView = targetProvider.singleUser()
+                target2.setAvatar(avatar = user.image, placeholder = placeholder)
+                target2.setOnline(user.online)
+
+                val users = channel.members.filter { it.user.id != currentUser?.id }.map { it.user }
+                val target3: List<AvatarImageView> = targetProvider.userGroup(users.size)
+                target3.forEachIndexed { index, targetItem ->
+                    targetItem.setAvatar(avatar = users[index].image, placeholder = placeholder)
+                }
+            }
+        }
     }
 }

@@ -3,11 +3,14 @@ package io.getstream.chat.docs.java.ui.general;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
@@ -16,10 +19,15 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.getstream.chat.android.markdown.MarkdownTextTransformer;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.User;
+import io.getstream.chat.android.models.Member;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager;
@@ -30,6 +38,12 @@ import io.getstream.chat.android.ui.font.TextStyle;
 import io.getstream.chat.android.ui.helper.SupportedReactions;
 import io.getstream.chat.android.ui.navigation.ChatNavigationHandler;
 import io.getstream.chat.android.ui.navigation.ChatNavigator;
+import io.getstream.chat.android.ui.widgets.avatar.AvatarImageView;
+import io.getstream.chat.android.ui.widgets.avatar.AvatarStyle;
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer;
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider;
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer;
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView;
 import io.getstream.chat.docs.R;
 
 /**
@@ -226,6 +240,57 @@ public class Configuration {
     * [Disabling Video Thumbnails](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#disabling-video-thumbnails)
     */
     private void disablingVideoThumbnails(){
-        ChatUI.setVideoThumbnailsEnabled(false);
+
+    }
+
+    private void customizingUserAvatarRenderer() {
+        final UserAvatarRenderer renderer = new UserAvatarRenderer() {
+            @Override
+            public void render(
+                    @NonNull  AvatarStyle style,
+                    @NonNull User user,
+                    @NonNull UserAvatarView target
+            ) {
+                final Drawable placeholder = new ColorDrawable(Color.RED);
+                target.setAvatar(user.getImage(), placeholder);
+                target.setOnline(user.getOnline());
+            }
+        };
+        ChatUI.setUserAvatarRenderer(renderer);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    private void customizingChannelAvatarRenderer() {
+        ChannelAvatarRenderer renderer = new ChannelAvatarRenderer() {
+
+            @Override
+            public void render(
+                    @NonNull AvatarStyle style,
+                    @NonNull Channel channel,
+                    @Nullable User currentUser,
+                    ChannelAvatarViewProvider targetProvider
+            ) {
+                Drawable placeholder = new ColorDrawable(Color.RED);
+
+                final AvatarImageView target1 = targetProvider.regular();
+                target1.setAvatar(channel.getImage(), placeholder);
+
+                final User singleUser = channel.getMembers().stream().findFirst().orElseThrow().getUser();
+                final UserAvatarView target2 = targetProvider.singleUser();
+                target2.setAvatar(singleUser.getImage(), placeholder);
+                target2.setOnline(singleUser.getOnline());
+
+                final String currentUserId = currentUser != null ? currentUser.getId() : null;
+                final List<User> users = channel.getMembers().stream()
+                        .map(Member::getUser)
+                        .filter(user -> !user.getId().equals(currentUserId))
+                        .collect(Collectors.toList());
+                final List<AvatarImageView> target3 = targetProvider.userGroup(users.size());
+                for (int i = 0; i < target3.size(); i++) {
+                    target3.get(i).setAvatar(users.get(i).getImage(), placeholder);
+                }
+            }
+        };
+        ChatUI.setChannelAvatarRenderer(renderer);
     }
 }
