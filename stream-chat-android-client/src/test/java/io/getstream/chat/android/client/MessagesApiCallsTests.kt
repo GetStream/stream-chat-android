@@ -65,7 +65,7 @@ internal class MessagesApiCallsTests {
         val message = Message(text = "a-message")
 
         whenever(mock.api.getMessage(messageId)).thenReturn(RetroSuccess(message).toRetrofitCall())
-        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any(), any()))
+        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any()))
             .doReturn(Result.Success(message))
 
         val result = client.getMessage(messageId).await()
@@ -185,7 +185,7 @@ internal class MessagesApiCallsTests {
             ),
         ).thenReturn(RetroSuccess(message).toRetrofitCall())
 
-        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any(), any()))
+        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any()))
             .doReturn(Result.Success(message))
 
         val result = client.sendMessage(mock.channelType, mock.channelId, message).await()
@@ -207,7 +207,7 @@ internal class MessagesApiCallsTests {
             ),
         ).thenReturn(RetroError<Message>(mock.serverErrorCode).toRetrofitCall())
 
-        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any(), any()))
+        whenever(mock.attachmentSender.sendAttachments(any(), any(), any(), any()))
             .doReturn(requestResult)
 
         val result = client.sendMessage(mock.channelType, mock.channelId, message).await()

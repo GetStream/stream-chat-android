@@ -17,7 +17,6 @@
 package io.getstream.chat.android.state.facade
 
 import androidx.annotation.CallSuper
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -51,7 +50,6 @@ internal open class BaseRepositoryFacadeTest {
     protected lateinit var messages: MessageRepository
     protected lateinit var reactions: ReactionRepository
     protected lateinit var syncState: SyncStateRepository
-    protected lateinit var attachmentRepository: AttachmentRepository
 
     protected lateinit var sut: RepositoryFacade
 
@@ -65,7 +63,6 @@ internal open class BaseRepositoryFacadeTest {
         messages = mock()
         reactions = mock()
         syncState = mock()
-        attachmentRepository = mock()
 
         val repositoryFactory = object : RepositoryFactory {
             override fun createUserRepository(): UserRepository = users
@@ -83,7 +80,6 @@ internal open class BaseRepositoryFacadeTest {
                 reactions
 
             override fun createSyncStateRepository(): SyncStateRepository = syncState
-            override fun createAttachmentRepository(): AttachmentRepository = attachmentRepository
         }
         sut = RepositoryFacade.create(repositoryFactory, testCoroutines.scope)
     }

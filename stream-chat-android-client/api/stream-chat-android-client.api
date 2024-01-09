@@ -2113,11 +2113,6 @@ public abstract interface class io/getstream/chat/android/client/notifications/h
 	public abstract fun buildIcon (Lio/getstream/chat/android/models/User;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class io/getstream/chat/android/client/persistance/repository/AttachmentRepository {
-	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun observeAttachmentsForMessage (Ljava/lang/String;)Lkotlinx/coroutines/flow/Flow;
-}
-
 public abstract interface class io/getstream/chat/android/client/persistance/repository/ChannelConfigRepository {
 	public abstract fun cacheChannelConfigs (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2199,7 +2194,6 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory {
-	public abstract fun createAttachmentRepository ()Lio/getstream/chat/android/client/persistance/repository/AttachmentRepository;
 	public abstract fun createChannelConfigRepository ()Lio/getstream/chat/android/client/persistance/repository/ChannelConfigRepository;
 	public abstract fun createChannelRepository (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/ChannelRepository;
 	public abstract fun createMessageRepository (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/persistance/repository/MessageRepository;

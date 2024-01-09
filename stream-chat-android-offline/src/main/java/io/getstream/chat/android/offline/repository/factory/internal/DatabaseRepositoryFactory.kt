@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.repository.factory.internal
 
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -30,7 +29,6 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.channel.internal.DatabaseChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.DatabaseAttachmentRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
@@ -131,17 +129,6 @@ internal class DatabaseRepositoryFactory(
         return databaseSyncStateRepository ?: run {
             DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
                 repositoriesCache[SyncStateRepository::class.java] = repository
-            }
-        }
-    }
-
-    override fun createAttachmentRepository(): AttachmentRepository {
-        val databaseAttachmentRepository =
-            repositoriesCache[AttachmentRepository::class.java] as? DatabaseAttachmentRepository?
-
-        return databaseAttachmentRepository ?: run {
-            DatabaseAttachmentRepository(database.attachmentDao()).also { repository ->
-                repositoriesCache[AttachmentRepository::class.java] = repository
             }
         }
     }
