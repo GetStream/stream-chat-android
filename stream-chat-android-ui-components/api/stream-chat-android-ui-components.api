@@ -2,7 +2,8 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/ChatUI;
 	public static final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public static final fun getAttachmentPreviewFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager;
-	public final fun getAutoTranslationEnabled ()Z
+	public static final fun getAutoTranslationEnabled ()Z
+	public static final fun getChannelAvatarRenderer ()Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarRenderer;
 	public static final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
 	public static final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/helper/CurrentUserProvider;
 	public static final fun getDateFormatter ()Lio/getstream/chat/android/ui/common/helper/DateFormatter;
@@ -16,10 +17,12 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
 	public static final fun getStyle ()Lio/getstream/chat/android/ui/font/ChatStyle;
 	public static final fun getSupportedReactions ()Lio/getstream/chat/android/ui/helper/SupportedReactions;
+	public static final fun getUserAvatarRenderer ()Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarRenderer;
 	public static final fun getVideoThumbnailsEnabled ()Z
 	public static final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public static final fun setAttachmentPreviewFactoryManager (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager;)V
-	public final fun setAutoTranslationEnabled (Z)V
+	public static final fun setAutoTranslationEnabled (Z)V
+	public static final fun setChannelAvatarRenderer (Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarRenderer;)V
 	public static final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;)V
 	public static final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/helper/CurrentUserProvider;)V
 	public static final fun setDateFormatter (Lio/getstream/chat/android/ui/common/helper/DateFormatter;)V
@@ -33,6 +36,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setStreamCdnImageResizing (Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;)V
 	public static final fun setStyle (Lio/getstream/chat/android/ui/font/ChatStyle;)V
 	public static final fun setSupportedReactions (Lio/getstream/chat/android/ui/helper/SupportedReactions;)V
+	public static final fun setUserAvatarRenderer (Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarRenderer;)V
 	public static final fun setVideoThumbnailsEnabled (Z)V
 }
 
@@ -4362,6 +4366,14 @@ public class io/getstream/chat/android/ui/widgets/GridSpacingItemDecoration : an
 	public fun setSpanCount (I)V
 }
 
+public class io/getstream/chat/android/ui/widgets/avatar/AvatarImageView : com/google/android/material/imageview/ShapeableImageView {
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
+	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun setAvatar (Ljava/lang/Object;Ljava/lang/Object;)V
+	public static synthetic fun setAvatar$default (Lio/getstream/chat/android/ui/widgets/avatar/AvatarImageView;Ljava/lang/Object;Ljava/lang/Object;ILjava/lang/Object;)V
+}
+
 public final class io/getstream/chat/android/ui/widgets/avatar/AvatarShape : java/lang/Enum {
 	public static final field CIRCLE Lio/getstream/chat/android/ui/widgets/avatar/AvatarShape;
 	public static final field ROUND_RECT Lio/getstream/chat/android/ui/widgets/avatar/AvatarShape;
@@ -4400,13 +4412,25 @@ public final class io/getstream/chat/android/ui/widgets/avatar/AvatarStyle : io/
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/ui/widgets/avatar/ChannelAvatarRenderer {
+	public abstract fun render (Lio/getstream/chat/android/ui/widgets/avatar/AvatarStyle;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarViewProvider;)V
+}
+
 public final class io/getstream/chat/android/ui/widgets/avatar/ChannelAvatarView : android/view/ViewGroup {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+	public final fun getAvatarRenderer ()Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarRenderer;
+	public final fun setAvatarRenderer (Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarRenderer;)V
 	public final fun setChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setChannel (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)V
 	public static synthetic fun setChannel$default (Lio/getstream/chat/android/ui/widgets/avatar/ChannelAvatarView;Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/widgets/avatar/ChannelAvatarViewProvider {
+	public abstract fun regular ()Lio/getstream/chat/android/ui/widgets/avatar/AvatarImageView;
+	public abstract fun singleUser ()Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarView;
+	public abstract fun userGroup (I)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition : java/lang/Enum {
@@ -4419,12 +4443,19 @@ public final class io/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPo
 	public static fun values ()[Lio/getstream/chat/android/ui/widgets/avatar/OnlineIndicatorPosition;
 }
 
-public final class io/getstream/chat/android/ui/widgets/avatar/UserAvatarView : com/google/android/material/imageview/ShapeableImageView {
+public abstract interface class io/getstream/chat/android/ui/widgets/avatar/UserAvatarRenderer {
+	public abstract fun render (Lio/getstream/chat/android/ui/widgets/avatar/AvatarStyle;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarView;)V
+}
+
+public final class io/getstream/chat/android/ui/widgets/avatar/UserAvatarView : io/getstream/chat/android/ui/widgets/avatar/AvatarImageView {
 	public fun <init> (Landroid/content/Context;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;)V
 	public fun <init> (Landroid/content/Context;Landroid/util/AttributeSet;I)V
 	public fun <init> (Landroid/content/Context;Lio/getstream/chat/android/ui/widgets/avatar/AvatarStyle;)V
+	public final fun setOnline (Z)V
 	public final fun setUser (Lio/getstream/chat/android/models/User;)V
+	public final fun setUser (Lio/getstream/chat/android/models/User;Z)V
+	public static synthetic fun setUser$default (Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarView;Lio/getstream/chat/android/models/User;ZILjava/lang/Object;)V
 }
 
 public final class io/getstream/chat/android/ui/widgets/typing/TypingIndicatorView : android/widget/LinearLayout {
