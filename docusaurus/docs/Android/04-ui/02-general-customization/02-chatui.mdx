@@ -151,6 +151,187 @@ ChatUI.setMimeTypeIconProvider(mimeType -> {
 </TabItem>
 </Tabs>
 
+## Customizing Avatars
+An avatar is a small image which identifies a specific user or channel.
+`UserAvatarView` is used in the lists of users and messages, whereas `ChannelAvatarView` is used in in the lists of channels.
+
+The image in the `UserAvatarView` and `ChannelAvatarView` is being displayed based on the `image` property, present in both `User` and `Channel` objects respectively:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Default Avatar Light Mode](../../assets/default_channel.png) | ![Default Avatar Dark Mode](../../assets/default_channel_dark.png) |
+
+Both `UserAvatarView` and `ChannelAvatarView` will use the default gradient color with initials if the `image` property cannot be loaded:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Default Avatar Light Mode](../../assets/default_avatar.png) | ![Default Avatar Dark Mode](../../assets/default_avatar_dark.png) |
+
+In addition, `ChannelAvatarView` provides several extra fallback scenarios if `image` property is an empty string:
+- If the channel has just `1` member, the `image` property of this user will be used to display an avatar.
+- If the channel has just `2` members, the `name` property of the user, who is not the current user will be used to display an avatar.
+- If the channel has more than two members, the avatar image will be produced from the first `4` users in the channel's member list.
+
+#### Customizing Avatars Using Styles
+You can configure the avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/widgets/avatar/AvatarStyle.kt). You can create this kind of avatar by changing the shape and corner radius:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Light Mode](../../assets/square_avatar.png) | ![Dark Mode](../../assets/square_avatar_dark.png)
+
+#### Customizing User Avatars Using UserAvatarRenderer
+
+Overriding the `UserAvatarRenderer` allows you to add custom logic for the and user's avatars displayed using `UserAvatarView`.
+
+:::note
+The `UserAvatarView.setAvatar` method mentioned below can accept different data types as `avatar` parameter.
+It can be a `Bitmap`, `Drawable`, `Uri`, `String` or `DrawbleRes` (resource id).
+:::
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+object : UserAvatarRenderer {
+    override fun render(style: AvatarStyle, user: User, target: UserAvatarView) {
+        // You can apply custom image loading logic here
+        val placeholder: Drawable = /* ... */
+        target.setAvatar(avatar = user.image, placeholder = placeholder)
+        target.setOnline(online = user.online)
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+new UserAvatarRenderer() {
+    @Override
+    public void render(
+        @NonNull AvatarStyle style,
+        @NonNull User user, 
+        @NonNull UserAvatarView target
+    ) {
+        // You can apply custom image loading logic here
+        final Drawable placeholder = /* ... */;
+        target.setAvatar(user.getImage(), placeholder);
+        target.setOnline(user.getOnline());
+    }
+};
+```
+</TabItem>
+</Tabs>
+
+#### Customizing Channel Avatars Using ChannelAvatarRenderer
+
+Overriding the `ChannelAvatarRenderer` allows you to add custom logic for the channel's avatars displayed using `ChannelAvatarView`.
+
+:::note
+The `AvatarImageView.setAvatar` method mentioned below can accept different data types as `avatar` parameter.
+It can be a `Bitmap`, `Drawable`, `Uri`, `String` or `DrawbleRes` (resource id).
+:::
+
+Let's look at the different scenarios for channel avatars, which are handled by the default.
+You can override the `ChannelAvatarRenderer` to apply custom logic for each scenario or just simplify the logic to a single approach for all scenarios.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+object : ChannelAvatarRenderer {
+    override fun render(
+        style: AvatarStyle, 
+        channel: Channel, 
+        user: User, 
+        targetProvider: ChannelAvatarViewProvider,
+    ) {
+        // You can apply custom image loading logic here
+        val placeholder: Drawable = /* ... */
+            
+        // Scenario_1: `Channel.image` is not empty
+        val target1: AvatarImageView = targetProvider.regular()
+        target1.setAvatar(avatar = channel.image, placeholder = placeholder)
+
+        // Scenario_2: `Channel.image` is empty and `Channel` has less or equal to 2 members
+        val singleUser: User = /* ... */
+        val target2: UserAvatarView = targetProvider.singleUser()
+        target2.setAvatar(avatar = singleUser.image, placeholder = placeholder)
+        target2.setOnline(online = singleUser.online)
+
+        // Scenario_3: `Channel.image` is empty and `Channel` has more than 2 members
+        val users = channel.members.filter { it.user.id != currentUser?.id }.map { it.user }
+        val target3: List<AvatarImageView> = targetProvider.userGroup(users.size)
+        target3.forEachIndexed { index, targetItem ->
+            targetItem.setAvatar(avatar = users[index].image, placeholder = placeholder)
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+new ChannelAvatarRenderer() {
+    @Override
+    public void render(
+        @NonNull AvatarStyle style,
+        @NonNull User user,
+        @NonNull UserAvatarView target
+    ) {
+        // You can apply custom image loading logic here
+        final Drawable placeholder = /* ... */;
+        
+        // Scenario_1: `Channel.image` is not empty
+        final AvatarImageView target1 = targetProvider.regular();
+        target1.setAvatar(channel.getImage(), placeholder);
+        
+        // Scenario_2: `Channel.image` is empty and `Channel` has less or equal to 2 members
+        final User singleUser = /* ... */;
+        final UserAvatarView target2 = targetProvider.singleUser();
+        target2.setAvatar(singleUser.getImage(), placeholder);
+        target2.setOnline(singleUser.getOnline());
+        
+        // Scenario_3: `Channel.image` is empty and `Channel` has more than 2 members
+        final List<User> users = channel.getMembers().stream()
+                .filter(member -> !member.getUser().getId().equals(currentUser.getId()))
+                .map(Member::getUser)
+                .collect(Collectors.toList());
+        final List<AvatarImageView> target3 = targetProvider.userGroup(users.size());
+        for (int i = 0; i < target3.size(); i++) {
+            target3.get(i).setAvatar(users.get(i).getImage(), placeholder);
+        }
+    }
+};
+```
+</TabItem>
+</Tabs>
+
+
+
+**If you only would like to change the gradient colors for the default avatar**, you can use `stream_ui_avatar_gradient_colors`.
+
+The default color set includes a variety of colors:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Colorful Avatars Light Mode](../../assets/colorful_avatars.png) | ![Colorful Avatars Dark Mode](../../assets/colorful_avatars_dark.png) |
+
+The set can be overridden in the `color.xml` file - you can expand or reduce the number of supported colors, like in the example below:
+
+```
+<array name="stream_ui_avatar_gradient_colors">
+    <item>@color/stream_ui_avatar_gradient_blue</item>
+</array>        
+```
+
+Which creates:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Blue Gradient Avatars Light Mode](../../assets/blue_gradients_avatars.png) | ![Blue Gradient Avatars Dark Mode](../../assets/blue_gradients_avatars_dark.png) |
+
 ## Adding Extra Headers to Image Requests
 
 If you're [using your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn), you might also need to add extra headers to image loading requests. You can do this by creating your own implementation of the `ImageHeadersProvider` interface and then setting it on `ChatUI`:

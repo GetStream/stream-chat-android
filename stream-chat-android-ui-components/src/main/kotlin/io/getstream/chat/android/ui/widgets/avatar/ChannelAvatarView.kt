@@ -127,7 +127,7 @@ public class ChannelAvatarView : ViewGroup {
              * If the channel has a custom avatar renderer we use that.
              */
             avatarRenderer != null -> {
-                avatarRenderer?.render(channel, currentUser, avatarViewProvider)
+                avatarRenderer?.render(avatarStyle, channel, currentUser, avatarViewProvider)
             }
             /**
              * If the channel has an image we load that as a priority.
@@ -446,12 +446,13 @@ public interface ChannelAvatarViewProvider {
 /**
  * Custom renderer for the channel avatar.
  */
-public interface ChannelAvatarRenderer {
+public fun interface ChannelAvatarRenderer {
 
     /**
      * Renders the avatar for the given [channel] and [currentUser] into the target view provided by [targetProvider].
      */
     public fun render(
+        style: AvatarStyle,
         channel: Channel,
         currentUser: User?,
         targetProvider: ChannelAvatarViewProvider,

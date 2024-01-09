@@ -15,7 +15,7 @@ import java.nio.ByteBuffer
 /**
  * Represents the base avatar image view, which is capable of displaying an avatar of any type.
  */
-public class AvatarImageView : ShapeableImageView {
+public open class AvatarImageView : ShapeableImageView {
 
     public constructor(context: Context?) : super(context)
     public constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
