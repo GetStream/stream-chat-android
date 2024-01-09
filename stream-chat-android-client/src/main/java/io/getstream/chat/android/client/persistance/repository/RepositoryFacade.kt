@@ -45,7 +45,6 @@ public class RepositoryFacade private constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
-    private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -54,8 +53,7 @@ public class RepositoryFacade private constructor(
     MessageRepository by messageRepository,
     ChannelConfigRepository by configsRepository,
     QueryChannelsRepository by queryChannelsRepository,
-    SyncStateRepository by syncStateRepository,
-    AttachmentRepository by attachmentRepository {
+    SyncStateRepository by syncStateRepository {
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> =
         selectChannels(channelCIDs, null)
@@ -156,7 +154,6 @@ public class RepositoryFacade private constructor(
         configsRepository.clear()
         queryChannelsRepository.clear()
         syncStateRepository.clear()
-        attachmentRepository.clear()
     }
 
     @InternalStreamChatApi
@@ -194,7 +191,6 @@ public class RepositoryFacade private constructor(
                 messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
-                attachmentRepository = factory.createAttachmentRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
             )
