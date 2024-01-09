@@ -90,7 +90,7 @@ internal class MessageListItemLiveDataTest {
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
-            members = channelState.members.asLiveData(),
+            getMembers = { emptyList() },
         )
     }
 
@@ -111,7 +111,7 @@ internal class MessageListItemLiveDataTest {
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
-            members = channelState.members.asLiveData(),
+            getMembers = { emptyList() },
         )
     }
 
@@ -147,7 +147,7 @@ internal class MessageListItemLiveDataTest {
             deletedMessageVisibility = deletedMessageVisibility,
             messageFooterVisibility = messageFooterVisibility,
             messagePositionHandlerProvider = MessageListViewModel.MessagePositionHandler::defaultHandler,
-            members = channelState.members.asLiveData(),
+            getMembers = { emptyList() },
         )
     }
 
