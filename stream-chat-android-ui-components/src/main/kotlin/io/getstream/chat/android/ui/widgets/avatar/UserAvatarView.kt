@@ -243,6 +243,9 @@ public class UserAvatarView : AvatarImageView {
     }
 }
 
+/**
+ * Custom renderer for the user avatar.
+ */
 public fun interface UserAvatarRenderer {
     /**
      * Renders the avatar for the given [user] into the [target].

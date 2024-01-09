@@ -92,6 +92,15 @@
 ### ❌ Removed
 - Removed field name notation transformation from `QuerySortByField`. Now `QuerySortByField` does not transform field name from snake case to camel case. [#5140](https://github.com/GetStream/stream-chat-android/pull/5140)
 
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed crash when playing completed voice message. [#5135](https://github.com/GetStream/stream-chat-android/pull/5135)
+- Fixed send attachment without the offline plugin. [#5142](https://github.com/GetStream/stream-chat-android/pull/5142)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added `UserAvatarRenderer` and `ChannelAvatarRenderer` to customize avatars. [#5141](https://github.com/GetStream/stream-chat-android/pull/5141)
+
 # December 22th, 2023 - 6.0.11
 ## Common changes for all artifacts
 ### ⬆️ Improved
