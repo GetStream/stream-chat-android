@@ -26,7 +26,7 @@ import androidx.annotation.LayoutRes
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.GiphyViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.internal.ScrollButtonView
 import io.getstream.chat.android.ui.font.TextStyle
 import io.getstream.chat.android.ui.helper.TransformStyle

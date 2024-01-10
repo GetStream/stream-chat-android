@@ -23,6 +23,10 @@ import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.ui.common.internal.animateHighlight
 
+/**
+ * Base ViewHolder used for displaying messages in
+ * [io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter].
+ */
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {

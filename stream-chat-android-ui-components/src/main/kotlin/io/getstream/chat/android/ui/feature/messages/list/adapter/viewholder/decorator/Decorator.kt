@@ -14,14 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator
 
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
-internal interface Decorator {
+/**
+ * Decorator interface used to decorate the view holder.
+ */
+public interface Decorator {
 
-    fun <T : MessageListItem> decorate(
+    /**
+     * Decorates the view holder.
+     */
+    public fun <T : MessageListItem> decorate(
         viewHolder: BaseMessageItemViewHolder<T>,
         data: T,
     )

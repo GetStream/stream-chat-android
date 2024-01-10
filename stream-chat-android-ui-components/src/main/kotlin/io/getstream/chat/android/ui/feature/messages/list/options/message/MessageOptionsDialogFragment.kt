@@ -46,8 +46,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.DecoratorProvider
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.feature.messages.list.options.message.internal.MessageOptionsDecoratorProvider

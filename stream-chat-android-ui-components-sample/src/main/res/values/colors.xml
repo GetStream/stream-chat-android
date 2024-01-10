@@ -32,4 +32,6 @@
     <color name="component_browser_sub_card">@color/stream_ui_white_snow</color>
     <color name="component_browser_background">@color/stream_ui_white_smoke</color>
     <color name="component_browser_background_light">@color/stream_ui_white</color>
+
+    <color name="message_forwarded">#808080</color>
 </resources>

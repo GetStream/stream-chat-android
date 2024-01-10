@@ -19,10 +19,10 @@ package io.getstream.chat.android.ui.feature.messages.list.options.message.inter
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.AvatarDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.BackgroundDecorator
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.MaxPossibleWidthDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.MessageContainerMarginDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.ReplyDecorator

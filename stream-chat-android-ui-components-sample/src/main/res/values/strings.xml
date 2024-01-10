@@ -121,6 +121,9 @@
     <!-- Pinned message list screen -->
     <string name="pinned_message_list_title">Pinned Messages</string>
 
+    <!-- Chat Screen -->
+    <string name="message_forwarded">Forwarded</string>
+
     <!-- Flag message -->
     <string name="message_flagged_title">Message Flagged</string>
     <string name="message_flagged_description">The message has been reported to a moderator.</string>

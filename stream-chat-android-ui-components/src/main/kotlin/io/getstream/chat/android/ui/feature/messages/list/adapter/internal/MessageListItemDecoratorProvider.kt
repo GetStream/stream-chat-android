@@ -16,14 +16,16 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter.internal
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
+import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.AvatarDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.BackgroundDecorator
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.DecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.FailedIndicatorDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.FootnoteDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.GapDecorator
@@ -34,49 +36,48 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.dec
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.ReplyDecorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.TextDecorator
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
+import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 
 /**
  * Provides all decorators that will be used in MessageListView items.
  *
+ * @param channel [Channel].
  * @param dateFormatter [DateFormatter]. Formats the dates in the messages.
- * @param isDirectMessage Checks if the message is direct of not. Used in the footnote.
  * @param messageListViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
  * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
  * @param deletedMessageVisibility [DeletedMessageVisibility] Used to hide or show the the deleted message accordingly to the logic provided.
- * @param isCurrentUserBanned Checks if the current user is banned inside the channel. Used for failed icon indicator.
  */
 @Suppress("LongParameterList")
 internal class MessageListItemDecoratorProvider(
+    channel: Channel,
     dateFormatter: DateFormatter,
-    isDirectMessage: () -> Boolean,
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
     deletedMessageVisibility: () -> DeletedMessageVisibility,
-    isCurrentUserBanned: () -> Boolean,
     getLanguageDisplayName: (code: String) -> String,
 ) : DecoratorProvider {
 
-    private val messageListDecorators = listOfNotNull<Decorator>(
-        BackgroundDecorator(messageBackgroundFactory),
-        TextDecorator(messageListViewStyle.itemStyle),
-        GapDecorator(),
-        MaxPossibleWidthDecorator(messageListViewStyle.itemStyle),
-        MessageContainerMarginDecorator(messageListViewStyle.itemStyle),
-        AvatarDecorator(showAvatarPredicate),
-        FailedIndicatorDecorator(messageListViewStyle.itemStyle, isCurrentUserBanned),
-        ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
-        ReplyDecorator(messageListViewStyle.replyMessageStyle),
-        FootnoteDecorator(
-            dateFormatter,
-            isDirectMessage,
-            messageListViewStyle,
-            deletedMessageVisibility,
-            getLanguageDisplayName,
-        ),
-        PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
-    )
-
-    override val decorators: List<Decorator> = messageListDecorators
+    override val decorators: List<Decorator> by lazy {
+        listOfNotNull<Decorator>(
+            BackgroundDecorator(messageBackgroundFactory),
+            TextDecorator(messageListViewStyle.itemStyle),
+            GapDecorator(),
+            MaxPossibleWidthDecorator(messageListViewStyle.itemStyle),
+            MessageContainerMarginDecorator(messageListViewStyle.itemStyle),
+            AvatarDecorator(showAvatarPredicate),
+            FailedIndicatorDecorator(messageListViewStyle.itemStyle) { channel.isCurrentUserBanned() },
+            ReactionsDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.reactionsEnabled },
+            ReplyDecorator(messageListViewStyle.replyMessageStyle),
+            FootnoteDecorator(
+                dateFormatter,
+                { channel.isDirectMessaging() },
+                messageListViewStyle,
+                deletedMessageVisibility,
+                getLanguageDisplayName,
+            ),
+            PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
+        )
+    }
 }

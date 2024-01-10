@@ -66,7 +66,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
-import io.getstream.chat.android.ui.common.utils.extensions.isDirectMessaging
 import io.getstream.chat.android.ui.databinding.StreamUiMessageListViewBinding
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity
 import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
@@ -112,7 +111,6 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainerImpl
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter
-import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactoryImpl
@@ -133,7 +131,6 @@ import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.getTranslatedText
 import io.getstream.chat.android.ui.utils.extensions.isCurrentUser
-import io.getstream.chat.android.ui.utils.extensions.isCurrentUserBanned
 import io.getstream.chat.android.ui.utils.extensions.isGiphyNotEphemeral
 import io.getstream.chat.android.ui.utils.extensions.showToast
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -811,14 +808,13 @@ public class MessageListView : ConstraintLayout {
             messageOptionItemsFactory = MessageOptionItemsFactory.defaultFactory(context)
         }
 
-        messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
+        messageListItemViewHolderFactory.decoratorProvider = ChatUI.decoratorProviderFactory.createProvider(
+            channel = channel,
             dateFormatter = messageDateFormatter,
-            isDirectMessage = { channel.isDirectMessaging() },
             messageListViewStyle = requireStyle(),
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory = messageBackgroundFactory,
             deletedMessageVisibility = { deletedMessageVisibility },
-            isCurrentUserBanned = { channel.isCurrentUserBanned() },
             getLanguageDisplayName = getLanguageDisplayName,
         )
 
@@ -1857,6 +1853,10 @@ public class MessageListView : ConstraintLayout {
         public fun predicate(item: MessageListItem): Boolean
     }
 
+    /**
+     * Predicate object with a filter condition for MessageListItem.
+     * Used to filter a list of MessageListItem before applying it to MessageListView.
+     */
     public fun interface ShowAvatarPredicate {
         public fun shouldShow(messageItem: MessageListItem.MessageItem): Boolean
     }

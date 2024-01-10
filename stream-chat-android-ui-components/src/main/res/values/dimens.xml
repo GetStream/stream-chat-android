@@ -173,6 +173,10 @@
     <dimen name="stream_ui_channel_item_message_date">13sp</dimen>
 
     <!-- Message ViewHolders -->
+    <dimen name="stream_ui_message_text_padding_top">@dimen/stream_ui_spacing_small</dimen>
+    <dimen name="stream_ui_message_text_padding_start">@dimen/stream_ui_spacing_medium</dimen>
+    <dimen name="stream_ui_message_text_padding_end">@dimen/stream_ui_spacing_medium</dimen>
+    <dimen name="stream_ui_message_text_padding_bottom">@dimen/stream_ui_spacing_small</dimen>
     <dimen name="stream_ui_message_viewholder_avatar_missing_margin">40dp</dimen>
     <dimen name="stream_ui_message_corner_radius_negative">-16dp</dimen>
     <dimen name="stream_ui_message_footnote_spacing">6dp</dimen>

@@ -21,9 +21,9 @@ import androidx.annotation.CallSuper
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 
-internal abstract class DecoratedBaseMessageItemViewHolder<T : MessageListItem>(
+public abstract class DecoratedBaseMessageItemViewHolder<T : MessageListItem> internal constructor(
     itemView: View,
     private val decorators: List<Decorator>,
 ) : BaseMessageItemViewHolder<T>(itemView) {

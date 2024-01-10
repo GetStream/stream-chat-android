@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl
 
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -42,17 +42,17 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param listeners Listeners used by the ViewHolder.
  * @param binding Binding generated for the layout.
  */
-internal class LinkAttachmentsViewHolder(
+public class LinkAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val messageTextTransformer: ChatMessageTextTransformer,
     private val listeners: MessageListListenerContainer?,
-    internal val binding: StreamUiItemLinkAttachmentBinding = StreamUiItemLinkAttachmentBinding.inflate(
+    public val binding: StreamUiItemLinkAttachmentBinding = StreamUiItemLinkAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false,
     ),
-    private val style: MessageListItemStyle,
+    public val style: MessageListItemStyle,
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
     /**
