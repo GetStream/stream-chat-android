@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl
 
 import android.view.View
 import android.view.ViewGroup
@@ -34,7 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListLis
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.dpToPx
@@ -50,13 +50,13 @@ import io.getstream.log.taggedLogger
  * @param messageTextTransformer Formats strings and sets them on the respective TextView.
  * @param binding Binding generated for the layout.
  */
-internal class MediaAttachmentsViewHolder(
+public class MediaAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
     private val messageTextTransformer: ChatMessageTextTransformer,
-    private val audioRecordViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
-    internal val binding: StreamUiItemMessageMediaAttachmentBinding = StreamUiItemMessageMediaAttachmentBinding.inflate(
+    public val audioRecordViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
+    public val binding: StreamUiItemMessageMediaAttachmentBinding = StreamUiItemMessageMediaAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false,

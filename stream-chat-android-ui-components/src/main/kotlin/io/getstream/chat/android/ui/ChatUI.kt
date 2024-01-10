@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.font.ChatFonts
 import io.getstream.chat.android.ui.font.ChatFontsImpl
 import io.getstream.chat.android.ui.font.ChatStyle
@@ -122,6 +123,12 @@ public object ChatUI {
      */
     @JvmStatic
     public var dateFormatter: DateFormatter by lazyVar { DateFormatter.from(appContext) }
+
+    /**
+     * Allows adding support for custom attachments in the message list.
+     */
+    @JvmStatic
+    public var decoratorProviderFactory: DecoratorProviderFactory by lazyVar { DecoratorProviderFactory.default() }
 
     /**
      * Allows adding support for custom attachments in the message list.

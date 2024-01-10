@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator
 
 import io.getstream.chat.android.core.internal.exhaustive
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.CustomAttachmentsViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.DateDividerViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.FileAttachmentsViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.GiphyAttachmentViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.GiphyViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.LinkAttachmentsViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MediaAttachmentsViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessageDeletedViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.DateDividerViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.LinkAttachmentsViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
 
-internal abstract class BaseDecorator : Decorator {
+public abstract class BaseDecorator : Decorator {
 
-    final override fun <T : MessageListItem> decorate(
+    public override fun <T : MessageListItem> decorate(
         viewHolder: BaseMessageItemViewHolder<T>,
         data: T,
     ) {
@@ -58,7 +58,7 @@ internal abstract class BaseDecorator : Decorator {
      * @param viewHolder The holder to be decorated.
      * @param data The data used to define various decorations.
      */
-    abstract fun decorateCustomAttachmentsMessage(
+    protected abstract fun decorateCustomAttachmentsMessage(
         viewHolder: CustomAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     )
@@ -69,7 +69,7 @@ internal abstract class BaseDecorator : Decorator {
      * @param viewHolder The holder to be decorated.
      * @param data The data used to define various decorations.
      */
-    abstract fun decorateGiphyAttachmentMessage(
+    protected abstract fun decorateGiphyAttachmentMessage(
         viewHolder: GiphyAttachmentViewHolder,
         data: MessageListItem.MessageItem,
     )
@@ -80,7 +80,7 @@ internal abstract class BaseDecorator : Decorator {
      * @param viewHolder The holder to be decorated.
      * @param data The data used to define various decorations.
      */
-    abstract fun decorateFileAttachmentsMessage(
+    protected abstract fun decorateFileAttachmentsMessage(
         viewHolder: FileAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     )
@@ -91,7 +91,7 @@ internal abstract class BaseDecorator : Decorator {
      * @param viewHolder The holder to be decorated.
      * @param data The data used to define various decorations.
      */
-    abstract fun decorateMediaAttachmentsMessage(
+    protected abstract fun decorateMediaAttachmentsMessage(
         viewHolder: MediaAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     )
@@ -107,7 +107,7 @@ internal abstract class BaseDecorator : Decorator {
      * @param viewHolder The holder to be decorated.
      * @param data The data used to define various decorations.
      */
-    abstract fun decorateLinkAttachmentsMessage(
+    protected abstract fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     )
@@ -121,7 +121,7 @@ internal abstract class BaseDecorator : Decorator {
     protected open fun decorateDeletedMessage(
         viewHolder: MessageDeletedViewHolder,
         data: MessageListItem.MessageItem,
-    ) = Unit
+    ): Unit = Unit
 
     /**
      * Applies various decorations to the [GiphyViewHolder].
@@ -129,8 +129,8 @@ internal abstract class BaseDecorator : Decorator {
      * @param viewHolder The holder to be decorated.
      * @param data The data used to define various decorations.
      */
-    abstract fun decorateGiphyMessage(
+    protected open fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
         data: MessageListItem.MessageItem,
-    )
+    ): Unit = Unit
 }

@@ -23,7 +23,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 

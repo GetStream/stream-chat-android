@@ -14,52 +14,56 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl
 
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
+import androidx.core.view.setPadding
 import androidx.core.view.updateLayoutParams
-import io.getstream.chat.android.ui.databinding.StreamUiItemCustomAttachmentsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentsBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentClickListener
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentDownloadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.utils.extensions.dpToPx
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
+import io.getstream.log.taggedLogger
 
 /**
- * ViewHolder used for displaying messages that contain custom attachments.
+ * ViewHolder that displays message items containing file attachments.
+ *
+ * Note: This ViewHolder is used in situations where the message either contains
+ * multiple attachment types or a single attachment type that does not have
+ * a designated ViewHolder.
+ *
+ * You can see the full list of ViewHolders in [io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory].
  *
  * @param parent The parent container.
  * @param decorators List of decorators applied to the ViewHolder.
- * @param listeners Listeners used by the ViewHolder.
  * @param messageTextTransformer Formats strings and sets them on the respective TextView.
- * @param attachmentFactoryManager A manager for the registered custom attachment factories.
+ * @param listeners Listeners used by the ViewHolder.
  * @param binding Binding generated for the layout.
  */
-internal class CustomAttachmentsViewHolder(
+public class FileAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
     private val messageTextTransformer: ChatMessageTextTransformer,
-    private val attachmentFactoryManager: AttachmentFactoryManager,
-    internal val binding: StreamUiItemCustomAttachmentsBinding = StreamUiItemCustomAttachmentsBinding.inflate(
+    public val binding: StreamUiItemFileAttachmentsBinding = StreamUiItemFileAttachmentsBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false,
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
-    /**
-     * The inner ViewHolder with custom attachments.
-     */
-    private var innerAttachmentViewHolder: InnerAttachmentViewHolder? = null
+    private val logger by taggedLogger("FileAttachmentListVH")
 
     /**
      * Initializes the ViewHolder class.
@@ -67,46 +71,38 @@ internal class CustomAttachmentsViewHolder(
     init {
         initializeListeners()
         setLinkMovementMethod()
+        binding.fileAttachmentsView.setPadding(4.dpToPx())
     }
 
     override fun messageContainerView(): View = binding.messageContainer
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        super.bindData(data, diff)
-        bindMessageText()
-        bindHorizontalBias()
-        bindCustomAttachments(data)
-    }
-
     /**
-     * Updates the text section of the message.
+     * Binds the data to the view.
      */
-    private fun bindMessageText() {
-        binding.messageText.isVisible = data.message.text.isNotEmpty()
-        messageTextTransformer.transformAndApply(binding.messageText, data)
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+        logger.d { "[bindData] data: $data, diff: $diff" }
+        super.bindData(data, diff)
+
+        updateHorizontalBias(data)
+
+        binding.fileAttachmentsView.setAttachments(data.message.attachments)
+
+        if (data.message.text.isNotEmpty()) {
+            messageTextTransformer.transformAndApply(binding.messageText, data)
+            binding.messageText.visibility = View.VISIBLE
+        } else {
+            binding.messageText.visibility = View.GONE
+        }
     }
 
     /**
      * Updates the horizontal bias of the message according to the owner
      * of the message.
      */
-    private fun bindHorizontalBias() {
+    private fun updateHorizontalBias(data: MessageListItem.MessageItem) {
         binding.messageContainer.updateLayoutParams<ConstraintLayout.LayoutParams> {
             this.horizontalBias = if (data.isMine) 1f else 0f
         }
-    }
-
-    /**
-     * Updates the custom attachments section of the message.
-     */
-    private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
-        this.innerAttachmentViewHolder =
-            attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
-                .also { attachmentViewHolder ->
-                    attachmentViewHolder.onBindViewHolder(data.message)
-                    binding.attachmentsContainer.removeAllViews()
-                    binding.attachmentsContainer.addView(attachmentViewHolder.itemView)
-                }
     }
 
     /**
@@ -116,9 +112,6 @@ internal class CustomAttachmentsViewHolder(
     private fun initializeListeners() {
         binding.run {
             listeners?.let { container ->
-                messageContainer.setOnClickListener {
-                    container.messageClickListener.onMessageClick(data.message)
-                }
                 reactionsView.setReactionClickListener {
                     container.reactionViewClickListener.onReactionViewClick(data.message)
                 }
@@ -132,11 +125,14 @@ internal class CustomAttachmentsViewHolder(
                 userAvatarView.setOnClickListener {
                     container.userClickListener.onUserClick(data.message.user)
                 }
-                LongClickFriendlyLinkMovementMethod.set(
-                    textView = messageText,
-                    longClickTarget = messageContainer,
-                    onLinkClicked = container.linkClickListener::onLinkClick,
-                )
+                binding.fileAttachmentsView.attachmentLongClickListener = AttachmentLongClickListener {
+                    container.messageLongClickListener.onMessageLongClick(data.message)
+                }
+                binding.fileAttachmentsView.attachmentClickListener = AttachmentClickListener { attachment ->
+                    container.attachmentClickListener.onAttachmentClick(data.message, attachment)
+                }
+                binding.fileAttachmentsView.attachmentDownloadClickListener =
+                    AttachmentDownloadClickListener(container.attachmentDownloadClickListener::onAttachmentDownloadClick)
             }
         }
     }
@@ -145,34 +141,12 @@ internal class CustomAttachmentsViewHolder(
      * Enables clicking on links.
      */
     private fun setLinkMovementMethod() {
-        listeners?.let { container ->
+        listeners?.let { listenerContainer ->
             LongClickFriendlyLinkMovementMethod.set(
                 textView = binding.messageText,
                 longClickTarget = binding.messageContainer,
-                onLinkClicked = container.linkClickListener::onLinkClick,
+                onLinkClicked = listenerContainer.linkClickListener::onLinkClick,
             )
         }
-    }
-
-    /**
-     * Called when a view in this ViewHolder has been recycled.
-     */
-    override fun unbind() {
-        innerAttachmentViewHolder?.onUnbindViewHolder()
-        super.unbind()
-    }
-
-    /**
-     * Called when a view in this ViewHolder has been attached to a window.
-     */
-    override fun onDetachedFromWindow() {
-        innerAttachmentViewHolder?.onViewDetachedFromWindow()
-    }
-
-    /**
-     * Called when a view in this ViewHolder has been detached from its window.
-     */
-    override fun onAttachedToWindow() {
-        innerAttachmentViewHolder?.onViewAttachedToWindow()
     }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl
 
 import android.view.View
 import android.view.ViewGroup
@@ -29,8 +29,8 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GiphyMediaAttachmentView
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.BackgroundDecorator
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
 import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.android.ui.utils.extensions.hasText
 import io.getstream.chat.android.ui.utils.extensions.isBottomPosition
@@ -45,12 +45,12 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
  * @param markdown Markdown renderer, used for the message text.
  * @param binding The binding that holds all the View references.
  */
-internal class GiphyAttachmentViewHolder(
+public class GiphyAttachmentViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val listeners: MessageListListenerContainer?,
     private val markdown: ChatMessageTextTransformer,
-    internal val binding: StreamUiItemGiphyAttachmentBinding = StreamUiItemGiphyAttachmentBinding.inflate(
+    public val binding: StreamUiItemGiphyAttachmentBinding = StreamUiItemGiphyAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false,

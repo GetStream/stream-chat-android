@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal
+package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl
 
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -24,15 +24,15 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.internal.Decorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-internal class MessageDeletedViewHolder(
+public class MessageDeletedViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val style: MessageListItemStyle,
-    internal val binding: StreamUiItemMessageDeletedBinding = StreamUiItemMessageDeletedBinding.inflate(
+    public val style: MessageListItemStyle,
+    public val binding: StreamUiItemMessageDeletedBinding = StreamUiItemMessageDeletedBinding.inflate(
         parent.streamThemeInflater,
         parent,
         false,
