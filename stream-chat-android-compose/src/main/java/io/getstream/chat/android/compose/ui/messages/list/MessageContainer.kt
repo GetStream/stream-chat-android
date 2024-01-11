@@ -42,6 +42,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceh
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
+import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
@@ -100,6 +101,7 @@ public fun MessageContainer(
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
     emptyThreadPlaceholderItemContent: @Composable (EmptyThreadPlaceholderItemState) -> Unit = { },
+    startOfTheChannelItemState: @Composable (StartOfTheChannelItemState) -> Unit = { },
 ) {
     when (messageListItemState) {
         is DateSeparatorItemState -> dateSeparatorContent(messageListItemState)
@@ -109,6 +111,7 @@ public fun MessageContainer(
         is TypingItemState -> typingIndicatorContent(messageListItemState)
         is EmptyThreadPlaceholderItemState -> emptyThreadPlaceholderItemContent(messageListItemState)
         is UnreadSeparatorItemState -> unreadSeparatorContent(messageListItemState)
+        is StartOfTheChannelItemState -> startOfTheChannelItemState(messageListItemState)
     }
 }
 

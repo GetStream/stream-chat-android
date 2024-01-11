@@ -41,6 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/messagesHeaderView"
         app:streamUiFlagMessageConfirmationEnabled="true"
         app:streamUiPinMessageEnabled="true"
+        app:streamUiMessagesStart="top"
         />
 
     <io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
