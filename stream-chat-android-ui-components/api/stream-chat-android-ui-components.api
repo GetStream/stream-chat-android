@@ -2574,6 +2574,17 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$StartOfTheChannelItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$StartOfTheChannelItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$StartOfTheChannelItem;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$StartOfTheChannelItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadPlaceholderItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadPlaceholderItem;
 	public fun toString ()Ljava/lang/String;
@@ -2669,6 +2680,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public static final field MEDIA_ATTACHMENT I
 	public static final field MESSAGE_DELETED I
 	public static final field PLAIN_TEXT I
+	public static final field START_OF_THE_CHANNEL I
 	public static final field SYSTEM_MESSAGE I
 	public static final field THREAD_PLACEHOLDER I
 	public static final field THREAD_SEPARATOR I

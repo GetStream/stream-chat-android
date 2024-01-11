@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENT
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.PLAIN_TEXT
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.START_OF_THE_CHANNEL
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
@@ -185,6 +186,7 @@ public open class MessageListItemViewHolderFactory {
             FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
             MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
             UNREAD_SEPARATOR -> createUnreadSeparatorViewHolder(parentView)
+            START_OF_THE_CHANNEL -> createEmptyMessageItemViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }

@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.utils.extensions
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
+import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
@@ -49,5 +50,6 @@ public fun MessageListItemCommon.toUiMessageListItem(): MessageListItem {
         )
         is EmptyThreadPlaceholderItemState -> MessageListItem.ThreadPlaceholderItem
         is UnreadSeparatorItemState -> MessageListItem.UnreadSeparatorItem(unreadCount = unreadCount)
+        is StartOfTheChannelItemState -> MessageListItem.StartOfTheChannelItem(channel = channel)
     }
 }
