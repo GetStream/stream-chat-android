@@ -73,6 +73,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItem
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
+import io.getstream.chat.android.ui.common.state.messages.list.HasMessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocusRemoved
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
@@ -1413,7 +1414,7 @@ public class MessageListController(
      * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     private fun markLastMessageReadInternal() {
-        val itemState = messagesState.messageItems.lastOrNull { it is MessageItemState } as? MessageItemState
+        val itemState = messagesState.messageItems.lastOrNull { it is HasMessageListItemState } as? HasMessageListItemState
         val messageId = itemState?.message?.id
         val messageText = itemState?.message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
