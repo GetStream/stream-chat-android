@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
+import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.extractCause
@@ -387,6 +388,7 @@ public class MessageListController(
     @Volatile
     private var lastSeenThreadMessageId: String? = null
 
+    @VisibleForTesting
     internal var lastSeenMessageId: String?
         get() = if (isInThread) lastSeenThreadMessageId else lastSeenChannelMessageId
         set(value) = if (isInThread) {
