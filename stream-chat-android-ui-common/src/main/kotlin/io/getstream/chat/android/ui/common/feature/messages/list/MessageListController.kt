@@ -381,10 +381,18 @@ public class MessageListController(
     private val debouncer = Debouncer(debounceMs = 200L, scope = scope)
 
     @Volatile
-    private var lastSeenMessageId: String? = null
+    private var lastSeenChannelMessageId: String? = null
 
     @Volatile
     private var lastSeenThreadMessageId: String? = null
+
+    internal var lastSeenMessageId: String?
+        get() = if (isInThread) lastSeenThreadMessageId else lastSeenChannelMessageId
+        set(value) = if (isInThread) {
+            lastSeenThreadMessageId = value
+        } else {
+            lastSeenChannelMessageId = value
+        }
 
     /**
      * We start observing messages and if the message list screen was started after searching for a message, it will
@@ -1414,21 +1422,19 @@ public class MessageListController(
      * Marks that the last message in the list as read. This also sets the unread count to 0.
      */
     private fun markLastMessageReadInternal() {
-        val itemState = messagesState.messageItems.lastOrNull { it is HasMessageListItemState } as? HasMessageListItemState
+        val itemState = messagesState.messageItems.lastOrNull { messageItem ->
+            messageItem is HasMessageListItemState
+        } as? HasMessageListItemState
         val messageId = itemState?.message?.id
         val messageText = itemState?.message?.text
         logger.d { "[markLastMessageRead] cid: $cid, msgId($isInThread): $messageId, msgText: \"$messageText\"" }
 
-        val lastSeenMessageId = if (isInThread) lastSeenThreadMessageId else lastSeenMessageId
+        val lastSeenMessageId = this.lastSeenMessageId
         if (lastSeenMessageId == messageId) {
             logger.w { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
             return
         }
-        if (isInThread) {
-            this.lastSeenThreadMessageId = messageId
-        } else {
-            this.lastSeenMessageId = messageId
-        }
+        this.lastSeenMessageId = messageId
 
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             if (isInThread) {
