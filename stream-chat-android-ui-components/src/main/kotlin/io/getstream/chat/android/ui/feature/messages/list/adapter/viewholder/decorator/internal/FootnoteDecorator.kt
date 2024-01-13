@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -72,6 +73,11 @@ internal class FootnoteDecorator(
 ) : BaseDecorator() {
 
     private val itemStyle: MessageListItemStyle get() = listViewStyle.itemStyle
+
+    /**
+     * The type of the decorator. In this case [Decorator.Type.BuiltIn.FOOTNOTE].
+     */
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.FOOTNOTE
 
     /**
      * Decorates the footnote of the message containing custom attachments.

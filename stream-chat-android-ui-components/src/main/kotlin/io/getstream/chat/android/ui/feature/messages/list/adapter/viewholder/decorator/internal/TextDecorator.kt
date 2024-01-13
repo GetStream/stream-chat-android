@@ -20,6 +20,7 @@ import android.widget.TextView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -30,6 +31,11 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.font.setTextStyle
 
 internal class TextDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
+
+    /**
+     * The type of the decorator. In this case [Decorator.Type.BuiltIn.TEXT].
+     */
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.TEXT
 
     /**
      * Decorates the text of the message containing custom attachments.

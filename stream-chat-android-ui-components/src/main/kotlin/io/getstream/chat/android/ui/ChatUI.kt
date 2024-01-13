@@ -128,7 +128,7 @@ public object ChatUI {
      * Allows adding support for custom attachments in the message list.
      */
     @JvmStatic
-    public var decoratorProviderFactory: DecoratorProviderFactory by lazyVar { DecoratorProviderFactory.default() }
+    public var decoratorProviderFactory: DecoratorProviderFactory by lazyVar { DecoratorProviderFactory.defaultFactory() }
 
     /**
      * Allows adding support for custom attachments in the message list.

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.sample.feature.chat.messagelist
+package io.getstream.chat.ui.sample.feature.chat.messagelist.decorator
 
 import android.util.TypedValue
 import android.view.View
@@ -25,9 +25,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.common.utils.Utils
-import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -37,9 +37,10 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.ui.sample.R
 
 class ForwardedDecorator(
-    private val style: MessageListItemStyle,
-
+    private val forceShowForAllMessages: Boolean = false,
 ) : BaseDecorator() {
+
+    override val type: Decorator.Type = CustomDecoratorType.FORWARDED
 
     private val forwardedViewId = View.generateViewId()
 
@@ -87,12 +88,13 @@ class ForwardedDecorator(
         data: MessageListItem.MessageItem,
         isPlainText: Boolean = false,
     ) {
+        val isForwarded = forceShowForAllMessages || data.message.extraData["forwarded"] as? Boolean ?: false
         var textView = container.findViewById<TextView>(forwardedViewId)
-        if (textView == null) {
+        if (textView == null && isForwarded) {
             textView = createTextView(container, isPlainText)
             container.addView(textView, 0)
         }
-        textView.isVisible = data.message.extraData["forwarded"] as? Boolean ?: false
+        textView?.isVisible = isForwarded
     }
 
     private fun createTextView(container: ViewGroup, isPlainText: Boolean) = TextView(container.context).apply {

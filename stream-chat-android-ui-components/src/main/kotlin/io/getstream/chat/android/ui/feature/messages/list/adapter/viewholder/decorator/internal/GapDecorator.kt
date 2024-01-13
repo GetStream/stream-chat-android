@@ -20,6 +20,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -30,6 +31,11 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
 
 internal class GapDecorator : BaseDecorator() {
+
+    /**
+     * The type of the decorator. In this case [Decorator.Type.BuiltIn.GAP].
+     */
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.GAP
 
     /**
      * Decorates the gap of the message containing custom attachments.

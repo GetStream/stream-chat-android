@@ -21,6 +21,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MessageReplyView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -32,6 +33,11 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 internal class ReplyDecorator(
     private val style: MessageReplyStyle,
 ) : BaseDecorator() {
+
+    /**
+     * The type of the decorator. In this case [Decorator.Type.BuiltIn.REPLY].
+     */
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.REPLY
 
     /**
      * Decorates the reply section of the message containing custom attachments.

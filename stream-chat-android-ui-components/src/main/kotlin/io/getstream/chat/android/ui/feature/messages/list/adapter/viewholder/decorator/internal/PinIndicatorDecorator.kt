@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -42,6 +43,11 @@ import io.getstream.chat.android.ui.utils.extensions.updateConstraints
  * shows a caption indicating that the message was pinned by a particular user.
  */
 internal class PinIndicatorDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
+
+    /**
+     * The type of the decorator. In this case [Decorator.Type.BuiltIn.PIN_INDICATOR].
+     */
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.PIN_INDICATOR
 
     /**
      * Decorates the pin indicator of the message containing custom attachments.

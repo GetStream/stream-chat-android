@@ -734,3 +734,220 @@ Which makes the UI look like so:
 Only the video thumbnails fetched from Stream's APIs are paid and can be disabled. Video thumbnails loaded from local storage - such as the ones in the attachment picker - are not paid and will remain enabled.
 :::
 
+## Customizing Message Decorators
+
+Message decorators are used to decorate the message UI elements. 
+For example, the `ReplyDecorator` is used to reflect `Message.replyTo` property on UI.
+
+You can customize the message decorators by overriding the default `ChatUI.decoratorProviderFactory`:
+
+### Removing Built-in Decorators
+
+For instance you can remove one the built-in decorators.
+Let's try to remove the `ReplyDecorator`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.decoratorProviderFactory = DecoratorProviderFactory.default {
+    it.type != Decorator.Type.BuiltIn.REPLY
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setDecoratorProviderFactory(
+    DecoratorProviderFactory.defaultFactory(
+        decorator -> decorator.getType() != Decorator.Type.BuiltIn.REPLY
+    )
+);
+```
+</TabItem>
+</Tabs>
+
+
+| DecoratorProviderFactory (default)                                                                                       | DecoratorProviderFactory (no ReplyDecorator)                                                                                                 |
+|--------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| ![Messages List Video Thumbs disabled Dark Mode](../../assets/configuration_message_list_decorator_provider_default.png) | ![Attachment Gallery Video Thumbs disabled Dark Mode](../../assets/configuration_message_list_decorator_provider_custom.png) |
+
+### Adding Custom Decorators
+You can also add your own decorators.
+
+:::note
+You can find the `ForwardedDecorator` related classes below in our [Sample App](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components-sample/src/main/kotlin/io/getstream/chat/ui/sample/feature/chat/messagelist/decorator/).
+:::
+
+Let's add a `ForwardedDecorator` that will display a `Forwarded` label for the **forwarded** messages:
+```kotlin
+// First, create a custom decorator type enum
+enum class CustomDecoratorType : Decorator.Type {
+    FORWARDED,
+}
+
+// Then, create a decorator
+class ForwardedDecorator() : BaseDecorator() {
+
+    override val type: Decorator.Type = CustomDecoratorType.FORWARDED
+
+    private val forwardedViewId = View.generateViewId()
+
+    override fun decorateCustomAttachmentsMessage(
+        viewHolder: CustomAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupForwardedView(viewHolder.binding.messageContainer, data)
+    }
+
+    override fun decorateGiphyAttachmentMessage(
+        viewHolder: GiphyAttachmentViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupForwardedView(viewHolder.binding.messageContainer, data)
+    }
+
+    override fun decorateFileAttachmentsMessage(
+        viewHolder: FileAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupForwardedView(viewHolder.binding.messageContainer, data)
+    }
+
+    override fun decorateMediaAttachmentsMessage(
+        viewHolder: MediaAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupForwardedView(viewHolder.binding.messageContainer, data)
+    }
+
+    override fun decoratePlainTextMessage(viewHolder: MessagePlainTextViewHolder, data: MessageListItem.MessageItem) {
+        setupForwardedView(viewHolder.binding.messageContainer, data, isPlainText = true)
+    }
+
+    override fun decorateLinkAttachmentsMessage(
+        viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        setupForwardedView(viewHolder.binding.messageContainer, data)
+    }
+
+    private fun setupForwardedView(
+        container: ViewGroup,
+        data: MessageListItem.MessageItem,
+        isPlainText: Boolean = false,
+    ) {
+        // Check if the message is forwarded based on your custom message property
+        val isForwarded = data.message.extraData["forwarded"] as? Boolean ?: false
+        var textView = container.findViewById<TextView>(forwardedViewId)
+        if (textView == null && isForwarded) {
+            textView = createTextView(container, isPlainText)
+            container.addView(textView, 0)
+        }
+        textView?.isVisible = isForwarded
+    }
+
+    private fun createTextView(container: ViewGroup, isPlainText: Boolean) = TextView(container.context).apply {
+        id = forwardedViewId
+        layoutParams = MarginLayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+            topMargin = Utils.dpToPx(MARGIN_TOP_DP)
+            marginStart = Utils.dpToPx(MARGIN_START_DP)
+            marginEnd = Utils.dpToPx(MARGIN_END_DP)
+            if (!isPlainText) bottomMargin = Utils.dpToPx(MARGIN_BOTTOM_DP)
+        }
+        setTextSize(TypedValue.COMPLEX_UNIT_SP, TEXT_SIZE)
+        setText(R.string.message_forwarded)
+        setTextColor(ContextCompat.getColor(container.context, R.color.message_forwarded))
+        setCompoundDrawablesWithIntrinsicBounds(R.drawable.rounded_arrow_top_right_24, 0, 0, 0)
+    }
+
+    companion object {
+        const val MARGIN_TOP_DP = 4
+        const val MARGIN_START_DP = 8
+        const val MARGIN_END_DP = 16
+        const val MARGIN_BOTTOM_DP = 4
+
+        const val TEXT_SIZE = 13f
+    }
+}
+```
+
+Then, add the decorator to the `CustomDecoratorProviderFactory` and `CustomDecoratorProvider`:
+```kotlin
+/**
+ * Custom decorator provider factory that creates a [CustomDecoratorProvider].
+ */
+class CustomDecoratorProviderFactory : DecoratorProviderFactory  {
+    override fun createDecoratorProvider(
+        channel: Channel,
+        dateFormatter: DateFormatter,
+        messageListViewStyle: MessageListViewStyle,
+        showAvatarPredicate: MessageListView.ShowAvatarPredicate,
+        messageBackgroundFactory: MessageBackgroundFactory,
+        deletedMessageVisibility: () -> DeletedMessageVisibility,
+        getLanguageDisplayName: (code: String) -> String,
+    ): DecoratorProvider = CustomDecoratorProvider(
+        channel,
+        dateFormatter,
+        messageListViewStyle,
+        showAvatarPredicate,
+        messageBackgroundFactory,
+        deletedMessageVisibility,
+        getLanguageDisplayName,
+    )
+}
+
+/**
+ * Custom decorator provider that creates the list of decorators.
+ */
+class CustomDecoratorProvider(
+    channel: Channel,
+    dateFormatter: DateFormatter,
+    messageListViewStyle: MessageListViewStyle,
+    showAvatarPredicate: MessageListView.ShowAvatarPredicate,
+    messageBackgroundFactory: MessageBackgroundFactory,
+    deletedMessageVisibility: () -> DeletedMessageVisibility,
+    getLanguageDisplayName: (code: String) -> String,
+) : DecoratorProvider {
+    override val decorators by lazy {
+        // You can pass any of the above paparameters 
+        // to your decorator to have more customized behavior.
+        listOf(ForwardedDecorator())
+    }
+}
+```
+
+Then you need to send the message with the `forwarded` property set to `true`. 
+You can do it by using the `extraData` property of the `Message` object:
+
+```kotlin
+val channelClient = client.channel("messaging", "<channel_id>")
+
+// Create a forwarded message with the custom fields
+val forwardedMessage = Message(
+    text = originalMessage.text,
+    extraData = mutableMapOf(
+        "forwarded" to true,
+    ),
+)
+
+// Send the message to the channel
+channelClient.sendMessage(message).enqueue { /* ... */ }
+```
+
+As a result, the forwarded message will be decorated with the custom decorator:
+
+| No ForwardedDecorator                                                                                                      | Has ForwardedDecorator                                                                                                         |
+|----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| ![Messages List Video Thumbs disabled Dark Mode](../../assets/configuration_message_list_decorator_forwarded_disabled.png) | ![Attachment Gallery Video Thumbs disabled Dark Mode](../../assets/configuration_message_list_decorator_forwarded_enabled.png) |
+
+On the **left** image you can see the default setup with `DecoratorProviderFactory.defaultFactory()` only: 
+```kotlin
+ChatUI.decoratorProviderFactory = DecoratorProviderFactory.defaultFactory()
+```
+
+On the **right** image you can see the default setup along with the `ForwardedDecorator` added to the `CustomDecoratorProviderFactory`:
+```kotlin
+ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
+```

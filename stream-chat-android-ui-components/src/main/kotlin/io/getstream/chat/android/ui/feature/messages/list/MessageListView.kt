@@ -808,7 +808,7 @@ public class MessageListView : ConstraintLayout {
             messageOptionItemsFactory = MessageOptionItemsFactory.defaultFactory(context)
         }
 
-        messageListItemViewHolderFactory.decoratorProvider = ChatUI.decoratorProviderFactory.createProvider(
+        messageListItemViewHolderFactory.decoratorProvider = ChatUI.decoratorProviderFactory.createDecoratorProvider(
             channel = channel,
             dateFormatter = messageDateFormatter,
             messageListViewStyle = requireStyle(),
