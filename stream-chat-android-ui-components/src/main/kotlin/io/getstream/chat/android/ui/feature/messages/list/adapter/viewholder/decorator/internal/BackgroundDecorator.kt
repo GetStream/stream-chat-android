@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.de
 
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -32,6 +33,11 @@ import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 internal class BackgroundDecorator(
     private val messageBackgroundFactory: MessageBackgroundFactory,
 ) : BaseDecorator() {
+
+    /**
+     * The type of the decorator. In this case [Decorator.Type.BuiltIn.BACKGROUND].
+     */
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.BACKGROUND
 
     /**
      * Decorates the background of the custom attachments message.

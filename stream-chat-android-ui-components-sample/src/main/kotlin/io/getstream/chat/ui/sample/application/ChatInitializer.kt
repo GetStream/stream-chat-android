@@ -33,18 +33,12 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
-import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
-import io.getstream.chat.ui.sample.feature.chat.messagelist.ForwardedDecorator
+import io.getstream.chat.ui.sample.feature.chat.messagelist.decorator.CustomDecoratorProviderFactory
 
 class ChatInitializer(
     private val context: Context,
@@ -142,20 +136,6 @@ class ChatInitializer(
         //     )
         // }
 
-        ChatUI.decoratorProviderFactory = DecoratorProviderFactory.default() + object : DecoratorProviderFactory {
-            override fun createProvider(
-                channel: Channel,
-                dateFormatter: DateFormatter,
-                messageListViewStyle: MessageListViewStyle,
-                showAvatarPredicate: MessageListView.ShowAvatarPredicate,
-                messageBackgroundFactory: MessageBackgroundFactory,
-                deletedMessageVisibility: () -> DeletedMessageVisibility,
-                getLanguageDisplayName: (code: String) -> String,
-            ): DecoratorProvider = object : DecoratorProvider {
-                override val decorators = listOf(
-                    ForwardedDecorator(messageListViewStyle.itemStyle),
-                )
-            }
-        }
+        ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }
 }

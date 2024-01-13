@@ -33,6 +33,8 @@ import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory;
 import io.getstream.chat.android.ui.font.ChatFonts;
 import io.getstream.chat.android.ui.font.TextStyle;
 import io.getstream.chat.android.ui.helper.SupportedReactions;
@@ -45,6 +47,7 @@ import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider;
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer;
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView;
 import io.getstream.chat.docs.R;
+import kotlin.jvm.functions.Function1;
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -237,9 +240,9 @@ public class Configuration {
     }
 
     /**
-    * [Disabling Video Thumbnails](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#disabling-video-thumbnails)
-    */
-    private void disablingVideoThumbnails(){
+     * [Disabling Video Thumbnails](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#disabling-video-thumbnails)
+     */
+    private void disablingVideoThumbnails() {
 
     }
 
@@ -247,7 +250,7 @@ public class Configuration {
         final UserAvatarRenderer renderer = new UserAvatarRenderer() {
             @Override
             public void render(
-                    @NonNull  AvatarStyle style,
+                    @NonNull AvatarStyle style,
                     @NonNull User user,
                     @NonNull UserAvatarView target
             ) {
@@ -292,5 +295,13 @@ public class Configuration {
             }
         };
         ChatUI.setChannelAvatarRenderer(renderer);
+    }
+
+    private void customizingDefaultDecoratorProviderFactory() {
+        ChatUI.setDecoratorProviderFactory(
+                DecoratorProviderFactory.defaultFactory(
+                        decorator -> decorator.getType() != Decorator.Type.BuiltIn.REPLY
+                )
+        );
     }
 }

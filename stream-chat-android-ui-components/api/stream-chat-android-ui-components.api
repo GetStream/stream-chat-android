@@ -7,6 +7,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getChannelNameFormatter ()Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;
 	public static final fun getCurrentUserProvider ()Lio/getstream/chat/android/ui/helper/CurrentUserProvider;
 	public static final fun getDateFormatter ()Lio/getstream/chat/android/ui/common/helper/DateFormatter;
+	public static final fun getDecoratorProviderFactory ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
 	public static final fun getFonts ()Lio/getstream/chat/android/ui/font/ChatFonts;
 	public static final fun getImageHeadersProvider ()Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;
 	public static final fun getMessagePreviewFormatter ()Lio/getstream/chat/android/ui/helper/MessagePreviewFormatter;
@@ -26,6 +27,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setChannelNameFormatter (Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;)V
 	public static final fun setCurrentUserProvider (Lio/getstream/chat/android/ui/helper/CurrentUserProvider;)V
 	public static final fun setDateFormatter (Lio/getstream/chat/android/ui/common/helper/DateFormatter;)V
+	public static final fun setDecoratorProviderFactory (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;)V
 	public static final fun setFonts (Lio/getstream/chat/android/ui/font/ChatFonts;)V
 	public static final fun setImageHeadersProvider (Lio/getstream/chat/android/ui/common/helper/ImageHeadersProvider;)V
 	public static final fun setMessagePreviewFormatter (Lio/getstream/chat/android/ui/helper/MessagePreviewFormatter;)V
@@ -2689,6 +2691,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$UserClickListener;
 }
 
+public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/view/GiphyMediaAttachmentViewStyle {
 	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/adapter/view/GiphyMediaAttachmentViewStyle$Companion;
 	public static final field NO_GIVEN_DIMENSION_RATIO F
@@ -2817,6 +2823,137 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/models/Message;)Z
 	public fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+}
+
+public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/BaseDecorator : io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator {
+	public fun <init> ()V
+	public fun decorate (Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;)V
+	protected abstract fun decorateCustomAttachmentsMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/CustomAttachmentsViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected fun decorateDeletedMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MessageDeletedViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected abstract fun decorateFileAttachmentsMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/FileAttachmentsViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected abstract fun decorateGiphyAttachmentMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/GiphyAttachmentViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected fun decorateGiphyMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/GiphyViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected abstract fun decorateLinkAttachmentsMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/LinkAttachmentsViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected abstract fun decorateMediaAttachmentsMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MediaAttachmentsViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected abstract fun decoratePlainTextMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MessagePlainTextViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator {
+	public abstract fun decorate (Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;)V
+	public abstract fun getType ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type;
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type {
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn : java/lang/Enum, io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type {
+	public static final field AVATAR Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field BACKGROUND Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field FAILED_INDICATOR Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field FOOTNOTE Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field GAP Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field MAX_POSSIBLE_WIDTH Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field MESSAGE_CONTAINER_MARGIN Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field PIN_INDICATOR Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field REACTIONS Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field REPLY Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static final field TEXT Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator$Type$BuiltIn;
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProvider {
+	public abstract fun getDecorators ()Ljava/util/List;
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory$Companion;
+	public abstract fun createDecoratorProvider (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ShowAvatarPredicate;Lio/getstream/chat/android/ui/feature/messages/list/background/MessageBackgroundFactory;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProvider;
+	public static fun defaultFactory (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory$Companion {
+	public final fun defaultFactory (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
+	public static synthetic fun defaultFactory$default (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory$Companion;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactoryKt {
+	public static final fun plus (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderFactory;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProviderKt {
+	public static final fun plus (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProvider;Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProvider;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/DecoratorProvider;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/CustomAttachmentsViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemCustomAttachmentsBinding;
+	public fun messageContainerView ()Landroid/view/View;
+	public fun onAttachedToWindow ()V
+	public fun onDetachedFromWindow ()V
+	public fun unbind ()V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/DateDividerViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$DateSeparatorItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemDateDividerBinding;
+	public final fun getStyle ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/FileAttachmentsViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemFileAttachmentsBinding;
+	public fun messageContainerView ()Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/GiphyAttachmentViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemGiphyAttachmentBinding;
+	public fun messageContainerView ()Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/GiphyViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemMessageGiphyBinding;
+	public final fun getStyle ()Lio/getstream/chat/android/ui/feature/messages/list/GiphyViewHolderStyle;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/LinkAttachmentsViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemLinkAttachmentBinding;
+	public final fun getStyle ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;
+	public fun messageContainerView ()Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MediaAttachmentsViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getAudioRecordViewStyle ()Lio/getstream/chat/android/ui/feature/messages/list/MessageViewStyle;
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemMessageMediaAttachmentBinding;
+	public fun messageContainerView ()Landroid/view/View;
+	public fun onAttachedToWindow ()V
+	public fun unbind ()V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MessageDeletedViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemMessageDeletedBinding;
+	public final fun getStyle ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MessagePlainTextViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemMessagePlainTextBinding;
+	public fun messageContainerView ()Landroid/view/View;
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/background/MessageBackgroundFactory {

@@ -20,6 +20,7 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.BaseDecorator
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.CustomAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.FileAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.GiphyAttachmentViewHolder
@@ -33,6 +34,8 @@ import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
 internal class AvatarDecorator(
     private val showAvatarPredicate: MessageListView.ShowAvatarPredicate,
 ) : BaseDecorator() {
+
+    override val type: Decorator.Type = Decorator.Type.BuiltIn.AVATAR
 
     /**
      * Decorates the avatar of the custom attachments message, based on the message owner.

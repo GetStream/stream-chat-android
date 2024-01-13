@@ -57,6 +57,7 @@ internal class MessageListItemDecoratorProvider(
     messageBackgroundFactory: MessageBackgroundFactory,
     deletedMessageVisibility: () -> DeletedMessageVisibility,
     getLanguageDisplayName: (code: String) -> String,
+    decoratorPredicate: (Decorator) -> Boolean,
 ) : DecoratorProvider {
 
     override val decorators: List<Decorator> by lazy {
@@ -78,6 +79,6 @@ internal class MessageListItemDecoratorProvider(
                 getLanguageDisplayName,
             ),
             PinIndicatorDecorator(messageListViewStyle.itemStyle).takeIf { messageListViewStyle.pinMessageEnabled },
-        )
+        ).filter(decoratorPredicate)
     }
 }

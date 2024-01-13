@@ -24,8 +24,16 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemDecoratorProvider
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 
+/**
+ * A factory responsible for creating [DecoratorProvider]s
+ * to be used in [io.getstream.chat.android.ui.feature.messages.list.MessageListView].
+ */
 public interface DecoratorProviderFactory {
-    public fun createProvider(
+
+    /**
+     * Creates a new [DecoratorProvider] for the given [channel].
+     */
+    public fun createDecoratorProvider(
         channel: Channel,
         dateFormatter: DateFormatter,
         messageListViewStyle: MessageListViewStyle,
@@ -36,8 +44,15 @@ public interface DecoratorProviderFactory {
     ): DecoratorProvider
 
     public companion object {
-        public fun default(): DecoratorProviderFactory = object : DecoratorProviderFactory {
-            override fun createProvider(
+
+        /**
+         * Creates the default [DecoratorProviderFactory].
+         */
+        @JvmStatic
+        public fun defaultFactory(
+            predicate: (Decorator) -> Boolean = { true },
+        ): DecoratorProviderFactory = object : DecoratorProviderFactory {
+            override fun createDecoratorProvider(
                 channel: Channel,
                 dateFormatter: DateFormatter,
                 messageListViewStyle: MessageListViewStyle,
@@ -54,6 +69,7 @@ public interface DecoratorProviderFactory {
                     messageBackgroundFactory,
                     deletedMessageVisibility,
                     getLanguageDisplayName,
+                    predicate,
                 )
             }
         }
@@ -66,7 +82,7 @@ public interface DecoratorProviderFactory {
 public operator fun DecoratorProviderFactory.plus(
     other: DecoratorProviderFactory,
 ): DecoratorProviderFactory = object : DecoratorProviderFactory {
-    override fun createProvider(
+    override fun createDecoratorProvider(
         channel: Channel,
         dateFormatter: DateFormatter,
         messageListViewStyle: MessageListViewStyle,
@@ -75,7 +91,7 @@ public operator fun DecoratorProviderFactory.plus(
         deletedMessageVisibility: () -> DeletedMessageVisibility,
         getLanguageDisplayName: (code: String) -> String,
     ): DecoratorProvider {
-        return this@plus.createProvider(
+        return this@plus.createDecoratorProvider(
             channel,
             dateFormatter,
             messageListViewStyle,
@@ -83,7 +99,7 @@ public operator fun DecoratorProviderFactory.plus(
             messageBackgroundFactory,
             deletedMessageVisibility,
             getLanguageDisplayName,
-        ) + other.createProvider(
+        ) + other.createDecoratorProvider(
             channel,
             dateFormatter,
             messageListViewStyle,

@@ -18,6 +18,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Exposed `Decorator` and related classes for the better `MessageListView` customization. [#5144](https://github.com/GetStream/stream-chat-android/pull/5144) 
 
 ### ❌ Removed
 
