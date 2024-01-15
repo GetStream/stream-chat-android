@@ -59,6 +59,9 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             is MessageListItem.ThreadPlaceholderItem -> true
             is MessageListItem.UnreadSeparatorItem ->
                 oldItem.unreadCount == (newItem as? MessageListItem.UnreadSeparatorItem)?.unreadCount
+
+            is MessageListItem.StartOfTheChannelItem ->
+                oldItem.channel == (newItem as? MessageListItem.StartOfTheChannelItem)?.channel
         }
     }
 

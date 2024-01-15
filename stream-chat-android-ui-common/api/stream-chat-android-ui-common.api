@@ -1163,6 +1163,18 @@ public final class io/getstream/chat/android/ui/common/state/messages/list/Shuff
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState : io/getstream/chat/android/ui/common/state/messages/list/MessageListItemState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun copy (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState;Lio/getstream/chat/android/models/Channel;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/list/StartOfTheChannelItemState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/common/state/messages/list/SystemMessageItemState : io/getstream/chat/android/ui/common/state/messages/list/HasMessageListItemState {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/models/Message;)V

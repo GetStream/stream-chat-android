@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -51,6 +52,7 @@ public sealed class HasMessageListItemState : MessageListItemState() {
  * @param deletedMessageVisibility The [DeletedMessageVisibility] which determines the visibility of deleted messages in
  * the UI.
  * @param focusState The current [MessageFocusState] of the message, used to focus the message in the ui.
+ * @param messageReadBy The list of [ChannelUserRead] for the message.
  */
 public data class MessageItemState(
     public override val message: Message = Message(),
@@ -109,6 +111,20 @@ public data class TypingItemState(
  */
 public data object EmptyThreadPlaceholderItemState : MessageListItemState()
 
+/**
+ * Represents an unread separator item inside a message list.
+ *
+ * @param unreadCount The number of unread messages.
+ */
 public data class UnreadSeparatorItemState(
     val unreadCount: Int,
+) : MessageListItemState()
+
+/**
+ * Represents the start of the channel inside a message list.
+ *
+ * @param channel The [Channel] this message list belongs to.
+ */
+public data class StartOfTheChannelItemState(
+    val channel: Channel,
 ) : MessageListItemState()
