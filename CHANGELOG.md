@@ -14,11 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- Protected PN related requests from repeated usage. [#5110](https://github.com/GetStream/stream-chat-android/pull/5110)
-  * Prevented `ChatClient.getDevices` from duplicate requests.
-  * Prevented `ChatClient.addDevice` from duplicate requests.
-  * Prevented `ChatClient.deleteDevice` from duplicate requests.
-  * Added debouncing logic into `PushTokenUpdateHandler`
 
 ### ✅ Added
 
@@ -61,7 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed old messages being marked as read by freshly added members. [#5138](https://github.com/GetStream/stream-chat-android/pull/5138)
 
 ### ⬆️ Improved
 
@@ -73,7 +67,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed unread count not being cleared. [#5116](https://github.com/GetStream/stream-chat-android/pull/5116)
 
 ### ⬆️ Improved
 
@@ -126,6 +119,23 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# January 12th, 2023 - 5.17.21
+## stream-chat-android-client
+### ⬆️ Improved
+- Protected PN related requests from repeated usage. [#5110](https://github.com/GetStream/stream-chat-android/pull/5110)
+  * Prevented `ChatClient.getDevices` from duplicate requests.
+  * Prevented `ChatClient.addDevice` from duplicate requests.
+  * Prevented `ChatClient.deleteDevice` from duplicate requests.
+  * Added debouncing logic into `PushTokenUpdateHandler`
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed old messages being marked as read by freshly added members. [#5138](https://github.com/GetStream/stream-chat-android/pull/5138)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed unread count not being cleared. [#5116](https://github.com/GetStream/stream-chat-android/pull/5116)
 
 # December 7th, 2023 - 5.17.20
 ## stream-chat-android-client
