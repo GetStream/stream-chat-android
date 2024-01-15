@@ -120,7 +120,7 @@
 
 ### ❌ Removed
 
-# January 12th, 2023 - 5.17.21
+# January 15th, 2023 - 5.17.21
 ## stream-chat-android-client
 ### ⬆️ Improved
 - Protected PN related requests from repeated usage. [#5110](https://github.com/GetStream/stream-chat-android/pull/5110)
