@@ -92,6 +92,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.SendGiphy
 import io.getstream.chat.android.ui.common.state.messages.list.ShuffleGiphy
+import io.getstream.chat.android.ui.common.state.messages.list.StartOfTheChannelItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
@@ -420,6 +421,7 @@ public class MessageListController(
     @Suppress("MagicNumber")
     private fun observeMessagesListState() {
         channelState.filterNotNull().flatMapLatest { channelState ->
+            val channel = channelState.toChannel()
             combine(
                 channelState.messagesState,
                 channelState.reads,
@@ -433,6 +435,7 @@ public class MessageListController(
                 channelState.endOfNewerMessages,
                 unreadLabelState,
                 channelState.members,
+                channelState.endOfOlderMessages,
             ) { data ->
                 val state = data[0] as MessagesState
                 val reads = data[1] as List<ChannelUserRead>
@@ -446,6 +449,7 @@ public class MessageListController(
                 val endOfNewerMessages = data[9] as Boolean
                 val unreadLabel = data[10] as UnreadLabel?
                 val members = data[11] as List<Member>
+                val endOfOlderMessages = data[12] as Boolean
 
                 when (state) {
                     is MessagesState.Loading,
@@ -470,6 +474,11 @@ public class MessageListController(
                             focusedMessage = focusedMessage,
                             unreadLabel = unreadLabel,
                             members = members,
+                            endOfOlderMessages = endOfOlderMessages,
+                            channel = channel.copy(
+                                members = members,
+                                read = reads,
+                            ),
                         ),
                         endOfNewMessagesReached = endOfNewerMessages,
                     )
@@ -683,6 +692,8 @@ public class MessageListController(
                         focusedMessage = focusedMessage,
                         unreadLabel = null,
                         members = members,
+                        endOfOlderMessages = false,
+                        channel = null,
                     ),
                     parentMessageId = threadId,
                     endOfNewMessagesReached = true,
@@ -720,6 +731,8 @@ public class MessageListController(
      * @param focusedMessage The message we wish to scroll/focus in center of the screen.
      * @param unreadLabel The label that shows the unread count.
      * @param members The list of members in the channel.
+     * @param endOfOlderMessages Whether we reached the end of older messages.
+     * @param channel The channel we are currently in.
      *
      * @return A list of [MessageListItemState]s, each containing a position.
      */
@@ -736,6 +749,8 @@ public class MessageListController(
         focusedMessage: Message?,
         unreadLabel: UnreadLabel?,
         members: List<Member>,
+        endOfOlderMessages: Boolean,
+        channel: Channel?,
     ): List<MessageListItemState> {
         val parentMessageId = (_mode.value as? MessageMode.MessageThread)?.parentMessage?.id
         val currentUser = user.value
@@ -751,6 +766,11 @@ public class MessageListController(
         val shouldAddDateSeparatorInEmptyThread = isThreadWithNoReplies && showDateSeparatorInEmptyThread
         val shouldAddThreadSeparator = isThreadWithReplies ||
             (isThreadWithNoReplies && showThreadSeparatorInEmptyThread)
+
+        if (endOfOlderMessages && channel != null) {
+            groupedMessages.add(StartOfTheChannelItemState(channel))
+        }
+
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
@@ -2004,5 +2024,6 @@ private fun MessageListItemState.stringify(): String {
         is ThreadDateSeparatorItemState -> "ThreadDateSeparator"
         is TypingItemState -> "Typing"
         is UnreadSeparatorItemState -> "UnreadSeparator"
+        is StartOfTheChannelItemState -> "StartOfTheChannelItemState"
     }
 }

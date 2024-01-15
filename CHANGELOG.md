@@ -50,6 +50,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `StartOfTheChannelItemState`, a new `MessageListItemState` that represent the start of the channel inside a message list. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
 
 ### ⚠️ Changed
 
@@ -61,6 +62,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `StartOfTheChannelItem`, a new `MessageListItem` that represent the start of the channel inside a message list. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
 
 ### ⚠️ Changed
 
@@ -72,6 +74,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `startOfTheChannelItemState` composable function to `MessageContainer` to be able to render the start of the channel. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
 
 ### ⚠️ Changed
 

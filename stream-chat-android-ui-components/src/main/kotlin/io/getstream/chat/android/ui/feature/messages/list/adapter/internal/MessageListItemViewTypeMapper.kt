@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENT
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.PLAIN_TEXT
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.START_OF_THE_CHANNEL
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
@@ -60,6 +61,7 @@ internal object MessageListItemViewTypeMapper {
             is MessageListItem.TypingItem -> TYPING_INDICATOR
             is MessageListItem.ThreadPlaceholderItem -> THREAD_PLACEHOLDER
             is MessageListItem.UnreadSeparatorItem -> UNREAD_SEPARATOR
+            is MessageListItem.StartOfTheChannelItem -> START_OF_THE_CHANNEL
         }
     }
 
