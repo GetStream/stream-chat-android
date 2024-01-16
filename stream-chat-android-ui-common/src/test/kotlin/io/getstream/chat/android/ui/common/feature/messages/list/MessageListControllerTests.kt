@@ -435,7 +435,7 @@ internal class MessageListControllerTests {
     }
 
     @Test
-    fun `When system message arrives, markRead should invoked for that channel`() = runTest {
+    fun `When system message arrives, markRead should be invoked for that channel`() = runTest {
         /* Given */
         val chatClient: ChatClient = mock()
         val members = randomMembers(size = 2) {
