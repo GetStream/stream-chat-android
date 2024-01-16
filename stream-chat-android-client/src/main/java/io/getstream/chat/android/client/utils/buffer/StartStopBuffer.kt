@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.utils.buffer
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -30,17 +31,25 @@ import java.util.concurrent.atomic.AtomicBoolean
 private const val NO_LIMIT = -1
 
 @InternalStreamChatApi
-public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customTrigger: StateFlow<Boolean>? = null) {
+public class StartStopBuffer<T>(
+    suffix: String = "Default",
+    private val bufferLimit: Int = NO_LIMIT,
+    customTrigger: StateFlow<Boolean>? = null,
+) {
+
+    private val logger by taggedLogger("Chat:StartStopBuffer-$suffix")
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
     private var func: ((T) -> Unit)? = null
 
     init {
+        logger.i { "<init> customTrigger: $customTrigger" }
         CoroutineScope(DispatcherProvider.IO).launch {
             customTrigger?.collectLatest { active ->
+                logger.v { "<init> active: $active" }
                 if (active) {
-                    active()
+                    active(src = "init")
                 } else {
                     hold()
                 }
@@ -49,40 +58,56 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customT
     }
 
     public fun hold() {
+        logger.d { "[hold] no args" }
         active.set(false)
     }
 
-    public fun active() {
+    public fun active(src: String = "active") {
+        logger.d { "[active] no args" }
         active.set(true)
-
+        val func = func
+        logger.v { "[active] func: $func" }
         if (func != null) {
-            propagateData()
+            propagateData(src = src)
         }
     }
 
     public fun subscribe(func: (T) -> Unit) {
         this.func = func
 
-        if (active.get()) {
-            propagateData()
+        val isActive = active.get()
+        logger.d { "[active] isActive: $isActive, func: $func" }
+        if (isActive) {
+            propagateData(src = "subscribe")
         }
     }
 
     public fun enqueueData(data: T) {
+        logger.d { "[enqueueData] data: ${data?.let { it::class.simpleName }}" }
         events.offer(data)
 
-        if (active.get() || aboveSafetyThreshold()) {
-            propagateData()
+        val isActive = active.get()
+        val aboveSafetyThreshold = aboveSafetyThreshold()
+        logger.v { "[enqueueData] isActive: $isActive, aboveSafetyThreshold: $aboveSafetyThreshold" }
+        if (isActive || aboveSafetyThreshold) {
+            propagateData(src = "enqueue")
         }
     }
 
     private fun aboveSafetyThreshold(): Boolean = events.size > bufferLimit && bufferLimit != NO_LIMIT
 
-    private fun propagateData() {
+    private fun propagateData(src: String) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            while (active.get() && events.isNotEmpty() || aboveSafetyThreshold()) {
+            val isActive = active.get()
+            val hasEvents = events.isNotEmpty()
+            val aboveSafetyThreshold = aboveSafetyThreshold()
+            val result = isActive && hasEvents || aboveSafetyThreshold()
+            logger.d { "[propagateData] #$src; result: $result, isActive: $isActive, " +
+                "hasEvents: $hasEvents, aboveSafetyThreshold: $aboveSafetyThreshold" }
+            while (result) {
                 events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
+                        logger.v { "[propagateData] #$src; data: $it" }
                         func?.invoke(it)
                     }
                 }
