@@ -829,8 +829,9 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.setAudioRecordViewStyle(style.audioRecordPlayerViewStyle)
         messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(style.replyMessageStyle)
 
-        adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
-        setMessageListItemAdapter(adapter)
+        adapter = MessageListItemAdapter(messageListItemViewHolderFactory).also {
+            setMessageListItemAdapter(it)
+        }
     }
 
     /**
@@ -1092,7 +1093,6 @@ public class MessageListView : ConstraintLayout {
      * the message list.
      */
     public fun displayNewMessages(messageListItemWrapper: MessageListItemWrapper) {
-        logger.d { "[displayNewMessages] messageListItemWrapper: ${messageListItemWrapper.stringify()}" }
         buffer.enqueueData(messageListItemWrapper)
     }
 
@@ -1159,7 +1159,6 @@ public class MessageListView : ConstraintLayout {
     }
 
     private fun handleNewWrapper(listItem: MessageListItemWrapper) {
-        logger.v { "[handleNewWrapper] listItem: $listItem" }
         CoroutineScope(DispatcherProvider.IO).launch {
             val filteredList = listItem.items
                 .filter(messageListItemPredicate::predicate)
@@ -1187,17 +1186,15 @@ public class MessageListView : ConstraintLayout {
                     messageListViewStyle?.messagesStart?.let(::chatMessageStart)
                 }
 
-                logger.v { "[handleNewWrapper] submitting filteredList: ${filteredList.size}" }
+                logger.v { "[handleNewWrapper] filteredList.size: ${filteredList.size}" }
                 adapter.submitList(filteredList) {
-                    // scrollHelper.onMessageListChanged(
-                    //     isThreadStart = isThreadStart,
-                    //     hasNewMessages = listItem.hasNewMessages,
-                    //     isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
-                    //     areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
-                    // )
-                    //
+                    scrollHelper.onMessageListChanged(
+                        isThreadStart = isThreadStart,
+                        hasNewMessages = listItem.hasNewMessages,
+                        isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
+                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
+                    )
                     buffer.active()
-                    //adapter.notifyDataSetChanged()
                 }
             }
         }
