@@ -60,7 +60,6 @@ public sealed class MessageListItem {
 
     public abstract fun stringify(): String
 
-
     /**
      * Represent a date separator item in a [MessageListView].
      *
