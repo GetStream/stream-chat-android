@@ -44,7 +44,6 @@ public class StartStopBuffer<T>(
     private var func: ((T) -> Unit)? = null
 
     init {
-        logger.i { "<init> customTrigger: $customTrigger" }
         CoroutineScope(DispatcherProvider.IO).launch {
             customTrigger?.collectLatest { active ->
                 logger.v { "<init> active: $active" }
@@ -58,15 +57,12 @@ public class StartStopBuffer<T>(
     }
 
     public fun hold() {
-        logger.d { "[hold] no args" }
         active.set(false)
     }
 
     public fun active(src: String = "active") {
-        logger.d { "[active] no args" }
         active.set(true)
         val func = func
-        logger.v { "[active] func: $func" }
         if (func != null) {
             propagateData(src = src)
         }
@@ -75,21 +71,15 @@ public class StartStopBuffer<T>(
     public fun subscribe(func: (T) -> Unit) {
         this.func = func
 
-        val isActive = active.get()
-        logger.d { "[active] isActive: $isActive, func: $func" }
-        if (isActive) {
+        if (active.get()) {
             propagateData(src = "subscribe")
         }
     }
 
     public fun enqueueData(data: T) {
-        logger.d { "[enqueueData] data: ${data?.let { it::class.simpleName }}" }
         events.offer(data)
 
-        val isActive = active.get()
-        val aboveSafetyThreshold = aboveSafetyThreshold()
-        logger.v { "[enqueueData] isActive: $isActive, aboveSafetyThreshold: $aboveSafetyThreshold" }
-        if (isActive || aboveSafetyThreshold) {
+        if (active.get() || aboveSafetyThreshold()) {
             propagateData(src = "enqueue")
         }
     }
@@ -98,16 +88,9 @@ public class StartStopBuffer<T>(
 
     private fun propagateData(src: String) {
         CoroutineScope(DispatcherProvider.IO).launch {
-            val isActive = active.get()
-            val hasEvents = events.isNotEmpty()
-            val aboveSafetyThreshold = aboveSafetyThreshold()
-            val result = isActive && hasEvents || aboveSafetyThreshold()
-            logger.d { "[propagateData] #$src; result: $result, isActive: $isActive, " +
-                "hasEvents: $hasEvents, aboveSafetyThreshold: $aboveSafetyThreshold" }
             while (active.get() && events.isNotEmpty() || aboveSafetyThreshold()) {
                 events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
-                        logger.v { "[propagateData] #$src; data: $it" }
                         func?.invoke(it)
                     }
                 }

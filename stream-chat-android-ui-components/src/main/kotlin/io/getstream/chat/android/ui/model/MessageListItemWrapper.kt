@@ -37,5 +37,4 @@ public data class MessageListItemWrapper(
         return "MessageListItemWrapper(items=${items.size}, first: ${items.firstOrNull()?.stringify()}" +
             "hasNewMessages=$hasNewMessages, isTyping=$isTyping, isThread=$isThread, areNewestMessagesLoaded=$areNewestMessagesLoaded)"
     }
-
 }
