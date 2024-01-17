@@ -104,7 +104,7 @@ public class StartStopBuffer<T>(
             val result = isActive && hasEvents || aboveSafetyThreshold()
             logger.d { "[propagateData] #$src; result: $result, isActive: $isActive, " +
                 "hasEvents: $hasEvents, aboveSafetyThreshold: $aboveSafetyThreshold" }
-            while (result) {
+            while (active.get() && events.isNotEmpty() || aboveSafetyThreshold()) {
                 events.poll()?.let {
                     withContext(DispatcherProvider.Main) {
                         logger.v { "[propagateData] #$src; data: $it" }

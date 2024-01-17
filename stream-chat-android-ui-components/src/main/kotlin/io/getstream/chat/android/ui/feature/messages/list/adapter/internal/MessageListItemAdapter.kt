@@ -34,6 +34,21 @@ internal class MessageListItemAdapter(
 
     var isThread: Boolean = false
 
+    init {
+        logger.i { "<init> isThread: $isThread" }
+        setHasStableIds(true)
+    }
+
+    override fun submitList(list: List<MessageListItem>?) {
+        logger.i { "[submitList] list.size: ${list?.size}" }
+        super.submitList(list)
+    }
+
+    override fun submitList(list: List<MessageListItem>?, commitCallback: Runnable?) {
+        logger.i { "[submitList] list.size: ${list?.size}, commitCallback: $commitCallback" }
+        super.submitList(list, commitCallback)
+    }
+
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
     override fun getItemViewType(position: Int): Int {
@@ -44,12 +59,22 @@ internal class MessageListItemAdapter(
         parent: ViewGroup,
         viewType: Int,
     ): BaseMessageItemViewHolder<out MessageListItem> {
-        return viewHolderFactory.createViewHolder(parent, viewType)
+        return viewHolderFactory.createViewHolder(parent, viewType).also {
+            logger.d { "[onCreateViewHolder] viewType: $viewType, holder: $it" }
+        }
     }
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
         logger.d { "[onBindViewHolder] position: $position, holder: $holder" }
         holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+    }
+
+    override fun onCurrentListChanged(
+        previousList: MutableList<MessageListItem>,
+        currentList: MutableList<MessageListItem>
+    ) {
+        logger.d { "[onCurrentListChanged] previousList.size: ${previousList.size}, " +
+            "currentList.size: ${currentList.size}" }
     }
 
     override fun onBindViewHolder(

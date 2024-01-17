@@ -370,7 +370,11 @@ public class MessageListView : ConstraintLayout {
                 } else {
                     val style = requireStyle()
                     val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
-                    val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+                    val isThreadEnabled = style.threadsEnabled && channel.config.isThreadEnabled
+                    val viewStyle = style.copy(
+                        editMessageEnabled = isEditEnabled,
+                        threadsEnabled = isThreadEnabled,
+                    )
 
                     val messageOptionItems = messageOptionItemsFactory.createMessageOptionItems(
                         selectedMessage = message,
@@ -781,14 +785,14 @@ public class MessageListView : ConstraintLayout {
     public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()
-
-        messageListViewStyle = requireStyle().copy(
-            replyEnabled = requireStyle().replyEnabled,
-            threadsEnabled = requireStyle().threadsEnabled && channel.config.isThreadEnabled,
-        )
     }
 
     private fun initAdapter() {
+        if (::adapter.isInitialized) {
+            logger.v { "[initAdapter] rejected (already initialized)" }
+            return
+        }
+        val style = requireStyle()
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
             messageDateFormatter = ChatUI.dateFormatter
@@ -804,7 +808,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         if (::messageBackgroundFactory.isInitialized.not()) {
-            messageBackgroundFactory = MessageBackgroundFactoryImpl(requireStyle().itemStyle)
+            messageBackgroundFactory = MessageBackgroundFactoryImpl(style.itemStyle)
         }
 
         if (::messageOptionItemsFactory.isInitialized.not()) {
@@ -814,7 +818,8 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.decoratorProvider = MessageListItemDecoratorProvider(
             dateFormatter = messageDateFormatter,
             isDirectMessage = { channel.isDirectMessaging() },
-            messageListViewStyle = requireStyle(),
+            isThreadEnabled = { channel.config.isThreadEnabled },
+            messageListViewStyle = style,
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory = messageBackgroundFactory,
             deletedMessageVisibility = { deletedMessageVisibility },
@@ -824,14 +829,12 @@ public class MessageListView : ConstraintLayout {
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentFactoryManager(this.attachmentFactoryManager)
-        messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
-        messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
-        messageListItemViewHolderFactory.setAudioRecordViewStyle(requireStyle().audioRecordPlayerViewStyle)
-        messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(requireStyle().replyMessageStyle)
+        messageListItemViewHolderFactory.setMessageListItemStyle(style.itemStyle)
+        messageListItemViewHolderFactory.setGiphyViewHolderStyle(style.giphyViewHolderStyle)
+        messageListItemViewHolderFactory.setAudioRecordViewStyle(style.audioRecordPlayerViewStyle)
+        messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(style.replyMessageStyle)
 
         adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
-        adapter.setHasStableIds(true)
-
         setMessageListItemAdapter(adapter)
     }
 
@@ -1199,7 +1202,7 @@ public class MessageListView : ConstraintLayout {
                     // )
                     //
                     buffer.active()
-                    adapter.notifyDataSetChanged()
+                    //adapter.notifyDataSetChanged()
                 }
             }
         }

@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.feature.messages.list.background.MessageBack
  *
  * @param dateFormatter [DateFormatter]. Formats the dates in the messages.
  * @param isDirectMessage Checks if the message is direct of not. Used in the footnote.
+ * @param isThreadEnabled Checks if the threads are enabled in Channel's config.
  * @param messageListViewStyle [MessageListViewStyle] The style of the MessageListView and its items.
  * @param showAvatarPredicate [MessageListView.ShowAvatarPredicate] Checks if should show the avatar or not accordingly with the provided logic.
  * @param messageBackgroundFactory [MessageBackgroundFactory] Factory that customizes the background of messages.
@@ -50,6 +51,7 @@ import io.getstream.chat.android.ui.feature.messages.list.background.MessageBack
 internal class MessageListItemDecoratorProvider(
     dateFormatter: DateFormatter,
     isDirectMessage: () -> Boolean,
+    isThreadEnabled: () -> Boolean,
     messageListViewStyle: MessageListViewStyle,
     showAvatarPredicate: MessageListView.ShowAvatarPredicate,
     messageBackgroundFactory: MessageBackgroundFactory,
@@ -71,6 +73,7 @@ internal class MessageListItemDecoratorProvider(
         FootnoteDecorator(
             dateFormatter,
             isDirectMessage,
+            isThreadEnabled,
             messageListViewStyle,
             deletedMessageVisibility,
             getLanguageDisplayName,
