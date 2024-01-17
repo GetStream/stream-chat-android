@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed unread count not being cleared while user is inside a channel. [#5146](https://github.com/GetStream/stream-chat-android/pull/5146)
 
 ### ⬆️ Improved
 

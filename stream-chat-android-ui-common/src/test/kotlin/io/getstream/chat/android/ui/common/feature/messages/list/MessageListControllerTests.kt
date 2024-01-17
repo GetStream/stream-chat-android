@@ -33,13 +33,16 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomMessageList
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
 import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.suspendableRandomMessageList
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
@@ -67,6 +70,7 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.Date
 
 @ExperimentalCoroutinesApi
 internal class MessageListControllerTests {
@@ -430,6 +434,61 @@ internal class MessageListControllerTests {
         controller.channel.value.members.size `should be equal to` 4
     }
 
+    @Test
+    fun `When system message arrives, markRead should be invoked for that channel`() = runTest {
+        /* Given */
+        val chatClient: ChatClient = mock()
+        val members = randomMembers(size = 2) {
+            randomMember(user = if (it % 2 == 0) user1 else user2)
+        }
+        val channelData = ChannelData(
+            type = CHANNEL_TYPE,
+            id = CHANNEL_ID,
+            memberCount = members.size,
+            createdBy = user1,
+        )
+
+        val messages = suspendableRandomMessageList(2) {
+            nowMessage(author = user1, type = "regular", text = "regular_$it").also {
+                delay(100L)
+            }
+        }
+        val membersState = MutableStateFlow(members)
+        val channelDataState = MutableStateFlow(channelData)
+        val membersCountState = MutableStateFlow(members.size)
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(
+                channelDataState = channelDataState,
+                membersState = membersState,
+                membersCountState = membersCountState,
+                messagesState = messagesState,
+            )
+            .get()
+
+        /* When */
+
+        // 1 ==> simulate channel entering
+        messagesState.emit(messages)
+        controller.updateLastSeenMessage(messages.last())
+        // wait for 1 sec to let controller.debouncer trigger markRead for the last message
+        delay(1000)
+
+        // 2 ==> simulate new system message arrival
+        val newMessage = nowMessage(author = user1, type = "system", text = "system_${messages.size}")
+        messagesState.emit(messages + newMessage)
+        controller.updateLastSeenMessage(newMessage)
+        // wait for 1 sec to let controller.debouncer trigger markRead for new system message
+        delay(1000)
+
+        /* Then */
+        verify(chatClient, times(2)).markRead(eq(CHANNEL_TYPE), eq(CHANNEL_ID))
+        controller.lastSeenMessageId `should be equal to` newMessage.id
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelId: String = CID,
@@ -535,6 +594,22 @@ internal class MessageListControllerTests {
 
         private val user1 = User(id = "Jc", name = "Jc Miñarro")
         private val user2 = User(id = "NotJc", name = "Not Jc Miñarro")
+
+        private fun nowDate() = Date(testCoroutines.dispatcher.scheduler.currentTime)
+
+        private fun nowMessage(author: User, type: String, text: String = randomString()): Message {
+            val nowDate = nowDate()
+            return randomMessage(
+                user = author,
+                type = type,
+                text = text,
+                createdAt = nowDate,
+                updatedAt = nowDate,
+                deletedAt = null,
+                createdLocallyAt = null,
+                updatedLocallyAt = null,
+            )
+        }
 
         private fun ChannelState.convertToChannel(): Channel {
             val channelData = channelData.value

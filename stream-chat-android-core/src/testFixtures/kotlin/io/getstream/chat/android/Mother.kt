@@ -266,6 +266,17 @@ public fun randomChannelUserRead(
     lastReadMessageId = lastReadMessageId,
 )
 
+public suspend fun suspendableRandomMessageList(
+    size: Int = 10,
+    creationFunction: suspend (Int) -> Message = { randomMessage() },
+): List<Message> {
+    val result = ArrayList<Message>(size)
+    for (i in 0 until size) {
+        result.add(creationFunction(i))
+    }
+    return result
+}
+
 public fun randomMessageList(
     size: Int = 10,
     creationFunction: (Int) -> Message = { randomMessage() },
