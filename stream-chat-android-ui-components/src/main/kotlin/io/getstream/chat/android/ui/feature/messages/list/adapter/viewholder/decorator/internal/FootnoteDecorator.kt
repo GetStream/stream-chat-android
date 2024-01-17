@@ -67,6 +67,7 @@ private const val NO_READS = 0
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
+    private val isThreadEnabled: () -> Boolean,
     private val listViewStyle: MessageListViewStyle,
     private val deletedMessageVisibilityHandler: () -> DeletedMessageVisibility,
     private val getLanguageDisplayName: (code: String) -> String,
@@ -270,7 +271,8 @@ internal class FootnoteDecorator(
         threadGuideline: View,
         data: MessageListItem.MessageItem,
     ) {
-        if (!listViewStyle.threadsEnabled) {
+        val isThreadEnabled = listViewStyle.threadsEnabled && isThreadEnabled()
+        if (!isThreadEnabled) {
             return
         }
         root.updateConstraints {
