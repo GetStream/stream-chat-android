@@ -33,8 +33,9 @@ public data class MessageListItemWrapper(
         return stringify()
     }
 
-    public fun stringify(): String {
+    private fun stringify(): String {
         return "MessageListItemWrapper(items=${items.size}, first: ${items.firstOrNull()?.stringify()}" +
-            "hasNewMessages=$hasNewMessages, isTyping=$isTyping, isThread=$isThread, areNewestMessagesLoaded=$areNewestMessagesLoaded)"
+            ", hasNewMessages=$hasNewMessages, isTyping=$isTyping, isThread=$isThread" +
+            ", areNewestMessagesLoaded=$areNewestMessagesLoaded)"
     }
 }
