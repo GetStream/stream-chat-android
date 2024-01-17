@@ -750,7 +750,7 @@ Let's try to remove the `ReplyDecorator`:
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-ChatUI.decoratorProviderFactory = DecoratorProviderFactory.default {
+ChatUI.decoratorProviderFactory = DecoratorProviderFactory.defaultFactory {
     it.type != Decorator.Type.BuiltIn.REPLY
 }
 ```
