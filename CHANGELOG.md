@@ -58,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed blinking of the message list. [#5150](https://github.com/GetStream/stream-chat-android/pull/5150)
 
 ### ⬆️ Improved
 

@@ -54,7 +54,7 @@ internal class UnreadCountLogic(
     private val globalState: GlobalState,
     private val unreadTrigger: StateFlow<Boolean>,
     private val countBuffer: StartStopBuffer<ChatEvent> = StartStopBuffer(
-        suffix = "UC",
+        suffix = "UCL",
         bufferLimit = COUNT_BUFFER_LIMIT,
         customTrigger = unreadTrigger,
     ),
