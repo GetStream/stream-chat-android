@@ -1,0 +1,274 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Offline and State Plugins
+
+**Stream Android Chat SDK v6** brings several enhancements and changes to the plugin architecture. 
+In this migration guide, we'll walk you through the key modifications and provide instructions on how to adapt your existing codebase to the new version.
+
+## Architecture Changes
+
+To enhance architectural flexibility, the `StreamStatePluginFactory` has been separated from the `StreamOfflinePluginFactory`. 
+It now functions as an independent plugin factory, allowing developers to decouple state and persistence functionalities and customize their chat applications with greater precision.
+
+### Offline Plugin
+
+The first notable change is the removal of the `io.getstream.chat.android.offline.plugin.configuration.Config` class. 
+This class has been deleted since `StreamOfflinePluginFactory` no longer requires a `Config` parameter. 
+Instead, the configuration for the offline functionality can now be controlled by including or excluding the `StreamOfflinePluginFactory` in the list of `plugins` when configuring your `ChatClient`.
+
+In addition, parameters that were previously included in the `Config` have been removed from the **SDK** as well:
+- The `useSequentialEventHandler` flag has been removed from the Stream Android Chat SDK as the sequential event handling mechanism is now the sole option available. This change ensures a streamlined event processing flow, resulting in a more seamless and robust chat experience within your applications.
+- The `persistenceEnabled` flag has been removed since the persistence functionality is now controlled by including or excluding the `StreamOfflinePluginFactory` in the `ChatClient` plugins.
+
+Moreover, the `uploadAttachmentsNetworkType` parameter has been moved from the `Config` to the `ChatClient`.
+Furthermore, the `UploadAttachmentsNetworkType` class has been transferred from `stream-chat-android-state` to `stream-chat-android-core`. 
+Along with this migration, the package of the `UploadAttachmentsNetworkType` class has been changed from `io.getstream.chat.android.offline.model.message.attachments` to `io.getstream.chat.android.models`.
+
+:::note
+The purpose of the `Offline plugin` was narrowed down to providing offline support (persistence layer) for the chat functionality.
+:::
+
+Here is how `StreamOfflinePluginFactory` is now initialized:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(context)
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
+```
+
+</TabItem>
+</Tabs>
+
+Here is where `uploadAttachmentsNetworkType` parameter is passed now:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType
+
+//...
+
+ChatClient.Builder(apiKey, context)
+    // uploadAttachmentsNetworkType is passed here.
+    .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+    .build()
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType;
+
+//...
+
+new ChatClient.Builder(apiKey, context)
+        // uploadAttachmentsNetworkType is passed here.
+        .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
+        .build();
+```
+
+</TabItem>
+</Tabs>
+
+### State Plugin
+
+The `StreamStatePluginFactory` has been separated from the `StreamOfflinePluginFactory` and now exists as a distinct, independent plugin factory. 
+This deliberate decision allows for better modularity and independent control over each plugin's functionalities.
+
+Some flags, such as `backgroundSyncEnabled` and `userPresence` of the offline plugin's `Config` have been migrated to `StatePluginConfig`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+
+//...
+
+StatePluginConfig(
+    // Enables the background sync which is performed to sync user actions done without the Internet connection.
+    backgroundSyncEnabled = true,
+    // Enables the ability to receive information about user activity such as last active date and if they are online right now.
+    userPresence = true,
+)
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig;
+
+//...
+
+// Enable background sync which syncs user actions performed while offline
+boolean backgroundSyncEnabled = true;
+// Enable tracking online states for users
+boolean userPresence = true;
+
+StreamStatePluginFactory statePluginFactory = new StreamStatePluginFactory(
+        new StatePluginConfig(
+                backgroundSyncEnabled,
+                userPresence
+        ),
+        context
+);
+```
+
+</TabItem>
+</Tabs>
+
+
+## Let's summarize all the initialization changes in the one place
+Here is the way the `ChatClient` initialization looked in **v5**:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(
+    config = Config(
+        // Enables the background sync which is performed to sync user actions done without the Internet connection.
+        backgroundSyncEnabled = true,
+        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
+        userPresence = true,
+        // Enables using the database as an internal caching mechanism.
+        persistenceEnabled = true,
+        // An enumeration of various network types used as a constraint inside upload attachments worker.
+        uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        // Whether the SDK will use a new sequential event handling mechanism.
+        useSequentialEventHandler = false,
+    ),
+    appContext = context,
+)
+
+ChatClient.Builder(apiKey, context)
+    .withPlugin(offlinePluginFactory)
+    .build()
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Enables background sync which is performed to sync user actions done while offline.
+boolean backgroundSyncEnabled = true;
+// Enables the ability to receive information about user activity such as last active date and if they are online right now.
+boolean userPresence = true;
+// Enables using the database as an internal caching mechanism.
+boolean persistenceEnabled = true;
+// An enumeration of various network types used as a constraint inside upload attachments worker.
+UploadAttachmentsNetworkType uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING;
+// Whether the SDK will use a new sequential event handling mechanism.
+boolean useSequentialEventHandler = true;
+
+StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(
+        new Config(
+                backgroundSyncEnabled, 
+                userPresence, 
+                persistenceEnabled, 
+                uploadAttachmentsNetworkType, 
+                useSequentialEventHandler
+        ), context);
+new ChatClient.Builder(apiKey, context)
+        .withPlugin(offlinePluginFactory)
+        .build();
+```
+
+</TabItem>
+</Tabs>
+
+Here is the way the `ChatClient` initialization looks in **v6**:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val statePluginFactory = StreamStatePluginFactory(
+    appContext = context,
+    config = StatePluginConfig(
+        // Enables the background sync which is performed to sync user actions done without the Internet connection.
+        backgroundSyncEnabled = true,
+        // Enables the ability to receive information about user activity such as last active date and if they are online right now.
+        userPresence = true,
+    ),
+)
+
+val offlinePluginFactory = StreamOfflinePluginFactory(context)
+
+ChatClient.Builder(apiKey, context)
+    .withPlugins(statePluginFactory, offlinePluginFactory)
+    .uploadAttachmentsNetworkType(
+        // An enumeration of various network types used as a constraint inside upload attachments worker.
+        UploadAttachmentsNetworkType.NOT_ROAMING
+    )
+    .build()
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Enable background sync which syncs user actions performed while offline
+boolean backgroundSyncEnabled = true;
+// Enable tracking online states for users
+boolean userPresence = true;
+
+StreamStatePluginFactory statePluginFactory = new StreamStatePluginFactory(
+        new StatePluginConfig(
+                backgroundSyncEnabled,
+                userPresence
+        ),
+        context
+);
+
+StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(context);
+
+new ChatClient.Builder(apiKey, context)
+        .uploadAttachmentsNetworkType(
+                // An enumeration of various network types used as a constraint inside upload attachments worker.
+                UploadAttachmentsNetworkType.NOT_ROAMING
+        )
+        .withPlugins(statePluginFactory, offlinePluginFactory)
+        .build();
+```
+
+</TabItem>
+</Tabs>
+
+
+### List of affected imports
+
+The following list includes the **public classes** whose packages have been affected by the mentioned changes above:
+```java
+Was: io.getstream.chat.android.offline.event.handler.chat.BaseChatEventHandler
+Now: io.getstream.chat.android.state.event.handler.chat.BaseChatEventHandler
+
+Was: io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
+Now: io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
+
+Was: io.getstream.chat.android.livedata.utils.EventObserver
+Now: io.getstream.chat.android.state.utils.EventObserver
+
+Was: io.getstream.chat.android.offline.plugin.state.StateRegistry
+Now: io.getstream.chat.android.state.plugin.state.StateRegistry
+
+Was: io.getstream.chat.android.offline.plugin.state.StateRegistry
+Now: io.getstream.chat.android.state.plugin.state.StateRegistry
+```

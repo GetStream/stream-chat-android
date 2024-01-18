@@ -1,0 +1,15 @@
+# RTL Support
+
+UI Components support right-to-left (RTL) languages out of the box. The components can display content in a right-to-left direction and mirror associated UI elements. However, you may want to change the way certain components behave in RTL mode. 
+
+### MessageComposerView configuration
+
+By default `MessageComposerView` determines the input direction based on the first strong directional character. To change the behavior you can override the center content slot of `MessageComposerView`. You can check how to override content slots [here](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#overriding-content-views).
+
+### MessageListView configuration
+
+To change RTL support for the messages in the `MessageListView` you can use custom view holders with a different text direction. You can check how to implement custom view holders [here](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#custom-message-views).
+
+### ChannelListView configuration
+
+To change RTL support for the channels in the `ChannelListView` you can use custom view holders with a different text direction. You can check how to implement custom view holders [here](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list/#creating-a-custom-viewholder-factory).
