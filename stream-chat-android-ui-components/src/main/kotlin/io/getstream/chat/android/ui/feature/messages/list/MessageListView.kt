@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
-import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -167,8 +166,6 @@ public class MessageListView : ConstraintLayout {
     private var messageListViewStyle: MessageListViewStyle? = null
 
     private lateinit var binding: StreamUiMessageListViewBinding
-
-    private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer(suffix = "MLV")
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var loadingView: View
@@ -620,9 +617,6 @@ public class MessageListView : ConstraintLayout {
         binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
 
         layoutTransition = LayoutTransition()
-
-        buffer.subscribe(::handleNewWrapper)
-        buffer.active()
     }
 
     private fun initLoadingView() {
@@ -1098,7 +1092,7 @@ public class MessageListView : ConstraintLayout {
      * the message list.
      */
     public fun displayNewMessages(messageListItemWrapper: MessageListItemWrapper) {
-        buffer.enqueueData(messageListItemWrapper)
+        handleNewWrapper(messageListItemWrapper)
     }
 
     /**
@@ -1170,8 +1164,6 @@ public class MessageListView : ConstraintLayout {
                 .let(messageListItemTransformer::transform)
 
             withContext(DispatcherProvider.Main) {
-                buffer.hold()
-
                 val isThreadStart = !adapter.isThread && listItem.isThread ||
                     (listItem.isThread && listItem.items.size > 1 && adapter.itemCount <= 1)
                 val isNormalModeStart = adapter.isThread && !listItem.isThread
@@ -1199,7 +1191,6 @@ public class MessageListView : ConstraintLayout {
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
                         areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
                     )
-                    buffer.active()
                 }
             }
         }
