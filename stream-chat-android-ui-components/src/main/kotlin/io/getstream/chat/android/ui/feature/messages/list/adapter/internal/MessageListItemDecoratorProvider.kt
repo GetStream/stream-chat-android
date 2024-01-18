@@ -74,6 +74,7 @@ internal class MessageListItemDecoratorProvider(
             FootnoteDecorator(
                 dateFormatter,
                 { channel.isDirectMessaging() },
+                { channel.config.isThreadEnabled },
                 messageListViewStyle,
                 deletedMessageVisibility,
                 getLanguageDisplayName,

@@ -2120,6 +2120,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun showMessageOptionsDialog (Landroidx/fragment/app/FragmentManager;Lio/getstream/chat/android/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
 	public static synthetic fun showMessageOptionsDialog$default (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView;Landroidx/fragment/app/FragmentManager;Lio/getstream/chat/android/models/Message;Ljava/util/List;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun showModeratedMessageDialog (Lio/getstream/chat/android/models/Message;)V
+	public final fun updateChannel (Lio/getstream/chat/android/models/Channel;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$AttachmentClickListener {
@@ -2533,6 +2534,7 @@ public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter
 
 public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
 	public final fun getStableId ()J
+	public abstract fun stringify ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$DateSeparatorItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
@@ -2543,11 +2545,15 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getDate ()Ljava/util/Date;
 	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$LoadingMoreIndicatorItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$LoadingMoreIndicatorItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2573,6 +2579,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun isMine ()Z
 	public final fun isTheirs ()Z
 	public final fun isThreadMode ()Z
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2584,11 +2591,15 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
 	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadPlaceholderItem : io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$ThreadPlaceholderItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2602,6 +2613,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public final fun getDate ()Ljava/util/Date;
 	public final fun getMessageCount ()I
 	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2613,6 +2625,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUsers ()Ljava/util/List;
 	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -2624,6 +2637,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUnreadCount ()I
 	public fun hashCode ()I
+	public fun stringify ()Ljava/lang/String;
 	public fun toString ()Ljava/lang/String;
 }
 

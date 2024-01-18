@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.utils.buffer
 
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -30,7 +31,13 @@ import java.util.concurrent.atomic.AtomicBoolean
 private const val NO_LIMIT = -1
 
 @InternalStreamChatApi
-public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customTrigger: StateFlow<Boolean>? = null) {
+public class StartStopBuffer<T>(
+    suffix: String = "Default",
+    private val bufferLimit: Int = NO_LIMIT,
+    customTrigger: StateFlow<Boolean>? = null,
+) {
+
+    private val logger by taggedLogger("Chat:StartStopBuffer-$suffix")
 
     private val events: Queue<T> = ConcurrentLinkedQueue()
     private var active = AtomicBoolean(true)
@@ -39,8 +46,9 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customT
     init {
         CoroutineScope(DispatcherProvider.IO).launch {
             customTrigger?.collectLatest { active ->
+                logger.v { "<init> active: $active" }
                 if (active) {
-                    active()
+                    active(src = "init")
                 } else {
                     hold()
                 }
@@ -52,11 +60,10 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customT
         active.set(false)
     }
 
-    public fun active() {
+    public fun active(src: String) {
         active.set(true)
-
         if (func != null) {
-            propagateData()
+            propagateData(src = src)
         }
     }
 
@@ -64,7 +71,7 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customT
         this.func = func
 
         if (active.get()) {
-            propagateData()
+            propagateData(src = "subscribe")
         }
     }
 
@@ -72,13 +79,13 @@ public class StartStopBuffer<T>(private val bufferLimit: Int = NO_LIMIT, customT
         events.offer(data)
 
         if (active.get() || aboveSafetyThreshold()) {
-            propagateData()
+            propagateData(src = "enqueue")
         }
     }
 
     private fun aboveSafetyThreshold(): Boolean = events.size > bufferLimit && bufferLimit != NO_LIMIT
 
-    private fun propagateData() {
+    private fun propagateData(src: String) {
         CoroutineScope(DispatcherProvider.IO).launch {
             while (active.get() && events.isNotEmpty() || aboveSafetyThreshold()) {
                 events.poll()?.let {

@@ -24,12 +24,20 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
+import io.getstream.log.taggedLogger
 
 internal class MessageListItemAdapter(
     private val viewHolderFactory: MessageListItemViewHolderFactory,
 ) : ListAdapter<MessageListItem, BaseMessageItemViewHolder<out MessageListItem>>(MessageListItemDiffCallback) {
 
+    private val logger by taggedLogger("Chat:MessageListAdapter")
+
     var isThread: Boolean = false
+
+    init {
+        logger.i { "<init> no args" }
+        setHasStableIds(true)
+    }
 
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
@@ -62,7 +70,6 @@ internal class MessageListItemAdapter(
             .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
                 acc + messageListItemPayloadDiff
             }
-
         holder.bindListItem(getItem(position), diff)
     }
 

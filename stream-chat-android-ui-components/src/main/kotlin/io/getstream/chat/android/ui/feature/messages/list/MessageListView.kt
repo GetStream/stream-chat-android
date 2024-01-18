@@ -35,7 +35,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
-import io.getstream.chat.android.client.utils.buffer.StartStopBuffer
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isThreadReply
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
@@ -164,8 +163,6 @@ public class MessageListView : ConstraintLayout {
     private var messageListViewStyle: MessageListViewStyle? = null
 
     private lateinit var binding: StreamUiMessageListViewBinding
-
-    private val buffer: StartStopBuffer<MessageListItemWrapper> = StartStopBuffer()
 
     private lateinit var adapter: MessageListItemAdapter
     private lateinit var loadingView: View
@@ -367,7 +364,11 @@ public class MessageListView : ConstraintLayout {
                 } else {
                     val style = requireStyle()
                     val isEditEnabled = style.editMessageEnabled && !message.isGiphyNotEphemeral()
-                    val viewStyle = style.copy(editMessageEnabled = isEditEnabled)
+                    val isThreadEnabled = style.threadsEnabled && channel.config.isThreadEnabled
+                    val viewStyle = style.copy(
+                        editMessageEnabled = isEditEnabled,
+                        threadsEnabled = isThreadEnabled,
+                    )
 
                     val messageOptionItems = messageOptionItemsFactory.createMessageOptionItems(
                         selectedMessage = message,
@@ -613,9 +614,6 @@ public class MessageListView : ConstraintLayout {
         binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
 
         layoutTransition = LayoutTransition()
-
-        buffer.subscribe(::handleNewWrapper)
-        buffer.active()
     }
 
     private fun initLoadingView() {
@@ -771,21 +769,36 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Updates the channel object used by the message list and initializes adapter if it's not initialized yet.
+     *
+     * @param channel The channel object.
+     */
+    public fun updateChannel(channel: Channel) {
+        this.channel = channel
+        initAdapter()
+    }
+
+    /**
      * Initializes the message list view with the [Channel] object.
      *
      * @param channel The channel object.
      */
+    @Deprecated(
+        message = "Use updateChannel instead",
+        replaceWith = ReplaceWith("updateChannel(channel)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()
-
-        messageListViewStyle = requireStyle().copy(
-            replyEnabled = requireStyle().replyEnabled,
-            threadsEnabled = requireStyle().threadsEnabled && channel.config.isThreadEnabled,
-        )
     }
 
     private fun initAdapter() {
+        if (::adapter.isInitialized) {
+            logger.v { "[initAdapter] rejected (already initialized)" }
+            return
+        }
+        val style = requireStyle()
         // Create default DateFormatter if needed
         if (::messageDateFormatter.isInitialized.not()) {
             messageDateFormatter = ChatUI.dateFormatter
@@ -801,7 +814,7 @@ public class MessageListView : ConstraintLayout {
         }
 
         if (::messageBackgroundFactory.isInitialized.not()) {
-            messageBackgroundFactory = MessageBackgroundFactoryImpl(requireStyle().itemStyle)
+            messageBackgroundFactory = MessageBackgroundFactoryImpl(style.itemStyle)
         }
 
         if (::messageOptionItemsFactory.isInitialized.not()) {
@@ -811,7 +824,7 @@ public class MessageListView : ConstraintLayout {
         messageListItemViewHolderFactory.decoratorProvider = ChatUI.decoratorProviderFactory.createDecoratorProvider(
             channel = channel,
             dateFormatter = messageDateFormatter,
-            messageListViewStyle = requireStyle(),
+            messageListViewStyle = style,
             showAvatarPredicate = this.showAvatarPredicate,
             messageBackgroundFactory = messageBackgroundFactory,
             deletedMessageVisibility = { deletedMessageVisibility },
@@ -820,15 +833,14 @@ public class MessageListView : ConstraintLayout {
 
         messageListItemViewHolderFactory.setListenerContainer(this.listenerContainer)
         messageListItemViewHolderFactory.setAttachmentFactoryManager(this.attachmentFactoryManager)
-        messageListItemViewHolderFactory.setMessageListItemStyle(requireStyle().itemStyle)
-        messageListItemViewHolderFactory.setGiphyViewHolderStyle(requireStyle().giphyViewHolderStyle)
-        messageListItemViewHolderFactory.setAudioRecordViewStyle(requireStyle().audioRecordPlayerViewStyle)
-        messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(requireStyle().replyMessageStyle)
+        messageListItemViewHolderFactory.setMessageListItemStyle(style.itemStyle)
+        messageListItemViewHolderFactory.setGiphyViewHolderStyle(style.giphyViewHolderStyle)
+        messageListItemViewHolderFactory.setAudioRecordViewStyle(style.audioRecordPlayerViewStyle)
+        messageListItemViewHolderFactory.setReplyMessageListItemViewStyle(style.replyMessageStyle)
 
-        adapter = MessageListItemAdapter(messageListItemViewHolderFactory)
-        adapter.setHasStableIds(true)
-
-        setMessageListItemAdapter(adapter)
+        adapter = MessageListItemAdapter(messageListItemViewHolderFactory).also {
+            setMessageListItemAdapter(it)
+        }
     }
 
     /**
@@ -1090,7 +1102,7 @@ public class MessageListView : ConstraintLayout {
      * the message list.
      */
     public fun displayNewMessages(messageListItemWrapper: MessageListItemWrapper) {
-        buffer.enqueueData(messageListItemWrapper)
+        handleNewWrapper(messageListItemWrapper)
     }
 
     /**
@@ -1162,8 +1174,6 @@ public class MessageListView : ConstraintLayout {
                 .let(messageListItemTransformer::transform)
 
             withContext(DispatcherProvider.Main) {
-                buffer.hold()
-
                 val isThreadStart = !adapter.isThread && listItem.isThread ||
                     (listItem.isThread && listItem.items.size > 1 && adapter.itemCount <= 1)
                 val isNormalModeStart = adapter.isThread && !listItem.isThread
@@ -1183,6 +1193,7 @@ public class MessageListView : ConstraintLayout {
                     messageListViewStyle?.messagesStart?.let(::chatMessageStart)
                 }
 
+                logger.v { "[handleNewWrapper] filteredList.size: ${filteredList.size}" }
                 adapter.submitList(filteredList) {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
@@ -1190,8 +1201,6 @@ public class MessageListView : ConstraintLayout {
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
                         areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
                     )
-
-                    buffer.active()
                 }
             }
         }
