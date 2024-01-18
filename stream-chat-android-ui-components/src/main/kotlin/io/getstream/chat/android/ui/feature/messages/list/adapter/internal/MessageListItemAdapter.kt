@@ -35,7 +35,7 @@ internal class MessageListItemAdapter(
     var isThread: Boolean = false
 
     init {
-        logger.i { "<init> isThread: $isThread" }
+        logger.i { "<init> no args" }
         setHasStableIds(true)
     }
 

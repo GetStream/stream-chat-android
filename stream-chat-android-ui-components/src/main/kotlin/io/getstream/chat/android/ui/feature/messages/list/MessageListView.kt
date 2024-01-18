@@ -769,10 +769,25 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Updates the channel object used by the message list and initializes adapter if it's not initialized yet.
+     *
+     * @param channel The channel object.
+     */
+    public fun updateChannel(channel: Channel) {
+        this.channel = channel
+        initAdapter()
+    }
+
+    /**
      * Initializes the message list view with the [Channel] object.
      *
      * @param channel The channel object.
      */
+    @Deprecated(
+        message = "Use updateChannel instead",
+        replaceWith = ReplaceWith("updateChannel(channel)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun init(channel: Channel) {
         this.channel = channel
         initAdapter()

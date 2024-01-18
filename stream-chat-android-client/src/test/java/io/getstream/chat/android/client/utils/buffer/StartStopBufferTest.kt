@@ -35,7 +35,7 @@ internal class StartStopBufferTest {
             val data = randomString()
             var resultText = ""
 
-            active()
+            active(src = "test")
             subscribe { result ->
                 resultText = result
             }
@@ -79,7 +79,7 @@ internal class StartStopBufferTest {
 
             lastNumber `should be equal to` "0"
 
-            active()
+            active(src = "test")
 
             lastNumber `should be equal to` data1
         }
@@ -106,7 +106,7 @@ internal class StartStopBufferTest {
 
             lastNumber `should be equal to` "0"
 
-            active()
+            active(src = "test")
 
             lastNumber `should be equal to` data1
         }
@@ -132,7 +132,7 @@ internal class StartStopBufferTest {
 
             lastNumber `should be equal to` "0"
 
-            active()
+            active(src = "test")
 
             lastNumber `should be equal to` data3
         }
@@ -159,8 +159,8 @@ internal class StartStopBufferTest {
 
             lastNumber `should be equal to` "0"
 
-            active()
-            active()
+            active(src = "test")
+            active(src = "test")
 
             lastNumber `should be equal to` data2
         }
