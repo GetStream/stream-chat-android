@@ -39,6 +39,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Open `ChatClient.getMessageUsingCache()` extension method. [#5153](https://github.com/GetStream/stream-chat-android/pull/5153
 
 ### ⚠️ Changed
 
