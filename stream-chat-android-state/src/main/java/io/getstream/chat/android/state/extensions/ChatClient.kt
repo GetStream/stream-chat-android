@@ -347,7 +347,6 @@ public fun ChatClient.cancelEphemeralMessage(message: Message): Call<Boolean> {
  *
  * @return The message with the corresponding iID wrapped inside a [Call].
  */
-@InternalStreamChatApi
 @CheckResult
 public fun ChatClient.getMessageUsingCache(
     messageId: String,
