@@ -60,9 +60,8 @@ public class StartStopBuffer<T>(
         active.set(false)
     }
 
-    public fun active(src: String = "active") {
+    public fun active(src: String) {
         active.set(true)
-        val func = func
         if (func != null) {
             propagateData(src = src)
         }
