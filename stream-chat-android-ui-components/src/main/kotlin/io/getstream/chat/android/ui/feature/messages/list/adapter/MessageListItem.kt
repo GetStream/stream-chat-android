@@ -29,8 +29,6 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem.TypingItem
 import java.util.Date
 
-private const val HASH_MULTIPLIER = 31
-
 /**
  * [MessageListItem] represents elements that are displayed in a [MessageListView].
  * There are the following subclasses of the [MessageListItem] available:
@@ -49,7 +47,7 @@ public sealed class MessageListItem {
         return when (this) {
             is TypingItem -> TYPING_ITEM_STABLE_ID
             is ThreadSeparatorItem -> THREAD_SEPARATOR_ITEM_STABLE_ID
-            is MessageItem -> identifierHash()
+            is MessageItem -> uniqueIdentifier()
             is DateSeparatorItem -> date.time
             is LoadingMoreIndicatorItem -> LOADING_MORE_INDICATOR_STABLE_ID
             is ThreadPlaceholderItem -> THREAD_PLACEHOLDER_STABLE_ID
@@ -98,11 +96,10 @@ public sealed class MessageListItem {
             get() = !isMine
 
         /**
-         * Identifier of message. This should be used instead of hashCode to compare in DiffUtil.ItemCallback to
-         * correctly update the message in the MessageListView when, and only when, updates are necessary.
+         * Identifier of message.
+         * It is an unique identifier of message in the channel that doesn't change even if the message content changes.
          */
-        internal fun identifierHash(): Long =
-            (message.identifierHash() * HASH_MULTIPLIER) + messageReadBy.size.hashCode()
+        internal fun uniqueIdentifier(): Long = message.identifierHash()
 
         override fun stringify(): String {
             return "MessageItem(message=${message.text})"
