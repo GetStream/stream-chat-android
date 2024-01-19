@@ -23,4 +23,5 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 internal data class RemoveMembersRequest(
     val remove_members: List<String>,
     val message: UpstreamMessageDto?,
+    val skip_push: Boolean?,
 )

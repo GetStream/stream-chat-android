@@ -310,6 +310,7 @@ internal interface ChatApi {
         members: List<String>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        skipPush: Boolean?,
     ): Call<Channel>
 
     @CheckResult
@@ -318,6 +319,7 @@ internal interface ChatApi {
         channelId: String,
         members: List<String>,
         systemMessage: Message?,
+        skipPush: Boolean?,
     ): Call<Channel>
 
     @CheckResult
@@ -326,6 +328,7 @@ internal interface ChatApi {
         channelId: String,
         members: List<String>,
         systemMessage: Message?,
+        skipPush: Boolean?,
     ): Call<Channel>
 
     @CheckResult

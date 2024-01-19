@@ -674,11 +674,12 @@ constructor(
         members: List<String>,
         systemMessage: Message?,
         hideHistory: Boolean?,
+        skipPush: Boolean?,
     ): Call<Channel> {
         return channelApi.addMembers(
             channelType = channelType,
             channelId = channelId,
-            body = AddMembersRequest(members, systemMessage?.toDto(), hideHistory),
+            body = AddMembersRequest(members, systemMessage?.toDto(), hideHistory, skipPush),
         ).map(this::flattenChannel)
     }
 
@@ -687,11 +688,12 @@ constructor(
         channelId: String,
         members: List<String>,
         systemMessage: Message?,
+        skipPush: Boolean?,
     ): Call<Channel> {
         return channelApi.removeMembers(
             channelType = channelType,
             channelId = channelId,
-            body = RemoveMembersRequest(members, systemMessage?.toDto()),
+            body = RemoveMembersRequest(members, systemMessage?.toDto(), skipPush),
         ).map(this::flattenChannel)
     }
 
@@ -700,11 +702,12 @@ constructor(
         channelId: String,
         members: List<String>,
         systemMessage: Message?,
+        skipPush: Boolean?,
     ): Call<Channel> {
         return channelApi.inviteMembers(
             channelType = channelType,
             channelId = channelId,
-            body = InviteMembersRequest(members, systemMessage?.toDto()),
+            body = InviteMembersRequest(members, systemMessage?.toDto(), skipPush),
         ).map(this::flattenChannel)
     }
 

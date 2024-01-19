@@ -215,6 +215,7 @@ internal class UsersApiCallsTests {
                 mock.channelId,
                 listOf("a-id", "b-id"),
                 null,
+                null,
             ),
         ).thenReturn(RetroSuccess(channel).toRetrofitCall())
 
