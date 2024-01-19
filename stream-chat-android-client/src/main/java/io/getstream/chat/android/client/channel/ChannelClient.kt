@@ -597,6 +597,7 @@ public class ChannelClient internal constructor(
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message object that will be shown in the channel.
      * @param hideHistory Hides the history of the channel to the added member.
+     * @param skipPush Skip sending push notifications.
      *
      * @return Executable async [Call] responsible for adding the members.
      */
@@ -605,6 +606,7 @@ public class ChannelClient internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
+        skipPush: Boolean? = null,
     ): Call<Channel> {
         return client.addMembers(
             channelType = channelType,
@@ -612,6 +614,7 @@ public class ChannelClient internal constructor(
             memberIds = memberIds,
             systemMessage = systemMessage,
             hideHistory = hideHistory,
+            skipPush = skipPush,
         )
     }
 
@@ -622,16 +625,22 @@ public class ChannelClient internal constructor(
      *
      * @param memberIds The list of the member ids to be removed.
      * @param systemMessage The system message object that will be shown in the channel.
+     * @param skipPush Skip sending push notifications.
      *
      * @return Executable async [Call] responsible for removing the members.
      */
     @CheckResult
-    public fun removeMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+    public fun removeMembers(
+        memberIds: List<String>,
+        systemMessage: Message? = null,
+        skipPush: Boolean? = null,
+    ): Call<Channel> {
         return client.removeMembers(
             channelType = channelType,
             channelId = channelId,
             memberIds = memberIds,
             systemMessage = systemMessage,
+            skipPush = skipPush,
         )
     }
 
@@ -642,16 +651,22 @@ public class ChannelClient internal constructor(
      *
      * @param memberIds The list of the member ids to be invited.
      * @param systemMessage The system message object that will be shown in the channel.
+     * @param skipPush Skip sending push notifications.
      *
      * @return Executable async [Call] responsible for inviting the members.
      */
     @CheckResult
-    public fun inviteMembers(memberIds: List<String>, systemMessage: Message? = null): Call<Channel> {
+    public fun inviteMembers(
+        memberIds: List<String>,
+        systemMessage: Message? = null,
+        skipPush: Boolean? = null,
+    ): Call<Channel> {
         return client.inviteMembers(
             channelType = channelType,
             channelId = channelId,
             memberIds = memberIds,
             systemMessage = systemMessage,
+            skipPush = skipPush,
         )
     }
 
