@@ -2308,6 +2308,7 @@ internal constructor(
      * @param memberIds The list of the member ids to be added.
      * @param systemMessage The system message that will be shown in the channel.
      * @param hideHistory Hides the history of the channel to the added member.
+     * @param skipPush If true, skips sending push notifications.
      *
      * @return Executable async [Call] responsible for adding the members.
      */
@@ -2318,6 +2319,7 @@ internal constructor(
         memberIds: List<String>,
         systemMessage: Message? = null,
         hideHistory: Boolean? = null,
+        skipPush: Boolean? = null,
     ): Call<Channel> {
         return api.addMembers(
             channelType,
@@ -2325,6 +2327,7 @@ internal constructor(
             memberIds,
             systemMessage,
             hideHistory,
+            skipPush,
         )
     }
 
@@ -2335,6 +2338,7 @@ internal constructor(
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of the member ids to be removed.
      * @param systemMessage The system message that will be shown in the channel.
+     * @param skipPush If true, skips sending push notifications.
      *
      * @return Executable async [Call] responsible for removing the members.
      */
@@ -2344,11 +2348,13 @@ internal constructor(
         channelId: String,
         memberIds: List<String>,
         systemMessage: Message? = null,
+        skipPush: Boolean? = null,
     ): Call<Channel> = api.removeMembers(
         channelType,
         channelId,
         memberIds,
         systemMessage,
+        skipPush,
     )
 
     /**
@@ -2358,6 +2364,7 @@ internal constructor(
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of the member ids to be invited.
      * @param systemMessage The system message that will be shown in the channel.
+     * @param skipPush If true, skips sending push notifications.
      *
      * @return Executable async [Call] responsible for inviting the members.
      */
@@ -2367,11 +2374,13 @@ internal constructor(
         channelId: String,
         memberIds: List<String>,
         systemMessage: Message? = null,
+        skipPush: Boolean? = null,
     ): Call<Channel> = api.inviteMembers(
         channelType,
         channelId,
         memberIds,
         systemMessage,
+        skipPush,
     )
 
     /**
