@@ -1,4 +1,4 @@
-# Dependencies
+# Installation
 
 All Stream Android libraries are available from MavenCentral, with some of their transitive dependencies hosted on Jitpack. 
 
@@ -104,34 +104,3 @@ We ship an additional artifact for Markdown support which can be used together w
 ### Push Notifications
 
 We ship multiple artifacts to easily integrate Stream Chat with third party push notification providers. See the [Push Notification page](../03-client/06-guides/01-push-notifications/01-overview.mdx) for more details.
-
-## Versioning
-
-Our Android libraries do **not** follow semantic versioning.
-
-We increase the minor version whenever breaking changes are introduced. Patch releases only contain smaller fixes and improvements.
-
-You can keep track of all the changes in the Stream Android libraries via the [GitHub releases page](https://github.com/GetStream/stream-chat-android/releases), and you can also find the release notes of all past releases in our [CHANGELOG file](https://github.com/GetStream/stream-chat-android/blob/main/CHANGELOG.md). These will always highlight breaking changes.
-
-We also maintain a separate document, [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md), which lists deprecated constructs in the SDK, with their expected time of further deprecations and eventual removal.
-
-## Snapshot Builds
-
-We publish SNAPSHOT versions of our SDK, which contain the code as of the latest commit on [the `develop` branch](https://github.com/GetStream/stream-chat-android/tree/develop).
-
-These builds may contain bugs or breaking changes that will be fixed before the next proper release. However, you can use these builds temporarily to include the latest changes from our SDK in your project before the next release happens.
-
-:::warning
-Snapshot builds are not stable. Never use them in production.
-:::
-
-To use snapshot builds, you need to add the Sonatype snapshot repository in your Gradle build configuration (see at the top of this page for where to add this): 
-
-```groovy
-maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-```
-
-Then you can add a snapshot dependency on any of our artifacts, replacing the normal version number with a version that has a `-SNAPSHOT` postfix. 
-Our snapshot version is always one patch version ahead of the latest release we've published. If the last stable release was `X.Y.Z`, the snapshot version would be `X.Y.(Z+1)-SNAPSHOT`.
-
-You can browse our available snapshot builds in the [Sonatype snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/io/getstream/), which you can also check for what the latest available snapshot version is.
