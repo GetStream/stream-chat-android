@@ -4,22 +4,23 @@ slug: /
 
 # Overview
 
-Built on top of the Stream Chat low-level client, the Stream Chat Android UI components include everything you need to build feature-rich and high-functioning chat user experiences out of the box.
+Built on top of the Stream Chat low-level client, the Stream Chat Android UI components enable you to easily build any type of chat or messaging experience for Android.
 
-We have component libraries available for both Android Views and Jetpack Compose. Each library includes an extensive set of fast performing and customizable UI components which allow you to get started quickly with little to no plumbing required. The libraries support:
+We have component libraries available for both Android Views and Jetpack Compose. Each of these libraries provides an extensive collection of efficient and customizable UI components which enable you to quickly get started with little to no setup required. The libraries support:
 
-- Rich media messages
-- Reactions
-- Threads and quoted replies
+<!-- TODO validate list below -->
+- Rich-media messages
+- Channel and message lists
+- Message Reactions
+- Message threads and quoted replies
 - Text input commands (ex: Giphy and @mentions)
 - Image and file uploads
 - Video playback
-- Read state and typing indicators
-- Channel and message lists
-- Push
+- Indicators for read state and typing
+- Push notifications
 - Offline storage
 - Voice messages
-- and a lot more.
+- and more.
 
 :::note
 The fastest way to get started with the SDK is by trying the [Android Views In-App Messaging Tutorial](https://getstream.io/tutorials/android-chat/). If you're using Jetpack Compose, see the [Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/) instead.
@@ -27,25 +28,25 @@ The fastest way to get started with the SDK is by trying the [Android Views In-A
 
 ## Architecture
 
-The SDK consists of three separate frameworks:
+The SDK consists of three separate libraries:
 <!-- TODO iOS uses the artifact name, for us it would be stream-chat-android-ui-components etc -->
 <!-- TODO Name should be UI Components or Android Views UI Components? -->
 <!-- TODO Should we list Compose first? -->
-- [UI components](ui/getting-started). Provides a set of reusable and customizable UI components to add chat to your Android Views application.
-- [Compose UI components](compose/getting-started). Provides a set of reusable and customizable UI components to add chat to your Jetpack Compose application.
-- [Low-level client](https://getstream.io/chat/docs/android/?language=kotlin). Provides the main chat functionality, including offline storage and optimistic updates. You can use it directly in case you want to build your own UI layer for the chat.
+- [UI components](ui/getting-started). Provides a set of reusable and customizable UI components based on Android Views.
+- [Compose UI components](compose/getting-started). Provides a set of reusable and customizable Jetpack Compose UI components.
+- [Low-level client](https://getstream.io/chat/docs/android/?language=kotlin). Provides the main chat functionality. You can use it directly if you intend to build your own UI layer for the chat.
 
-We suggest using either the [UI components](ui/getting-started) or the [Compose UI components](compose/getting-started) to most of our customers. Unless your UI is completely different from the common industry standard, you should be able to customize the built-in components to match your needs.
+We recommend using either the [UI components](ui/getting-started) or the [Compose UI components](compose/getting-started) to most of our customers. If your UI doesn't significantly differ from the industry standard, you should be able to customize the built-in components to match your requirements.
 
-The UI SDKs provide both ready-made components that you can directly integrate (and customize) in your apps, or you can build your own by reacting to the state we expose and re-using our components as building blocks, if needed.
+The UI SDKs provide pre-made components that you can directly integrate and customize in your apps. Alternatively, you can create your own by listening to the state we expose and using our components as building blocks.
 
-You can learn more about how the state is exposed on [this page](../client/llc-client-overview.md) and in the [low-level client docs](https://getstream.io/chat/docs/android/?language=kotlin).
+You can learn more about how state is exposed on [here](../client/llc-client-overview.md) and in the [low-level client docs](https://getstream.io/chat/docs/android/?language=kotlin).
 
-<!-- TODO check all links on this page -->
+<!-- TODO check all links on this page, especially state link above -->
 
 ### Dependencies
 
-The SDK tries to keep the list of external dependencies to a minimum, these are the dependencies currently used:
+The SDK aims to limit the number of external dependencies it uses. Here are the dependencies that are currently used:
 
 #### UI Components
 -
@@ -80,10 +81,20 @@ This is also built on top of the state library, and offers easy integration of S
 Check out the Compose implementation in action by trying the open-source [Compose UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose-sample).
 
 :::note
-Integrating our Compose SDK into an Android Views based app is fully supported. It could provide you and your development team an amazing opportunity to get started with Compose.
+Using our Compose SDK in an Android Views based app is fully supported. It could provide you an amazing opportunity to explore and adopt Compose.
 :::
 
-## Upgrade and versioning strategy
+### The Right SDK for You
+
+If your use case requires a very high level of customization, runtime theming changes, replacing whole parts of the default UI or stateless components that don't rely on our ViewModels,
+the **Compose SDK is the way to go**. It offers deep customization through several layers - the theme, modifiers for components, bound and stateless component overloads, smaller reusable components and slot APIs.
+
+If, instead, you're looking for a simpler, less customizable SDK which currently offers slightly better performance in some scenarios or your project is limited by technology, then
+the **UI Components SDK is a great option**. It still offers a fair amount of customization through the theme and its attributes and some programmatic ways to customize the UI.
+
+Whichever SDK you choose, **we guarantee you'll be happy and we'll provide amazing support** with your integration, through detailed documentation, guides and direct support.
+
+## Upgrade and Versioning Strategy
 
 Our Android libraries do **not** follow semantic versioning. <!-- TODO Is this accurate? -->
 
@@ -93,8 +104,8 @@ You can see all the SDK changes in the [releases page](https://github.com/GetStr
 
 We also maintain a separate document, [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md), which lists deprecated constructs in the SDK, with their expected time of further deprecations and eventual removal.
 
-:::note
-You can subscribe to the releases of [getstream/stream-chat-android](https://github.com/GetStream/stream-chat-android) by clicking the _Watch_ button. You can further tweak your watch preferences to subscribe only to release events.
+:::info
+You can get notified of new releases by using the _Watch_ button in the [getstream/stream-chat-android](https://github.com/GetStream/stream-chat-android) repository. You can tweak your watch preferences to subscribe only to release events.
 :::
 
 ### How Should I Specify My Dependency Version?
@@ -107,4 +118,23 @@ For example:
 implementation "io.getstream:stream-chat-android-compose:6.0.+"
 ```
 
-<!-- TODO Should we keep the Snapshot Build section? -->
+### Snapshot Builds
+
+We publish SNAPSHOT versions of our SDK, which contain the code as of the latest commit on [the `develop` branch](https://github.com/GetStream/stream-chat-android/tree/develop).
+
+These builds may contain bugs or breaking changes that will be fixed before the next proper release. However, you can use these builds temporarily to include the latest changes from our SDK in your project before the next release happens.
+
+:::warning
+Snapshot builds are not stable. Never use them in production.
+:::
+
+To use snapshot builds, you need to add the Sonatype snapshot repository in your Gradle build configuration (see at the top of this page for where to add this):
+
+```groovy
+maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+```
+
+Then you can add a snapshot dependency on any of our artifacts, replacing the normal version number with a version that has a `-SNAPSHOT` postfix.
+Our snapshot version is always one patch version ahead of the latest release we've published. If the last stable release was `X.Y.Z`, the snapshot version would be `X.Y.(Z+1)-SNAPSHOT`.
+
+You can browse our available snapshot builds in the [Sonatype snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/io/getstream/), which you can also check for what the latest available snapshot version is.
