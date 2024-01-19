@@ -266,7 +266,7 @@ public class Channels {
             ChannelClient channelClient = client.channel("messaging", "general");
 
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers(Arrays.asList("thierry", "josh"), null, false).enqueue(result -> {
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), null, false, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {
@@ -275,7 +275,7 @@ public class Channels {
             });
 
             // Remove member with id "tommaso"
-            channelClient.removeMembers(Collections.singletonList("tommaso"), null).enqueue(result -> {
+            channelClient.removeMembers(Collections.singletonList("tommaso"), null, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {
@@ -294,7 +294,7 @@ public class Channels {
                     .withText("Thierry and Josh were added to this channel")
                     .build();
             // Add members with ids "thierry" and "josh"
-            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage, false).enqueue(result -> {
+            channelClient.addMembers(Arrays.asList("thierry", "josh"), addMemberSystemMessage, false, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {
@@ -306,7 +306,7 @@ public class Channels {
                     .withText("Tommaso was removed from this channel")
                     .build();
             // Remove member with id "tommaso"
-            channelClient.removeMembers(Collections.singletonList("tommaso"), removeMemberSystemMessage).enqueue(result -> {
+            channelClient.removeMembers(Collections.singletonList("tommaso"), removeMemberSystemMessage, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {
@@ -559,7 +559,7 @@ public class Channels {
 
             List<String> memberIds = Arrays.asList("nick");
 
-            channelClient.inviteMembers(memberIds, null).enqueue(result -> {
+            channelClient.inviteMembers(memberIds, null, false).enqueue(result -> {
                 if (result.isSuccess()) {
                     Channel channel = result.getOrNull();
                 } else {

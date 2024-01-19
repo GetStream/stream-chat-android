@@ -525,8 +525,8 @@ public final class io/getstream/chat/android/client/audio/WaveformExtractorKt {
 
 public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun acceptInvite (Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public final fun addMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
-	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun addMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
+	public static synthetic fun addMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun create (Ljava/util/List;Ljava/util/Map;)Lio/getstream/result/call/Call;
 	public final fun delete ()Lio/getstream/result/call/Call;
@@ -550,8 +550,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun getReactions (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun hide (Z)Lio/getstream/result/call/Call;
 	public static synthetic fun hide$default (Lio/getstream/chat/android/client/channel/ChannelClient;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
-	public final fun inviteMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
-	public static synthetic fun inviteMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun inviteMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
+	public static synthetic fun inviteMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun keystroke ()Lio/getstream/result/call/Call;
 	public final fun keystroke (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun keystroke$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -581,8 +581,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun queryMembers (IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;IILio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun rejectInvite ()Lio/getstream/result/call/Call;
-	public final fun removeMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
-	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun removeMembers (Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
+	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/channel/ChannelClient;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun removeShadowBan (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun sendAction (Lio/getstream/chat/android/client/api/models/SendActionRequest;)Lio/getstream/result/call/Call;
 	public final fun sendEvent (Ljava/lang/String;Ljava/util/Map;)Lio/getstream/result/call/Call;
