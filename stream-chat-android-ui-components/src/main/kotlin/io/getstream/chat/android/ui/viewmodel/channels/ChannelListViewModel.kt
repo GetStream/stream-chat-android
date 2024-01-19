@@ -275,7 +275,8 @@ public class ChannelListViewModel(
      */
     public fun leaveChannel(channel: Channel) {
         chatClient.clientState.user.value?.let { user ->
-            chatClient.channel(channel.type, channel.id).removeMembers(listOf(user.id)).enqueue(
+            val channelClient = chatClient.channel(channel.type, channel.id)
+            channelClient.removeMembers(listOf(user.id)).enqueue(
                 onError = { error ->
                     logger.e {
                         "Could not leave channel with id: ${channel.id}. " +
