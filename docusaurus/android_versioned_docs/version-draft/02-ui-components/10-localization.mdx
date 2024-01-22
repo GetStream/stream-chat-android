@@ -1,4 +1,4 @@
-# Adding Localization
+# Localization
 
 The Android SDK's UI Components are available in multiple languages out-of-the-box. At the moment we support the following languages (and more will be added in the future):
 - [English](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components/src/main/res/values-en)
@@ -20,10 +20,10 @@ If your app doesn't support all these languages, you might want to [remove some 
 
 | English | Italian |
 | --- | --- |
-|![English](../../assets/custom_translations_english.png)|![Italian](../../assets/custom_translations_italian.png)|
+|![English](../assets/custom_translations_english.png)|![Italian](../assets/custom_translations_italian.png)|
 
 
-### What is Localization?
+## What is Localization?
 If you deploy your app to users who speak another language, you might want to internationalize (localize) it. That means you need to write the app in a way that makes it possible to localize values like text and layouts for each language or locale that the app supports. For more information, see the official [Android documentation](https://developer.android.com/guide/topics/resources/localization).
 
 Support for different languages in the SDK is based on the standard [Android mechanism](https://developer.android.com/training/basics/supporting-devices/languages) of switching resources on system locale change. The locale will be set automatically, based on system preferences. You can provide custom localization for the SDK's string resources by overriding them in the locale-specific `/res/values` directories of your project.
@@ -48,9 +48,9 @@ These strings are also grouped in resource files prefixed with `strings_`. Each 
 * [strings_pinned_message_list.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_pinned_message_list.xml)
 * [strings_common.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/strings_common.xml)
 
-### Adding a new language
+## Adding a New Language
 
-Let's see how you can add support for additional languages in the SDK. As an example, we'll implement a custom Polish language translation for the [`ChannelListHeaderView`](../03-channel-components/03-channel-list-header.mdx) UI component.
+Let's see how you can add support for additional languages in the SDK. As an example, we'll implement a custom Polish language translation for the [`ChannelListHeaderView`](02-ui-components/05-channel-list-header.mdx) UI component.
 
 Usually, base string resources are located in the `/res/values/strings.xml` file. In order to add translations for the new language (PL) we are going to create a new `strings.xml` file under `res/values-pl` directory.
 
@@ -77,15 +77,15 @@ In order to do that, we need to add the following string resource to the target 
 
 As the result, your app will display _`Oczekiwanie na połączenie`_ text on devices set to a Polish locale.
 
-### Overriding existing languages
+## Overriding Existing Languages
 
 To override strings for a language supported by default, create new string resources in the locale-specific `/res/values-XX` directories of your project with the same `name`. [Here](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components/src/main/res/values) you can find a list of available text resources grouped by component.
 
-### Overriding the default language
+## Overriding the Default Language
 
 To change the strings used by default, place the string resources you want to override inside the `/res/values` [directory](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components/src/main/res/values) directory.
 
-### Removing existing languages
+## Removing Existing Languages
 
 The Android UI Components include resources for all of the languages mentioned above. If your app doesn't support all those languages, you can exclude some of them by explicitly defining a list of supported languages inside your `build.gradle` file:
 
@@ -97,19 +97,19 @@ defaultConfig {
 
 With the configuration here, your app will include only _English_ and _Spanish_ resources.
 
-### Translating User Messages
+## Automatic Translation
 
 Stream Chat provides the ability to run users' messages through automatic translation.
 While machine translation is never perfect it can enable two users to communicate with
 each other without speaking the same language.
 
 In order to enable automatic translation, the following steps are required to do in the Client SDKs:
-#### Enabling the feature in the UI Components SDK through:
+### Enabling the feature in the UI Components SDK through:
 ```kotlin
 ChatUI.autoTranslationEnabled = true
 ```
 
-#### Supporting the auto-translation in the custom `ChatMessageTextTransformer`
+### Supporting the auto-translation in the custom `ChatMessageTextTransformer`
 
 Please, take into account, that if you are using a custom `ChatMessageTextTransformer` you need to support the auto-translation feature by yourself.
 
@@ -128,7 +128,7 @@ ChatUI.messageTextTransformer = MarkdownTextTransformer(
 }
 ```
 
-#### Enabling the feature for Push Notifications through:
+### Enabling the feature for Push Notifications through:
 ```kotlin
 val notificationConfig = NotificationConfig(
     //...
@@ -147,7 +147,7 @@ ChatClient.Builder(apiKey, context)
     .build()
 
 ```
-#### Providing the language when connecting the user:
+### Providing the language when connecting the user:
 ```kotlin
 client.connectUser(user = User(id = "userId", language = "en"), token = "userToken").await()
 ```
