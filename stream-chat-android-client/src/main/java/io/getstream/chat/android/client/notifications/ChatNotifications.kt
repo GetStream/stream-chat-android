@@ -69,7 +69,9 @@ internal class ChatNotificationsImpl constructor(
 
     override fun onSetUser() {
         logger.i { "[onSetUser] no args" }
-        permissionManager.start()
+        permissionManager
+            .takeIf { notificationConfig.requestPermissionOnAppLaunch() }
+            ?.start()
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
