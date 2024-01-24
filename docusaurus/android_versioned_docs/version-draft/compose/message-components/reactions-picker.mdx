@@ -4,7 +4,7 @@ The `ReactionsPicker` component allows you to display all of the reactions your 
 
 ## Usage
 
-If you're using the [`MessagesScreen`](./01-messages-screen.mdx) component, `ReactionsPicker` is automatically set up for you. To use it inside of your custom screens simply add it like so:
+If you're using the [`MessagesScreen`](./messages-screen.mdx) component, `ReactionsPicker` is automatically set up for you. To use it inside of your custom screens simply add it like so:
 
 ```kotlin
 ChatTheme {
@@ -30,7 +30,7 @@ ChatTheme {
 }
 ```
 
-Adding the `ReactionsPicker` component is very simple, all you need to do is make sure that it is displayed when the `selectedMessageState` is `SelectedMessageReactionsPickerState` and pass in the selected `Message`. The reactions are drawn from the [`ChatTheme`](../03-general-customization/01-chat-theme.mdx) and the rest is done for you.
+Adding the `ReactionsPicker` component is very simple, all you need to do is make sure that it is displayed when the `selectedMessageState` is `SelectedMessageReactionsPickerState` and pass in the selected `Message`. The reactions are drawn from the [`ChatTheme`](../general-customization/chat-theme.mdx) and the rest is done for you.
 
 The code above will render the following UI:
 
@@ -88,7 +88,7 @@ public fun ReactionsPicker(
 )
 ```
 
-* `reactionTypes`: Allows you to customize which reactions are shown. By default it uses `reactionIconFactory` inside of [`ChatTheme`](../03-general-customization/01-chat-theme.mdx).
+* `reactionTypes`: Allows you to customize which reactions are shown. By default it uses `reactionIconFactory` inside of [`ChatTheme`](../general-customization/chat-theme.mdx).
 
 The best way to customize this is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 

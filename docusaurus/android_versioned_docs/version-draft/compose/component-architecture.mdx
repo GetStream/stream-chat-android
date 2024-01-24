@@ -7,7 +7,7 @@ The Jetpack Compose SDK exposes three types of components:
 * **Stateless components**: low-level, stateless `Composable`s for full customizability.
 
 :::note
-All components from the SDK have to be wrapped in [`ChatTheme`](03-general-customization/01-chat-theme.mdx) which provides theming and other customization options. You don't have to individually wrap components in [`ChatTheme`](03-general-customization/01-chat-theme.mdx), but it has to be present somewhere above the Chat components in the hierarchy.
+All components from the SDK have to be wrapped in [`ChatTheme`](general-customization/chat-theme.mdx) which provides theming and other customization options. You don't have to individually wrap components in [`ChatTheme`](general-customization/chat-theme.mdx), but it has to be present somewhere above the Chat components in the hierarchy.
 :::
 
 Let's go through each type to see what the difference is and how to use them.
@@ -20,8 +20,8 @@ These components are **very easy to use** and they display entire screens for yo
 
 We have two screen components:
 
-* [`ChannelsScreen`](./04-channel-components/01-channels-screen.mdx): Builds a screen that shows a header with user information, the list of channels for the current user and a search input to filter those channels by name.
-* [`MessagesScreen`](./05-message-components/01-messages-screen.mdx): Builds a full chat experience with a header that shows information about the channel, list that supports messages (including attachments, reactions, replies, threads and more) and a message composer that lets you write messages and send attachments.
+* [`ChannelsScreen`](channel-components/channels-screen.mdx): Builds a screen that shows a header with user information, the list of channels for the current user and a search input to filter those channels by name.
+* [`MessagesScreen`](message-components/messages-screen.mdx): Builds a full chat experience with a header that shows information about the channel, list that supports messages (including attachments, reactions, replies, threads and more) and a message composer that lets you write messages and send attachments.
 
 ### Usage
 
@@ -61,7 +61,7 @@ This will give you a fully working screen:
 |---|---|
 |  ![Default ChannelsScreen Component Dark](../assets/compose_default_channels_screen_component_dark.png) | ![ChannelsScreen Component with SelectedChannelMenu open Dark](../assets/compose_default_channels_screen_component_open_selected_channel_menu_dark.png) |
 
-You can learn more about [`ChannelsScreen`](./04-channel-components/01-channels-screen.mdx) and [`MessagesScreen`](./05-message-components/01-messages-screen.mdx) on their respective pages.
+You can learn more about [`ChannelsScreen`](channel-components/channels-screen.mdx) and [`MessagesScreen`](message-components/messages-screen.mdx) on their respective pages.
 
 ## Bound Components
 
