@@ -1,56 +1,18 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# January 24th, 2024 - 6.0.13
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Ensure PushNotification Permissions are only requested on the case `NotificationConfig.requestPermissionOnAppLaunch` lambda returns `true`.[#5158](https://github.com/GetStream/stream-chat-android/pull/5158)
 
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Exposed `Decorator` and related classes for the better `MessageListView` customization. [#5144](https://github.com/GetStream/stream-chat-android/pull/5144) 
 
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Open `ChatClient.getMessageUsingCache()` extension method. [#5153](https://github.com/GetStream/stream-chat-android/pull/5153
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fixed unread count not being cleared while user is inside a channel. [#5146](https://github.com/GetStream/stream-chat-android/pull/5146)
-
-### ⬆️ Improved
 
 ### ✅ Added
 - Added `StartOfTheChannelItemState`, a new `MessageListItemState` that represent the start of the channel inside a message list. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
@@ -58,43 +20,16 @@
 ### ⚠️ Changed
 - Changed `AttachmentConstants.MAX_ATTACHMENTS_COUNT` to align with the API limits. [#5159](https://github.com/GetStream/stream-chat-android/pull/5159)
 
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed blinking of the message list. [#5150](https://github.com/GetStream/stream-chat-android/pull/5150)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `StartOfTheChannelItem`, a new `MessageListItem` that represent the start of the channel inside a message list. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `startOfTheChannelItemState` composable function to `MessageContainer` to be able to render the start of the channel. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # January 09th, 2024 - 6.0.12
 ## stream-chat-android-core
