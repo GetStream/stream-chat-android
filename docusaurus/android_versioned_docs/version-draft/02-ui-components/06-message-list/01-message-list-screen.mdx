@@ -10,9 +10,9 @@ You can set up a self-contained chat screen that displays a list of messages and
 
 The `MessageListFragment` contains these three inner components:
 
-* [`MessageListHeaderView`](02-ui-components/07-message-list-header.mdx): Displays a navigation icon, the name of the channel or thread and the channel avatar.
+* [`MessageListHeaderView`](../07-message-list-header.mdx): Displays a navigation icon, the name of the channel or thread and the channel avatar.
 * [`MessageListView`](02-message-list.mdx): Shows a list of paginated messages, with threads, replies, reactions and deleted messages.
-* [`MessageComposerView`](02-ui-components/08-message-composer/01-message-composer.mdx): Allows users to participate in the chat by sending messages and attachments.
+* [`MessageComposerView`](../08-message-composer/01-message-composer.mdx): Allows users to participate in the chat by sending messages and attachments.
 
 :::note
 Fragments and Activities representing self-contained screens are easy to use. They allow you to explore the features of our SDK in a breeze, however, they offer limited customization.
@@ -277,5 +277,5 @@ context.startActivity(MessageListActivity.createIntent(context, "messaging:123",
 </Tabs>
 
 :::note
-Fragments and Activities representing self-contained screens can be styled using the options described in the [theming](../02-general-customization/01-theming.mdx) guide.
+Fragments and Activities representing self-contained screens can be styled using the options described in the [theming](../02-theming.mdx) guide.
 :::
