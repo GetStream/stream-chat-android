@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Ensure PushNotification Permissions are only requested on the case `NotificationConfig.requestPermissionOnAppLaunch` lambda returns `true`.[#5158](https://github.com/GetStream/stream-chat-android/pull/5158)
 
 ### ⬆️ Improved
 
