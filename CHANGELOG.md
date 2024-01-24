@@ -56,6 +56,7 @@
 - Added `StartOfTheChannelItemState`, a new `MessageListItemState` that represent the start of the channel inside a message list. [#5145](https://github.com/GetStream/stream-chat-android/pull/5145)
 
 ### ⚠️ Changed
+- Changed `AttachmentConstants.MAX_ATTACHMENTS_COUNT` to align with the API limits. [#5159](https://github.com/GetStream/stream-chat-android/pull/5159)
 
 ### ❌ Removed
 
