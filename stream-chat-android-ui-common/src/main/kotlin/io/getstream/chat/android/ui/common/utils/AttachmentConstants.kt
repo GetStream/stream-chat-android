@@ -38,5 +38,5 @@ public object AttachmentConstants {
     /**
      * Default max number of attachments.
      */
-    public const val MAX_ATTACHMENTS_COUNT: Int = 10
+    public const val MAX_ATTACHMENTS_COUNT: Int = 30
 }
