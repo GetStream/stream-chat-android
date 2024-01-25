@@ -1,0 +1,54 @@
+# ChannelsScreen
+
+Previously, `ChannelsScreen` component was internally creating `ChannelViewModelFactory` by utilizing the given component parameters.
+In the new version, you are required to provide a `ChannelViewModelFactory` instance to `ChannelsScreen`, which will be used for creating the required ViewModels.
+
+## Component Parameters
+
+Since the `ChannelViewModelFactory` is passed directly to the `ChannelsScreen` component, the following parameters were removed from `ChannelsScreen` component:
+- `filters: FilterObject? = null` - Default filters for channels. By passing in `null` to the ViewModel, we show messaging channels where the current user is a member.
+- `querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated")` - Default query sort for channels.
+- `channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT` - The limit of channels queried per page.
+- `memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT` - The limit of members requested per channel.
+- `messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT` - The limit of messages requested per channel item.
+
+The `ChannelsScreen` signature in **v5** looked like this:
+
+```kotlin
+@Composable
+public fun ChannelsScreen(
+    filters: FilterObject? = null,
+    querySort: QuerySorter<Channel> = QuerySortByField.descByName("last_updated"),
+    title: String = "Stream Chat",
+    isShowingHeader: Boolean = true,
+    isShowingSearch: Boolean = false,
+    channelLimit: Int = ChannelListViewModel.DEFAULT_CHANNEL_LIMIT,
+    memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
+    messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
+    onHeaderActionClick: () -> Unit = {},
+    onHeaderAvatarClick: () -> Unit = {},
+    onItemClick: (Channel) -> Unit = {},
+    onViewChannelInfoAction: (Channel) -> Unit = {},
+    onBackPressed: () -> Unit = {},
+)
+```
+
+And the signature of `ChannelsScreen` in **v6** looks like this:
+```kotlin
+@Composable
+public fun ChannelsScreen(
+    viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
+    title: String = "Stream Chat",
+    isShowingHeader: Boolean = true,
+    isShowingSearch: Boolean = false,
+    onHeaderActionClick: () -> Unit = {},
+    onHeaderAvatarClick: () -> Unit = {},
+    onItemClick: (Channel) -> Unit = {},
+    onViewChannelInfoAction: (Channel) -> Unit = {},
+    onBackPressed: () -> Unit = {},
+)
+```
+
+## More Information
+You can find more docs about the `ChannelsScreen` component and its' customization [here](../../03-compose/04-channel-list/01-channels-screen.mdx).
+

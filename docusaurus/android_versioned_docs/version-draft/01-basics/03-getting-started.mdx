@@ -153,7 +153,7 @@ You shouldn't call `connectUser` if the user is already set. You can use `ChatCl
 The methods of the `ChatClient` class allow you to create channels, send messages, add reactions, and perform many more low-level operations. You can also use the SDK's pre-built UI Components that will perform data fetching and sending for you, as described below.
 
 :::note
-For more information on handling complex scenarios, check out our [Handling User Connection](../04-client/06-guides/02-handling-user-connection.mdx) guide.
+For more information on handling complex scenarios, check out our [Handling User Connection](../09-client/06-guides/02-handling-user-connection.mdx) guide.
 :::
 
 ### Disconnecting the User
@@ -194,7 +194,7 @@ ChatClient.instance().disconnect(flushPersistence).enqueue((result) -> {
 </Tabs>
 
 Note that the `disconnect` method has an additional parameter that allows you to clear the database when using offline storage.
-For more information about working with offline mode see [Offline Support](../client/guides/offline-support.mdx)
+For more information about working with offline mode see [Offline Support](../../client/guides/offline-support)
 
 ### Switching the User
 
@@ -513,7 +513,7 @@ new ChatClient.Builder(apiKey, context)
 </TabItem>
 </Tabs>
 
-For more information on working with `OfflinePlugin`, see [Offline Support](../04-client/06-guides/03-offline-support.mdx)
+For more information on working with `OfflinePlugin`, see [Offline Support](../09-client/06-guides/03-offline-support.mdx)
 
 ## Calls
 
@@ -661,4 +661,4 @@ There are two UI Component implementations available: one built on regular, XML 
 
 Take a look at the Overview pages of the implementations to get started with them:
 - [XML based UI Components](../02-ui-components/01-getting-started.mdx)
-- [Jetpack Compose UI Components](../compose/overview.mdx)
+- [Jetpack Compose UI Components](../03-compose/01-overview.mdx)
