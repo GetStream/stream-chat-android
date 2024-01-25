@@ -21,7 +21,6 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapter
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.getstream.chat.android.client.extensions.internal.applyPagination
 import io.getstream.chat.android.client.parser2.adapters.DateAdapter
 import io.getstream.chat.android.models.Attachment
@@ -61,7 +60,6 @@ internal class ChannelExtensionsTest {
                     override fun toJson(writer: JsonWriter, value: Attachment.UploadState?) = TODO("Not implemented")
                 },
             )
-            .add(KotlinJsonAdapterFactory())
             .build()
         val adapter = moshi.adapter<List<Channel>>()
         val channels = requireNotNull(adapter.fromJson(JsonReader.of(channelsFile.source().buffer())))

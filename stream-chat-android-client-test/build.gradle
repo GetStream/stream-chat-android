@@ -37,7 +37,6 @@ dependencies {
     implementation Dependencies.workRuntimeKtx
 
     // Tests
-    testImplementation Dependencies.moshiKotlin
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine

@@ -183,7 +183,6 @@ object Dependencies {
     const val mockitoKotlin = "org.mockito.kotlin:mockito-kotlin:${Versions.MOCKITO_KOTLIN}"
     const val moshi = "com.squareup.moshi:moshi:${Versions.MOSHI}"
     const val moshiCodegen = "com.squareup.moshi:moshi-kotlin-codegen:${Versions.MOSHI}"
-    const val moshiKotlin = "com.squareup.moshi:moshi-kotlin:${Versions.MOSHI}"
     const val moshiAdapters = "com.squareup.moshi:moshi-adapters:${Versions.MOSHI}"
     const val navigationFragmentKTX = "androidx.navigation:navigation-fragment-ktx:${Versions.ANDROIDX_NAVIGATION}"
     const val navigationSafeArgsGradlePlugin =

@@ -80,7 +80,7 @@ dependencies {
     testImplementation project(":stream-chat-android-test")
     testImplementation project(":stream-chat-android-client-test")
     testImplementation testFixtures(project(":stream-chat-android-core"))
-    testImplementation Dependencies.moshiKotlin
+    testImplementation Dependencies.moshi
 
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams

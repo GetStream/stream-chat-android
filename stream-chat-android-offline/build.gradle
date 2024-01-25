@@ -84,7 +84,6 @@ dependencies {
 
     // Serialization
     implementation Dependencies.moshi
-    implementation Dependencies.moshiKotlin
     implementation Dependencies.moshiAdapters
     ksp Dependencies.moshiCodegen
 
@@ -93,7 +92,6 @@ dependencies {
     testImplementation project(":stream-chat-android-client-test")
     testImplementation testFixtures(project(":stream-chat-android-core"))
     testImplementation Dependencies.streamResult
-    testImplementation Dependencies.moshiKotlin
 
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
