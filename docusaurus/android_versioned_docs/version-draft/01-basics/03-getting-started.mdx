@@ -2,7 +2,6 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
 # Getting Started
-<!-- TODO I kept this page because it seemed better than having this info in the UI Components/Getting Started page, like iOS does. -->
 
 Let's see how you can get started with the Android Chat SDK after adding the required [dependencies](./02-installation.mdx). This page shows you how to initialize the SDK in your app.
 
@@ -100,7 +99,6 @@ val user = User(
 
 // Connect the user only if they aren't already connected
 if (ChatClient.instance().getCurrentUser() == null) {
-
     ChatClient.instance().connectUser(user = user, token = "userToken") // Replace with a real token
         .enqueue { result ->
             when (result) {
@@ -119,23 +117,24 @@ if (ChatClient.instance().getCurrentUser() == null) {
 <TabItem value="java" label="Java">
 
 ```java
-User user = new User();
-user.setId("bender");
-user.setName("Bender");
-user.setImage("https://bit.ly/321RmWb");
+User user = new User.Builder()
+        .withId("bender")
+        .withName("Bender")
+        .withImage("https://bit.ly/321RmWb")
+        .build();
 
 // Connect the user only if they aren't already connected
 if (ChatClient.instance().getCurrentUser() == null) {
-
     ChatClient.instance().connectUser(user, "userToken")  // Replace with a real token
-            .enqueue((result) -> {
-                if (result.isSuccess()) {
-                    // Handle success
-                } else {
-                    // Handle error
-                }
-            });
+        .enqueue((result) -> {
+            if (result.isSuccess()) {
+                // Handle success
+            } else {
+                // Handle error
+            }
+        });
 }
+
 ```
 </TabItem>
 </Tabs>
@@ -248,10 +247,11 @@ ChatClient.instance().switchUser(user = user2, token = "userToken") // Replace w
 <TabItem value="java" label="Java">
 
 ```java
-User user1 = new User();
-user1.setId("bender");
-user1.setName("Bender");
-user1.setImage("https://bit.ly/321RmWb");
+User user1 = new User.Builder()
+        .withId("bender")
+        .withName("Bender")
+        .withImage("https://bit.ly/321RmWb")
+        .build();
 
 // Connect the first user
 ChatClient.instance().connectUser(user1, "userToken") // Replace with a real token
@@ -263,10 +263,11 @@ ChatClient.instance().connectUser(user1, "userToken") // Replace with a real tok
             }
         });
 
-User user2 = new User();
-user2.setId("bender2");
-user2.setName("Bender2");
-user2.setImage("https://bit.ly/321RmWb");
+User user2 = new User.Builder()
+        .withId("bender2")
+        .withName("Bender2")
+        .withImage("https://bit.ly/321RmWb")
+        .build();
 
 ChatClient.instance().switchUser(user2, "userToken") // Replace with a real token
         .enqueue((result) -> {
@@ -294,6 +295,9 @@ As an example, let's say that you want to query the last conversations I partici
 
 Here’s an example of how you can query the list of channels:
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 val request = QueryChannelsRequest(
     filter = Filters.and(
@@ -309,13 +313,44 @@ val request = QueryChannelsRequest(
 }
 
 client.queryChannels(request).enqueue { result ->
-    if (result.isSuccess) {
-        val channels: List<Channel> = result.data()
-    } else {
-        // Handle result.error()
+    when (result) {
+        is Result.Success -> {
+            val channels: List<Channel> = result.value
+        }
+        is Result.Failure -> {
+            // Handle result.error()
+        }
     }
 }
 ```
+</TabItem>
+<TabItem value="java" label="Java">
+
+```java
+FilterObject filter = Filters.and(
+    Filters.eq("type", "messaging"),
+    Filters.in("members", Collections.singletonList("thierry"))
+);
+int offset = 0;
+int limit = 10;
+QuerySortByField<Channel> sort = QuerySortByField.descByName("lastMessageAt");
+int messageLimit = 0;
+int memberLimit = 0;
+
+QueryChannelsRequest request = new QueryChannelsRequest(filter, offset, limit, sort, messageLimit, memberLimit)
+        .withWatch()
+        .withState();
+
+client.queryChannels(request).enqueue(result -> {
+    if (result.isSuccess()) {
+        List<Channel> channels = result.getOrNull();
+    } else {
+        // Handle error
+    }
+});
+```
+</TabItem>
+</Tabs>
 
 :::note
 At a minimum, the filter should include members: { $in: [userID] }.
@@ -323,11 +358,25 @@ At a minimum, the filter should include members: { $in: [userID] }.
 
 On messaging and team applications you normally have users added to channels as a member. A good starting point is to use this filter to show the channels the user is participating.
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 val filter = Filters.`in`("members", listOf("thierry"))
 ```
+</TabItem>
+<TabItem value="java" label="Java">
+
+```java
+FilterObject filter = Filters.in("members", Collections.singletonList("thierry"));
+```
+</TabItem>
+</Tabs>
 
 On a support chat, you probably want to attach additional information to channels such as the support agent handling the case and other information regarding the status of the support case (for example: open, pending, solved).
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 val filter = Filters.and(
@@ -335,22 +384,59 @@ val filter = Filters.and(
     Filters.`in`("status", listOf("pending", "open", "new")),
 )
 ```
+</TabItem>
+<TabItem value="java" label="Java">
+
+```java
+FilterObject filter = Filters.and(
+        Filters.eq("agent_id", user.getId()),
+        Filters.in("status", Arrays.asList("pending", "open", "new"))
+);
+```
+</TabItem>
+</Tabs>
 
 ### Creating Channels
 
 If you need to create a channel, you can use `channel.create` and pass a `channelId`.
 
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
 ```kotlin
 val channelClient = client.channel(channelType = "messaging", channelId = "general")
 
-channelClient.create().enqueue { result ->
-    if (result.isSuccess) {
-        val newChannel: Channel = result.data()
-    } else {
-        // Handle result.error()
+channelClient.create(memberIds = emptyList(), extraData = emptyMap()).enqueue { result ->
+    when (result) {
+        is Result.Success -> {
+            val newChannel: Channel = result.value
+        }
+        is Result.Failure -> {
+            // Handler error
+        }
     }
 }
 ```
+</TabItem>
+<TabItem value="java" label="Java">
+
+```java
+ChannelClient channelClient = client.channel("messaging", "general");
+
+Map<String, Object> extraData = new HashMap<>();
+List<String> memberIds = new LinkedList<>();
+
+channelClient.create(memberIds, extraData)
+        .enqueue(result -> {
+            if (result.isSuccess()) {
+                Channel newChannel = result.getOrNull();
+            } else {
+                // Handle error
+            }
+        });
+```
+</TabItem>
+</Tabs>
 
 ## Client Plugins
 
@@ -359,7 +445,7 @@ Plugins offer a convenient way of adding additional functionality to `ChatClient
 Adding a plugin is easy:
 
 <Tabs>
-<TabItem value="kotlin" label="kotlin">
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin {2-4}
 val client = ChatClient.Builder(apiKey, context)
@@ -370,7 +456,7 @@ val client = ChatClient.Builder(apiKey, context)
 ```
 </TabItem>
 
-<TabItem value="java" label="java">
+<TabItem value="java" label="Java">
 
 ```java {2-4}
 new ChatClient.Builder(apiKey, context)
@@ -389,7 +475,7 @@ Our UI Components rely on reading the state in order to render the UI. Informati
 Let's see how we can add the plugin:
 
 <Tabs>
-<TabItem value="kotlin" label="kotlin">
+<TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
 // Create a state plugin factory
@@ -411,7 +497,7 @@ ChatClient.Builder(apiKey, context)
 
 </TabItem>
 
-<TabItem value="java" label="java">
+<TabItem value="java" label="Java">
 
 ```java
 // Enable background sync which syncs user actions performed while offline
@@ -551,10 +637,13 @@ You can run a `Call` asynchronously, automatically scheduled on a background thr
 ```kotlin
 // Safe to call from the main thread
 channelClient.sendMessage(message).enqueue { result: Result<Message> ->
-    if (result.isSuccess) {
-        val sentMessage = result.data()
-    } else {
-        // Handle result.error()
+    when (result) {
+        is Result.Success -> {
+            val sentMessage: Message = result.value
+        }
+        is Result.Failure -> {
+            // Handle error
+        }
     }
 }
 ```

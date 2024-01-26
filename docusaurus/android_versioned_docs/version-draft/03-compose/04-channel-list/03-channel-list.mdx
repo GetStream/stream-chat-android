@@ -1,4 +1,4 @@
-# ChannelList
+# Channel List
 
 The `ChannelList` component allows you to build a paginated list of `Channel` items with exposed long tap and single tap actions. We provide two versions of the `ChannelList` component:
 
@@ -67,6 +67,7 @@ fun ChannelList(
 * `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
 
 :::note
+<!-- TODO link to guides, which we'll remove. Revisit after re-organizing pages. (Liviu) -->
 You may need to pass a custom `ChatEventHandlerFactory` to the ViewModel to make sure the list is updated properly. Check [ChannelListUpdates](../../09-client/06-guides/05-channel-list-updates.mdx) section to learn more.
 :::
 

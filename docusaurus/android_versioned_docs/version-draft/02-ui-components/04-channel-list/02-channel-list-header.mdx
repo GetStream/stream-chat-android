@@ -5,9 +5,9 @@ import TabItem from '@theme/TabItem';
 
 `ChannelListHeaderView` is a component that shows the title of the channels list, the current connection status, the avatar of the current user, and provides an action button that can be used to create a new conversation. It is designed to be displayed at the top of the channels screen of your app.
  
- | Light Mode | Dark Mode |
- | --- | --- |
- |![Light_mode](../assets/channels_header.png)|![Dark_mode](../assets/channels_header_dark.png)|
+ | Light Mode                                      | Dark Mode                                           |
+ |-------------------------------------------------|-----------------------------------------------------|
+ | ![Light_mode](../../assets/channels_header.png) | ![Dark_mode](../../assets/channels_header_dark.png) |
  
 ## Usage
 
@@ -48,9 +48,9 @@ ChannelListHeaderViewModelBinding.bind(viewModel, channelListHeaderView, getView
 
 The `ChannelListHeaderViewModel::bindView` function provides all the logic of subscribing to data emitted by the ViewModel. By default, the ViewModel will make the View display the avatar of the currently logged-in user as well as the "Waiting for network" state when needed.
 
- | Light Mode | Dark Mode |
- | --- | --- |
- |![Light_mode](../assets/channels_header_waiting_for_network.png)|![Dark_mode](../assets/channels_header_waiting_for_network_dark.png)|
+ | Light Mode                                                          | Dark Mode                                                               |
+ |---------------------------------------------------------------------|-------------------------------------------------------------------------|
+ | ![Light_mode](../../assets/channels_header_waiting_for_network.png) | ![Dark_mode](../../assets/channels_header_waiting_for_network_dark.png) |
 
 ## Handling Actions
 
@@ -102,8 +102,8 @@ The appearance of `ChannelListHeaderView` can be conveniently modified using its
 
 The example above hides the avatar view, makes the title text bold and sets the drawable of the action button to a custom icon.
     
-| Before | After |
-| --- | --- |
-|![Light_mode](../assets/channels_header.png)|![Dark_mode](../assets/channels_header_after_customization.png)|
+| Before                                          | After                                                              |
+|-------------------------------------------------|--------------------------------------------------------------------|
+| ![Light_mode](../../assets/channels_header.png) | ![Dark_mode](../../assets/channels_header_after_customization.png) |
 
 A full list of available XML attributes is available [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_channel_list_header_view.xml).

@@ -181,7 +181,7 @@ You can configure the avatar shape, border width, online indicator and other asp
 
 #### Customizing User Avatars Using UserAvatarRenderer
 
-Overriding the `UserAvatarRenderer` allows you to add custom logic for the and user's avatars displayed using `UserAvatarView`.
+Overriding the `UserAvatarRenderer` allows you to add custom logic for the user's avatars displayed using `UserAvatarView`.
 
 :::note
 The `UserAvatarView.setAvatar` method mentioned below can accept different data types as `avatar` parameter.
@@ -192,7 +192,7 @@ It can be a `Bitmap`, `Drawable`, `Uri`, `String` or `DrawbleRes` (resource id).
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-object : UserAvatarRenderer {
+ChatUI.userAvatarRenderer = object : UserAvatarRenderer {
     override fun render(style: AvatarStyle, user: User, target: UserAvatarView) {
         // You can apply custom image loading logic here
         val placeholder: Drawable = /* ... */
@@ -206,7 +206,7 @@ object : UserAvatarRenderer {
 <TabItem value="java" label="Java">
 
 ```java
-new UserAvatarRenderer() {
+final UserAvatarRenderer renderer = new UserAvatarRenderer() {
     @Override
     public void render(
         @NonNull AvatarStyle style,
@@ -219,6 +219,8 @@ new UserAvatarRenderer() {
         target.setOnline(user.getOnline());
     }
 };
+
+ChatUI.setUserAvatarRenderer(renderer);
 ```
 </TabItem>
 </Tabs>
@@ -239,7 +241,7 @@ You can override the `ChannelAvatarRenderer` to apply custom logic for each scen
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-object : ChannelAvatarRenderer {
+ChatUI.channelAvatarRenderer = object : ChannelAvatarRenderer {
     override fun render(
         style: AvatarStyle, 
         channel: Channel, 
@@ -273,7 +275,7 @@ object : ChannelAvatarRenderer {
 <TabItem value="java" label="Java">
 
 ```java
-new ChannelAvatarRenderer() {
+ChannelAvatarRenderer renderer = new ChannelAvatarRenderer() {
     @Override
     public void render(
         @NonNull AvatarStyle style,
@@ -304,6 +306,8 @@ new ChannelAvatarRenderer() {
         }
     }
 };
+
+ChatUI.setChannelAvatarRenderer(renderer);
 ```
 </TabItem>
 </Tabs>
@@ -685,7 +689,7 @@ ChatUI.setQuotedAttachmentFactoryManager(quotedAttachmentFactoryManager);
 
 ### Guide on Adding Support for Custom Attachments
 
-We offer a [guide](08-message-composer/04-custom-attachments.mdx) on implementing custom attachment support which covers the topic extensively.
+We offer a [guide](06-message-composer/04-custom-attachments.mdx) on implementing custom attachment support which covers the topic extensively.
 
 ## Disabling Video Thumbnails
 

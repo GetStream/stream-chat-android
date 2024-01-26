@@ -12,8 +12,8 @@ module.exports = {
             label: 'v5',
             path: 'v5',
             banner: 'unmaintained'
-          }
-        },
+          },
+        }
       }
     ]
   ]

@@ -6,9 +6,9 @@ slug: /
 
 Built on top of the Stream Chat low-level client, the Stream Chat Android UI components enable you to easily build any type of chat or messaging experience for Android.
 
-We have component libraries available for both Android Views and Jetpack Compose. Each of these libraries provides an extensive collection of efficient and customizable UI components which enable you to quickly get started with little to no setup required. The libraries support:
+We have UI component libraries available for both Android Views and Jetpack Compose. Each of these libraries provides an extensive collection of efficient and customizable UI components which enable you to quickly get started with little to no setup required. The libraries support:
 
-<!-- TODO validate list below -->
+<!-- TODO validate list below. It's a copy from iOS, should we add/remove something? -->
 - Rich-media messages
 - Channel and message lists
 - Message Reactions
@@ -19,7 +19,7 @@ We have component libraries available for both Android Views and Jetpack Compose
 - Indicators for read state and typing
 - Push notifications
 - Offline storage
-- Voice messages
+- Voice messages (only in the Android Views library for now)
 - and more.
 
 :::note
@@ -29,9 +29,7 @@ The fastest way to get started with the SDK is by trying the [Android Views In-A
 ## Architecture
 
 The SDK consists of three separate libraries:
-<!-- TODO iOS uses the artifact name, for us it would be stream-chat-android-ui-components etc -->
-<!-- TODO Name should be UI Components or Android Views UI Components? -->
-<!-- TODO Should we list Compose first? -->
+<!-- TODO Should we list Compose components first? -->
 - [UI components](../02-ui-components/01-getting-started.mdx). Provides a set of reusable and customizable UI components based on Android Views.
 - [Compose UI components](../03-compose/01-overview.mdx). Provides a set of reusable and customizable Jetpack Compose UI components.
 - [Low-level client](https://getstream.io/chat/docs/android/?language=kotlin). Provides the main chat functionality. You can use it directly if you intend to build your own UI layer for the chat.
@@ -42,21 +40,7 @@ The UI SDKs provide pre-made components that you can directly integrate and cust
 
 You can learn more about how state is exposed [here](../09-client/06-guides/04-state-plugin.mdx) and in the [low-level client docs](https://getstream.io/chat/docs/android/?language=kotlin).
 
-<!-- TODO check all links on this page, especially state link above -->
-
-### Dependencies
-
-The SDK aims to limit the number of external dependencies it uses. Here are the dependencies that are currently used:
-
-#### UI Components
--
-
-#### Compose UI Components
--
-
-#### Low-level Client
--
-<!-- TODO add external dependencies -->
+<!-- TODO check all links on this page, especially state link above (Liviu) -->
 
 ## Choosing the Right SDK
 
@@ -75,8 +59,6 @@ You can see the UI Components in action by checking out the [UI Components Sampl
 The Compose UI Components library is a chat UI implementation built from scratch with [Jetpack Compose](https://developer.android.com/jetpack/compose). It contains modular Composable functions for building channel lists, messaging screens, and more. See the [Getting Started](../03-compose/01-overview.mdx) page for more details.
 
 This is also built on top of the state library, and offers easy integration of Stream Chat into a Compose-based Android application. It's also highly modular and customizable.
-
-<!-- TODO add theming link for Compose -->
 
 Check out the Compose implementation in action by trying the open-source [Compose UI Components Sample App](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose-sample).
 
@@ -109,13 +91,13 @@ You can get notified of new releases by using the _Watch_ button in the [getstre
 :::
 
 ### How Should I Specify My Dependency Version?
-<!-- TODO Double check if this is correct -->
-You should either use a fixed version or the optimistic operator (plus sign), with **the minor version specified**.
+
+You should use a fixed version in order to avoid any conflicts or unpredicted behaviour.
 
 For example:
 
 ```groovy
-implementation "io.getstream:stream-chat-android-compose:6.0.+"
+implementation "io.getstream:stream-chat-android-compose:6.0.0"
 ```
 
 ### Snapshot Builds

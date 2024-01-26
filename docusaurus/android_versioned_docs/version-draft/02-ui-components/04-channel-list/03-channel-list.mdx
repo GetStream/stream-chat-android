@@ -77,6 +77,7 @@ ChannelListViewModelBinding.bind(viewModel, channelListView, getViewLifecycleOwn
 </Tabs>
 
 :::note
+<!-- TODO link to a guide below, section that we'll remove. What should we do? -->
 You may need to pass a custom `ChatEventHandler` to make sure the list is updated properly. Check [ChannelListUpdates](../../09-client/06-guides/05-channel-list-updates.mdx) section to read more.
 :::
 
@@ -218,7 +219,7 @@ The transformer should be set before the View is rendered to make sure that the 
 
 ## Customizing Swipe Actions
 
-By default `ChannelListView` supports **two** swipe actions: 
+By default, `ChannelListView` supports **two** swipe actions: 
 * `More Options` - available for every channel.
 * `Delete` - available for the channels where `Channel.ownCapbilities` contains `"delete-channel"`
 
