@@ -12,12 +12,7 @@ module.exports = {
             label: 'v5',
             path: 'v5',
             banner: 'unmaintained'
-          },
-          'draft': {
-            label: 'Draft',
-            path: 'draft',
-            banner: 'unreleased'
-          },
+          }
         },
       }
     ]
