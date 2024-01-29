@@ -50,4 +50,15 @@ public abstract class InnerAttachmentViewHolder(public val itemView: View) {
      * Called when a view in this ViewHolder has been detached from its window.
      */
     public open fun onViewDetachedFromWindow() {}
+
+    public companion object {
+        /**
+         * Creates a stub [InnerAttachmentViewHolder] instance.
+         *
+         * @param itemView The view that this ViewHolder controls.
+         */
+        public fun stub(itemView: View): InnerAttachmentViewHolder {
+            return object : InnerAttachmentViewHolder(itemView) {}
+        }
+    }
 }

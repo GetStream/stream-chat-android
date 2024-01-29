@@ -26,7 +26,7 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 import io.getstream.chat.android.ui.databinding.StreamUiItemGiphyAttachmentBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GiphyMediaAttachmentView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
@@ -48,7 +48,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 public class GiphyAttachmentViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer?,
+    private val listeners: MessageListListeners?,
     private val markdown: ChatMessageTextTransformer,
     public val binding: StreamUiItemGiphyAttachmentBinding = StreamUiItemGiphyAttachmentBinding.inflate(
         parent.streamThemeInflater,
