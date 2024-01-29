@@ -2100,7 +2100,20 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setModeratedMessageHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ModeratedMessageOptionHandler;)V
 	public final fun setModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ModeratedMessageLongClickListener;)V
 	public final fun setNewMessagesBehaviour (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;)V
+	public final fun setOnAttachmentClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentClickListener;)V
+	public final fun setOnAttachmentDownloadClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentDownloadClickListener;)V
+	public final fun setOnEnterThreadListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnEnterThreadListener;)V
+	public final fun setOnLinkClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnLinkClickListener;)V
+	public final fun setOnMessageClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener;)V
+	public final fun setOnMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;)V
+	public final fun setOnMessageRetryListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;)V
+	public final fun setOnModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnModeratedMessageLongClickListener;)V
+	public final fun setOnReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;)V
+	public final fun setOnReplyMessageClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReplyMessageClickListener;)V
 	public final fun setOnScrollToBottomHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnScrollToBottomHandler;)V
+	public final fun setOnThreadClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener;)V
+	public final fun setOnUserClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserClickListener;)V
+	public final fun setOnUserReactionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserReactionClickListener;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
@@ -2263,8 +2276,64 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public static fun values ()[Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$NewMessagesBehaviour;
 }
 
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentClickListener {
+	public abstract fun onAttachmentClick (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Attachment;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentDownloadClickListener {
+	public abstract fun onAttachmentDownloadClick (Lio/getstream/chat/android/models/Attachment;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnEnterThreadListener {
+	public abstract fun onThreadEntered (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnGiphySendListener {
+	public abstract fun onGiphySend (Lio/getstream/chat/android/ui/common/state/messages/list/GiphyAction;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnLinkClickListener {
+	public abstract fun onLinkClick (Ljava/lang/String;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener {
+	public abstract fun onMessageClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener {
+	public abstract fun onMessageLongClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener {
+	public abstract fun onRetryMessage (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnModeratedMessageLongClickListener {
+	public abstract fun onModeratedMessageLongClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener {
+	public abstract fun onReactionViewClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReplyMessageClickListener {
+	public abstract fun onReplyClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnScrollToBottomHandler {
 	public abstract fun onScrollToBottom ()V
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener {
+	public abstract fun onThreadClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserClickListener {
+	public abstract fun onUserClick (Lio/getstream/chat/android/models/User;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserReactionClickListener {
+	public abstract fun onUserReactionClick (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener {
@@ -2681,6 +2750,7 @@ public class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageL
 	protected final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;
 	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;
+	protected final fun getListeners ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemViewType {
@@ -2715,6 +2785,19 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ThreadClickListener;
 	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$UserClickListener;
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners {
+	public abstract fun getAttachmentClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentClickListener;
+	public abstract fun getAttachmentDownloadClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnAttachmentDownloadClickListener;
+	public abstract fun getGiphySendListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnGiphySendListener;
+	public abstract fun getLinkClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnLinkClickListener;
+	public abstract fun getMessageClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener;
+	public abstract fun getMessageLongClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;
+	public abstract fun getMessageRetryListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;
+	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;
+	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener;
+	public abstract fun getUserClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserClickListener;
 }
 
 public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder {
@@ -2800,6 +2883,12 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory {
 	public abstract fun canHandle (Lio/getstream/chat/android/models/Message;)Z
 	public abstract fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+	public abstract fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory$DefaultImpls {
+	public static fun createViewHolder (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+	public static fun createViewHolder (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager {
@@ -2808,6 +2897,13 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun canHandle (Lio/getstream/chat/android/models/Message;)Z
 	public final fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+	public final fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+}
+
+public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/BaseAttachmentFactory : io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactory {
+	public fun <init> ()V
+	public fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+	public fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/DefaultQuotedAttachmentMessageFactory : io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
@@ -2823,6 +2919,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 }
 
 public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder$Companion;
 	public fun <init> (Landroid/view/View;)V
 	public final fun getContext ()Landroid/content/Context;
 	public final fun getItemView ()Landroid/view/View;
@@ -2830,6 +2927,10 @@ public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter
 	public fun onUnbindViewHolder ()V
 	public fun onViewAttachedToWindow ()V
 	public fun onViewDetachedFromWindow ()V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder$Companion {
+	public final fun stub (Landroid/view/View;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/QuotedAttachmentFactory {
@@ -2849,6 +2950,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public fun <init> ()V
 	public fun canHandle (Lio/getstream/chat/android/models/Message;)Z
 	public fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
+	public fun createViewHolder (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Landroid/view/ViewGroup;)Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/InnerAttachmentViewHolder;
 }
 
 public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/BaseDecorator : io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator {
