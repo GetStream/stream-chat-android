@@ -793,11 +793,11 @@ class CallOnAttachmentViewFactory constructor(
 
     override fun createViewHolder(
         message: Message,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
         parent: ViewGroup
     ): InnerAttachmentViewHolder {
-        val callOnAttachment = message.attachments.firstOrNull { it.hasCallType() }
-            ?: return createViewHolder(message, listeners, parent)
+        // this method is called if `canHandle` returns true
+        val callOnAttachment = message.attachments.first { it.hasCallType() }
         val binding = AttachmentCallOnBinding
             .inflate(LayoutInflater.from(parent.context), null, false)
         return CallOnAttachmentViewHolder(

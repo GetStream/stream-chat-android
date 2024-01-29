@@ -459,7 +459,7 @@ interface AttachmentFactory {
     
     fun createViewHolder(
         message: Message,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
         parent: ViewGroup,
     ): InnerAttachmentViewHolder
 }
@@ -519,7 +519,7 @@ class DateAttachmentFactory : AttachmentFactory {
 
     override fun createViewHolder(
         message: Message,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
         parent: ViewGroup,
     ): InnerAttachmentViewHolder {
         // Create an inner ViewHolder with the attachment content
@@ -530,7 +530,7 @@ class DateAttachmentFactory : AttachmentFactory {
 
     class DateAttachmentViewHolder(
         private val binding: ItemDateAttachmentBinding,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
     ) : InnerAttachmentViewHolder(binding.root) {
 
         private lateinit var message: Message
@@ -581,7 +581,7 @@ class DateAttachmentFactory implements AttachmentFactory {
     @NonNull
     @Override
     public InnerAttachmentViewHolder createViewHolder(@NonNull Message message,
-                                                      @Nullable MessageListListenerContainer listeners,
+                                                      @Nullable MessageListListeners listeners,
                                                       @NonNull ViewGroup parent) {
         ItemDateAttachmentBinding binding = ItemDateAttachmentBinding
                 .inflate(LayoutInflater.from(parent.getContext()), parent, false);
@@ -593,7 +593,7 @@ class DateAttachmentFactory implements AttachmentFactory {
         private ItemDateAttachmentBinding binding;
         private Message message;
 
-        public DateAttachmentViewHolder(ItemDateAttachmentBinding binding, MessageListListenerContainer listeners) {
+        public DateAttachmentViewHolder(ItemDateAttachmentBinding binding, MessageListListeners listeners) {
             super(binding.getRoot());
             this.binding = binding;
 

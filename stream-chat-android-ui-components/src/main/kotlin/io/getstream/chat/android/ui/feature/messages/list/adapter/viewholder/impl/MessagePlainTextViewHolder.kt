@@ -23,7 +23,7 @@ import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.databinding.StreamUiItemMessagePlainTextBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
@@ -36,7 +36,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 public class MessagePlainTextViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer?,
+    private val listeners: MessageListListeners?,
     private val messageTextTransformer: ChatMessageTextTransformer,
     public val binding: StreamUiItemMessagePlainTextBinding =
         StreamUiItemMessagePlainTextBinding.inflate(

@@ -29,7 +29,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemMessageGiphyBinding
 import io.getstream.chat.android.ui.feature.messages.list.GiphyViewHolderStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -39,7 +39,7 @@ import io.getstream.chat.android.ui.utils.load
 public class GiphyViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    listeners: MessageListListenerContainer?,
+    listeners: MessageListListeners?,
     public val style: GiphyViewHolderStyle,
     public val binding: StreamUiItemMessageGiphyBinding = StreamUiItemMessageGiphyBinding.inflate(
         parent.streamThemeInflater,

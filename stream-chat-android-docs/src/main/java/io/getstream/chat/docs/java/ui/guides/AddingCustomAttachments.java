@@ -35,10 +35,9 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory;
-import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerLeadingContent;
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer;
-import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.BaseAttachmentFactory;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.InnerAttachmentViewHolder;
@@ -257,12 +256,12 @@ public class AddingCustomAttachments extends Fragment {
      */
     class RenderingDateAttachments {
 
-        class DateAttachmentFactory implements AttachmentFactory {
+        class DateAttachmentFactory extends BaseAttachmentFactory {
 
             @Override
             public boolean canHandle(@NonNull Message message) {
                 for (Attachment attachment : message.getAttachments()) {
-                    if (attachment.getType().equals("date")) {
+                    if ("date".equals(attachment.getType())) {
                         return true;
                     }
                 }
@@ -272,7 +271,7 @@ public class AddingCustomAttachments extends Fragment {
             @NonNull
             @Override
             public InnerAttachmentViewHolder createViewHolder(@NonNull Message message,
-                                                              @Nullable MessageListListenerContainer listeners,
+                                                              @Nullable MessageListListeners listeners,
                                                               @NonNull ViewGroup parent) {
                 ItemDateAttachmentBinding binding = ItemDateAttachmentBinding
                         .inflate(LayoutInflater.from(parent.getContext()), parent, false);
@@ -284,7 +283,7 @@ public class AddingCustomAttachments extends Fragment {
                 private ItemDateAttachmentBinding binding;
                 private Message message;
 
-                public DateAttachmentViewHolder(ItemDateAttachmentBinding binding, MessageListListenerContainer listeners) {
+                public DateAttachmentViewHolder(ItemDateAttachmentBinding binding, MessageListListeners listeners) {
                     super(binding.getRoot());
                     this.binding = binding;
 
@@ -304,7 +303,7 @@ public class AddingCustomAttachments extends Fragment {
 
                     Attachment dateAttachment = null;
                     for (Attachment attachment : message.getAttachments()) {
-                        if (attachment.getType().equals("date")) {
+                        if ("date".equals(attachment.getType())) {
                             dateAttachment = attachment;
                             break;
                         }

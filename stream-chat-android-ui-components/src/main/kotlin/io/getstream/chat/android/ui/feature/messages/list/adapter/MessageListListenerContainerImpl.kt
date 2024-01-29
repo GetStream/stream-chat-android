@@ -16,111 +16,111 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter
 
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.AttachmentClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.AttachmentDownloadClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.GiphySendListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.LinkClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageLongClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.MessageRetryListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ReactionViewClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ThreadClickListener
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView.UserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnAttachmentDownloadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnGiphySendListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLinkClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
 import io.getstream.chat.android.ui.utils.ListenerDelegate
 
 internal class MessageListListenerContainerImpl(
-    messageClickListener: MessageClickListener = MessageClickListener(EmptyFunctions.ONE_PARAM),
-    messageLongClickListener: MessageLongClickListener = MessageLongClickListener(EmptyFunctions.ONE_PARAM),
-    messageRetryListener: MessageRetryListener = MessageRetryListener(EmptyFunctions.ONE_PARAM),
-    threadClickListener: ThreadClickListener = ThreadClickListener(EmptyFunctions.ONE_PARAM),
-    attachmentClickListener: AttachmentClickListener = AttachmentClickListener(EmptyFunctions.TWO_PARAM),
-    attachmentDownloadClickListener: AttachmentDownloadClickListener = AttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
-    reactionViewClickListener: ReactionViewClickListener = ReactionViewClickListener(EmptyFunctions.ONE_PARAM),
-    userClickListener: UserClickListener = UserClickListener(EmptyFunctions.ONE_PARAM),
-    giphySendListener: GiphySendListener = GiphySendListener(EmptyFunctions.ONE_PARAM),
-    linkClickListener: LinkClickListener = LinkClickListener(EmptyFunctions.ONE_PARAM),
-) : MessageListListenerContainer {
+    messageClickListener: OnMessageClickListener = OnMessageClickListener(EmptyFunctions.ONE_PARAM),
+    messageLongClickListener: OnMessageLongClickListener = OnMessageLongClickListener(EmptyFunctions.ONE_PARAM),
+    messageRetryListener: OnMessageRetryListener = OnMessageRetryListener(EmptyFunctions.ONE_PARAM),
+    threadClickListener: OnThreadClickListener = OnThreadClickListener(EmptyFunctions.ONE_PARAM),
+    attachmentClickListener: OnAttachmentClickListener = OnAttachmentClickListener(EmptyFunctions.TWO_PARAM),
+    attachmentDownloadClickListener: OnAttachmentDownloadClickListener = OnAttachmentDownloadClickListener(EmptyFunctions.ONE_PARAM),
+    reactionViewClickListener: OnReactionViewClickListener = OnReactionViewClickListener(EmptyFunctions.ONE_PARAM),
+    userClickListener: OnUserClickListener = OnUserClickListener(EmptyFunctions.ONE_PARAM),
+    giphySendListener: OnGiphySendListener = OnGiphySendListener(EmptyFunctions.ONE_PARAM),
+    linkClickListener: OnLinkClickListener = OnLinkClickListener(EmptyFunctions.ONE_PARAM),
+) : MessageListListeners {
     private object EmptyFunctions {
-        val ONE_PARAM: (Any) -> Unit = { _ -> }
-        val TWO_PARAM: (Any, Any) -> Unit = { _, _ -> }
+        val ONE_PARAM: (Any) -> Boolean = { _ -> false }
+        val TWO_PARAM: (Any, Any) -> Boolean = { _, _ -> false }
     }
 
-    override var messageClickListener: MessageClickListener by ListenerDelegate(
+    override var messageClickListener: OnMessageClickListener by ListenerDelegate(
         messageClickListener,
     ) { realListener ->
-        MessageClickListener { message ->
+        OnMessageClickListener { message ->
             realListener().onMessageClick(message)
         }
     }
 
-    override var messageLongClickListener: MessageLongClickListener by ListenerDelegate(
+    override var messageLongClickListener: OnMessageLongClickListener by ListenerDelegate(
         messageLongClickListener,
     ) { realListener ->
-        MessageLongClickListener { message ->
+        OnMessageLongClickListener { message ->
             realListener().onMessageLongClick(message)
         }
     }
 
-    override var messageRetryListener: MessageRetryListener by ListenerDelegate(
+    override var messageRetryListener: OnMessageRetryListener by ListenerDelegate(
         messageRetryListener,
     ) { realListener ->
-        MessageRetryListener { message ->
+        OnMessageRetryListener { message ->
             realListener().onRetryMessage(message)
         }
     }
 
-    override var threadClickListener: ThreadClickListener by ListenerDelegate(
+    override var threadClickListener: OnThreadClickListener by ListenerDelegate(
         threadClickListener,
     ) { realListener ->
-        ThreadClickListener { message ->
+        OnThreadClickListener { message ->
             realListener().onThreadClick(message)
         }
     }
 
-    override var attachmentClickListener: AttachmentClickListener by ListenerDelegate(
+    override var attachmentClickListener: OnAttachmentClickListener by ListenerDelegate(
         attachmentClickListener,
     ) { realListener ->
-        AttachmentClickListener { message, attachment ->
+        OnAttachmentClickListener { message, attachment ->
             realListener().onAttachmentClick(message, attachment)
         }
     }
 
-    override var attachmentDownloadClickListener: AttachmentDownloadClickListener by ListenerDelegate(
+    override var attachmentDownloadClickListener: OnAttachmentDownloadClickListener by ListenerDelegate(
         attachmentDownloadClickListener,
     ) { realListener ->
-        AttachmentDownloadClickListener { attachment ->
+        OnAttachmentDownloadClickListener { attachment ->
             realListener().onAttachmentDownloadClick(attachment)
         }
     }
 
-    override var reactionViewClickListener: ReactionViewClickListener by ListenerDelegate(
+    override var reactionViewClickListener: OnReactionViewClickListener by ListenerDelegate(
         reactionViewClickListener,
     ) { realListener ->
-        ReactionViewClickListener { message ->
+        OnReactionViewClickListener { message ->
             realListener().onReactionViewClick(message)
         }
     }
 
-    override var userClickListener: UserClickListener by ListenerDelegate(
+    override var userClickListener: OnUserClickListener by ListenerDelegate(
         userClickListener,
     ) { realListener ->
-        UserClickListener { user ->
+        OnUserClickListener { user ->
             realListener().onUserClick(user)
         }
     }
 
-    override var giphySendListener: GiphySendListener by ListenerDelegate(
+    override var giphySendListener: OnGiphySendListener by ListenerDelegate(
         giphySendListener,
     ) { realListener ->
-        GiphySendListener { action ->
+        OnGiphySendListener { action ->
             realListener().onGiphySend(action)
         }
     }
 
-    override var linkClickListener: LinkClickListener by ListenerDelegate(
+    override var linkClickListener: OnLinkClickListener by ListenerDelegate(
         linkClickListener,
     ) { realListener ->
-        LinkClickListener { url ->
+        OnLinkClickListener { url ->
             realListener().onLinkClick(url)
         }
     }
