@@ -120,6 +120,44 @@ public final class io/getstream/chat/android/compose/state/channels/list/Channel
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract class io/getstream/chat/android/compose/state/channels/list/SearchQuery {
+	public static final field $stable I
+	public abstract fun getQuery ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/state/channels/list/SearchQuery$Channels : io/getstream/chat/android/compose/state/channels/list/SearchQuery {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Channels;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Channels;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Channels;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getQuery ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/state/channels/list/SearchQuery$Empty : io/getstream/chat/android/compose/state/channels/list/SearchQuery {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Empty;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getQuery ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/state/channels/list/SearchQuery$Messages : io/getstream/chat/android/compose/state/channels/list/SearchQuery {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Messages;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Messages;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/SearchQuery$Messages;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getQuery ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewActivityAttachmentState$Creator : android/os/Parcelable$Creator {
 	public fun <init> ()V
 	public final fun createFromParcel (Landroid/os/Parcel;)Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewActivityAttachmentState;
