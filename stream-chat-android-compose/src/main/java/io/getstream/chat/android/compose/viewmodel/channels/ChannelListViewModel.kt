@@ -27,6 +27,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ConnectionState
@@ -101,7 +102,7 @@ public class ChannelListViewModel(
      * The current state of the search input. When changed, it emits a new value in a flow, which
      * queries and loads new data.
      */
-    private val searchQuery = MutableStateFlow("")
+    private val searchQuery = MutableStateFlow<SearchQuery>(SearchQuery.Empty)
 
     /**
      * The current state of the channels screen. It holds all the information required to render the UI.
@@ -185,22 +186,35 @@ public class ChannelListViewModel(
 
         searchQuery.combine(queryConfigFlow) { query, config -> query to config }
             .collectLatest { (query, config) ->
-                val queryChannelsRequest = QueryChannelsRequest(
-                    filter = createQueryChannelsFilter(config.filters, query),
-                    querySort = config.querySort,
-                    limit = channelLimit,
-                    messageLimit = messageLimit,
-                    memberLimit = memberLimit,
-                )
+                when (query) {
+                    is SearchQuery.Empty -> queryChannels(config)
+                    is SearchQuery.Channels -> queryChannels(
+                        config.copy(
+                            filters = createQueryChannelsFilter(config.filters, query.query),
+                        ),
+                    )
+                    is SearchQuery.Messages -> TODO()
+                }
 
-                logger.d { "Querying channels as state" }
-                queryChannelsState = chatClient.queryChannelsAsState(
-                    request = queryChannelsRequest,
-                    chatEventHandlerFactory = chatEventHandlerFactory,
-                    coroutineScope = viewModelScope,
-                )
                 observeChannels(searchQuery = query)
             }
+    }
+
+    private fun queryChannels(config: QueryConfig<Channel>) {
+        val queryChannelsRequest = QueryChannelsRequest(
+            filter = config.filters,
+            querySort = config.querySort,
+            limit = channelLimit,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+        )
+
+        logger.d { "Querying channels as state" }
+        queryChannelsState = chatClient.queryChannelsAsState(
+            request = queryChannelsRequest,
+            chatEventHandlerFactory = chatEventHandlerFactory,
+            coroutineScope = viewModelScope,
+        )
     }
 
     /**
@@ -238,7 +252,7 @@ public class ChannelListViewModel(
      * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [queryChannelsState].
      * @param searchQuery The search query string used to search channels.
      */
-    private suspend fun observeChannels(searchQuery: String) {
+    private suspend fun observeChannels(searchQuery: SearchQuery) {
         logger.d { "ViewModel is observing channels. When state is available, it will be notified" }
         queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
             channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
@@ -289,7 +303,7 @@ public class ChannelListViewModel(
      * The new operation will hold the channels that match the new query.
      */
     public fun setSearchQuery(newQuery: String) {
-        this.searchQuery.value = newQuery
+        this.searchQuery.value = SearchQuery.Channels(newQuery)
     }
 
     /**
@@ -331,7 +345,7 @@ public class ChannelListViewModel(
         val currentQuery = queryChannelsState.value?.nextPageRequest?.value
 
         currentQuery?.copy(
-            filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value),
+            filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value.query),
             querySort = currentConfig.querySort,
         )?.let { queryChannelsRequest ->
             chatClient.queryChannels(queryChannelsRequest).enqueue()
