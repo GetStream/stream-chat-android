@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix annotated messages not being building proper links. [#5163](https://github.com/GetStream/stream-chat-android/pull/5163)
 
 ### ⬆️ Improved
 
