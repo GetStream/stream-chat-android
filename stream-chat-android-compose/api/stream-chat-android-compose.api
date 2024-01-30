@@ -101,19 +101,19 @@ public final class io/getstream/chat/android/compose/state/channels/list/Channel
 public final class io/getstream/chat/android/compose/state/channels/list/ChannelsState {
 	public static final field $stable I
 	public fun <init> ()V
-	public fun <init> (ZZZLjava/util/List;Ljava/lang/String;)V
-	public synthetic fun <init> (ZZZLjava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;)V
+	public synthetic fun <init> (ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Ljava/util/List;
-	public final fun component5 ()Ljava/lang/String;
-	public final fun copy (ZZZLjava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/compose/state/channels/list/ChannelsState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ChannelsState;ZZZLjava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ChannelsState;
+	public final fun component5 ()Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;
+	public final fun copy (ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;)Lio/getstream/chat/android/compose/state/channels/list/ChannelsState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ChannelsState;ZZZLjava/util/List;Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ChannelsState;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getChannelItems ()Ljava/util/List;
 	public final fun getEndOfChannels ()Z
-	public final fun getSearchQuery ()Ljava/lang/String;
+	public final fun getSearchQuery ()Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;
 	public fun hashCode ()I
 	public final fun isLoading ()Z
 	public final fun isLoadingMore ()Z

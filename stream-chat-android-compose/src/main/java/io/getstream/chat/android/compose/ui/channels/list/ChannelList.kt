@@ -212,7 +212,7 @@ public fun ChannelList(
             itemContent = itemContent,
             divider = divider,
         )
-        searchQuery.isNotEmpty() -> emptySearchContent(searchQuery)
+        searchQuery.query.isNotBlank() -> emptySearchContent(searchQuery.query)
         else -> emptyContent()
     }
 }
