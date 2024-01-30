@@ -26,6 +26,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import java.util.Locale
 import java.util.regex.Pattern
 
 /**
@@ -112,13 +113,15 @@ private fun AnnotatedString.Builder.linkify(
     }
 }
 
-private fun String.fixPrefix(schemes: List<String>): String {
-    return if (schemes.none { scheme -> startsWith(scheme) }) {
-        schemes[0] + this
-    } else {
-        this
-    }
-}
+private fun String.fixPrefix(schemes: List<String>): String =
+    lowercase(Locale.getDefault())
+        .let {
+            if (schemes.none { scheme -> it.startsWith(scheme) }) {
+                schemes[0] + it
+            } else {
+                it
+            }
+        }
 
 private val URL_SCHEMES = listOf("http://", "https://")
 private val EMAIL_SCHEMES = listOf("mailto:")
