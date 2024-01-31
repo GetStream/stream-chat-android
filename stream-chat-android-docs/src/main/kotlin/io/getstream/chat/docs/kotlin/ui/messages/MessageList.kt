@@ -15,17 +15,17 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.helper.StyleTransformer
-import io.getstream.chat.android.ui.helper.TransformStyle
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
-import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.TodayMessageListItemBinding
@@ -106,26 +106,33 @@ class MessageListViewSnippets : Fragment() {
      * [Listeners](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#listeners)
      */
     fun listeners() {
-        messageListView.setMessageClickListener { message: Message ->
+        messageListView.setOnMessageClickListener { message: Message ->
             // Handle message being clicked
+            true
         }
-        messageListView.setEnterThreadListener { message: Message ->
+        messageListView.setOnEnterThreadListener { message: Message ->
             // Handle thread being entered
+            true
         }
-        messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
+        messageListView.setOnAttachmentDownloadClickListener { attachment: Attachment ->
             // Handle clicks on the download attachment button
+            true
         }
-        messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
+        messageListView.setOnUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
             // Handle clicks on a reaction left by a user
+            true
         }
-        messageListView.setMessageLongClickListener { message ->
+        messageListView.setOnMessageLongClickListener { message ->
             // Handle message being long clicked
+            true
         }
-        messageListView.setAttachmentClickListener { message, attachment ->
+        messageListView.setOnAttachmentClickListener { message, attachment ->
             // Handle attachment being clicked
+            true
         }
-        messageListView.setUserClickListener { user ->
+        messageListView.setOnUserClickListener { user ->
             // Handle user avatar being clicked
+            true
         }
     }
 

@@ -200,26 +200,39 @@ You can always override them to get the event when something happens:
 <TabItem value="kotlin" label="Kotlin">
 
 ```kotlin
-messageListView.setMessageClickListener { message: Message ->
+messageListView.setOnMessageClickListener { message: Message ->
     // Handle message being clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    true
 }
-messageListView.setEnterThreadListener { message: Message ->
+messageListView.setOnEnterThreadListener { message: Message ->
     // Handle thread being entered
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    true
 }
-messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
+messageListView.setOnAttachmentDownloadClickListener { attachment: Attachment ->
     // Handle clicks on the download attachment button
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    true
 }
-messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
+messageListView.setOnUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
     // Handle clicks on a reaction left by a user
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    true
 }
-messageListView.setMessageLongClickListener { message ->
+messageListView.setOnMessageLongClickListener { message ->
     // Handle message being long clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    true
 }
-messageListView.setAttachmentClickListener { message, attachment ->
+messageListView.setOnAttachmentClickListener { message, attachment ->
     // Handle attachment being clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    true
 }
-messageListView.setUserClickListener { user ->
-    // Handle user avatar being clicked
+messageListView.setOnUserClickListener { user ->
+    // Handle user avatar being clicked. If false, the default behavior will be executed
+    true
 }
 ```
 </TabItem>
@@ -227,26 +240,40 @@ messageListView.setUserClickListener { user ->
 <TabItem value="java" label="Java">
 
 ```java
-messageListView.setMessageClickListener((message) -> {
+messageListView.setOnMessageClickListener((message) -> {
     // Handle message being clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
-messageListView.setEnterThreadListener((message) -> {
+messageListView.setOnEnterThreadListener((message) -> {
     // Handle thread being entered
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
-messageListView.setAttachmentDownloadClickListener((attachment) -> {
+messageListView.setOnAttachmentDownloadClickListener((attachment) -> {
     // Handle clicks on the download attachment button
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
-messageListView.setUserReactionClickListener((message, user, reaction) -> {
+messageListView.setOnUserReactionClickListener((message, user, reaction) -> {
     // Handle clicks on a reaction left by a user
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
-messageListView.setMessageLongClickListener((message) -> {
+messageListView.setOnMessageLongClickListener((message) -> {
     // Handle message being long clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
-messageListView.setAttachmentClickListener((message, attachment) -> {
+messageListView.setOnAttachmentClickListener((message, attachment) -> {
     // Handle attachment being clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
-messageListView.setUserClickListener((user) -> {
+messageListView.setOnUserClickListener((user) -> {
     // Handle user avatar being clicked
+    // Return true if the event is consumed. If false, the default behavior will be executed
+    return true;
 });
 ```
 </TabItem>

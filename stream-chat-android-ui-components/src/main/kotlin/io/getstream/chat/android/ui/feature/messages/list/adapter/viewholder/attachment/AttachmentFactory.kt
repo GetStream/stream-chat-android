@@ -19,6 +19,8 @@ package io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.at
 import android.view.ViewGroup
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenersAdapter
 
 /**
  * Represents a handler that can handle custom attachments of certain type and create
@@ -43,9 +45,34 @@ public interface AttachmentFactory {
      * @param parent The parent View where the attachment content view is supposed to be placed.
      * @return An inner ViewHolder with the attachment content view.
      */
+    @Deprecated(
+        message = "Use createViewHolder(message: Message, listeners: MessageListListeners?, parent: ViewGroup) instead",
+        replaceWith = ReplaceWith("createViewHolder(message, listeners, parent)"),
+        level = DeprecationLevel.WARNING,
+    )
     public fun createViewHolder(
         message: Message,
         listeners: MessageListListenerContainer?,
         parent: ViewGroup,
-    ): InnerAttachmentViewHolder
+    ): InnerAttachmentViewHolder {
+        return InnerAttachmentViewHolder.stub(parent)
+    }
+
+    /**
+     * Create a ViewHolder for the custom attachments View which is aware of the parent's
+     * ViewHolder lifecycle.
+     *
+     * @param message The message containing custom attachments that we are going to render.
+     * @param listeners [MessageListListeners] with listeners for the message list.
+     * @param parent The parent View where the attachment content view is supposed to be placed.
+     * @return An inner ViewHolder with the attachment content view.
+     */
+    public fun createViewHolder(
+        message: Message,
+        listeners: MessageListListeners?,
+        parent: ViewGroup,
+    ): InnerAttachmentViewHolder {
+        val adapter = listeners?.let { MessageListListenersAdapter(it) }
+        return createViewHolder(message, adapter, parent)
+    }
 }

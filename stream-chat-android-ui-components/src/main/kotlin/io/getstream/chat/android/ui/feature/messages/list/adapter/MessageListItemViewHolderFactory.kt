@@ -101,14 +101,27 @@ public open class MessageListItemViewHolderFactory {
      * A container containing listeners used by the ViewHolders for
      * setting reactions, opening message options, etc.
      */
+    @Deprecated(
+        message = "Use MessageListListeners instead",
+        replaceWith = ReplaceWith("MessageListListeners"),
+        level = DeprecationLevel.WARNING,
+    )
     protected var listenerContainer: MessageListListenerContainer? = null
         private set
 
     /**
-     * Setter for [listenerContainer].
+     * A container containing listeners used by the ViewHolders for
+     * setting reactions, opening message options, etc.
      */
-    internal fun setListenerContainer(listenerContainer: MessageListListenerContainer?) {
-        this.listenerContainer = listenerContainer
+    protected var listeners: MessageListListeners? = null
+        private set
+
+    /**
+     * Setter for [listeners].
+     */
+    internal fun setListeners(listeners: MessageListListeners?) {
+        this.listeners = listeners
+        this.listenerContainer = listeners?.let { MessageListListenersAdapter(it) }
     }
 
     /**
@@ -203,7 +216,7 @@ public open class MessageListItemViewHolderFactory {
         return CustomAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
-            listenerContainer,
+            listeners,
             textTransformer,
             attachmentFactoryManager,
         )
@@ -221,7 +234,7 @@ public open class MessageListItemViewHolderFactory {
         return GiphyAttachmentViewHolder(
             parentView,
             decoratorProvider.decorators,
-            listenerContainer,
+            listeners,
             markdown = textTransformer,
         )
     }
@@ -239,7 +252,7 @@ public open class MessageListItemViewHolderFactory {
         return MediaAttachmentsViewHolder(
             parentView,
             decoratorProvider.decorators,
-            listenerContainer,
+            listeners,
             textTransformer,
             audioRecordViewStyle,
         )
@@ -299,7 +312,7 @@ public open class MessageListItemViewHolderFactory {
         return MessagePlainTextViewHolder(
             parentView,
             decoratorProvider.decorators,
-            listenerContainer,
+            listeners,
             textTransformer,
         )
     }
@@ -328,7 +341,7 @@ public open class MessageListItemViewHolderFactory {
         return GiphyViewHolder(
             parentView,
             decoratorProvider.decorators,
-            listenerContainer,
+            listeners,
             giphyViewHolderStyle,
         )
     }
@@ -384,7 +397,7 @@ public open class MessageListItemViewHolderFactory {
         return FileAttachmentsViewHolder(
             parent = parentView,
             decorators = decoratorProvider.decorators,
-            listeners = listenerContainer,
+            listeners = listeners,
             messageTextTransformer = textTransformer,
         )
     }
@@ -402,7 +415,7 @@ public open class MessageListItemViewHolderFactory {
         return LinkAttachmentsViewHolder(
             parent = parentView,
             decorators = decoratorProvider.decorators,
-            listeners = listenerContainer,
+            listeners = listeners,
             style = style,
             messageTextTransformer = textTransformer,
         )
