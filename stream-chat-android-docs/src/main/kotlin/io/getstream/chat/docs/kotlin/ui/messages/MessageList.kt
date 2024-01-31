@@ -106,17 +106,21 @@ class MessageListViewSnippets : Fragment() {
      * [Listeners](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list/#listeners)
      */
     fun listeners() {
-        messageListView.setMessageClickListener { message: Message ->
+        messageListView.setOnMessageClickListener { message: Message ->
             // Handle message being clicked
+            true
         }
-        messageListView.setEnterThreadListener { message: Message ->
+        messageListView.setOnEnterThreadListener { message: Message ->
             // Handle thread being entered
+            true
         }
-        messageListView.setAttachmentDownloadClickListener { attachment: Attachment ->
+        messageListView.setOnAttachmentDownloadClickListener { attachment: Attachment ->
             // Handle clicks on the download attachment button
+            true
         }
-        messageListView.setUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
+        messageListView.setOnUserReactionClickListener { message: Message, user: User, reaction: Reaction ->
             // Handle clicks on a reaction left by a user
+            true
         }
         messageListView.setOnMessageLongClickListener { message ->
             // Handle message being long clicked
