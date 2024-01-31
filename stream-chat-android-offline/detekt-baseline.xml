@@ -3,6 +3,7 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>EmptyFunctionBlock:BaseDomainTest2.kt$BaseDomainTest2.&lt;no name provided>${}</ID>
+    <ID>EmptyFunctionBlock:DeleteChannelListenerDatabase.kt$DeleteChannelListenerDatabase${ }</ID>
     <ID>ForbiddenComment:BaseDomainTest2.kt$BaseDomainTest2$// TODO: a chat domain without a user set should raise a clear error</ID>
     <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun objectToStringArguments()</ID>
     <ID>LongMethod:FilterObjectConverterTest.kt$FilterObjectConverterTest.Companion$@JvmStatic fun stringToObjectArguments()</ID>

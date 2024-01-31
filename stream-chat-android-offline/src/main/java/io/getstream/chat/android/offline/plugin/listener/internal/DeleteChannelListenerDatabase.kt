@@ -56,7 +56,6 @@ internal class DeleteChannelListenerDatabase(
         channelType: String,
         channelId: String,
     ) {
-
     }
 
     /**
@@ -72,7 +71,6 @@ internal class DeleteChannelListenerDatabase(
         channelId: String,
         result: Result<Channel>,
     ) {
-
     }
 
     /**
