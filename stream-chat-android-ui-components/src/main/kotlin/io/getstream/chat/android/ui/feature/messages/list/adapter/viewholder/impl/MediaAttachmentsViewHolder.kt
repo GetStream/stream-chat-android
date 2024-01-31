@@ -30,7 +30,7 @@ import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerVie
 import io.getstream.chat.android.ui.feature.messages.list.MessageViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentLongClickListener
@@ -53,7 +53,7 @@ import io.getstream.log.taggedLogger
 public class MediaAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer?,
+    private val listeners: MessageListListeners?,
     private val messageTextTransformer: ChatMessageTextTransformer,
     public val audioRecordViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
     public val binding: StreamUiItemMessageMediaAttachmentBinding = StreamUiItemMessageMediaAttachmentBinding.inflate(

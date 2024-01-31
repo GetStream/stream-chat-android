@@ -24,7 +24,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemLinkAttachmentBindin
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.internal.LongClickFriendlyLinkMovementMethod
@@ -46,7 +46,7 @@ public class LinkAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
     private val messageTextTransformer: ChatMessageTextTransformer,
-    private val listeners: MessageListListenerContainer?,
+    private val listeners: MessageListListeners?,
     public val binding: StreamUiItemLinkAttachmentBinding = StreamUiItemLinkAttachmentBinding.inflate(
         parent.streamThemeInflater,
         parent,

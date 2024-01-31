@@ -24,7 +24,7 @@ import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.databinding.StreamUiItemFileAttachmentsBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentClickListener
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.AttachmentDownloadClickListener
@@ -54,7 +54,7 @@ import io.getstream.log.taggedLogger
 public class FileAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer?,
+    private val listeners: MessageListListeners?,
     private val messageTextTransformer: ChatMessageTextTransformer,
     public val binding: StreamUiItemFileAttachmentsBinding = StreamUiItemFileAttachmentsBinding.inflate(
         parent.streamThemeInflater,

@@ -91,26 +91,33 @@ public class MessageList extends Fragment {
     }
 
     public void listeners() {
-        messageListView.setMessageClickListener((message) -> {
+        messageListView.setOnMessageClickListener((message) -> {
             // Handle message being clicked
+            return true;
         });
-        messageListView.setEnterThreadListener((message) -> {
+        messageListView.setOnEnterThreadListener((message) -> {
             // Handle thread being entered
+            return true;
         });
-        messageListView.setAttachmentDownloadClickListener((attachment) -> {
+        messageListView.setOnAttachmentDownloadClickListener((attachment) -> {
             // Handle clicks on the download attachment button
+            return true;
         });
-        messageListView.setUserReactionClickListener((message, user, reaction) -> {
+        messageListView.setOnUserReactionClickListener((message, user, reaction) -> {
             // Handle clicks on a reaction left by a user
+            return true;
         });
-        messageListView.setMessageLongClickListener((message) -> {
+        messageListView.setOnMessageLongClickListener((message) -> {
             // Handle message being long clicked
+            return true;
         });
-        messageListView.setAttachmentClickListener((message, attachment) -> {
+        messageListView.setOnAttachmentClickListener((message, attachment) -> {
             // Handle attachment being clicked
+            return true;
         });
-        messageListView.setUserClickListener((user) -> {
+        messageListView.setOnUserClickListener((user) -> {
             // Handle user avatar being clicked
+            return true;
         });
     }
 

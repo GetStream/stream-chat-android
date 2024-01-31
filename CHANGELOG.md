@@ -60,6 +60,21 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added new listeners and corresponding setters to `MessageListView` to allow better behaviour customization. [#5161](https://github.com/GetStream/stream-chat-android/pull/5161)
+  * `OnEnterThreadListener` and `MessageListView.setOnEnterThreadListener`
+  * `OnMessageClickListener` and `MessageListView.setOnMessageClickListener`
+  * `OnReplyMessageClickListener` and `MessageListView.setOnReplyMessageClickListener`
+  * `OnMessageRetryListener` and `MessageListView.setOnMessageRetryListener`
+  * `OnMessageLongClickListener` and `MessageListView.setOnMessageLongClickListener`
+  * `OnModeratedMessageLongClickListener` and `MessageListView.setOnModeratedMessageLongClickListener`
+  * `OnThreadClickListener` and `MessageListView.setOnThreadClickListener`
+  * `OnAttachmentClickListener` and `MessageListView.setOnAttachmentClickListener`
+  * `OnAttachmentDownloadClickListener` and `MessageListView.setOnAttachmentDownloadClickListener`
+  * `OnGiphySendListener` and `MessageListView.setOnGiphySendListener`
+  * `OnLinkClickListener` and `MessageListView.setOnLinkClickListener`
+  * `OnUserClickListener` and `MessageListView.setOnUserClickListener`
+  * `OnReactionViewClickListener` and `MessageListView.setOnReactionViewClickListener`
+  * `OnUserReactionClickListener` and `MessageListView.setOnUserReactionClickListener`
 
 ### ⚠️ Changed
 

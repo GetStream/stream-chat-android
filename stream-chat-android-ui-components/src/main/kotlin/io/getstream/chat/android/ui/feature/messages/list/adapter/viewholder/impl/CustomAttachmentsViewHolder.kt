@@ -24,7 +24,7 @@ import androidx.core.view.updateLayoutParams
 import io.getstream.chat.android.ui.databinding.StreamUiItemCustomAttachmentsBinding
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.InnerAttachmentViewHolder
@@ -46,7 +46,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 public class CustomAttachmentsViewHolder internal constructor(
     parent: ViewGroup,
     decorators: List<Decorator>,
-    private val listeners: MessageListListenerContainer?,
+    private val listeners: MessageListListeners?,
     private val messageTextTransformer: ChatMessageTextTransformer,
     private val attachmentFactoryManager: AttachmentFactoryManager,
     public val binding: StreamUiItemCustomAttachmentsBinding = StreamUiItemCustomAttachmentsBinding.inflate(
@@ -100,6 +100,8 @@ public class CustomAttachmentsViewHolder internal constructor(
      * Updates the custom attachments section of the message.
      */
     private fun bindCustomAttachments(data: MessageListItem.MessageItem) {
+        // TODO this seems to be inefficient, we should probably cache the view holder
+        //  instead of creating it on every `bindCustomAttachments` call.
         this.innerAttachmentViewHolder =
             attachmentFactoryManager.createViewHolder(data.message, listeners, binding.root)
                 .also { attachmentViewHolder ->

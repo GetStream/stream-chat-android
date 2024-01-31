@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.databinding.StreamUiUnsupportedAttachmentViewBinding
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.chat.android.uiutils.extension.hasLink
@@ -57,7 +58,7 @@ public class UnsupportedAttachmentFactory : AttachmentFactory {
      */
     override fun createViewHolder(
         message: Message,
-        listeners: MessageListListenerContainer?,
+        listeners: MessageListListeners?,
         parent: ViewGroup,
     ): InnerAttachmentViewHolder {
         val binding = StreamUiUnsupportedAttachmentViewBinding

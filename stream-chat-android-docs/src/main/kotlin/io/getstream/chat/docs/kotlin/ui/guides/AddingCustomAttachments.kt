@@ -23,9 +23,8 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.AttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.FileAttachmentPreviewFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory.MediaAttachmentPreviewFactory
-import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerLeadingContent
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListenerContainer
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.DefaultQuotedAttachmentMessageFactory
@@ -197,7 +196,7 @@ class AddingCustomAttachments {
 
             override fun createViewHolder(
                 message: Message,
-                listeners: MessageListListenerContainer?,
+                listeners: MessageListListeners?,
                 parent: ViewGroup,
             ): InnerAttachmentViewHolder {
                 return ItemDateAttachmentBinding
@@ -207,7 +206,7 @@ class AddingCustomAttachments {
 
             class DateAttachmentViewHolder(
                 private val binding: ItemDateAttachmentBinding,
-                listeners: MessageListListenerContainer?,
+                listeners: MessageListListeners?,
             ) : InnerAttachmentViewHolder(binding.root) {
 
                 private lateinit var message: Message
