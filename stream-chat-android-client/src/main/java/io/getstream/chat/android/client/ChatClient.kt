@@ -1052,20 +1052,19 @@ internal constructor(
         return api.sendReaction(finalReaction, enforceUnique)
             .retry(scope = userScope, retryPolicy = retryPolicy)
             .doOnStart(userScope) {
-                plugins
-                    .forEach { plugin ->
-                        logger.v { "[sendReaction] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
-                        plugin.onSendReactionRequest(
-                            cid = cid,
-                            reaction = finalReaction,
-                            enforceUnique = enforceUnique,
-                            currentUser = currentUser!!,
-                        )
-                    }
+                logger.v { "[sendReaction] #doOnStart; reaction: ${reaction.type}, messageId: ${reaction.messageId}" }
+                plugins.forEach { plugin ->
+                    plugin.onSendReactionRequest(
+                        cid = cid,
+                        reaction = finalReaction,
+                        enforceUnique = enforceUnique,
+                        currentUser = currentUser!!,
+                    )
+                }
             }
             .doOnResult(userScope) { result ->
+                logger.v { "[sendReaction] #doOnResult; completed: $result" }
                 plugins.forEach { plugin ->
-                    logger.v { "[sendReaction] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
                     plugin.onSendReactionResult(
                         cid = cid,
                         reaction = finalReaction,
@@ -1965,6 +1964,21 @@ internal constructor(
     @CheckResult
     public fun deleteChannel(channelType: String, channelId: String): Call<Channel> {
         return api.deleteChannel(channelType, channelId)
+            .doOnStart(userScope) {
+                logger.d { "[deleteChannel] #doOnStart; cid: $channelType:$channelId" }
+                plugins.forEach { listener ->
+                    listener.onDeleteChannelRequest(getCurrentUser(), channelType, channelId)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                logger.v { "[deleteChannel] #doOnResult; completed($channelType:$channelId): $result" }
+                plugins.forEach { listener ->
+                    listener.onDeleteChannelResult(channelType, channelId, result)
+                }
+            }
+            .precondition(plugins) {
+                onDeleteChannelPrecondition(getCurrentUser(), channelType, channelId)
+            }
     }
 
     @CheckResult

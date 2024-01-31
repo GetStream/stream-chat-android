@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -73,6 +74,7 @@ public interface Plugin :
     MarkAllReadListener,
     ChannelMarkReadListener,
     CreateChannelListener,
+    DeleteChannelListener,
     GetMessageListener,
     FetchCurrentUserListener {
 
@@ -131,7 +133,7 @@ public interface Plugin :
         /* No-Op */
     }
 
-    override fun onSendReactionPrecondition(
+    override suspend fun onSendReactionPrecondition(
         currentUser: User?,
         reaction: Reaction,
     ): Result<Unit> = Result.Success(Unit)
@@ -338,6 +340,28 @@ public interface Plugin :
         currentUser: User?,
         channelId: String,
         memberIds: List<String>,
+    ): Result<Unit> = Result.Success(Unit)
+
+    override suspend fun onDeleteChannelRequest(
+        currentUser: User?,
+        channelType: String,
+        channelId: String,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onDeleteChannelResult(
+        channelType: String,
+        channelId: String,
+        result: Result<Channel>,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onDeleteChannelPrecondition(
+        currentUser: User?,
+        channelType: String,
+        channelId: String,
     ): Result<Unit> = Result.Success(Unit)
 
     override suspend fun onAttachmentSendRequest(channelType: String, channelId: String, message: Message) {

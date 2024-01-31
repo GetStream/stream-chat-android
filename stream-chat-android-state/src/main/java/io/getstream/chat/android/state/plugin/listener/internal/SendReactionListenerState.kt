@@ -109,7 +109,7 @@ internal class SendReactionListenerState(
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      */
-    override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
+    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
                 Result.Failure(Error.GenericError(message = "Current user is null!"))

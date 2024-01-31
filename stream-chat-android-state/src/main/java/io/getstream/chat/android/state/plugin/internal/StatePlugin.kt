@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -42,6 +43,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.event.handler.internal.EventHandler
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DeleteChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
@@ -100,6 +102,7 @@ public class StatePlugin internal constructor(
     HideChannelListener by HideChannelListenerState(logic),
     MarkAllReadListener by MarkAllReadListenerState(logic, stateRegistry),
     DeleteReactionListener by DeleteReactionListenerState(logic, clientState),
+    DeleteChannelListener by DeleteChannelListenerState(logic, clientState),
     SendReactionListener by SendReactionListenerState(logic, clientState),
     DeleteMessageListener by DeleteMessageListenerState(logic, clientState, globalState),
     SendGiphyListener by SendGiphyListenerState(logic),

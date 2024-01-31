@@ -68,5 +68,5 @@ public interface SendReactionListener {
      *
      * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
-    public fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit>
+    public suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit>
 }
