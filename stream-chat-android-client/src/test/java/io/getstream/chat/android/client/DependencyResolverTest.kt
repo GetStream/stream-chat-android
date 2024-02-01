@@ -19,10 +19,13 @@ package io.getstream.chat.android.client
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
+import io.getstream.chat.android.client.scope.ClientTestScope
+import io.getstream.chat.android.client.scope.UserTestScope
 import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.TestResult
 import kotlinx.coroutines.test.runTest
@@ -31,6 +34,7 @@ import org.amshove.kluent.`should be`
 import org.amshove.kluent.`should throw`
 import org.amshove.kluent.`with message`
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -123,6 +127,10 @@ public class DependencyResolverTest {
 
     public companion object {
 
+        @JvmField
+        @RegisterExtension
+        public val testCoroutines: TestCoroutineExtension = TestCoroutineExtension()
+
         @JvmStatic
         public fun initializationStatesArguments(): List<Arguments> =
             InitializationState.values()
@@ -134,6 +142,8 @@ public class DependencyResolverTest {
         var plugins: MutableList<Plugin> = arrayListOf()
         var pluginFactories: MutableList<PluginFactory> = arrayListOf()
         val mutableClientState: MutableClientState = mock()
+        val clientScope = ClientTestScope(testCoroutines.scope)
+        val userScope = UserTestScope(clientScope)
 
         fun with(plugin: Plugin) = apply {
             plugins.add(plugin)
@@ -155,8 +165,8 @@ public class DependencyResolverTest {
             userCredentialStorage = mock(),
             userStateService = mock(),
             tokenUtils = mock(),
-            clientScope = mock(),
-            userScope = mock(),
+            clientScope = clientScope,
+            userScope = userScope,
             retryPolicy = mock(),
             appSettingsManager = mock(),
             chatSocket = mock(),

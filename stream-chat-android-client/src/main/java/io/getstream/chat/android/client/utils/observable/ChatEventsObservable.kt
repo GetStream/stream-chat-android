@@ -32,6 +32,8 @@ import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 internal class ChatEventsObservable(
@@ -39,18 +41,15 @@ internal class ChatEventsObservable(
     private val scope: CoroutineScope,
     private val chatSocket: ChatSocket,
 ) {
-    private var subscriptions = setOf<EventSubscription>()
-    private var eventsMapper = EventsMapper(this)
+
+    private val mutex = Mutex()
+
+    private val subscriptions = mutableSetOf<EventSubscription>()
+    private val eventsMapper = EventsMapper(this)
 
     private fun onNext(event: ChatEvent) {
-        subscriptions.forEach { subscription ->
-            if (!subscription.isDisposed) {
-                subscription.onNext(event)
-            }
-        }
+        notifySubscriptions(event)
         emitConnectionEvents(event)
-        subscriptions = subscriptions.filterNot(Disposable::isDisposed).toSet()
-        checkIfEmpty()
     }
 
     private fun emitConnectionEvents(event: ChatEvent) {
@@ -64,12 +63,6 @@ internal class ChatEventsObservable(
                 }
                 else -> Unit // Ignore other events
             }
-        }
-    }
-
-    private fun checkIfEmpty() {
-        if (subscriptions.isEmpty()) {
-            chatSocket.removeListener(eventsMapper)
         }
     }
 
@@ -98,12 +91,36 @@ internal class ChatEventsObservable(
         )
     }
 
-    private fun addSubscription(subscription: EventSubscription): Disposable {
-        if (subscriptions.isEmpty()) {
-            // add listener to socket events only once
-            chatSocket.addListener(eventsMapper)
+    private fun notifySubscriptions(event: ChatEvent) {
+        scope.launch {
+            mutex.withLock {
+                val iterator = subscriptions.iterator()
+                while (iterator.hasNext()) {
+                    val subscription = iterator.next()
+                    if (subscription.isDisposed) {
+                        iterator.remove()
+                    } else {
+                        subscription.onNext(event)
+                    }
+                }
+                // remove listener from socket events if there are no subscriptions
+                if (subscriptions.isEmpty()) {
+                    chatSocket.removeListener(eventsMapper)
+                }
+            }
         }
-        subscriptions = subscriptions + subscription
+    }
+
+    private fun addSubscription(subscription: EventSubscription): Disposable {
+        scope.launch {
+            mutex.withLock {
+                // add listener to socket events only once
+                if (subscriptions.isEmpty()) {
+                    chatSocket.addListener(eventsMapper)
+                }
+                subscriptions.add(subscription)
+            }
+        }
         return subscription
     }
 
