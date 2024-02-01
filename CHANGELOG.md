@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
 
 ### ⬆️ Improved
 
