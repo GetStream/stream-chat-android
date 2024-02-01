@@ -25,8 +25,8 @@ import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.compose.state.QueryConfig
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelMute
@@ -435,9 +435,12 @@ public class ChannelListViewModel(
      * @param channelMutes The list of channels muted for the current user.
      *
      */
-    private fun createChannelItems(channels: List<Channel>, channelMutes: List<ChannelMute>): List<ChannelItemState> {
+    private fun createChannelItems(
+        channels: List<Channel>,
+        channelMutes: List<ChannelMute>,
+    ): List<ItemState.ChannelItemState> {
         val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
-        return channels.map { ChannelItemState(it, it.cid in mutedChannelIds) }
+        return channels.map { ItemState.ChannelItemState(it, it.cid in mutedChannelIds) }
     }
 
     internal companion object {

@@ -49,7 +49,7 @@ import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
@@ -77,25 +77,25 @@ import io.getstream.chat.android.models.User
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ChannelItem(
-    channelItem: ChannelItemState,
+    channelItem: ItemState.ChannelItemState,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
     modifier: Modifier = Modifier,
-    leadingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
+    leadingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         DefaultChannelItemLeadingContent(
             channelItem = it,
             currentUser = currentUser,
         )
     },
-    centerContent: @Composable RowScope.(ChannelItemState) -> Unit = {
+    centerContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         DefaultChannelItemCenterContent(
             channel = it.channel,
             isMuted = it.isMuted,
             currentUser = currentUser,
         )
     },
-    trailingContent: @Composable RowScope.(ChannelItemState) -> Unit = {
+    trailingContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         DefaultChannelItemTrailingContent(
             channel = it.channel,
             currentUser = currentUser,
@@ -139,7 +139,7 @@ public fun ChannelItem(
  */
 @Composable
 internal fun DefaultChannelItemLeadingContent(
-    channelItem: ChannelItemState,
+    channelItem: ItemState.ChannelItemState,
     currentUser: User?,
 ) {
     ChannelAvatar(
@@ -338,7 +338,7 @@ private fun ChannelItemPreview(
 ) {
     ChatTheme {
         ChannelItem(
-            channelItem = ChannelItemState(
+            channelItem = ItemState.ChannelItemState(
                 channel = channel,
                 isMuted = isMuted,
             ),

@@ -34,8 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
 
 /**
@@ -63,7 +63,7 @@ public fun Channels(
     contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ChannelItemState) -> Unit,
+    itemContent: @Composable (ItemState) -> Unit,
     divider: @Composable () -> Unit,
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
@@ -83,7 +83,7 @@ public fun Channels(
 
             items(
                 items = channelItems,
-                key = { it.channel.cid },
+                key = { it.key },
             ) { item ->
                 itemContent(item)
 

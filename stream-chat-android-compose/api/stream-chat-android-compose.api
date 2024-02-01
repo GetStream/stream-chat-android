@@ -73,21 +73,6 @@ public final class io/getstream/chat/android/compose/state/QueryConfig {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/state/channels/list/ChannelItemState {
-	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/models/Channel;Z)V
-	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
-	public final fun component2 ()Z
-	public final fun copy (Lio/getstream/chat/android/models/Channel;Z)Lio/getstream/chat/android/compose/state/channels/list/ChannelItemState;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ChannelItemState;Lio/getstream/chat/android/models/Channel;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ChannelItemState;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
-	public fun hashCode ()I
-	public final fun isMuted ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/compose/state/channels/list/ChannelOptionState {
 	public static final field $stable I
 	public synthetic fun <init> (Ljava/lang/String;JLandroidx/compose/ui/graphics/painter/Painter;JLio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -117,6 +102,40 @@ public final class io/getstream/chat/android/compose/state/channels/list/Channel
 	public fun hashCode ()I
 	public final fun isLoading ()Z
 	public final fun isLoadingMore ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/compose/state/channels/list/ItemState {
+	public static final field $stable I
+	public abstract fun getKey ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState : io/getstream/chat/android/compose/state/channels/list/ItemState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Channel;Z)V
+	public synthetic fun <init> (Lio/getstream/chat/android/models/Channel;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component2 ()Z
+	public final fun copy (Lio/getstream/chat/android/models/Channel;Z)Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/Channel;ZILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getKey ()Ljava/lang/String;
+	public fun hashCode ()I
+	public final fun isMuted ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState : io/getstream/chat/android/compose/state/channels/list/ItemState {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/compose/state/channels/list/ItemState$SearchResultItemState;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getKey ()Ljava/lang/String;
+	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -640,7 +659,7 @@ public final class io/getstream/chat/android/compose/ui/channels/info/SelectedCh
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/ChannelItemKt {
-	public static final fun ChannelItem (Lio/getstream/chat/android/compose/state/channels/list/ChannelItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ChannelItem (Lio/getstream/chat/android/compose/state/channels/list/ItemState$ChannelItemState;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/channels/list/ChannelListKt {
