@@ -47,6 +47,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 
@@ -158,6 +159,7 @@ public fun ChannelList(
  * @param onLastItemReached Handler for pagination, when the user reaches the end of the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
+ * @param onSearchResultClick Handler for a single search result tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search
@@ -180,6 +182,7 @@ public fun ChannelList(
     onLastItemReached: () -> Unit = {},
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = {},
+    onSearchResultClick: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = { DefaultChannelListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyContent(modifier) },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
@@ -191,16 +194,13 @@ public fun ChannelList(
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ItemState) -> Unit = { itemState ->
-        when (itemState) {
-            is ItemState.ChannelItemState -> DefaultChannelItem(
-                channelItem = itemState,
-                currentUser = currentUser,
-                onChannelClick = onChannelClick,
-                onChannelLongClick = onChannelLongClick,
-            )
-
-            is ItemState.SearchResultItemState -> TODO()
-        }
+        DefaultItem(
+            itemState = itemState,
+            currentUser = currentUser,
+            onChannelClick = onChannelClick,
+            onChannelLongClick = onChannelLongClick,
+            onSearchResultClick = onSearchResultClick,
+        )
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
@@ -222,6 +222,58 @@ public fun ChannelList(
         searchQuery.query.isNotBlank() -> emptySearchContent(searchQuery.query)
         else -> emptyContent()
     }
+}
+
+/**
+ * The default item.
+ *
+ * @param itemState The item to represent.
+ * @param currentUser The currently logged in user.
+ * @param onChannelClick Handler when the user clicks on an a channel.
+ * @param onChannelLongClick Handler when the user long taps on an a channel.
+ */
+@Composable
+internal fun DefaultItem(
+    itemState: ItemState,
+    currentUser: User?,
+    onChannelClick: (Channel) -> Unit,
+    onChannelLongClick: (Channel) -> Unit,
+    onSearchResultClick: (Message) -> Unit,
+) {
+    when (itemState) {
+        is ItemState.ChannelItemState -> DefaultChannelItem(
+            channelItem = itemState,
+            currentUser = currentUser,
+            onChannelClick = onChannelClick,
+            onChannelLongClick = onChannelLongClick,
+        )
+
+        is ItemState.SearchResultItemState -> DefaultSearchResultItem(
+            searchResultItemState = itemState,
+            currentUser = currentUser,
+            onSearchResultClick = onSearchResultClick,
+        )
+    }
+}
+
+/**
+ * The default search result item.
+ *
+ * @param searchResultItemState The item to represent.
+ * @param currentUser The currently logged in user.
+ * @param onSearchResultClick Handler when the user clicks on an item.
+ */
+@Composable
+internal fun DefaultSearchResultItem(
+    searchResultItemState: ItemState.SearchResultItemState,
+    currentUser: User?,
+    onSearchResultClick: (Message) -> Unit,
+) {
+    SearchResultItem(
+        searchResultItemState = searchResultItemState,
+        currentUser = currentUser,
+        onSearchResultClick = onSearchResultClick,
+    )
 }
 
 /**
