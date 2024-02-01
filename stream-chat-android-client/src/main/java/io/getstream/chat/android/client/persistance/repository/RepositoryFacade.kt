@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -54,6 +55,8 @@ public class RepositoryFacade private constructor(
     ChannelConfigRepository by configsRepository,
     QueryChannelsRepository by queryChannelsRepository,
     SyncStateRepository by syncStateRepository {
+
+    private val logger by taggedLogger("Chat:RepositoryFacade")
 
     override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> =
         selectChannels(channelCIDs, null)
@@ -121,10 +124,23 @@ public class RepositoryFacade private constructor(
     }
 
     override suspend fun insertReaction(reaction: Reaction) {
-        reaction.user?.let {
-            insertUser(it)
-            reactionsRepository.insertReaction(reaction)
+        val messageId = reaction.messageId
+        if (messageId.isEmpty()) {
+            logger.w { "[insertReaction] rejected (message id cannot be empty)" }
+            return
         }
+        val user = reaction.user
+        if (user == null) {
+            logger.w { "[insertReaction] rejected (user cannot be null)" }
+            return
+        }
+        if (messageRepository.selectMessage(messageId) == null) {
+            logger.w { "[insertReaction] rejected (message cannot be found in local DB)" }
+            return
+        }
+        logger.d { "[insertReaction] reaction: ${reaction.type}, messageId: $messageId" }
+        insertUser(user)
+        reactionsRepository.insertReaction(reaction)
     }
 
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {

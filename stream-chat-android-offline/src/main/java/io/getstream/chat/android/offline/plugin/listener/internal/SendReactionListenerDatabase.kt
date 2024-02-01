@@ -119,13 +119,16 @@ internal class SendReactionListenerDatabase(
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      */
-    override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
+    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
                 Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
                 Result.Failure(Error.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
+            }
+            messageRepository.selectMessage(reaction.messageId) == null -> {
+                Result.Failure(Error.GenericError("Reaction::messageId cannot be found in DB!"))
             }
             else -> {
                 Result.Success(Unit)

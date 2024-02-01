@@ -12,11 +12,13 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Prevent inserting reaction which violates `ForeignKey` constraint in local DB. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
 - Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `DeleteChannelListener`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
 
 ### ⚠️ Changed
 
@@ -24,6 +26,8 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Prevent sending reaction for non-existing message. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+  * `SendReactionListener.onSendReactionPrecondition` is now suspendable function.
 
 ### ⬆️ Improved
 
@@ -35,6 +39,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Clear stale cache inside `StateRegistry`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
 
 ### ⬆️ Improved
 

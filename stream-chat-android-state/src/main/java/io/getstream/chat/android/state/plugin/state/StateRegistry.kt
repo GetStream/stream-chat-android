@@ -17,15 +17,19 @@
 package io.getstream.chat.android.state.plugin.state
 
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.ChannelDeletedEvent
+import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelChildren
@@ -46,6 +50,9 @@ public class StateRegistry constructor(
     private val job: Job,
     private val scope: CoroutineScope,
 ) {
+
+    private val logger by taggedLogger("Chat:StateRegistry")
+
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
@@ -140,5 +147,26 @@ public class StateRegistry constructor(
         channels.clear()
         threads.forEach { it.value.destroy() }
         threads.clear()
+    }
+
+    internal fun handleBatchEvent(batchEvent: BatchEvent) {
+        for (event in batchEvent.sortedEvents) {
+            when (event) {
+                is ChannelDeletedEvent -> {
+                    removeChanel(event.channelType, event.channelId)
+                }
+                is NotificationChannelDeletedEvent -> {
+                    removeChanel(event.channelType, event.channelId)
+                }
+                else -> continue
+            }
+        }
+    }
+
+    private fun removeChanel(channelType: String, channelId: String) {
+        val removed = channels.remove(channelType to channelId)?.also {
+            it.destroy()
+        }
+        logger.i { "[removeChanel] removed channel($channelType, $channelId): $removed" }
     }
 }

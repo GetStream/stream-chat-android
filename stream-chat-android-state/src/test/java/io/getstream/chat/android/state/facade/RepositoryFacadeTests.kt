@@ -237,7 +237,9 @@ internal class RepositoryFacadeTests : BaseRepositoryFacadeTest() {
     @Test
     fun `When insert a reaction, it should have a valid users and it need to be stored`() = runTest {
         val user = randomUser()
-        val reaction = randomReaction(user = user)
+        val message = randomMessage(user = user)
+        val reaction = randomReaction(user = user, messageId = message.id)
+        whenever(messages.selectMessage(message.id)) doReturn message
 
         sut.insertReaction(reaction)
 

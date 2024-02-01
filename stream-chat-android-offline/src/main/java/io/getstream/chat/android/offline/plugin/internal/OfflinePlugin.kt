@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.plugin.internal
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
@@ -50,7 +51,7 @@ import kotlin.reflect.KClass
  * @param sendMessageListener [SendMessageListener]
  * @param queryMembersListener [QueryMembersListener]
  * @param createChannelListener [CreateChannelListener]
- * @param getMessageListener [GetMessageListener]
+ * @param deleteChannelListener [DeleteChannelListener]
  * @param getMessageListener [GetMessageListener]
  * @param fetchCurrentUserListener [FetchCurrentUserListener]
  * @param activeUser User associated with [OfflinePlugin] instance.
@@ -71,6 +72,7 @@ internal class OfflinePlugin(
     private val sendAttachmentListener: SendAttachmentListener,
     private val queryMembersListener: QueryMembersListener,
     private val createChannelListener: CreateChannelListener,
+    private val deleteChannelListener: DeleteChannelListener,
     private val getMessageListener: GetMessageListener,
     private val fetchCurrentUserListener: FetchCurrentUserListener,
     private val provideDependency: (KClass<*>) -> Any? = { null },
@@ -86,6 +88,7 @@ internal class OfflinePlugin(
     SendMessageListener by sendMessageListener,
     QueryMembersListener by queryMembersListener,
     CreateChannelListener by createChannelListener,
+    DeleteChannelListener by deleteChannelListener,
     SendAttachmentListener by sendAttachmentListener,
     GetMessageListener by getMessageListener,
     FetchCurrentUserListener by fetchCurrentUserListener {

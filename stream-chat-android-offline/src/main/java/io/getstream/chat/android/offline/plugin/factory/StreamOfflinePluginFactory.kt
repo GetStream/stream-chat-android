@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.persistance.repository.factory.Repositor
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
@@ -34,6 +35,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.plugin.internal.OfflinePlugin
 import io.getstream.chat.android.offline.plugin.listener.internal.CreateChannelListenerDatabase
+import io.getstream.chat.android.offline.plugin.listener.internal.DeleteChannelListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteMessageListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.DeleteReactionListenerDatabase
 import io.getstream.chat.android.offline.plugin.listener.internal.EditMessageListenerDatabase
@@ -163,6 +165,12 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
             userRepository = repositoryFacade,
         )
 
+        val deleteChannelListener: DeleteChannelListener = DeleteChannelListenerDatabase(
+            clientState = clientState,
+            channelRepository = repositoryFacade,
+            userRepository = repositoryFacade,
+        )
+
         val getMessageListener: GetMessageListener = GetMessageListenerDatabase(
             repositoryFacade = repositoryFacade,
         )
@@ -185,6 +193,7 @@ public class StreamOfflinePluginFactory(private val appContext: Context) : Plugi
             shuffleGiphyListener = shuffleGiphyListener,
             queryMembersListener = queryMembersListener,
             createChannelListener = createChannelListener,
+            deleteChannelListener = deleteChannelListener,
             getMessageListener = getMessageListener,
             fetchCurrentUserListener = fetchCurrentUserListener,
         )

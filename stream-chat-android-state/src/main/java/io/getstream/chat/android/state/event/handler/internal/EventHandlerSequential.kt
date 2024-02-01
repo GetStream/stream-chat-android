@@ -395,6 +395,8 @@ internal class EventHandlerSequential(
                 }
         }
 
+        stateRegistry.handleBatchEvent(batchEvent)
+
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         logicRegistry.getActiveQueryChannelsLogic().map { channelsLogic ->
