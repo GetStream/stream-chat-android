@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Prevent inserting reaction which violates `ForeignKey` constraint in local DB. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+- Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
 
 ### ⬆️ Improved
 
