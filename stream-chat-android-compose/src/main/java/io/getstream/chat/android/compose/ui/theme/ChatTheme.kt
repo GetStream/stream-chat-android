@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
+import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -88,6 +89,9 @@ private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter>
 }
 private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewFormatter> {
     error("No MessagePreviewFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
+    error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -212,6 +216,7 @@ public fun ChatTheme(
         attachmentFactories = attachmentFactories,
         autoTranslationEnabled = autoTranslationEnabled,
     ),
+    searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
@@ -380,6 +385,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessagePreviewFormatter.current
+
+    /**
+     * Retrieves the current [SearchResultNameFormatter] at the call site's position in the hierarchy.
+     */
+    public val searchResultNameFormatter: SearchResultNameFormatter
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalSearchResultNameFormatter.current
 
     /**
      * Retrieves the current [MessageAlignmentProvider] at the call site's position in the hierarchy.
