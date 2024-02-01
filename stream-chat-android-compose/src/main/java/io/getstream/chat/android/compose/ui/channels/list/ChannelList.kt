@@ -39,8 +39,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewChannelData
 import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -101,15 +101,18 @@ public fun ChannelList(
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
+    itemContent: @Composable (ItemState) -> Unit = { channelItem ->
         val user by viewModel.user.collectAsState()
+        when (channelItem) {
+            is ItemState.ChannelItemState -> DefaultChannelItem(
+                channelItem = channelItem,
+                currentUser = user,
+                onChannelClick = onChannelClick,
+                onChannelLongClick = onChannelLongClick,
+            )
 
-        DefaultChannelItem(
-            channelItem = channelItem,
-            currentUser = user,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
+            is ItemState.SearchResultItemState -> TODO()
+        }
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
@@ -187,13 +190,17 @@ public fun ChannelList(
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ChannelItemState) -> Unit = { channelItem ->
-        DefaultChannelItem(
-            channelItem = channelItem,
-            currentUser = currentUser,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
+    itemContent: @Composable (ItemState) -> Unit = { itemState ->
+        when (itemState) {
+            is ItemState.ChannelItemState -> DefaultChannelItem(
+                channelItem = itemState,
+                currentUser = currentUser,
+                onChannelClick = onChannelClick,
+                onChannelLongClick = onChannelLongClick,
+            )
+
+            is ItemState.SearchResultItemState -> TODO()
+        }
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
@@ -227,7 +234,7 @@ public fun ChannelList(
  */
 @Composable
 internal fun DefaultChannelItem(
-    channelItem: ChannelItemState,
+    channelItem: ItemState.ChannelItemState,
     currentUser: User?,
     onChannelClick: (Channel) -> Unit,
     onChannelLongClick: (Channel) -> Unit,
@@ -307,11 +314,11 @@ private fun ChannelListForContentStatePreview() {
         ChannelsState(
             isLoading = false,
             channelItems = listOf(
-                ChannelItemState(channel = PreviewChannelData.channelWithImage),
-                ChannelItemState(channel = PreviewChannelData.channelWithMessages),
-                ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
-                ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
-                ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
+                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
+                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithMessages),
+                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
+                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
+                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
             ),
         ),
     )
