@@ -942,8 +942,8 @@ channelClient.sendMessage(message).enqueue { /* ... */ }
 
 As a result, the forwarded message will be decorated with the custom decorator:
 
-| No ForwardedDecorator                                                                                                      | Has ForwardedDecorator                                                                                                         |
-|----------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
+| No ForwardedDecorator                                                                                                   | Has ForwardedDecorator                                                                                                      |
+|-------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
 | ![Messages List Video Thumbs disabled Dark Mode](../assets/configuration_message_list_decorator_forwarded_disabled.png) | ![Attachment Gallery Video Thumbs disabled Dark Mode](../assets/configuration_message_list_decorator_forwarded_enabled.png) |
 
 On the **left** image you can see the default setup with `DecoratorProviderFactory.defaultFactory()` only: 
@@ -955,3 +955,19 @@ On the **right** image you can see the default setup along with the `ForwardedDe
 ```kotlin
 ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
 ```
+
+## RTL Support
+
+UI Components support right-to-left (RTL) languages out of the box. The components can display content in a right-to-left direction and mirror associated UI elements. However, you may want to change the way certain components behave in RTL mode.
+
+### MessageComposerView configuration
+
+By default `MessageComposerView` determines the input direction based on the first strong directional character. To change the behavior you can override the center content slot of `MessageComposerView`. You can check how to override content slots [here](../message-composer/message-composer/#overriding-content-views).
+
+### MessageListView configuration
+
+To change RTL support for the messages in the `MessageListView` you can use custom view holders with a different text direction. You can check how to implement custom view holders [here](../message-list/message-list/#custom-message-views).
+
+### ChannelListView configuration
+
+To change RTL support for the channels in the `ChannelListView` you can use custom view holders with a different text direction. You can check how to implement custom view holders [here](../channel-list/channel-list/#creating-a-custom-viewholder-factory).
