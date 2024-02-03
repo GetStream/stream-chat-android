@@ -124,7 +124,8 @@ internal class EventBatchUpdate private constructor(
     suspend fun execute() {
         // actually insert the data
         currentUserId?.let { userMap -= it }
-        enrichChannelsWithCapabilities()
+        // TODO delete if regression goes well
+        // enrichChannelsWithCapabilities()
         logger.v { "[execute] id: $id, channelMap.size: ${channelMap.size}" }
 
         repos.storeStateForChannels(
@@ -146,6 +147,15 @@ internal class EventBatchUpdate private constructor(
             .map { channel -> channel.cid }
         val cachedChannels = repos.selectChannels(channelsWithoutCapabilities)
         logger.v { "[enrichChannelsWithCapabilities] id: $id, cachedChannels.size: ${cachedChannels.size}" }
+        // TODO the logic below seems to be wrong, we should be adding capabilities to the channels from
+        //  the channelMap, otherwise we just replaced the channels in channelMap with the cachedChannels
+        //  which may be wrong, cause we may have some changes in the channelMap that we want to keep.
+        //
+        // FIXME
+        //  For instance this breaks the logic removing a member from a channel, cachedChannels will have
+        //  the stale member list, and we will lose the member removal.
+        //
+        // We should be adding the capabilities from the cachedChannels to the channels in channelMap
         channelMap.putAll(cachedChannels.associateBy(Channel::cid))
     }
 

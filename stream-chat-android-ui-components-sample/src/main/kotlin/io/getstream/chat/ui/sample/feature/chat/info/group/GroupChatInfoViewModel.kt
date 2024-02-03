@@ -31,7 +31,9 @@ import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.livedata.utils.Event
 import io.getstream.chat.android.offline.extensions.watchChannelAsState
+import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -42,6 +44,8 @@ class GroupChatInfoViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
+
+    private val logger = StreamLog.getLogger("GroupChatInfoViewModel")
 
     /**
      * Holds information about the current channel and is actively updated.
@@ -58,20 +62,19 @@ class GroupChatInfoViewModel(
     val errorEvents: LiveData<Event<ErrorEvent>> = _errorEvents
 
     init {
+        logger.i { "<init> cid: $cid, this: $this" }
         _state.value = INITIAL_STATE
 
         // Update channel mute status
         clientState.user.value?.channelMutes?.let(::updateChannelMuteStatus)
 
         // Update members
-        _state.addSource(channelState.flatMapLatest { it.members }.asLiveData(), this::updateMembers)
+        _state.addSource(channelState.flatMapLatest { it.members }.asLiveData()) { members ->
+            updateMembers(members)
+        }
 
         _state.addSource(channelState.flatMapLatest { it.channelData }.asLiveData()) { channelData ->
-            _state.value = _state.value?.copy(
-                channelName = channelData.name,
-                ownCapabilities = channelData.ownCapabilities,
-                createdBy = channelData.createdBy,
-            )
+            updateChannelData(channelData)
         }
     }
 
@@ -118,7 +121,16 @@ class GroupChatInfoViewModel(
         }
     }
 
+    private fun updateChannelData(channelData: ChannelData) {
+        _state.value = _state.value?.copy(
+            channelName = channelData.name,
+            ownCapabilities = channelData.ownCapabilities,
+            createdBy = channelData.createdBy,
+        )
+    }
+
     private fun updateMembers(members: List<Member>) {
+        logger.v { "[updateMembers] member.ids: ${members.map { it.user.id }}" }
         val currentState = _state.value!!
         _state.value =
             currentState.copy(
@@ -143,6 +155,11 @@ class GroupChatInfoViewModel(
                 _errorEvents.postValue(Event(ErrorEvent.MuteChannelError))
             }
         }
+    }
+
+    override fun onCleared() {
+        logger.i { "[onCleared] no args" }
+        super.onCleared()
     }
 
     data class State(

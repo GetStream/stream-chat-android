@@ -185,6 +185,10 @@ internal class ChannelStateLogic(
         mutableState.upsertWatchers(watchers, watchersCount)
     }
 
+    fun setWatchers(watchers: List<User>, watchersCount: Int) {
+        mutableState.setWatchers(watchers, watchersCount)
+    }
+
     /**
      * Upsert members in the channel.
      *
@@ -270,6 +274,10 @@ internal class ChannelStateLogic(
      */
     fun upsertMembers(members: List<Member>) {
         mutableState.upsertMembers(members)
+    }
+
+    fun setMembers(members: List<Member>, membersCount: Int) {
+        mutableState.setMembers(members, membersCount)
     }
 
     /**

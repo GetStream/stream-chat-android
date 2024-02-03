@@ -32,6 +32,7 @@ import io.getstream.chat.android.core.utils.date.inOffsetWith
 import io.getstream.chat.android.offline.model.channel.ChannelData
 import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
 import io.getstream.chat.android.offline.plugin.state.channel.MessagesState
+import io.getstream.logging.StreamLog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +45,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import java.util.Date
+import java.util.concurrent.atomic.AtomicInteger
 
 @Suppress("TooManyFunctions")
 /** State container with mutable data of a channel.*/
@@ -54,6 +56,9 @@ internal class ChannelMutableState(
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
 ) : ChannelState {
+
+    private val seq = seqGenerator.incrementAndGet()
+    private val logger by lazy { StreamLog.getLogger("Chat:ChannelState-$seq") }
 
     override val cid: String = "%s:%s".format(channelType, channelId)
 
@@ -188,6 +193,10 @@ internal class ChannelMutableState(
 
     override val insideSearch: StateFlow<Boolean> = _insideSearch
 
+    init {
+        logger.d { "<init> cid: $cid, this: $this" }
+    }
+
     override fun toChannel(): Channel {
         // recreate a channel object from the various observables.
         val channelData = channelData.value
@@ -321,8 +330,15 @@ internal class ChannelMutableState(
      * @param members list of members to be upserted.
      */
     fun upsertMembers(members: List<Member>) {
+        logger.d { "[upsertMembers] member.ids: ${members.map { it.getUserId() }}" }
         val membersMap = members.associateBy(Member::getUserId)
         _members.value = _members.value + membersMap
+    }
+
+    fun setMembers(members: List<Member>, membersCount: Int) {
+        logger.d { "[setMembers] member.ids: ${members.map { it.getUserId() }}" }
+        _members.value = members.associateBy(Member::getUserId)
+        _membersCount.value = membersCount
     }
 
     /**
@@ -331,6 +347,7 @@ internal class ChannelMutableState(
      * @param member The member to be added.
      */
     fun addMember(member: Member) {
+        logger.d { "[addMember] member.id: ${member.getUserId()}" }
         _membersCount.value += 1.takeUnless { _members.value.keys.contains(member.getUserId()) } ?: 0
         upsertMembers(listOf(member))
     }
@@ -341,6 +358,7 @@ internal class ChannelMutableState(
      * @param member The member to be removed.
      */
     fun deleteMember(member: Member) {
+        logger.d { "[deleteMember] member.id: ${member.getUserId()}" }
         _membersCount.value -= _members.value.count { it.key == member.getUserId() }
         _members.value = _members.value - member.getUserId()
         deleteWatcher(
@@ -356,6 +374,7 @@ internal class ChannelMutableState(
      * @param watchersCount The current number of watchers.
      */
     internal fun deleteWatcher(user: User, watchersCount: Int) {
+        logger.v { "[deleteWatcher] user.id: ${user.id}, watchersCount: $watchersCount" }
         _watchers.value = _watchers.value - user.id
         _watcherCount.value = watchersCount.takeUnless { it < 0 } ?: _watchers.value.size
     }
@@ -369,8 +388,15 @@ internal class ChannelMutableState(
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
+        logger.v { "[upsertWatchers] watchers.ids: ${watchers.map { it.id }}, watchersCount: $watchersCount" }
         _watchers.value += watchers.associateBy(User::id)
         _watcherCount.value = watchersCount.takeUnless { it == 0 } ?: _watchers.value.size
+    }
+
+    fun setWatchers(watchers: List<User>, watchersCount: Int) {
+        logger.v { "[setWatchers] watchers.ids: ${watchers.map { it.id }}, watchersCount: $watchersCount" }
+        _watchers.value = watchers.associateBy(User::id)
+        _watcherCount.value = watchersCount
     }
 
     /**
@@ -383,6 +409,7 @@ internal class ChannelMutableState(
     }
 
     fun upsertUserPresence(user: User) {
+        logger.d { "[upsertUserPresence] user.id: ${user.id}" }
         _members.value[user.id]?.copy(user = user)?.let { upsertMembers(listOf(it)) }
         user.takeIf { _watchers.value.any { it.key == user.id } }
             ?.let { upsertWatchers(listOf(it), _watcherCount.value) }
@@ -452,5 +479,6 @@ internal class ChannelMutableState(
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
+        private val seqGenerator = AtomicInteger()
     }
 }

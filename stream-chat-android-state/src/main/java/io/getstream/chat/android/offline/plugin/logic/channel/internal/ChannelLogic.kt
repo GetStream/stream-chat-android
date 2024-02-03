@@ -100,10 +100,11 @@ internal class ChannelLogic(
     private val repos: RepositoryFacade,
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
+    private val getCurrentUserId: () -> String?,
 ) : QueryChannelListener {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger = StreamLog.getLogger("Chat:ChannelLogic")
+    private val logger = StreamLog.getLogger("Chat:ChannelLogicDB")
 
     val cid: String
         get() = mutableState.cid
@@ -496,7 +497,8 @@ internal class ChannelLogic(
      * Responsible for synchronizing [ChannelMutableStateImpl].
      */
     internal fun handleEvent(event: ChatEvent) {
-        StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
+        val currentUserId = getCurrentUserId()
+        logger.d { "[handleEvent] cid: $cid, currentUserId: $currentUserId, event: $event" }
         when (event) {
             is NewMessageEvent -> {
                 if (!mutableState.insideSearch.value) {
@@ -537,10 +539,15 @@ internal class ChannelLogic(
                 upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
+                if (event.user.id == currentUserId) {
+                    logger.i { "[handleEvent] skip MemberRemovedEvent for currentUser" }
+                    return
+                }
                 channelStateLogic.deleteMember(event.member)
             }
             is NotificationRemovedFromChannelEvent -> {
-                channelStateLogic.deleteMember(event.member)
+                channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
+                channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
             }
             is MemberAddedEvent -> {
                 channelStateLogic.addMember(event.member)
