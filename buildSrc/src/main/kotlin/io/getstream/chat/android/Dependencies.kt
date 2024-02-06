@@ -192,6 +192,7 @@ object Dependencies {
     const val navigationRuntimeKTX = "androidx.navigation:navigation-runtime-ktx:${Versions.ANDROIDX_NAVIGATION}"
     const val navigationTest = "androidx.navigation:navigation-testing:${Versions.ANDROIDX_NAVIGATION}"
     const val navigationUIKTX = "androidx.navigation:navigation-ui-ktx:${Versions.ANDROIDX_NAVIGATION}"
+    const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.ANDROIDX_NAVIGATION}"
     const val ok2curl = "com.github.mrmike:ok2curl:${Versions.OK2CURL}"
     const val okhttp = "com.squareup.okhttp3:okhttp:${Versions.OKHTTP}"
     const val okhttpLoggingInterceptor = "com.squareup.okhttp3:logging-interceptor:${Versions.OKHTTP}"
