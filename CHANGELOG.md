@@ -81,6 +81,7 @@
   * `OnUserClickListener` and `MessageListView.setOnUserClickListener`
   * `OnReactionViewClickListener` and `MessageListView.setOnReactionViewClickListener`
   * `OnUserReactionClickListener` and `MessageListView.setOnUserReactionClickListener`
+- Added `messageBuilder` parameter to `MessageComposerViewModel.bindView` to allow customizing the message builder. [#5169](https://github.com/GetStream/stream-chat-android/pull/5169)
 
 ### ⚠️ Changed
 

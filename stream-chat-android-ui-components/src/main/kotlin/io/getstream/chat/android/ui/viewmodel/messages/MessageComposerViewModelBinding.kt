@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
  *
  * @param view An instance of [MessageComposerView] to bind to the ViewModel.
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param messageBuilder A lambda function to build a new message.
  * @param sendMessageButtonClickListener Click listener for the send message button.
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
@@ -135,6 +136,7 @@ public fun MessageComposerViewModel.bindView(
  *
  * @param view An instance of [MessageComposerView] to bind to the ViewModel.
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param messageBuilder A lambda function to build a new message.
  * @param sendMessageButtonClickListener Click listener for the send message button.
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
