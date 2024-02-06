@@ -211,11 +211,10 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler {
 	public static final field Companion Lio/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler$Companion;
-	public abstract fun handleMessagePosition (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Message;Z)Ljava/util/List;
+	public abstract fun handleMessagePosition (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Message;ZZ)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler$Companion {
-	public final fun defaultHandler ()Lio/getstream/chat/android/ui/common/feature/messages/list/MessagePositionHandler;
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/ClipboardHandler {
