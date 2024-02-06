@@ -783,6 +783,7 @@ public class MessageListController(
                 message = message,
                 nextMessage = nextMessage,
                 isAfterDateSeparator = shouldAddDateSeparator,
+                isInThread = isInThread,
             )
 
             val isLastMessageInGroup =

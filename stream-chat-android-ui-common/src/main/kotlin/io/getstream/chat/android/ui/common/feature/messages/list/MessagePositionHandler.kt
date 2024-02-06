@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.utils.message.isError
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 
@@ -32,6 +33,7 @@ public fun interface MessagePositionHandler {
      * @param message The current [Message] in the list.
      * @param nextMessage The next [Message] in the list.
      * @param isAfterDateSeparator If a date separator was added before the current [Message].
+     * @param isInThread If the current [Message] is in a thread.
      *
      * @return The position of the current message inside the group.
      */
@@ -40,6 +42,7 @@ public fun interface MessagePositionHandler {
         message: Message,
         nextMessage: Message?,
         isAfterDateSeparator: Boolean,
+        isInThread: Boolean,
     ): List<MessagePosition>
 
     public companion object {
@@ -49,6 +52,7 @@ public fun interface MessagePositionHandler {
          *
          * @return The default implementation of [MessagePositionHandler].
          */
+        @InternalStreamChatApi
         @Suppress("ComplexCondition")
         public fun defaultHandler(): MessagePositionHandler {
             return MessagePositionHandler {
@@ -56,6 +60,7 @@ public fun interface MessagePositionHandler {
                     message: Message,
                     nextMessage: Message?,
                     isAfterDateSeparator: Boolean,
+                    _: Boolean,
                 ->
                 val previousUser = previousMessage?.user
                 val user = message.user
