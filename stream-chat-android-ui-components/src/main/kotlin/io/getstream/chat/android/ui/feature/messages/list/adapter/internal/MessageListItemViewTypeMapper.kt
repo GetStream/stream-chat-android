@@ -85,15 +85,17 @@ internal object MessageListItemViewTypeMapper {
         val containsOnlyLinks = message.containsOnlyLinkAttachments()
 
         return when {
-            attachmentFactoryManager.canHandle(message) -> CUSTOM_ATTACHMENTS
+            message.isDeleted() -> MESSAGE_DELETED
             message.isError() && !message.isModerationBounce() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
-            message.isDeleted() -> MESSAGE_DELETED
             message.isGiphyEphemeral() -> GIPHY
-            containsGiphy -> GIPHY_ATTACHMENT
-            containsOnlyLinks -> LINK_ATTACHMENTS
-            message.isMediaAttachment() -> MEDIA_ATTACHMENT
-            hasAttachments -> FILE_ATTACHMENTS
+            hasAttachments -> when {
+                attachmentFactoryManager.canHandle(message) -> CUSTOM_ATTACHMENTS
+                containsGiphy -> GIPHY_ATTACHMENT
+                containsOnlyLinks -> LINK_ATTACHMENTS
+                message.isMediaAttachment() -> MEDIA_ATTACHMENT
+                else -> FILE_ATTACHMENTS
+            }
             else -> PLAIN_TEXT
         }
     }
