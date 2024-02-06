@@ -123,6 +123,11 @@ public class RepositoryFacade private constructor(
         messageRepository.deleteChannelMessagesBefore(cid, hideMessagesBefore)
     }
 
+    override suspend fun deleteChannelMessage(message: Message) {
+        messageRepository.deleteChannelMessage(message)
+        channelsRepository.deleteChannelMessage(message)
+    }
+
     override suspend fun insertReaction(reaction: Reaction) {
         val messageId = reaction.messageId
         if (messageId.isEmpty()) {

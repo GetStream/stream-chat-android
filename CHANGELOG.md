@@ -28,6 +28,7 @@
 ### 🐞 Fixed
 - Prevent sending reaction for non-existing message. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
   * `SendReactionListener.onSendReactionPrecondition` is now suspendable function.
+- Remove the deleted `Message` from cached `Channel.messages` collection. [#5170](https://github.com/GetStream/stream-chat-android/pull/5170) 
 
 ### ⬆️ Improved
 
