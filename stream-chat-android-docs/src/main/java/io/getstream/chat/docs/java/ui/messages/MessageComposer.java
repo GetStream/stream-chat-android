@@ -75,7 +75,9 @@ public class MessageComposer extends Fragment {
             MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
             // Bind MessageComposerViewModel with MessageComposerView
+            // Handle message building
             MessageComposerViewModelBinder.with(viewModel)
+                    .messageBuilder(viewModel::buildNewMessage)
                     .onSendMessageButtonClick((message) -> {
                         // Handle send button click
                         return Unit.INSTANCE;

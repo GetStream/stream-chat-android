@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
  *
  * @param view An instance of [MessageComposerView] to bind to the ViewModel.
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param messageBuilder A lambda function to build a new message.
  * @param sendMessageButtonClickListener Click listener for the send message button.
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
@@ -80,6 +81,7 @@ import kotlinx.coroutines.launch
 public fun MessageComposerViewModel.bindView(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
+    messageBuilder: () -> Message = { buildNewMessage() },
     sendMessageButtonClickListener: (Message) -> Unit = this.sendMessageButtonClickListener,
     textInputChangeListener: (String) -> Unit = this.textInputChangeListener,
     attachmentSelectionListener: (List<Attachment>) -> Unit = this.attachmentSelectionListener,
@@ -101,7 +103,7 @@ public fun MessageComposerViewModel.bindView(
     audioSliderDragStartListener: (Float) -> Unit = this.audioSliderDragStartListener,
     audioSliderDragStopListener: (Float) -> Unit = this.audioSliderDragStopListener,
 ) {
-    view.sendMessageButtonClickListener = { sendMessageButtonClickListener(buildNewMessage()) }
+    view.sendMessageButtonClickListener = { sendMessageButtonClickListener(messageBuilder()) }
     view.textInputChangeListener = textInputChangeListener
     view.attachmentSelectionListener = attachmentSelectionListener
     view.attachmentRemovalListener = attachmentRemovalListener
@@ -134,6 +136,7 @@ public fun MessageComposerViewModel.bindView(
  *
  * @param view An instance of [MessageComposerView] to bind to the ViewModel.
  * @param lifecycleOwner [LifecycleOwner] of Activity or Fragment hosting the [MessageComposerView]
+ * @param messageBuilder A lambda function to build a new message.
  * @param sendMessageButtonClickListener Click listener for the send message button.
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
@@ -161,6 +164,7 @@ public fun MessageComposerViewModel.bindView(
 public fun MessageComposerViewModel.bindViewDefaults(
     view: MessageComposerView,
     lifecycleOwner: LifecycleOwner,
+    messageBuilder: () -> Message = { buildNewMessage() },
     sendMessageButtonClickListener: ((Message) -> Unit)? = null,
     textInputChangeListener: ((String) -> Unit)? = null,
     attachmentSelectionListener: ((List<Attachment>) -> Unit)? = null,
@@ -185,6 +189,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     bindView(
         view = view,
         lifecycleOwner = lifecycleOwner,
+        messageBuilder = messageBuilder,
         sendMessageButtonClickListener = this.sendMessageButtonClickListener and sendMessageButtonClickListener,
         textInputChangeListener = this.textInputChangeListener and textInputChangeListener,
         attachmentSelectionListener = this.attachmentSelectionListener and attachmentSelectionListener,
