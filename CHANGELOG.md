@@ -57,6 +57,8 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨Breaking change: Changed `MessagePositionHandler.handleMessagePosition` signature. [#5168](https://github.com/GetStream/stream-chat-android/pull/5168)
+  * Added `isInThread: Boolean` parameter. 
 
 ### ❌ Removed
 
