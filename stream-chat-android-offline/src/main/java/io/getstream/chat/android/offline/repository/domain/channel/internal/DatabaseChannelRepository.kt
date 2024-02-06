@@ -76,6 +76,10 @@ internal class DatabaseChannelRepository(
         }
     }
 
+    private fun cacheChannel(vararg channels: Channel) {
+        channels.forEach { channelCache.put(it.cid, it) }
+    }
+
     private fun cacheChannel(channels: Collection<Channel>) {
         channels.forEach { channelCache.put(it.cid, it) }
     }
@@ -91,6 +95,13 @@ internal class DatabaseChannelRepository(
         scope.launchWithMutex(dbMutex) { channelDao.delete(cid) }
     }
 
+    override suspend fun deleteChannelMessage(message: Message) {
+        channelCache[message.cid]?.let { cachedChannel ->
+            val updatedChannel = cachedChannel.copy(messages = cachedChannel.messages.filter { it.id != message.id })
+            cacheChannel(updatedChannel)
+        }
+    }
+
     /**
      * Select a channel by cid.
      *
@@ -98,7 +109,7 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun selectChannel(cid: String): Channel? =
         channelCache[cid] ?: channelDao.select(cid = cid)?.toModel(getUser, getMessage)
-            ?.also { cacheChannel(listOf(it)) }
+            ?.also { cacheChannel(it) }
 
     /**
      * Select a list of channels by cid.
@@ -158,11 +169,9 @@ internal class DatabaseChannelRepository(
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
         channelCache[cid]?.let { cachedChannel ->
             cacheChannel(
-                listOf(
-                    cachedChannel.copy(
-                        hidden = hidden,
-                        hiddenMessagesBefore = hideMessagesBefore,
-                    ),
+                cachedChannel.copy(
+                    hidden = hidden,
+                    hiddenMessagesBefore = hideMessagesBefore,
                 ),
             )
         }
