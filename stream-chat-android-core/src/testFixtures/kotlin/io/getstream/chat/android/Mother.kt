@@ -17,6 +17,7 @@
 package io.getstream.chat.android
 
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelConfig
 import io.getstream.chat.android.models.ChannelInfo
@@ -391,6 +392,18 @@ public fun randomAttachment(
         extraData = extraData,
     )
 }
+
+public fun randomMediaAttachment(): Attachment = randomAttachment(
+    type = listOf(
+        AttachmentType.IMAGE,
+        AttachmentType.VIDEO,
+        AttachmentType.AUDIO_RECORDING,
+    ).random(),
+    titleLink = null,
+    ogUrl = null,
+    uploadState = Attachment.UploadState.Success,
+    extraData = mapOf("uploadId" to randomString()),
+)
 
 public fun randomMember(
     user: User = randomUser(),
