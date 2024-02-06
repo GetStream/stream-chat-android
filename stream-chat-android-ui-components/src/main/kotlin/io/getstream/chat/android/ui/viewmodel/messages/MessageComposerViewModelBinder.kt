@@ -64,6 +64,7 @@ public class MessageComposerViewModelBinder private constructor(
         ): MessageComposerViewModelBinder = MessageComposerViewModelBinder(vm)
     }
 
+    private var messageBuilder: () -> Message = { vm.buildNewMessage() }
     private var sendMessageButtonClickListener: (Message) -> Unit = vm.sendMessageButtonClickListener
     private var textInputChangeListener: (String) -> Unit = vm.textInputChangeListener
     private var attachmentSelectionListener: (List<Attachment>) -> Unit = vm.attachmentSelectionListener
@@ -84,6 +85,14 @@ public class MessageComposerViewModelBinder private constructor(
     private var audioCompleteButtonClickListener: () -> Unit = vm.audioCompleteButtonClickListener
     private var audioSliderDragStartListener: (Float) -> Unit = vm.audioSliderDragStartListener
     private var audioSliderDragStopListener: (Float) -> Unit = vm.audioSliderDragStopListener
+
+    /**
+     * Sets the message builder that is invoked when the send message button is clicked.
+     */
+    public fun messageBuilder(builder: () -> Message): MessageComposerViewModelBinder {
+        messageBuilder = builder
+        return this
+    }
 
     /**
      * Sets the click listener for the send message button.
@@ -290,6 +299,7 @@ public class MessageComposerViewModelBinder private constructor(
         vm.bindView(
             view = view,
             lifecycleOwner = lifecycleOwner,
+            messageBuilder = messageBuilder,
             sendMessageButtonClickListener = sendMessageButtonClickListener,
             textInputChangeListener = textInputChangeListener,
             attachmentSelectionListener = attachmentSelectionListener,

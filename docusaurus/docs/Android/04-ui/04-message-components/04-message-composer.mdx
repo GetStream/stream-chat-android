@@ -72,6 +72,8 @@ MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class
 
 // Bind MessageComposerViewModel with MessageComposerView
 MessageComposerViewModelBinder.with(viewModel)
+        // Optional (you can set your custom message builder here)
+        .messageBuilder(viewModel::buildNewMessage)
         // Optional (you can set your custom listeners here)
         .onSendMessageButtonClick((message) -> {
             // Handle send button click
