@@ -1,5 +1,6 @@
 package io.getstream.chat.docs.kotlin.cookbook.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -34,21 +35,24 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.docs.R
 
 @Composable
-fun CustomChannelListScreen(viewModel: CustomChannelListViewModel = viewModel()) {
+fun CustomChannelListScreen(
+    viewModel: CustomChannelListViewModel = viewModel(),
+    navigateToMessageList: (String) -> Unit,
+) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-    CustomChannelList(uiState.value.channels)
+    CustomChannelList(channels = uiState.value.channels, onChannelClick = navigateToMessageList)
 }
 
 @Composable
-fun CustomChannelList(channels: List<Channel>) {
+fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(all = 15.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         itemsIndexed(channels) { index, item ->
-            CustomChannelListItem(channel = item)
+            CustomChannelListItem(channel = item, onChannelClick = onChannelClick)
             if (index < channels.lastIndex) {
                 Spacer(modifier = Modifier.height(7.dp))
                 Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
@@ -58,10 +62,11 @@ fun CustomChannelList(channels: List<Channel>) {
 }
 
 @Composable
-fun CustomChannelListItem(channel: Channel) {
+fun CustomChannelListItem(channel: Channel, onChannelClick: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onChannelClick(channel.cid) }
             .padding(all = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -99,26 +104,7 @@ fun PreviewCustomChannelList() {
         channels = listOf(
             Channel(name = "Byron Waelchi", memberCount = 10),
             Channel(name = "Bernice Li", memberCount = 5),
-        )
+        ),
+        onChannelClick = {}
     )
 }
-
-/*
-HStack {
-    if let imageURL = viewModel.imageURL(for: channel) {
-        StreamLazyImage(url: imageURL)
-    } else {
-        Circle()
-            .fill(Color.gray)
-            .frame(width: 30)
-    }
-    VStack(alignment: .leading) {
-        Text(DefaultChatChannelNamer()(channel, chatClient.currentUserId) ?? "")
-            .lineLimit(1)
-            .bold()
-        Text("\(channel.previewMessage?.text ?? "No messages")")
-            .font(.caption)
-    }
-    Spacer()
-}
- */

@@ -103,6 +103,7 @@ dependencies {
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
     implementation Dependencies.composeLifecycle
+    implementation Dependencies.navigationCompose
     implementation Dependencies.streamPushFirebase
     implementation Dependencies.streamPushHuawei
     implementation Dependencies.streamPushXiaomi
