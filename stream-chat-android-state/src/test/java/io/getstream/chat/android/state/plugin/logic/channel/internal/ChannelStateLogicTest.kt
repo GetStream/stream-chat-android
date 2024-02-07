@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomNewMessageEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -28,7 +27,6 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -45,7 +43,6 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -83,7 +80,6 @@ internal class ChannelStateLogicTest {
             searchLogic = SearchLogic(mutableState),
             attachmentUrlValidator = attachmentUrlValidator,
             coroutineScope = testCoroutines.scope,
-            unreadCountLogic = unreadCountLogic,
         )
         _messages = emptyMap()
         _unreadCount.value = 0
@@ -145,7 +141,6 @@ internal class ChannelStateLogicTest {
     }
     private lateinit var clientState: ClientState
     private lateinit var spyMutableGlobalState: MutableGlobalState
-    private val unreadCountLogic: UnreadCountLogic = mock()
 
     private val attachmentUrlValidator: AttachmentUrlValidator = mock {
         on(it.updateValidAttachmentsUrl(any(), any())) doAnswer { invocationOnMock ->
@@ -189,66 +184,6 @@ internal class ChannelStateLogicTest {
 
         // Only the new message is available
         _messages `should not be equal to` mapOf(recentMessage.id to recentMessage)
-    }
-
-    @Test
-    fun `new messages should increment the unread count`() {
-        val createdAt = randomDate()
-        val oldCreatedAt = randomDateBefore(createdAt.time)
-        val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
-        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
-        val newUnreadCount = randomInt()
-        whenever(mutableState.read) doReturn MutableStateFlow(
-            ChannelUserRead(
-                user = user,
-                lastReceivedEventDate = Date(Long.MIN_VALUE),
-                unreadMessages = newUnreadCount,
-                lastRead = Date(Long.MIN_VALUE),
-                lastReadMessageId = randomString(),
-            ),
-        )
-
-        val oldMessage = randomMessage(
-            user = User(id = "otherUserId"),
-            createdAt = oldCreatedAt,
-            createdLocallyAt = oldCreatedAt,
-            deletedAt = null,
-            silent = false,
-            showInChannel = true,
-        )
-
-        val oldMessageNewMessageEvent = randomNewMessageEvent(
-            message = oldMessage,
-        )
-
-        channelStateLogic.incrementUnreadCountIfNecessary(oldMessageNewMessageEvent)
-        verify(unreadCountLogic).enqueueCount(oldMessageNewMessageEvent)
-    }
-
-    @Test
-    fun `old messages should NOT increment the unread count`() {
-        // The last message is really new.
-        whenever(mutableState.read) doReturn MutableStateFlow(
-            ChannelUserRead(
-                user = user,
-                lastReceivedEventDate = Date(Long.MAX_VALUE),
-                unreadMessages = randomInt(),
-                lastRead = Date(Long.MIN_VALUE),
-                lastReadMessageId = randomString(),
-            ),
-        )
-        val oldMessages = List(positiveRandomInt(20)) { randomMessage() }
-        whenever(mutableState.visibleMessages) doReturn MutableStateFlow(oldMessages.associateBy(Message::id))
-
-        val eventList = oldMessages.map { message ->
-            randomNewMessageEvent(message = message)
-        }
-
-        repeat(3) {
-            channelStateLogic.incrementUnreadCountIfNecessary(eventList.random())
-        }
-
-        _unreadCount.value `should be equal to` 0
     }
 
     @Test

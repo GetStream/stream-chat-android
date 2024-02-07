@@ -33,6 +33,7 @@ import io.getstream.chat.android.randomMember
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
+import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUserRead
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelLogic
 import io.getstream.chat.android.state.plugin.logic.channel.internal.ChannelStateLogic
@@ -116,7 +117,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic.handleEvent(userStartWatchingEvent)
 
         verify(channelStateLogic).upsertMessage(newMessage, false)
-        verify(channelStateLogic).incrementUnreadCountIfNecessary(userStartWatchingEvent)
+        verify(channelStateLogic).updateCurrentUserRead(userStartWatchingEvent.createdAt, userStartWatchingEvent.message)
         verify(channelStateLogic).toggleHidden(false)
     }
 
@@ -176,7 +177,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(readEvent)
 
-        verify(channelStateLogic).enqueueUpdateRead(readEvent)
+        verify(channelStateLogic).updateRead(readEvent.toChannelUserRead())
     }
 
     // Read event notification
@@ -186,7 +187,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
 
         channelLogic.handleEvent(readEvent)
 
-        verify(channelStateLogic).enqueueUpdateRead(readEvent)
+        verify(channelStateLogic).updateRead(readEvent.toChannelUserRead())
     }
 
     // Reaction event
