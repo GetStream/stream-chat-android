@@ -59,7 +59,6 @@ internal class ChannelStateLogic(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
-    private val unreadCountLogic: UnreadCountLogic,
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
 
