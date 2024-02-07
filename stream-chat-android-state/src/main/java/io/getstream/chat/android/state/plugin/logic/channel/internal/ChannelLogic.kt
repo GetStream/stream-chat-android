@@ -169,7 +169,7 @@ internal class ChannelLogic(
      */
     internal suspend fun loadNewerMessages(messageId: String, limit: Int): Result<Channel> {
         logger.i { "[loadNewerMessages] messageId: $messageId, limit: $limit" }
-        mutableState.setLoadingNewerMessages(true)
+        channelStateLogic.loadingNewerMessages()
         return runChannelQuery("loadNewerMessages", newerWatchChannelRequest(limit = limit, baseMessageId = messageId))
     }
 
@@ -183,7 +183,7 @@ internal class ChannelLogic(
      */
     internal suspend fun loadOlderMessages(messageLimit: Int, baseMessageId: String? = null): Result<Channel> {
         logger.i { "[loadOlderMessages] messageLimit: $messageLimit, baseMessageId: $baseMessageId" }
-        mutableState.setLoadingOlderMessages(true)
+        channelStateLogic.loadingOlderMessages()
         return runChannelQuery(
             "loadOlderMessages",
             olderWatchChannelRequest(limit = messageLimit, baseMessageId = baseMessageId),
@@ -314,7 +314,7 @@ internal class ChannelLogic(
                 "isChannelsStateUpdate: $isChannelsStateUpdate"
         }
         localChannel.hidden?.let(channelStateLogic::toggleHidden)
-        mutableState.hideMessagesBefore = localChannel.hiddenMessagesBefore
+        localChannel.hiddenMessagesBefore?.let(channelStateLogic::hideMessagesBefore)
         updateDataForChannel(
             localChannel,
             messageLimit = messageLimit,
@@ -486,30 +486,6 @@ internal class ChannelLogic(
 
     private fun upsertUser(user: User) {
         upsertUserPresence(user)
-        val userId = user.id
-        mutableState.channelData.value.takeIf { it.createdBy.id == userId }?.let { channelData ->
-            mutableState.setChannelData(channelData.copy(createdBy = user))
-        }
-        mutableState.messageList.value
-            .map { message ->
-                message.copy(
-                    user = message.user.takeUnless { it.id == userId } ?: user,
-                    ownReactions = message.ownReactions.map { reaction ->
-                        reaction.takeUnless { it.fetchUserId() == userId } ?: reaction.copy(user = user)
-                    },
-                    latestReactions = message.latestReactions.map { reaction ->
-                        reaction.takeUnless { it.fetchUserId() == userId } ?: reaction.copy(user = user)
-                    },
-                )
-            }
-            .also { mutableState.setMessages(it) }
-            .filter {
-                it.user.id == userId ||
-                    it.ownReactions.any { reaction -> reaction.fetchUserId() == userId } ||
-                    it.latestReactions.any { reaction -> reaction.fetchUserId() == userId }
-            }.takeUnless { it.isEmpty() }?.let { changedMessages ->
-                channelStateLogic.upsertMessages(changedMessages)
-            }
     }
 
     /**
@@ -537,7 +513,9 @@ internal class ChannelLogic(
             }
             is MessageUpdatedEvent -> {
                 event.message.copy(
-                    replyTo = mutableState.messageList.value.firstOrNull { it.id == event.message.replyMessageId },
+                    replyTo = event.message.replyMessageId
+                        ?.let { mutableState.getMessageById(it) }
+                        ?: event.message.replyTo,
                 ).let(::upsertEventMessage)
 
                 channelStateLogic.toggleHidden(false)

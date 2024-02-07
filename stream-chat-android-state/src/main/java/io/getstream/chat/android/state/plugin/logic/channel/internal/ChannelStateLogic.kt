@@ -629,6 +629,20 @@ internal class ChannelStateLogic(
         }
     }
 
+    /**
+     * Set states as loading newer messages.
+     */
+    fun loadingNewerMessages() {
+        mutableState.setLoadingNewerMessages(true)
+    }
+
+    /**
+     * Set states as loading older messages.
+     */
+    fun loadingOlderMessages() {
+        mutableState.setLoadingOlderMessages(true)
+    }
+
     private companion object {
         private const val TAG = "Chat:ChannelStateLogic"
         private const val TEXT_LIMIT = 10

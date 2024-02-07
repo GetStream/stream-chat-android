@@ -434,6 +434,9 @@ internal class ChannelMutableState(
         _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }
         user.takeIf { _watchers?.value?.any { it.key == user.id } == true }
             ?.let { upsertWatchers(listOf(it), watcherCount.value) }
+        _channelData?.value?.takeIf { it.createdBy.id == user.id }
+            ?.let { setChannelData(it.copy(createdBy = user)) }
+        _messages?.apply { value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id } }
     }
 
     fun upsertReads(reads: List<ChannelUserRead>) {
