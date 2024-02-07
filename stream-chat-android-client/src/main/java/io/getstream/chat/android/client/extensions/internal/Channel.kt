@@ -48,28 +48,37 @@ public val Channel.lastMessage: Message?
 
 @InternalStreamChatApi
 public fun Channel.updateLastMessage(
+    receivedEventDate: Date,
     message: Message,
     currentUserId: String,
 ): Channel {
     val createdAt = message.createdAt ?: message.createdLocallyAt
-    val messageCreatedAt =
-        checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
+    checkNotNull(createdAt) { "created at cant be null, be sure to set message.createdAt" }
 
-    val updateNeeded = message.id == lastMessage?.id
-    val newLastMessage = lastMessageAt == null || messageCreatedAt.after(lastMessageAt)
+    val newMessages = (
+        messages
+            .associateBy { it.id } + (message.id to message)
+        )
+        .values
+        .sortedBy { it.createdAt ?: it.createdLocallyAt }
+
     val newReads = read.map { read ->
         read.takeUnless { it.user.id == currentUserId }
             ?: read.copy(
-                lastReceivedEventDate = messageCreatedAt,
-                unreadMessages = read.unreadMessages + 1,
+                lastReceivedEventDate = receivedEventDate,
+                unreadMessages = read.let {
+                    val hasNewUnreadMessage = receivedEventDate.after(it.lastReceivedEventDate) &&
+                        newMessages.size > messages.size &&
+                        newMessages.last().id == message.id
+                    if (hasNewUnreadMessage) it.unreadMessages.inc() else it.unreadMessages
+                },
             )
     }
-    return this.takeUnless { updateNeeded || newLastMessage }
-        ?: copy(
-            lastMessageAt = messageCreatedAt,
-            messages = messages + message,
-            read = newReads,
-        ).syncUnreadCountWithReads()
+    return this.copy(
+        lastMessageAt = newMessages.last().let { it.createdAt ?: it.createdLocallyAt },
+        messages = newMessages,
+        read = newReads,
+    ).syncUnreadCountWithReads()
 }
 
 /**

@@ -449,7 +449,7 @@ internal class EventHandlerSequential(
                 // note that many of these events should also update user information
                 is NewMessageEvent -> {
                     val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
-                    batch.addMessageData(event.cid, enrichedMessage)
+                    batch.addMessageData(event.createdAt, event.cid, enrichedMessage)
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         val updatedChannel = channel.copy(
                             hidden = false,
@@ -460,18 +460,20 @@ internal class EventHandlerSequential(
                 }
                 is MessageDeletedEvent -> {
                     batch.addMessageData(
+                        event.createdAt,
                         event.cid,
                         event.message.enrichWithOwnReactions(batch, currentUserId, event.user),
                     )
                 }
                 is MessageUpdatedEvent -> {
                     batch.addMessageData(
+                        event.createdAt,
                         event.cid,
                         event.message.enrichWithOwnReactions(batch, currentUserId, event.user),
                     )
                 }
                 is NotificationMessageNewEvent -> {
-                    batch.addMessageData(event.cid, event.message)
+                    batch.addMessageData(event.createdAt, event.cid, event.message)
                     batch.addChannel(event.channel.copy(hidden = false))
                 }
                 is NotificationAddedToChannelEvent -> {
