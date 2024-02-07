@@ -20,7 +20,6 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.isPermanent
-import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -91,15 +90,6 @@ internal class ChannelStateLogic(
     fun writeChannelState(): ChannelMutableState = mutableState
 
     /**
-     * Increments the unread count of the Channel if necessary.
-     *
-     * @param message [Message].
-     */
-    fun incrementUnreadCountIfNecessary(chatEvent: ChatEvent) {
-        unreadCountLogic.enqueueCount(chatEvent)
-    }
-
-    /**
      * Updates the channel data of the state of the SDK.
      *
      * @param channel the data of [Channel] to be updated.
@@ -125,14 +115,6 @@ internal class ChannelStateLogic(
      * @param read the information about the read.
      */
     fun updateRead(read: ChannelUserRead) = updateReads(listOf(read))
-
-    /**
-     * Enqueues an read update. This method is useful to update the unread count only when the SDK is not updating
-     * channels data.
-     */
-    fun enqueueUpdateRead(chatEvent: ChatEvent) {
-        unreadCountLogic.enqueueCount(chatEvent)
-    }
 
     /**
      * Updates the list of typing users.
@@ -641,6 +623,30 @@ internal class ChannelStateLogic(
      */
     fun loadingOlderMessages() {
         mutableState.setLoadingOlderMessages(true)
+    }
+
+    /**
+     * Update [ChannelUserRead] for the current user if the message is considered unread for the current user
+     * in the channel.
+     *
+     * @param eventReceivedDate The date when the event was received.
+     * @param message The message that was received.
+     */
+    fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
+        mutableState.read.value
+            ?.takeUnless { it.lastReceivedEventDate.after(eventReceivedDate) }
+            ?.takeUnless {
+                message.user.id == clientState.user.value?.id ||
+                    message.parentId?.takeUnless { message.showInChannel } != null
+            }
+            ?.let {
+                updateRead(
+                    it.copy(
+                        lastReceivedEventDate = eventReceivedDate,
+                        unreadMessages = it.unreadMessages.inc(),
+                    ),
+                )
+            }
     }
 
     private companion object {

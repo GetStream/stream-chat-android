@@ -508,7 +508,7 @@ internal class ChannelLogic(
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
-                channelStateLogic.incrementUnreadCountIfNecessary(event)
+                channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                 channelStateLogic.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
@@ -532,7 +532,7 @@ internal class ChannelLogic(
                 if (!mutableState.insideSearch.value) {
                     upsertEventMessage(event.message)
                 }
-                channelStateLogic.incrementUnreadCountIfNecessary(event)
+                channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                 channelStateLogic.toggleHidden(false)
             }
             is ReactionNewEvent -> {
@@ -600,13 +600,13 @@ internal class ChannelLogic(
                 channelStateLogic.setTyping(event.user.id, event)
             }
             is MessageReadEvent -> {
-                channelStateLogic.enqueueUpdateRead(event)
+                channelStateLogic.updateRead(event.toChannelUserRead())
             }
             is NotificationMarkReadEvent -> {
-                channelStateLogic.enqueueUpdateRead(event)
+                channelStateLogic.updateRead(event.toChannelUserRead())
             }
             is MarkAllReadEvent -> {
-                channelStateLogic.enqueueUpdateRead(event)
+                channelStateLogic.updateRead(event.toChannelUserRead())
             }
             is NotificationMarkUnreadEvent -> {
                 channelStateLogic.updateRead(event.toChannelUserRead())
