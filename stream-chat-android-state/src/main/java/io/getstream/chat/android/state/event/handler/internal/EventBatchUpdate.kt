@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
+import java.util.Date
 
 /**
  * EventBatchUpdate helps you efficiently implement a 4 step batch update process
@@ -64,10 +65,10 @@ internal class EventBatchUpdate private constructor(
      * Adds the message and updates the last message for the given channel.
      * Increments the unread count if the right conditions apply.
      */
-    fun addMessageData(cid: String, message: Message) {
+    fun addMessageData(receivedEventDate: Date, cid: String, message: Message) {
         addMessage(message)
         getCurrentChannel(cid)
-            ?.updateLastMessage(message, currentUserId)
+            ?.updateLastMessage(receivedEventDate, message, currentUserId)
             ?.let(::addChannel)
     }
 
