@@ -2,6 +2,7 @@ package io.getstream.chat.docs.kotlin.cookbook.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,13 +41,17 @@ fun CustomChannelListScreen(
     viewModel: CustomChannelListViewModel = viewModel(),
     navigateToMessageList: (String) -> Unit,
 ) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    CustomChannelList(channels = uiState.value.channels, onChannelClick = navigateToMessageList)
+    if (uiState.error == null) {
+        CustomChannelList(channels = uiState.channels, onChannelClick = navigateToMessageList)
+    } else {
+        Error(message = uiState.error!!)
+    }
 }
 
 @Composable
-fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit) {
+private fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(all = 15.dp),
@@ -62,7 +68,7 @@ fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit)
 }
 
 @Composable
-fun CustomChannelListItem(channel: Channel, onChannelClick: (String) -> Unit) {
+private fun CustomChannelListItem(channel: Channel, onChannelClick: (String) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,6 +87,7 @@ fun CustomChannelListItem(channel: Channel, onChannelClick: (String) -> Unit) {
 
 @Composable
 private fun ChannelImage(url: String) {
+    // We use coil for getting the images
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
@@ -95,6 +102,16 @@ private fun ChannelImage(url: String) {
         fallback = painterResource(id = R.drawable.ic_avatar),
         placeholder = painterResource(id = R.drawable.ic_avatar),
     )
+}
+
+@Composable
+private fun Error(message: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = message)
+    }
 }
 
 @Preview(showBackground = true)

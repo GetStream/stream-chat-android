@@ -16,7 +16,7 @@ class CustomChannelListViewModel(val chatClient: ChatClient = ChatClient.instanc
     val uiState = _uiState.asStateFlow()
 
     init {
-        // Get last conversations I participated in, sorted by last message date
+        // Get last conversations I participated in, sorted by last updated
         val request = QueryChannelsRequest(
             filter = Filters.and(
                 Filters.`in`("members", listOf("filip")),
@@ -33,7 +33,7 @@ class CustomChannelListViewModel(val chatClient: ChatClient = ChatClient.instanc
             when (result) {
                 is Result.Success -> {
                     val channels: List<Channel> = result.value
-                    _uiState.update { it.copy(channels = channels)  }
+                    _uiState.update { it.copy(channels = channels, error = null) }
                 }
                 else -> {
                     _uiState.update { it.copy(error = "Error loading channels") }
