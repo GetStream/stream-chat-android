@@ -1,0 +1,128 @@
+# Custom Message List
+
+On this page you'll learn how to create a simple message list screen, without using any of the SDK's UI components. We will only use the low-level `ChatClient` for state and Jetpack Compose for the UI.
+
+## Custom Message List View Model
+
+First, we create a view model that receives a `ChatClient` instance. It exposes a `uiState` property of type `StateFlow<MessageListUiState>`. This allows the UI layer to observe changes to the state and update the UI accordingly.
+
+Next, we define the `getMessages` method, which calls `chatClient.watchChannelAsState`, passing the _cid_. This returns a `StateFlow<ChannelState>`, which represents the state of the channel. We store this state in the `channelStateFlow` variable.
+
+Finally, we start collecting `channelStateFlow` and it's `messages: StateFlow<List<Message>>` property, and update `_uiState` accordingly.
+
+:::note
+We're loading only the first 30 messages for simplicity. In a real app you should implement message pagination. See more here. <!-- TODO add link -->
+:::
+
+Here is the full code for the view model:
+
+```kotlin
+class CustomMessageListViewModel(val chatClient: ChatClient = ChatClient.instance()) : ViewModel() {
+    private val _uiState = MutableStateFlow(MessageListUiState())
+    val uiState = _uiState.asStateFlow()
+
+    fun getMessages(cid: String) {
+        val channelStateFlow: StateFlow<ChannelState?> = chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = 30,
+            coroutineScope = viewModelScope
+        )
+
+        viewModelScope.launch {
+            channelStateFlow.collect { channelState ->
+                if (channelState != null) {
+                    channelState.messages.collect { messages ->
+                        _uiState.update { it.copy(messages = messages, error = null) }
+                    }
+                } else {
+                    _uiState.update { it.copy(error = "Cannot load messages") }
+                }
+            }
+        }
+    }
+}
+
+data class MessageListUiState(
+    val messages: List<Message> = emptyList(),
+    val error: String? = null,
+)
+```
+
+## Custom Message List UI
+
+For the UI, we create a composable called `CustomMessageListScreen` that observes the view model's `uiState: StateFlow` property for changes.
+
+To trigger message loading, we call the view model's `getMessages` method with a channel `cid` that we get as an argument in the composable (populated when the app's `NavHost` navigates to this composable). We then pass the state to other functions to build the appropriate UI.
+
+```kotlin
+@Composable
+fun CustomMessageListScreen(cid: String?, viewModel: CustomMessageListViewModel = viewModel()) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = Unit) { cid?.let { viewModel.getMessages(it) } }
+
+    if (uiState.error == null) {
+        CustomMessageList(messages = uiState.messages)
+    } else {
+        Error(message = uiState.error!!)
+    }
+}
+```
+
+The other composable functions used to create the screen are listed below:
+```kotlin
+@Composable
+private fun CustomMessageList(messages: List<Message>) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(all = 15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        reverseLayout = true,
+    ) {
+        items(messages) { message ->
+            if (message.text != "") CustomMessageListItem(message = message)
+        }
+    }
+}
+
+@Composable
+private fun CustomMessageListItem(message: Message) {
+    val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+    Column {
+        Text(text = "${message.user.name} said:", fontSize = 12.sp, fontWeight = FontWeight.Light)
+        Spacer(modifier = Modifier.height(5.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .background(
+                    color = Color(0xFFEEEEEE),
+                    shape = RoundedCornerShape(topStart = 0.dp, topEnd = 10.dp, bottomEnd = 10.dp, bottomStart = 10.dp)
+                )
+                .padding(all = 10.dp)
+        ) {
+            Text(text = message.text)
+            Spacer(modifier = Modifier.width(15.dp))
+            message.createdAt?.let {
+                Text(text = timeFormat.format(it), fontSize = 12.sp, fontWeight = FontWeight.Light)
+            }
+        }
+    }
+}
+
+@Composable
+private fun Error(message: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = message)
+    }
+}
+```
+
+## More Resources
+<!-- TODO check links -->
+<!-- TODO link to State plugin (explain watchChannelAsState) -->
+If you want to learn how to use and customize our existing Compose UI Components, see [this](../03-compose/01-overview.mdx) page.

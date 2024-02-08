@@ -2,6 +2,7 @@ package io.getstream.chat.docs.kotlin.cookbook.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,11 +32,15 @@ import java.util.Locale
 
 @Composable
 fun CustomMessageListScreen(viewModel: CustomMessageListViewModel = viewModel(), cid: String?) {
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(key1 = Unit) { cid?.let { viewModel.loadNewestMessages(it) } }
+    LaunchedEffect(key1 = Unit) { cid?.let { viewModel.getMessages(it) } }
 
-    CustomMessageList(messages = uiState.value.messages)
+    if (uiState.error == null) {
+        CustomMessageList(messages = uiState.messages)
+    } else {
+        Error(message = uiState.error!!)
+    }
 }
 
 @Composable
@@ -74,5 +80,15 @@ private fun CustomMessageListItem(message: Message) {
                 Text(text = timeFormat.format(it), fontSize = 12.sp, fontWeight = FontWeight.Light)
             }
         }
+    }
+}
+
+@Composable
+private fun Error(message: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = message)
     }
 }
