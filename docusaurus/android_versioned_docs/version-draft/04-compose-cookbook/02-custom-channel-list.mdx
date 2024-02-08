@@ -1,0 +1,154 @@
+# Custom Channel List
+
+In this cookbook recipe, we will show you how to implement a simple channel list screen, without using any of the SDK's UI components. We will rely only on the `ChatClient` for state and on standard Jetpack Compose for the UI.
+
+![Custom messages](../assets/cookbook_custom_channel_list.png)
+
+## Custom Channel List View Model
+
+The UI state is handled by a view model, `CustomChannelListViewModel`. It receives a `ChatClient` instance as a constructor parameter. This is done for simplicity, you should use a repository class and a DI library in a real app.
+
+```kotlin 
+class CustomChannelListViewModel(val chatClient: ChatClient = ChatClient.instance()) : ViewModel()
+```
+
+We expose the UI state to the UI layer through the `uiState` property, which is a read-only `StateFlow` of `ChannelListUiState`. This allows the UI layer to observe changes to the state and update the UI accordingly.
+
+```kotlin
+private val _uiState = MutableStateFlow(ChannelListUiState())
+val uiState = _uiState.asStateFlow()
+
+data class ChannelListUiState(
+    val channels: List<Channel> = emptyList(),
+    val error: String? = null,
+)
+```
+
+Next, we query the chat client for channels in the `init` block. The query is done asynchronously, and the result is handled in a callback. If the query is successful, the list of channels in the UI state is updated. If the query fails, the error message in the UI state is updated.
+
+```kotlin
+init {
+    // Get last conversations I participated in, sorted by last updated
+    val request = QueryChannelsRequest(
+        filter = Filters.and(
+            Filters.`in`("members", listOf("filip")),
+        ),
+        offset = 0,
+        limit = 30,
+        querySort = QuerySortByField.descByName("last_updated")
+    ).apply {
+        watch = true
+        state = true
+    }
+
+    chatClient.queryChannels(request).enqueue { result ->
+        when (result) {
+            is Result.Success -> {
+                val channels: List<Channel> = result.value
+                _uiState.update { it.copy(channels = channels, error = null) }
+            }
+            else -> {
+                _uiState.update { it.copy(error = "Error loading channels") }
+            }
+        }
+    }
+}
+```
+
+:::note
+We're getting only the first 30 channels for simplicity. In a real app you should implement channel pagination. See more here. <!-- TODO add link -->
+:::
+
+## Custom Channel List UI
+
+The channel list screen is represented by a composable called `CustomChannelListScreen`, which follows the standard _view model with UI state + UI Controller_ pattern. 
+
+We start by observing the view model's `uiState: StateFlow` property for changes. We then pass the `uiState.channels` list down the Composition to build the UI.
+
+Here is the full code for our custom channel list screen:
+
+```kotlin
+@Composable
+fun CustomChannelListScreen(
+    viewModel: CustomChannelListViewModel = viewModel(),
+    navigateToMessageList: (String) -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    if (uiState.error == null) {
+        CustomChannelList(channels = uiState.channels, onChannelClick = navigateToMessageList)
+    } else {
+        Error(message = uiState.error!!)
+    }
+}
+
+@Composable
+private fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize(),
+        contentPadding = PaddingValues(all = 15.dp),
+        verticalArrangement = Arrangement.spacedBy(7.dp),
+    ) {
+        itemsIndexed(channels) { index, item ->
+            CustomChannelListItem(channel = item, onChannelClick = onChannelClick)
+            if (index < channels.lastIndex) {
+                Spacer(modifier = Modifier.height(7.dp))
+                Divider(color = Color(0xFFEEEEEE), thickness = 1.dp)
+            }
+        }
+    }
+}
+
+@Composable
+private fun CustomChannelListItem(channel: Channel, onChannelClick: (String) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onChannelClick(channel.cid) }
+            .padding(all = 10.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column {
+            Text(text = if (channel.name != "") channel.name else "Channel", fontWeight = FontWeight.Bold)
+            Text(text = "Members: ${channel.memberCount}", fontWeight = FontWeight.Light)
+        }
+        ChannelImage(channel.image)
+    }
+}
+
+@Composable
+private fun ChannelImage(url: String) {
+    // We use coil for getting the images
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(durationMillis = 500)
+            .build(),
+        contentDescription = null,
+        modifier = Modifier
+            .size(45.dp)
+            .clip(shape = RoundedCornerShape(15.dp)),
+        contentScale = ContentScale.Crop,
+        error = painterResource(id = R.drawable.ic_avatar),
+        fallback = painterResource(id = R.drawable.ic_avatar),
+        placeholder = painterResource(id = R.drawable.ic_avatar),
+    )
+}
+
+@Composable
+private fun Error(message: String) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = message)
+    }
+}
+```
+
+## More Resources
+<!-- TODO check links -->
+Be sure to read the [Getting Started](../01-basics/03-getting-started.mdx) page for more info about channels, queries, asynchronous calls and others.
+
+If you want to learn how to use and customize our existing Compose UI Components, see [here](../03-compose/01-overview.mdx).
