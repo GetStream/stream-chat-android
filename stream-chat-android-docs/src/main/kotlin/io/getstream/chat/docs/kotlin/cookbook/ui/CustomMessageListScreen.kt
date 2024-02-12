@@ -12,7 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.docs.kotlin.cookbook.ui.common.OnListEndReached
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -37,32 +39,36 @@ fun CustomMessageListScreen(viewModel: CustomMessageListViewModel = viewModel(),
     LaunchedEffect(key1 = Unit) { cid?.let { viewModel.getMessages(it) } }
 
     if (uiState.error == null) {
-        CustomMessageList(messages = uiState.messages)
+        CustomMessageList(messages = uiState.messages, onListEndReached = { cid?.let { viewModel.loadMoreMessages(it) } })
     } else {
         Error(message = uiState.error!!)
     }
 }
 
 @Composable
-private fun CustomMessageList(messages: List<Message>) {
+private fun CustomMessageList(messages: List<Message>, onListEndReached: () -> Unit) {
+    val listState = rememberLazyListState()
+    listState.OnListEndReached(buffer = 5, handler = onListEndReached)
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        state = listState,
         contentPadding = PaddingValues(all = 15.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp),
         reverseLayout = true,
     ) {
-        items(messages) { message ->
-            if (message.text != "") CustomMessageListItem(message = message)
+        itemsIndexed(messages) { index, message ->
+            if (message.text != "") CustomMessageListItem(message = message, index = index)
         }
     }
 }
 
 @Composable
-private fun CustomMessageListItem(message: Message) {
+private fun CustomMessageListItem(message: Message, index: Int) {
     val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
 
     Column {
-        Text(text = "${message.user.name} said:", fontSize = 12.sp, fontWeight = FontWeight.Light)
+        Text(text = "Message #${index + 1}. ${message.user.name} said:", fontSize = 12.sp, fontWeight = FontWeight.Light)
         Spacer(modifier = Modifier.height(5.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
