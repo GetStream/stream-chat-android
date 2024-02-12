@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
@@ -35,6 +36,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.docs.R
+import io.getstream.chat.docs.kotlin.cookbook.ui.common.OnListEndReached
 
 @Composable
 fun CustomChannelListScreen(
@@ -44,16 +46,24 @@ fun CustomChannelListScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     if (uiState.error == null) {
-        CustomChannelList(channels = uiState.channels, onChannelClick = navigateToMessageList)
+        CustomChannelList(
+            channels = uiState.channels,
+            onChannelClick = navigateToMessageList,
+            onListEndReached = viewModel::loadMoreChannels
+        )
     } else {
         Error(message = uiState.error!!)
     }
 }
 
 @Composable
-private fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit) {
+private fun CustomChannelList(channels: List<Channel>, onChannelClick: (String) -> Unit, onListEndReached: () -> Unit) {
+    val listState = rememberLazyListState()
+    listState.OnListEndReached(buffer = 5, handler = onListEndReached)
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
+        state = listState,
         contentPadding = PaddingValues(all = 15.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
@@ -122,6 +132,7 @@ fun PreviewCustomChannelList() {
             Channel(name = "Byron Waelchi", memberCount = 10),
             Channel(name = "Bernice Li", memberCount = 5),
         ),
-        onChannelClick = {}
+        onChannelClick = {},
+        onListEndReached = {},
     )
 }
