@@ -41,6 +41,7 @@
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Clear stale cache inside `StateRegistry`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+- Unread messates coun is now updated properly. [#5175](https://github.com/GetStream/stream-chat-android/pull/5175)
 
 ### ⬆️ Improved
 
