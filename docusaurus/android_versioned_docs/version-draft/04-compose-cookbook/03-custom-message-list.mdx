@@ -2,17 +2,15 @@
 
 On this page you'll learn how to create a simple message list screen, without using any of the SDK's UI components. We will only use the low-level `ChatClient` for state and Jetpack Compose for the UI.
 
+![Custom Message List](../assets/cookbook_custom_message_list.png)
+
 ## Custom Message List View Model
 
-First, we create a view model that receives a `ChatClient` instance. It exposes a `uiState` property of type `StateFlow<MessageListUiState>`. This allows the UI layer to observe changes to the state and update the UI accordingly.
+First, we create a view model that receives a `ChatClient` instance. It exposes a `uiState` property of type `StateFlow<MessageListUiState>`. This allows the UI layer to observe state changes and update the UI accordingly.
 
 Next, we define the `getMessages` method, which calls `chatClient.watchChannelAsState`, passing the _cid_. This returns a `StateFlow<ChannelState>`, which represents the state of the channel. We store this state in the `channelStateFlow` variable.
 
 Finally, we start collecting `channelStateFlow` and it's `messages: StateFlow<List<Message>>` property, and update `_uiState` accordingly.
-
-:::note
-We're loading only the first 30 messages for simplicity. In a real app you should implement message pagination. See more here. <!-- TODO add link -->
-:::
 
 Here is the full code for the view model:
 
@@ -122,7 +120,91 @@ private fun Error(message: String) {
 }
 ```
 
+## Paginating Messages
+
+#### Check if the message list is scrolled to the end 
+
+To create simple pagination for the message list, we first extend the `LazyListState` class with a composable function named `OnListEndReached`.
+
+This function takes two parameters: `buffer` and `handler`. `handler` is a lambda that will be executed when the end of the list (considering the `buffer`) is reached.
+
+Inside the function, a `derivedStateOf` block is used to create a boolean state that determines whether `handler` should be called. This state, named `shouldCallHandler`, is _true_ when the index of the last visible item equals the total number of items minus the buffer.
+
+Finally, a `LaunchedEffect` block is used to call the handler function when `shouldCallHandler` is _true_. This effect is re-launched every time `shouldCallHandler` changes. In other words, `handler` will be called every time the user scrolls the list to its end (considering the buffer).
+
+```kotlin
+@Composable
+fun LazyListState.OnListEndReached(buffer: Int = 0, handler: () -> Unit) {
+    val shouldCallHandler by remember {
+        derivedStateOf {
+            layoutInfo.visibleItemsInfo.lastOrNull()?.let { lastVisibleItem ->
+                lastVisibleItem.index == layoutInfo.totalItemsCount - 1 - buffer
+            } ?: false
+        }
+    }
+
+    LaunchedEffect(shouldCallHandler) {
+        if (shouldCallHandler) handler()
+    }
+}
+```
+
+#### Load more messages in the View Model
+
+In order to support pagination, we must add a method to the View Model that will load more messages when the list reaches the end. In our case, we'll fetch older messages:
+
+```kotlin
+fun loadMoreMessages(cid: String) {
+    chatClient.loadOlderMessages(cid = cid, messageLimit = 30).enqueue(
+        onError = { streamError ->
+            Log.e("[Messages]", "Cannot load more messages. Error: ${streamError.message}")
+        }
+    )   
+}
+```
+
+#### Put everything together in the UI
+
+To make it work, we just need to make a few changes to the UI.
+
+We add a new lambda parameter named `onListEndReached` to the `CustomMessageList` composable and we use the list state `OnListEndReached` extension method what we created earlier:
+
+```kotlin
+private fun CustomMessageList(messages: List<Message>, onListEndReached: () -> Unit) {
+    val listState = rememberLazyListState()
+    listState.OnListEndReached(buffer = 5, handler = onListEndReached)
+
+    LazyColumn(
+        // ...
+        state = listState,
+        // ...
+    ) {
+        // ...
+    }
+}
+```
+
+In `CustomMessageListScreen`, we call the view model method that loads more messages when the `onListEndReached` lambda is called:
+
+```kotlin
+// ...
+CustomMessageList(
+    // ...
+    onListEndReached = { cid?.let { viewModel.loadMoreMessages(it) } }
+)
+//...
+```
+
+Now, when the user scrolls to the end of the list, older messages will be loaded.
+
+:::note
+There might be edge cases that are not covered by this pagination implementation. Its purpose is to demonstrate how more messages can be fetched in a pagination scenario. Make sure you test your production implementation.
+:::
+
 ## More Resources
 <!-- TODO check links -->
 <!-- TODO link to State plugin (explain watchChannelAsState) -->
+
+For more info about channels, queries, asynchronous calls and other info, read the [Getting Started](../01-basics/03-getting-started.mdx) page.
+
 If you want to learn how to use and customize our existing Compose UI Components, see [this](../03-compose/01-overview.mdx) page.

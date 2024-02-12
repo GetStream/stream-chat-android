@@ -7,8 +7,9 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.extensions.loadNewestMessages
-import io.getstream.result.Result
+import io.getstream.chat.android.state.extensions.loadOlderMessages
+import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.result.call.enqueue
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,7 +43,15 @@ class CustomMessageListViewModel(val chatClient: ChatClient = ChatClient.instanc
         }
     }
 
-    fun getMessages(cid: String) {
+    fun loadMoreMessages(cid: String) {
+        chatClient.loadOlderMessages(cid = cid, messageLimit = 30).enqueue(
+            onError = { streamError ->
+                Log.e("[Messages]", "Cannot load more messages. Error: ${streamError.message}")
+            }
+        )
+    }
+
+    fun getMessages2(cid: String) {
         val query = QueryChannelRequest()
             .withMessages(30)
             .withWatch()
