@@ -88,8 +88,8 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         channelLogic = ChannelLogic(
             repos,
             false,
-            channelStateLogic,
-        )
+            channelStateLogic
+        ) { CURRENT_USER_ID }
     }
 
     // User watching event
