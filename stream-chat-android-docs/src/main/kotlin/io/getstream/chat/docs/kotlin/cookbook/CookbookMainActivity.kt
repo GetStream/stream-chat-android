@@ -7,7 +7,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomChannelListScreen
+import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageListHeader
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageListScreen
 import io.getstream.chat.docs.kotlin.cookbook.ui.theme.CookbookTheme
 import io.getstream.chat.docs.kotlin.cookbook.utils.connectUser
@@ -32,7 +34,8 @@ class CookbookMainActivity : ComponentActivity() {
                     composable(AppScreens.CustomChannelList.route) {
                         CustomChannelListScreen(
                             navigateToMessageList = { cid ->
-                                navController.navigate(AppScreens.CustomMessageList.routeWithArg(cid))
+                                // navController.navigate(AppScreens.CustomMessageList.routeWithArg(cid))
+                                navController.navigate(AppScreens.CustomMessageListHeader.routeWithArg(cid))
                             }
                         )
                     }
@@ -41,6 +44,15 @@ class CookbookMainActivity : ComponentActivity() {
                         CustomMessageListScreen(
                             cid = backStackEntry.arguments?.getString("cid")
                         )
+                    }
+
+                    composable(AppScreens.CustomMessageListHeader.route) { backStackEntry ->
+                        ChatTheme {
+                            CustomMessageListHeader(
+                                cid = backStackEntry.arguments?.getString("cid"),
+                                onBackClick = { navController.popBackStack() }
+                            )
+                        }
                     }
                 }
             }
@@ -55,10 +67,12 @@ class CookbookMainActivity : ComponentActivity() {
 
 enum class AppScreens(val route: String) {
     CustomChannelList("channel_list"),
-    CustomMessageList("message_list/{cid}");
+    CustomMessageList("message_list/{cid}"),
+    CustomMessageListHeader("message_header/{cid}");
 
     fun routeWithArg(argValue: Any): String = when (this) {
         CustomMessageList -> this.route.replace("{cid}", argValue.toString())
+        CustomMessageListHeader -> this.route.replace("{cid}", argValue.toString())
         else -> this.route
     }
 }
