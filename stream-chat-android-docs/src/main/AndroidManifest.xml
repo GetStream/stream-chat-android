@@ -9,6 +9,7 @@
             android:exported="true"
             android:label="Chat Cookbook App"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
+            android:windowSoftInputMode="adjustResize"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
