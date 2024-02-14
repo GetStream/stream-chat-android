@@ -120,7 +120,7 @@
 
 ### ❌ Removed
 
-# February 13th, 2024 - 5.17.22
+# February 14th, 2024 - 5.17.23
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Channel State is properly updated after member removal. [#5166](https://github.com/GetStream/stream-chat-android/pull/5166)
