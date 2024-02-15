@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -57,7 +56,7 @@ fun CustomMessageListHeader(cid: String?, onBackClick: () -> Unit = {}) {
             color = Color(0xFF0F7B6F),
             leadingContent = { CustomHeaderLeadingContent(onClick = onBackClick) },
             centerContent = { CustomHeaderCenterContent(channel = channel, currentUser = currentUser) },
-            trailingContent = { CustomHeaderTrailingContent() }
+            trailingContent = { CustomHeaderTrailingContent() },
         )
     }
 }
@@ -116,8 +115,8 @@ private fun CustomHeaderTrailingContent() {
             onClick = {}
         )
         CustomHeaderButton(
-            iconRes = R.drawable.ic_info,
-            contentDescription = "More Info",
+            iconRes = R.drawable.ic_menu,
+            contentDescription = "Menu",
             onClick = {}
         )
     }
