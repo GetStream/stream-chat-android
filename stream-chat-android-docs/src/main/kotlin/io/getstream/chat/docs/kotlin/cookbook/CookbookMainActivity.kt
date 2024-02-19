@@ -9,7 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomChannelListScreen
-import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageComposer
+import io.getstream.chat.docs.kotlin.cookbook.ui.CustomComposerAndAttachmentsPicker
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageListHeader
 import io.getstream.chat.docs.kotlin.cookbook.ui.CustomMessageListScreen
 import io.getstream.chat.docs.kotlin.cookbook.ui.theme.CookbookTheme
@@ -59,7 +59,7 @@ class CookbookMainActivity : ComponentActivity() {
 
                     composable(AppScreens.CustomMessageComposer.route) { backStackEntry ->
                         ChatTheme {
-                            CustomMessageComposer(
+                            CustomComposerAndAttachmentsPicker(
                                 cid = backStackEntry.arguments?.getString("cid"),
                                 onBackClick = { navController.popBackStack() }
                             )
