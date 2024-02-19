@@ -21,6 +21,7 @@ Let's define a new composable, `CustomMessageComposer`, that takes two view mode
 Inside it, we'll use the standard `MessageComposer` component and customize it as we need.
 
 ```kotlin
+@Composable
 private fun CustomMessageComposer(
     composerViewModel: MessageComposerViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
