@@ -834,6 +834,7 @@ public class MessageListController(
 
             unreadLabel
                 ?.takeIf { it.lastReadMessageId == message.id }
+                ?.takeIf { nextMessage != null }
                 ?.let { groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (index == 0 && shouldAddThreadSeparator) {
