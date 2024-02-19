@@ -11,10 +11,11 @@ In this example we will customize the `MessageListHeader` component and make it 
 Let's define a new composable, `CustomMessageListHeader`, that takes the channel `cid` and a back handler as parameters.
 
 ```kotlin
+@Composable
 fun CustomMessageListHeader(cid: String?, onBackClick: () -> Unit = {})
 ```
 
-For simplicity, let's use the built-in `MessageListViewModel` inside it to acquire the state that we need.
+Inside it we'll use the built-in `MessageListViewModel` to acquire the state that we need.
 
 ```kotlin
 val viewModel = viewModel(

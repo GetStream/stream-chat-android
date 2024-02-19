@@ -12,7 +12,7 @@ The UI state is handled by a view model, `CustomChannelListViewModel`. It receiv
 class CustomChannelListViewModel(val chatClient: ChatClient = ChatClient.instance()) : ViewModel()
 ```
 
-We expose the UI state to the UI layer through the `uiState` property, which is a read-only `StateFlow` of `ChannelListUiState`. This allows the UI layer to observe changes to the state and update the UI accordingly.
+In our view model we expose the UI state to the UI layer through the `uiState` property, which is a read-only `StateFlow` of `ChannelListUiState`. This allows the UI layer to observe changes to the state and update the UI accordingly.
 
 ```kotlin
 private val _uiState = MutableStateFlow(ChannelListUiState())
@@ -24,7 +24,7 @@ data class ChannelListUiState(
 )
 ```
 
-Next, we query the chat client for channels in the `init` block. We do this by defining our request and passing it to `chatClient.queryChannelsAsState`. We get back a `StateFlow<QueryChannelsState?>`, which we store in the `queryChannelsStateFlow` class property.
+Next, we query the chat client for channels in the view model's `init` block. We do this by defining our request and passing it to `chatClient.queryChannelsAsState`. We get back a `StateFlow<QueryChannelsState?>`, which we store in the `queryChannelsStateFlow` class property.
 
 Finally, we start collecting `queryChannelsStateFlow` and it's `channels: StateFlow<List<Channel>?>` property, and update `_uiState` accordingly.
 
