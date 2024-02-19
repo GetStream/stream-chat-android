@@ -522,8 +522,7 @@ public class MessageListController(
                 it.read
                     .filterNotNull()
                     .filter {
-                        it.unreadMessages > 0 &&
-                            it.lastReadMessageId != null &&
+                        it.lastReadMessageId != null &&
                             previousUnreadMessageId?.equals(it.lastReadMessageId)?.not() ?: true
                     }
             }

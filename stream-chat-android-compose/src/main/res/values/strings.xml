@@ -73,6 +73,7 @@
         <item quantity="other">%d Replies</item>
     </plurals>
     <plurals name="stream_compose_message_list_unread_separator">
+        <item quantity="zero">Unread Message</item>
         <item quantity="one">%d Unread Message</item>
         <item quantity="other">%d Unread Messages</item>
     </plurals>
