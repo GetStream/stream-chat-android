@@ -512,10 +512,10 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
-        refreshUnreadLabel(null)
+        refreshUnreadLabel()
     }
 
-    private fun refreshUnreadLabel(expectedMessageId: String?) {
+    private fun refreshUnreadLabel() {
         val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
         channelState.filterNotNull()
             .flatMapLatest {
@@ -1510,7 +1510,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    refreshUnreadLabel(message.id)
+                    refreshUnreadLabel()
                 }
             }
         }
