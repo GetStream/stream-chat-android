@@ -43,10 +43,7 @@ internal class UnreadSeparatorViewHolder(
 
         binding.root.setBackgroundColor(style.unreadSeparatorBackgroundColor)
         binding.unreadSeparatorLabel.setTextStyle(style.unreadSeparatorTextStyle)
-        binding.unreadSeparatorLabel.text = context.resources.getQuantityString(
-            R.plurals.stream_ui_message_list_unread_separator,
-            data.unreadCount,
-            data.unreadCount,
-        )
+        binding.unreadSeparatorLabel.text =
+            context.resources.getString(R.string.stream_ui_message_list_unread_separator)
     }
 }
