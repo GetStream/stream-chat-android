@@ -194,6 +194,15 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
     /**
      * Sets the listener that will be notified when picking attachments has been completed.
      */
+    @Suppress("MaxLineLength")
+    @Deprecated(
+        message = "Use the new [AttachmentsSelectionListener] interface instead",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            "setAttachmentsSelectionListener(attachmentsSelectionListener)",
+            "io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment.AttachmentsSelectionListener",
+        ),
+    )
     public fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener
     }
