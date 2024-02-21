@@ -1276,7 +1276,12 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
 	public final fun setAttachmentSelectionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentSelectionListener;)V
 	public final fun setAttachmentsPickerTabFactories (Ljava/util/List;)V
+	public final fun setAttachmentsSelectionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$AttachmentsSelectionListener;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$AttachmentsSelectionListener {
+	public abstract fun onAttachmentsSelected (Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$Companion {
