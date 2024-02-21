@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCommandSuggestionsContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerFooterContent
@@ -136,16 +137,24 @@ public class MessageComposerView : ConstraintLayout {
     public var dismissSuggestionsListener: () -> Unit = {}
 
     /**
+     * Builder for the attachments picker dialog.
+     */
+    public var attachmentsPickerDialogBuilder: (AttachmentsPickerDialogStyle) -> AttachmentsPickerDialogFragment = {
+        AttachmentsPickerDialogFragment
+            .newInstance(it).apply {
+                setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
+                    attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
+                }
+            }
+    }
+
+    /**
      * Click listener for the pick attachments button.
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            AttachmentsPickerDialogFragment
-                .newInstance(messageComposerContext.style.attachmentsPickerDialogStyle).apply {
-                    setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
-                        attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
-                    }
-                }.show(it, AttachmentsPickerDialogFragment.TAG)
+            attachmentsPickerDialogBuilder(messageComposerContext.style.attachmentsPickerDialogStyle)
+                .show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
 
