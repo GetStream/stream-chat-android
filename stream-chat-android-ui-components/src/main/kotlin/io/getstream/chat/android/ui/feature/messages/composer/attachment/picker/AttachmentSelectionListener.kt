@@ -18,6 +18,15 @@ package io.getstream.chat.android.ui.feature.messages.composer.attachment.picker
 
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
+@Suppress("MaxLineLength")
+@Deprecated(
+    message = "Use the new [AttachmentsPickerDialogFragment.AttachmentsSelectionListener] interface instead",
+    level = DeprecationLevel.WARNING,
+    replaceWith = ReplaceWith(
+        "AttachmentsPickerDialogFragment.AttachmentsSelectionListener",
+        "io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment.AttachmentsSelectionListener",
+    ),
+)
 public fun interface AttachmentSelectionListener {
     /**
      * Called when attachment picking has been completed.
