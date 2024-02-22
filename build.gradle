@@ -60,15 +60,6 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url "https://jitpack.io"
-            content {
-                includeModule("com.github.chrisbanes", "PhotoView")
-
-                // https://github.com/stfalcon-studio/StfalconImageViewer/issues/69
-                includeModule("com.github.stfalcon-studio", "StfalconImageViewer")
-            }
-        }
     }
 }
 
