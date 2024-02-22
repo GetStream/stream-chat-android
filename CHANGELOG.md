@@ -8,6 +8,8 @@
 
 ### ⚠️ Changed
 
+- Bump Compose UI to 1.6.2 and Compose compiler to 1.5.10.
+
 ### ❌ Removed
 
 ## stream-chat-android-client
