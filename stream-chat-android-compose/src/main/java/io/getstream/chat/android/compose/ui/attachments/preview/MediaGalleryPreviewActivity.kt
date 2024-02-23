@@ -42,10 +42,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.calculatePan
 import androidx.compose.foundation.gestures.calculateZoom
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -107,7 +107,6 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
-import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
@@ -162,6 +161,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.initials
 import io.getstream.chat.android.uiutils.extension.hasLink
 import io.getstream.result.Result
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.Date
@@ -171,7 +171,6 @@ import kotlin.math.abs
  * Shows an image and video previews along with enabling
  * the user to perform various actions such as image or file deletion.
  */
-@OptIn(ExperimentalPagerApi::class)
 public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
     /**
@@ -456,10 +455,12 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     style = textStyle,
                     color = textColor,
                 )
+
                 is ConnectionState.Connecting -> NetworkLoadingIndicator(
                     textStyle = textStyle,
                     textColor = textColor,
                 )
+
                 is ConnectionState.Offline -> Text(
                     text = getString(R.string.stream_compose_disconnected),
                     style = textStyle,
@@ -661,6 +662,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     ),
                 )
             }
+
             is Reply -> {
                 handleResult(
                     MediaGalleryPreviewResult(
@@ -670,6 +672,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     ),
                 )
             }
+
             is Delete -> mediaGalleryPreviewViewModel.deleteCurrentMediaAttachment(attachments[currentPage])
             is SaveMedia -> {
                 onDownloadHandleRequest(
@@ -815,8 +818,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             imageSize = Size(it.size.width.toFloat(), it.size.height.toFloat())
                         }
                         .pointerInput(Unit) {
-                            forEachGesture {
-                                awaitPointerEventScope {
+                            coroutineScope {
+                                awaitEachGesture {
                                     awaitFirstDown(requireUnconsumed = true)
                                     do {
                                         val event = awaitPointerEvent(pass = PointerEventPass.Initial)
@@ -856,8 +859,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             }
                         }
                         .pointerInput(Unit) {
-                            forEachGesture {
-                                awaitPointerEventScope {
+                            coroutineScope {
+                                awaitEachGesture {
                                     awaitFirstDown()
                                     withTimeoutOrNull(DoubleTapTimeoutMs) {
                                         awaitFirstDown()
@@ -1395,6 +1398,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 mediaUri = result.value,
                 attachmentType = attachment.type,
             )
+
             is Result.Failure -> toastFailedShare()
         }
     }
