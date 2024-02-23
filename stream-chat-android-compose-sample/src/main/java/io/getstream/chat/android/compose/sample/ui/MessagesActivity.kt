@@ -24,6 +24,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -61,6 +62,8 @@ import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPick
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
+import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -100,11 +103,24 @@ class MessagesActivity : BaseConnectedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+
+
         setContent {
+            val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
             ChatTheme(
+                colors = colors,
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 allowUIAutomationTest = true,
+                messageComposerTheme = MessageComposerTheme.defaultTheme().let { messageComposerTheme ->
+                    messageComposerTheme.copy(
+                        cancelIcon = messageComposerTheme.cancelIcon.copy(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_clear),
+                            tint = colors.overlayDark,
+                            backgroundColor = colors.appBackground,
+                        ),
+                    )
+                }
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,

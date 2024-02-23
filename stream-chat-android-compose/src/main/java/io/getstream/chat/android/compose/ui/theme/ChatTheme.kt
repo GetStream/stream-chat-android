@@ -133,6 +133,9 @@ private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSepar
 private val LocalMessageUnreadSeparatorTheme = compositionLocalOf<MessageUnreadSeparatorTheme> {
     error("No MessageUnreadSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
+    error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
@@ -173,6 +176,8 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
  * @param messageDateSeparatorTheme Theme of the message date separator.
+ * @param messageUnreadSeparatorTheme Theme of the message unread separator.
+ * @param messageComposerTheme Theme of the message composer.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param content The content shown within the theme wrapper.
  */
@@ -218,7 +223,11 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
-    messageUnradSeparatorTheme: MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme.defaultTheme(
+    messageUnreadSeparatorTheme: MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme.defaultTheme(
+        typography = typography,
+        colors = colors,
+    ),
+    messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
         typography = typography,
         colors = colors,
     ),
@@ -245,7 +254,8 @@ public fun ChatTheme(
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
         LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
-        LocalMessageUnreadSeparatorTheme provides messageUnradSeparatorTheme,
+        LocalMessageUnreadSeparatorTheme provides messageUnreadSeparatorTheme,
+        LocalMessageComposerTheme provides messageComposerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -438,6 +448,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageUnreadSeparatorTheme.current
+
+    /**
+     * Retrieves the current [MessageComposerTheme] at the call site's position in the hierarchy.
+     */
+    public val messageComposerTheme: MessageComposerTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageComposerTheme.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.

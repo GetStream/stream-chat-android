@@ -40,16 +40,20 @@ public fun CancelIcon(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+
     Icon(
         modifier = modifier
-            .background(shape = CircleShape, color = ChatTheme.colors.overlayDark)
+            .background(
+                shape = ChatTheme.messageComposerTheme.cancelIcon.backgroundShape,
+                color = ChatTheme.messageComposerTheme.cancelIcon.backgroundColor,
+            )
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = onClick,
             ),
-        painter = painterResource(id = R.drawable.stream_compose_ic_close),
+        painter = ChatTheme.messageComposerTheme.cancelIcon.painter,
         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-        tint = ChatTheme.colors.appBackground,
+        tint = ChatTheme.messageComposerTheme.cancelIcon.tint,
     )
 }
