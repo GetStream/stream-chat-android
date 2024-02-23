@@ -1395,6 +1395,7 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 	public final fun getDateFormatter (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 	public final fun getDimens (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public final fun getMessageAlignmentProvider (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;
+	public final fun getMessageComposerTheme (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
 	public final fun getMessageDateSeparatorTheme (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/theme/MessageDateSeparatorTheme;
 	public final fun getMessageOptionsUserReactionAlignment (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;
 	public final fun getMessagePreviewFormatter (Landroidx/compose/runtime/Composer;I)Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;
@@ -1412,7 +1413,42 @@ public final class io/getstream/chat/android/compose/ui/theme/ChatTheme {
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ChatThemeKt {
-	public static final fun ChatTheme (ZZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Landroidx/compose/material/ripple/RippleTheme;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;ZLio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;Ljava/util/List;ZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MessageTheme;Lio/getstream/chat/android/compose/ui/theme/MessageTheme;Lio/getstream/chat/android/compose/ui/theme/MessageDateSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageUnreadSeparatorTheme;Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;IIII)V
+	public static final fun ChatTheme (ZZLio/getstream/chat/android/compose/ui/theme/StreamColors;Lio/getstream/chat/android/compose/ui/theme/StreamDimens;Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamShapes;Landroidx/compose/material/ripple/RippleTheme;Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/getstream/chat/android/compose/ui/util/ReactionIconFactory;ZLio/getstream/chat/android/ui/common/helper/DateFormatter;Lio/getstream/chat/android/ui/common/utils/ChannelNameFormatter;Lio/getstream/chat/android/compose/ui/util/MessagePreviewFormatter;Lio/getstream/chat/android/compose/ui/util/StreamCoilImageLoaderFactory;Lio/getstream/chat/android/compose/ui/util/MessageAlignmentProvider;Lio/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment;Ljava/util/List;ZLio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;ZLio/getstream/chat/android/compose/ui/theme/MessageTheme;Lio/getstream/chat/android/compose/ui/theme/MessageTheme;Lio/getstream/chat/android/compose/ui/theme/MessageDateSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageUnreadSeparatorTheme;Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/sdk/chat/audio/recording/StreamMediaRecorder;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;IIII)V
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle {
+	public static final field $stable I
+	public synthetic fun <init> (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/graphics/painter/Painter;JLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Landroidx/compose/ui/graphics/Shape;
+	public final fun component2-0d7_KjU ()J
+	public final fun component3 ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun component4-0d7_KjU ()J
+	public final fun copy-3bbok98 (Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/graphics/painter/Painter;J)Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;
+	public static synthetic fun copy-3bbok98$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;Landroidx/compose/ui/graphics/Shape;JLandroidx/compose/ui/graphics/painter/Painter;JILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getBackgroundColor-0d7_KjU ()J
+	public final fun getBackgroundShape ()Landroidx/compose/ui/graphics/Shape;
+	public final fun getPainter ()Landroidx/compose/ui/graphics/painter/Painter;
+	public final fun getTint-0d7_KjU ()J
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/MessageComposerTheme {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme$Companion;
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;
+	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCancelIcon ()Lio/getstream/chat/android/compose/ui/theme/MessageComposerCancelIconStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/MessageComposerTheme$Companion {
+	public final fun defaultTheme (Lio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/MessageDateSeparatorTheme {

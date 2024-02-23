@@ -103,8 +103,6 @@ class MessagesActivity : BaseConnectedActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
         setContent {
             val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
             ChatTheme(
@@ -120,7 +118,7 @@ class MessagesActivity : BaseConnectedActivity() {
                             backgroundColor = colors.appBackground,
                         ),
                     )
-                }
+                },
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
