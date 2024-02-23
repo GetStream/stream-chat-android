@@ -81,12 +81,11 @@ dependencies {
     implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.androidxViewPager2
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.photoview
+    implementation Dependencies.photoviewDialog
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
     implementation Dependencies.androidxStartup
-    implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
     implementation Dependencies.permissionx

@@ -20,7 +20,6 @@ import android.content.Context
 import android.content.Intent
 import android.widget.ImageView
 import android.widget.Toast
-import com.stfalcon.imageviewer.StfalconImageViewer
 import io.getstream.chat.android.client.utils.attachment.isAudio
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -35,6 +34,7 @@ import io.getstream.chat.android.ui.feature.gallery.AttachmentMediaActivity
 import io.getstream.chat.android.ui.utils.load
 import io.getstream.chat.android.uiutils.model.MimeType
 import io.getstream.log.taggedLogger
+import io.getstream.photoview.dialog.PhotoViewDialog
 
 public open class AttachmentDestination(
     public var message: Message,
@@ -68,16 +68,19 @@ public open class AttachmentDestination(
                         url = attachment.titleLink ?: attachment.ogUrl ?: attachment.assetUrl
                         type = AttachmentType.LINK
                     }
+
                     attachment.isGif() -> {
                         url = attachment.imageUrl
                         type = AttachmentType.GIPHY
                     }
+
                     else -> {
                         showImageViewer(message, attachment)
                         return
                     }
                 }
             }
+
             AttachmentType.GIPHY -> url = attachment.thumbUrl
             AttachmentType.PRODUCT -> url = attachment.url
         }
@@ -127,6 +130,7 @@ public open class AttachmentDestination(
                 )
                 start(intent)
             }
+
             docMimeType(mimeType) -> {
                 val intent = Intent(context, AttachmentDocumentActivity::class.java).apply {
                     putExtra("url", url)
@@ -178,7 +182,7 @@ public open class AttachmentDestination(
 
         val attachmentIndex = message.attachments.indexOf(attachment)
 
-        StfalconImageViewer
+        PhotoViewDialog
             .Builder(context, imageUrls, ImageView::load)
             .withStartPosition(
                 if (attachmentIndex in imageUrls.indices) attachmentIndex else 0,
