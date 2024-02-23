@@ -8,7 +8,7 @@ In this guide, we will demonstrate how to build a date sharing feature. Chat use
 
 This involves doing the following steps:
 1. Implementing a custom message composer that is capable of sending a message with `date` attachments.
-2. Adding support for `date` attachments by creating a custom [AttachmentFactory](../03-general-customization/02-attachment-factory.mdx).
+2. Adding support for `date` attachments by creating a custom [AttachmentFactory](#attachment-factories).
 
 :::note
 In this guide, we'll show only the main points concerning custom attachments and their factories. Smaller parts will be omitted for the sake of being concise.
@@ -212,7 +212,7 @@ Now that you've set up the `DatePicker` and the custom composer, you need to bui
 
 ## Rendering Date Attachments
 
-Let's see how to create an [AttachmentFactory](../03-general-customization/02-attachment-factory.mdx) that is capable of handling date attachments:
+Let's see how to create an [AttachmentFactory](#attachment-factories) that is capable of handling date attachments:
 
 ```kotlin
 val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
@@ -407,7 +407,7 @@ Let's see how to build a custom **quoted attachment factory**.
 
 ## Rendering Quoted Date Attachments
 
-We will be using the same [AttachmentFactory](https://getstream.io/chat/docs/sdk/android/compose/general-customization/attachment-factory/) type for quoted messages.
+We will be using the same [AttachmentFactory](#attachment-factories) type for quoted messages.
 
 Let's start with creating a component that will be used to render the quoted message inside the regular message content:
 

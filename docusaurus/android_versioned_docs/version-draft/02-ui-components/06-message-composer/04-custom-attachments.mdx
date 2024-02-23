@@ -21,7 +21,7 @@ You can find the full code from this guide on [GitHub](https://github.com/GetStr
 
 ## Sending Date Attachments
 
-First of all, you'll need to customize the leading content of [MessageComposerView](02-ui-components/08-message-composer/01-message-composer.mdx) to let the user pick a date using the date picker button. We'll take the [DefaultMessageComposerLeadingContent](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button:
+First of all, you'll need to customize the leading content of [MessageComposerView](01-message-composer.mdx) to let the user pick a date using the date picker button. We'll take the [DefaultMessageComposerLeadingContent](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/content/DefaultMessageComposerLeadingContent.kt) as a reference and add a new date picker button:
 
 Add an icon for the new button and name it `ic_calendar.xml`. Then create a layout called `custom_message_composer_leading_content.xml`:
 

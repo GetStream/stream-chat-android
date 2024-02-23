@@ -91,29 +91,6 @@ override fun onCreate(savedInstanceState: Bundle?) {
 }
 ```
 
-## Customization
-
-`ChannelsScreen` is one of our **screen components** and as such it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it in the [`ChatTheme`](../03-customizing-components.mdx).
-
-When it comes to UI and behavior customization in the `ChannelsScreen` signature you have access to the following:
-
-```kotlin
-fun ChannelsScreen(
-    viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(
-      ... // Params
-    ),
-    title: String = "Stream Chat",
-    isShowingHeader: Boolean = true,
-    isShowingSearch: Boolean = false,
-    ... // Action handlers
-)
-```
-
-* `viewModelFactory`: The factory that you build yourself, if you want access to `ViewModels` for custom behavior. This lets you control not just the way the `ViewModel`s are built, but also their lifecycle, as you can share them between components. You can also customize its parameters to affect the behavior of the screen.
-* `title`: The title of the `ChannelListHeader`.
-* `isShowingHeader`: Flag that affects if we show the `ChannelListHeader`. `true` by default.
-* `isShowingSearch`: Flag that affects if we show the `SearchInput`. `false` by default.
-
 ## Overriding the ViewModels
 
 In case you want to control the logic when using the `ChannelsScreen`, you can do so by providing a `ChannelViewModelFactory` that you use to build the respective ViewModels yourself.
@@ -159,4 +136,29 @@ Even though `ChannelsScreen` offers limited customization, you can still achieve
 For more information on how to do so read our [Customizing Components](../03-customizing-components.mdx) page.
 :::
 
-<!-- TODO WIP PAGE If you want to build a custom Channels screen UI or override the default the behavior, follow our Building Custom Screens (../guides/05-_05-building-custom-screens.mdx) guide. -->
+## Customization
+
+`ChannelsScreen` is one of our **screen components** and as such it doesn't offer much customization. As with any component, you can customize the content theme and styling by wrapping it in the [`ChatTheme`](../03-customizing-components.mdx).
+
+When it comes to UI and behavior customization in the `ChannelsScreen` signature you have access to the following:
+
+```kotlin
+fun ChannelsScreen(
+    viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(
+      ... // Params
+    ),
+    title: String = "Stream Chat",
+    isShowingHeader: Boolean = true,
+    isShowingSearch: Boolean = false,
+    ... // Action handlers
+)
+```
+
+* `viewModelFactory`: The factory that you build yourself, if you want access to `ViewModels` for custom behavior. This lets you control not just the way the `ViewModel`s are built, but also their lifecycle, as you can share them between components. You can also customize its parameters to affect the behavior of the screen.
+* `title`: The title of the `ChannelListHeader`.
+* `isShowingHeader`: Flag that affects if we show the `ChannelListHeader`. `true` by default.
+* `isShowingSearch`: Flag that affects if we show the `SearchInput`. `false` by default.
+
+:::note
+If you want to build a completely custom channel list, follow our [Custom Channel List](../../04-compose-cookbook/02-custom-channel-list.mdx) Cookbook recipe.
+:::
