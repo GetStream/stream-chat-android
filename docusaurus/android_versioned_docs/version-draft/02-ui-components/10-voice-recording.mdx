@@ -1,0 +1,499 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Voice Recording
+
+## Introduction
+
+The UI Components Chat SDK provides the flexibility to customize the visual presentation of audio recording. You can personalize the way audio recording is displayed and make it more unique according to your preferences and requirements.
+
+## Enabling Audio Recording
+
+`MessageComposerView` in Chat UI Components serves as the container where audio recording functionality is rendered. It provides the necessary components and elements to handle the recording process and display relevant user interface elements related to audio recording.
+
+### Using Theming
+
+Let's display enabled audio recording button by setting `streamUiMessageComposerAudioRecordingButtonVisible` 
+and `streamUiMessageComposerAudioRecordingButtonEnabled` to `true` in our `MessageComposerViewTheme`:
+
+```xml
+
+<style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+    <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
+</style>
+```
+
+This will show the microphone button in the `MessageComposerView` next to the send button.
+
+If you want to show the send button only when there's text in the input, you can do that by
+setting `streamUiMessageComposerAudioRecordingButtonPreferred` to true in
+the `MessageComposerViewTheme`. This way, the send button will only be visible when there's
+something typed in the composer.
+
+```xml
+
+<style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+    <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonEnabled">true</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonPreferred">true</item>
+</style>
+```
+
+:::note
+Only certain attributes were used here, you can find the rest in
+the source code [here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs_message_composer_view.xml).
+:::
+
+Next, set `MessageComposerViewTheme` to your Stream theme as shown below:
+
+```xml
+
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMessageComposerViewStyle">@style/MessageComposerViewTheme</item>
+</style>
+```
+
+And finally, override `streamUiTheme`:
+
+```xml
+
+<style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="streamUiTheme">@style/StreamTheme</item>
+</style>
+```
+
+### Using XML Attributes
+
+The same result can be achieved by using XML attributes directly on the `MessageComposerView`:
+
+```xml {5-7}
+<io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+    android:id="@+id/messageComposerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:streamUiMessageComposerAudioRecordingButtonVisible="true"
+    app:streamUiMessageComposerAudioRecordingButtonEnabled="true"
+    app:streamUiMessageComposerAudioRecordingButtonPreferred="true"
+    />
+```
+
+### Using TransformStyle
+
+The last but not least option is to use `TransformStyle` to enable the audio recording
+functionality:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        audioRecordingButtonVisible = true,
+        audioRecordingButtonEnabled = true,
+        audioRecordingButtonPreferred = true,
+    )
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageComposerStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+
+</TabItem>
+</Tabs>
+
+:::note
+Only certain attributes were used here, you can find the rest in the source code 
+[here](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/feature/messages/composer/MessageComposerViewStyle.kt).
+:::
+
+
+## UI Customization
+
+### Customize `MessageComposerView`
+
+#### Using XML Attributes and Theming
+Next step is to customize the UI of the audio feature components in `MessageComposerView`. 
+You can do that by overriding the following attributes:
+
+```xml
+<style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordText">@string/stream_ui_message_composer_hold_to_record</item>
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextSize">@dimen/stream_ui_text_medium</item>
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextColor">@color/stream_ui_white_snow</item>
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextStyle">bold</item>
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordTextFont">@font/stream_roboto_medium</item>
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawable">@drawable/stream_ui_message_composer_audio_record_hold_background</item>
+    <item name="streamUiMessageComposerAudioRecordingHoldToRecordBackgroundDrawableTint">@null</item>
+    <item name="streamUiMessageComposerAudioRecordingSlideToCancelText">@string/stream_ui_message_composer_slide_to_cancel</item>
+    <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextSize">@dimen/stream_ui_text_medium</item>
+    <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextColor">@color/stream_ui_text_color_secondary</item>
+    <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextStyle">normal</item>
+    <item name="streamUiMessageComposerAudioRecordingSlideToCancelTextFont">@font/stream_roboto_medium</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingButtonIconDrawable">@drawable/stream_ui_ic_mic</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingButtonIconDrawableTint">@color/stream_ui_accent_blue</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawable">@drawable/stream_ui_message_composer_audio_record_mic_background</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingButtonBackgroundDrawableTint">@null</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawable">@drawable/stream_ui_ic_mic_lock</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingLockIconDrawableTint">@null</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawable">@drawable/stream_ui_ic_mic_locked</item>
+    <item name="streamUiMessageComposerAudioRecordingFloatingLockedIconDrawableTint">@null</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonIconDrawable">@drawable/stream_ui_ic_mic</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonIconTintList">@null</item>
+    <item name="streamUiMessageComposerAudioRecordingWaveformColor">@color/stream_ui_accent_blue</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonWidth">@dimen/stream_ui_message_composer_trailing_content_button_record_audio_width</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonHeight">@dimen/stream_ui_message_composer_trailing_content_button_record_audio_height</item>
+    <item name="streamUiMessageComposerAudioRecordingButtonPadding">@dimen/stream_ui_message_composer_trailing_content_button_record_audio_padding</item>
+</style>
+```
+
+
+#### Using TransformStyle
+
+The same level of UI customization can be achieved by overriding `messageComposerStyleTransformer` in `TransformStyle`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        audioRecordingHoldToRecordText = context.getString(R.string.stream_ui_message_composer_hold_to_record),
+        audioRecordingHoldToRecordTextStyle = TextStyle(
+            size = context.getDimension(R.dimen.stream_ui_text_medium),
+            color = context.getColorCompat(R.color.stream_ui_text_color_secondary),
+        ),
+        audioRecordingHoldToRecordBackgroundDrawable = context.getDrawableCompat(R.drawable.stream_ui_message_composer_audio_record_hold_background)!!,
+        audioRecordingHoldToRecordBackgroundDrawableTint = null,
+        audioRecordingSlideToCancelText = context.getString(R.string.stream_ui_message_composer_slide_to_cancel),
+        audioRecordingSlideToCancelTextStyle = TextStyle(
+            size = context.getDimension(R.dimen.stream_ui_text_medium),
+            color = context.getColorCompat(R.color.stream_ui_text_color_secondary),
+        ),
+        audioRecordingSlideToCancelStartDrawable = context.getDrawableCompat(R.drawable.stream_ui_arrow_left)!!,
+        audioRecordingSlideToCancelStartDrawableTint = null,
+        audioRecordingFloatingButtonIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!,
+        audioRecordingFloatingButtonIconDrawableTint = null,
+        audioRecordingFloatingButtonBackgroundDrawable = context.getDrawableCompat(R.drawable.stream_ui_message_composer_audio_record_mic_background)!!,
+        audioRecordingFloatingButtonBackgroundDrawableTint = null,
+        audioRecordingFloatingLockIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_mic_lock)!!,
+        audioRecordingFloatingLockIconDrawableTint = null,
+        audioRecordingFloatingLockedIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_mic_locked)!!,
+        audioRecordingFloatingLockedIconDrawableTint = null,
+        audioRecordingWaveformColor = context.getColorCompat(R.color.stream_ui_accent_blue),
+        audioRecordingButtonIconDrawable = context.getDrawableCompat(R.drawable.stream_ui_ic_mic)!!,
+        audioRecordingButtonIconTintList = null,
+        audioRecordingButtonWidth = context.getDimension(R.dimen.stream_ui_message_composer_trailing_content_button_record_audio_width),
+        audioRecordingButtonHeight = context.getDimension(R.dimen.stream_ui_message_composer_trailing_content_button_record_audio_height),
+        audioRecordingButtonPadding = context.getDimension(R.dimen.stream_ui_message_composer_trailing_content_button_record_audio_padding),
+    )
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageComposerStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+
+</TabItem>
+</Tabs>
+
+
+### Customize `AudioRecordPlayerView` app-wide
+
+`AudioRecordPlayerView` is the UI component that displays the audio recording waveform, the audio recording duration and playback control buttons. 
+It is used in:
+- `MessageComposerView` to display the audio recording attachment in attachments preview section.
+- `MessageListItemView` to display the audio recording attachment in message list.
+
+#### Using XML Attributes and Theming
+Let's override `streamUiAudioRecordPlayerViewStyle` in `StreamTheme`:
+
+```xml
+
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+  <item name="streamUiAudioRecordPlayerViewStyle">@style/AudioRecordPlayerViewTheme</item>
+</style>
+```
+
+Override the desired attributes in `AudioRecordPlayerViewTheme`:
+```xml
+<style name="AudioRecordPlayerViewTheme" parent="StreamUi.AudioRecordPlayerView">
+  <item name="streamUiAudioRecordPlayerHeight">@dimen/stream_ui_audio_record_player_height</item>
+  <item name="streamUiAudioRecordPlayerPaddingStart">@dimen/stream_ui_audio_record_player_padding_start</item>
+  <item name="streamUiAudioRecordPlayerPaddingTop">@dimen/stream_ui_audio_record_player_padding_top</item>
+  <item name="streamUiAudioRecordPlayerPaddingEnd">@dimen/stream_ui_audio_record_player_padding_end</item>
+  <item name="streamUiAudioRecordPlayerPaddingBottom">@dimen/stream_ui_audio_record_player_padding_bottom</item>
+  <item name="streamUiAudioRecordPlayerBackgroundDrawable">@drawable/stream_ui_audio_record_player_background</item>
+  <item name="streamUiAudioRecordPlayerBackgroundDrawableTint">@null</item>
+
+  <!-- Playback Progress Container -->
+  <item name="streamUiAudioRecordPlayerPlaybackProgressContainerWidth">@dimen/stream_ui_audio_record_player_playback_progress_container_width</item>
+  <item name="streamUiAudioRecordPlayerPlaybackProgressContainerHeight">@dimen/stream_ui_audio_record_player_playback_progress_container_height</item>
+
+  <!-- Playback Button -->
+  <item name="streamUiAudioRecordPlayerPlaybackButtonWidth">@dimen/stream_ui_audio_record_player_playback_button_width</item>
+  <item name="streamUiAudioRecordPlayerPlaybackButtonHeight">@dimen/stream_ui_audio_record_player_playback_button_height</item>
+  <item name="streamUiAudioRecordPlayerPlaybackButtonElevation">@dimen/stream_ui_audio_record_player_playback_button_elevation</item>
+  <item name="streamUiAudioRecordPlayerPlaybackButtonPadding">@dimen/stream_ui_audio_record_player_playback_button_padding</item>
+  <item name="streamUiAudioRecordPlayerPlaybackButtonBackground">@drawable/stream_ui_white_shape_circular</item>
+  <item name="streamUiAudioRecordPlayerPlaybackButtonBackgroundTint">@null</item>
+  <item name="streamUiAudioRecordPlayerPlayIconDrawable">@drawable/stream_ui_ic_play</item>
+  <item name="streamUiAudioRecordPlayerPlayIconDrawableTint">@null</item>
+  <item name="streamUiAudioRecordPlayerPauseIconDrawable">@drawable/stream_ui_ic_pause</item>
+  <item name="streamUiAudioRecordPlayerPauseIconDrawableTint">@null</item>
+
+  <!-- Progress Bar -->
+  <item name="streamUiAudioRecordPlayerProgressBarWidth">@dimen/stream_ui_audio_record_player_progress_bar_width</item>
+  <item name="streamUiAudioRecordPlayerProgressBarHeight">@dimen/stream_ui_audio_record_player_progress_bar_height</item>
+  <item name="streamUiAudioRecordPlayerProgressBarDrawable">@drawable/stream_ui_rotating_indeterminate_progress_gradient</item>
+  <item name="streamUiAudioRecordPlayerProgressBarDrawableTint">@null</item>
+
+  <!-- Duration Text -->
+  <item name="streamUiAudioRecordPlayerDurationTextViewWidth">@dimen/stream_ui_audio_record_player_duration_text_view_width</item>
+  <item name="streamUiAudioRecordPlayerDurationTextViewHeight">@dimen/stream_ui_audio_record_player_duration_text_view_height</item>
+  <item name="streamUiAudioRecordPlayerDurationTextViewMarginStart">@dimen/stream_ui_audio_record_player_duration_text_view_margin_start</item>
+  <item name="streamUiAudioRecordPlayerDurationTextSize">@dimen/stream_ui_audio_record_player_duration_text_size</item>
+  <item name="streamUiAudioRecordPlayerDurationTextColor">@color/stream_ui_audio_record_player_duration_text_color</item>
+  <item name="streamUiAudioRecordPlayerDurationTextStyle">normal</item>
+
+  <!-- Wave Bar -->
+  <item name="streamUiAudioRecordPlayerWaveBarHeight">@dimen/stream_ui_audio_record_player_wave_bar_height</item>
+  <item name="streamUiAudioRecordPlayerWaveBarMarginStart">@dimen/stream_ui_audio_record_player_wave_bar_margin_start</item>
+  <item name="streamUiAudioRecordPlayerWaveBarColorPlayed">@color/stream_ui_accent_blue</item>
+  <item name="streamUiAudioRecordPlayerWaveBarColorFuture">@color/stream_ui_grey</item>
+
+  <!-- Scrubber -->
+  <item name="streamUiAudioRecordPlayerScrubberWidthDefault">@dimen/stream_ui_audio_record_player_scrubber_width_default</item>
+  <item name="streamUiAudioRecordPlayerScrubberWidthPressed">@dimen/stream_ui_audio_record_player_scrubber_width_pressed</item>
+  <item name="streamUiAudioRecordPlayerScrubberDrawable">@drawable/stream_ui_share_rectangle</item>
+  <item name="streamUiAudioRecordPlayerScrubberDrawableTint">@null</item>
+
+  <!-- File Icon Container -->
+  <item name="streamUiAudioRecordPlayerFileIconContainerWidth">@dimen/stream_ui_audio_record_player_file_icon_container_width</item>
+  <item name="streamUiAudioRecordPlayerFileIconContainerVisible">@bool/stream_ui_audio_record_player_file_icon_container_visible</item>
+  <item name="streamUiAudioRecordPlayerAudioFileIconDrawable">@drawable/stream_ui_ic_file_aac</item>
+
+  <!-- Speed button -->
+  <item name="streamUiAudioRecordPlayerSpeedButtonWidth">@dimen/stream_ui_audio_record_player_speed_button_width</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonHeight">@dimen/stream_ui_audio_record_player_speed_button_height</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonElevation">@dimen/stream_ui_audio_record_player_speed_button_elevation</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonBackgroundDrawable">@drawable/stream_ui_literal_white_shape_16dp_corners</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonBackgroundDrawableTint">@null</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonTextSize">@dimen/stream_ui_audio_record_player_speed_text_size</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonTextColor">@color/stream_ui_audio_record_player_speed_text_color</item>
+  <item name="streamUiAudioRecordPlayerSpeedButtonTextStyle">normal</item>
+
+</style>
+```
+
+#### Using TransformStyle
+The same result can be achieved by overriding `audioRecordPlayerViewStyle` in `TransformStyle`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.audioRecordPlayerViewStyle = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        backgroundDrawableTint = Color.YELLOW,
+        playIconDrawableTint = Color.BLACK,
+        waveBarColorPlayed = Color.BLACK,
+        waveBarColorFuture = Color.LTGRAY,
+        scrubberDrawableTint = Color.BLACK,
+        durationTextStyle = TextStyle(
+            size = context.getDimension(R.dimen.stream_ui_text_medium),
+            color = Color.BLACK,
+        ),
+        isFileIconContainerVisible = false,
+        padding = ViewPadding(
+            start = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_start),
+            top = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_top),
+            end = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_end),
+            bottom = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_bottom)
+        ),
+        progressBarDrawableTint = Color.RED
+    )
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setAudioRecordPlayerViewStyle(source -> {
+    // Customize the style
+    return source;
+});
+```
+
+</TabItem>
+</Tabs>
+
+### Customize `AudioRecordPlayerView` separately per component
+
+`MessageComposerView` and `MessageListItemView` use the same `AudioRecordPlayerView` to display the audio recording attachment.
+If you want to customize the UI of `AudioRecordPlayerView` differently for `MessageComposerView` and `MessageListItemView`, you can do that as shown below.
+
+#### Using XML Attributes and Theming
+
+**First**, let's create separate styles for `AudioRecordPlayerView` in `MessageComposerView` and `MessageListItemView`:
+```xml
+<style name="AudioRecordPlayerViewThemeOwn" parent="StreamUi.AudioRecordPlayerView">
+    <!-- your customizations for OWN messages in message list -->
+</style>
+
+<style name="AudioRecordPlayerViewThemeTheirs" parent="StreamUi.AudioRecordPlayerView">
+    <!-- your customizations for THEIR messages in message list -->
+</style>
+
+<style name="AudioRecordPlayerViewThemePreview" parent="StreamUi.AudioRecordPlayerView">
+    <!-- your customizations for attachmnet preview in message composer -->
+</style>
+```
+
+**Second**, override default styles for `MessageComposerView` and `MessageListItemView`:
+```xml
+<style name="MessageListTheme" parent="StreamUi.MessageList">
+    <item name="streamUiMessageListAudioRecordPlayerViewStyleOwn">@style/AudioRecordPlayerViewThemeOwn</item>
+    <item name="streamUiMessageListAudioRecordPlayerViewStyleTheirs">@style/AudioRecordPlayerViewThemeTheirs</item>
+</style>
+
+<style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+<item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+<item name="streamUiMessageComposerAudioRecordPlayerViewStyle">@style/AudioRecordPlayerViewThemePreview</item>
+</style>
+```
+
+**Finally**, set modified `streamUiMessageListStyle` and `streamUiMessageComposerViewStyle` into `StreamTheme`:
+```xml
+<style name="StreamTheme" parent="@style/StreamUiTheme">
+  <item name="streamUiMessageListStyle">@style/MessageListTheme</item>
+  <item name="streamUiMessageComposerViewStyle">@style/MessageComposerViewTheme</item>
+</style>
+```
+
+#### For `MessageComposerView` using `TransformStyle`
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        audioRecordPlayerViewStyle = AudioRecordPlayerViewStyle.default(context).copy(
+            backgroundDrawableTint = Color.YELLOW,
+            playIconDrawableTint = Color.BLACK,
+            waveBarColorPlayed = Color.BLACK,
+            waveBarColorFuture = Color.LTGRAY,
+            scrubberDrawableTint = Color.BLACK,
+            durationTextStyle = TextStyle(
+                size = context.getDimension(R.dimen.stream_ui_text_medium),
+                color = Color.BLACK,
+            ),
+            isFileIconContainerVisible = false,
+            padding = ViewPadding(
+                start = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_start),
+                top = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_top),
+                end = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_end),
+                bottom = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_bottom)
+            ),
+            progressBarDrawableTint = Color.RED
+        )
+    )
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMssageComposerStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+
+</TabItem>
+</Tabs>
+
+#### For `MessageListItemView` using `TransformStyle`
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageListStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        audioRecordPlayerViewStyle = defaultStyle.audioRecordPlayerViewStyle.copy(
+            own = AudioRecordPlayerViewStyle.default(context).copy(
+                backgroundDrawableTint = Color.YELLOW,
+                playIconDrawableTint = Color.BLACK,
+                waveBarColorPlayed = Color.BLACK,
+                waveBarColorFuture = Color.LTGRAY,
+                scrubberDrawableTint = Color.BLACK,
+                durationTextStyle = TextStyle(
+                    size = context.getDimension(R.dimen.stream_ui_text_medium),
+                    color = Color.BLACK,
+                ),
+                isFileIconContainerVisible = false,
+                padding = ViewPadding(
+                    start = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_start),
+                    top = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_top),
+                    end = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_end),
+                    bottom = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_bottom)
+                ),
+                progressBarDrawableTint = Color.RED
+            ),
+            theirs = AudioRecordPlayerViewStyle.default(context).copy(
+                backgroundDrawableTint = Color.BLACK,
+                playIconDrawableTint = Color.BLACK,
+                waveBarColorPlayed = Color.WHITE,
+                waveBarColorFuture = Color.GRAY,
+                scrubberDrawableTint = Color.WHITE,
+                durationTextStyle = TextStyle(
+                    size = context.getDimension(R.dimen.stream_ui_text_medium),
+                    color = Color.WHITE,
+                ),
+                isFileIconContainerVisible = false,
+                padding = ViewPadding(
+                    start = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_start),
+                    top = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_top),
+                    end = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_end),
+                    bottom = context.getDimension(R.dimen.stream_ui_audio_record_player_padding_bottom)
+                ),
+                progressBarDrawableTint = Color.RED
+            ),
+        )
+    )
+}
+```
+
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageListStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+
+</TabItem>
+</Tabs>
