@@ -103,6 +103,7 @@ public class MessageComposerController(
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val messageId: String? = null,
+    private val isLinkPreviewEnabled: Boolean = false,
 ) {
 
     /**
@@ -941,14 +942,17 @@ public class MessageComposerController(
      * Shows link previews if necessary.
      */
     private suspend fun handleLinkPreviews() {
+        if (!isLinkPreviewEnabled) return
         val urls = LinkPattern.findAll(messageText).map {
             it.value
         }.toList()
+        logger.v { "[handleLinkPreviews] urls: $urls" }
         val previews = urls.take(1)
             .map { url -> chatClient.enrichPreview(url).await() }
             .filterIsInstance<Result.Success<LinkPreview>>()
             .map { it.value }
 
+        logger.v { "[handleLinkPreviews] previews: ${previews.map { it.originUrl }}" }
         linkPreviews.value = previews
     }
 

@@ -73,6 +73,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -119,6 +120,7 @@ public fun MessagesScreen(
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
+    onComposerLinkPreviewClick: ((LinkPreview) -> Unit )? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -205,6 +207,7 @@ public fun MessagesScreen(
                             composerViewModel.dismissMessageActions()
                         }
                     },
+                    onLinkPreviewClick = onComposerLinkPreviewClick,
                     onSendMessage = remember(composerViewModel) {
                         {
                                 message ->

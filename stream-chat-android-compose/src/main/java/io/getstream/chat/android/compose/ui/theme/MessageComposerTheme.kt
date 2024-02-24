@@ -20,9 +20,13 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 
 /**
@@ -31,6 +35,7 @@ import io.getstream.chat.android.compose.R
  */
 public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,
+    val linkPreview: ComposerLinkPreviewTheme,
 ) {
 
     public companion object {
@@ -49,12 +54,8 @@ public data class MessageComposerTheme(
             },
         ): MessageComposerTheme {
             return MessageComposerTheme(
-                attachmentCancelIcon = ComposerCancelIconStyle(
-                    backgroundShape = CircleShape,
-                    backgroundColor = colors.overlayDark,
-                    painter = painterResource(id = R.drawable.stream_compose_ic_close),
-                    tint = colors.appBackground,
-                ),
+                attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
+                linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
             )
         }
     }
@@ -72,4 +73,77 @@ public data class ComposerCancelIconStyle(
     val backgroundColor: Color,
     val painter: Painter,
     val tint: Color,
-)
+) {
+    public companion object {
+
+        /**
+         * Builds the default cancel icon style.
+         *
+         * @return A [ComposerCancelIconStyle] instance holding the default theming.
+         */
+        @Composable
+        public fun defaultStyle(
+            colors: StreamColors = when (isSystemInDarkTheme()) {
+                true -> StreamColors.defaultDarkColors()
+                else -> StreamColors.defaultColors()
+            },
+        ): ComposerCancelIconStyle {
+            return ComposerCancelIconStyle(
+                backgroundShape = CircleShape,
+                backgroundColor = colors.overlayDark,
+                painter = painterResource(id = R.drawable.stream_compose_ic_close),
+                tint = colors.appBackground,
+            )
+        }
+    }
+}
+
+public data class ComposerLinkPreviewTheme(
+    val imageWidth: Dp,
+    val imageHeight: Dp,
+    val imagePadding: Dp,
+    val imageShape: Shape,
+    val separatorSize: ComponentSize,
+    val separatorMarginStart: Dp,
+    val separatorMarginEnd: Dp,
+    val title: TextComponentStyle,
+    val titleToSubtitle: Dp,
+    val subtitle: TextComponentStyle,
+    val cancelIcon: ComposerCancelIconStyle,
+) {
+    public companion object {
+
+        @Composable
+        public fun defaultTheme(
+            typography: StreamTypography = StreamTypography.defaultTypography(),
+            colors: StreamColors = when (isSystemInDarkTheme()) {
+                true -> StreamColors.defaultDarkColors()
+                else -> StreamColors.defaultColors()
+            },
+        ): ComposerLinkPreviewTheme {
+            return ComposerLinkPreviewTheme(
+                cancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
+                imageWidth = 48.dp,
+                imageHeight = 48.dp,
+                imagePadding = 4.dp,
+                separatorSize = ComponentSize(width = 2.dp, height = 48.dp),
+                separatorMarginStart = 4.dp,
+                separatorMarginEnd = 8.dp,
+                title = TextComponentStyle(
+                    color = colors.textHighEmphasis,
+                    style = typography.bodyBold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                ),
+                titleToSubtitle = 4.dp,
+                subtitle = TextComponentStyle(
+                    color = colors.textHighEmphasis,
+                    style = typography.footnote,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                ),
+                imageShape = RectangleShape,
+            )
+        }
+    }
+}
