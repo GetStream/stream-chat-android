@@ -142,6 +142,12 @@ private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
+private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No ComposerLinkPreviewEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
 private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
     error("No StreamMediaRecorder provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -152,6 +158,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
+ * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
@@ -185,6 +192,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     autoTranslationEnabled: Boolean = false,
+    isComposerLinkPreviewEnabled: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -265,6 +273,7 @@ public fun ChatTheme(
         LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
+        LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
     ) {
         if (allowUIAutomationTest) {
             Box(
@@ -464,6 +473,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAutoTranslationEnabled.current
+
+    /**
+     * Retrieves the current [isComposerLinkPreviewEnabled] value at the call site's position in the hierarchy.
+     */
+    public val isComposerLinkPreviewEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalComposerLinkPreviewEnabled.current
 
     /**
      * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.

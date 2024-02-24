@@ -64,6 +64,7 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
@@ -89,6 +90,7 @@ class MessagesActivity : BaseConnectedActivity() {
             context = this,
             channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
             autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+            isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
             deletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
             messageId = intent.getStringExtra(KEY_MESSAGE_ID),
             parentMessageId = intent.getStringExtra(KEY_PARENT_MESSAGE_ID),
@@ -105,12 +107,15 @@ class MessagesActivity : BaseConnectedActivity() {
 
         setContent {
             val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+            val typography = StreamTypography.defaultTypography()
             ChatTheme(
                 colors = colors,
+                typography = typography,
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+                isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
                 allowUIAutomationTest = true,
-                messageComposerTheme = MessageComposerTheme.defaultTheme().let { messageComposerTheme ->
+                messageComposerTheme = MessageComposerTheme.defaultTheme(typography).let { messageComposerTheme ->
                     messageComposerTheme.copy(
                         attachmentCancelIcon = messageComposerTheme.attachmentCancelIcon.copy(
                             painter = painterResource(id = R.drawable.stream_compose_ic_clear),

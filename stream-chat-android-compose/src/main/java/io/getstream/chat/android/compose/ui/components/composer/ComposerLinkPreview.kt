@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -27,13 +28,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
@@ -41,6 +39,9 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
+import io.getstream.log.StreamLog
+
+private const val TAG = "ComposerLinkPreview"
 
 /**
  * Shows the link image preview, the title of the link
@@ -51,17 +52,16 @@ import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
  * @param linkPreview - The link preview to show.
  * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param modifier Modifier for styling.
- * @param onItemClick Lambda called when an item gets clicked.
+ * @param onClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ComposerLinkPreview(
     linkPreview: LinkPreview,
-    linkDescriptionMaxLines: Int,
     modifier: Modifier = Modifier,
-    onItemClick: (context: Context, url: String) -> Unit = ::onLinkPreviewClick,
+    onClick: ((linkPreview: LinkPreview) -> Unit)? = null,
 ) {
-    
+
     var previewClosed by rememberSaveable { mutableStateOf(false) }
 
     if (previewClosed) {
@@ -71,16 +71,12 @@ public fun ComposerLinkPreview(
     val context = LocalContext.current
     val attachment = linkPreview.attachment
     val previewUrl = attachment.titleLink ?: attachment.ogUrl
-    val urlWithScheme = previewUrl?.addSchemeToUrlIfNeeded()
 
     checkNotNull(previewUrl) {
         "Missing preview URL."
     }
 
-    val errorMessage = stringResource(
-        id = R.string.stream_compose_message_list_error_cannot_open_link,
-        previewUrl,
-    )
+    val errorMessage = stringResource(id = R.string.stream_compose_message_list_error_cannot_open_link, previewUrl)
 
     Row(
         modifier = modifier
@@ -89,15 +85,9 @@ public fun ComposerLinkPreview(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
                     try {
-                        if (urlWithScheme != null) {
-                            onItemClick(context, urlWithScheme)
-                        } else {
-                            Toast
-                                .makeText(context, errorMessage, Toast.LENGTH_LONG)
-                                .show()
-                        }
+                        onClick?.invoke(linkPreview) ?: onLinkPreviewClick(context, linkPreview)
                     } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
+                        StreamLog.e(TAG, e) { "[onLinkPreviewClick] failed: $e" }
                         Toast
                             .makeText(context, errorMessage, Toast.LENGTH_LONG)
                             .show()
@@ -106,64 +96,34 @@ public fun ComposerLinkPreview(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val imagePreviewUrl = attachment.imagePreviewUrl
-        if (imagePreviewUrl != null) {
-            ComposerLinkImagePreview(attachment)
-        }
-
-        Spacer(modifier = Modifier.width(4.dp))
-
-        Box(
-            modifier = Modifier
-                .height(48.dp)
-                .width(2.dp)
-                .background(ChatTheme.colors.primaryAccent)
-        )
-
-        Spacer(modifier = Modifier.width(8.dp))
-
+        val theme = ChatTheme.messageComposerTheme.linkPreview
+        ComposerLinkImagePreview(attachment)
+        ComposerVerticalSeparator()
         Column(
-            modifier = Modifier
-                .weight(1f)
+            modifier = Modifier.weight(1f)
         ) {
-            val title = attachment.title
-            if (title != null) {
-                ComposerLinkTitle(title)
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            val description = attachment.text
-            if (description != null) {
-                ComposerLinkDescription(description, linkDescriptionMaxLines)
-            }
+            ComposerLinkTitle(attachment.title)
+            Spacer(modifier = Modifier.height(theme.titleToSubtitle))
+            ComposerLinkDescription(attachment.text)
         }
-        
-        IconButton(onClick = { previewClosed = true }) {
-            Icon(
-                modifier = modifier
-                    .background(
-                        shape = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundShape,
-                        color = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundColor,
-                    ),
-                painter = ChatTheme.messageComposerTheme.attachmentCancelIcon.painter,
-                contentDescription = stringResource(id = R.string.stream_compose_cancel),
-                tint = ChatTheme.messageComposerTheme.attachmentCancelIcon.tint,
-            )
-        }
+        ComposerLinkCancelIcon { previewClosed = true }
     }
 }
 
 @Composable
 private fun ComposerLinkImagePreview(attachment: Attachment) {
-    val painter = rememberStreamImagePainter(data = attachment.imagePreviewUrl)
-    Box(modifier = Modifier.height(56.dp)
-        .width(56.dp),
+    val imagePreviewUrl = attachment.imagePreviewUrl ?: return
+    val theme = ChatTheme.messageComposerTheme.linkPreview
+    val painter = rememberStreamImagePainter(data = imagePreviewUrl)
+    Box(
+        modifier = Modifier.padding(theme.imagePadding),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             modifier = Modifier
-                .height(48.dp)
-                .width(48.dp)
-                /*.clip(ChatTheme.shapes.attachment)*/,
+                .height(theme.imageHeight)
+                .width(theme.imageWidth)
+                .clip(theme.imageShape),
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.Crop,
@@ -172,24 +132,66 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
 }
 
 @Composable
-private fun ComposerLinkTitle(text: String) {
+private fun ComposerVerticalSeparator() {
+    val theme = ChatTheme.messageComposerTheme.linkPreview
+    Box(
+        modifier = Modifier.padding(
+            start = theme.separatorMarginStart,
+            end = theme.separatorMarginEnd
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .height(theme.separatorSize.height)
+                .width(theme.separatorSize.width)
+                .background(ChatTheme.colors.primaryAccent)
+        )
+    }
+}
+
+@Composable
+private fun ComposerLinkTitle(title: String?) {
+    title ?: return
+    val textStyle = ChatTheme.messageComposerTheme.linkPreview.title
     Text(
-        text = text,
-        style = ChatTheme.typography.bodyBold,
-        color = ChatTheme.colors.textHighEmphasis,
-        maxLines = 1,
+        text = title,
+        style = textStyle.style,
+        color = textStyle.color,
+        maxLines = textStyle.maxLines,
+        overflow = textStyle.overflow,
     )
 }
 
 @Composable
-private fun ComposerLinkDescription(description: String, linkDescriptionMaxLines: Int) {
+private fun ComposerLinkDescription(description: String?) {
+    description ?: return
+    val textStyle = ChatTheme.messageComposerTheme.linkPreview.subtitle
     Text(
         text = description,
-        style = ChatTheme.typography.footnote,
-        color = ChatTheme.colors.textHighEmphasis,
-        maxLines = linkDescriptionMaxLines,
-        overflow = TextOverflow.Ellipsis,
+        style = textStyle.style,
+        color = textStyle.color,
+        maxLines = textStyle.maxLines,
+        overflow = textStyle.overflow,
     )
+}
+
+@Composable
+private fun ComposerLinkCancelIcon(
+    onClick: () -> Unit,
+) {
+    val theme = ChatTheme.messageComposerTheme.linkPreview
+    IconButton(onClick = onClick) {
+        Icon(
+            modifier = Modifier
+                .background(
+                    shape = theme.cancelIcon.backgroundShape,
+                    color = theme.cancelIcon.backgroundColor,
+                ),
+            painter = theme.cancelIcon.painter,
+            contentDescription = stringResource(id = R.string.stream_compose_cancel),
+            tint = theme.cancelIcon.tint,
+        )
+    }
 }
 
 /**
@@ -198,33 +200,16 @@ private fun ComposerLinkDescription(description: String, linkDescriptionMaxLines
  * @param context Context needed to start the Activity.
  * @param url The url of the link attachment being clicked.
  */
-internal fun onLinkPreviewClick(context: Context, url: String) {
+private fun onLinkPreviewClick(context: Context, preview: LinkPreview) {
+    val previewUrl = preview.attachment.titleLink ?: preview.attachment.ogUrl
+    checkNotNull(previewUrl) {
+        "Missing preview URL."
+    }
+    val urlWithScheme = previewUrl.addSchemeToUrlIfNeeded()
     context.startActivity(
         Intent(
             Intent.ACTION_VIEW,
-            Uri.parse(url),
+            Uri.parse(urlWithScheme),
         ),
-    )
-}
-
-
-@Preview
-@Composable
-private fun SampleComposerLinkPreview() {
-    val attachment = Attachment(
-        title = "Yahoo | Mail, Weather, Search, Politics, News, Finance, Sports & Videos",
-        titleLink = "https://www.yahoo.com/",
-        text = "Latest news coverage, email, free stock quotes, live scores and video are just the beginning. Discover more every day at Yahoo!",
-        imageUrl = "https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo.png",
-        thumbUrl = "https://s.yimg.com/cv/apiv2/social/images/yahoo_default_logo.png",
-        ogUrl = "http://Yahoo.co",
-    )
-
-    ComposerLinkPreview(
-        linkPreview = LinkPreview(
-            originUrl = "https://www.yahoo.com/",
-            attachment = attachment,
-        ),
-        linkDescriptionMaxLines = 2,
     )
 }
