@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.attachments.audio.RunningWaveForm
+import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -414,6 +415,12 @@ public fun DefaultMessageComposerHeaderContent(
                 .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
             activeAction = activeAction,
             onCancelAction = onCancelAction,
+        )
+    }
+    if (messageComposerState.linkPreviews.isNotEmpty()) {
+        ComposerLinkPreview(
+            linkPreview = messageComposerState.linkPreviews.first(),
+            linkDescriptionMaxLines = 1
         )
     }
 }
@@ -783,7 +790,8 @@ internal fun DefaultMessageComposerTrailingContent(
                                                 val event = awaitPointerEvent(PointerEventPass.Main)
 
                                                 if (event.changes.all { it.changedToUp() }) {
-                                                    statefulStreamMediaRecorder.stopRecording()
+                                                    statefulStreamMediaRecorder
+                                                        .stopRecording()
                                                         .onSuccess {
                                                             StreamLog.i("MessageComposer") {
                                                                 "[onRecordingSaved] attachment: $it"
@@ -805,9 +813,11 @@ internal fun DefaultMessageComposerTrailingContent(
                                         !storageAndRecordingPermissionState.allPermissionsGranted -> {
                                             storageAndRecordingPermissionState.launchMultiplePermissionRequest()
                                         }
+
                                         isRecording == MediaRecorderState.UNINITIALIZED -> {
                                             handleAudioRecording()
                                         }
+
                                         else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
                                     }
                                 },
