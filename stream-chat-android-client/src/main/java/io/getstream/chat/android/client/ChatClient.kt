@@ -2507,6 +2507,12 @@ internal constructor(
      */
     @CheckResult
     public fun enrichUrl(url: String): Call<Attachment> = api.og(url)
+        .doOnStart(userScope) {
+            logger.d { "[enrichUrl] #doOnStart; url: $url" }
+        }
+        .doOnResult(userScope) {
+            logger.v { "[enrichUrl] #doOnResult; completed($url): $it" }
+        }
 
     @CheckResult
     public fun banUser(

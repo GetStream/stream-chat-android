@@ -24,6 +24,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,7 @@ import io.getstream.chat.android.compose.R
 public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,
     val linkPreview: ComposerLinkPreviewTheme,
+    val inputField: ComposerInputFieldTheme,
 ) {
 
     public companion object {
@@ -48,6 +51,7 @@ public data class MessageComposerTheme(
         @Composable
         public fun defaultTheme(
             typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
@@ -56,6 +60,7 @@ public data class MessageComposerTheme(
             return MessageComposerTheme(
                 attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
                 linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
+                inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
             )
         }
     }
@@ -146,4 +151,43 @@ public data class ComposerLinkPreviewTheme(
             )
         }
     }
+}
+
+/**
+ * Represents the theming for the input field in the message composer.
+ *
+ * @param borderShape The shape of the border for the input field.
+ * @param backgroundColor The background color for the input field.
+ * @param textStyle The text style for the input field.
+ * @param cursorBrushColor The color for the cursor in the input field.
+ */
+public data class ComposerInputFieldTheme(
+    val borderShape: Shape,
+    val backgroundColor: Color,
+    val textStyle: TextStyle,
+    val cursorBrushColor: Color,
+) {
+
+    public companion object {
+        @Composable
+        public fun defaultTheme(
+            typography: StreamTypography = StreamTypography.defaultTypography(),
+            shapes: StreamShapes = StreamShapes.defaultShapes(),
+            colors: StreamColors = when (isSystemInDarkTheme()) {
+                true -> StreamColors.defaultDarkColors()
+                else -> StreamColors.defaultColors()
+            },
+        ): ComposerInputFieldTheme {
+            return ComposerInputFieldTheme(
+                borderShape = shapes.inputField,
+                backgroundColor = colors.inputBackground,
+                textStyle = typography.body.copy(
+                    color = colors.textHighEmphasis,
+                    textDirection = TextDirection.Content,
+                ),
+                cursorBrushColor = colors.primaryAccent,
+            )
+        }
+    }
+
 }

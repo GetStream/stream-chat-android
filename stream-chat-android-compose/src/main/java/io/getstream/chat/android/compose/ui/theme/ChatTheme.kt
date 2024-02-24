@@ -237,6 +237,7 @@ public fun ChatTheme(
     ),
     messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
         typography = typography,
+        shapes = shapes,
         colors = colors,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
