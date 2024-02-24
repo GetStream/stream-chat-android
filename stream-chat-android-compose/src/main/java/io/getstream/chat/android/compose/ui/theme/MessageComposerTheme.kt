@@ -30,7 +30,7 @@ import io.getstream.chat.android.compose.R
  * @param attachmentCancelIcon The theming for the cancel icon used in the message composer.
  */
 public data class MessageComposerTheme(
-    val attachmentCancelIcon: MessageComposerCancelIconStyle,
+    val attachmentCancelIcon: ComposerCancelIconStyle,
 ) {
 
     public companion object {
@@ -49,7 +49,7 @@ public data class MessageComposerTheme(
             },
         ): MessageComposerTheme {
             return MessageComposerTheme(
-                attachmentCancelIcon = MessageComposerCancelIconStyle(
+                attachmentCancelIcon = ComposerCancelIconStyle(
                     backgroundShape = CircleShape,
                     backgroundColor = colors.overlayDark,
                     painter = painterResource(id = R.drawable.stream_compose_ic_close),
@@ -67,7 +67,7 @@ public data class MessageComposerTheme(
  * @param backgroundColor The background color for the cancel icon.
  * @param tint The tint color for the cancel icon.
  */
-public data class MessageComposerCancelIconStyle(
+public data class ComposerCancelIconStyle(
     val backgroundShape: Shape,
     val backgroundColor: Color,
     val painter: Painter,
