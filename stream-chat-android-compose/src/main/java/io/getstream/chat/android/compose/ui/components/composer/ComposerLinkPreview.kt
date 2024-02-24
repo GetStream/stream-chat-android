@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.composer
 
 import android.content.ActivityNotFoundException
@@ -61,7 +77,6 @@ public fun ComposerLinkPreview(
     modifier: Modifier = Modifier,
     onClick: ((linkPreview: LinkPreview) -> Unit)? = null,
 ) {
-
     var previewClosed by rememberSaveable { mutableStateOf(false) }
 
     if (previewClosed) {
@@ -100,7 +115,7 @@ public fun ComposerLinkPreview(
         ComposerLinkImagePreview(attachment)
         ComposerVerticalSeparator()
         Column(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
         ) {
             ComposerLinkTitle(attachment.title)
             Spacer(modifier = Modifier.height(theme.titleToSubtitle))
@@ -137,14 +152,14 @@ private fun ComposerVerticalSeparator() {
     Box(
         modifier = Modifier.padding(
             start = theme.separatorMarginStart,
-            end = theme.separatorMarginEnd
-        )
+            end = theme.separatorMarginEnd,
+        ),
     ) {
         Box(
             modifier = Modifier
                 .height(theme.separatorSize.height)
                 .width(theme.separatorSize.width)
-                .background(ChatTheme.colors.primaryAccent)
+                .background(ChatTheme.colors.primaryAccent),
         )
     }
 }

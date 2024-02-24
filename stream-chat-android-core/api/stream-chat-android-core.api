@@ -959,6 +959,24 @@ public final class io/getstream/chat/android/models/LessThanOrEqualsFilterObject
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/LinkPreview {
+	public static final field Companion Lio/getstream/chat/android/models/LinkPreview$Companion;
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/models/Attachment;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/getstream/chat/android/models/Attachment;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/models/Attachment;)Lio/getstream/chat/android/models/LinkPreview;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/LinkPreview;Ljava/lang/String;Lio/getstream/chat/android/models/Attachment;ILjava/lang/Object;)Lio/getstream/chat/android/models/LinkPreview;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
+	public final fun getOriginUrl ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/LinkPreview$Companion {
+	public final fun getEMPTY ()Lio/getstream/chat/android/models/LinkPreview;
+}
+
 public final class io/getstream/chat/android/models/Member : io/getstream/chat/android/models/UserEntity, io/getstream/chat/android/models/querysort/ComparableFieldProvider {
 	public fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/util/Date;Ljava/util/Date;ZZLjava/lang/String;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/models/User;Ljava/util/Date;Ljava/util/Date;Ljava/lang/Boolean;Ljava/util/Date;Ljava/util/Date;ZZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V

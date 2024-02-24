@@ -146,7 +146,7 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
-    onLinkPreviewClick: ((LinkPreview) -> Unit )? = null,
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
@@ -412,7 +412,7 @@ public fun MessageComposer(
 public fun DefaultMessageComposerHeaderContent(
     messageComposerState: MessageComposerState,
     onCancelAction: () -> Unit,
-    onLinkPreviewClick: ((LinkPreview) -> Unit )? = null,
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
 ) {
     val activeAction = messageComposerState.action
 

@@ -1006,7 +1006,7 @@ public class MessageComposerController(
         private val CommandPattern = Pattern.compile("^/[a-z]*$")
 
         internal val LinkPattern = Regex(
-            "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?"
+            "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?",
         )
 
         private const val OneSecond = 1000L

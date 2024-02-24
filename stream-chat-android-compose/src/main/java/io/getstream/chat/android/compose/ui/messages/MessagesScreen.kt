@@ -120,7 +120,7 @@ public fun MessagesScreen(
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
-    onComposerLinkPreviewClick: ((LinkPreview) -> Unit )? = null,
+    onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,

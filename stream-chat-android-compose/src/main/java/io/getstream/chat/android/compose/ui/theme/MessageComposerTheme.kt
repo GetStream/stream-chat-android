@@ -189,5 +189,4 @@ public data class ComposerInputFieldTheme(
             )
         }
     }
-
 }
