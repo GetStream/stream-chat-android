@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -47,12 +48,14 @@ import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import io.getstream.result.call.map
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -262,6 +265,11 @@ public class MessageComposerController(
     public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the list of links that can be previewed.
+     */
+    public val linkPreviews: MutableStateFlow<List<LinkPreview>> = MutableStateFlow(emptyList())
+
+    /**
      * Represents the list of users in the channel.
      */
     private var users: List<User> = emptyList()
@@ -381,10 +389,10 @@ public class MessageComposerController(
             }
             handleCommandSuggestions()
             handleValidationErrors()
-        }.debounce(ComputeMentionSuggestionsDebounceTime)
-            .onEach {
-                handleMentionSuggestions()
-            }.launchIn(scope)
+        }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
+            scope.launch { handleMentionSuggestions() }
+            scope.launch { handleLinkPreviews() }
+        }.launchIn(scope)
 
         selectedAttachments.onEach { selectedAttachments ->
             state.value = state.value.copy(attachments = selectedAttachments)
@@ -404,6 +412,10 @@ public class MessageComposerController(
 
         commandSuggestions.onEach { commandSuggestions ->
             state.value = state.value.copy(commandSuggestions = commandSuggestions)
+        }.launchIn(scope)
+
+        linkPreviews.onEach { linkPreviews ->
+            state.value = state.value.copy(linkPreviews = linkPreviews)
         }.launchIn(scope)
 
         cooldownTimer.onEach { cooldownTimer ->
@@ -849,8 +861,8 @@ public class MessageComposerController(
         val result = chatClient.queryMembers(
             channelType = channelType,
             channelId = channelId,
-            offset = queryMembersRequestOffset,
-            limit = queryMembersMemberLimit,
+            offset = QUERY_MEMBERS_REQUEST_OFFSET,
+            limit = QUERY_MEMBERS_REQUEST_LIMIT,
             filter = Filters.autocomplete(
                 fieldName = "name",
                 value = contains,
@@ -926,6 +938,21 @@ public class MessageComposerController(
     }
 
     /**
+     * Shows link previews if necessary.
+     */
+    private suspend fun handleLinkPreviews() {
+        val urls = LinkPattern.findAll(messageText).map {
+            it.value
+        }.toList()
+        val previews = urls.take(1)
+            .map { url -> chatClient.enrichPreview(url).await() }
+            .filterIsInstance<Result.Success<LinkPreview>>()
+            .map { it.value }
+
+        linkPreviews.value = previews
+    }
+
+    /**
      * Gets the edit message call using [ChatClient].
      *
      * @param message [Message]
@@ -952,7 +979,11 @@ public class MessageComposerController(
         chatClient.stopTyping(type, id, parentMessageId).enqueue()
     }
 
-    private companion object {
+    private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> {
+        return this.enrichUrl(url).map { LinkPreview(url, it) }
+    }
+
+    internal companion object {
         /**
          * The default allowed number of characters in a message.
          */
@@ -968,23 +999,25 @@ public class MessageComposerController(
          */
         private val CommandPattern = Pattern.compile("^/[a-z]*$")
 
+        internal val LinkPattern = Regex(
+            "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?"
+        )
+
         private const val OneSecond = 1000L
 
         /**
-         * The amount of time we debounce computing mention suggestions.
-         * We debounce those computations in the case of being unable to find mentions from local data, we will query
-         * the BE for members.
+         * The amount of time we debounce computing mention suggestions and link previews.
          */
-        private const val ComputeMentionSuggestionsDebounceTime = 300L
+        private const val TEXT_INPUT_DEBOUNCE_TIME = 300L
 
         /**
          * Pagination offset for the member query.
          */
-        private const val queryMembersRequestOffset: Int = 0
+        private const val QUERY_MEMBERS_REQUEST_OFFSET: Int = 0
 
         /**
          * The upper limit of members the query is allowed to return.
          */
-        private const val queryMembersMemberLimit: Int = 30
+        private const val QUERY_MEMBERS_REQUEST_LIMIT: Int = 30
     }
 }

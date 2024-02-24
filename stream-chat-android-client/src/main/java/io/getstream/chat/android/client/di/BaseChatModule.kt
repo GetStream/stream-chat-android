@@ -46,6 +46,7 @@ import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -238,6 +239,7 @@ internal open class BaseChatModule(
         buildRetrofitApi<ConfigApi>(),
         buildRetrofitApi<VideoCallApi>(),
         buildRetrofitApi<FileDownloadApi>(),
+        buildRetrofitApi<OpenGraphApi>(),
         userScope,
         userScope,
     ).let { originalApi ->
