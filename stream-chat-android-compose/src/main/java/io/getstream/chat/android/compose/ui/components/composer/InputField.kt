@@ -37,12 +37,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
-import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Custom input field that we use for our UI. It's fairly simple - shows a basic input with clipped
