@@ -41,16 +41,16 @@ public fun CancelIcon(
     Icon(
         modifier = modifier
             .background(
-                shape = ChatTheme.messageComposerTheme.cancelIcon.backgroundShape,
-                color = ChatTheme.messageComposerTheme.cancelIcon.backgroundColor,
+                shape = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundShape,
+                color = ChatTheme.messageComposerTheme.attachmentCancelIcon.backgroundColor,
             )
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = onClick,
             ),
-        painter = ChatTheme.messageComposerTheme.cancelIcon.painter,
+        painter = ChatTheme.messageComposerTheme.attachmentCancelIcon.painter,
         contentDescription = stringResource(id = R.string.stream_compose_cancel),
-        tint = ChatTheme.messageComposerTheme.cancelIcon.tint,
+        tint = ChatTheme.messageComposerTheme.attachmentCancelIcon.tint,
     )
 }

@@ -112,7 +112,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 allowUIAutomationTest = true,
                 messageComposerTheme = MessageComposerTheme.defaultTheme().let { messageComposerTheme ->
                     messageComposerTheme.copy(
-                        cancelIcon = messageComposerTheme.cancelIcon.copy(
+                        attachmentCancelIcon = messageComposerTheme.attachmentCancelIcon.copy(
                             painter = painterResource(id = R.drawable.stream_compose_ic_clear),
                             tint = colors.overlayDark,
                             backgroundColor = colors.appBackground,
