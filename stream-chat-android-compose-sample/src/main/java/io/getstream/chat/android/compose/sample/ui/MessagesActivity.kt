@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -349,6 +350,7 @@ class MessagesActivity : BaseConnectedActivity() {
     }
 
     companion object {
+        private const val TAG = "MessagesActivity"
         private const val KEY_CHANNEL_ID = "channelId"
         private const val KEY_MESSAGE_ID = "messageId"
         private const val KEY_PARENT_MESSAGE_ID = "parentMessageId"

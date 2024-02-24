@@ -281,7 +281,7 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
-    onLinkPreviewClick: (LinkPreview) -> Unit = {},
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},

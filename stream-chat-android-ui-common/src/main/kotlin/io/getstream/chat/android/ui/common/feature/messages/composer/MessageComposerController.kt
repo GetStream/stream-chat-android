@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.ValidationErr
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer
+import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.uiutils.extension.containsLinks
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
@@ -984,7 +985,8 @@ public class MessageComposerController(
     }
 
     private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> {
-        return this.enrichUrl(url).map { LinkPreview(url, it) }
+        val urlWithScheme = url.addSchemeToUrlIfNeeded()
+        return this.enrichUrl(urlWithScheme).map { LinkPreview(url, it) }
     }
 
     internal companion object {
