@@ -849,7 +849,7 @@ public final class io/getstream/chat/android/compose/ui/components/composer/Comp
 }
 
 public final class io/getstream/chat/android/compose/ui/components/composer/ComposerLinkPreviewKt {
-	public static final fun ComposerLinkPreview (Lio/getstream/chat/android/models/LinkPreview;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun ComposerLinkPreview (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/LinkPreview;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/composer/CoolDownIndicatorKt {
@@ -1484,26 +1484,24 @@ public final class io/getstream/chat/android/compose/ui/theme/ComposerInputField
 public final class io/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme$Companion;
-	public synthetic fun <init> (FFFLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;FFLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;FLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-D9Ej5fM ()F
-	public final fun component10 ()Lio/getstream/chat/android/compose/ui/theme/TextComponentStyle;
-	public final fun component11 ()Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;
-	public final fun component2-D9Ej5fM ()F
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Landroidx/compose/ui/graphics/Shape;FLio/getstream/chat/android/compose/ui/theme/ComponentSize;FFLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;FLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun component10 ()Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;
+	public final fun component2 ()Landroidx/compose/ui/graphics/Shape;
 	public final fun component3-D9Ej5fM ()F
-	public final fun component4 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun component5-D9Ej5fM ()F
 	public final fun component6-D9Ej5fM ()F
-	public final fun component7-D9Ej5fM ()F
-	public final fun component8 ()Lio/getstream/chat/android/compose/ui/theme/TextComponentStyle;
-	public final fun component9-D9Ej5fM ()F
-	public final fun copy-9cj75hI (FFFLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;FFLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;FLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;)Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;
-	public static synthetic fun copy-9cj75hI$default (Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;FFFLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;FFLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;FLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;
+	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/TextComponentStyle;
+	public final fun component8-D9Ej5fM ()F
+	public final fun component9 ()Lio/getstream/chat/android/compose/ui/theme/TextComponentStyle;
+	public final fun copy-9SJH0UY (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Landroidx/compose/ui/graphics/Shape;FLio/getstream/chat/android/compose/ui/theme/ComponentSize;FFLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;FLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;)Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;
+	public static synthetic fun copy-9SJH0UY$default (Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Landroidx/compose/ui/graphics/Shape;FLio/getstream/chat/android/compose/ui/theme/ComponentSize;FFLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;FLio/getstream/chat/android/compose/ui/theme/TextComponentStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCancelIcon ()Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;
-	public final fun getImageHeight-D9Ej5fM ()F
 	public final fun getImagePadding-D9Ej5fM ()F
 	public final fun getImageShape ()Landroidx/compose/ui/graphics/Shape;
-	public final fun getImageWidth-D9Ej5fM ()F
+	public final fun getImageSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
 	public final fun getSeparatorMarginEnd-D9Ej5fM ()F
 	public final fun getSeparatorMarginStart-D9Ej5fM ()F
 	public final fun getSeparatorSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;

@@ -66,15 +66,14 @@ private const val TAG = "ComposerLinkPreview"
  * When clicking it, we open the preview link.
  *
  * @param linkPreview - The link preview to show.
- * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param modifier Modifier for styling.
  * @param onClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ComposerLinkPreview(
-    linkPreview: LinkPreview,
     modifier: Modifier = Modifier,
+    linkPreview: LinkPreview,
     onClick: ((linkPreview: LinkPreview) -> Unit)? = null,
 ) {
     var previewClosed by rememberSaveable { mutableStateOf(false) }
@@ -136,8 +135,8 @@ private fun ComposerLinkImagePreview(attachment: Attachment) {
     ) {
         Image(
             modifier = Modifier
-                .height(theme.imageHeight)
-                .width(theme.imageWidth)
+                .height(theme.imageSize.height)
+                .width(theme.imageSize.width)
                 .clip(theme.imageShape),
             painter = painter,
             contentDescription = null,
