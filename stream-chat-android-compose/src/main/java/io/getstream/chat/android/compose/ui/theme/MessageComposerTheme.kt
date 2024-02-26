@@ -103,11 +103,24 @@ public data class ComposerCancelIconStyle(
     }
 }
 
+/**
+ * Represents the theming for the link preview in the message composer.
+ *
+ * @param imageSize The size of the image in the link preview.
+ * @param imagePadding The padding for the image in the link preview.
+ * @param imageShape The shape of the image in the link preview.
+ * @param separatorSize The size of the separator in the link preview.
+ * @param separatorMarginStart The start margin for the separator in the link preview.
+ * @param separatorMarginEnd The end margin for the separator in the link preview.
+ * @param title The theming for the title in the link preview.
+ * @param titleToSubtitle The vertical space between the title and the subtitle in the link preview.
+ * @param subtitle The theming for the subtitle in the link preview.
+ * @param cancelIcon The theming for the cancel icon in the link preview.
+ */
 public data class ComposerLinkPreviewTheme(
-    val imageWidth: Dp,
-    val imageHeight: Dp,
-    val imagePadding: Dp,
+    val imageSize: ComponentSize,
     val imageShape: Shape,
+    val imagePadding: Dp,
     val separatorSize: ComponentSize,
     val separatorMarginStart: Dp,
     val separatorMarginEnd: Dp,
@@ -127,9 +140,8 @@ public data class ComposerLinkPreviewTheme(
             },
         ): ComposerLinkPreviewTheme {
             return ComposerLinkPreviewTheme(
-                cancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
-                imageWidth = 48.dp,
-                imageHeight = 48.dp,
+                imageSize = ComponentSize(width = 48.dp, height = 48.dp),
+                imageShape = RectangleShape,
                 imagePadding = 4.dp,
                 separatorSize = ComponentSize(width = 2.dp, height = 48.dp),
                 separatorMarginStart = 4.dp,
@@ -147,7 +159,7 @@ public data class ComposerLinkPreviewTheme(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 ),
-                imageShape = RectangleShape,
+                cancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
             )
         }
     }

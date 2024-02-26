@@ -13,6 +13,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added `LinkPreview` model to represent the link preview data. [#5184](https://github.com/GetStream/stream-chat-android/pull/5184)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Prevent inserting reaction which violates `ForeignKey` constraint in local DB. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
@@ -22,6 +34,7 @@
 
 ### ✅ Added
 - Added `DeleteChannelListener`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+- Added `ChatClient.enrichUrl` to enrich the URL with the preview data. [#5184](https://github.com/GetStream/stream-chat-android/pull/5184)
 
 ### ⚠️ Changed
 
@@ -104,6 +117,7 @@
 
 ### ✅ Added
 - Added `MessageComposerTheme` to customize the message composer. [#5183](https://github.com/GetStream/stream-chat-android/pull/5183)
+- Added `ComposerLinkPreview` to show link previews in the message composer. [#5184](https://github.com/GetStream/stream-chat-android/pull/5184)
 
 ### ⚠️ Changed
 
