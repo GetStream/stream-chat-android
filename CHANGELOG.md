@@ -31,6 +31,7 @@
 - Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
 
 ### ⬆️ Improved
+- Ensure fresh token is used to establish WS connection. [#5185](https://github.com/GetStream/stream-chat-android/pull/5185)
 
 ### ✅ Added
 - Added `DeleteChannelListener`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
