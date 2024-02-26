@@ -3,10 +3,13 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Migrated the internal PhotoView library into the [photoview-android](https://github.com/GetStream/photoview-android), and now the `stream-chat-android-ui-components` doesn't need to depend on Jitpack.
 
 ### ✅ Added
 
 ### ⚠️ Changed
+
+- Bump Compose UI to 1.6.2 and Compose compiler to 1.5.10.
 
 ### ❌ Removed
 

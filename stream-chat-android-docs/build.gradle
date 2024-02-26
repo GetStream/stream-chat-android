@@ -102,6 +102,8 @@ dependencies {
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
+    implementation Dependencies.composeLifecycle
+    implementation Dependencies.navigationCompose
     implementation Dependencies.streamPushFirebase
     implementation Dependencies.streamPushHuawei
     implementation Dependencies.streamPushXiaomi
@@ -115,4 +117,5 @@ dependencies {
     implementation Dependencies.huaweiPush
     compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar')
     implementation Dependencies.coil
+    implementation Dependencies.composeCoil
 }
