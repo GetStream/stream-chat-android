@@ -103,6 +103,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageComposerTheme` to customize the message composer. [#5183](https://github.com/GetStream/stream-chat-android/pull/5183)
 
 ### ⚠️ Changed
 
