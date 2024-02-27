@@ -31,23 +31,17 @@ internal class ApiRequestsDumper(
     private val dateFormat: DateFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.getDefault()),
 ) : ApiRequestsAnalyser {
 
-    private val requestsDataMap: MutableMap<String, MutableList<RequestData>> = mutableMapOf()
+    private val requestsDataMap: MutableMap<String, List<RequestData>> = mutableMapOf()
 
     /**
      * Registers the request using the name as an ID.
      *
-     * @param name Name of the request.
+     * @param requestName Name of the request.
      * @param data All the data that should be included in the analyser about the request.
      */
     override fun registerRequest(requestName: String, data: Map<String, String>) {
         val requestData = RequestData(requestName, Date(), data)
-        val requestDataList = requestsDataMap[requestName]
-
-        if (requestDataList != null) {
-            requestDataList.add(requestData)
-        } else {
-            requestsDataMap[requestName] = mutableListOf(requestData)
-        }
+        requestsDataMap[requestName] = (requestsDataMap[requestName] ?: emptyList()) + requestData
     }
 
     /**
