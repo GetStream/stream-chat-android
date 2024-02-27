@@ -990,6 +990,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/Messag
 	public final fun getAttachmentRemovalListener ()Lkotlin/jvm/functions/Function1;
 	public final fun getAttachmentSelectionListener ()Lkotlin/jvm/functions/Function1;
 	public final fun getAttachmentsButtonClickListener ()Lkotlin/jvm/functions/Function0;
+	public final fun getAttachmentsPickerDialogBuilder ()Lkotlin/jvm/functions/Function1;
 	public final fun getAudioCompleteButtonClickListener ()Lkotlin/jvm/functions/Function0;
 	public final fun getAudioDeleteButtonClickListener ()Lkotlin/jvm/functions/Function0;
 	public final fun getAudioPlaybackButtonClickListener ()Lkotlin/jvm/functions/Function0;
@@ -1013,6 +1014,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/Messag
 	public final fun setAttachmentRemovalListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setAttachmentSelectionListener (Lkotlin/jvm/functions/Function1;)V
 	public final fun setAttachmentsButtonClickListener (Lkotlin/jvm/functions/Function0;)V
+	public final fun setAttachmentsPickerDialogBuilder (Lkotlin/jvm/functions/Function1;)V
 	public final fun setAudioCompleteButtonClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setAudioDeleteButtonClickListener (Lkotlin/jvm/functions/Function0;)V
 	public final fun setAudioPlaybackButtonClickListener (Lkotlin/jvm/functions/Function0;)V
@@ -1274,7 +1276,12 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
 	public final fun setAttachmentSelectionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentSelectionListener;)V
 	public final fun setAttachmentsPickerTabFactories (Ljava/util/List;)V
+	public final fun setAttachmentsSelectionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$AttachmentsSelectionListener;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)V
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$AttachmentsSelectionListener {
+	public abstract fun onAttachmentsSelected (Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$Companion {

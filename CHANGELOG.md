@@ -63,7 +63,8 @@
 
 ### ⚠️ Changed
 - 🚨Breaking change: Changed `MessagePositionHandler.handleMessagePosition` signature. [#5168](https://github.com/GetStream/stream-chat-android/pull/5168)
-  * Added `isInThread: Boolean` parameter. 
+  * Added `isInThread: Boolean` parameter.
+- Deprecated `AttachmentSelectionListener` class, use `AttachmentsSelectionListener` instead. [#5178](https://github.com/GetStream/stream-chat-android/pull/5178)
 
 ### ❌ Removed
 
@@ -89,6 +90,7 @@
   * `OnReactionViewClickListener` and `MessageListView.setOnReactionViewClickListener`
   * `OnUserReactionClickListener` and `MessageListView.setOnUserReactionClickListener`
 - Added `messageBuilder` parameter to `MessageComposerViewModel.bindView` to allow customizing the message builder. [#5169](https://github.com/GetStream/stream-chat-android/pull/5169)
+- Added `MessageComposerView.attachmentsPickerDialogBuilder` lambda that allow you to create your own Picker Dialog. [#5178](https://github.com/GetStream/stream-chat-android/pull/5178)
 
 ### ⚠️ Changed
 
