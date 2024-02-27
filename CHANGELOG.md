@@ -8,7 +8,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-
 - Bump Compose UI to 1.6.2 and Compose compiler to 1.5.10.
 
 ### ❌ Removed
@@ -29,6 +28,7 @@
 ### 🐞 Fixed
 - Prevent inserting reaction which violates `ForeignKey` constraint in local DB. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
 - Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
+- Fixed `ArrayIndexOutOfBoundsException` in `ApiRequestsDumper`. [#5187](https://github.com/GetStream/stream-chat-android/pull/5187)
 
 ### ⬆️ Improved
 - Ensure fresh token is used to establish WS connection. [#5185](https://github.com/GetStream/stream-chat-android/pull/5185)
