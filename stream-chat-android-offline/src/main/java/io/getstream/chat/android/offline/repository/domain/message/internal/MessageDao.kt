@@ -182,6 +182,12 @@ internal interface MessageDao {
     )
     suspend fun deleteMessage(cid: String, messageId: String)
 
+    @Query(
+        "DELETE from $MESSAGE_ENTITY_TABLE_NAME " +
+            "WHERE cid = :cid",
+    )
+    suspend fun deleteMessages(cid: String)
+
     @Transaction
     suspend fun select(ids: List<String>): List<MessageEntity> {
         return ids.chunked(SQLITE_MAX_VARIABLE_NUMBER).flatMap { messageIds -> selectChunked(messageIds) }
