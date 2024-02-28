@@ -93,6 +93,13 @@ public interface MessageRepository {
     public suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date)
 
     /**
+     * Deletes all messages from a channel.
+     *
+     * @param cid of message - String.
+     */
+    public suspend fun deleteChannelMessages(cid: String)
+
+    /**
      * Deletes message.
      *
      * @param message [Message]

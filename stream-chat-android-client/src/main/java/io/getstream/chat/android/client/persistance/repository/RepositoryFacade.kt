@@ -163,6 +163,11 @@ public class RepositoryFacade private constructor(
         )
     }
 
+    override suspend fun deleteChannel(cid: String) {
+        channelsRepository.deleteChannel(cid)
+        messageRepository.deleteChannelMessages(cid)
+    }
+
     public suspend fun storeStateForChannel(channel: Channel) {
         storeStateForChannels(listOf(channel))
     }
