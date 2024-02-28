@@ -352,11 +352,16 @@ internal class EventHandlerSequential(
         }
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
 
+        stateRegistry.handleBatchEvent(batchEvent)
+
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
             .forEach { (cid, events) ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
+                if (events.any { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }) {
+                    logicRegistry.removeChannel(channelType, channelId)
+                }
                 if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
                     val channelLogic: ChannelLogic = logicRegistry.channel(
                         channelType = channelType,
@@ -394,8 +399,6 @@ internal class EventHandlerSequential(
                     channelLogic.handleEvent(userPresenceChanged)
                 }
         }
-
-        stateRegistry.handleBatchEvent(batchEvent)
 
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
