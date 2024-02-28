@@ -63,6 +63,7 @@ internal class ChannelStateLogic(
 ) : ChannelMessagesUpdateLogic {
 
     private val logger by taggedLogger(TAG)
+    private val processedMessageIds = mutableSetOf<String>()
 
     /**
      * Used to prune stale active typing events when the sender
@@ -634,6 +635,7 @@ internal class ChannelStateLogic(
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
         mutableState.read.value
             ?.takeUnless { it.lastReceivedEventDate.after(eventReceivedDate) }
+            ?.takeUnless { processedMessageIds.contains(message.id) }
             ?.takeUnless {
                 message.user.id == clientState.user.value?.id ||
                     message.parentId?.takeUnless { message.showInChannel } != null
@@ -646,6 +648,7 @@ internal class ChannelStateLogic(
                     ),
                 )
             }
+        processedMessageIds.add(message.id)
     }
 
     private companion object {
