@@ -423,7 +423,18 @@ internal class EventHandlerSequential(
         logger.v { "[updateOfflineStorage] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size} " }
         val events = batchEvent.sortedEvents.map { it.enrichIfNeeded() }
         val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
-        batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
+        val cidEvents = events.filterIsInstance<CidEvent>()
+        batchBuilder.addToFetchChannels(
+            cidEvents
+                .filterNot { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
+                .map { it.cid },
+        )
+
+        batchBuilder.addToRemoveChannels(
+            cidEvents
+                .filter { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
+                .map { it.cid },
+        )
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
             events.filterIsInstance<HasOwnUser>().map { it.me }
