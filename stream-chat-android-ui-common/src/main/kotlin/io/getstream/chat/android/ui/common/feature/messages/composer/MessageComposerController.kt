@@ -836,8 +836,10 @@ public class MessageComposerController(
                     )
                 }
                 else -> {
-                    logger.v { "[handleMentionSuggestions] userNameContains: $userNameContains, " +
-                        "membersCount: $membersCount" }
+                    logger.v {
+                        "[handleMentionSuggestions] userNameContains: $userNameContains, " +
+                            "membersCount: $membersCount"
+                    }
                     emptyList()
                 }
             }
