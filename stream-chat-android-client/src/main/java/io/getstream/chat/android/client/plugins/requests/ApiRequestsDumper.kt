@@ -40,8 +40,10 @@ internal class ApiRequestsDumper(
      * @param data All the data that should be included in the analyser about the request.
      */
     override fun registerRequest(requestName: String, data: Map<String, String>) {
-        val requestData = RequestData(requestName, Date(), data)
-        requestsDataMap[requestName] = (requestsDataMap[requestName] ?: emptyList()) + requestData
+        synchronized(this) {
+            val requestData = RequestData(requestName, Date(), data)
+            requestsDataMap[requestName] = (requestsDataMap[requestName] ?: emptyList()) + requestData
+        }
     }
 
     /**
@@ -80,11 +82,12 @@ internal class ApiRequestsDumper(
      * Clear an specific requests containing some string in its name. Return -1 it the request is not found.
      */
     override fun clearRequestContaining(queryText: String) {
-        val keys = requestsDataMap.keys.filter { key ->
-            key.contains(queryText)
+        synchronized(this) {
+            val keys = requestsDataMap.keys.filter { key ->
+                key.contains(queryText)
+            }
+            keys.forEach(requestsDataMap::remove)
         }
-
-        keys.forEach(requestsDataMap::remove)
     }
 
     /**
