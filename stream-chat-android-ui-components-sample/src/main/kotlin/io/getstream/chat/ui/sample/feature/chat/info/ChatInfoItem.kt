@@ -114,7 +114,6 @@ sealed class ChatInfoItem {
                 get() = isHidden
         }
 
-
         sealed class Stateful : Option() {
             abstract val isChecked: Boolean
 

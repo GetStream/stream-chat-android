@@ -168,7 +168,7 @@ class GroupChatInfoFragment : Fragment() {
 
             when (option) {
                 is ChatInfoItem.Option.Stateful.MuteChannel -> viewModel.onAction(
-                    GroupChatInfoViewModel.Action.MuteChannelClicked(isChecked)
+                    GroupChatInfoViewModel.Action.MuteChannelClicked(isChecked),
                 )
                 else -> throw IllegalStateException("Chat info option $option is not supported!")
             }
@@ -213,22 +213,26 @@ class GroupChatInfoFragment : Fragment() {
 
     private fun subscribeForChannelVisibilityEvents() {
         ChatClient.instance().subscribeFor<ChannelHiddenEvent>(viewLifecycleOwner) {
-            viewModel.onAction(GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
-                cid = it.cid,
-                hidden = true,
-                clearHistory = it.clearHistory
-            ))
+            viewModel.onAction(
+                GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
+                    cid = it.cid,
+                    hidden = true,
+                    clearHistory = it.clearHistory,
+                ),
+            )
         }
         ChatClient.instance().subscribeFor<ChannelVisibleEvent>(viewLifecycleOwner) {
-            viewModel.onAction(GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
-                cid = it.cid,
-                hidden = false
-            ))
+            viewModel.onAction(
+                GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
+                    cid = it.cid,
+                    hidden = false,
+                ),
+            )
         }
     }
 
     private fun prepareHideChannelClickedAction(
-        onReady: (GroupChatInfoViewModel.Action.HideChannelClicked) -> Unit
+        onReady: (GroupChatInfoViewModel.Action.HideChannelClicked) -> Unit,
     ) {
         val curValue = viewModel.state.value!!.channelHidden
         val newValue = curValue.not()

@@ -80,8 +80,12 @@ class GroupChatInfoViewModel(
             )
         }
 
-        // TODO we use take(1), cause ChannelState.hidden seems to be not updated properly
-        _state.addSource(channelState.flatMapLatest { it.hidden }.distinctUntilChanged().take(1).asLiveData()) { hidden ->
+        _state.addSource(
+            channelState.flatMapLatest { it.hidden }
+                .distinctUntilChanged()
+                .take(1) // TODO we use take(1), cause ChannelState.hidden seems to be not updated properly
+                .asLiveData()
+        ) { hidden ->
             logger.v { "[onHiddenChanged] hidden: $hidden" }
             _state.value = _state.value?.copy(
                 channelHidden = hidden,
@@ -204,7 +208,9 @@ class GroupChatInfoViewModel(
         data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
 
         data class ChannelHiddenUpdated(
-            val cid: String, val hidden: Boolean, val clearHistory: Boolean? = null
+            val cid: String,
+            val hidden: Boolean,
+            val clearHistory: Boolean? = null,
         ) : Action()
         data object LeaveChannelClicked : Action()
     }
