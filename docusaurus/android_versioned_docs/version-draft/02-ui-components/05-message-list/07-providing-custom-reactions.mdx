@@ -3,10 +3,6 @@ import TabItem from '@theme/TabItem';
 
 # Providing Custom Reactions
 
-:::note
-You can find the full code from this guide on [GitHub](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-guides/src/main/java/io/getstream/chat/android/guides/catalog/uicomponents/customreactions). To check the final result, clone the repository, select the `stream-chat-android-ui-guides` module on your Android Studio like the image below, and run the module. ![UI Guides Module on Android Studio](../../assets/ui_guides_module_android_studio.png)
-:::
-
 By default, the UI Components SDK provides the following reaction options and corresponding icons for them:
 
 - `like`
@@ -17,6 +13,10 @@ By default, the UI Components SDK provides the following reaction options and co
 
 |![The Default Message Options Overlay](../../assets/custom_reactions_message_options_overlay_before.png)|
 |---|
+
+:::note
+You can find the full code from this guide on [GitHub](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-guides/src/main/java/io/getstream/chat/android/guides/catalog/uicomponents/customreactions). To check the final result, clone the repository, select the `stream-chat-android-ui-guides` module on your Android Studio like the image below, and run the module. ![UI Guides Module on Android Studio](../../assets/ui_guides_module_android_studio.png)
+:::
 
 If you want to override the supported reactions, you need to create a custom instance of `SupportedReactions` with your custom set of reactions and provide it using the `ChatUI.supportedReactions` property.
 

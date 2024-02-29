@@ -3,9 +3,7 @@ import TabItem from '@theme/TabItem';
 
 # Debugging
 
-:::note
-*ChatClientDebugger* might be useful in investigation of issues happening on users side.
-:::
+### Debug Message Sending
 
 To debug various flows inside the SDK, you can pass your own `ChatClientDebugger` implementation:
 
@@ -29,9 +27,11 @@ ChatClient client = new ChatClient.Builder("apiKey", context)
 </TabItem>
 </Tabs>
 
-### Debug Message Sending
+:::note
+*ChatClientDebugger* might be useful in investigation of issues happening on users side.
+:::
 
-To debug a message sending flow you can override `ChatClientDebugger.debugSendMessage` function and provide your own `SendMessageDebugger` implementation:
+For example, to debug a message sending flow you can override `ChatClientDebugger.debugSendMessage` function and provide your own `SendMessageDebugger` implementation:
 
 <Tabs>
 <TabItem value="kotlin" label="Kotlin">
@@ -215,3 +215,23 @@ public class CustomSendMessageDebugger implements SendMessageDebugger {
 ```
 </TabItem>
 </Tabs>
+
+## Debug Requests
+
+The SDK includes a tool to debug requests and help the user to understand how and when the backend is being requested.
+
+### ApiRequestsAnalyser
+
+The `ApiRequestsAnalyser` can be called at any time to print out all the requests that were made with their information.
+
+Enable it using:
+
+```
+ChatClient.Builder(apiKey, context)
+    .debugRequests(true)
+    .build()
+```
+
+Then you can request the information for the requests used `ApiRequestsAnalyser.dumpRequestByName` or `ApiRequestsAnalyser.dumpAll`.
+
+To clear the information of the analyser to focus on some information, it is possible to clear the data using `ApiRequestsAnalyser.clearRequestContaining` or `ApiRequestsAnalyse.clearAll`.

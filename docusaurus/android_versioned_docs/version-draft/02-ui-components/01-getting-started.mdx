@@ -38,17 +38,22 @@ See the individual pages of the components to learn more about them.
 - [Search Views](05-message-list/04-search-view.mdx)
 - [Attachment Gallery](06-message-composer/02-working-with-attachments.mdx)
 
-## Requirements
+## Checklist
 
-To use the UI Components, add the dependency to your app, as described on the [Dependencies](../01-basics/02-installation.mdx#ui-components) page.
-
-Since this library uses Material elements, make sure that you use a Material theme in your application before adding the components. This means that your app's theme should extend a theme from `Theme.MaterialComponents`, and not `Theme.AppCompat`. Here's a correct example:
+For a successful integration of our UI Components, follow these steps:
+1. Dependency. Add the dependency to your app, as described on the [Dependencies](../01-basics/02-installation.mdx#ui-components) page.
+2. Set up the `ChatClient`. Learn how to initialize the ChatClient [here](https://getstream.io/chat/docs/android/?language=kotlin#chat-client).
+3. Handle user connection. Read how to connect a user [here](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin#connecting-the-user) and info about User Tokens [here](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
+4. State and Offline. Using the `StatePlugin` is mandatory if you want to use our UI Components. Read the [State Overview](../05-state-and-offline/01-state-overview.mdx) page for more information. Also, it's a good idea to add [offline support](../05-state-and-offline/02-offline-support.mdx) for better UX.
+5. Theme. Since this library uses Material elements, make sure that you use a Material theme in your application before adding the components. This means that your app's theme should extend a theme from `Theme.MaterialComponents`, and not `Theme.AppCompat`. Find a correct example **below**. If you want to keep using an `AppCompat` theme for styling, you can inherit from a [Bridge Theme](https://m2.material.io/develop/android/docs/getting-started#bridge-themes) to support using Material based components.
 
 ```xml
 <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 ```
 
-If you want to keep using an `AppCompat` theme for styling, you can inherit from a [Bridge Theme](https://m2.material.io/develop/android/docs/getting-started#bridge-themes) to support using Material based components.
+:::note
+Check out our [sample app](#sample-app) for a quick start in using our UI Components.
+:::
 
 ## ViewModels
 

@@ -1,11 +1,11 @@
-# Customizing Image and Video Previews
+# Image and Video Previews
 
 ## Introduction
 
 The UI Components Chat SDK allows you to customize how image and video attachments are displayed.
 
 :::note
-Video thumbnails are a paid feature, with the pricing listed [here](https://getstream.io/chat/pricing/). They are enabled by default but can be turned off by setting the `ChatUI` property `videoThumbnailsEnabled` to `false`. You can read more about disabling video thumbnails in the [configuration documentation](../03-customizing-components.mdx#disabling-video-thumbnails)
+Video thumbnails are a paid feature, with the pricing listed [here](https://getstream.io/chat/pricing/). They are enabled by default but can be turned off by setting the `ChatUI` property `videoThumbnailsEnabled` to `false`. You can read more about disabling video thumbnails in the [configuration documentation](03-customizing-components.mdx#disabling-video-thumbnails)
 :::
 
 ## Customization
@@ -20,7 +20,7 @@ By default, it looks like so:
 
 | Default Image and Video Attachment Previews (Light Mode) | Default Image and Video Attachment Previews (Dark Mode) |
 |---|---|
-| ![Default Image and Video Attachment Previews Light Mode](../../assets/xml_customizing_image_and_video_attachments_message_list_stock.png) | ![Default Image and Video Attachment Previews Dark Mode](../../assets/xml_customizing_image_and_video_attachments_message_list_stock_dark.png) |
+| ![Default Image and Video Attachment Previews Light Mode](../assets/xml_customizing_image_and_video_attachments_message_list_stock.png) | ![Default Image and Video Attachment Previews Dark Mode](../assets/xml_customizing_image_and_video_attachments_message_list_stock_dark.png) |
 
 We'll start changing it by replacing the stock play button in favor of a flatter, semi-transparent design.
 
@@ -60,7 +60,7 @@ The result should look like so:
 
 | Custom Image and Video Attachment Previews (Light Mode) | Custom Image and Video Attachment Previews (Dark Mode) |
 |---|---|
-| ![Custom Image and Video Attachment Previews Light Mode](../../assets/xml_customizing_image_and_video_attachments_message_list_custom.png) | ![Custom Image and Video Attachment Previews Dark Mode](../../assets/xml_customizing_image_and_video_attachments_message_list_custom_dark.png) |
+| ![Custom Image and Video Attachment Previews Light Mode](../assets/xml_customizing_image_and_video_attachments_message_list_custom.png) | ![Custom Image and Video Attachment Previews Dark Mode](../assets/xml_customizing_image_and_video_attachments_message_list_custom_dark.png) |
 
 ### MessageComposerView
 
@@ -68,7 +68,7 @@ By default, attachments inside `MessageComposerView` look like so:
 
 | Default Image and Video Attachment Previews (Light Mode) | Default Image and Video Attachment Previews (Dark Mode) |
 |---|---|
-| ![Default Image and Video Attachment Previews Light Mode](../../assets/xml_customizing_image_and_video_attachments_message_composer_stock.png) | ![Default Image and Video Attachment Previews Dark Mode](../../assets/xml_customizing_image_and_video_attachments_message_composer_stock_dark.png) |
+| ![Default Image and Video Attachment Previews Light Mode](../assets/xml_customizing_image_and_video_attachments_message_composer_stock.png) | ![Default Image and Video Attachment Previews Dark Mode](../assets/xml_customizing_image_and_video_attachments_message_composer_stock_dark.png) |
 
 This component offers a more direct styling approach compared to `MessageListView`. You can simply add attributes to the `MessageComposerView` declaration in your XML layout.
 
@@ -93,7 +93,7 @@ Which results in the following UI:
 
 | Custom Image and Video Attachment Previews (Light Mode) | Custom Image and Video Attachment Previews (Dark Mode) |
 |---|---|
-| ![Custom Image and Video Attachment Previews Light Mode](../../assets/xml_customizing_image_and_video_attachments_message_composer_custom.png) | ![Custom Image and Video Attachment Previews Dark Mode](../../assets/xml_customizing_image_and_video_attachments_message_composer_custom_dark.png) |
+| ![Custom Image and Video Attachment Previews Light Mode](../assets/xml_customizing_image_and_video_attachments_message_composer_custom.png) | ![Custom Image and Video Attachment Previews Dark Mode](../assets/xml_customizing_image_and_video_attachments_message_composer_custom_dark.png) |
 
 ### Attachment Gallery
 
@@ -103,11 +103,11 @@ The default appearance of the gallery looks like this:
 
 | Default Image and Video Attachment Gallery (Light Mode) | Default Image and Video Attachment Gallery with Overview (Light Mode) |
 |---|---|
-| ![Default Image and Video Attachment Gallery Light Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_stock.png) | ![Default Image and Video Attachment Gallery with Overview Light Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_stock.png) |
+| ![Default Image and Video Attachment Gallery Light Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_stock.png) | ![Default Image and Video Attachment Gallery with Overview Light Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_stock.png) |
 
 | Default Image and Video Attachment Gallery (Dark Mode) | Default Image and Video Attachment Gallery with Overview (Dark Mode) |
 |---|---|
-| ![Default Image and Video Attachment Gallery Dark Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_stock_dark.png) | ![Default Image and Video Attachment Gallery with Overview Dark Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_stock_dark.png) |
+| ![Default Image and Video Attachment Gallery Dark Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_stock_dark.png) | ![Default Image and Video Attachment Gallery with Overview Dark Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_stock_dark.png) |
 
 Let's replicate the changes we made in the previous sections.
 
@@ -173,8 +173,8 @@ Now the attachment gallery should look like so:
 
 | Custom Image and Video Attachment Gallery (Light Mode) | Custom Image and Video Attachment Gallery with Overview (Light Mode) |
 |---|---|
-| ![Custom Image and Video Attachment Gallery Light Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_custom.png) | ![Custom Image and Video Attachment Gallery with Overview Light Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_custom.png) |
+| ![Custom Image and Video Attachment Gallery Light Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_custom.png) | ![Custom Image and Video Attachment Gallery with Overview Light Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_custom.png) |
 
 | Custom Image and Video Attachment Gallery (Dark Mode) | Custom Image and Video Attachment Gallery with Overview (Dark Mode) |
 |---|---|
-| ![Custom Image and Video Attachment Gallery Dark Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_custom_dark.png) | ![Custom Image and Video Attachment Gallery with Overview Dark Mode](../../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_custom_dark.png) |
+| ![Custom Image and Video Attachment Gallery Dark Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_custom_dark.png) | ![Custom Image and Video Attachment Gallery with Overview Dark Mode](../assets/xml_customizing_image_and_video_attachments_attachment_gallery_with_overview_custom_dark.png) |

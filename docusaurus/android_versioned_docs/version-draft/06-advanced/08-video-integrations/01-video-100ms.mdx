@@ -55,7 +55,7 @@ There are only a few setup steps to go through in the Stream dashboard and this 
 
 This is the screen that you navigated to:
 
-![View of the Stream Dashboard when an app was selected with the external video integration.](../../../assets/hms-guide-before.png)
+![View of the Stream Dashboard when an app was selected with the external video integration.](../../assets/hms-guide-before.png)
 
 First, it is necessary to enable the integration through the toggle in the top right (red arrow in the image below). Make sure that you can see the green **100ms Enabled** badge at the top.
 
@@ -66,7 +66,7 @@ Next, it is necessary to enter the credentials from the 100ms console. This is t
 - `Default Role` (can be `guest`)
 - `Default Room Template` (100ms Dashboard: `Templates` -> `Name`)
 
-![View of the Stream Dashboard when the 100ms video integration was enabled.](../../../assets/hms-guide-after.png)
+![View of the Stream Dashboard when the 100ms video integration was enabled.](../../assets/hms-guide-after.png)
 
 With these steps being taken, the Stream Chat SDK will use these credentials internally to initiate calls without you needing to take additional steps.
 
@@ -326,7 +326,7 @@ For more details about override methods from `HMSUpdateListener`, check out the 
 
 ## 5. Implement Video Call Layouts
 Now you’ll implement a video call screen like the below:
-![Video Call Screen](../../../assets/video-integration-call.jpg)
+![Video Call Screen](../../assets/video-integration-call.jpg)
 
 The UI components of the call are:
 
@@ -720,7 +720,7 @@ VideoCallDialogFragment.create(callType = callType, callId = callId)
 
 The end result will look like this:
 
-![Video Integration Results](../../../assets/video-integration-call-result.png)
+![Video Integration Results](../../assets/video-integration-call-result.png)
 
 But you may face an unresolved IDE error for the `ChannelViewModel` if you build your project now. You’ll cover it in the following sections.
 
@@ -730,7 +730,7 @@ We implemented a basic form of a video call with 100ms SDK. Now let’s create c
 
 Now, let’s integrate the video call into your chat screen with the custom attachment. You will show a custom UI for call messages in the message list that will look like this:
 
-![Video Integration Custom Call Messages Results](../../../assets/video-integration-custom-attachments.png)
+![Video Integration Custom Call Messages Results](../../assets/video-integration-custom-attachments.png)
 
 ### Create Video Call Custom Attachments
 
