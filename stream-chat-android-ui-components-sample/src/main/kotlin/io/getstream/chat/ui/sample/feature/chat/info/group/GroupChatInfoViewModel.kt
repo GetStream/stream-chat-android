@@ -32,10 +32,13 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.utils.Event
+import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 
 class GroupChatInfoViewModel(
@@ -43,6 +46,8 @@ class GroupChatInfoViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
 ) : ViewModel() {
+
+    private val logger by taggedLogger("GroupChatInfo-VM")
 
     /**
      * Holds information about the current channel and is actively updated.
@@ -74,16 +79,29 @@ class GroupChatInfoViewModel(
                 createdBy = channelData.createdBy,
             )
         }
+
+        // TODO we use take(1), cause ChannelState.hidden seems to be not updated properly
+        _state.addSource(channelState.flatMapLatest { it.hidden }.distinctUntilChanged().take(1).asLiveData()) { hidden ->
+            logger.v { "[onHiddenChanged] hidden: $hidden" }
+            _state.value = _state.value?.copy(
+                channelHidden = hidden,
+            )
+        }
     }
 
     fun onAction(action: Action) {
-        when (action) {
-            is Action.NameChanged -> changeGroupName(action.name)
-            is Action.MemberClicked -> handleMemberClick(action.member)
-            Action.MembersSeparatorClicked -> _state.value = _state.value!!.copy(shouldExpandMembers = true)
-            is Action.MuteChannelClicked -> switchGroupMute(action.isEnabled)
-            is Action.ChannelMutesUpdated -> updateChannelMuteStatus(action.channelMutes)
-            Action.LeaveChannelClicked -> leaveChannel()
+        logger.d { "[onAction] action: $action" }
+        viewModelScope.launch {
+            when (action) {
+                is Action.NameChanged -> changeGroupName(action.name)
+                is Action.MemberClicked -> handleMemberClick(action.member)
+                is Action.MembersSeparatorClicked -> _state.value = _state.value!!.copy(shouldExpandMembers = true)
+                is Action.MuteChannelClicked -> switchGroupMute(action.isEnabled)
+                is Action.HideChannelClicked -> switchGroupHide(action.isHidden, action.clearHistory)
+                is Action.ChannelMutesUpdated -> updateChannelMuteStatus(action.channelMutes)
+                is Action.ChannelHiddenUpdated -> updateChannelHideStatus(action.cid, action.hidden)
+                is Action.LeaveChannelClicked -> leaveChannel()
+            }
         }
     }
 
@@ -130,7 +148,13 @@ class GroupChatInfoViewModel(
     }
 
     private fun updateChannelMuteStatus(channelMutes: List<ChannelMute>) {
-        _state.postValue(_state.value!!.copy(channelMuted = channelMutes.any { it.channel.cid == cid }))
+        _state.value = _state.value!!.copy(channelMuted = channelMutes.any { it.channel.cid == cid })
+    }
+
+    private fun updateChannelHideStatus(eventCid: String, hidden: Boolean) {
+        if (eventCid != cid) return
+        logger.v { "[updateChannelHideStatus] hidden: $hidden" }
+        _state.value = _state.value!!.copy(channelHidden = hidden)
     }
 
     private fun switchGroupMute(isEnabled: Boolean) {
@@ -146,11 +170,26 @@ class GroupChatInfoViewModel(
         }
     }
 
+    private fun switchGroupHide(hide: Boolean, clearHistory: Boolean?) {
+        logger.v { "[switchGroupHide] hide: $hide, clearHistory: $clearHistory" }
+        viewModelScope.launch {
+            val result = if (hide) {
+                channelClient.hide(clearHistory = clearHistory == true).await()
+            } else {
+                channelClient.show().await()
+            }
+            if (result is Result.Failure) {
+                _errorEvents.postValue(Event(ErrorEvent.HideChannelError))
+            }
+        }
+    }
+
     data class State(
         val members: List<Member>,
         val createdBy: User,
         val channelName: String,
         val channelMuted: Boolean,
+        val channelHidden: Boolean,
         val shouldExpandMembers: Boolean?,
         val membersToShowCount: Int,
         val ownCapabilities: Set<String>,
@@ -159,21 +198,27 @@ class GroupChatInfoViewModel(
     sealed class Action {
         data class NameChanged(val name: String) : Action()
         data class MemberClicked(val member: Member) : Action()
-        object MembersSeparatorClicked : Action()
+        data object MembersSeparatorClicked : Action()
         data class MuteChannelClicked(val isEnabled: Boolean) : Action()
+        data class HideChannelClicked(val isHidden: Boolean, val clearHistory: Boolean? = null) : Action()
         data class ChannelMutesUpdated(val channelMutes: List<ChannelMute>) : Action()
-        object LeaveChannelClicked : Action()
+
+        data class ChannelHiddenUpdated(
+            val cid: String, val hidden: Boolean, val clearHistory: Boolean? = null
+        ) : Action()
+        data object LeaveChannelClicked : Action()
     }
 
     sealed class UiEvent {
         data class ShowMemberOptions(val member: Member, val channelName: String) : UiEvent()
-        object RedirectToHome : UiEvent()
+        data object RedirectToHome : UiEvent()
     }
 
     sealed class ErrorEvent {
-        object ChangeGroupNameError : ErrorEvent()
-        object MuteChannelError : ErrorEvent()
-        object LeaveChannelError : ErrorEvent()
+        data object ChangeGroupNameError : ErrorEvent()
+        data object MuteChannelError : ErrorEvent()
+        data object HideChannelError : ErrorEvent()
+        data object LeaveChannelError : ErrorEvent()
     }
 
     companion object {
@@ -184,6 +229,7 @@ class GroupChatInfoViewModel(
             createdBy = User(),
             channelName = "",
             channelMuted = false,
+            channelHidden = false,
             shouldExpandMembers = null,
             membersToShowCount = 0,
             emptySet(),
