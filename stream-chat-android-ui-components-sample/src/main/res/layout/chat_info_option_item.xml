@@ -47,6 +47,7 @@
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toEndOf="@id/optionImageView"
         app:layout_constraintTop_toTopOf="@id/optionImageView"
+        app:layout_constraintHorizontal_bias="0"
         tools:text="Notifications"
         />
 
@@ -56,9 +57,27 @@
         android:layout_height="24dp"
         android:layout_marginEnd="@dimen/spacing_medium"
         android:src="@drawable/ic_icon_right"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/optionImageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/optionTextView"
+        app:layout_constraintTop_toTopOf="@id/optionImageView"
+        app:tint="@color/stream_ui_grey"
+        tools:ignore="ContentDescription"
+        />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/optionCompound"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginEnd="@dimen/spacing_small"
+        android:background="@null"
+        android:clickable="false"
+        android:focusable="false"
+        android:src="@drawable/ic_icon_right"
+        app:layout_constraintBottom_toBottomOf="@id/optionImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/optionArrowRight"
         app:layout_constraintTop_toTopOf="@id/optionImageView"
         app:tint="@color/stream_ui_grey"
         tools:ignore="ContentDescription"

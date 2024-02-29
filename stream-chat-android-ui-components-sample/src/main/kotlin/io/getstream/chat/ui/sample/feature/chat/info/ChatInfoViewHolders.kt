@@ -88,7 +88,9 @@ class ChatInfoOptionViewHolder(
         binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.textColorResId))
         binding.optionImageView.setImageResource(item.iconResId)
         binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionArrowRight.isInvisible = !item.showRightArrow
+        binding.optionArrowRight.isVisible = item.showRightArrow
+        binding.optionCompound.isVisible = item.checkedState != null
+        binding.optionCompound.isChecked = item.checkedState == true
     }
 }
 

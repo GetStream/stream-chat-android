@@ -21,6 +21,8 @@
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
     <string name="leave">Leave</string>
+    <string name="clear_history">Clear History</string>
+    <string name="keep_history">Keep History</string>
     <string name="remove">Remove</string>
     <string name="ok">Ok</string>
 
@@ -102,6 +104,9 @@
 
     <string name="chat_group_info_owner">Owner</string>
     <string name="chat_group_info_option_mute">Mute Group</string>
+    <string name="chat_group_info_option_hide">Hide Group</string>
+    <string name="chat_group_info_option_show">Show Group</string>
+    <string name="chat_group_info_option_hide_description">Do you really want to hide the group %s?</string>
     <string name="chat_group_info_option_leave">Leave Group</string>
     <string name="chat_group_info_option_members_separator_title">%d more</string>
     <string name="chat_group_info_edit_name_label">NAME</string>
@@ -115,6 +120,7 @@
     <string name="chat_group_info_error_remove_member">Failed to remove member</string>
     <string name="chat_group_info_error_change_name">Failed to change channel name</string>
     <string name="chat_group_info_error_mute_channel">Failed to switch mute state</string>
+    <string name="chat_group_info_error_hide_channel">Failed to switch hide state</string>
     <string name="chat_group_info_error_leave_channel">Failed to leave channel</string>
     <string name="chat_group_info_error_add_member">Failed to add channel member</string>
 
