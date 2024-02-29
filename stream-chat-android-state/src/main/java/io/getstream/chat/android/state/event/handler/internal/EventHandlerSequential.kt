@@ -352,11 +352,16 @@ internal class EventHandlerSequential(
         }
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
 
+        stateRegistry.handleBatchEvent(batchEvent)
+
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
             .forEach { (cid, events) ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
+                if (events.any { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }) {
+                    logicRegistry.removeChannel(channelType, channelId)
+                }
                 if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
                     val channelLogic: ChannelLogic = logicRegistry.channel(
                         channelType = channelType,
@@ -395,8 +400,6 @@ internal class EventHandlerSequential(
                 }
         }
 
-        stateRegistry.handleBatchEvent(batchEvent)
-
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         logicRegistry.getActiveQueryChannelsLogic().map { channelsLogic ->
@@ -423,7 +426,18 @@ internal class EventHandlerSequential(
         logger.v { "[updateOfflineStorage] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size} " }
         val events = batchEvent.sortedEvents.map { it.enrichIfNeeded() }
         val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
-        batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
+        val cidEvents = events.filterIsInstance<CidEvent>()
+        batchBuilder.addToFetchChannels(
+            cidEvents
+                .filterNot { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
+                .map { it.cid },
+        )
+
+        batchBuilder.addToRemoveChannels(
+            cidEvents
+                .filter { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
+                .map { it.cid },
+        )
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
             events.filterIsInstance<HasOwnUser>().map { it.me }

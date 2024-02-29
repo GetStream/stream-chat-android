@@ -134,11 +134,16 @@ internal class EventBatchUpdate private constructor(
         private val id: Int,
     ) {
         private val channelsToFetch = mutableSetOf<String>()
+        private val channelsToRemove = mutableSetOf<String>()
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
 
         fun addToFetchChannels(cIds: List<String>) {
             channelsToFetch += cIds
+        }
+
+        fun addToRemoveChannels(cIds: List<String>) {
+            channelsToRemove += cIds
         }
 
         fun addToFetchChannels(cId: String) {
@@ -162,6 +167,7 @@ internal class EventBatchUpdate private constructor(
             repos: RepositoryFacade,
             currentUserId: String,
         ): EventBatchUpdate {
+            channelsToRemove.forEach { repos.deleteChannel(it) }
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
             val messageMap: Map<String, Message> =

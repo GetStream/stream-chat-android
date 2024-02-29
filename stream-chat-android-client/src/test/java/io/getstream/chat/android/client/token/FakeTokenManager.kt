@@ -16,11 +16,12 @@
 
 package io.getstream.chat.android.client.token
 
-internal class FakeTokenManager(val tkn: String) : TokenManager {
-
-    override fun loadSync(): String {
-        return tkn
-    }
+internal class FakeTokenManager(
+    private val token: String,
+    private val loadSyncToken: String = token,
+) : TokenManager {
+    override fun loadSync(): String = loadSyncToken
+    override fun getToken(): String = token
 
     override fun ensureTokenLoaded() {
         // empty
@@ -32,10 +33,6 @@ internal class FakeTokenManager(val tkn: String) : TokenManager {
 
     override fun hasTokenProvider(): Boolean {
         return true
-    }
-
-    override fun getToken(): String {
-        return tkn
     }
 
     override fun hasToken(): Boolean {

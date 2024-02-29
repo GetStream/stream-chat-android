@@ -115,6 +115,10 @@ internal class LogicRegistry internal constructor(
         }
     }
 
+    internal fun removeChannel(channelType: String, channelId: String) {
+        channels.remove(channelType to channelId)
+    }
+
     fun channelState(channelType: String, channelId: String): ChannelStateLogic {
         return channel(channelType, channelId).stateLogic()
     }

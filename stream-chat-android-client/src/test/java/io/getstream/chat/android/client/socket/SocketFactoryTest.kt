@@ -44,7 +44,7 @@ internal class SocketFactoryTest {
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
-    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token), httpClient)
+    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient)
 
     /** [arguments] */
     @ParameterizedTest
@@ -65,6 +65,7 @@ internal class SocketFactoryTest {
         private val endpoint = "https://${randomString().lowercase(Locale.getDefault())}/"
         private val apiKey = randomString()
         private val token = randomString()
+        private val loadSyncToken = randomString()
 
         @JvmStatic
         @Suppress("MaxLineLength")
@@ -78,7 +79,7 @@ internal class SocketFactoryTest {
             randomUser().let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt",
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$loadSyncToken&stream-auth-type=jwt",
                 )
             },
             User("anon").let {
