@@ -821,20 +821,12 @@ public class MessageComposerController(
 
             val membersCount = _channelState.value?.membersCount ?: 0
             when {
-                userNameContains.isEmpty() -> {
-                    logger.v { "[handleMentionSuggestions] userNameContains must be not empty" }
-                    emptyList()
-                }
-                membersCount == 0 -> {
-                    logger.v { "[handleMentionSuggestions] no members in the channel." }
-                    emptyList()
-                }
-                membersCount == users.size -> {
-                    logger.v { "[handleMentionSuggestions] mention found in the local state." }
+                userNameContains.isEmpty() || membersCount == users.size -> {
+                    logger.v { "[handleMentionSuggestions] search locally" }
                     users.filter { it.name.contains(userNameContains, true) }
                 }
-                else -> {
-                    logger.v { "[handleMentionSuggestions] querying the server for members who match the mention." }
+                userNameContains.isNotEmpty() -> {
+                    logger.v { "[handleMentionSuggestions] search remotely" }
                     val (channelType, channelId) = channelId.cidToTypeAndId()
 
                     queryMembersByUserNameContains(
@@ -842,6 +834,11 @@ public class MessageComposerController(
                         channelId = channelId,
                         contains = userNameContains,
                     )
+                }
+                else -> {
+                    logger.v { "[handleMentionSuggestions] userNameContains: $userNameContains, " +
+                        "membersCount: $membersCount" }
+                    emptyList()
                 }
             }
         } else {
