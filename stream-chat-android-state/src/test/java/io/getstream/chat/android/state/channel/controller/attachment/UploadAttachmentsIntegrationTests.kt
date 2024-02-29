@@ -248,6 +248,10 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun deleteChannelMessages(cid: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteChannelMessage(message: Message) {
         messages.remove(message.id)
     }
