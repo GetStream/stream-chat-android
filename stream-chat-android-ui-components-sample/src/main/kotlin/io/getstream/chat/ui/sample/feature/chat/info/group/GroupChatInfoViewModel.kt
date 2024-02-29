@@ -84,7 +84,7 @@ class GroupChatInfoViewModel(
             channelState.flatMapLatest { it.hidden }
                 .distinctUntilChanged()
                 .take(1) // TODO we use take(1), cause ChannelState.hidden seems to be not updated properly
-                .asLiveData()
+                .asLiveData(),
         ) { hidden ->
             logger.v { "[onHiddenChanged] hidden: $hidden" }
             _state.value = _state.value?.copy(
