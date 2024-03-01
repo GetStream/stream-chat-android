@@ -66,7 +66,7 @@ You can provide custom icon and text resources displayed in notifications by ove
 - Text resources are placed inside [string.xml](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/src/main/res/values/strings.xml) file
 
 :::info
-The SDK supports multiple languages. Make sure to override resources in all languages used in your app. Refer to [Adding Localization](../../../02-ui-components/08-localization.mdx) guide for more details.
+The SDK supports multiple languages. Make sure to override resources in all languages used in your app. Refer to [Adding Localization](../../02-ui-components/08-localization.mdx) guide for more details.
 :::
 
 ### Using our `NotificationHandlerFactory`
@@ -256,7 +256,7 @@ new ChatClient.Builder("api-key", context)
 
 ### Dismissing notifications
 
-Our [`MessageListView`](../../../02-ui-components/05-message-list/03-message-list.mdx) UI component and [`MessageList`](../../../03-compose/05-message-list/03-message-list.mdx) Compose UI Component automatically dismiss notifications related to a `Channel` when the user opens it.
+Our [`MessageListView`](../../02-ui-components/05-message-list/03-message-list.mdx) UI component and [`MessageList`](../../03-compose/05-message-list/03-message-list.mdx) Compose UI Component automatically dismiss notifications related to a `Channel` when the user opens it.
 
 If you need to dismiss them manually (for example, if you are using a custom `MessageListView` component) you can call the `ChatClient::dismissChannelNotifications` method, providing the `channelType` and `channelId` from the `Channel` that you would like to dismiss notifications:
 

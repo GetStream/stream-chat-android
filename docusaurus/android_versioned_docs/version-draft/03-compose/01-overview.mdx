@@ -42,20 +42,21 @@ See the individual pages for these components to learn more about them.
 
 **Utility components** 
 
-* [User Avatar](08-utility-components/01-user-avatar.mdx)
-* [Channel Avatar](08-utility-components/02-channel-avatar.mdx)
-* [Search Input](08-utility-components/03-search-input.mdx)
+* [User Avatar](07-utility-components/01-user-avatar.mdx)
+* [Channel Avatar](07-utility-components/02-channel-avatar.mdx)
+* [Search Input](07-utility-components/03-search-input.mdx)
 
-## Requirements
+## Checklist
 
-To use the Compose UI Components, you have to set up your project to work with Jetpack Compose, as per the [official documentation](https://developer.android.com/jetpack/compose/setup).
-
-Once you're done, add the necessary dependencies, as described on the [Dependencies](../01-basics/02-installation.mdx#ui-components) page.
-
-And that's it. You should be able to use our Compose UI Components in your app to start building a rich chat experience.
+For a successful integration of our Compose UI Components, follow these steps:
+1. Set up your project to work with Jetpack Compose, as per the [official documentation](https://developer.android.com/jetpack/compose/setup).
+2. Dependency. Add the dependency to your app, as described on the [Dependencies](../01-basics/02-installation.mdx#compose-ui-components) page.
+3. Set up the `ChatClient`. Learn how to set up the ChatClient [here](https://getstream.io/chat/docs/android/?language=kotlin#chat-client).
+4. User connection. Read how to handle the user connection [here](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin#connecting-the-user) and info about User Tokens [here](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
+5. State and Offline. Using the `StatePlugin` is mandatory if you want to use our UI Components. Read the [State Overview](../05-state-and-offline/01-state-overview.mdx) page for more information. Also, it's a good idea to add [offline support](../05-state-and-offline/02-offline-support.mdx) for better UX.
 
 :::note
-If you're looking to explore the setup and our components in a step-by-step way, check out our [Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/).
+If you're looking to explore the setup and our components in a step-by-step way, check out our [Compose In-App Messaging Tutorial](https://getstream.io/chat/compose/tutorial/). Also, check-out our [sample app](#sample-app).
 :::
 
 ## ViewModels
