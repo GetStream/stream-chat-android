@@ -26,6 +26,8 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.subscribeFor
 import io.getstream.chat.android.state.utils.EventObserver
@@ -43,8 +45,11 @@ import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAd
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.autoScrollToTop
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import io.getstream.log.taggedLogger
 
 class GroupChatInfoFragment : Fragment() {
+
+    private val logger by taggedLogger("GroupChatInfo-View")
 
     private val args: GroupChatInfoFragmentArgs by navArgs()
     private val viewModel: GroupChatInfoViewModel by viewModels { ChatViewModelFactory(args.cid) }
@@ -101,6 +106,7 @@ class GroupChatInfoFragment : Fragment() {
 
     private fun bindGroupInfoViewModel() {
         subscribeForChannelMutesUpdatedEvents()
+        subscribeForChannelVisibilityEvents()
         setOnClickListeners()
 
         viewModel.events.observe(
@@ -135,6 +141,7 @@ class GroupChatInfoFragment : Fragment() {
                         ChatInfoItem.Separator,
                         ChatInfoItem.ChannelName(state.channelName),
                         ChatInfoItem.Option.Stateful.MuteChannel(isChecked = state.channelMuted),
+                        ChatInfoItem.Option.HideChannel(isHidden = state.channelHidden),
                         ChatInfoItem.Option.PinnedMessages,
                         ChatInfoItem.Option.SharedMedia,
                         ChatInfoItem.Option.SharedFiles,
@@ -148,6 +155,7 @@ class GroupChatInfoFragment : Fragment() {
                 when (it) {
                     is GroupChatInfoViewModel.ErrorEvent.ChangeGroupNameError -> R.string.chat_group_info_error_change_name
                     is GroupChatInfoViewModel.ErrorEvent.MuteChannelError -> R.string.chat_group_info_error_mute_channel
+                    is GroupChatInfoViewModel.ErrorEvent.HideChannelError -> R.string.chat_group_info_error_hide_channel
                     is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel
                 }.let(::showToast)
             },
@@ -156,14 +164,14 @@ class GroupChatInfoFragment : Fragment() {
 
     private fun setOnClickListeners() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
-            viewModel.onAction(
-                when (option) {
-                    is ChatInfoItem.Option.Stateful.MuteChannel -> GroupChatInfoViewModel.Action.MuteChannelClicked(
-                        isChecked,
-                    )
-                    else -> throw IllegalStateException("Chat info option $option is not supported!")
-                },
-            )
+            logger.d { "[onStatefulOptionChanged] option: $option, isChecked: $isChecked" }
+
+            when (option) {
+                is ChatInfoItem.Option.Stateful.MuteChannel -> viewModel.onAction(
+                    GroupChatInfoViewModel.Action.MuteChannelClicked(isChecked),
+                )
+                else -> throw IllegalStateException("Chat info option $option is not supported!")
+            }
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
@@ -186,6 +194,9 @@ class GroupChatInfoFragment : Fragment() {
                         }
                         .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
                 }
+                is ChatInfoItem.Option.HideChannel -> prepareHideChannelClickedAction {
+                    viewModel.onAction(it)
+                }
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }
         }
@@ -197,6 +208,49 @@ class GroupChatInfoFragment : Fragment() {
     private fun subscribeForChannelMutesUpdatedEvents() {
         ChatClient.instance().subscribeFor<NotificationChannelMutesUpdatedEvent>(viewLifecycleOwner) {
             viewModel.onAction(GroupChatInfoViewModel.Action.ChannelMutesUpdated(it.me.channelMutes))
+        }
+    }
+
+    private fun subscribeForChannelVisibilityEvents() {
+        ChatClient.instance().subscribeFor<ChannelHiddenEvent>(viewLifecycleOwner) {
+            viewModel.onAction(
+                GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
+                    cid = it.cid,
+                    hidden = true,
+                    clearHistory = it.clearHistory,
+                ),
+            )
+        }
+        ChatClient.instance().subscribeFor<ChannelVisibleEvent>(viewLifecycleOwner) {
+            viewModel.onAction(
+                GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
+                    cid = it.cid,
+                    hidden = false,
+                ),
+            )
+        }
+    }
+
+    private fun prepareHideChannelClickedAction(
+        onReady: (GroupChatInfoViewModel.Action.HideChannelClicked) -> Unit,
+    ) {
+        val curValue = viewModel.state.value!!.channelHidden
+        val newValue = curValue.not()
+        val action = GroupChatInfoViewModel.Action.HideChannelClicked(newValue)
+        if (newValue) {
+            val channelName = viewModel.state.value!!.channelName
+            ConfirmationDialogFragment.newHideChannelInstance(requireContext(), channelName)
+                .apply {
+                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                        onReady(action.copy(clearHistory = true))
+                    }
+                    cancelClickListener = ConfirmationDialogFragment.CancelClickListener {
+                        onReady(action)
+                    }
+                }
+                .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+        } else {
+            onReady(action)
         }
     }
 }

@@ -34,7 +34,7 @@ sealed class ChatInfoItem {
     data class MemberItem(val member: Member, val createdBy: User) : ChatInfoItem()
     data class MembersSeparator(val membersToShow: Int) : ChatInfoItem()
     data class ChannelName(val name: String) : ChatInfoItem()
-    object Separator : ChatInfoItem()
+    data object Separator : ChatInfoItem()
 
     sealed class Option : ChatInfoItem() {
 
@@ -52,35 +52,37 @@ sealed class ChatInfoItem {
 
         open val showRightArrow: Boolean = true
 
-        object PinnedMessages : Option() {
+        open val checkedState: Boolean? = null
+
+        data object PinnedMessages : Option() {
             override val iconResId: Int
                 get() = R.drawable.stream_ui_ic_pin
             override val textResId: Int
                 get() = R.string.chat_info_option_pinned_messages
         }
 
-        object SharedMedia : Option() {
+        data object SharedMedia : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_media
             override val textResId: Int
                 get() = R.string.chat_info_option_media
         }
 
-        object SharedFiles : Option() {
+        data object SharedFiles : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_files
             override val textResId: Int
                 get() = R.string.chat_info_option_files
         }
 
-        object SharedGroups : Option() {
+        data object SharedGroups : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_new_group
             override val textResId: Int
                 get() = R.string.chat_info_option_shared_groups
         }
 
-        object DeleteConversation : Option() {
+        data object DeleteConversation : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_delete
             override val textResId: Int
@@ -92,12 +94,24 @@ sealed class ChatInfoItem {
             override val showRightArrow: Boolean = false
         }
 
-        object LeaveGroup : Option() {
+        data object LeaveGroup : Option() {
             override val iconResId: Int
                 get() = R.drawable.ic_leave_group
             override val textResId: Int
                 get() = R.string.chat_group_info_option_leave
             override val showRightArrow: Boolean = false
+        }
+
+        data class HideChannel(var isHidden: Boolean) : Option() {
+            override val iconResId: Int
+                get() = R.drawable.ic_hide
+            override val textResId: Int
+                get() = R.string.chat_group_info_option_hide
+
+            override val showRightArrow: Boolean = false
+
+            override val checkedState: Boolean
+                get() = isHidden
         }
 
         sealed class Stateful : Option() {

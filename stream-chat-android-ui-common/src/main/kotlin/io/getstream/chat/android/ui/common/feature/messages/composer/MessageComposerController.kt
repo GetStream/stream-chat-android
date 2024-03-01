@@ -142,10 +142,12 @@ public class MessageComposerController(
         coroutineScope = scope,
     )
 
+    private val _channelState: StateFlow<ChannelState?> = observeChannelState()
+
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: Flow<ChannelState> = observeChannelState()
+    public val channelState: Flow<ChannelState> = _channelState.filterNotNull()
 
     /**
      * Holds information about the abilities the current user
@@ -369,13 +371,13 @@ public class MessageComposerController(
         setupComposerState()
     }
 
-    private fun observeChannelState(): Flow<ChannelState> {
+    private fun observeChannelState(): StateFlow<ChannelState?> {
         logger.d { "[observeChannelState] cid: $channelId, messageId: $messageId, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(
             cid = channelId,
             messageLimit = messageLimit,
             coroutineScope = scope,
-        ).filterNotNull()
+        )
     }
 
     /**
@@ -817,15 +819,14 @@ public class MessageComposerController(
             logger.v { "[handleMentionSuggestions] Input contains the mention prefix @." }
             val userNameContains = messageText.substringAfterLast("@")
 
-            val localMentions = users.filter { it.name.contains(userNameContains, true) }
-
+            val membersCount = _channelState.value?.membersCount ?: 0
             when {
-                localMentions.isNotEmpty() -> {
-                    logger.v { "[handleMentionSuggestions] Mention found in the local state." }
-                    localMentions
+                userNameContains.isEmpty() || membersCount == users.size -> {
+                    logger.v { "[handleMentionSuggestions] search locally" }
+                    users.filter { it.name.contains(userNameContains, true) }
                 }
-                userNameContains.count() > 1 -> {
-                    logger.v { "[handleMentionSuggestions] Querying the server for members who match the mention." }
+                userNameContains.isNotEmpty() -> {
+                    logger.v { "[handleMentionSuggestions] search remotely" }
                     val (channelType, channelId) = channelId.cidToTypeAndId()
 
                     queryMembersByUserNameContains(
@@ -834,7 +835,13 @@ public class MessageComposerController(
                         contains = userNameContains,
                     )
                 }
-                else -> emptyList()
+                else -> {
+                    logger.v {
+                        "[handleMentionSuggestions] userNameContains: $userNameContains, " +
+                            "membersCount: $membersCount"
+                    }
+                    emptyList()
+                }
             }
         } else {
             emptyList()
