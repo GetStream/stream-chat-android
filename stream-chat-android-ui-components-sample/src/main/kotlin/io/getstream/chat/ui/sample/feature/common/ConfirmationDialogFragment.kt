@@ -33,6 +33,7 @@ import io.getstream.chat.ui.sample.databinding.ConfirmationDialogFragmentBinding
 internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
 
     var confirmClickListener: ConfirmClickListener? = null
+    var cancelClickListener: CancelClickListener? = null
 
     private val iconResId: Int by lazy { requireArguments().getInt(ARG_ICON_RES_ID) }
     private val iconTintResId: Int by lazy { requireArguments().getInt(ARG_ICON_TINT_RES_ID) }
@@ -48,6 +49,7 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
     override fun onDetach() {
         super.onDetach()
         confirmClickListener = null
+        cancelClickListener = null
     }
 
     override fun onCreateView(
@@ -71,7 +73,10 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             titleTextView.text = title
             descriptionTextView.text = description
             cancelButton.text = cancelText
-            cancelButton.setOnClickListener { dismiss() }
+            cancelButton.setOnClickListener {
+                cancelClickListener?.onClick()
+                dismiss()
+            }
             if (hasConfirmButton) {
                 confirmButton.apply {
                     isVisible = true
@@ -93,6 +98,10 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
     }
 
     fun interface ConfirmClickListener {
+        fun onClick()
+    }
+
+    fun interface CancelClickListener {
         fun onClick()
     }
 
@@ -131,6 +140,15 @@ internal class ConfirmationDialogFragment : BottomSheetDialogFragment() {
             description = context.getString(R.string.chat_group_info_leave_confirm, channelName),
             confirmText = context.getString(R.string.leave),
             cancelText = context.getString(R.string.cancel),
+        )
+
+        fun newHideChannelInstance(context: Context, channelName: String): ConfirmationDialogFragment = newInstance(
+            iconResId = R.drawable.ic_hide,
+            iconTintResId = R.color.stream_ui_grey,
+            title = context.getString(R.string.chat_group_info_option_hide),
+            description = context.getString(R.string.chat_group_info_option_hide_description, channelName),
+            confirmText = context.getString(R.string.clear_history),
+            cancelText = context.getString(R.string.keep_history),
         )
 
         fun newFlagMessageInstance(context: Context): ConfirmationDialogFragment = newInstance(

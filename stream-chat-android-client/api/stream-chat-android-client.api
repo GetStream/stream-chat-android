@@ -48,6 +48,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun disconnectSocket ()Lio/getstream/result/call/Call;
 	public final fun dismissChannelNotifications (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
+	public final fun enrichUrl (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun fetchCurrentUser ()Lio/getstream/result/call/Call;
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
@@ -2148,6 +2149,7 @@ public final class io/getstream/chat/android/client/persistance/repository/Chann
 public abstract interface class io/getstream/chat/android/client/persistance/repository/MessageRepository {
 	public abstract fun clear (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun deleteChannelMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

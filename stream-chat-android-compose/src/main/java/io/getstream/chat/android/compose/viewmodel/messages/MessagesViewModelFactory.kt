@@ -95,6 +95,7 @@ public class MessagesViewModelFactory(
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
+    private val isComposerLinkPreviewEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     /**
@@ -112,6 +113,7 @@ public class MessagesViewModelFactory(
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
                     messageId = messageId,
+                    isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
                 ),
             )
         },

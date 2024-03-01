@@ -20,6 +20,7 @@ import androidx.lifecycle.ViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
@@ -87,6 +88,11 @@ public class MessageComposerViewModel(
      * Represents the list of commands to be displayed in the command suggestion list popup.
      */
     public val commandSuggestions: MutableStateFlow<List<Command>> = messageComposerController.commandSuggestions
+
+    /**
+     * Represents the list of links that can be previewed.
+     */
+    public val linkPreviews: MutableStateFlow<List<LinkPreview>> = messageComposerController.linkPreviews
 
     /**
      * Current message mode, either [MessageMode.Normal] or [MessageMode.MessageThread]. Used to determine if we're

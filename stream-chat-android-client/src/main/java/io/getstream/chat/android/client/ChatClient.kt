@@ -416,7 +416,7 @@ internal constructor(
 
             is DisconnectedEvent -> {
                 logger.i { "[handleEvent] event: DisconnectedEvent(disconnectCause=${event.disconnectCause})" }
-                api.releseConnection()
+                api.releaseConnection()
                 mutableClientState.setConnectionState(ConnectionState.Offline)
                 when (event.disconnectCause) {
                     is DisconnectCause.ConnectionReleased,
@@ -2501,6 +2501,18 @@ internal constructor(
     @CheckResult
     public fun translate(messageId: String, language: String): Call<Message> =
         api.translate(messageId, language)
+
+    /**
+     * Enriches the given URL with Open Graph data.
+     */
+    @CheckResult
+    public fun enrichUrl(url: String): Call<Attachment> = api.og(url)
+        .doOnStart(userScope) {
+            logger.d { "[enrichUrl] #doOnStart; url: $url" }
+        }
+        .doOnResult(userScope) {
+            logger.v { "[enrichUrl] #doOnResult; completed($url): $it" }
+        }
 
     @CheckResult
     public fun banUser(

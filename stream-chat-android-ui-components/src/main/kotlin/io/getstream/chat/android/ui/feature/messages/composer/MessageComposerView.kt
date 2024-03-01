@@ -30,10 +30,10 @@ import androidx.core.view.children
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCommandSuggestionsContent
 import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerFooterContent
@@ -54,7 +54,6 @@ import io.getstream.chat.android.ui.feature.messages.composer.content.MessageCom
 import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerTrailingContent
 import io.getstream.chat.android.ui.feature.messages.composer.internal.MessageComposerSuggestionsPopup
 import io.getstream.chat.android.ui.feature.messages.composer.internal.ValidationErrorRenderer
-import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
@@ -136,16 +135,24 @@ public class MessageComposerView : ConstraintLayout {
     public var dismissSuggestionsListener: () -> Unit = {}
 
     /**
+     * Builder for the attachments picker dialog.
+     */
+    public var attachmentsPickerDialogBuilder: (AttachmentsPickerDialogStyle) -> AttachmentsPickerDialogFragment = {
+        AttachmentsPickerDialogFragment
+            .newInstance(it).apply {
+                setAttachmentsSelectionListener { attachments: List<Attachment> ->
+                    attachmentSelectionListener(attachments)
+                }
+            }
+    }
+
+    /**
      * Click listener for the pick attachments button.
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            AttachmentsPickerDialogFragment
-                .newInstance(messageComposerContext.style.attachmentsPickerDialogStyle).apply {
-                    setAttachmentSelectionListener { attachments: List<AttachmentMetaData> ->
-                        attachmentSelectionListener(attachments.map { it.toAttachment(requireContext()) })
-                    }
-                }.show(it, AttachmentsPickerDialogFragment.TAG)
+            attachmentsPickerDialogBuilder(messageComposerContext.style.attachmentsPickerDialogStyle)
+                .show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
 

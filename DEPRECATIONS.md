@@ -4,6 +4,7 @@ This document lists deprecated constructs in the SDK, with their expected time �
 
 | API / Feature | Deprecated (warning) | Deprecated (error) | Removed | Notes |
 | --- | --- | --- | --- | --- |
+| `AttachmentSelectionListener` | 2024.02.21 <br/>6.0.15 | 2024.03.21 ⌛ | 2024.04.21 ⌛ | Use `AttachmentsPickerDialogFragment.AttachmentsSelectionListener` instead. |
 | `ImageAttachmentQuotedContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2023.08.29<br/>6.0.0 | Deprecated in favor of `MediaAttachmentQuotedContent`. The new function has the ability to preview videos as well as images. |
 | `StreamDimens` constructor containing parameter `attachmentsContentImageGridSpacing`  | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2023.08.29<br/>6.0.0 | This constructor has been deprecated. Use the constructor that does not contain the parameter `attachmentsContentImageGridSpacing`. |
 | `ImageAttachmentContent` | 2022.09.13 <br/>5.9.1 | 2022.09.27<br/>5.9.1 | 2023.08.29<br/>6.0.0 | `ImageAttachmentContent` has been deprecated in favor of `MediattachmentContent`. The new function is able to preview videos as well as images and has access to a new and improved media gallery. |

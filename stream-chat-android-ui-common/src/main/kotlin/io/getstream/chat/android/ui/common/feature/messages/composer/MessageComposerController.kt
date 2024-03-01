@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
@@ -42,17 +43,20 @@ import io.getstream.chat.android.ui.common.state.messages.composer.ValidationErr
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer
+import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
 import io.getstream.chat.android.uiutils.extension.containsLinks
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import io.getstream.result.call.map
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -100,6 +104,7 @@ public class MessageComposerController(
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val messageId: String? = null,
+    private val isLinkPreviewEnabled: Boolean = false,
 ) {
 
     /**
@@ -137,10 +142,12 @@ public class MessageComposerController(
         coroutineScope = scope,
     )
 
+    private val _channelState: StateFlow<ChannelState?> = observeChannelState()
+
     /**
      * Holds information about the current state of the [Channel].
      */
-    public val channelState: Flow<ChannelState> = observeChannelState()
+    public val channelState: Flow<ChannelState> = _channelState.filterNotNull()
 
     /**
      * Holds information about the abilities the current user
@@ -262,6 +269,11 @@ public class MessageComposerController(
     public val commandSuggestions: MutableStateFlow<List<Command>> = MutableStateFlow(emptyList())
 
     /**
+     * Represents the list of links that can be previewed.
+     */
+    public val linkPreviews: MutableStateFlow<List<LinkPreview>> = MutableStateFlow(emptyList())
+
+    /**
      * Represents the list of users in the channel.
      */
     private var users: List<User> = emptyList()
@@ -359,13 +371,13 @@ public class MessageComposerController(
         setupComposerState()
     }
 
-    private fun observeChannelState(): Flow<ChannelState> {
+    private fun observeChannelState(): StateFlow<ChannelState?> {
         logger.d { "[observeChannelState] cid: $channelId, messageId: $messageId, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(
             cid = channelId,
             messageLimit = messageLimit,
             coroutineScope = scope,
-        ).filterNotNull()
+        )
     }
 
     /**
@@ -381,10 +393,10 @@ public class MessageComposerController(
             }
             handleCommandSuggestions()
             handleValidationErrors()
-        }.debounce(ComputeMentionSuggestionsDebounceTime)
-            .onEach {
-                handleMentionSuggestions()
-            }.launchIn(scope)
+        }.debounce(TEXT_INPUT_DEBOUNCE_TIME).onEach {
+            scope.launch { handleMentionSuggestions() }
+            scope.launch { handleLinkPreviews() }
+        }.launchIn(scope)
 
         selectedAttachments.onEach { selectedAttachments ->
             state.value = state.value.copy(attachments = selectedAttachments)
@@ -404,6 +416,10 @@ public class MessageComposerController(
 
         commandSuggestions.onEach { commandSuggestions ->
             state.value = state.value.copy(commandSuggestions = commandSuggestions)
+        }.launchIn(scope)
+
+        linkPreviews.onEach { linkPreviews ->
+            state.value = state.value.copy(linkPreviews = linkPreviews)
         }.launchIn(scope)
 
         cooldownTimer.onEach { cooldownTimer ->
@@ -803,15 +819,14 @@ public class MessageComposerController(
             logger.v { "[handleMentionSuggestions] Input contains the mention prefix @." }
             val userNameContains = messageText.substringAfterLast("@")
 
-            val localMentions = users.filter { it.name.contains(userNameContains, true) }
-
+            val membersCount = _channelState.value?.membersCount ?: 0
             when {
-                localMentions.isNotEmpty() -> {
-                    logger.v { "[handleMentionSuggestions] Mention found in the local state." }
-                    localMentions
+                userNameContains.isEmpty() || membersCount == users.size -> {
+                    logger.v { "[handleMentionSuggestions] search locally" }
+                    users.filter { it.name.contains(userNameContains, true) }
                 }
-                userNameContains.count() > 1 -> {
-                    logger.v { "[handleMentionSuggestions] Querying the server for members who match the mention." }
+                userNameContains.isNotEmpty() -> {
+                    logger.v { "[handleMentionSuggestions] search remotely" }
                     val (channelType, channelId) = channelId.cidToTypeAndId()
 
                     queryMembersByUserNameContains(
@@ -820,7 +835,13 @@ public class MessageComposerController(
                         contains = userNameContains,
                     )
                 }
-                else -> emptyList()
+                else -> {
+                    logger.v {
+                        "[handleMentionSuggestions] userNameContains: $userNameContains, " +
+                            "membersCount: $membersCount"
+                    }
+                    emptyList()
+                }
             }
         } else {
             emptyList()
@@ -849,8 +870,8 @@ public class MessageComposerController(
         val result = chatClient.queryMembers(
             channelType = channelType,
             channelId = channelId,
-            offset = queryMembersRequestOffset,
-            limit = queryMembersMemberLimit,
+            offset = QUERY_MEMBERS_REQUEST_OFFSET,
+            limit = QUERY_MEMBERS_REQUEST_LIMIT,
             filter = Filters.autocomplete(
                 fieldName = "name",
                 value = contains,
@@ -926,6 +947,24 @@ public class MessageComposerController(
     }
 
     /**
+     * Shows link previews if necessary.
+     */
+    private suspend fun handleLinkPreviews() {
+        if (!isLinkPreviewEnabled) return
+        val urls = LinkPattern.findAll(messageText).map {
+            it.value
+        }.toList()
+        logger.v { "[handleLinkPreviews] urls: $urls" }
+        val previews = urls.take(1)
+            .map { url -> chatClient.enrichPreview(url).await() }
+            .filterIsInstance<Result.Success<LinkPreview>>()
+            .map { it.value }
+
+        logger.v { "[handleLinkPreviews] previews: ${previews.map { it.originUrl }}" }
+        linkPreviews.value = previews
+    }
+
+    /**
      * Gets the edit message call using [ChatClient].
      *
      * @param message [Message]
@@ -952,7 +991,12 @@ public class MessageComposerController(
         chatClient.stopTyping(type, id, parentMessageId).enqueue()
     }
 
-    private companion object {
+    private fun ChatClient.enrichPreview(url: String): Call<LinkPreview> {
+        val urlWithScheme = url.addSchemeToUrlIfNeeded()
+        return this.enrichUrl(urlWithScheme).map { LinkPreview(url, it) }
+    }
+
+    internal companion object {
         /**
          * The default allowed number of characters in a message.
          */
@@ -968,23 +1012,25 @@ public class MessageComposerController(
          */
         private val CommandPattern = Pattern.compile("^/[a-z]*$")
 
+        internal val LinkPattern = Regex(
+            "(http://|https://)?([a-zA-Z0-9]+(\\.[a-zA-Z0-9-]+)*\\.([a-zA-Z]{2,}))(/[\\w-./?%&=]*)?",
+        )
+
         private const val OneSecond = 1000L
 
         /**
-         * The amount of time we debounce computing mention suggestions.
-         * We debounce those computations in the case of being unable to find mentions from local data, we will query
-         * the BE for members.
+         * The amount of time we debounce computing mention suggestions and link previews.
          */
-        private const val ComputeMentionSuggestionsDebounceTime = 300L
+        private const val TEXT_INPUT_DEBOUNCE_TIME = 300L
 
         /**
          * Pagination offset for the member query.
          */
-        private const val queryMembersRequestOffset: Int = 0
+        private const val QUERY_MEMBERS_REQUEST_OFFSET: Int = 0
 
         /**
          * The upper limit of members the query is allowed to return.
          */
-        private const val queryMembersMemberLimit: Int = 30
+        private const val QUERY_MEMBERS_REQUEST_LIMIT: Int = 30
     }
 }

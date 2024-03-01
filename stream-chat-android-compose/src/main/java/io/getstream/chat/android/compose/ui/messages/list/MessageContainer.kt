@@ -158,10 +158,8 @@ internal fun DefaultMessageUnreadSeparatorContent(unreadSeparatorItemState: Unre
     ) {
         Text(
             modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
-            text = LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_unread_separator,
-                unreadSeparatorItemState.unreadCount,
-                unreadSeparatorItemState.unreadCount,
+            text = LocalContext.current.resources.getString(
+                R.string.stream_compose_message_list_unread_separator,
             ),
             style = ChatTheme.messageUnreadSeparatorTheme.textStyle,
         )

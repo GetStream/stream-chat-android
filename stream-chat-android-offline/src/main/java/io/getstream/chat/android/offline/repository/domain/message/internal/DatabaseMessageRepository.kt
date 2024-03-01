@@ -151,6 +151,12 @@ internal class DatabaseMessageRepository(
         scope.launchWithMutex(dbMutex) { messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore) }
     }
 
+    override suspend fun deleteChannelMessages(cid: String) {
+        messageCache.evictAll()
+        replyMessageCache.evictAll()
+        scope.launchWithMutex(dbMutex) { messageDao.deleteMessages(cid) }
+    }
+
     /**
      * Deletes message.
      *
