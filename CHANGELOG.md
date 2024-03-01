@@ -26,15 +26,12 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Prevent inserting reaction which violates `ForeignKey` constraint in local DB. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
-- Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
 - Fixed `ArrayIndexOutOfBoundsException` in `ApiRequestsDumper`. [#5187](https://github.com/GetStream/stream-chat-android/pull/5187)
 
 ### ⬆️ Improved
 - Ensure fresh token is used to establish WS connection. [#5185](https://github.com/GetStream/stream-chat-android/pull/5185)
 
 ### ✅ Added
-- Added `DeleteChannelListener`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
 - Added `ChatClient.enrichUrl` to enrich the URL with the preview data. [#5184](https://github.com/GetStream/stream-chat-android/pull/5184)
 
 ### ⚠️ Changed
@@ -43,9 +40,6 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
-- Prevent sending reaction for non-existing message. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
-  * `SendReactionListener.onSendReactionPrecondition` is now suspendable function.
-- Remove the deleted `Message` from cached `Channel.messages` collection. [#5170](https://github.com/GetStream/stream-chat-android/pull/5170) 
 
 ### ⬆️ Improved
 
@@ -57,8 +51,6 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
-- Clear stale cache inside `StateRegistry`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
-- Unread messages count is now updated properly. [#5175](https://github.com/GetStream/stream-chat-android/pull/5175)
 
 ### ⬆️ Improved
 
@@ -76,8 +68,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- 🚨Breaking change: Changed `MessagePositionHandler.handleMessagePosition` signature. [#5168](https://github.com/GetStream/stream-chat-android/pull/5168)
-  * Added `isInThread: Boolean` parameter.
 - Deprecated `AttachmentSelectionListener` class, use `AttachmentsSelectionListener` instead. [#5178](https://github.com/GetStream/stream-chat-android/pull/5178)
 
 ### ❌ Removed
@@ -88,22 +78,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added new listeners and corresponding setters to `MessageListView` to allow better behaviour customization. [#5161](https://github.com/GetStream/stream-chat-android/pull/5161)
-  * `OnEnterThreadListener` and `MessageListView.setOnEnterThreadListener`
-  * `OnMessageClickListener` and `MessageListView.setOnMessageClickListener`
-  * `OnReplyMessageClickListener` and `MessageListView.setOnReplyMessageClickListener`
-  * `OnMessageRetryListener` and `MessageListView.setOnMessageRetryListener`
-  * `OnMessageLongClickListener` and `MessageListView.setOnMessageLongClickListener`
-  * `OnModeratedMessageLongClickListener` and `MessageListView.setOnModeratedMessageLongClickListener`
-  * `OnThreadClickListener` and `MessageListView.setOnThreadClickListener`
-  * `OnAttachmentClickListener` and `MessageListView.setOnAttachmentClickListener`
-  * `OnAttachmentDownloadClickListener` and `MessageListView.setOnAttachmentDownloadClickListener`
-  * `OnGiphySendListener` and `MessageListView.setOnGiphySendListener`
-  * `OnLinkClickListener` and `MessageListView.setOnLinkClickListener`
-  * `OnUserClickListener` and `MessageListView.setOnUserClickListener`
-  * `OnReactionViewClickListener` and `MessageListView.setOnReactionViewClickListener`
-  * `OnUserReactionClickListener` and `MessageListView.setOnUserReactionClickListener`
-- Added `messageBuilder` parameter to `MessageComposerViewModel.bindView` to allow customizing the message builder. [#5169](https://github.com/GetStream/stream-chat-android/pull/5169)
 - Added `MessageComposerView.attachmentsPickerDialogBuilder` lambda that allow you to create your own Picker Dialog. [#5178](https://github.com/GetStream/stream-chat-android/pull/5178)
 
 ### ⚠️ Changed
@@ -112,7 +86,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix annotated messages not being building proper links. [#5163](https://github.com/GetStream/stream-chat-android/pull/5163)
 
 ### ⬆️ Improved
 
@@ -134,6 +107,54 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# February 13th, 2024 - 6.0.14
+## stream-chat-android-client
+### 🐞 Fixed
+- Prevent inserting reaction which violates `ForeignKey` constraint in local DB. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+- Fixed crash in `ChatEventsObservable.onNext`. [#5165](https://github.com/GetStream/stream-chat-android/pull/5165)
+
+### ✅ Added
+- Added `DeleteChannelListener`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Prevent sending reaction for non-existing message. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+  * `SendReactionListener.onSendReactionPrecondition` is now suspendable function.
+- Remove the deleted `Message` from cached `Channel.messages` collection. [#5170](https://github.com/GetStream/stream-chat-android/pull/5170)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Clear stale cache inside `StateRegistry`. [#5164](https://github.com/GetStream/stream-chat-android/pull/5164)
+- Unread messages count is now updated properly. [#5175](https://github.com/GetStream/stream-chat-android/pull/5175)
+
+## stream-chat-android-ui-common
+### ⚠️ Changed
+- 🚨Breaking change: Changed `MessagePositionHandler.handleMessagePosition` signature. [#5168](https://github.com/GetStream/stream-chat-android/pull/5168)
+  * Added `isInThread: Boolean` parameter.
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added new listeners and corresponding setters to `MessageListView` to allow better behaviour customization. [#5161](https://github.com/GetStream/stream-chat-android/pull/5161)
+  * `OnEnterThreadListener` and `MessageListView.setOnEnterThreadListener`
+  * `OnMessageClickListener` and `MessageListView.setOnMessageClickListener`
+  * `OnReplyMessageClickListener` and `MessageListView.setOnReplyMessageClickListener`
+  * `OnMessageRetryListener` and `MessageListView.setOnMessageRetryListener`
+  * `OnMessageLongClickListener` and `MessageListView.setOnMessageLongClickListener`
+  * `OnModeratedMessageLongClickListener` and `MessageListView.setOnModeratedMessageLongClickListener`
+  * `OnThreadClickListener` and `MessageListView.setOnThreadClickListener`
+  * `OnAttachmentClickListener` and `MessageListView.setOnAttachmentClickListener`
+  * `OnAttachmentDownloadClickListener` and `MessageListView.setOnAttachmentDownloadClickListener`
+  * `OnGiphySendListener` and `MessageListView.setOnGiphySendListener`
+  * `OnLinkClickListener` and `MessageListView.setOnLinkClickListener`
+  * `OnUserClickListener` and `MessageListView.setOnUserClickListener`
+  * `OnReactionViewClickListener` and `MessageListView.setOnReactionViewClickListener`
+  * `OnUserReactionClickListener` and `MessageListView.setOnUserReactionClickListener`
+- Added `messageBuilder` parameter to `MessageComposerViewModel.bindView` to allow customizing the message builder. [#5169](https://github.com/GetStream/stream-chat-android/pull/5169)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix annotated messages not being building proper links. [#5163](https://github.com/GetStream/stream-chat-android/pull/5163)
 
 # January 24th, 2024 - 6.0.13
 ## stream-chat-android-client
