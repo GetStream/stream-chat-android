@@ -24,6 +24,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
@@ -71,6 +73,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
+    private val userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(chatClient, cid),
     private val fileToUri: (File) -> String = { file -> file.toUri().toString() },
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
@@ -115,9 +118,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         MessageComposerViewModel::class.java to {
             MessageComposerViewModel(
                 MessageComposerController(
-                    channelId = cid,
+                    channelCid = cid,
                     chatClient = chatClient,
                     mediaRecorder = mediaRecorder,
+                    userLookupHandler = userLookupHandler,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
                     fileToUri = fileToUri,
