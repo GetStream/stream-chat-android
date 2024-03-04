@@ -71,7 +71,13 @@ public class DefaultQueryFilter<T>(
         val formattedTarget = queryFormatter.format(target)
         val distance = when (formattedTarget.contains(formattedQuery, ignoreCase = true)) {
             true -> 0
-            else -> levenshteinDistance(formattedQuery, formattedTarget)
+            else -> {
+                val finalTarget = when (formattedTarget.length > formattedQuery.length) {
+                    true -> formattedTarget.substring(0, formattedQuery.length)
+                    else -> formattedTarget
+                }
+                levenshteinDistance(formattedQuery, finalTarget)
+            }
         }
         return MeasuredItem(this, distance)
     }
