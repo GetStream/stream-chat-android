@@ -151,6 +151,7 @@ public fun randomMessage(
     ownReactions: List<Reaction> = listOf(),
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
+    messageTextUpdatedAt: Date? = randomDate(),
     deletedAt: Date? = randomDate(),
     updatedLocallyAt: Date? = randomDate(),
     createdLocallyAt: Date? = randomDate(),
@@ -203,6 +204,7 @@ public fun randomMessage(
     pinExpires = pinExpires,
     pinnedBy = pinnedBy,
     threadParticipants = threadParticipants,
+    messageTextUpdatedAt = messageTextUpdatedAt,
 )
 
 public fun randomChannel(

@@ -222,6 +222,11 @@ public data class Message(
      * Contains moderation details of the message.
      */
     val moderationDetails: MessageModerationDetails? = null,
+
+    /**
+     * Date when the message text was updated
+     */
+    val messageTextUpdatedAt: Date? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
@@ -367,6 +372,7 @@ public data class Message(
         private var skipPushNotification: Boolean = false
         private var skipEnrichUrl: Boolean = false
         private var moderationDetails: MessageModerationDetails? = null
+        private var messageTextUpdatedAt: Date? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -408,6 +414,7 @@ public data class Message(
             skipPushNotification = message.skipPushNotification
             skipEnrichUrl = message.skipEnrichUrl
             moderationDetails = message.moderationDetails
+            messageTextUpdatedAt = message.messageTextUpdatedAt
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -470,6 +477,9 @@ public data class Message(
         public fun withModerationDetails(moderationDetails: MessageModerationDetails): Builder = apply {
             this.moderationDetails = moderationDetails
         }
+        public fun withMessageTextUpdatedAt(messageTextUpdatedAt: Date?): Builder = apply {
+            this.messageTextUpdatedAt = messageTextUpdatedAt
+        }
 
         public fun build(): Message {
             return Message(
@@ -512,6 +522,7 @@ public data class Message(
                 skipPushNotification = skipPushNotification,
                 skipEnrichUrl = skipEnrichUrl,
                 moderationDetails = moderationDetails,
+                messageTextUpdatedAt = messageTextUpdatedAt,
             )
         }
     }
