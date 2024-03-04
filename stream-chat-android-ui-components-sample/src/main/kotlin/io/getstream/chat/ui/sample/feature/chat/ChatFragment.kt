@@ -23,11 +23,20 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.LocalUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.RemoteUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -46,20 +55,42 @@ import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.chat.composer.CustomMessageComposerLeadingContent
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 class ChatFragment : Fragment() {
 
+    private val logger by taggedLogger("ChatFragment")
+
     private val args: ChatFragmentArgs by navArgs()
 
+    private val defaultUserLookupHandler by lazy {
+        DefaultUserLookupHandler(
+            chatClient = ChatClient.instance(),
+            channelCid = args.cid,
+            localFilter = DefaultQueryFilter { it.name.ifBlank { it.id } },
+        )
+    }
+
+    private val remoteUserLookupHandler by lazy {
+        RemoteUserLookupHandler(
+            chatClient = ChatClient.instance(),
+            channelCid = args.cid
+        )
+    }
+
     private val factory: MessageListViewModelFactory by lazy {
+        val chatClient = ChatClient.instance()
         MessageListViewModelFactory(
             context = requireContext().applicationContext,
             cid = args.cid,
             messageId = args.messageId,
             parentMessageId = args.parentMessageId,
+            chatClient = chatClient,
+            userLookupHandler = defaultUserLookupHandler,
         )
     }
     private val chatViewModelFactory: ChatViewModelFactory by lazy { ChatViewModelFactory(args.cid) }
@@ -176,6 +207,32 @@ class ChatFragment : Fragment() {
             binding.messageComposerView.setLeadingContent(
                 CustomMessageComposerLeadingContent(requireContext()),
             )
+        }
+
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                messageComposerViewModel.messageMode.collect { messageMode ->
+                    when (messageMode) {
+                        is MessageMode.Normal -> {/**/}
+                        is MessageMode.MessageThread -> {/**/}
+                    }
+                    val modeText = messageMode.javaClass.simpleName
+                    logger.d { "[onMessageModeChange] messageMode: $modeText" }
+                }
+            }
+        }
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                messageComposerViewModel.lastActiveAction.collect { messageAction ->
+                    when (messageAction) {
+                        is Edit -> {/**/}
+                        is Reply -> {/**/}
+                        else -> {/**/}
+                    }
+                    val actionText = messageAction?.javaClass?.simpleName
+                    logger.d { "[onMessageActionChange] messageAction: $actionText" }
+                }
+            }
         }
     }
 

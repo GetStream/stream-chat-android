@@ -41,17 +41,17 @@ public class LocalUserLookupHandler @JvmOverloads constructor(
 
     override suspend fun handleUserLookup(query: String): List<User> {
         try {
-            logger.d { "[handleUserLookup] query: \"$query\"" }
+            if (DEBUG) logger.d { "[handleUserLookup] query: \"$query\"" }
             val (channelType, channelId) = channelCid.cidToTypeAndId()
             val channelState = chatClient.state.channel(channelType, channelId)
             val localUsers = channelState.members.value.map { it.user }
             val membersCount = channelState.membersCount.value
             return when (membersCount == localUsers.size) {
                 true -> filter.filter(localUsers, query).also {
-                    logger.v { "[handleUserLookup] found ${it.size} users" }
+                    if (DEBUG) logger.v { "[handleUserLookup] found ${it.size} users" }
                 }
                 else -> {
-                    logger.v { "[handleUserLookup] #empty; localUsers: ${localUsers.size} out of $membersCount" }
+                    if (DEBUG) logger.v { "[handleUserLookup] #empty; users: ${localUsers.size} out of $membersCount" }
                     emptyList()
                 }
             }
@@ -59,5 +59,9 @@ public class LocalUserLookupHandler @JvmOverloads constructor(
             logger.e(e) { "[handleUserLookup] failed: $e" }
             return emptyList()
         }
+    }
+
+    private companion object {
+        private const val DEBUG = false
     }
 }

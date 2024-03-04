@@ -38,8 +38,9 @@ public class DefaultUserLookupHandler(
      *
      * @param chatClient Chat client used to query members.
      * @param channelCid The CID of the channel we are querying for members.
-     * @param localFilter The filter used to filter the users during the local lookup.
+     * @param localFilter The filter used to filter the cached users during the local lookup.
      */
+    @JvmOverloads
     public constructor(
         chatClient: ChatClient,
         channelCid: String,
