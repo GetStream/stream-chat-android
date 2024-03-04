@@ -40,11 +40,11 @@ public class RemoteUserLookupHandler(
     override suspend fun handleUserLookup(query: String): List<User> {
         return when {
             query.isNotEmpty() -> {
-                logger.v { "[handleUserLookup] search remotely" }
+                if (DEBUG) logger.v { "[handleUserLookup] search remotely" }
                 chatClient.queryMembersByUsername(channelCid = channelCid, query = query)
             }
             else -> {
-                logger.v { "[handleUserLookup] #empty; query: $query" }
+                if (DEBUG) logger.v { "[handleUserLookup] #empty; query: $query" }
                 emptyList()
             }
         }
@@ -64,7 +64,7 @@ public class RemoteUserLookupHandler(
         channelCid: String,
         query: String,
     ): List<User> {
-        logger.d { "[queryMembersByUsername] query: \"$query\"" }
+        if (DEBUG) logger.d { "[queryMembersByUsername] query: \"$query\"" }
         val (channelType, channelId) = channelCid.cidToTypeAndId()
         val result = queryMembers(
             channelType = channelType,
@@ -78,7 +78,7 @@ public class RemoteUserLookupHandler(
 
         return when (result) {
             is Result.Success -> {
-                logger.v { "[queryMembersByUsername] found ${result.value.size} users" }
+                if (DEBUG) logger.v { "[queryMembersByUsername] found ${result.value.size} users" }
                 result.value.map { it.user }.filter { it.name.contains(query, true) }
             }
             is Result.Failure -> {
@@ -89,6 +89,8 @@ public class RemoteUserLookupHandler(
     }
 
     private companion object {
+        private const val DEBUG = false
+
         /**
          * Pagination offset for the member query.
          */
