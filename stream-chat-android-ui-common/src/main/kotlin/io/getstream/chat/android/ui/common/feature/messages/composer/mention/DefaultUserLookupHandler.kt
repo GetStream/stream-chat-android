@@ -43,7 +43,7 @@ public class DefaultUserLookupHandler(
     public constructor(
         chatClient: ChatClient,
         channelCid: String,
-        localFilter: QueryFilter<User> = DefaultQueryFilter { it.name },
+        localFilter: QueryFilter<User> = DefaultQueryFilter { it.name.ifBlank { it.id } },
     ) : this(
         localHandler = LocalUserLookupHandler(chatClient, channelCid, localFilter),
         remoteHandler = RemoteUserLookupHandler(chatClient, channelCid),

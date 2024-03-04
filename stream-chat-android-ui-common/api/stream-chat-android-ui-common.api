@@ -70,12 +70,6 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public fun format (Ljava/lang/String;)Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/MatchSimilar : io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter {
-	public static final field $stable I
-	public fun <init> ()V
-	public fun format (Ljava/lang/String;)Ljava/lang/String;
-}
-
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter {
 	public abstract fun format (Ljava/lang/String;)Ljava/lang/String;
 }

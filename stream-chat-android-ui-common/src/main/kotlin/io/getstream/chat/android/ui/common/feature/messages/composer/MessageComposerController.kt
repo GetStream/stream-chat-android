@@ -31,6 +31,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
+import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -70,6 +72,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -346,6 +349,10 @@ public class MessageComposerController(
      * Represents the selected mentions based on the message suggestion list.
      */
     private val selectedMentions: MutableSet<User> = mutableSetOf()
+
+    private val mentionSuggester = TypingSuggester(
+        TypingSuggestionOptions(symbol = MentionStartSymbol),
+    )
 
     /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
@@ -812,15 +819,18 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private suspend fun handleMentionSuggestions() {
-        // TODO double-check if we need to use the regex pattern to check for mentions
-        val containsMention = MentionPattern.matcher(messageText).find()
-        // val containsMention = messageText.startsWith(MentionStartChar)
-        mentionSuggestions.value = if (containsMention) {
-            logger.v { "[handleMentionSuggestions] Input contains the mention prefix @." }
-            val userNameContains = messageText.substringAfterLast("@")
-            userLookupHandler.handleUserLookup(userNameContains)
-        } else {
-            emptyList()
+        val inputText = messageText
+        scope.launch(DispatcherProvider.IO) {
+            val suggestion = mentionSuggester.typingSuggestion(inputText)
+            logger.v { "[handleMentionSuggestions] suggestion: $suggestion" }
+            val result = if (suggestion != null) {
+                userLookupHandler.handleUserLookup(suggestion.text)
+            } else {
+                emptyList()
+            }
+            withContext(DispatcherProvider.Main) {
+                mentionSuggestions.value = result
+            }
         }
     }
 
@@ -930,14 +940,9 @@ public class MessageComposerController(
         private const val DefaultMaxMessageLength: Int = 5000
 
         /**
-         * The regex pattern used to check if the message ends with incomplete mention.
-         */
-        private val MentionPattern = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
-
-        /**
          * The character used to start a mention.
          */
-        private const val MentionStartChar: Char = '@'
+        private const val MentionStartSymbol: String = "@"
 
         /**
          * The regex pattern used to check if the message ends with incomplete command.
@@ -954,15 +959,5 @@ public class MessageComposerController(
          * The amount of time we debounce computing mention suggestions and link previews.
          */
         private const val TEXT_INPUT_DEBOUNCE_TIME = 300L
-
-        /**
-         * Pagination offset for the member query.
-         */
-        private const val QUERY_MEMBERS_REQUEST_OFFSET: Int = 0
-
-        /**
-         * The upper limit of members the query is allowed to return.
-         */
-        private const val QUERY_MEMBERS_REQUEST_LIMIT: Int = 30
     }
 }

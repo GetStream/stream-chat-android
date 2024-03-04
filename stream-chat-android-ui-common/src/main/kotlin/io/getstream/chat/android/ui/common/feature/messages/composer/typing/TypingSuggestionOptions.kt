@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter
-
-import java.text.Normalizer
+package io.getstream.chat.android.ui.common.feature.messages.composer.typing
 
 /**
- * Ignore diacritics in the query string.
+ * The options to configure the [TypingSuggester].
+ *
+ * @param symbol The symbol that typing suggester will use to recognise a suggestion.
+ * @param shouldTriggerOnlyAtStart Whether the suggester should only be recognising at the start of the input.
+ * @param minimumRequiredCharacters The minimum required characters for the suggester to start recognising a suggestion.
  */
-internal class IgnoreDiacritics : QueryFormatter {
-
-    private val diacriticsRegex = "\\p{InCombiningDiacriticalMarks}+".toRegex()
-    override fun format(query: String): String {
-        return query.removeDiacritics()
-    }
-
-    private fun String.removeDiacritics(): String {
-        if (this.isEmpty()) return this
-        val normalized = Normalizer.normalize(this, Normalizer.Form.NFD)
-        return normalized.replace(diacriticsRegex, "")
-    }
-}
+internal data class TypingSuggestionOptions(
+    val symbol: String,
+    val shouldTriggerOnlyAtStart: Boolean = false,
+    val minimumRequiredCharacters: Int = 0,
+)
