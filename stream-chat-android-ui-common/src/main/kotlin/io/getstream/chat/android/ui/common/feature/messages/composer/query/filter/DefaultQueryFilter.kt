@@ -23,6 +23,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.query.forma
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.formatter.Transliterate
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.StreamTransliterator
+import io.getstream.log.taggedLogger
 import kotlin.math.min
 
 /**
@@ -41,6 +42,8 @@ public class DefaultQueryFilter<T>(
     private val target: (T) -> String,
 ) : QueryFilter<T> {
 
+    private val logger by taggedLogger("Chat:InputQueryFilter")
+
     private val queryFormatter: QueryFormatter = Combine(
         Lowercase(),
         IgnoreDiacritics(),
@@ -48,17 +51,24 @@ public class DefaultQueryFilter<T>(
     )
 
     override fun filter(items: List<T>, query: String): List<T> {
+        logger.d { "[filter] query: \"$query\", items.size: ${items.size}" }
         val formattedQuery = queryFormatter.format(query)
         return items.asSequence()
             .map { it.measureDistance(formattedQuery) }
             .filter { it.distance < MAX_DISTANCE }
             .sorted()
+            .onEach { logger.v { "[filter] target: \"${target(it.item)}\", distance: ${it.distance}" } }
             .map { it.item }
             .toList()
     }
 
     private fun T.measureDistance(formattedQuery: String): MeasuredItem<T> {
-        val formattedTarget = queryFormatter.format(target(this))
+        val target = target(this)
+        if (target.isEmpty() || formattedQuery.length > target.length) {
+            logger.v { "[measureDistance] #skip; target: \"$target\", formattedQuery: \"$formattedQuery\"" }
+            return MeasuredItem(this, Int.MAX_VALUE)
+        }
+        val formattedTarget = queryFormatter.format(target)
         val distance = when (formattedTarget.contains(formattedQuery, ignoreCase = true)) {
             true -> 0
             else -> levenshteinDistance(formattedQuery, formattedTarget)
@@ -69,6 +79,40 @@ public class DefaultQueryFilter<T>(
     private data class MeasuredItem<T>(val item: T, val distance: Int) : Comparable<MeasuredItem<T>> {
         override fun compareTo(other: MeasuredItem<T>): Int {
             return distance.compareTo(other.distance)
+        }
+    }
+
+    private fun minLevenshteinDistance(search: String, target: String): Int {
+        val totalDistance = levenshteinDistance(search, target)
+        val wordDistance = wordLevenshteinDistance(search, target)
+        return minOf(totalDistance, wordDistance)
+    }
+
+    private fun wordLevenshteinDistance(search: String, target: String): Int {
+        try {
+            if (search.isEmpty() || target.isEmpty()) {
+                return Int.MAX_VALUE
+            }
+            var distance = Int.MAX_VALUE
+            var sStartIndex = 0
+            var tStartIndex = 0
+            while (true) {
+                val sEndIndex = search.indexOf(startIndex = sStartIndex, char = SPACE)
+                val tEndIndex = target.indexOf(startIndex = tStartIndex, char = SPACE)
+                if (tEndIndex == -1) {
+                    break
+                }
+                val subSearch = if (sEndIndex == -1) search else search.substring(sStartIndex, sEndIndex)
+                val subTarget = target.substring(tStartIndex, tEndIndex)
+                val subDistance = levenshteinDistance(subSearch, subTarget)
+                distance = minOf(distance, subDistance)
+                sStartIndex = sEndIndex + 1
+                tStartIndex = tEndIndex + 1
+            }
+            return distance
+        } catch (e: Throwable) {
+            logger.e(e) { "[wordLevenshteinDistance] failed: $e" }
+            return Int.MAX_VALUE
         }
     }
 
@@ -108,5 +152,6 @@ public class DefaultQueryFilter<T>(
 
     private companion object {
         private const val MAX_DISTANCE = 3
+        private const val SPACE = ' '
     }
 }

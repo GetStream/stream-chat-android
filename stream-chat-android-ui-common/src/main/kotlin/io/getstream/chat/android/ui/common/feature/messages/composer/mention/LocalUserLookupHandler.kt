@@ -34,7 +34,7 @@ import io.getstream.log.taggedLogger
 public class LocalUserLookupHandler @JvmOverloads constructor(
     private val chatClient: ChatClient,
     private val channelCid: String,
-    private val filter: QueryFilter<User> = DefaultQueryFilter { it.name },
+    private val filter: QueryFilter<User> = DefaultQueryFilter { it.name.ifBlank { it.id } },
 ) : UserLookupHandler {
 
     private val logger by taggedLogger("Chat:UserLookupLocal")

@@ -19,7 +19,10 @@
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun completeRecording()</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun toggleRecordingPlayback()</ID>
     <ID>ReturnCount:DefaultQueryFilter.kt$DefaultQueryFilter$private fun levenshteinDistance(search: String, target: String): Int</ID>
+    <ID>ReturnCount:DefaultQueryFilter.kt$DefaultQueryFilter$private fun wordLevenshteinDistance(search: String, target: String): Int</ID>
     <ID>ReturnCount:StorageHelper.kt$StorageHelper$public fun getCachedFileFromUri( context: Context, attachmentMetaData: AttachmentMetaData, ): File?</ID>
+    <ID>ReturnCount:TypingSuggester.kt$TypingSuggester$internal fun typingSuggestion(text: CharSequence, caretLocation: Int = text.length): TypingSuggestion?</ID>
+    <ID>TooGenericExceptionCaught:DefaultQueryFilter.kt$DefaultQueryFilter$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Exception</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$exception: Exception</ID>
@@ -35,6 +38,7 @@
     <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun IntArray.downsampleRms(): Int</ID>
     <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Float>.downsample(targetSamples: Int): List&lt;Float></ID>
     <ID>UnusedPrivateMember:AudioRecordingController.kt$AudioRecordingController$private fun List&lt;Int>.downsampleToSingleMax(): Int</ID>
+    <ID>UnusedPrivateMember:DefaultQueryFilter.kt$DefaultQueryFilter$private fun minLevenshteinDistance(search: String, target: String): Int</ID>
     <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_AMPLITUDE = 32767f</ID>
     <ID>VariableNaming:AudioRecordingController.kt$AudioRecordingController$val MAX_DB = 90.0 // Maximum decibel level for normalization</ID>
   </CurrentIssues>

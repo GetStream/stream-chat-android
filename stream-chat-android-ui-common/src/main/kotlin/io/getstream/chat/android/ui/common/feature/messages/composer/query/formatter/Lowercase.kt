@@ -21,6 +21,7 @@ package io.getstream.chat.android.ui.common.feature.messages.composer.query.form
  */
 internal class Lowercase : QueryFormatter {
     override fun format(query: String): String {
+        if (query.isEmpty()) return query
         return query.lowercase()
     }
 }

@@ -71,11 +71,8 @@ public class RemoteUserLookupHandler(
             channelId = channelId,
             offset = QUERY_MEMBERS_REQUEST_OFFSET,
             limit = QUERY_MEMBERS_REQUEST_LIMIT,
-            filter = Filters.autocomplete(
-                fieldName = "name",
-                value = query,
-            ),
-            sort = QuerySortByField(),
+            filter = Filters.autocomplete(fieldName = "name", value = query),
+            sort = QuerySortByField.ascByName(fieldName = "name"),
             members = listOf(),
         ).await()
 

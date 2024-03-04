@@ -153,6 +153,7 @@
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Attachment)</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Boolean)</ID>
+    <ID>RethrowCaughtException:BaseMessageItemViewHolder.kt$BaseMessageItemViewHolder$throw e</ID>
     <ID>ReturnCount:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>
@@ -161,6 +162,7 @@
     <ID>SwallowedException:WebLinkDestination.kt$WebLinkDestination$e: ActivityNotFoundException</ID>
     <ID>ThrowingExceptionsWithoutMessageOrCause:MessageComposerView.kt$&lt;no name provided>.&lt;no name provided>$IndexOutOfBoundsException()</ID>
     <ID>TooGenericExceptionCaught:AttachmentGalleryActivity.kt$AttachmentGalleryActivity$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:BaseMessageItemViewHolder.kt$BaseMessageItemViewHolder$e: Throwable</ID>
     <ID>TooGenericExceptionCaught:ChatFontsImpl.kt$ChatFontsImpl$t: Throwable</ID>
     <ID>TooGenericExceptionThrown:AttachmentGalleryPagerAdapter.kt$AttachmentGalleryPagerAdapter$throw Throwable("Unsupported attachment type")</ID>
     <ID>TooManyFunctions:AttachmentGalleryActivity.kt$AttachmentGalleryActivity : AppCompatActivity</ID>
