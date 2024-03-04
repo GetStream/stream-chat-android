@@ -77,6 +77,7 @@ internal data class DownstreamMessageDto(
     val pin_expires: Date?,
     val pinned: Boolean = false,
     val pinned_at: Date?,
+    val message_text_updated_at: Date?,
     val pinned_by: DownstreamUserDto?,
     val quoted_message: DownstreamMessageDto?,
     val quoted_message_id: String?,

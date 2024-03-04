@@ -141,6 +141,7 @@ internal object MessageDtoTestData {
         pinned_at = null,
         pin_expires = null,
         channel = null,
+        message_text_updated_at = null,
         moderation_details = DownstreamModerationDetailsDto(
             original_text = "spam_text",
             action = "bounce",
@@ -252,6 +253,7 @@ internal object MessageDtoTestData {
         pinned_at = null,
         pin_expires = null,
         channel = null,
+        message_text_updated_at = null,
         moderation_details = DownstreamModerationDetailsDto(
             original_text = "spam_text",
             action = "bounce",
@@ -339,6 +341,7 @@ internal object MessageDtoTestData {
         pinned_by = null,
         pinned_at = null,
         pin_expires = null,
+        message_text_updated_at = null,
         channel = ChannelInfoDtoTestData.channelInfoDtoWithoutMemberCount,
     )
 
