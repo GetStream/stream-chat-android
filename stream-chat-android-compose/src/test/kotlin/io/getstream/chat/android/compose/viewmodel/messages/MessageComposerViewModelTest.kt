@@ -396,6 +396,7 @@ internal class MessageComposerViewModelTest {
                 whenever(it.lastSentMessageDate) doReturn MutableStateFlow(null)
                 whenever(it.channelConfig) doReturn MutableStateFlow(config)
                 whenever(it.members) doReturn MutableStateFlow(members)
+                whenever(it.membersCount) doReturn MutableStateFlow(members.size)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
