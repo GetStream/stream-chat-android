@@ -111,7 +111,9 @@ internal class LogicRegistry internal constructor(
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
                 coroutineScope = coroutineScope,
-            )
+            ) {
+                clientState.user.value?.id
+            }
         }
     }
 

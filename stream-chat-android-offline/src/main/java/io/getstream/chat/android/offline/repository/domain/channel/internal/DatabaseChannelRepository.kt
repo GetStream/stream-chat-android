@@ -252,6 +252,11 @@ internal class DatabaseChannelRepository(
     private fun Message.after(date: Date?): Boolean =
         date?.let { (createdAt ?: createdLocallyAt ?: Date(0)).after(it) } ?: true
 
+    override suspend fun evictChannel(cid: String) {
+        logger.v { "[evictChannel] cid: $cid" }
+        channelCache.remove(cid)
+    }
+
     override suspend fun clear() {
         dbMutex.withLock { channelDao.deleteAll() }
     }

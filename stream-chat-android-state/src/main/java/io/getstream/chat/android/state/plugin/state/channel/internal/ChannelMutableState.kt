@@ -33,9 +33,11 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.utils.internal.combineStates
 import io.getstream.chat.android.state.utils.internal.mapState
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.util.Date
+import java.util.concurrent.atomic.AtomicInteger
 
 @Suppress("TooManyFunctions")
 /** State container with mutable data of a channel.*/
@@ -47,6 +49,9 @@ internal class ChannelMutableState(
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
+
+    private val seq = seqGenerator.incrementAndGet()
+    private val logger by taggedLogger("Chat:ChannelState-$seq")
 
     private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _countedMessage: MutableSet<String>? = mutableSetOf()
@@ -359,8 +364,15 @@ internal class ChannelMutableState(
      * @param members list of members to be upserted.
      */
     fun upsertMembers(members: List<Member>) {
+        logger.d { "[upsertMembers] member.ids: ${members.map { it.getUserId() }}" }
         val membersMap = members.associateBy(Member::getUserId)
         _members?.apply { value = value + membersMap }
+    }
+
+    fun setMembers(members: List<Member>, membersCount: Int) {
+        logger.d { "[setMembers] member.ids: ${members.map { it.getUserId() }}" }
+        _members?.value = members.associateBy(Member::getUserId)
+        _membersCount?.value = membersCount
     }
 
     /**
@@ -369,6 +381,7 @@ internal class ChannelMutableState(
      * @param member The member to be added.
      */
     fun addMember(member: Member) {
+        logger.d { "[addMember] member.id: ${member.getUserId()}" }
         _membersCount?.value = membersCount.value +
             (1.takeUnless { _members?.value?.keys?.contains(member.getUserId()) == true } ?: 0)
         upsertMembers(listOf(member))
@@ -380,6 +393,7 @@ internal class ChannelMutableState(
      * @param member The member to be removed.
      */
     fun deleteMember(member: Member) {
+        logger.d { "[deleteMember] member.id: ${member.getUserId()}" }
         _members?.let {
             _membersCount?.value = membersCount.value - it.value.count { it.key == member.getUserId() }
             it.value = it.value - member.getUserId()
@@ -399,6 +413,7 @@ internal class ChannelMutableState(
      * @param watchersCount The current number of watchers.
      */
     internal fun deleteWatcher(user: User, watchersCount: Int) {
+        logger.v { "[deleteWatcher] user.id: ${user.id}, watchersCount: $watchersCount" }
         _watchers?.let { upsertWatchers((it.value - user.id).values.toList(), watchersCount) }
     }
 
@@ -411,10 +426,17 @@ internal class ChannelMutableState(
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
+        logger.v { "[upsertWatchers] watchers.ids: ${watchers.map { it.id }}, watchersCount: $watchersCount" }
         _watchers?.apply {
             value = value + watchers.associateBy(User::id)
             _watcherCount?.value = watchersCount.takeUnless { it < 0 } ?: value.size
         }
+    }
+
+    fun setWatchers(watchers: List<User>, watchersCount: Int) {
+        logger.v { "[setWatchers] watchers.ids: ${watchers.map { it.id }}, watchersCount: $watchersCount" }
+        _watchers?.value = watchers.associateBy(User::id)
+        _watcherCount?.value = watchersCount
     }
 
     /**
@@ -431,6 +453,7 @@ internal class ChannelMutableState(
     }
 
     fun upsertUserPresence(user: User) {
+        logger.d { "[upsertUserPresence] user.id: ${user.id}" }
         _members?.value?.get(user.id)?.copy(user = user)?.let { upsertMembers(listOf(it)) }
         user.takeIf { _watchers?.value?.any { it.key == user.id } == true }
             ?.let { upsertWatchers(listOf(it), watcherCount.value) }
@@ -535,5 +558,6 @@ internal class ChannelMutableState(
 
     private companion object {
         private const val OFFSET_EVENT_TIME = 5L
+        private val seqGenerator = AtomicInteger()
     }
 }

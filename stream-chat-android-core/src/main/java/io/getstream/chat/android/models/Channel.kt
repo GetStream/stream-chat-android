@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -283,4 +284,37 @@ public data class Channel(
             extraData = extraData,
         )
     }
+}
+
+@InternalStreamChatApi
+public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
+    return copy(
+        name = that.name,
+        image = that.image,
+        hidden = that.hidden,
+        frozen = that.frozen,
+        team = that.team,
+        config = that.config,
+        extraData = that.extraData,
+        syncStatus = that.syncStatus,
+        hiddenMessagesBefore = that.hiddenMessagesBefore,
+        memberCount = that.memberCount,
+        members = that.members,
+        lastMessageAt = when (that.lastMessageAt?.after(lastMessageAt)) {
+            true -> that.lastMessageAt
+            else -> this.lastMessageAt
+        },
+        createdAt = that.createdAt,
+        updatedAt = that.updatedAt,
+        deletedAt = that.deletedAt,
+        /* Do not merge (messages, watcherCount, watchers, read, ownCapabilities, membership, unreadCount) fields.
+        messages = that.messages,
+        watcherCount = that.watcherCount,
+        watchers = that.watchers,
+        read = that.read,
+        ownCapabilities = that.ownCapabilities,
+        membership = that.membership,
+        unreadCount = that.unreadCount,
+         */
+    )
 }
