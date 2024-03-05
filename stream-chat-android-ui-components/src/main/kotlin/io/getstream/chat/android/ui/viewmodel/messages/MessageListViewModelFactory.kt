@@ -25,7 +25,9 @@ import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.JavaCompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.toUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
@@ -160,6 +162,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             DateSeparatorHandler.getDefaultThreadDateSeparatorHandler()
         private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
         private var mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext)
+        private var userLookupHandler: JavaCompatUserLookupHandler? = null
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -181,6 +184,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
         public fun mediaRecorder(mediaRecorder: StreamMediaRecorder): Builder = apply {
             this.mediaRecorder = mediaRecorder
+        }
+
+        public fun userLookupHandler(userLookupHandler: JavaCompatUserLookupHandler): Builder = apply {
+            this.userLookupHandler = userLookupHandler
         }
 
         public fun enforceUniqueReactions(enforceUniqueReactions: Boolean): Builder = apply {
@@ -219,12 +226,15 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
          * Builds [MessageListViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
+            val cid = cid ?: error("Channel cid should not be null")
             return MessageListViewModelFactory(
                 context = context,
-                cid = cid ?: error("Channel cid should not be null"),
+                cid = cid,
                 messageId = messageId,
                 chatClient = chatClient,
                 mediaRecorder = mediaRecorder,
+                userLookupHandler = userLookupHandler?.toUserLookupHandler()
+                    ?: DefaultUserLookupHandler(chatClient, cid),
                 enforceUniqueReactions = enforceUniqueReactions,
                 maxAttachmentCount = maxAttachmentCount,
                 maxAttachmentSize = maxAttachmentSize,

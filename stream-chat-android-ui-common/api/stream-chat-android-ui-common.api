@@ -24,10 +24,18 @@ public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDoc
 
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/DefaultUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
 	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter;)V
 	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;)V
 	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/JavaCompatUserLookupHandler {
+	public abstract fun handleJavaUserLookup (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/JavaCompatUserLookupHandlerKt {
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/LocalUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {

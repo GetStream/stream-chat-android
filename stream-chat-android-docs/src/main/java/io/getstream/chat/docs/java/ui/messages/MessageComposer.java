@@ -1,5 +1,7 @@
 package io.getstream.chat.docs.java.ui.messages;
 
+import static java.util.Collections.emptyList;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -14,6 +16,20 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.datepicker.MaterialDatePicker;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.channel.ChannelClient;
+import io.getstream.chat.android.models.FilterObject;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.Member;
+import io.getstream.chat.android.models.User;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.JavaCompatUserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler;
 import io.getstream.chat.android.ui.common.state.messages.Edit;
 import io.getstream.chat.android.ui.common.state.messages.MessageMode;
 import io.getstream.chat.android.ui.common.state.messages.Reply;
@@ -38,8 +54,13 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
+import io.getstream.result.Result;
+import io.getstream.result.call.Call;
+import io.getstream.result.call.CallKt;
 import kotlin.Unit;
+import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
@@ -504,6 +525,58 @@ public class MessageComposer extends Fragment {
                 // Return the required view if contained in the component
                 return null;
             }
+        }
+    }
+
+    /**
+     * [Changing Mention Search](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#changing-mention-search)
+     */
+    class ChangingMentionSearch extends Fragment {
+
+        private ChatClient chatClient;
+        private ChannelClient channelClient;
+
+        private MessageComposerView messageComposerView;
+        private MessageListView messageListView;
+
+        private Call<List<User>> queryMembers(String query) {
+            FilterObject filter = Filters.eq("name", query);
+            QuerySorter<Member> sort = QuerySortByField.descByName("name");
+            Call<List<Member>> membersCall = channelClient.queryMembers(0, 30, filter, sort, emptyList());
+            return CallKt.map(membersCall, members -> {
+                List<User> users = new ArrayList<>();
+                for (Member member : members) {
+                    users.add(member.getUser());
+                }
+                return users;
+            });
+        }
+
+        public void usage1() {
+            // Create MessageComposerViewModel for a given channel
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid("messaging:123")
+                    .userLookupHandler((query, callback) -> {
+                        // Implement your custom user lookup
+                        Call<List<User>> queryCall = queryMembers(query);
+                        queryCall.enqueue(result -> {
+                            if (result.isSuccess()) {
+                                callback.invoke(result.getOrThrow());
+                            } else {
+                                callback.invoke(Collections.emptyList());
+                            }
+                        });
+                        return () -> {
+                            queryCall.cancel();
+                            return Unit.INSTANCE;
+                        };
+                    })
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+
+            // Bind MessageComposerViewModel with MessageComposerView
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
         }
     }
 }

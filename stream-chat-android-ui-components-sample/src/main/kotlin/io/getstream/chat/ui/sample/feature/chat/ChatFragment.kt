@@ -33,10 +33,9 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.LocalUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.RemoteUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
+import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -71,14 +70,16 @@ class ChatFragment : Fragment() {
         DefaultUserLookupHandler(
             chatClient = ChatClient.instance(),
             channelCid = args.cid,
-            localFilter = DefaultQueryFilter { it.name.ifBlank { it.id } },
+            localFilter = DefaultQueryFilter(
+                transliterator = DefaultStreamTransliterator(transliterationId = "Cyrl-Latn"),
+            ) { it.name.ifBlank { it.id } },
         )
     }
 
     private val remoteUserLookupHandler by lazy {
         RemoteUserLookupHandler(
             chatClient = ChatClient.instance(),
-            channelCid = args.cid
+            channelCid = args.cid,
         )
     }
 
@@ -213,8 +214,8 @@ class ChatFragment : Fragment() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 messageComposerViewModel.messageMode.collect { messageMode ->
                     when (messageMode) {
-                        is MessageMode.Normal -> {/**/}
-                        is MessageMode.MessageThread -> {/**/}
+                        is MessageMode.Normal -> { /* no-op */ }
+                        is MessageMode.MessageThread -> { /* no-op */ }
                     }
                     val modeText = messageMode.javaClass.simpleName
                     logger.d { "[onMessageModeChange] messageMode: $modeText" }
@@ -225,9 +226,9 @@ class ChatFragment : Fragment() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 messageComposerViewModel.lastActiveAction.collect { messageAction ->
                     when (messageAction) {
-                        is Edit -> {/**/}
-                        is Reply -> {/**/}
-                        else -> {/**/}
+                        is Edit -> { /* no-op */ }
+                        is Reply -> { /* no-op */ }
+                        else -> { /* no-op */ }
                     }
                     val actionText = messageAction?.javaClass?.simpleName
                     logger.d { "[onMessageActionChange] messageAction: $actionText" }
