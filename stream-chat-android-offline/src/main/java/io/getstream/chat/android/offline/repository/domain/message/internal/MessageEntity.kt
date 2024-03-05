@@ -124,6 +124,8 @@ internal data class MessageInnerEntity(
 
     /** Contains moderation details of the message **/
     val moderationDetails: ModerationDetailsEntity? = null,
+    /** When the message text was updated */
+    val messageTextUpdatedAt: Date? = null,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

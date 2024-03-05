@@ -98,6 +98,8 @@ internal data class ReplyMessageInnerEntity(
     val threadParticipantsIds: List<String> = emptyList(),
     /** Contains moderation details of the message **/
     val moderationDetails: ModerationDetailsEntity? = null,
+    /** Date when the message text was updated **/
+    val messageTextUpdatedAt: Date? = null,
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"
