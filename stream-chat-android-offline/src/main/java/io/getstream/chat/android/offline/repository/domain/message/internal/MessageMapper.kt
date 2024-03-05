@@ -72,6 +72,7 @@ internal suspend fun MessageEntity.toModel(
         skipEnrichUrl = skipEnrichUrl,
         skipPushNotification = skipPushNotification,
         moderationDetails = moderationDetails?.toModel(),
+        messageTextUpdatedAt = messageTextUpdatedAt,
     )
 }
 
@@ -112,6 +113,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         skipPushNotification = skipPushNotification,
         skipEnrichUrl = skipEnrichUrl,
         moderationDetails = moderationDetails?.toEntity(),
+        messageTextUpdatedAt = messageTextUpdatedAt,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),
@@ -157,6 +159,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             pinExpires = pinExpires,
             pinnedBy = pinnedByUserId?.let { getUser(it) },
             moderationDetails = moderationDetails?.toModel(),
+            messageTextUpdatedAt = messageTextUpdatedAt,
         )
     }
 }
