@@ -35,6 +35,7 @@ import io.getstream.chat.android.ui.common.feature.messages.composer.typing.Typi
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
@@ -238,6 +239,15 @@ public class MessageComposerController(
     /**
      * UI state of the current composer input.
      */
+    public val messageInput: MutableStateFlow<MessageInput> = MutableStateFlow(MessageInput())
+
+    /**
+     * UI state of the current composer input.
+     */
+    @Deprecated(
+        message = "Use messageInput instead",
+        replaceWith = ReplaceWith("messageInput"),
+    )
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
@@ -337,7 +347,7 @@ public class MessageComposerController(
      * Gets the current text input in the message composer.
      */
     private val messageText: String
-        get() = input.value
+        get() = messageInput.value.text
 
     /**
      * Gives us information if the composer is in the "thread" mode.
@@ -391,11 +401,12 @@ public class MessageComposerController(
      */
     @OptIn(FlowPreview::class)
     private fun setupComposerState() {
-        input.onEach { input ->
-            state.value = state.value.copy(inputValue = input)
+        messageInput.onEach { value ->
+            input.value = value.text
+            state.value = state.value.copy(inputValue = value.text)
 
             if (canSendTypingUpdates.value) {
-                typingUpdatesBuffer.onKeystroke(input)
+                typingUpdatesBuffer.onKeystroke(value.text)
             }
             handleCommandSuggestions()
             handleValidationErrors()
@@ -463,8 +474,13 @@ public class MessageComposerController(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
-        if (this.input.value == value) return
-        this.input.value = value
+        if (this.messageInput.value.text == value) return
+        this.messageInput.value = MessageInput(value, MessageInput.Source.External)
+    }
+
+    private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
+        if (this.messageInput.value.text == value) return
+        this.messageInput.value = MessageInput(value, source)
     }
 
     /**
@@ -505,7 +521,7 @@ public class MessageComposerController(
                 messageActions.value = messageActions.value + messageAction
             }
             is Edit -> {
-                input.value = messageAction.message.text
+                setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
                 selectedAttachments.value = messageAction.message.attachments
                 messageActions.value = messageActions.value + messageAction
             }
@@ -520,7 +536,7 @@ public class MessageComposerController(
      */
     public fun dismissMessageActions() {
         if (isInEditMode) {
-            setMessageInput("")
+            setMessageInputInternal("", MessageInput.Source.Default)
             this.selectedAttachments.value = emptyList()
         }
 
@@ -567,7 +583,7 @@ public class MessageComposerController(
      */
     public fun clearData() {
         logger.i { "[clearData]" }
-        input.value = ""
+        messageInput.value = MessageInput()
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
@@ -693,7 +709,7 @@ public class MessageComposerController(
      */
     private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
-            val message = input.value
+            val message = messageInput.value.text
             val messageLength = message.length
 
             if (messageLength > maxMessageLength) {
@@ -741,7 +757,7 @@ public class MessageComposerController(
     public fun selectMention(user: User) {
         val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
 
-        setMessageInput(augmentedMessageText)
+        setMessageInputInternal(augmentedMessageText, MessageInput.Source.MentionSelected)
         selectedMentions += user
     }
 
@@ -751,7 +767,7 @@ public class MessageComposerController(
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
-        setMessageInput("/${command.name} ")
+        setMessageInputInternal("/${command.name} ", MessageInput.Source.CommandSelected)
     }
 
     /**
@@ -819,7 +835,13 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private suspend fun handleMentionSuggestions() {
-        val inputText = messageText
+        val messageInput = messageInput.value
+        if (messageInput.source == MessageInput.Source.MentionSelected) {
+            logger.v { "[handleMentionSuggestions] rejected (messageInput came from mention selection)" }
+            mentionSuggestions.value = emptyList()
+            return
+        }
+        val inputText = messageInput.text
         scope.launch(DispatcherProvider.IO) {
             val suggestion = mentionSuggester.typingSuggestion(inputText)
             logger.v { "[handleMentionSuggestions] suggestion: $suggestion" }
