@@ -42,5 +42,8 @@ internal object NoOpChannelRepository : ChannelRepository {
     override suspend fun selectMembersForChannel(cid: String): List<Member> = emptyList()
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) { /* No-Op */ }
     override suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message) { /* No-Op */ }
+
+    override suspend fun evictChannel(cid: String) { /* No-Op */ }
+
     override suspend fun clear() { /* No-Op */ }
 }

@@ -73,7 +73,7 @@ public class MessageListHeaderViewModel(
         channelState.flatMapLatest { state ->
             combine(
                 state.channelData,
-                state.members,
+                state.membersCount,
                 state.watcherCount,
             ) { _, _, _ ->
                 state.toChannel()

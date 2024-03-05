@@ -94,7 +94,7 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
             false,
             channelStateLogic,
             testCoroutines.scope,
-        )
+        ) { CURRENT_USER_ID }
     }
 
     // User watching event

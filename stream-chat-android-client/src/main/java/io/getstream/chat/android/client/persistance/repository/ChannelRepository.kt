@@ -139,6 +139,13 @@ public interface ChannelRepository {
     public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
 
     /**
+     * Evict a [Channel] from the repository.
+     *
+     * @param cid String
+     */
+    public suspend fun evictChannel(cid: String)
+
+    /**
      * Clear Channels of this repository.
      */
     public suspend fun clear()

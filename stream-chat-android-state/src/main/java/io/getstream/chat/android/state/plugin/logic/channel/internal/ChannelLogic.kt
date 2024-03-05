@@ -81,7 +81,6 @@ import io.getstream.chat.android.state.event.handler.internal.utils.toChannelUse
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.toAnyChannelPaginationRequest
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
-import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -103,10 +102,11 @@ internal class ChannelLogic(
     private val userPresence: Boolean,
     private val channelStateLogic: ChannelStateLogic,
     private val coroutineScope: CoroutineScope,
+    private val getCurrentUserId: () -> String?,
 ) {
 
     private val mutableState: ChannelMutableState = channelStateLogic.writeChannelState()
-    private val logger by taggedLogger("Chat:ChannelLogic")
+    private val logger by taggedLogger("Chat:ChannelLogicDB")
 
     val cid: String
         get() = mutableState.cid
@@ -504,7 +504,8 @@ internal class ChannelLogic(
      * Responsible for synchronizing [ChannelStateLogic].
      */
     internal fun handleEvent(event: ChatEvent) {
-        StreamLog.d("Channel-Logic") { "[handleEvent] cid: $cid, event: $event" }
+        val currentUserId = getCurrentUserId()
+        logger.d { "[handleEvent] cid: $cid, currentUserId: $currentUserId, event: $event" }
         when (event) {
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
@@ -545,10 +546,15 @@ internal class ChannelLogic(
                 upsertEventMessage(event.message)
             }
             is MemberRemovedEvent -> {
+                if (event.user.id == currentUserId) {
+                    logger.i { "[handleEvent] skip MemberRemovedEvent for currentUser" }
+                    return
+                }
                 channelStateLogic.deleteMember(event.member)
             }
             is NotificationRemovedFromChannelEvent -> {
-                channelStateLogic.deleteMember(event.member)
+                channelStateLogic.setMembers(event.channel.members, event.channel.memberCount)
+                channelStateLogic.setWatchers(event.channel.watchers, event.channel.watcherCount)
             }
             is MemberAddedEvent -> {
                 channelStateLogic.addMember(event.member)

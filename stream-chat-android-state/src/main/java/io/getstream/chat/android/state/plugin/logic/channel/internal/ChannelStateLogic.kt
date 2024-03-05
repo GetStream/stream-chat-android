@@ -155,6 +155,15 @@ internal class ChannelStateLogic(
     }
 
     /**
+     * Sets the watchers of the channel.
+     *
+     * @param watchers the list of [User] to be set
+     */
+    fun setWatchers(watchers: List<User>, watchersCount: Int) {
+        mutableState.setWatchers(watchers, watchersCount)
+    }
+
+    /**
      * Upsert members in the channel.
      *
      * @param message The message to be added or updated.
@@ -289,6 +298,16 @@ internal class ChannelStateLogic(
      */
     fun upsertMembers(members: List<Member>) {
         mutableState.upsertMembers(members)
+    }
+
+    /**
+     * Sets the members of the channel.
+     *
+     * @param members The list of members.
+     * @param membersCount The count of members.
+     */
+    fun setMembers(members: List<Member>, membersCount: Int) {
+        mutableState.setMembers(members, membersCount)
     }
 
     /**
