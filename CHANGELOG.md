@@ -49,6 +49,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Restored user mention customization which was removed during v5-v6 migration. [#5193](https://github.com/GetStream/stream-chat-android/pull/5193)  
 
 ### ⚠️ Changed
 
