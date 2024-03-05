@@ -22,6 +22,96 @@ public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDoc
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler {
+	public abstract fun handleCompatUserLookup (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandlerKt {
+	public static final fun toJavaCompatUserLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;
+	public static final fun toUserLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/DefaultUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;)V
+	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/DefaultUserQueryFilter : io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun filter (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/LocalUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/RemoteUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
+	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
+	public abstract fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandlerKt {
+	public static final fun withQueryFormatter (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;Lio/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/DefaultQueryFilter : io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun filter (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {
+	public abstract fun filter (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/Combine : io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter {
+	public static final field $stable I
+	public fun <init> (Ljava/util/List;)V
+	public fun <init> ([Lio/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter;)V
+	public fun format (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter {
+	public abstract fun format (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/Transliterate : io/getstream/chat/android/ui/common/feature/messages/composer/query/formatter/QueryFormatter {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun format (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/transliteration/DefaultStreamTransliterator : io/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun transliterate (Ljava/lang/String;)Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator {
+	public abstract fun transliterate (Ljava/lang/String;)Ljava/lang/String;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler {
 	public static final field Companion Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler$Companion;
 	public abstract fun shouldAddDateSeparator (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Message;)Z
@@ -484,6 +574,70 @@ public abstract class io/getstream/chat/android/ui/common/state/messages/Message
 
 public final class io/getstream/chat/android/ui/common/state/messages/MessageActionKt {
 	public static final fun updateMessage (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/common/state/messages/MessageAction;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source;)V
+	public synthetic fun <init> (Ljava/lang/String;Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source;
+	public final fun copy (Ljava/lang/String;Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source;)Lio/getstream/chat/android/ui/common/state/messages/MessageInput;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/common/state/messages/MessageInput;Ljava/lang/String;Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/state/messages/MessageInput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getSource ()Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source;
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$CommandSelected : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$CommandSelected;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Default : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Default;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Edit : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Edit;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$External : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$External;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source {
+	public static final field $stable I
+}
+
+public final class io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$MentionSelected : io/getstream/chat/android/ui/common/state/messages/MessageInput$Source$Internal {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/state/messages/MessageInput$Source$MentionSelected;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/ui/common/state/messages/MessageMode {

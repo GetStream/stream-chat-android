@@ -26,14 +26,16 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
+import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.MessageInput
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
@@ -56,7 +58,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -72,6 +73,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Date
 import java.util.concurrent.TimeUnit
@@ -85,7 +87,7 @@ import java.util.regex.Pattern
  *
  * If you require more state and business logic, compose this Controller with your code and apply the necessary changes.
  *
- * @param channelId The ID of the channel we're chatting in.
+ * @param channelCid The CID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
  * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
@@ -96,9 +98,10 @@ import java.util.regex.Pattern
 @InternalStreamChatApi
 @Suppress("TooManyFunctions")
 public class MessageComposerController(
-    private val channelId: String,
+    private val channelCid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val mediaRecorder: StreamMediaRecorder,
+    private val userLookupHandler: UserLookupHandler,
     private val fileToUri: (File) -> String,
     private val messageLimit: Int,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
@@ -124,7 +127,7 @@ public class MessageComposerController(
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
     private val audioRecordingController = AudioRecordingController(
-        channelId,
+        channelCid,
         chatClient.audioPlayer,
         mediaRecorder,
         fileToUri,
@@ -236,6 +239,15 @@ public class MessageComposerController(
     /**
      * UI state of the current composer input.
      */
+    public val messageInput: MutableStateFlow<MessageInput> = MutableStateFlow(MessageInput())
+
+    /**
+     * UI state of the current composer input.
+     */
+    @Deprecated(
+        message = "Use messageInput instead",
+        replaceWith = ReplaceWith("messageInput"),
+    )
     public val input: MutableStateFlow<String> = MutableStateFlow("")
 
     /**
@@ -335,7 +347,7 @@ public class MessageComposerController(
      * Gets the current text input in the message composer.
      */
     private val messageText: String
-        get() = input.value
+        get() = messageInput.value.text
 
     /**
      * Gives us information if the composer is in the "thread" mode.
@@ -347,6 +359,10 @@ public class MessageComposerController(
      * Represents the selected mentions based on the message suggestion list.
      */
     private val selectedMentions: MutableSet<User> = mutableSetOf()
+
+    private val mentionSuggester = TypingSuggester(
+        TypingSuggestionOptions(symbol = MentionStartSymbol),
+    )
 
     /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
@@ -372,9 +388,9 @@ public class MessageComposerController(
     }
 
     private fun observeChannelState(): StateFlow<ChannelState?> {
-        logger.d { "[observeChannelState] cid: $channelId, messageId: $messageId, messageLimit: $messageLimit" }
+        logger.d { "[observeChannelState] cid: $channelCid, messageId: $messageId, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(
-            cid = channelId,
+            cid = channelCid,
             messageLimit = messageLimit,
             coroutineScope = scope,
         )
@@ -385,11 +401,12 @@ public class MessageComposerController(
      */
     @OptIn(FlowPreview::class)
     private fun setupComposerState() {
-        input.onEach { input ->
-            state.value = state.value.copy(inputValue = input)
+        messageInput.onEach { value ->
+            input.value = value.text
+            state.value = state.value.copy(inputValue = value.text)
 
             if (canSendTypingUpdates.value) {
-                typingUpdatesBuffer.onKeystroke(input)
+                typingUpdatesBuffer.onKeystroke(value.text)
             }
             handleCommandSuggestions()
             handleValidationErrors()
@@ -457,8 +474,13 @@ public class MessageComposerController(
      * @param value Current state value.
      */
     public fun setMessageInput(value: String) {
-        if (this.input.value == value) return
-        this.input.value = value
+        if (this.messageInput.value.text == value) return
+        this.messageInput.value = MessageInput(value, MessageInput.Source.External)
+    }
+
+    private fun setMessageInputInternal(value: String, source: MessageInput.Source) {
+        if (this.messageInput.value.text == value) return
+        this.messageInput.value = MessageInput(value, source)
     }
 
     /**
@@ -499,7 +521,7 @@ public class MessageComposerController(
                 messageActions.value = messageActions.value + messageAction
             }
             is Edit -> {
-                input.value = messageAction.message.text
+                setMessageInputInternal(messageAction.message.text, MessageInput.Source.Edit)
                 selectedAttachments.value = messageAction.message.attachments
                 messageActions.value = messageActions.value + messageAction
             }
@@ -514,7 +536,7 @@ public class MessageComposerController(
      */
     public fun dismissMessageActions() {
         if (isInEditMode) {
-            setMessageInput("")
+            setMessageInputInternal("", MessageInput.Source.Default)
             this.selectedAttachments.value = emptyList()
         }
 
@@ -561,7 +583,7 @@ public class MessageComposerController(
      */
     public fun clearData() {
         logger.i { "[clearData]" }
-        input.value = ""
+        messageInput.value = MessageInput()
         selectedAttachments.value = emptyList()
         validationErrors.value = emptyList()
         alsoSendToChannel.value = false
@@ -631,7 +653,7 @@ public class MessageComposerController(
             )
         } else {
             Message(
-                cid = channelId,
+                cid = channelCid,
                 text = trimmedMessage,
                 parentId = parentMessageId,
                 replyMessageId = replyMessageId,
@@ -687,7 +709,7 @@ public class MessageComposerController(
      */
     private fun handleValidationErrors() {
         validationErrors.value = mutableListOf<ValidationError>().apply {
-            val message = input.value
+            val message = messageInput.value.text
             val messageLength = message.length
 
             if (messageLength > maxMessageLength) {
@@ -735,7 +757,7 @@ public class MessageComposerController(
     public fun selectMention(user: User) {
         val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${user.name} "
 
-        setMessageInput(augmentedMessageText)
+        setMessageInputInternal(augmentedMessageText, MessageInput.Source.MentionSelected)
         selectedMentions += user
     }
 
@@ -745,7 +767,7 @@ public class MessageComposerController(
      * @param command The command that was selected.
      */
     public fun selectCommand(command: Command) {
-        setMessageInput("/${command.name} ")
+        setMessageInputInternal("/${command.name} ", MessageInput.Source.CommandSelected)
     }
 
     /**
@@ -813,86 +835,23 @@ public class MessageComposerController(
      * Shows the mention suggestion list popup if necessary.
      */
     private suspend fun handleMentionSuggestions() {
-        val containsMention = MentionPattern.matcher(messageText).find()
-
-        mentionSuggestions.value = if (containsMention) {
-            logger.v { "[handleMentionSuggestions] Input contains the mention prefix @." }
-            val userNameContains = messageText.substringAfterLast("@")
-
-            val membersCount = _channelState.value?.membersCount ?: 0
-            when {
-                userNameContains.isEmpty() || membersCount == users.size -> {
-                    logger.v { "[handleMentionSuggestions] search locally" }
-                    users.filter { it.name.contains(userNameContains, true) }
-                }
-                userNameContains.isNotEmpty() -> {
-                    logger.v { "[handleMentionSuggestions] search remotely" }
-                    val (channelType, channelId) = channelId.cidToTypeAndId()
-
-                    queryMembersByUserNameContains(
-                        channelType = channelType,
-                        channelId = channelId,
-                        contains = userNameContains,
-                    )
-                }
-                else -> {
-                    logger.v {
-                        "[handleMentionSuggestions] userNameContains: $userNameContains, " +
-                            "membersCount: $membersCount"
-                    }
-                    emptyList()
-                }
-            }
-        } else {
-            emptyList()
+        val messageInput = messageInput.value
+        if (messageInput.source == MessageInput.Source.MentionSelected) {
+            logger.v { "[handleMentionSuggestions] rejected (messageInput came from mention selection)" }
+            mentionSuggestions.value = emptyList()
+            return
         }
-    }
-
-    /**
-     * Queries the backend for channel members whose username contains the string represented by the argument
-     * [contains].
-     *
-     * @param channelType The type of channel we are querying for members.
-     * @param channelId The ID of the channel we are querying for members.
-     * @param contains The string for which we are querying the backend in order to see if it is contained
-     * within a member's username.
-     *
-     * @return A list of users whose username contains the string represented by [contains] or an empty list in case
-     * no usernames contain the given string.
-     */
-    private suspend fun queryMembersByUserNameContains(
-        channelType: String,
-        channelId: String,
-        contains: String,
-    ): List<User> {
-        logger.v { "[queryMembersByUserNameContains] Querying the backend for members." }
-
-        val result = chatClient.queryMembers(
-            channelType = channelType,
-            channelId = channelId,
-            offset = QUERY_MEMBERS_REQUEST_OFFSET,
-            limit = QUERY_MEMBERS_REQUEST_LIMIT,
-            filter = Filters.autocomplete(
-                fieldName = "name",
-                value = contains,
-            ),
-            sort = QuerySortByField(),
-            members = listOf(),
-        ).await()
-
-        return when (result) {
-            is Result.Success -> {
-                result.value
-                    .filter { it.user.name.contains(contains, true) }
-                    .map { it.user }
-            }
-            is Result.Failure -> {
-                logger.e {
-                    "[queryMembersByUserNameContains] Could not query members: " +
-                        result.value.message
-                }
-
+        val inputText = messageInput.text
+        scope.launch(DispatcherProvider.IO) {
+            val suggestion = mentionSuggester.typingSuggestion(inputText)
+            logger.v { "[handleMentionSuggestions] suggestion: $suggestion" }
+            val result = if (suggestion != null) {
+                userLookupHandler.handleUserLookup(suggestion.text)
+            } else {
                 emptyList()
+            }
+            withContext(DispatcherProvider.Main) {
+                mentionSuggestions.value = result
             }
         }
     }
@@ -977,7 +936,7 @@ public class MessageComposerController(
      * Makes an API call signaling that a typing event has occurred.
      */
     private fun sendKeystrokeEvent() {
-        val (type, id) = channelId.cidToTypeAndId()
+        val (type, id) = channelCid.cidToTypeAndId()
 
         chatClient.keystroke(type, id, parentMessageId).enqueue()
     }
@@ -986,7 +945,7 @@ public class MessageComposerController(
      * Makes an API call signaling that a stop typing event has occurred.
      */
     private fun sendStopTypingEvent() {
-        val (type, id) = channelId.cidToTypeAndId()
+        val (type, id) = channelCid.cidToTypeAndId()
 
         chatClient.stopTyping(type, id, parentMessageId).enqueue()
     }
@@ -1003,9 +962,9 @@ public class MessageComposerController(
         private const val DefaultMaxMessageLength: Int = 5000
 
         /**
-         * The regex pattern used to check if the message ends with incomplete mention.
+         * The character used to start a mention.
          */
-        private val MentionPattern = Pattern.compile("^(.* )?@([a-zA-Z]+[0-9]*)*$", Pattern.MULTILINE)
+        private const val MentionStartSymbol: String = "@"
 
         /**
          * The regex pattern used to check if the message ends with incomplete command.
@@ -1022,15 +981,5 @@ public class MessageComposerController(
          * The amount of time we debounce computing mention suggestions and link previews.
          */
         private const val TEXT_INPUT_DEBOUNCE_TIME = 300L
-
-        /**
-         * Pagination offset for the member query.
-         */
-        private const val QUERY_MEMBERS_REQUEST_OFFSET: Int = 0
-
-        /**
-         * The upper limit of members the query is allowed to return.
-         */
-        private const val QUERY_MEMBERS_REQUEST_LIMIT: Int = 30
     }
 }

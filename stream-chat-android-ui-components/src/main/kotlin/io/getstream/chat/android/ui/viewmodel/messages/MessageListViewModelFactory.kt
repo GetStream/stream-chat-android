@@ -24,6 +24,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.toUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.feature.messages.list.MessagePositionHandler
@@ -71,6 +75,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
     private val mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext),
+    private val userLookupHandler: UserLookupHandler = DefaultUserLookupHandler(chatClient, cid),
     private val fileToUri: (File) -> String = { file -> file.toUri().toString() },
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
@@ -115,9 +120,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         MessageComposerViewModel::class.java to {
             MessageComposerViewModel(
                 MessageComposerController(
-                    channelId = cid,
+                    channelCid = cid,
                     chatClient = chatClient,
                     mediaRecorder = mediaRecorder,
+                    userLookupHandler = userLookupHandler,
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,
                     fileToUri = fileToUri,
@@ -156,6 +162,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             DateSeparatorHandler.getDefaultThreadDateSeparatorHandler()
         private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
         private var mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext)
+        private var userLookupHandler: UserLookupHandler? = null
+        private var userLookupHandlerCompat: CompatUserLookupHandler? = null
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -177,6 +185,14 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
 
         public fun mediaRecorder(mediaRecorder: StreamMediaRecorder): Builder = apply {
             this.mediaRecorder = mediaRecorder
+        }
+
+        public fun userLookupHandlerCompat(userLookupHandler: CompatUserLookupHandler): Builder = apply {
+            this.userLookupHandlerCompat = userLookupHandler
+        }
+
+        public fun userLookupHandler(userLookupHandler: UserLookupHandler): Builder = apply {
+            this.userLookupHandler = userLookupHandler
         }
 
         public fun enforceUniqueReactions(enforceUniqueReactions: Boolean): Builder = apply {
@@ -215,12 +231,16 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
          * Builds [MessageListViewModelFactory] instance.
          */
         public fun build(): ViewModelProvider.Factory {
+            val cid = cid ?: error("Channel cid should not be null")
             return MessageListViewModelFactory(
                 context = context,
-                cid = cid ?: error("Channel cid should not be null"),
+                cid = cid,
                 messageId = messageId,
                 chatClient = chatClient,
                 mediaRecorder = mediaRecorder,
+                userLookupHandler = userLookupHandler
+                    ?: userLookupHandlerCompat?.toUserLookupHandler()
+                    ?: DefaultUserLookupHandler(chatClient, cid),
                 enforceUniqueReactions = enforceUniqueReactions,
                 maxAttachmentCount = maxAttachmentCount,
                 maxAttachmentSize = maxAttachmentSize,
