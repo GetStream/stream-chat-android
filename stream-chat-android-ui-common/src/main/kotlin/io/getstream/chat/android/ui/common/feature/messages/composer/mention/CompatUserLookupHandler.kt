@@ -16,15 +16,15 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.composer.mention
 
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.User
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 /**
  * Java compatibility interface for user lookup handler.
  */
-public interface JavaCompatUserLookupHandler {
+public fun interface CompatUserLookupHandler {
 
     /**
      * Handles user lookup by given [query] in suspend way.
@@ -34,19 +34,33 @@ public interface JavaCompatUserLookupHandler {
      * @param callback The callback to be invoked when the user lookup is completed.
      * @return The cancel function to be invoked when the user lookup should be cancelled.
      */
-    public fun handleJavaUserLookup(query: String, callback: (List<User>) -> Unit): () -> Unit
+    public fun handleCompatUserLookup(query: String, callback: (List<User>) -> Unit): () -> Unit
 }
 
-@InternalStreamChatApi
-public fun JavaCompatUserLookupHandler.toUserLookupHandler(): UserLookupHandler {
+/**
+ * Converts [CompatUserLookupHandler] to [UserLookupHandler].
+ */
+public fun CompatUserLookupHandler.toUserLookupHandler(): UserLookupHandler {
     return UserLookupHandler { query ->
         suspendCancellableCoroutine { cont ->
-            val cancelable = handleJavaUserLookup(query) { users ->
+            val cancelable = handleCompatUserLookup(query) { users ->
                 cont.resume(users)
             }
             cont.invokeOnCancellation {
                 cancelable.invoke()
             }
+        }
+    }
+}
+
+public fun UserLookupHandler.toJavaCompatUserLookupHandler(): CompatUserLookupHandler {
+    return CompatUserLookupHandler { query, callback ->
+        runBlocking {
+            val users = handleUserLookup(query)
+            callback(users)
+        }
+
+        return@CompatUserLookupHandler {
         }
     }
 }

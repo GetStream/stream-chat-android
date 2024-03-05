@@ -4522,7 +4522,8 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public final fun messageId (Ljava/lang/String;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
 	public final fun showSystemMessages (Z)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
 	public final fun threadDateSeparatorHandler (Lio/getstream/chat/android/ui/common/feature/messages/list/DateSeparatorHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
-	public final fun userLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/JavaCompatUserLookupHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
+	public final fun userLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
+	public final fun userLookupHandlerCompat (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModelFactory$Builder;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel : androidx/lifecycle/ViewModel {

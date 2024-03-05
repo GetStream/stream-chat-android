@@ -22,6 +22,15 @@ public class io/getstream/chat/android/ui/common/feature/documents/AttachmentDoc
 	protected fun onCreate (Landroid/os/Bundle;)V
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler {
+	public abstract fun handleCompatUserLookup (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
+}
+
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandlerKt {
+	public static final fun toJavaCompatUserLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;
+	public static final fun toUserLookupHandler (Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/CompatUserLookupHandler;)Lio/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler;
+}
+
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/DefaultUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)V
@@ -31,11 +40,12 @@ public final class io/getstream/chat/android/ui/common/feature/messages/composer
 	public fun handleUserLookup (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
-public abstract interface class io/getstream/chat/android/ui/common/feature/messages/composer/mention/JavaCompatUserLookupHandler {
-	public abstract fun handleJavaUserLookup (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)Lkotlin/jvm/functions/Function0;
-}
-
-public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/JavaCompatUserLookupHandlerKt {
+public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/DefaultUserQueryFilter : io/getstream/chat/android/ui/common/feature/messages/composer/query/filter/QueryFilter {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/transliteration/StreamTransliterator;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun filter (Ljava/util/List;Ljava/lang/String;)Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/ui/common/feature/messages/composer/mention/LocalUserLookupHandler : io/getstream/chat/android/ui/common/feature/messages/composer/mention/UserLookupHandler {

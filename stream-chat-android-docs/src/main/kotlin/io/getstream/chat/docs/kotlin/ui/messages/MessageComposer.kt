@@ -10,7 +10,21 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.datepicker.MaterialDatePicker
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.ChatClient.Companion.instance
+import io.getstream.chat.android.client.channel.ChannelClient
+import io.getstream.chat.android.models.Filters.eq
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -34,6 +48,10 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFacto
 import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.map
+import kotlin.jvm.functions.Function1
 
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
@@ -363,6 +381,60 @@ private object MessageComposer : Fragment() {
             override fun renderState(state: MessageComposerState) {
                 // Render the state of the component
             }
+        }
+    }
+
+    class ChangingMentionSearch(
+        private val chatClient: ChatClient,
+        private val channelClient: ChannelClient,
+        private val messageComposerView: MessageComposerView,
+    ) : Fragment() {
+
+        private suspend fun queryMembers(query: String): List<User> {
+            val filter = eq("name", query)
+            val sort: QuerySorter<Member> = descByName("name")
+            val membersCall = channelClient.queryMembers(0, 30, filter, sort, emptyList())
+            return membersCall.map { members ->
+                members.map { it.user }
+            }.await().getOrNull() ?: emptyList()
+        }
+
+        fun usage0() {
+            val cid = "messaging:123"
+            val transliterator = DefaultStreamTransliterator(transliterationId = "Cyrl-Latn")
+            DefaultUserLookupHandler(
+                chatClient = chatClient,
+                channelCid = cid,
+                localFilter = DefaultUserQueryFilter(transliterator = transliterator),
+            )
+        }
+
+        fun usage1() {
+            val cid = "messaging:123"
+            val defaultUserLookupHandler = DefaultUserLookupHandler(chatClient, cid)
+
+            val factory = MessageListViewModelFactory(
+                context = requireContext(), cid = cid, userLookupHandler = defaultUserLookupHandler
+            )
+            val viewModel: MessageComposerViewModel by viewModels { factory }
+            viewModel.bindView(messageComposerView, viewLifecycleOwner)
+        }
+
+        fun usage2() {
+            val cid = "messaging:123"
+            val customUserLookupHandler = UserLookupHandler { query ->
+                queryMembers(query)
+            }
+
+            val factory = MessageListViewModelFactory(
+                context = requireContext(),
+                cid = cid,
+                userLookupHandler = customUserLookupHandler
+            )
+            val viewModel: MessageComposerViewModel by viewModels { factory }
+
+            // Bind MessageComposerViewModel with MessageComposerView
+            viewModel.bindView(messageComposerView, viewLifecycleOwner)
         }
     }
 }
