@@ -24,8 +24,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.JavaCompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.toUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
@@ -162,7 +162,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             DateSeparatorHandler.getDefaultThreadDateSeparatorHandler()
         private var messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler()
         private var mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext)
-        private var userLookupHandler: JavaCompatUserLookupHandler? = null
+        private var userLookupHandler: UserLookupHandler? = null
+        private var userLookupHandlerCompat: CompatUserLookupHandler? = null
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -186,7 +187,11 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             this.mediaRecorder = mediaRecorder
         }
 
-        public fun userLookupHandler(userLookupHandler: JavaCompatUserLookupHandler): Builder = apply {
+        public fun userLookupHandlerCompat(userLookupHandler: CompatUserLookupHandler): Builder = apply {
+            this.userLookupHandlerCompat = userLookupHandler
+        }
+
+        public fun userLookupHandler(userLookupHandler: UserLookupHandler): Builder = apply {
             this.userLookupHandler = userLookupHandler
         }
 
@@ -233,7 +238,8 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 messageId = messageId,
                 chatClient = chatClient,
                 mediaRecorder = mediaRecorder,
-                userLookupHandler = userLookupHandler?.toUserLookupHandler()
+                userLookupHandler = userLookupHandler
+                    ?: userLookupHandlerCompat?.toUserLookupHandler()
                     ?: DefaultUserLookupHandler(chatClient, cid),
                 enforceUniqueReactions = enforceUniqueReactions,
                 maxAttachmentCount = maxAttachmentCount,

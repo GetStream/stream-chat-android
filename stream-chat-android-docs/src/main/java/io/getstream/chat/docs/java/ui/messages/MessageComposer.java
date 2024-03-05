@@ -17,7 +17,6 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.material.datepicker.MaterialDatePicker;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
@@ -28,8 +27,13 @@ import io.getstream.chat.android.models.Member;
 import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.models.querysort.QuerySortByField;
 import io.getstream.chat.android.models.querysort.QuerySorter;
-import io.getstream.chat.android.ui.common.feature.messages.composer.mention.JavaCompatUserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter;
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter;
+import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator;
+import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.StreamTransliterator;
 import io.getstream.chat.android.ui.common.state.messages.Edit;
 import io.getstream.chat.android.ui.common.state.messages.MessageMode;
 import io.getstream.chat.android.ui.common.state.messages.Reply;
@@ -54,13 +58,10 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
-import io.getstream.result.Result;
 import io.getstream.result.call.Call;
 import io.getstream.result.call.CallKt;
 import kotlin.Unit;
-import kotlin.coroutines.Continuation;
 import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 
 /**
  * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
@@ -552,25 +553,51 @@ public class MessageComposer extends Fragment {
             });
         }
 
+        public void usage0() {
+            String cid = "messaging:123";
+            StreamTransliterator transliterator = new DefaultStreamTransliterator("Cyrl-Latn");
+            DefaultUserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(
+                    chatClient,
+                    cid,
+                    new DefaultUserQueryFilter(transliterator)
+            );
+        }
+
         public void usage1() {
+            String cid = "messaging:123";
+            ChatClient chatClient = ChatClient.instance();
+            UserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(chatClient, cid);
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid(cid)
+                    .userLookupHandler(defaultUserLookupHandler)
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+        }
+
+        public void usage2() {
+            String cid = "messaging:123";
+            CompatUserLookupHandler customUserLookupHandler = (query, callback) -> {
+                // Implement your custom user lookup
+                Call<List<User>> queryCall = ChangingMentionSearch.this.queryMembers(query);
+                queryCall.enqueue(result -> {
+                    if (result.isSuccess()) {
+                        callback.invoke(result.getOrThrow());
+                    } else {
+                        callback.invoke(emptyList());
+                    }
+                });
+                return () -> {
+                    queryCall.cancel();
+                    return Unit.INSTANCE;
+                };
+            };
+
             // Create MessageComposerViewModel for a given channel
             ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
-                    .cid("messaging:123")
-                    .userLookupHandler((query, callback) -> {
-                        // Implement your custom user lookup
-                        Call<List<User>> queryCall = queryMembers(query);
-                        queryCall.enqueue(result -> {
-                            if (result.isSuccess()) {
-                                callback.invoke(result.getOrThrow());
-                            } else {
-                                callback.invoke(Collections.emptyList());
-                            }
-                        });
-                        return () -> {
-                            queryCall.cancel();
-                            return Unit.INSTANCE;
-                        };
-                    })
+                    .cid(cid)
+                    .userLookupHandlerCompat(customUserLookupHandler)
                     .build();
             ViewModelProvider provider = new ViewModelProvider(this, factory);
             MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);

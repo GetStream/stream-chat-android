@@ -33,8 +33,8 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.RemoteUserLookupHandler
-import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter
 import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -70,9 +70,9 @@ class ChatFragment : Fragment() {
         DefaultUserLookupHandler(
             chatClient = ChatClient.instance(),
             channelCid = args.cid,
-            localFilter = DefaultQueryFilter(
+            localFilter = DefaultUserQueryFilter(
                 transliterator = DefaultStreamTransliterator(transliterationId = "Cyrl-Latn"),
-            ) { it.name.ifBlank { it.id } },
+            ),
         )
     }
 
