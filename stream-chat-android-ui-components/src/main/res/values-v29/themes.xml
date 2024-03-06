@@ -19,7 +19,7 @@
     <style name="StreamUi.AttachmentGallery" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="streamUiTheme">@style/StreamUiTheme</item>
         <item name="android:statusBarColor">@color/stream_ui_white</item>
-        <item name="android:navigationBarColor">@color/stream_ui_white</item>
+        <item name="android:navigationBarColor">@color/stream_ui_literal_transparent</item>
         <item name="android:windowLightStatusBar">@bool/stream_ui_light_status_bar</item>
     </style>
 </resources>
