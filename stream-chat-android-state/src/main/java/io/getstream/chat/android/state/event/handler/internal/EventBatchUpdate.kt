@@ -108,7 +108,8 @@ internal class EventBatchUpdate private constructor(
     suspend fun execute() {
         // actually insert the data
         currentUserId?.let { userMap -= it }
-        enrichChannelsWithCapabilities()
+        // TODO delete if regression goes well
+        // enrichChannelsWithCapabilities()
         logger.v { "[execute] id: $id, channelMap.size: ${channelMap.size}" }
 
         repos.insertUsers(userMap.values.toList())
@@ -127,6 +128,15 @@ internal class EventBatchUpdate private constructor(
             .map { channel -> channel.cid }
         val cachedChannels = repos.selectChannels(channelsWithoutCapabilities)
         logger.v { "[enrichChannelsWithCapabilities] id: $id, cachedChannels.size: ${cachedChannels.size}" }
+        // TODO the logic below seems to be wrong, we should be adding capabilities to the channels from
+        //  the channelMap, otherwise we just replaced the channels in channelMap with the cachedChannels
+        //  which may be wrong, cause we may have some changes in the channelMap that we want to keep.
+        //
+        // FIXME
+        //  For instance this breaks the logic removing a member from a channel, cachedChannels will have
+        //  the stale member list, and we will lose the member removal.
+        //
+        // We should be adding the capabilities from the cachedChannels to the channels in channelMap
         channelMap.putAll(cachedChannels.associateBy(Channel::cid))
     }
 
@@ -134,11 +144,16 @@ internal class EventBatchUpdate private constructor(
         private val id: Int,
     ) {
         private val channelsToFetch = mutableSetOf<String>()
+        private val channelsToRemove = mutableSetOf<String>()
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
 
         fun addToFetchChannels(cIds: List<String>) {
             channelsToFetch += cIds
+        }
+
+        fun addToRemoveChannels(cIds: List<String>) {
+            channelsToRemove += cIds
         }
 
         fun addToFetchChannels(cId: String) {
@@ -162,6 +177,7 @@ internal class EventBatchUpdate private constructor(
             repos: RepositoryFacade,
             currentUserId: String,
         ): EventBatchUpdate {
+            channelsToRemove.forEach { repos.deleteChannel(it) }
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
             val messageMap: Map<String, Message> =

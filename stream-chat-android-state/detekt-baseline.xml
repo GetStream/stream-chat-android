@@ -20,6 +20,7 @@
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
+    <ID>LoopWithTooManyJumpStatements:EventHandlerSequential.kt$EventHandlerSequential$for</ID>
     <ID>MagicNumber:QueryChannelPaginationRequest.kt$QueryChannelPaginationRequest$30</ID>
     <ID>MagicNumber:StatePluginConfig.kt$StatePluginConfig$12</ID>
     <ID>MagicNumber:SyncManager.kt$SyncManager$30</ID>
@@ -49,6 +50,7 @@
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
     <ID>TooGenericExceptionCaught:ChatClient.kt$exception: Exception</ID>
     <ID>TooGenericExceptionCaught:EventHandlerSequential.kt$EventHandlerSequential$e: Throwable</ID>
+    <ID>UnusedPrivateMember:EventBatchUpdate.kt$EventBatchUpdate$private suspend fun enrichChannelsWithCapabilities()</ID>
     <ID>UnusedPrivateMember:ThreadLogic.kt$ThreadLogic$private fun handleEvent(event: HasMessage)</ID>
   </CurrentIssues>
 </SmellBaseline>

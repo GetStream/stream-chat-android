@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.api2.endpoint.GeneralApi
 import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
+import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
@@ -87,6 +88,7 @@ import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
@@ -134,6 +136,7 @@ constructor(
     private val configApi: ConfigApi,
     private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
+    private val ogApi: OpenGraphApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -174,7 +177,7 @@ constructor(
         this._connectionId.value = connectionId
     }
 
-    override fun releseConnection() {
+    override fun releaseConnection() {
         this._connectionId.value = ""
     }
 
@@ -785,6 +788,10 @@ constructor(
             messageId = messageId,
             request = TranslateMessageRequest(language),
         ).map { response -> response.message.toDomain() }
+    }
+
+    override fun og(url: String): Call<Attachment> {
+        return ogApi.get(url).map { it.toDomain() }
     }
 
     override fun searchMessages(request: SearchMessagesRequest): Call<List<Message>> {

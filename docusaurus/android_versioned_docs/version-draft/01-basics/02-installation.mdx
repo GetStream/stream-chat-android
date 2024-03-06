@@ -1,0 +1,106 @@
+# Installation
+
+All Stream Android libraries are available from MavenCentral, with some of their transitive dependencies hosted on Jitpack. 
+
+Before you add Stream dependencies, update your repositories in the `settings.gradle` file to include these two repositories:
+
+```groovy {5-6}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Or if you're using an older project setup, add these repositories in your project level `build.gradle` file:
+
+```groovy {4-5}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+Check the [Releases page](https://github.com/GetStream/stream-chat-android/releases) for the latest version and the changelog.
+
+[![Latest version badge](https://img.shields.io/github/v/release/GetStream/stream-chat-android)](https://github.com/GetStream/stream-chat-android/releases)
+
+## Available Artifacts
+
+### Client
+
+To add the low-level Chat client library to your app, open your module's `build.gradle` script and add the following:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-client:$stream_version"
+}
+```
+
+### State
+
+To use the state library in your application, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-state:$stream_version"
+}
+```
+
+### Offline Support
+
+To use offline support in your application, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-offline:$stream_version"
+}
+```
+
+This also adds the client library automatically.
+
+### UI Components
+
+To use the [UI Components](../02-ui-components/01-getting-started.mdx) in your application, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-ui-components:$stream_version"
+}
+```
+
+Adding the UI Components library as a dependency will automatically include the client and offline libraries as well.
+
+### Compose UI Components
+
+To use the [Compose UI Components](../03-compose/01-overview.mdx) instead, add the following dependency:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-chat-android-compose:$stream_version"
+}
+```
+
+Adding the Compose UI Components library as a dependency will automatically include the client and offline libraries as well.
+
+### Markdown support
+
+We ship an additional artifact for Markdown support which can be used together with the UI Components library:
+
+ ```groovy
+ dependencies {
+     implementation "stream-chat-android-markdown-transformer:$stream_version"
+ }
+ ```
+
+ For more information see [UI Components Configuration](../02-ui-components/03-customizing-components.mdx#markdown) guide.
+
+### Push Notifications
+
+We ship multiple artifacts to easily integrate Stream Chat with third party push notification providers. See the [Push Notification page](../06-advanced/01-push-notifications/01-overview.mdx) for more details.

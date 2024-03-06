@@ -512,18 +512,17 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
-        refreshUnreadLabel(null)
+        refreshUnreadLabel()
     }
 
-    private fun refreshUnreadLabel(expectedMessageId: String?) {
+    private fun refreshUnreadLabel() {
         val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
         channelState.filterNotNull()
             .flatMapLatest {
                 it.read
                     .filterNotNull()
                     .filter {
-                        it.unreadMessages > 0 &&
-                            it.lastReadMessageId != null &&
+                        it.lastReadMessageId != null &&
                             previousUnreadMessageId?.equals(it.lastReadMessageId)?.not() ?: true
                     }
             }
@@ -834,6 +833,7 @@ public class MessageListController(
 
             unreadLabel
                 ?.takeIf { it.lastReadMessageId == message.id }
+                ?.takeIf { nextMessage != null }
                 ?.let { groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (index == 0 && shouldAddThreadSeparator) {
@@ -1510,7 +1510,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    refreshUnreadLabel(message.id)
+                    refreshUnreadLabel()
                 }
             }
         }

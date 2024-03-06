@@ -26,6 +26,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.BannedUser
 import io.getstream.chat.android.models.BannedUsersSort
 import io.getstream.chat.android.models.Channel
@@ -413,6 +414,9 @@ internal interface ChatApi {
     fun translate(messageId: String, language: String): Call<Message>
 
     @CheckResult
+    fun og(url: String): Call<Attachment>
+
+    @CheckResult
     fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>>
 
     @CheckResult
@@ -420,5 +424,5 @@ internal interface ChatApi {
 
     fun warmUp()
 
-    fun releseConnection()
+    fun releaseConnection()
 }

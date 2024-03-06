@@ -36,6 +36,7 @@ import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
@@ -396,6 +397,7 @@ internal class MessageComposerViewModelTest {
                 whenever(it.lastSentMessageDate) doReturn MutableStateFlow(null)
                 whenever(it.channelConfig) doReturn MutableStateFlow(config)
                 whenever(it.members) doReturn MutableStateFlow(members)
+                whenever(it.membersCount) doReturn MutableStateFlow(members.size)
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
@@ -408,8 +410,9 @@ internal class MessageComposerViewModelTest {
             return MessageComposerViewModel(
                 MessageComposerController(
                     chatClient = chatClient,
-                    channelId = channelId,
+                    channelCid = channelId,
                     mediaRecorder = mock(),
+                    userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
                     fileToUri = { it.path },
                     maxAttachmentCount = maxAttachmentCount,
                     maxAttachmentSize = maxAttachmentSize,

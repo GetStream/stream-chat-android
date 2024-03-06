@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.attachments.audio.RunningWaveForm
+import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
@@ -86,6 +87,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -115,6 +117,7 @@ import java.util.Date
  * @param onValueChange Handler when the input field value changes.
  * @param onAttachmentRemoved Handler when the user taps on the cancel/delete attachment action.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ * @param onLinkPreviewClick Handler when the user taps on a link preview.
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
@@ -143,6 +146,7 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = { viewModel.setMessageInput(it) },
     onAttachmentRemoved: (Attachment) -> Unit = { viewModel.removeSelectedAttachment(it) },
     onCancelAction: () -> Unit = { viewModel.dismissMessageActions() },
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
@@ -151,6 +155,7 @@ public fun MessageComposer(
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
             onCancelAction = onCancelAction,
+            onLinkPreviewClick = onLinkPreviewClick,
         )
     },
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
@@ -276,6 +281,7 @@ public fun MessageComposer(
     onValueChange: (String) -> Unit = {},
     onAttachmentRemoved: (Attachment) -> Unit = {},
     onCancelAction: () -> Unit = {},
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
@@ -284,6 +290,7 @@ public fun MessageComposer(
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
             onCancelAction = onCancelAction,
+            onLinkPreviewClick = onLinkPreviewClick,
         )
     },
     footerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
@@ -399,11 +406,13 @@ public fun MessageComposer(
  *
  * @param messageComposerState The state of the message composer.
  * @param onCancelAction Handler for the cancel button on Message actions, such as Edit and Reply.
+ * @param onLinkPreviewClick Handler when the user taps on a link preview.
  */
 @Composable
 public fun DefaultMessageComposerHeaderContent(
     messageComposerState: MessageComposerState,
     onCancelAction: () -> Unit,
+    onLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
 ) {
     val activeAction = messageComposerState.action
 
@@ -414,6 +423,12 @@ public fun DefaultMessageComposerHeaderContent(
                 .padding(top = 8.dp, bottom = 6.dp, start = 8.dp, end = 8.dp),
             activeAction = activeAction,
             onCancelAction = onCancelAction,
+        )
+    }
+    if (ChatTheme.isComposerLinkPreviewEnabled && messageComposerState.linkPreviews.isNotEmpty()) {
+        ComposerLinkPreview(
+            linkPreview = messageComposerState.linkPreviews.first(),
+            onClick = onLinkPreviewClick,
         )
     }
 }
@@ -783,7 +798,8 @@ internal fun DefaultMessageComposerTrailingContent(
                                                 val event = awaitPointerEvent(PointerEventPass.Main)
 
                                                 if (event.changes.all { it.changedToUp() }) {
-                                                    statefulStreamMediaRecorder.stopRecording()
+                                                    statefulStreamMediaRecorder
+                                                        .stopRecording()
                                                         .onSuccess {
                                                             StreamLog.i("MessageComposer") {
                                                                 "[onRecordingSaved] attachment: $it"
@@ -805,9 +821,11 @@ internal fun DefaultMessageComposerTrailingContent(
                                         !storageAndRecordingPermissionState.allPermissionsGranted -> {
                                             storageAndRecordingPermissionState.launchMultiplePermissionRequest()
                                         }
+
                                         isRecording == MediaRecorderState.UNINITIALIZED -> {
                                             handleAudioRecording()
                                         }
+
                                         else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
                                     }
                                 },

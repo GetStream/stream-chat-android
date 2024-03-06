@@ -56,7 +56,11 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         messageListItem as T
 
         this.data = messageListItem
-        bindData(messageListItem, diff)
+        try {
+            bindData(messageListItem, diff)
+        } catch (e: Throwable) {
+            throw e
+        }
     }
 
     public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)

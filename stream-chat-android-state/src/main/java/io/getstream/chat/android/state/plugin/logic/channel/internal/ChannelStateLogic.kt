@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.internal
 
+import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
@@ -63,6 +64,7 @@ internal class ChannelStateLogic(
 ) : ChannelMessagesUpdateLogic {
 
     private val logger by taggedLogger(TAG)
+    private val processedMessageIds = LruCache<String, Boolean>(CACHE_SIZE)
 
     /**
      * Used to prune stale active typing events when the sender
@@ -150,6 +152,15 @@ internal class ChannelStateLogic(
      */
     private fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
         mutableState.upsertWatchers(watchers, watchersCount)
+    }
+
+    /**
+     * Sets the watchers of the channel.
+     *
+     * @param watchers the list of [User] to be set
+     */
+    fun setWatchers(watchers: List<User>, watchersCount: Int) {
+        mutableState.setWatchers(watchers, watchersCount)
     }
 
     /**
@@ -287,6 +298,16 @@ internal class ChannelStateLogic(
      */
     fun upsertMembers(members: List<Member>) {
         mutableState.upsertMembers(members)
+    }
+
+    /**
+     * Sets the members of the channel.
+     *
+     * @param members The list of members.
+     * @param membersCount The count of members.
+     */
+    fun setMembers(members: List<Member>, membersCount: Int) {
+        mutableState.setMembers(members, membersCount)
     }
 
     /**
@@ -634,6 +655,7 @@ internal class ChannelStateLogic(
     fun updateCurrentUserRead(eventReceivedDate: Date, message: Message) {
         mutableState.read.value
             ?.takeUnless { it.lastReceivedEventDate.after(eventReceivedDate) }
+            ?.takeUnless { processedMessageIds.get(message.id) == true }
             ?.takeUnless {
                 message.user.id == clientState.user.value?.id ||
                     message.parentId?.takeUnless { message.showInChannel } != null
@@ -646,10 +668,12 @@ internal class ChannelStateLogic(
                     ),
                 )
             }
+        processedMessageIds.put(message.id, true)
     }
 
     private companion object {
         private const val TAG = "Chat:ChannelStateLogic"
         private const val TEXT_LIMIT = 10
+        private const val CACHE_SIZE = 100
     }
 }

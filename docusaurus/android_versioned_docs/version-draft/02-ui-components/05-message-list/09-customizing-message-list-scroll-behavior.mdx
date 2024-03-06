@@ -1,0 +1,85 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Customizing MessageListView Scrolling Behavior
+
+## Introduction
+
+By default our `MessageListView` disables scrolling behavior when there's a dialog present, specifically when an instance of `DialogFragment` is present in the hierarchy. This is due to our default set of components, in which we show an overlay on the `MessageListView` when the user selects a `Message`. If we allowed scrolling, users could scroll with the full screen overlay shown and that would result in poor user experience.
+
+To mitigate this, we've added special handlers in the `MessageListScrollHelper` class, which controls the internal scrolling behavior. Whenever a scroll occurs, the following piece of code is triggered:
+
+```kotlin
+override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+    super.onScrollStateChanged(recyclerView, newState)
+
+    if (disableScrollWhenShowingDialog) { // 1
+        stopScrollIfPopupShown(recyclerView)
+    }
+}
+
+private fun stopScrollIfPopupShown(recyclerView: RecyclerView) {
+    val fragmentManager = recyclerView.context.getFragmentManager() ?: return
+    val hasDialogsShown = fragmentManager.fragments.any { it is DialogFragment } // 2
+
+    if (hasDialogsShown) {
+        recyclerView.stopScroll() // 3
+    }
+}
+```
+
+In the inner piece of code we check if there are any `DialogFragments` active, and if so, we stop the active scroll. It consists of three steps:
+
+1. We first check the style-based flag, which we'll describe in a moment.
+2. We check if there are any active `DialogFragment`s in the current context, which should refer to your application.
+3. If `hasDialogsShown` is `true`, we tell the `RecyclerView` to stop scrolling.
+
+However, this behavior might not be what works for your use case, but it's still the default as this is the most commonly requested behavior. But you can customize it.
+
+## Overriding the Default Scrolling Behavior
+
+If you need to enable scrolling, regardless of dialogs in your app, you can customize the default scrolling behavior to enable scrolls even if there is a `DialogFragment` active. For example, if you have bottom-sheet-style persistent dialogs, permanent popups or your `MessageListView` lives within a `DialogFragment` itself.
+
+To do so, you have to override a specific style attribute in the `MessageListView`, like so:
+
+```xml
+<io.getstream.chat.android.ui.feature.messages.list.MessageListView
+    android:id="@+id/messageListView"
+    ... // Other attributes
+    app:streamUiDisableScrollWhenShowingDialog="false" // here
+/>
+```
+
+By adding the `streamUiDisableScrollWhenShowingDialog` flag to the `MessageListView` in your layout files, you can override the default scrolling behavior. Alternatively, you can use style transformations to update the flag programmatically, **before the View is rendered**:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageListStyleTransformer = StyleTransformer { defaultViewStyle ->
+    defaultViewStyle.copy(
+        disableScrollWhenShowingDialog = false
+    )
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageListStyleTransformer(defaultViewStyle -> {
+    // Customize the style
+    return defaultViewStyle;
+});
+```
+</TabItem>
+</Tabs>
+
+:::note
+The transformers should be set before the views are rendered to make sure that the new style was applied.
+:::
+
+Using either of these two approaches will result in a `MessageListView` which will allow scrolling even if there are dialogs currently present on the screen, as seen in the GIF below.
+
+|![scroll-gif](https://user-images.githubusercontent.com/9600921/205136009-132b0ccb-bc2b-4585-a815-e5b99be2056d.gif)|
+|---|

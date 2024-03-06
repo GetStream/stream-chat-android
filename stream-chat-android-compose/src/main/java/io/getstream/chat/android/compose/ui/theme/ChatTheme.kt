@@ -133,9 +133,18 @@ private val LocalMessageDateSeparatorTheme = compositionLocalOf<MessageDateSepar
 private val LocalMessageUnreadSeparatorTheme = compositionLocalOf<MessageUnreadSeparatorTheme> {
     error("No MessageUnreadSeparatorTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
+    error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
+            "Make sure to wrap all usages of Stream components in a ChatTheme.",
+    )
+}
+private val LocalComposerLinkPreviewEnabled = compositionLocalOf<Boolean> {
+    error(
+        "No ComposerLinkPreviewEnabled Boolean provided! " +
             "Make sure to wrap all usages of Stream components in a ChatTheme.",
     )
 }
@@ -149,6 +158,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param isInDarkMode If we're currently in the dark mode or not. Affects only the default color palette that's
  * provided. If you customize [colors], make sure to add your own logic for dark/light colors.
  * @param autoTranslationEnabled Whether messages auto translation is enabled or not.
+ * @param isComposerLinkPreviewEnabled Whether the composer link preview is enabled or not.
  * @param colors The set of colors we provide, wrapped in [StreamColors].
  * @param dimens The set of dimens we provide, wrapped in [StreamDimens].
  * @param typography The set of typography styles we provide, wrapped in [StreamTypography].
@@ -173,6 +183,8 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param ownMessageTheme Theme of the current user messages.
  * @param otherMessageTheme Theme of the other users messages.
  * @param messageDateSeparatorTheme Theme of the message date separator.
+ * @param messageUnreadSeparatorTheme Theme of the message unread separator.
+ * @param messageComposerTheme Theme of the message composer.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param content The content shown within the theme wrapper.
  */
@@ -180,6 +192,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
 public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     autoTranslationEnabled: Boolean = false,
+    isComposerLinkPreviewEnabled: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -218,8 +231,13 @@ public fun ChatTheme(
         typography = typography,
         colors = colors,
     ),
-    messageUnradSeparatorTheme: MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme.defaultTheme(
+    messageUnreadSeparatorTheme: MessageUnreadSeparatorTheme = MessageUnreadSeparatorTheme.defaultTheme(
         typography = typography,
+        colors = colors,
+    ),
+    messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
+        typography = typography,
+        shapes = shapes,
         colors = colors,
     ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
@@ -245,7 +263,8 @@ public fun ChatTheme(
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
         LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
-        LocalMessageUnreadSeparatorTheme provides messageUnradSeparatorTheme,
+        LocalMessageUnreadSeparatorTheme provides messageUnreadSeparatorTheme,
+        LocalMessageComposerTheme provides messageComposerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -255,6 +274,7 @@ public fun ChatTheme(
         LocalReadCountEnabled provides readCountEnabled,
         LocalStreamMediaRecorder provides streamMediaRecorder,
         LocalAutoTranslationEnabled provides autoTranslationEnabled,
+        LocalComposerLinkPreviewEnabled provides isComposerLinkPreviewEnabled,
     ) {
         if (allowUIAutomationTest) {
             Box(
@@ -440,12 +460,28 @@ public object ChatTheme {
         get() = LocalMessageUnreadSeparatorTheme.current
 
     /**
+     * Retrieves the current [MessageComposerTheme] at the call site's position in the hierarchy.
+     */
+    public val messageComposerTheme: MessageComposerTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageComposerTheme.current
+
+    /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
      */
     public val autoTranslationEnabled: Boolean
         @Composable
         @ReadOnlyComposable
         get() = LocalAutoTranslationEnabled.current
+
+    /**
+     * Retrieves the current [isComposerLinkPreviewEnabled] value at the call site's position in the hierarchy.
+     */
+    public val isComposerLinkPreviewEnabled: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalComposerLinkPreviewEnabled.current
 
     /**
      * Retrieves the current list of [StreamMediaRecorder] at the call site's position in the hierarchy.

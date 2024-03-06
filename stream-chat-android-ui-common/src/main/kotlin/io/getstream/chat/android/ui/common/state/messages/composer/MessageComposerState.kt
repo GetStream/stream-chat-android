@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.common.state.messages.composer
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageAction
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
@@ -32,6 +33,7 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
  * @param validationErrors The list of validation errors.
  * @param mentionSuggestions The list of users that can be used to autocomplete the mention.
  * @param commandSuggestions The list of commands to be displayed in the command suggestion popup.
+ * @param linkPreviews The list of links found in [inputValue] to be previewed.
  * @param coolDownTime The amount of time left until the user is allowed to send the next message.
  * @param messageMode The message mode that's currently active.
  * @param alsoSendToChannel If the message will be shown in the channel after it is sent.
@@ -48,6 +50,7 @@ public data class MessageComposerState @JvmOverloads constructor(
     val validationErrors: List<ValidationError> = emptyList(),
     val mentionSuggestions: List<User> = emptyList(),
     val commandSuggestions: List<Command> = emptyList(),
+    val linkPreviews: List<LinkPreview> = emptyList(),
     val coolDownTime: Int = 0,
     val messageMode: MessageMode = MessageMode.Normal,
     val alsoSendToChannel: Boolean = false,

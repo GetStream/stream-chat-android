@@ -84,6 +84,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
+import io.getstream.chat.android.models.mergeChannelFromEvent
 import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
 import io.getstream.chat.android.state.event.handler.internal.batch.BatchEvent
 import io.getstream.chat.android.state.event.handler.internal.batch.SocketEventCollector
@@ -352,11 +353,16 @@ internal class EventHandlerSequential(
         }
         val sortedEvents: List<ChatEvent> = batchEvent.sortedEvents
 
+        stateRegistry.handleBatchEvent(batchEvent)
+
         // step 3 - forward the events to the active channels
         sortedEvents.filterIsInstance<CidEvent>()
             .groupBy { it.cid }
             .forEach { (cid, events) ->
                 val (channelType, channelId) = cid.cidToTypeAndId()
+                if (events.any { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }) {
+                    logicRegistry.removeChannel(channelType, channelId)
+                }
                 if (logicRegistry.isActiveChannel(channelType = channelType, channelId = channelId)) {
                     val channelLogic: ChannelLogic = logicRegistry.channel(
                         channelType = channelType,
@@ -395,8 +401,6 @@ internal class EventHandlerSequential(
                 }
         }
 
-        stateRegistry.handleBatchEvent(batchEvent)
-
         // only afterwards forward to the queryRepo since it borrows some data from the channel
         // queryRepo mainly monitors for the notification added to channel event
         logicRegistry.getActiveQueryChannelsLogic().map { channelsLogic ->
@@ -423,7 +427,18 @@ internal class EventHandlerSequential(
         logger.v { "[updateOfflineStorage] batchId: ${batchEvent.id}, batchEvent.size: ${batchEvent.size} " }
         val events = batchEvent.sortedEvents.map { it.enrichIfNeeded() }
         val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
-        batchBuilder.addToFetchChannels(events.filterIsInstance<CidEvent>().map { it.cid })
+        val cidEvents = events.filterIsInstance<CidEvent>()
+        batchBuilder.addToFetchChannels(
+            cidEvents
+                .filterNot { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
+                .map { it.cid },
+        )
+
+        batchBuilder.addToRemoveChannels(
+            cidEvents
+                .filter { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
+                .map { it.cid },
+        )
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
             events.filterIsInstance<HasOwnUser>().map { it.me }
@@ -450,13 +465,18 @@ internal class EventHandlerSequential(
                 is NewMessageEvent -> {
                     val enrichedMessage = event.message.enrichWithOwnReactions(batch, currentUserId, event.user)
                     batch.addMessageData(event.createdAt, event.cid, enrichedMessage)
-                    batch.getCurrentChannel(event.cid)?.let { channel ->
-                        val updatedChannel = channel.copy(
-                            hidden = false,
-                            messages = channel.messages + listOf(enrichedMessage),
-                        )
-                        batch.addChannel(updatedChannel)
+                    // first check channel in batch, if not found, check in db
+                    //  if we ignore batch, we may override existing channel in batch with the one from db
+                    val channel = batch.getCurrentChannel(event.cid) ?: repos.selectChannel(event.cid)
+                    if (channel == null) {
+                        logger.w { "[updateOfflineStorage] #new_message; (now channel found for ${event.cid})" }
+                        continue
                     }
+                    val updatedChannel = channel.copy(
+                        hidden = false,
+                        messages = channel.messages + listOf(enrichedMessage),
+                    )
+                    batch.addChannel(updatedChannel)
                 }
                 is MessageDeletedEvent -> {
                     batch.addMessageData(
@@ -474,11 +494,15 @@ internal class EventHandlerSequential(
                 }
                 is NotificationMessageNewEvent -> {
                     batch.addMessageData(event.createdAt, event.cid, event.message)
-                    batch.addChannel(event.channel.copy(hidden = false))
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel.copy(hidden = false))
                 }
                 is NotificationAddedToChannelEvent -> {
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
                     batch.addChannel(
-                        event.channel.addMembership(currentUserId, event.member),
+                        channel.addMembership(currentUserId, event.member),
                     )
                 }
                 is NotificationInvitedEvent -> {
@@ -486,14 +510,18 @@ internal class EventHandlerSequential(
                     batch.addUser(event.member.user)
                 }
                 is NotificationInviteAcceptedEvent -> {
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
                     batch.addUser(event.user)
                     batch.addUser(event.member.user)
-                    batch.addChannel(event.channel)
+                    batch.addChannel(channel)
                 }
                 is NotificationInviteRejectedEvent -> {
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
                     batch.addUser(event.user)
                     batch.addUser(event.member.user)
-                    batch.addChannel(event.channel)
+                    batch.addChannel(channel)
                 }
                 is ChannelHiddenEvent -> {
                     batch.getCurrentChannel(event.cid)?.let {
@@ -555,6 +583,10 @@ internal class EventHandlerSequential(
                     }
                 }
                 is MemberRemovedEvent -> {
+                    if (event.user.id == currentUserId) {
+                        logger.i { "[updateOfflineStorage] skip MemberRemovedEvent for currentUser" }
+                        continue
+                    }
                     batch.getCurrentChannel(event.cid)?.let { channel ->
                         batch.addChannel(
                             channel.removeMember(event.user.id)
@@ -568,31 +600,45 @@ internal class EventHandlerSequential(
                             channel.removeMembership(currentUserId).copy(
                                 memberCount = event.channel.memberCount,
                                 members = event.channel.members,
+                                watcherCount = event.channel.watcherCount,
+                                watchers = event.channel.watchers,
                             ),
                         )
                     }
                 }
                 is ChannelUpdatedEvent -> {
-                    batch.addChannel(event.channel)
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel)
                 }
                 is ChannelUpdatedByUserEvent -> {
-                    batch.addChannel(event.channel)
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel)
                 }
                 is ChannelDeletedEvent -> {
-                    batch.addChannel(event.channel)
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel)
                 }
                 is ChannelTruncatedEvent -> {
-                    batch.addChannel(event.channel)
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel)
                 }
                 is NotificationChannelDeletedEvent -> {
-                    batch.addChannel(event.channel)
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel)
                 }
                 is NotificationChannelMutesUpdatedEvent -> {
                     event.me.id mustBe currentUserId
                     repos.insertCurrentUser(event.me)
                 }
                 is NotificationChannelTruncatedEvent -> {
-                    batch.addChannel(event.channel)
+                    val channel = batch.getCurrentChannel(event.cid)
+                        ?.mergeChannelFromEvent(event.channel) ?: event.channel
+                    batch.addChannel(channel)
                 }
 
                 // get the channel, update reads, write the channel
@@ -644,6 +690,12 @@ internal class EventHandlerSequential(
                     if (event.hardDelete) {
                         repos.deleteChannelMessage(event.message)
                     }
+                }
+                is MemberRemovedEvent -> {
+                    repos.evictChannel(event.cid)
+                }
+                is NotificationRemovedFromChannelEvent -> {
+                    repos.evictChannel(event.cid)
                 }
                 else -> Unit // Ignore other events
             }

@@ -37,10 +37,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextDirection
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 
 /**
  * Custom input field that we use for our UI. It's fairly simple - shows a basic input with clipped
@@ -80,8 +80,11 @@ public fun InputField(
         textFieldValueState.selection
     }
 
+    val theme = ChatTheme.messageComposerTheme.inputField
+    val styledText = buildAnnotatedMessageText(value, theme.textStyle.color)
+
     val textFieldValue = textFieldValueState.copy(
-        text = value,
+        annotatedString = styledText,
         selection = selection,
     )
 
@@ -89,9 +92,9 @@ public fun InputField(
 
     BasicTextField(
         modifier = modifier
-            .border(border = border, shape = ChatTheme.shapes.inputField)
-            .clip(ChatTheme.shapes.inputField)
-            .background(ChatTheme.colors.inputBackground)
+            .border(border = border, shape = theme.borderShape)
+            .clip(theme.borderShape)
+            .background(theme.backgroundColor)
             .padding(innerPadding)
             .semantics { contentDescription = description },
         value = textFieldValue,
@@ -101,11 +104,8 @@ public fun InputField(
                 onValueChange(it.text)
             }
         },
-        textStyle = ChatTheme.typography.body.copy(
-            color = ChatTheme.colors.textHighEmphasis,
-            textDirection = TextDirection.Content,
-        ),
-        cursorBrush = SolidColor(ChatTheme.colors.primaryAccent),
+        textStyle = theme.textStyle,
+        cursorBrush = SolidColor(theme.cursorBrushColor),
         decorationBox = { innerTextField -> decorationBox(innerTextField) },
         maxLines = maxLines,
         singleLine = maxLines == 1,

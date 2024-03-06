@@ -111,8 +111,14 @@ internal class LogicRegistry internal constructor(
                 userPresence = userPresence,
                 channelStateLogic = stateLogic,
                 coroutineScope = coroutineScope,
-            )
+            ) {
+                clientState.user.value?.id
+            }
         }
+    }
+
+    internal fun removeChannel(channelType: String, channelId: String) {
+        channels.remove(channelType to channelId)
     }
 
     fun channelState(channelType: String, channelId: String): ChannelStateLogic {

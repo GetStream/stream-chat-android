@@ -1,0 +1,36 @@
+---
+title: Multi-Bundle
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import MultiBundleContent from '../../../../shared/_push-notification-multi-bundle.md'
+
+<MultiBundleContent/>
+
+Then, when a new device is registered, you need to add the desired `providerName`.
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin {4}
+Device(
+    token = "token-generated-by-provider",
+    pushProvider = yourPushProvider,
+    providerName = "providerName",
+)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+new Device(
+        "token-generated-by-provider",
+        PushProvider.FIREBASE, // your push provider
+        "providerName"
+);
+```
+</TabItem>
+</Tabs>
+
+If you are using any of the artifacts integration we support, you can set them by adding an extra attribute on the constructor of the `PushProviderGenerator` class implementation.

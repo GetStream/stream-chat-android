@@ -24,6 +24,7 @@ import android.widget.CheckedTextView
 import android.widget.FrameLayout
 import androidx.core.view.descendants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
@@ -31,6 +32,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.internal.AttachmentDialogPagerAdapter
+import io.getstream.chat.android.ui.feature.messages.composer.internal.toAttachment
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 /**
@@ -54,7 +56,14 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
     /**
      * A listener that is invoked when attachment picking has been completed
      */
-    private var attachmentSelectionListener: AttachmentSelectionListener? = null
+    private var attachmentSelectionListener: AttachmentSelectionListener? = AttachmentSelectionListener { attachments ->
+        attachmentsSelectionListener?.onAttachmentsSelected(attachments.map { it.toAttachment(requireContext()) })
+    }
+
+    /**
+     * A listener that is invoked when attachment picking has been completed
+     */
+    private var attachmentsSelectionListener: AttachmentsSelectionListener? = null
 
     /**
      * The list of currently selected attachments.
@@ -185,8 +194,24 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
     /**
      * Sets the listener that will be notified when picking attachments has been completed.
      */
+    @Suppress("MaxLineLength")
+    @Deprecated(
+        message = "Use the new [AttachmentsSelectionListener] interface instead",
+        level = DeprecationLevel.WARNING,
+        replaceWith = ReplaceWith(
+            "setAttachmentsSelectionListener(attachmentsSelectionListener)",
+            "io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogFragment.AttachmentsSelectionListener",
+        ),
+    )
     public fun setAttachmentSelectionListener(attachmentSelectionListener: AttachmentSelectionListener) {
         this.attachmentSelectionListener = attachmentSelectionListener
+    }
+
+    /**
+     * Sets the listener that will be notified when picking attachments has been completed.
+     */
+    public fun setAttachmentsSelectionListener(attachmentsSelectionListener: AttachmentsSelectionListener) {
+        this.attachmentsSelectionListener = attachmentsSelectionListener
     }
 
     private fun setSelectedTab(checkedTextView: CheckedTextView, pagePosition: Int) {
@@ -232,5 +257,14 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
                 setAttachmentsPickerTabFactories(attachmentsPickerTabFactories)
             }
         }
+    }
+
+    public fun interface AttachmentsSelectionListener {
+        /**
+         * Called when attachment picking has been completed.
+         *
+         * @param attachments The list of selected attachments.
+         */
+        public fun onAttachmentsSelected(attachments: List<Attachment>)
     }
 }
