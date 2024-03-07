@@ -18,7 +18,6 @@ package io.getstream.chat.android.client.events
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message

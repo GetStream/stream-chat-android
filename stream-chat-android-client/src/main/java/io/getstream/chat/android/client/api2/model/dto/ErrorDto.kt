@@ -29,7 +29,6 @@ internal data class ErrorDto(
     val details: List<ErrorDetailDto> = emptyList(),
 )
 
-
 @JsonClass(generateAdapter = true)
 internal data class ErrorDetailDto(
     val code: Int = -1,
