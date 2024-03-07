@@ -2,8 +2,8 @@ name: Publish Docusaurus to staging
 
 on:
   push:
-    branches:
-      - develop
+    paths:
+      - 'docusaurus/**'
 
 jobs:
   push_docusaurus:
