@@ -72,6 +72,8 @@ MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class
 
 // Bind MessageComposerViewModel with MessageComposerView
 MessageComposerViewModelBinder.with(viewModel)
+        // Optional (you can set your custom message builder here)
+        .messageBuilder(viewModel::buildNewMessage)
         // Optional (you can set your custom listeners here)
         .onSendMessageButtonClick((message) -> {
             // Handle send button click
@@ -849,3 +851,137 @@ In the example above, we inflated a simple layout with a single date picker butt
 |----------------------------------------------------------------------|----------------------------------------------------------------------|
 
 Date selection is not handled in this example for the sake of being concise. If you want to learn how to send a message with the selected date, consider reading the detailed guide on [Custom Attachments](04-custom-attachments.mdx).
+
+## Changing Mention Search
+It is possible to change the search method in the mention list.
+The `UserLookupHandler` is responsible for searching users when the user types `@` in the message input.
+The default class: `DefaultUserLookupHandler` removes diacritics and uses the `levenstein` distance to include similar words in the results.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val cid = "messaging:123"
+val chatClient = ChatClient.instance()
+val defaultUserLookupHandler = DefaultUserLookupHandler(chatClient, cid)
+
+val factory = MessageListViewModelFactory(
+    context = appContext, cid = cid, userLookupHandler = defaultUserLookupHandler
+)
+val messageComposerViewModel: MessageComposerViewModel by viewModels { factory }
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+String cid = "messaging:123";
+ChatClient chatClient = ChatClient.instance();
+UserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(chatClient, cid);
+ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+    .cid(cid)
+    .userLookupHandler(defaultUserLookupHandler)
+    .build();
+ViewModelProvider provider = new ViewModelProvider(this, factory);
+MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+```
+</TabItem>
+</Tabs>
+
+### Custom User Lookup Handler
+You can create your own implementation of `UserLookupHandler` to change the search method.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val cid = "messaging:123"
+// Implement your custom user lookup
+val customUserLookupHandler = UserLookupHandler { query ->
+    queryMembers(query)
+}
+
+// Create MessageComposerViewModel for a given channel
+val factory = MessageListViewModelFactory(
+    context = requireContext(),
+    cid = cid,
+    userLookupHandler = customUserLookupHandler
+)
+val viewModel: MessageComposerViewModel by viewModels { factory }
+
+// Bind MessageComposerViewModel with MessageComposerView
+viewModel.bindView(messageComposerView, viewLifecycleOwner)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+String cid = "messaging:123";
+// Implement your custom user lookup
+CompatUserLookupHandler customUserLookupHandler = (query, callback) -> {
+    Call<List<User>> queryCall = ChangingMentionSearch.this.queryMembers(query);
+    queryCall.enqueue(result -> {
+        if (result.isSuccess()) {
+            callback.invoke(result.getOrThrow());
+        } else {
+            callback.invoke(emptyList());
+        }
+    });
+    return () -> {
+        queryCall.cancel();
+        return Unit.INSTANCE;
+    };
+};
+
+// Create MessageComposerViewModel for a given channel
+ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+    .cid(cid)
+    // for Java we need to use the compat version of the handler
+    .userLookupHandlerCompat(customUserLookupHandler)
+    .build();
+ViewModelProvider provider = new ViewModelProvider(this, factory);
+MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+
+// Bind MessageComposerViewModel with MessageComposerView
+MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+```
+</TabItem>
+</Tabs>
+
+### Transliteration
+You can add transliteration to `DefaultUserLookupHandler` by setting the desired id for transliteration inside `DefaultUserQueryFilter` and passing it to `DefaultUserLookupHandler` constructor.
+
+:::note
+`DefaultStreamTransliterator` only supports transliteration prior to API 29 (Android Q) and it will not apply transliteration for APIs smaller than this.
+:::
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val cid = "messaging:123"
+val transliterator = DefaultStreamTransliterator(transliterationId = "Cyrl-Latn")
+DefaultUserLookupHandler(
+    chatClient = chatClient,
+    channelCid = cid,
+    localFilter = DefaultUserQueryFilter(transliterator = transliterator),
+)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+String cid = "messaging:123";
+StreamTransliterator transliterator = new DefaultStreamTransliterator("Cyrl-Latn");
+DefaultUserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(
+    chatClient,
+    cid,
+    new DefaultUserQueryFilter(transliterator)
+);
+```
+</TabItem>
+</Tabs>
+
+You can also use your own implementation of `StreamTransliterator` to add support for lowers APIs. An interesting library is [ICU4J](https://unicode-org.github.io/icu/userguide/icu4j)
