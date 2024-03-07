@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventD
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -88,6 +89,7 @@ internal class EventDtoAdapter(
         moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
+    private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
     private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
@@ -147,6 +149,7 @@ internal class EventDtoAdapter(
                 map.containsKey("me") -> connectedEventAdapter
                 else -> healthEventAdapter
             }
+            EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
             EventType.MESSAGE_NEW -> newMessageEventAdapter
             EventType.MESSAGE_DELETED -> messageDeletedEventAdapter
             EventType.MESSAGE_UPDATED -> messageUpdatedEventAdapter

@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
@@ -647,6 +648,7 @@ internal class ChannelLogic(
             is NotificationChannelDeletedEvent,
             is NotificationInvitedEvent,
             is ConnectedEvent,
+            is ConnectionErrorEvent,
             is ConnectingEvent,
             is DisconnectedEvent,
             is ErrorEvent,

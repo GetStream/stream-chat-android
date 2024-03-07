@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectingEventDto
+import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DisconnectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
@@ -77,6 +78,7 @@ import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
+import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
 import io.getstream.chat.android.client.events.ErrorEvent
 import io.getstream.chat.android.client.events.GlobalUserBannedEvent
@@ -136,6 +138,7 @@ internal fun ChatEventDto.toDomain(): ChatEvent {
         is ChannelUserUnbannedEventDto -> toDomain()
         is ChannelVisibleEventDto -> toDomain()
         is ConnectedEventDto -> toDomain()
+        is ConnectionErrorEventDto -> toDomain()
         is ConnectingEventDto -> toDomain()
         is DisconnectedEventDto -> toDomain()
         is ErrorEventDto -> toDomain()
@@ -704,6 +707,16 @@ private fun ConnectedEventDto.toDomain(): ConnectedEvent {
         rawCreatedAt = created_at.rawDate,
         me = me.toDomain(),
         connectionId = connection_id,
+    )
+}
+
+private fun ConnectionErrorEventDto.toDomain(): ConnectionErrorEvent {
+    return ConnectionErrorEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        connectionId = connection_id,
+        error = error.toDomain(),
     )
 }
 
