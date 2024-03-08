@@ -470,6 +470,14 @@ internal data class ConnectedEventDto(
     val connection_id: String,
 ) : ChatEventDto()
 
+@JsonClass(generateAdapter = true)
+internal data class ConnectionErrorEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val connection_id: String,
+    val error: ErrorDto,
+) : ChatEventDto()
+
 /**
  * Special upstream event class, as we have to send this event
  * after connecting.

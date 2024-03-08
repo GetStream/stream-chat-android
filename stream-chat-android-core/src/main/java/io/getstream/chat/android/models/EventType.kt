@@ -61,13 +61,13 @@ public object EventType {
     public const val NOTIFICATION_REMOVED_FROM_CHANNEL: String = "notification.removed_from_channel"
     public const val NOTIFICATION_MUTES_UPDATED: String = "notification.mutes_updated"
     public const val NOTIFICATION_CHANNEL_MUTES_UPDATED: String = "notification.channel_mutes_updated"
+    public const val CONNECTION_ERROR: String = "connection.error"
 
     /**
      * Local
      */
     public const val CONNECTION_CONNECTING: String = "connection.connecting"
     public const val CONNECTION_DISCONNECTED: String = "connection.disconnected"
-    public const val CONNECTION_ERROR: String = "connection.error"
 
     /**
      * Unknown

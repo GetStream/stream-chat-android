@@ -21,8 +21,10 @@ import io.getstream.chat.android.client.StreamLifecycleObserver
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.debugger.ChatClientDebugger
 import io.getstream.chat.android.client.errors.ChatErrorCode
+import io.getstream.chat.android.client.errors.ChatErrorDetail
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.chat.android.client.events.ConnectionErrorEvent
 import io.getstream.chat.android.client.events.HealthEvent
 import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.scope.UserScope
@@ -87,7 +89,10 @@ internal open class ChatSocket(
                         socketListenerJob = listen().onEach {
                             when (it) {
                                 is StreamWebSocketEvent.Error -> handleError(it.streamError)
-                                is StreamWebSocketEvent.Message -> handleEvent(it.chatEvent)
+                                is StreamWebSocketEvent.Message -> when (val event = it.chatEvent) {
+                                    is ConnectionErrorEvent -> handleError(event.toNetworkError())
+                                    else -> handleEvent(event)
+                                }
                             }
                         }.launchIn(userScope)
                     }
@@ -322,6 +327,32 @@ internal open class ChatSocket(
             is State.Disconnected.DisconnectedTemporarily -> DisconnectCause.Error(error)
             is State.Disconnected.WebSocketEventLost -> DisconnectCause.WebSocketNotAvailable
         }
+
+    private fun ConnectionErrorEvent.toNetworkError(): Error.NetworkError {
+        return Error.NetworkError(
+            message = error.message +
+                moreInfoTemplate(error.moreInfo) +
+                buildDetailsTemplate(error.details),
+            serverErrorCode = error.code,
+            statusCode = error.statusCode,
+        )
+    }
+
+    private fun moreInfoTemplate(moreInfo: String): String {
+        return if (moreInfo.isNotBlank()) {
+            "\nMore information available at $moreInfo"
+        } else {
+            ""
+        }
+    }
+
+    private fun buildDetailsTemplate(details: List<ChatErrorDetail>): String {
+        return if (details.isNotEmpty()) {
+            "\nError details: $details"
+        } else {
+            ""
+        }
+    }
 
     companion object {
         private const val TAG = "Chat:Socket"

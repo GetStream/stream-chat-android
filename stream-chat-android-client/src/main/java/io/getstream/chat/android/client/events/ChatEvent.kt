@@ -17,6 +17,7 @@
 package io.getstream.chat.android.client.events
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
+import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -665,6 +666,17 @@ public data class ConnectedEvent(
     override val me: User,
     val connectionId: String,
 ) : ChatEvent(), HasOwnUser
+
+/**
+ * Triggered when a WS connection fails.
+ */
+public data class ConnectionErrorEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    val connectionId: String,
+    val error: ChatError,
+) : ChatEvent()
 
 /**
  * Triggered when a user is connecting to the WS

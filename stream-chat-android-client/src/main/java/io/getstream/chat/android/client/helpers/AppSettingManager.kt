@@ -20,7 +20,9 @@ import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.models.App
 import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.FileUploadConfig
+import io.getstream.log.StreamLog
 import io.getstream.result.Result
+import io.getstream.result.extractCause
 
 /**
  * Maintains application settings fetched from the backend.
@@ -40,6 +42,11 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
             chatApi.appSettings().enqueue { result ->
                 if (result is Result.Success) {
                     this.appSettings = result.value
+                } else if (result is Result.Failure) {
+                    when (val cause = result.value.extractCause()) {
+                        null -> StreamLog.e(TAG) { "[loadAppSettings] failed: ${result.value}" }
+                        else -> StreamLog.e(TAG, cause) { "[loadAppSettings] failed: ${result.value}" }
+                    }
                 }
             }
         }
@@ -60,6 +67,8 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
     }
 
     companion object {
+        private const val TAG = "Chat:AppSettingManager"
+
         /**
          * Builds the default application settings with the reasonable defaults.
          */

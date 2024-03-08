@@ -756,6 +756,48 @@ public final class io/getstream/chat/android/client/errorhandler/ErrorHandler$De
 	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/ErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
 }
 
+public final class io/getstream/chat/android/client/errors/ChatError {
+	public fun <init> ()V
+	public fun <init> (ILjava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)V
+	public synthetic fun <init> (ILjava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/util/Map;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Ljava/lang/String;
+	public final fun copy (ILjava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;)Lio/getstream/chat/android/client/errors/ChatError;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/String;ILjava/util/Map;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatError;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()I
+	public final fun getDetails ()Ljava/util/List;
+	public final fun getDuration ()Ljava/lang/String;
+	public final fun getExceptionFields ()Ljava/util/Map;
+	public final fun getMessage ()Ljava/lang/String;
+	public final fun getMoreInfo ()Ljava/lang/String;
+	public final fun getStatusCode ()I
+	public fun hashCode ()I
+	public final fun setDuration (Ljava/lang/String;)V
+	public final fun setMessage (Ljava/lang/String;)V
+	public final fun setMoreInfo (Ljava/lang/String;)V
+	public final fun setStatusCode (I)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/errors/ChatErrorDetail {
+	public fun <init> (ILjava/util/List;)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/util/List;
+	public final fun copy (ILjava/util/List;)Lio/getstream/chat/android/client/errors/ChatErrorDetail;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/errors/ChatErrorDetail;ILjava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/client/errors/ChatErrorDetail;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCode ()I
+	public final fun getMessages ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamSdkException {
 	public fun <init> (Ljava/lang/String;)V
 }
@@ -1021,6 +1063,25 @@ public final class io/getstream/chat/android/client/events/ConnectingEvent : io/
 	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ConnectingEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ConnectingEvent;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/ConnectionErrorEvent : io/getstream/chat/android/client/events/ChatEvent {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lio/getstream/chat/android/client/errors/ChatError;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;)Lio/getstream/chat/android/client/events/ConnectionErrorEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/ConnectionErrorEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/errors/ChatError;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/ConnectionErrorEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getConnectionId ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public final fun getError ()Lio/getstream/chat/android/client/errors/ChatError;
 	public fun getRawCreatedAt ()Ljava/lang/String;
 	public fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
