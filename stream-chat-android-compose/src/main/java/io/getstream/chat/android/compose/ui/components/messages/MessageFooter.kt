@@ -16,11 +16,16 @@
 
 package io.getstream.chat.android.compose.ui.components.messages
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
  * @param messageItem Message to show.
  */
 @Composable
+@Suppress("LongMethod")
 public fun MessageFooter(
     messageItem: MessageItemState,
 ) {
@@ -60,11 +66,14 @@ public fun MessageFooter(
         )
     }
 
-    Column {
+    Column(horizontalAlignment = alignment.contentAlignment) {
         MessageTranslatedLabel(messageItem)
         if (messageItem.showMessageFooter) {
+            var showEditLabel by remember { mutableStateOf(message.messageTextUpdatedAt != null) }
+            var showEditInfo by remember { mutableStateOf(false) }
             Row(
-                modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+                modifier = Modifier
+                    .padding(top = 4.dp, bottom = 4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 if (!messageItem.isMine) {
@@ -90,6 +99,47 @@ public fun MessageFooter(
                 val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
                 if (date != null) {
                     Timestamp(date = date, formatType = DateFormatType.TIME)
+                }
+                if (showEditLabel) {
+                    Text(
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp),
+                        text = "·",
+                        style = ChatTheme.typography.footnote,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .clickable {
+                                showEditLabel = !showEditLabel
+                                showEditInfo = !showEditInfo
+                            },
+                        text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
+                        style = ChatTheme.typography.footnote,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                }
+            }
+            if (showEditInfo) {
+                Row(
+                    modifier = Modifier
+                        .padding(bottom = 4.dp)
+                        .clickable {
+                            showEditLabel = !showEditLabel
+                            showEditInfo = !showEditInfo
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .weight(1f, fill = false),
+                        text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
+                        style = ChatTheme.typography.footnote,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                    Timestamp(date = message.messageTextUpdatedAt, formatType = DateFormatType.RELATIVE)
                 }
             }
         }
