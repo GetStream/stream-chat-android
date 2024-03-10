@@ -64,6 +64,7 @@
     <string name="stream_compose_message_list_giphy_send">Send</string>
     <string name="stream_compose_message_list_giphy_cancel">Cancel</string>
     <string name="stream_compose_message_list_giphy_shuffle">Shuffle</string>
+    <string name="stream_compose_message_list_footnote_edited">Edited</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>

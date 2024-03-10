@@ -31,4 +31,9 @@ public enum class DateFormatType {
      * Represents a date format with full date information.
      */
     DATE,
+
+    /**
+     * Represents a date format with relative time information.
+     */
+    RELATIVE,
 }

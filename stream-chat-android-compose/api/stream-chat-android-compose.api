@@ -41,6 +41,7 @@ public final class io/getstream/chat/android/compose/handlers/PermissionHandler$
 
 public final class io/getstream/chat/android/compose/state/DateFormatType : java/lang/Enum {
 	public static final field DATE Lio/getstream/chat/android/compose/state/DateFormatType;
+	public static final field RELATIVE Lio/getstream/chat/android/compose/state/DateFormatType;
 	public static final field TIME Lio/getstream/chat/android/compose/state/DateFormatType;
 	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/getstream/chat/android/compose/state/DateFormatType;

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.DateFormatType.DATE
+import io.getstream.chat.android.compose.state.DateFormatType.RELATIVE
 import io.getstream.chat.android.compose.state.DateFormatType.TIME
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -49,6 +50,7 @@ public fun Timestamp(
         when (formatType) {
             TIME -> formatter.formatTime(date)
             DATE -> formatter.formatDate(date)
+            RELATIVE -> formatter.formatRelativeTime(date)
         }
     }
 
