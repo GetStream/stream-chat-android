@@ -18,10 +18,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/messageFooterContainer"
+    android:layout_gravity="end"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     >
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/messageFooterContainerInner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="end"
+        >
 
     <TextView
         android:id="@+id/messageFooterLabel"
@@ -82,4 +91,36 @@
         tools:visibility="visible"
         />
 
+    <TextView
+        android:id="@+id/editedLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
+        android:gravity="start"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        android:textDirection="locale"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:visibility="gone"
+        android:text="@string/stream_ui_message_list_footntoe_edited_label"
+        tools:visibility="visible"
+        />
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <TextView
+        android:id="@+id/editedInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_message_footnote_spacing"
+        android:gravity="end"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        android:textDirection="locale"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:visibility="gone"
+        tools:text="Edited today at 12:20"
+        tools:visibility="visible"
+        />
 </androidx.appcompat.widget.LinearLayoutCompat>

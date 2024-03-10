@@ -72,6 +72,10 @@
     <string name="stream_ui_message_list_flag_confirmation_positive_button">Flag</string>
     <string name="stream_ui_message_list_flag_confirmation_negative_button">Cancel</string>
 
+    <string name="stream_ui_message_list_footntoe_edited_label"> · Edited</string>
+    <string name="stream_ui_message_list_footntoe_edited_at">Edited %s</string>
+
+
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
