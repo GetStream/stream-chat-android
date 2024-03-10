@@ -1,6 +1,7 @@
 package io.getstream.chat.docs.java.ui.messages;
 
 import android.graphics.Color;
+import android.text.format.DateUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -17,13 +18,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import io.getstream.chat.android.ui.helper.TransformStyle;
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory;
+import io.getstream.chat.android.ui.helper.TransformStyle;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
@@ -152,6 +153,20 @@ public class MessageList extends Fragment {
                     public String formatTime(Date date) {
                         // Provide a way to format Time
                         return timeFormat.format(date);
+                    }
+
+                    @NonNull
+                    @Override
+                    public String formatRelativeTime(@Nullable Date date) {
+                        // Provide a way to format relative time
+
+                        return DateUtils.getRelativeDateTimeString(
+                                getContext(),
+                                date.getTime(),
+                                DateUtils.MINUTE_IN_MILLIS,
+                                DateUtils.WEEK_IN_MILLIS,
+                                0
+                                ).toString();
                     }
                 }
         );

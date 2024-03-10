@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.text.format.DateUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -26,8 +27,8 @@ import java.util.stream.Collectors;
 
 import io.getstream.chat.android.markdown.MarkdownTextTransformer;
 import io.getstream.chat.android.models.Channel;
-import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.models.Member;
+import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.ui.ChatUI;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager;
@@ -47,7 +48,6 @@ import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider;
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer;
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView;
 import io.getstream.chat.docs.R;
-import kotlin.jvm.functions.Function1;
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -203,6 +203,20 @@ public class Configuration {
                     public String formatTime(Date date) {
                         // Provide a way to format Time
                         return timeFormat.format(date);
+                    }
+
+                    @NonNull
+                    @Override
+                    public String formatRelativeTime(@Nullable Date date) {
+                        // Provide a way to format relative time
+
+                        return DateUtils.getRelativeDateTimeString(
+                                context,
+                                date.getTime(),
+                                DateUtils.MINUTE_IN_MILLIS,
+                                DateUtils.WEEK_IN_MILLIS,
+                                0
+                        ).toString();
                     }
                 }
         );

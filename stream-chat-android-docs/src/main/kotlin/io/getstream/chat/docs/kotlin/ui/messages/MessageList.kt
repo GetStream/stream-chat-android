@@ -3,6 +3,7 @@
 package io.getstream.chat.docs.kotlin.ui.messages
 
 import android.graphics.Color
+import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -180,6 +181,19 @@ class MessageListViewSnippets : Fragment() {
                 override fun formatTime(date: Date?): String {
                     // Provide a way to format Time
                     return timeFormat.format(date)
+                }
+
+                override fun formatRelativeTime(date: Date?): String {
+                    // Provide a way to format Relative Time
+                    date ?: return ""
+
+                    return DateUtils.getRelativeDateTimeString(
+                        context,
+                        date.time,
+                        DateUtils.MINUTE_IN_MILLIS,
+                        DateUtils.WEEK_IN_MILLIS,
+                        0,
+                    ).toString()
                 }
             }
         )
