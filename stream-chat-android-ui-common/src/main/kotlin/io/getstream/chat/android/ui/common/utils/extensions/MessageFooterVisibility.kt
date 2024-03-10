@@ -34,12 +34,14 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisi
  * @return If the message footer should be visible or not.
  */
 @InternalStreamChatApi
+@Suppress("ReturnCount")
 public fun MessageFooterVisibility.shouldShowMessageFooter(
     message: Message,
     isLastMessageInGroup: Boolean,
     nextMessage: Message?,
 ): Boolean {
     if (nextMessage == null && this != MessageFooterVisibility.Never) return true
+    if (message.messageTextUpdatedAt != null && this != MessageFooterVisibility.Never) return true
     return when (this) {
         MessageFooterVisibility.Always -> true
         MessageFooterVisibility.LastInGroup -> isLastMessageInGroup
