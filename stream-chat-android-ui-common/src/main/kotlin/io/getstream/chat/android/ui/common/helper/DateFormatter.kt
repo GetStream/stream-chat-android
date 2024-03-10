@@ -51,6 +51,14 @@ public interface DateFormatter {
      */
     public fun formatTime(date: Date?): String
 
+    /**
+     * Formats the given date as a relative time string.
+     *
+     * @param date The [Date] to format as a relative time string.
+     * @return The formatted relative time string.
+     */
+    public fun formatRelativeTime(date: Date?): String
+
     public companion object {
         /**
          * Builds the default date formatter.
@@ -163,6 +171,18 @@ internal class DefaultDateFormatter(
         }
     }
 
+    override fun formatRelativeTime(date: Date?): String {
+        date ?: return ""
+
+        return DateUtils.getRelativeDateTimeString(
+            dateContext.context(),
+            date.time,
+            DateUtils.MINUTE_IN_MILLIS,
+            DateUtils.WEEK_IN_MILLIS,
+            0,
+        ).toString()
+    }
+
     /**
      * Checks if the supplied day is today.
      *
@@ -231,6 +251,7 @@ internal class DefaultDateFormatter(
         fun yesterdayString(): String
         fun is24Hour(): Boolean
         fun dateTimePattern(): String
+        fun context(): Context
     }
 
     private class DefaultDateContext(
@@ -256,6 +277,10 @@ internal class DefaultDateFormatter(
             // Gets a localized pattern that contains 2 digit representations of
             // the year, month, and day of month
             return dateTimePatternLazy
+        }
+
+        override fun context(): Context {
+            return context
         }
     }
 }

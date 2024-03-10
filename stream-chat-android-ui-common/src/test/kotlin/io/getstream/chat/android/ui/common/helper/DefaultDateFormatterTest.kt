@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.helper
 
+import android.content.Context
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
 import org.amshove.kluent.shouldBeEqualTo
@@ -42,6 +43,9 @@ internal class DefaultDateFormatterTest {
         override fun yesterdayString() = YESTERDAY_STRING
         override fun is24Hour(): Boolean = is24Hour
         override fun dateTimePattern(): String = dateTimePattern
+        override fun context(): Context {
+            TODO("Not yet implemented")
+        }
     }
 
     @Test

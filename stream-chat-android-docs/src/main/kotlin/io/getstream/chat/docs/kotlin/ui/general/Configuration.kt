@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
+import android.text.format.DateUtils
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -191,6 +192,18 @@ private class ChatUiSnippets {
             override fun formatTime(date: Date?): String {
                 date ?: return ""
                 return timeFormat.format(date)
+            }
+
+            override fun formatRelativeTime(date: Date?): String {
+                date ?: return ""
+
+                return DateUtils.getRelativeDateTimeString(
+                    context,
+                    date.time,
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.WEEK_IN_MILLIS,
+                    0,
+                ).toString()
             }
         }
     }
