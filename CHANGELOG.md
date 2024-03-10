@@ -5,6 +5,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- `Message` entity has a new `messageTextUpdatedAt` property to represent the last time the message text was updated. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
 
 ### ⚠️ Changed
 
@@ -60,6 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Edited message will show info about when they were edited. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
 
 ### ⚠️ Changed
 
@@ -71,6 +73,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Edited message will show info about when they were edited. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
 
 ### ⚠️ Changed
 
