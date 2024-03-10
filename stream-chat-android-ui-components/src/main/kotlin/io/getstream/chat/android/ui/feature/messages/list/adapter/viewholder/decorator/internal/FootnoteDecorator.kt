@@ -334,6 +334,7 @@ internal class FootnoteDecorator(
     private fun setupMessageFooterTime(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
         val updatedAt = data.message.getUpdatedAtOrNull()
+        val editedAt = data.message.messageTextUpdatedAt?.let(dateFormatter::formatRelativeTime)
 
         when {
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
@@ -341,10 +342,10 @@ internal class FootnoteDecorator(
                 dateFormatter.formatTime(
                     updatedAt,
                 ),
+                null,
                 listViewStyle.itemStyle,
             )
-
-            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), listViewStyle.itemStyle)
+            else -> footnoteView.showTime(dateFormatter.formatTime(createdAt), editedAt, listViewStyle.itemStyle)
         }
     }
 

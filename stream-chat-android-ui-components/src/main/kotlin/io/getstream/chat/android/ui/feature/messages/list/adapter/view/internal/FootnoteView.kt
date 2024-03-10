@@ -62,10 +62,14 @@ internal class FootnoteView : LinearLayoutCompat {
         footnote.root.isVisible = false
         threadsFootnote.root.isVisible = false
         translatedLabel.isVisible = false
+        footnote.editedLabel.isVisible = false
     }
 
     fun applyGravity(isMine: Boolean) {
-        footnote.root.updateLayoutParams {
+        footnote.messageFooterContainer.updateLayoutParams {
+            gravity = if (isMine) Gravity.END else Gravity.START
+        }
+        footnote.messageFooterContainerInner.updateLayoutParams {
             gravity = if (isMine) Gravity.END else Gravity.START
         }
         threadsFootnote.root.updateLayoutParams {
@@ -183,11 +187,21 @@ internal class FootnoteView : LinearLayoutCompat {
         footnote.deliveryStatusIcon.setImageDrawable(drawableRes)
     }
 
-    fun showTime(time: String, style: MessageListItemStyle) {
+    fun showTime(time: String, editedAt: String?, style: MessageListItemStyle) {
         footnote.timeView.apply {
             isVisible = true
             text = time
             setTextStyle(style.textStyleMessageDate)
+        }
+        footnote.editedLabel.isVisible = editedAt != null
+        footnote.editedInfo.text = context.getString(R.string.stream_ui_message_list_footntoe_edited_at, editedAt)
+        footnote.editedInfo.isVisible = false
+        footnote.root.setOnClickListener {
+            if (editedAt != null) {
+                footnote.editedLabel.isVisible = !footnote.editedLabel.isVisible
+                footnote.editedInfo.isVisible = !footnote.editedInfo.isVisible
+                footnote.editedInfo.invalidate()
+            }
         }
     }
 
