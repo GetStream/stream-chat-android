@@ -265,6 +265,7 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
+        LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
         LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
