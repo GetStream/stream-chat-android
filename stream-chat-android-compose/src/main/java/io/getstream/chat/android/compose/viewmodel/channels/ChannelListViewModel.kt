@@ -187,20 +187,18 @@ public class ChannelListViewModel(
         searchQuery.combine(queryConfigFlow) { query, config -> query to config }
             .collectLatest { (query, config) ->
                 when (query) {
-                    is SearchQuery.Empty -> queryChannels(config)
-                    is SearchQuery.Channels -> queryChannels(
+                    is SearchQuery.Empty -> observeQueryChannels(config)
+                    is SearchQuery.Channels -> observeQueryChannels(
                         config.copy(
                             filters = createQueryChannelsFilter(config.filters, query.query),
                         ),
                     )
                     is SearchQuery.Messages -> TODO()
                 }
-
-                observeChannels(searchQuery = query)
             }
     }
 
-    private fun queryChannels(config: QueryConfig<Channel>) {
+    private suspend fun observeQueryChannels(config: QueryConfig<Channel>) {
         val queryChannelsRequest = QueryChannelsRequest(
             filter = config.filters,
             querySort = config.querySort,
@@ -215,6 +213,40 @@ public class ChannelListViewModel(
             chatEventHandlerFactory = chatEventHandlerFactory,
             coroutineScope = viewModelScope,
         )
+
+        queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
+            channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
+                .map { (channelMutes, state) ->
+                    when (state) {
+                        ChannelsStateData.NoQueryActive,
+                        ChannelsStateData.Loading,
+                        -> channelsState.copy(
+                            isLoading = true,
+                            searchQuery = searchQuery.value,
+                        ).also {
+                            logger.d { "Loading state for query" }
+                        }
+                        ChannelsStateData.OfflineNoResults -> {
+                            logger.d { "No offline results. Channels are empty" }
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = emptyList(),
+                                searchQuery = searchQuery.value,
+                            )
+                        }
+                        is ChannelsStateData.Result -> {
+                            logger.d { "Received result for state of channels" }
+                            channelsState.copy(
+                                isLoading = false,
+                                channelItems = createChannelItems(state.channels, channelMutes),
+                                isLoadingMore = false,
+                                endOfChannels = queryChannelsState.endOfChannels.value,
+                                searchQuery = searchQuery.value,
+                            )
+                        }
+                    }
+                }.collectLatest { newState -> channelsState = newState }
+        }
     }
 
     /**
@@ -243,49 +275,6 @@ public class ChannelListViewModel(
             )
         } else {
             filter
-        }
-    }
-
-    /**
-     * Kicks off operations required to combine and build the [ChannelsState] object for the UI.
-     *
-     * It connects the 'loadingMore', 'channelsState' and 'endOfChannels' properties from the [queryChannelsState].
-     * @param searchQuery The search query string used to search channels.
-     */
-    private suspend fun observeChannels(searchQuery: SearchQuery) {
-        logger.d { "ViewModel is observing channels. When state is available, it will be notified" }
-        queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-            channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
-                .map { (channelMutes, state) ->
-                    when (state) {
-                        ChannelsStateData.NoQueryActive,
-                        ChannelsStateData.Loading,
-                        -> channelsState.copy(
-                            isLoading = true,
-                            searchQuery = searchQuery,
-                        ).also {
-                            logger.d { "Loading state for query" }
-                        }
-                        ChannelsStateData.OfflineNoResults -> {
-                            logger.d { "No offline results. Channels are empty" }
-                            channelsState.copy(
-                                isLoading = false,
-                                channelItems = emptyList(),
-                                searchQuery = searchQuery,
-                            )
-                        }
-                        is ChannelsStateData.Result -> {
-                            logger.d { "Received result for state of channels" }
-                            channelsState.copy(
-                                isLoading = false,
-                                channelItems = createChannelItems(state.channels, channelMutes),
-                                isLoadingMore = false,
-                                endOfChannels = queryChannelsState.endOfChannels.value,
-                                searchQuery = searchQuery,
-                            )
-                        }
-                    }
-                }.collectLatest { newState -> channelsState = newState }
         }
     }
 
@@ -335,6 +324,15 @@ public class ChannelListViewModel(
         logger.d { "Loading more channels" }
 
         if (chatClient.clientState.isOffline) return
+        when (searchQuery.value) {
+            is SearchQuery.Empty,
+            is SearchQuery.Channels,
+            -> loadMoreQueryChannels()
+            is SearchQuery.Messages -> TODO()
+        }
+    }
+
+    private fun loadMoreQueryChannels() {
         val currentConfig = QueryConfig(
             filters = filterFlow.value ?: return,
             querySort = querySortFlow.value,
