@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import kotlinx.coroutines.launch
@@ -99,6 +100,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     isShowingHeader = true,
                     isShowingSearch = true,
                     onItemClick = ::openMessages,
+                    onSearchMessageItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
                         listViewModel.viewModelScope.launch {
@@ -247,6 +249,17 @@ class ChannelsActivity : BaseConnectedActivity() {
                 channelId = channel.cid,
                 messageId = null,
                 parentMessageId = null,
+            ),
+        )
+    }
+
+    private fun openMessages(message: Message) {
+        startActivity(
+            MessagesActivity.createIntent(
+                context = this,
+                channelId = message.cid,
+                messageId = message.id,
+                parentMessageId = message.parentId,
             ),
         )
     }
