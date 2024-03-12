@@ -58,6 +58,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
 import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import io.getstream.chat.android.ui.common.state.channels.actions.LeaveGroup
 import io.getstream.chat.android.ui.common.state.channels.actions.MuteChannel
@@ -91,6 +92,7 @@ public fun ChannelsScreen(
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
+    onSearchMessageItemClick: (Message) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
     onBackPressed: () -> Unit = {},
 ) {
@@ -158,6 +160,7 @@ public fun ChannelsScreen(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = onItemClick,
+                    onSearchResultClick = onSearchMessageItemClick,
                     onChannelLongClick = remember(listViewModel) {
                         {
                             listViewModel.selectChannel(it)
