@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
@@ -134,9 +134,13 @@ class ChannelsActivity : BaseConnectedActivity() {
             },
         ) {
             ChannelList(
-                modifier = Modifier.fillMaxSize().padding(it),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
                 itemContent = {
-                    CustomChannelListItem(channelItem = it, user = user)
+                    if (it is ItemState.ChannelItemState) {
+                        CustomChannelListItem(channelItem = it, user = user)
+                    }
                 },
                 divider = {
                     Spacer(
@@ -154,7 +158,7 @@ class ChannelsActivity : BaseConnectedActivity() {
      * An example of a customized DefaultChannelItem component.
      */
     @Composable
-    private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
+    private fun CustomChannelListItem(channelItem: ItemState.ChannelItemState, user: User?) {
         ChannelItem(
             channelItem = channelItem,
             currentUser = user,
