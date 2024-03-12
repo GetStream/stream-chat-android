@@ -64,6 +64,7 @@ import io.getstream.chat.android.models.querysort.QuerySortByField
  * @param onLastItemReached Handler for pagination, when the user reaches the last item in the list.
  * @param onChannelClick Handler for a single item tap.
  * @param onChannelLongClick Handler for a long item tap.
+ * @param onSearchResultClick Handler for a single search result tap.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
  * @param emptyContent Composable that represents the empty content if there are no channels.
  * @param emptySearchContent Composable that represents the empty content if there are no channels matching the search
@@ -92,6 +93,7 @@ public fun ChannelList(
     onLastItemReached: () -> Unit = remember(viewModel) { { viewModel.loadMore() } },
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = remember(viewModel) { { viewModel.selectChannel(it) } },
+    onSearchResultClick: (Message) -> Unit = {},
     loadingContent: @Composable () -> Unit = { LoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultChannelListEmptyContent(modifier) },
     emptySearchContent: @Composable (String) -> Unit = { searchQuery ->
@@ -104,16 +106,13 @@ public fun ChannelList(
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
     itemContent: @Composable (ItemState) -> Unit = { channelItem ->
         val user by viewModel.user.collectAsState()
-        when (channelItem) {
-            is ItemState.ChannelItemState -> DefaultChannelItem(
-                channelItem = channelItem,
-                currentUser = user,
-                onChannelClick = onChannelClick,
-                onChannelLongClick = onChannelLongClick,
-            )
-
-            is ItemState.SearchResultItemState -> TODO()
-        }
+        DefaultItem(
+            itemState = channelItem,
+            currentUser = user,
+            onChannelClick = onChannelClick,
+            onChannelLongClick = onChannelLongClick,
+            onSearchResultClick = onSearchResultClick,
+        )
     },
     divider: @Composable () -> Unit = { DefaultChannelItemDivider() },
 ) {
