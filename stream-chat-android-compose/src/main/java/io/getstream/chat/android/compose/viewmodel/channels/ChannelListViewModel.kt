@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.ChannelMute
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
@@ -68,6 +69,7 @@ import kotlinx.coroutines.launch
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
  */
+@Suppress("TooManyFunctions")
 public class ChannelListViewModel(
     public val chatClient: ChatClient,
     initialSort: QuerySorter<Channel>,
@@ -162,6 +164,12 @@ public class ChannelListViewModel(
     private var queryChannelsState: StateFlow<QueryChannelsState?> = MutableStateFlow(null)
 
     /**
+     * The current state of the search Messages. When changed, it emits a new value in a flow, which
+     * queries and loads new data.
+     */
+    private val searchMessageState: MutableStateFlow<SearchMessageState?> = MutableStateFlow(null)
+
+    /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
@@ -193,9 +201,51 @@ public class ChannelListViewModel(
                             filters = createQueryChannelsFilter(config.filters, query.query),
                         ),
                     )
-                    is SearchQuery.Messages -> TODO()
+                    is SearchQuery.Messages -> observeSearchMessages(query.query)
                 }
             }
+    }
+
+    private suspend fun observeSearchMessages(query: String) {
+        searchMessageState.value = SearchMessageState(query = query, isLoading = true)
+        searchMessages()
+        searchMessageState.filterNotNull().collectLatest {
+            channelsState = channelsState.copy(
+                searchQuery = searchQuery.value,
+                isLoading = it.isLoading,
+                isLoadingMore = it.isLoadingMore,
+                endOfChannels = !it.canLoadMore,
+                channelItems = it.messages.map(ItemState::SearchResultItemState),
+            )
+        }
+    }
+
+    private fun searchMessages() {
+        val currentState = searchMessageState.value ?: return
+        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(user.value) ?: return
+        viewModelScope.launch {
+            chatClient.searchMessages(
+                channelFilter = channelFilter,
+                messageFilter = Filters.autocomplete("text", currentState.query),
+                offset = currentState.messages.size,
+                limit = channelLimit,
+            ).await()
+                .onSuccess {
+                    searchMessageState.value = currentState.copy(
+                        messages = currentState.messages + it.messages,
+                        isLoading = false,
+                        isLoadingMore = false,
+                        canLoadMore = it.messages.size >= channelLimit,
+                    )
+                }
+                .onError {
+                    searchMessageState.value = currentState.copy(
+                        isLoading = false,
+                        isLoadingMore = false,
+                        canLoadMore = true,
+                    )
+                }
+        }
     }
 
     private suspend fun observeQueryChannels(config: QueryConfig<Channel>) {
@@ -328,7 +378,15 @@ public class ChannelListViewModel(
             is SearchQuery.Empty,
             is SearchQuery.Channels,
             -> loadMoreQueryChannels()
-            is SearchQuery.Messages -> TODO()
+            is SearchQuery.Messages -> {
+                searchMessageState.value
+                    ?.takeIf { it.canLoadMore }
+                    ?.takeUnless { it.isLoading || it.isLoadingMore }
+                    ?.let {
+                        searchMessageState.value = it.copy(isLoadingMore = true)
+                        searchMessages()
+                    }
+            }
         }
     }
 
@@ -457,4 +515,12 @@ public class ChannelListViewModel(
          */
         internal const val DEFAULT_MEMBER_LIMIT = 30
     }
+
+    private data class SearchMessageState(
+        val query: String = "",
+        val canLoadMore: Boolean = true,
+        val messages: List<Message> = emptyList(),
+        val isLoading: Boolean = false,
+        val isLoadingMore: Boolean = false,
+    )
 }
