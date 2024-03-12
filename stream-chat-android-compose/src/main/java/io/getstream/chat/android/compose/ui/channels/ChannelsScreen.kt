@@ -49,6 +49,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
@@ -88,7 +89,7 @@ public fun ChannelsScreen(
     viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
-    isShowingSearch: Boolean = false,
+    searchMode: SearchMode = SearchMode.None,
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
     onItemClick: (Channel) -> Unit = {},
@@ -140,7 +141,7 @@ public fun ChannelsScreen(
                     .fillMaxSize()
                     .background(color = ChatTheme.colors.appBackground),
             ) {
-                if (isShowingSearch) {
+                if (searchMode != SearchMode.None) {
                     SearchInput(
                         modifier = Modifier
                             .padding(horizontal = 12.dp, vertical = 8.dp)
@@ -150,7 +151,14 @@ public fun ChannelsScreen(
                         onValueChange = remember(listViewModel) {
                             {
                                 searchQuery = it
-                                listViewModel.setSearchQuery(it)
+                                listViewModel.setSearchQuery(
+                                    when {
+                                        it.isBlank() -> SearchQuery.Empty
+                                        searchMode == SearchMode.Channels -> SearchQuery.Channels(it)
+                                        searchMode == SearchMode.Messages -> SearchQuery.Messages(it)
+                                        else -> SearchQuery.Empty
+                                    },
+                                )
                             }
                         },
                     )
@@ -238,4 +246,10 @@ public fun ChannelsScreen(
             )
         }
     }
+}
+
+public enum class SearchMode {
+    None,
+    Channels,
+    Messages,
 }
