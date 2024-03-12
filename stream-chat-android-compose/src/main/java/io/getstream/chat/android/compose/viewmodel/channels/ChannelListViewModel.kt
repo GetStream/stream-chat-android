@@ -341,8 +341,19 @@ public class ChannelListViewModel(
      *
      * The new operation will hold the channels that match the new query.
      */
+    @Deprecated(
+        message = "Use setSearchQuery instead",
+        replaceWith = ReplaceWith(
+            expression = "setSearchQuery(SearchQuery.Channels(newQuery))",
+            imports = ["io.getstream.chat.android.compose.state.channels.list.SearchQuery"],
+        ),
+    )
     public fun setSearchQuery(newQuery: String) {
-        this.searchQuery.value = SearchQuery.Channels(newQuery)
+        this.searchQuery.value = SearchQuery.Messages(newQuery)
+    }
+
+    public fun setSearchQuery(searchQuery: SearchQuery) {
+        this.searchQuery.value = searchQuery
     }
 
     /**

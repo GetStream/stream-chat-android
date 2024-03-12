@@ -2137,6 +2137,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public final fun selectChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/models/querysort/QuerySorter;)V
+	public final fun setSearchQuery (Lio/getstream/chat/android/compose/state/channels/list/SearchQuery;)V
 	public final fun setSearchQuery (Ljava/lang/String;)V
 	public final fun unmuteChannel (Lio/getstream/chat/android/models/Channel;)V
 }
