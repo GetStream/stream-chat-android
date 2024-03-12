@@ -24,6 +24,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.uitests.R
@@ -42,7 +43,7 @@ class ComposeChannelsActivity : AppCompatActivity() {
             ChatTheme {
                 ChannelsScreen(
                     title = stringResource(id = R.string.sdk_name_compose),
-                    isShowingSearch = true,
+                    searchMode = SearchMode.Channels,
                     onItemClick = ::openMessages,
                     onHeaderAvatarClick = ::logout,
                     onBackPressed = ::finish,

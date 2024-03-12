@@ -52,6 +52,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
@@ -98,7 +99,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     viewModelFactory = factory,
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
-                    isShowingSearch = true,
+                    searchMode = SearchMode.Messages,
                     onItemClick = ::openMessages,
                     onSearchMessageItemClick = ::openMessages,
                     onBackPressed = ::finish,
