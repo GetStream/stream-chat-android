@@ -57,7 +57,6 @@ import java.io.File
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
@@ -88,7 +87,6 @@ public class MessagesViewModelFactory(
     ),
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -115,7 +113,6 @@ public class MessagesViewModelFactory(
                     channelCid = channelId,
                     messageLimit = messageLimit,
                     maxAttachmentCount = maxAttachmentCount,
-                    maxAttachmentSize = maxAttachmentSize,
                     messageId = messageId,
                     isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
                 ),
