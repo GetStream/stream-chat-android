@@ -16,7 +16,11 @@
 
 package io.getstream.chat.android.ui.common.state.messages.composer
 
+import io.getstream.chat.android.models.App
+import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.randomAttachment
@@ -30,7 +34,7 @@ import org.junit.jupiter.params.provider.MethodSource
 internal class MessageValidatorTest {
 
     private val messageValidator = MessageValidator(
-        maxAttachmentSize = maxAttachmentSize,
+        appSettings = appSettings,
         maxAttachmentCount = maxAttachmentCount,
         maxMessageLength = maxMessageLength,
     )
@@ -61,7 +65,26 @@ internal class MessageValidatorTest {
     }
     companion object {
 
-        private val maxAttachmentSize = 100 + positiveRandomLong(1000)
+        private val appSettings = AppSettings(
+            app = App(
+                name = randomString(),
+                fileUploadConfig = FileUploadConfig(
+                    allowedFileExtensions = emptyList(),
+                    allowedMimeTypes = emptyList(),
+                    blockedFileExtensions = emptyList(),
+                    blockedMimeTypes = emptyList(),
+                    sizeLimitInBytes = positiveRandomLong(100),
+                ),
+                imageUploadConfig = FileUploadConfig(
+                    allowedFileExtensions = emptyList(),
+                    allowedMimeTypes = emptyList(),
+                    blockedFileExtensions = emptyList(),
+                    blockedMimeTypes = emptyList(),
+                    sizeLimitInBytes = positiveRandomLong(100),
+                ),
+            ),
+        )
+
         private val maxAttachmentCount = 3 + positiveRandomInt(10)
         private val maxMessageLength = 100 + positiveRandomInt(1000)
 
@@ -87,7 +110,7 @@ internal class MessageValidatorTest {
                 randomString(positiveRandomInt(maxMessageLength)),
                 List(positiveRandomInt(maxAttachmentCount)) {
                     randomAttachment(
-                        fileSize = positiveRandomLong(maxAttachmentSize).toInt(),
+                        fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes).toInt(),
                     )
                 },
                 emptyList<ValidationError>(),
@@ -98,14 +121,16 @@ internal class MessageValidatorTest {
                     randomString(positiveRandomInt(maxMessageLength)),
                     List(attachmentCount) {
                         randomAttachment(
-                            fileSize = positiveRandomLong(maxAttachmentSize).toInt(),
+                            fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes).toInt(),
                         )
                     },
                     listOf(ValidationError.AttachmentCountExceeded(attachmentCount, maxAttachmentCount)),
                 )
             },
             randomAttachment(
-                fileSize = (maxAttachmentSize + positiveRandomLong(100)).toInt(),
+                type = AttachmentType.IMAGE,
+                fileSize = (appSettings.app.imageUploadConfig.sizeLimitInBytes + positiveRandomLong(100))
+                    .toInt(),
             ).let { invalidAttachment ->
                 Arguments.of(
                     randomBoolean(),
@@ -113,14 +138,111 @@ internal class MessageValidatorTest {
                     (
                         List(positiveRandomInt(maxAttachmentCount - 1)) {
                             randomAttachment(
-                                fileSize = positiveRandomLong(maxAttachmentSize).toInt(),
+                                fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes)
+                                    .toInt(),
                             )
                         } + invalidAttachment
                         ).shuffled(),
                     listOf(
                         ValidationError.AttachmentSizeExceeded(
                             listOf(invalidAttachment),
-                            maxAttachmentSize,
+                            appSettings.app.imageUploadConfig.sizeLimitInBytes,
+                        ),
+                    ),
+                )
+            },
+            randomAttachment(
+                type = AttachmentType.FILE,
+                fileSize = (appSettings.app.fileUploadConfig.sizeLimitInBytes + positiveRandomLong(100))
+                    .toInt(),
+            ).let { invalidAttachment ->
+                Arguments.of(
+                    randomBoolean(),
+                    randomString(positiveRandomInt(maxMessageLength)),
+                    (
+                        List(positiveRandomInt(maxAttachmentCount - 1)) {
+                            randomAttachment(
+                                fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes)
+                                    .toInt(),
+                            )
+                        } + invalidAttachment
+                        ).shuffled(),
+                    listOf(
+                        ValidationError.AttachmentSizeExceeded(
+                            listOf(invalidAttachment),
+                            appSettings.app.fileUploadConfig.sizeLimitInBytes,
+                        ),
+                    ),
+                )
+            },
+            randomAttachment(
+                type = AttachmentType.VIDEO,
+                fileSize = (appSettings.app.fileUploadConfig.sizeLimitInBytes + positiveRandomLong(100))
+                    .toInt(),
+            ).let { invalidAttachment ->
+                Arguments.of(
+                    randomBoolean(),
+                    randomString(positiveRandomInt(maxMessageLength)),
+                    (
+                        List(positiveRandomInt(maxAttachmentCount - 1)) {
+                            randomAttachment(
+                                fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes)
+                                    .toInt(),
+                            )
+                        } + invalidAttachment
+                        ).shuffled(),
+                    listOf(
+                        ValidationError.AttachmentSizeExceeded(
+                            listOf(invalidAttachment),
+                            appSettings.app.fileUploadConfig.sizeLimitInBytes,
+                        ),
+                    ),
+                )
+            },
+            randomAttachment(
+                type = AttachmentType.AUDIO,
+                fileSize = (appSettings.app.fileUploadConfig.sizeLimitInBytes + positiveRandomLong(100))
+                    .toInt(),
+            ).let { invalidAttachment ->
+                Arguments.of(
+                    randomBoolean(),
+                    randomString(positiveRandomInt(maxMessageLength)),
+                    (
+                        List(positiveRandomInt(maxAttachmentCount - 1)) {
+                            randomAttachment(
+                                fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes)
+                                    .toInt(),
+                            )
+                        } + invalidAttachment
+                        ).shuffled(),
+                    listOf(
+                        ValidationError.AttachmentSizeExceeded(
+                            listOf(invalidAttachment),
+                            appSettings.app.fileUploadConfig.sizeLimitInBytes,
+                        ),
+                    ),
+                )
+            },
+            randomAttachment(
+                type = AttachmentType.AUDIO_RECORDING,
+                fileSize = (appSettings.app.fileUploadConfig.sizeLimitInBytes + positiveRandomLong(100))
+                    .toInt(),
+            ).let { invalidAttachment ->
+                Arguments.of(
+                    randomBoolean(),
+                    randomString(positiveRandomInt(maxMessageLength)),
+                    (
+                        List(positiveRandomInt(maxAttachmentCount - 1)) {
+                            randomAttachment(
+                                fileSize = positiveRandomLong(appSettings.app.fileUploadConfig.sizeLimitInBytes)
+                                    .toInt(),
+                            )
+                        } + invalidAttachment
+                        ).shuffled(),
+                    listOf(
+                        ValidationError.AttachmentSizeExceeded(
+                            listOf(invalidAttachment),
+                            appSettings.app.fileUploadConfig.sizeLimitInBytes,
                         ),
                     ),
                 )

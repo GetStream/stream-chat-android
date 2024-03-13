@@ -16,11 +16,13 @@
 
 package io.getstream.chat.android.ui.common.state.messages.composer
 
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.uiutils.extension.containsLinks
 
 internal class MessageValidator(
-    private val maxAttachmentSize: Long,
+    private val appSettings: AppSettings,
     private val maxAttachmentCount: Int,
     var canSendLinks: Boolean = true,
     var maxMessageLength: Int = DEFAULT_MESSAGE_LENGTH,
@@ -30,6 +32,7 @@ internal class MessageValidator(
         listOfNotNull(
             validateMessageLength(message),
             validateAttachmentCount(attachments),
+            validateImageAttachmentSize(attachments),
             validateFileAttachmentSize(attachments),
             validateCanSendLinks(message),
         )
@@ -44,11 +47,19 @@ internal class MessageValidator(
             .takeIf { it > maxAttachmentCount }
             ?.let { ValidationError.AttachmentCountExceeded(it, maxAttachmentCount) }
 
+    private fun validateImageAttachmentSize(attachments: List<Attachment>): ValidationError? =
+        attachments
+            .filter { it.isImage() }
+            .filter { it.fileSize > appSettings.app.imageUploadConfig.sizeLimitInBytes }
+            .takeUnless { it.isEmpty() }
+            ?.let { ValidationError.AttachmentSizeExceeded(it, appSettings.app.imageUploadConfig.sizeLimitInBytes) }
+
     private fun validateFileAttachmentSize(attachments: List<Attachment>): ValidationError? =
         attachments
-            .filter { it.fileSize > maxAttachmentSize }
+            .filter { !it.isImage() }
+            .filter { it.fileSize > appSettings.app.fileUploadConfig.sizeLimitInBytes }
             .takeUnless { it.isEmpty() }
-            ?.let { ValidationError.AttachmentSizeExceeded(it, maxAttachmentSize) }
+            ?.let { ValidationError.AttachmentSizeExceeded(it, appSettings.app.fileUploadConfig.sizeLimitInBytes) }
 
     private fun validateCanSendLinks(message: String): ValidationError? =
         ValidationError.ContainsLinksWhenNotAllowed.takeIf { !canSendLinks && message.containsLinks() }
