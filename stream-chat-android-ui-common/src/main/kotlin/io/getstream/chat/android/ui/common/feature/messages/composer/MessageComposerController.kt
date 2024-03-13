@@ -40,13 +40,13 @@ import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.ThreadReply
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageValidator
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.chat.android.ui.common.utils.typing.TypingUpdatesBuffer
 import io.getstream.chat.android.ui.common.utils.typing.internal.DefaultTypingUpdatesBuffer
 import io.getstream.chat.android.uiutils.extension.addSchemeToUrlIfNeeded
-import io.getstream.chat.android.uiutils.extension.containsLinks
 import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
 import io.getstream.result.Result
@@ -160,7 +160,10 @@ public class MessageComposerController(
      * For a full list @see [ChannelCapabilities].
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
-        .map { it.ownCapabilities }
+        .map {
+            messageValidator.canSendLinks = it.ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
+            it.ownCapabilities
+        }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -177,22 +180,6 @@ public class MessageComposerController(
      * ever read directly.
      */
     private val canSendTypingUpdates = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.Eagerly,
-            initialValue = false,
-        )
-
-    /**
-     * Signals if the user is allowed to send links.
-     *
-     * Spun off as an individual field so that we can avoid the expense of running [Set.contains]
-     * on every typing update.
-     *
-     * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
-     * ever read directly.
-     */
-    private val canSendLinks = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_LINKS) }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -296,11 +283,6 @@ public class MessageComposerController(
     private var commands: List<Command> = emptyList()
 
     /**
-     * Represents the maximum allowed message length in the message input.
-     */
-    private var maxMessageLength: Int = DefaultMaxMessageLength
-
-    /**
      * Represents the coroutine [Job] used to update the countdown
      */
     private var cooldownTimerJob: Job? = null
@@ -364,12 +346,17 @@ public class MessageComposerController(
         TypingSuggestionOptions(symbol = MentionStartSymbol),
     )
 
+    private val messageValidator = MessageValidator(
+        maxAttachmentSize = maxAttachmentSize,
+        maxAttachmentCount = maxAttachmentCount,
+    )
+
     /**
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
         channelState.flatMapLatest { it.channelConfig }.onEach {
-            maxMessageLength = it.maxMessageLength
+            messageValidator.maxMessageLength = it.maxMessageLength
             commands = it.commands
             state.value = state.value.copy(hasCommands = commands.isNotEmpty())
         }.launchIn(scope)
@@ -708,45 +695,7 @@ public class MessageComposerController(
      * Checks the current input for validation errors.
      */
     private fun handleValidationErrors() {
-        validationErrors.value = mutableListOf<ValidationError>().apply {
-            val message = messageInput.value.text
-            val messageLength = message.length
-
-            if (messageLength > maxMessageLength) {
-                add(
-                    ValidationError.MessageLengthExceeded(
-                        messageLength = messageLength,
-                        maxMessageLength = maxMessageLength,
-                    ),
-                )
-            }
-
-            val attachmentCount = selectedAttachments.value.size
-            if (attachmentCount > maxAttachmentCount) {
-                add(
-                    ValidationError.AttachmentCountExceeded(
-                        attachmentCount = attachmentCount,
-                        maxAttachmentCount = maxAttachmentCount,
-                    ),
-                )
-            }
-
-            val attachments: List<Attachment> = selectedAttachments.value
-                .filter { it.fileSize > maxAttachmentSize }
-            if (attachments.isNotEmpty()) {
-                add(
-                    ValidationError.AttachmentSizeExceeded(
-                        attachments = attachments,
-                        maxAttachmentSize = maxAttachmentSize,
-                    ),
-                )
-            }
-            if (!canSendLinks.value && message.containsLinks()) {
-                add(
-                    ValidationError.ContainsLinksWhenNotAllowed,
-                )
-            }
-        }
+        validationErrors.value = messageValidator.validateMessage(messageInput.value.text, selectedAttachments.value)
     }
 
     /**
@@ -956,10 +905,6 @@ public class MessageComposerController(
     }
 
     internal companion object {
-        /**
-         * The default allowed number of characters in a message.
-         */
-        private const val DefaultMaxMessageLength: Int = 5000
 
         /**
          * The character used to start a mention.
