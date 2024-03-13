@@ -347,7 +347,7 @@ public class MessageComposerController(
     )
 
     private val messageValidator = MessageValidator(
-        maxAttachmentSize = maxAttachmentSize,
+        appSettings = chatClient.getAppSettings(),
         maxAttachmentCount = maxAttachmentCount,
     )
 
