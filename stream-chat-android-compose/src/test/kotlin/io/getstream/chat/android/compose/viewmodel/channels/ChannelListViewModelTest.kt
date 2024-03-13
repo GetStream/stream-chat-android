@@ -20,6 +20,8 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.models.AndFilterObject
 import io.getstream.chat.android.models.AutocompleteFilterObject
 import io.getstream.chat.android.models.Channel
@@ -164,7 +166,7 @@ internal class ChannelListViewModelTest {
             viewModel.selectChannel(channel1)
             viewModel.unmuteChannel(channel1)
 
-            viewModel.channelsState.channelItems.first().isMuted `should be equal to` true
+            (viewModel.channelsState.channelItems.first() as ItemState.ChannelItemState).isMuted `should be equal to` true
             viewModel.activeChannelAction `should be equal to` null
             viewModel.selectedChannel.value `should be equal to` null
             verify(chatClient).unmuteChannel("messaging", "channel1")
@@ -256,7 +258,7 @@ internal class ChannelListViewModelTest {
                 .givenChannelMutes()
                 .get()
 
-            viewModel.setSearchQuery("Search query")
+            viewModel.setSearchQuery(SearchQuery.Channels("Search query"))
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
