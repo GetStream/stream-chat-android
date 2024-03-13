@@ -43,5 +43,6 @@ internal fun FileUploadConfigDto.toDomain(): FileUploadConfig {
         allowedMimeTypes = allowed_mime_types,
         blockedFileExtensions = blocked_file_extensions,
         blockedMimeTypes = blocked_mime_types,
+        sizeLimitInBytes = size_limit?.takeUnless { it <= 0 } ?: AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
     )
 }

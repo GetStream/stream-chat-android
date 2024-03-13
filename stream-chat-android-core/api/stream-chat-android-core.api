@@ -118,6 +118,8 @@ public final class io/getstream/chat/android/models/App {
 }
 
 public final class io/getstream/chat/android/models/AppSettings {
+	public static final field Companion Lio/getstream/chat/android/models/AppSettings$Companion;
+	public static final field DEFAULT_SIZE_LIMIT_IN_BYTES J
 	public fun <init> (Lio/getstream/chat/android/models/App;)V
 	public final fun component1 ()Lio/getstream/chat/android/models/App;
 	public final fun copy (Lio/getstream/chat/android/models/App;)Lio/getstream/chat/android/models/AppSettings;
@@ -126,6 +128,9 @@ public final class io/getstream/chat/android/models/AppSettings {
 	public final fun getApp ()Lio/getstream/chat/android/models/App;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/AppSettings$Companion {
 }
 
 public final class io/getstream/chat/android/models/Attachment : io/getstream/chat/android/models/CustomObject {
@@ -794,18 +799,20 @@ public final class io/getstream/chat/android/models/ExistsFilterObject : io/gets
 }
 
 public final class io/getstream/chat/android/models/FileUploadConfig {
-	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;J)V
 	public final fun component1 ()Ljava/util/List;
 	public final fun component2 ()Ljava/util/List;
 	public final fun component3 ()Ljava/util/List;
 	public final fun component4 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/models/FileUploadConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/FileUploadConfig;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/FileUploadConfig;
+	public final fun component5 ()J
+	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;J)Lio/getstream/chat/android/models/FileUploadConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/FileUploadConfig;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;JILjava/lang/Object;)Lio/getstream/chat/android/models/FileUploadConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowedFileExtensions ()Ljava/util/List;
 	public final fun getAllowedMimeTypes ()Ljava/util/List;
 	public final fun getBlockedFileExtensions ()Ljava/util/List;
 	public final fun getBlockedMimeTypes ()Ljava/util/List;
+	public final fun getSizeLimitInBytes ()J
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }

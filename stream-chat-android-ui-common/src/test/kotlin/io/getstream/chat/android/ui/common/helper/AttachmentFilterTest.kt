@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.common.helper
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.FileUploadConfig
+import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import org.amshove.kluent.`should be equal to`
@@ -111,12 +112,14 @@ internal class AttachmentFilterTest {
             allowedMimeTypes: List<String> = emptyList(),
             blockedFileExtensions: List<String> = emptyList(),
             blockedMimeTypes: List<String> = emptyList(),
+            sizeLimitInBytes: Long = positiveRandomLong(),
         ): FileUploadConfig {
             return FileUploadConfig(
                 allowedFileExtensions = allowedFileExtensions,
                 allowedMimeTypes = allowedMimeTypes,
                 blockedFileExtensions = blockedFileExtensions,
                 blockedMimeTypes = blockedMimeTypes,
+                sizeLimitInBytes = sizeLimitInBytes,
             )
         }
     }

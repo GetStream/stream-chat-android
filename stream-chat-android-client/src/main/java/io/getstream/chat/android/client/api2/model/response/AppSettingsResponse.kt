@@ -36,4 +36,5 @@ internal data class FileUploadConfigDto(
     val allowed_mime_types: List<String>,
     val blocked_file_extensions: List<String>,
     val blocked_mime_types: List<String>,
+    val size_limit: Long?,
 )

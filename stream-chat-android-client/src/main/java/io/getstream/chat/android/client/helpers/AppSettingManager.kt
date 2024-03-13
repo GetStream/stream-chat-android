@@ -81,12 +81,14 @@ internal class AppSettingManager(private val chatApi: ChatApi) {
                         allowedMimeTypes = emptyList(),
                         blockedFileExtensions = emptyList(),
                         blockedMimeTypes = emptyList(),
+                        sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
                     ),
                     imageUploadConfig = FileUploadConfig(
                         allowedFileExtensions = emptyList(),
                         allowedMimeTypes = emptyList(),
                         blockedFileExtensions = emptyList(),
                         blockedMimeTypes = emptyList(),
+                        sizeLimitInBytes = AppSettings.DEFAULT_SIZE_LIMIT_IN_BYTES,
                     ),
                 ),
             )
