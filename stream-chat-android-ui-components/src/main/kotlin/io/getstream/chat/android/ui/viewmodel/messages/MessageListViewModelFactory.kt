@@ -51,7 +51,6 @@ import java.io.File
  * @param messageLimit The limit of the messages to load in a single page.
  * @param enforceUniqueReactions Flag to enforce unique reactions or enable multiple from the same user.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize The maximum file size of each attachment in bytes. By default, 100mb for Stream CDN.
  * @param showSystemMessages If we should show system message items in the list.
  * @param deletedMessageVisibility The behavior of deleted messages in the list and if they're visible or not.
  * @param messageFooterVisibility The behavior of message footers in the list and their visibility.
@@ -80,7 +79,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val messageLimit: Int = MessageListController.DEFAULT_MESSAGES_LIMIT,
     private val enforceUniqueReactions: Boolean = true,
     private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
     private val showSystemMessages: Boolean = true,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -125,7 +123,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     mediaRecorder = mediaRecorder,
                     userLookupHandler = userLookupHandler,
                     maxAttachmentCount = maxAttachmentCount,
-                    maxAttachmentSize = maxAttachmentSize,
                     fileToUri = fileToUri,
                     messageId = messageId,
                     messageLimit = messageLimit,
@@ -153,7 +150,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         private var chatClient: ChatClient = ChatClient.instance()
         private var enforceUniqueReactions: Boolean = true
         private var maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT
-        private var maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE
         private var showSystemMessages: Boolean = true
         private var deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE
         private var messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference()
@@ -203,10 +199,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             this.maxAttachmentCount = maxAttachmentCount
         }
 
-        public fun maxAttachmentSize(maxAttachmentSize: Long): Builder = apply {
-            this.maxAttachmentSize = maxAttachmentSize
-        }
-
         public fun showSystemMessages(showSystemMessages: Boolean): Builder = apply {
             this.showSystemMessages = showSystemMessages
         }
@@ -243,7 +235,6 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     ?: DefaultUserLookupHandler(chatClient, cid),
                 enforceUniqueReactions = enforceUniqueReactions,
                 maxAttachmentCount = maxAttachmentCount,
-                maxAttachmentSize = maxAttachmentSize,
                 showSystemMessages = showSystemMessages,
                 deletedMessageVisibility = deletedMessageVisibility,
                 messageFooterVisibility = messageFooterVisibility,

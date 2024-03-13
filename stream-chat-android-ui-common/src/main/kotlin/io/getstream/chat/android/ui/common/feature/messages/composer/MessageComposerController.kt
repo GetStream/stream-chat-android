@@ -90,7 +90,6 @@ import java.util.regex.Pattern
  * @param channelCid The CID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param maxAttachmentSize Tne maximum file size of each attachment in bytes. By default, 100 MB for Stream CDN.
  * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
  * queries executed on screen initialization.
  */
@@ -104,8 +103,7 @@ public class MessageComposerController(
     private val userLookupHandler: UserLookupHandler,
     private val fileToUri: (File) -> String,
     private val messageLimit: Int,
-    private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
+    maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
     private val messageId: String? = null,
     private val isLinkPreviewEnabled: Boolean = false,
 ) {
