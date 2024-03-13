@@ -21,8 +21,8 @@ package io.getstream.chat.android.uiutils.extension
  * regular expression.
  */
 public fun String.containsLinks(): Boolean {
-    val regex =
-        """(?:\s|^)((?:https?:)?(?:[a-z|A-Z0-9-]+(?:\.[a-z|A-Z0-9-]+)+)(?::[0-9]+)?(?:(?:[^\s]+)?)?)""".toRegex()
+    val regex = """(^|\s)((http|https|ftp)://)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(/[a-zA-Z0-9- ;,./?%&=]*)?"""
+        .toRegex(RegexOption.IGNORE_CASE)
     return this.contains(regex = regex)
 }
 
