@@ -26,7 +26,11 @@ import androidx.compose.runtime.Immutable
 @Immutable
 public data class AppSettings(
     val app: App,
-)
+) {
+    public companion object {
+        public const val DEFAULT_SIZE_LIMIT_IN_BYTES: Long = 100 * 1024 * 1024
+    }
+}
 
 /**
  * The representation of the app, with its configurations.
@@ -56,4 +60,5 @@ public data class FileUploadConfig(
     val allowedMimeTypes: List<String>,
     val blockedFileExtensions: List<String>,
     val blockedMimeTypes: List<String>,
+    val sizeLimitInBytes: Long,
 )
