@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -91,7 +92,7 @@ private object ChannelsScreenCustomizationSnippet {
                         ),
                         title = "Stream Chat",
                         isShowingHeader = true,
-                        isShowingSearch = true
+                        searchMode = SearchMode.Channels,
                     )
                 }
             }

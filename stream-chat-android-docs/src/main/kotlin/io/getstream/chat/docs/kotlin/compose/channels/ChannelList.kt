@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -169,25 +170,27 @@ private object ChannelListCustomizationSnippet {
             ChannelList(
                 // Set up state
                 itemContent = { // Customize the channel items
-                    Row(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        ChannelAvatar(
-                            modifier = Modifier.size(40.dp),
-                            channel = it.channel,
-                            currentUser = user
-                        )
+                    if (it is ItemState.ChannelItemState) {
+                        Row(
+                            modifier = Modifier
+                                .padding(8.dp)
+                                .fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            ChannelAvatar(
+                                modifier = Modifier.size(40.dp),
+                                channel = it.channel,
+                                currentUser = user
+                            )
 
-                        Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
 
-                        Text(
-                            text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                            style = ChatTheme.typography.bodyBold,
-                            maxLines = 1,
-                        )
+                            Text(
+                                text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
+                                style = ChatTheme.typography.bodyBold,
+                                maxLines = 1,
+                            )
+                        }
                     }
                 }
             )

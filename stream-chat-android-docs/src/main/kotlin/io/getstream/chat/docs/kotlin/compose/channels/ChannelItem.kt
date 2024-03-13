@@ -14,9 +14,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
+import io.getstream.chat.android.compose.ui.channels.list.SearchResultItem
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
@@ -38,13 +39,20 @@ private object ChannelItemUsageSnippet {
 
                 ChatTheme {
                     ChannelList(
-                        itemContent = { channelItem -> // Customize the channel items
-                            ChannelItem(
-                                channelItem = channelItem,
-                                currentUser = user,
-                                onChannelClick = {},
-                                onChannelLongClick = {}
-                            )
+                        itemContent = { itemState -> // Customize the channel items
+                            when(itemState) {
+                                is ItemState.ChannelItemState -> ChannelItem(
+                                    channelItem = itemState,
+                                    currentUser = user,
+                                    onChannelClick = {},
+                                    onChannelLongClick = {}
+                                )
+                                is ItemState.SearchResultItemState -> SearchResultItem(
+                                    searchResultItemState = itemState,
+                                    currentUser = user,
+                                    onSearchResultClick = { },
+                                )
+                            }
                         }
                     )
                 }
@@ -69,17 +77,24 @@ private object ChannelItemHandlingActionsSnippet {
 
                 ChatTheme {
                     ChannelList(
-                        itemContent = { channelItem ->
-                            ChannelItem(
-                                channelItem = channelItem,
-                                currentUser = user,
-                                onChannelLongClick = {
-                                    listViewModel.selectChannel(it)
-                                },
-                                onChannelClick = {
-                                    // Start the MessagesScreen
-                                },
-                            )
+                        itemContent = { itemState -> // Customize the channel items
+                            when(itemState) {
+                                is ItemState.ChannelItemState -> ChannelItem(
+                                    channelItem = itemState,
+                                    currentUser = user,
+                                    onChannelLongClick = {
+                                        listViewModel.selectChannel(it)
+                                    },
+                                    onChannelClick = {
+                                        // Start the MessagesScreen
+                                    },
+                                )
+                                is ItemState.SearchResultItemState -> SearchResultItem(
+                                    searchResultItemState = itemState,
+                                    currentUser = user,
+                                    onSearchResultClick = { },
+                                )
+                            }
                         }
                     )
                 }
@@ -104,8 +119,10 @@ private object ChannelItemCustomizationSnippet {
 
                 ChatTheme {
                     ChannelList(
-                        itemContent = { channelItem -> // Customize the channel items
-                            CustomChannelListItem(channelItem = channelItem, user = user)
+                        itemContent = { itemState -> // Customize the channel items
+                            if (itemState is ItemState.ChannelItemState) {
+                                CustomChannelListItem(channelItem = itemState, user = user)
+                            }
                         }
                     )
                 }
@@ -113,7 +130,7 @@ private object ChannelItemCustomizationSnippet {
         }
 
         @Composable
-        fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
+        fun CustomChannelListItem(channelItem: ItemState.ChannelItemState, user: User?) {
             ChannelItem(
                 channelItem = channelItem,
                 currentUser = user,
