@@ -19,15 +19,20 @@ package io.getstream.chat.android.ui.viewmodels.messages
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.models.App
+import io.getstream.chat.android.models.AppSettings
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.positiveRandomLong
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -356,12 +361,30 @@ internal class MessageComposerViewModelTest {
         private val chatClient: ChatClient = mock(),
         private val channelId: String = "messaging:123",
         private val maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-        private val maxAttachmentSize: Long = AttachmentConstants.MAX_UPLOAD_FILE_SIZE,
         statePluginConfig: StatePluginConfig = StatePluginConfig(),
     ) {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
         private val clientState: ClientState = mock()
+        private val appSettings: AppSettings = AppSettings(
+            app = App(
+                name = randomString(),
+                fileUploadConfig = FileUploadConfig(
+                    allowedFileExtensions = emptyList(),
+                    allowedMimeTypes = emptyList(),
+                    blockedFileExtensions = emptyList(),
+                    blockedMimeTypes = emptyList(),
+                    sizeLimitInBytes = positiveRandomLong(100),
+                ),
+                imageUploadConfig = FileUploadConfig(
+                    allowedFileExtensions = emptyList(),
+                    allowedMimeTypes = emptyList(),
+                    blockedFileExtensions = emptyList(),
+                    blockedMimeTypes = emptyList(),
+                    sizeLimitInBytes = positiveRandomLong(100),
+                ),
+            ),
+        )
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -372,6 +395,7 @@ internal class MessageComposerViewModelTest {
             whenever(chatClient.plugins) doReturn listOf(statePlugin)
             whenever(chatClient.pluginFactories) doReturn listOf(statePluginFactory)
             whenever(chatClient.audioPlayer) doReturn mock()
+            whenever(chatClient.getAppSettings()) doReturn appSettings
         }
 
         fun givenCurrentUser(currentUser: User = user1) = apply {
@@ -415,7 +439,6 @@ internal class MessageComposerViewModelTest {
                     userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
                     fileToUri = { it.path },
                     maxAttachmentCount = maxAttachmentCount,
-                    maxAttachmentSize = maxAttachmentSize,
                     messageLimit = 30,
                 ),
             )

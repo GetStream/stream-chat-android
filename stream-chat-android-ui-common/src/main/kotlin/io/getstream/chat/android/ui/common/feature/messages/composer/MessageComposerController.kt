@@ -108,6 +108,11 @@ public class MessageComposerController(
     private val isLinkPreviewEnabled: Boolean = false,
 ) {
 
+    private val messageValidator = MessageValidator(
+        appSettings = chatClient.getAppSettings(),
+        maxAttachmentCount = maxAttachmentCount,
+    )
+
     /**
      * The logger used to print to errors, warnings, information
      * and other things to log.
@@ -159,6 +164,7 @@ public class MessageComposerController(
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
         .map {
+            println("JcLog: messageValidator: -$messageValidator")
             messageValidator.canSendLinks = it.ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
             it.ownCapabilities
         }
@@ -342,11 +348,6 @@ public class MessageComposerController(
 
     private val mentionSuggester = TypingSuggester(
         TypingSuggestionOptions(symbol = MentionStartSymbol),
-    )
-
-    private val messageValidator = MessageValidator(
-        appSettings = chatClient.getAppSettings(),
-        maxAttachmentCount = maxAttachmentCount,
     )
 
     /**
