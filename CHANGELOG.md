@@ -6,6 +6,7 @@
 
 ### ✅ Added
 - `Message` entity has a new `messageTextUpdatedAt` property to represent the last time the message text was updated. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
+- `FileUploadConfig` entity has a new `sizeLimitInBytes:` property to represent the size limit for attachments. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ### ⚠️ Changed
 
@@ -52,8 +53,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Attachment size limit is not configured client-side anymore, you should configure it on the dashboard. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ### ❌ Removed
+- Removed `MessagesViewModelFactory.maxAttachmentSize` property. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -66,6 +69,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `MessagesViewModelFactory.maxAttachmentSize` property. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -78,6 +82,7 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+- Removed `MessagesViewModelFactory.maxAttachmentSize` property. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ## stream-chat-android-markdown-transformer
 ### 🐞 Fixed
