@@ -39,20 +39,20 @@ private object ChannelItemUsageSnippet {
 
                 ChatTheme {
                     ChannelList(
-                        itemContent = { itemState -> // Customize the channel items
-                            when(itemState) {
-                                is ItemState.ChannelItemState -> ChannelItem(
-                                    channelItem = itemState,
-                                    currentUser = user,
-                                    onChannelClick = {},
-                                    onChannelLongClick = {}
-                                )
-                                is ItemState.SearchResultItemState -> SearchResultItem(
-                                    searchResultItemState = itemState,
-                                    currentUser = user,
-                                    onSearchResultClick = { },
-                                )
-                            }
+                        channelContent = { channelState -> // Customize the channel items
+                            ChannelItem(
+                                channelItem = channelState,
+                                currentUser = user,
+                                onChannelClick = {},
+                                onChannelLongClick = {}
+                            )
+                        },
+                        searchResultContent = { searchResultState -> // Customize the search result items
+                            SearchResultItem(
+                                searchResultItemState = searchResultState,
+                                currentUser = user,
+                                onSearchResultClick = { },
+                            )
                         }
                     )
                 }
@@ -77,25 +77,25 @@ private object ChannelItemHandlingActionsSnippet {
 
                 ChatTheme {
                     ChannelList(
-                        itemContent = { itemState -> // Customize the channel items
-                            when(itemState) {
-                                is ItemState.ChannelItemState -> ChannelItem(
-                                    channelItem = itemState,
-                                    currentUser = user,
-                                    onChannelLongClick = {
-                                        listViewModel.selectChannel(it)
-                                    },
-                                    onChannelClick = {
-                                        // Start the MessagesScreen
-                                    },
-                                )
-                                is ItemState.SearchResultItemState -> SearchResultItem(
-                                    searchResultItemState = itemState,
-                                    currentUser = user,
-                                    onSearchResultClick = { },
-                                )
-                            }
-                        }
+                        channelContent = { channelState -> // Customize the channel items
+                            ChannelItem(
+                                channelItem = channelState,
+                                currentUser = user,
+                                onChannelClick = {
+                                    // Start the MessagesScreen
+                                },
+                                onChannelLongClick = {
+                                    listViewModel.selectChannel(it)
+                                }
+                            )
+                        },
+                        searchResultContent = { searchResultState -> // Customize the search result items
+                            SearchResultItem(
+                                searchResultItemState = searchResultState,
+                                currentUser = user,
+                                onSearchResultClick = { },
+                            )
+                        },
                     )
                 }
             }
@@ -119,10 +119,8 @@ private object ChannelItemCustomizationSnippet {
 
                 ChatTheme {
                     ChannelList(
-                        itemContent = { itemState -> // Customize the channel items
-                            if (itemState is ItemState.ChannelItemState) {
-                                CustomChannelListItem(channelItem = itemState, user = user)
-                            }
+                        channelContent = { channelState -> // Customize the channel items
+                            CustomChannelListItem(channelItem = channelState, user = user)
                         }
                     )
                 }
