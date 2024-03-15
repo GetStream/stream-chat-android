@@ -44,7 +44,7 @@ class ComposeChannelsActivity : AppCompatActivity() {
                 ChannelsScreen(
                     title = stringResource(id = R.string.sdk_name_compose),
                     searchMode = SearchMode.Channels,
-                    onItemClick = ::openMessages,
+                    onChannelClick = ::openMessages,
                     onHeaderAvatarClick = ::logout,
                     onBackPressed = ::finish,
                 )

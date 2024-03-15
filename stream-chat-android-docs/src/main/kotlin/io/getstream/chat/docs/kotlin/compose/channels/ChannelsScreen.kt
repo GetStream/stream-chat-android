@@ -47,7 +47,7 @@ private object ChannelsScreenHandlingActionsSnippet {
             setContent {
                 ChatTheme {
                     ChannelsScreen(
-                        onItemClick = {
+                        onChannelClick = {
                             // Open messages screen
                         },
                         onHeaderActionClick = {

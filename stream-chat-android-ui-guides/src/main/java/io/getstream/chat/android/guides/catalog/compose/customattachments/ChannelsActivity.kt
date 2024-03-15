@@ -40,7 +40,7 @@ class ChannelsActivity : AppCompatActivity() {
         setContent {
             ChatTheme(attachmentFactories = customFactories + defaultFactories) {
                 ChannelsScreen(
-                    onItemClick = { channel ->
+                    onChannelClick = { channel ->
                         startActivity(MessagesActivity.createIntent(this, channel.cid))
                     },
                     onBackPressed = { finish() },

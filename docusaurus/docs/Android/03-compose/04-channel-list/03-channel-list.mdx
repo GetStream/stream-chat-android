@@ -57,6 +57,7 @@ fun ChannelList(
     onLastItemReached: () -> Unit = { viewModel.loadMore() },
     onChannelClick: (Channel) -> Unit = {},
     onChannelLongClick: (Channel) -> Unit = { viewModel.selectChannel(it) },
+    onSearchResultClick: (Message) -> Unit = {},
     ... // Content Slots
 )
 ```
@@ -65,6 +66,7 @@ fun ChannelList(
 * `onLastItemReached`: Handler when the user reaches the last item in the list to trigger pagination. You don't need to override this if you're using the default `viewModel`, but if you're using a custom one, you can add custom behavior.
 * `onChannelClick`: Handler when the user taps on an item. Useful for starting the `MessagesScreen`.
 * `onChannelLongClick`: Handler when the user long taps on an item. By default, this updates state in the `viewModel`, which you can read to show custom UI and `Channel` actions if you're using a custom `ViewModel` instance. Override if you're using the default `viewModel` and you want to change the behavior.
+* `onSearchResultClick`: Handler when the user taps on a search result item. Useful for starting the `MessagesScreen` with the selected message.
 
 :::note
 <!-- TODO link to guides, which we'll remove. Revisit after re-organizing pages. (Liviu) -->
@@ -91,6 +93,9 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     onChannelClick = {
                         // Start the MessagesScreen
                     },
+                    onSearchResultClick = {
+                        // Start the MessagesScreen with the selected message
+                    }
                 )
 
                 if (selectedChannel != null) {
@@ -105,6 +110,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 In the example above, we created a `selectedChannel` state holder, which we use to show some custom UI if the data is not null. We update the state when the user long taps on an item.
 
 We also provide a custom `onChannelClick` handler, to open the `MessagesScreen` with the selected item. This will produce the same UI, but with user-defined actions.
+Finally we provide a custom `onSearchResultClick` handler, to open the `MessagesScreen` with the selected message.
 
 Alternatively, you can override the default `ViewModel` and read the internal state:
 
@@ -122,7 +128,10 @@ override fun onCreate(savedInstanceState: Bundle?) {
                     viewModel = listViewModel, // Passing in our ViewModel
                     onChannelClick = {
                         // Start the MessagesScreen
-                    }
+                    },
+                    onSearchResultClick = {
+                        // Start the MessagesScreen with the selected message
+                    },
                 )
 
                 if (listViewModel.selectedChannel != null) {
@@ -180,7 +189,8 @@ fun ChannelList(
     emptySearchContent: @Composable (String) -> Unit = { ... },
     helperContent: @Composable BoxScope.() -> Unit = { ... },
     loadingMoreContent: @Composable () -> Unit = { ... },
-    itemContent: @Composable (ChannelItemState) -> Unit = { ... },
+    channelContent: @Composable (ItemState.ChannelItemState) -> Unit = { ... },
+    searchResultContent: @Composable (ItemState.SearchResultItemState) -> Unit = { ... },
     divider: @Composable () -> Unit = { ... },
 )
 ```
@@ -192,17 +202,18 @@ fun ChannelList(
 * `emptySearchContent`: Customizable composable that allows you to override the empty state, when there are no channels matching the search query.
 * `helperContent`: Composable that represents helper content for the channel list. Empty by default, but can be used, for example, to display back to top floating action button.
 * `loadingMoreContent`: Composable that represents the loading more content, when we're loading the next page.
-* `itemContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda when building your custom UI.
+* `channelContent`: Customizable composable that allows you to fully override the UI and behavior of channel items. This will be applied to each item in the list, and you'll gain access to the `Channel` inside the lambda when building your custom UI.
+* `searchResultContent`: Customizable composable that allows you to fully override the UI and behavior of search result items. This will be applied to each item in the list, and you'll gain access to the `Message` inside the lambda when building your custom UI.
 * `divider`: Customizable composable that allows you to override the item divider.
 
-Here's a simple example for building your own channel item, by overriding the `itemContent` parameter:
+Here's a simple example for building your own channel item, by overriding the `channelContent` parameter:
 
 ```kotlin
 val user by listViewModel.user.collectAsState() // Fetch user
 
 ChannelList(
     ..., // Set up state
-    itemContent = { // Customize the channel items
+    channelContent = { // Customize the channel items
         Row(
             modifier = Modifier
                 .padding(8.dp)

@@ -39,7 +39,7 @@ private object ComponentArchitectureScreenComponentsUsageSnippet {
                 ChatTheme { // Theme wrapper
                     ChannelsScreen(
                         title = "App name",
-                        onItemClick = {
+                        onChannelClick = {
                             // On item clicked action
                         },
                         onHeaderActionClick = {

@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
@@ -60,7 +61,7 @@ private object SearchInputHandlingActionsSnippet {
                 searchQuery = it
 
                 // Use ChannelListViewModel to search for channels
-                channelListViewModel.setSearchQuery(it)
+                channelListViewModel.setSearchQuery(SearchQuery.Channels(it))
             }
         )
     }
@@ -87,7 +88,7 @@ private object SearchInputCustomizationSnippet {
                 searchQuery = it
 
                 // Use ChannelListViewModel to search for channels
-                channelListViewModel.setSearchQuery(it)
+                channelListViewModel.setSearchQuery(SearchQuery.Channels(it))
             },
             leadingIcon = {
                 // Remove the leading icon
