@@ -1,57 +1,10 @@
-# UNRELEASED CHANGELOG
+# March 15th, 2024 - 6.2.0
 ## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - `Message` entity has a new `messageTextUpdatedAt` property to represent the last time the message text was updated. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
 - `FileUploadConfig` entity has a new `sizeLimitInBytes:` property to represent the size limit for attachments. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - Attachment size limit is not configured client-side anymore, you should configure it on the dashboard. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
@@ -59,43 +12,20 @@
 - Removed `MessagesViewModelFactory.maxAttachmentSize` property. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Edited message will show info about when they were edited. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
-
-### ⚠️ Changed
 
 ### ❌ Removed
 - Removed `MessagesViewModelFactory.maxAttachmentSize` property. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
 
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Edited message will show info about when they were edited. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
 - Added `SearchMode` to `ChannelsScreen` to allow searching for channels or messages. [#5203](https://github.com/GetStream/stream-chat-android/pull/5203)
 - Added `ChannelsList.searchResultContent` comoposable lambda to render the search result content. [#5203](https://github.com/GetStream/stream-chat-android/pull/5203)
 
-### ⚠️ Changed
-
 ### ❌ Removed
 - Removed `MessagesViewModelFactory.maxAttachmentSize` property. [#5205](https://github.com/GetStream/stream-chat-android/pull/5205)
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # March 05th, 2024 - 6.1.1
 ## stream-chat-android-ui-common
