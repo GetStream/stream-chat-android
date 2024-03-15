@@ -75,10 +75,10 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * can customize the behavior using its parameters.
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
- * @param isShowingSearch If we show the search input or hide it.
+ * @param searchMode The search mode for the screen.
  * @param onHeaderActionClick Handler for the default header action.
  * @param onHeaderAvatarClick Handle for when the user clicks on the header avatar.
- * @param onItemClick Handler for Channel item clicks.
+ * @param onChannelClick Handler for Channel item clicks.
  * @param onViewChannelInfoAction Handler for when the user selects the [ViewInfo] option for a [Channel].
  * @param onBackPressed Handler for back press action.
  */
@@ -92,7 +92,7 @@ public fun ChannelsScreen(
     searchMode: SearchMode = SearchMode.None,
     onHeaderActionClick: () -> Unit = {},
     onHeaderAvatarClick: () -> Unit = {},
-    onItemClick: (Channel) -> Unit = {},
+    onChannelClick: (Channel) -> Unit = {},
     onSearchMessageItemClick: (Message) -> Unit = {},
     onViewChannelInfoAction: (Channel) -> Unit = {},
     onBackPressed: () -> Unit = {},
@@ -167,7 +167,7 @@ public fun ChannelsScreen(
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
-                    onChannelClick = onItemClick,
+                    onChannelClick = onChannelClick,
                     onSearchResultClick = onSearchMessageItemClick,
                     onChannelLongClick = remember(listViewModel) {
                         {

@@ -101,7 +101,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
                     searchMode = SearchMode.Messages,
-                    onItemClick = ::openMessages,
+                    onChannelClick = ::openMessages,
                     onSearchMessageItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
