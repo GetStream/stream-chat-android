@@ -78,6 +78,8 @@
 
 ### ✅ Added
 - Edited message will show info about when they were edited. [#5200](https://github.com/GetStream/stream-chat-android/pull/5200)
+- Added `SearchMode` to `ChannelsScreen` to allow searching for channels or messages. [#5203](https://github.com/GetStream/stream-chat-android/pull/5203)
+- Added `ChannelsList.searchResultContent` comoposable lambda to render the search result content. [#5203](https://github.com/GetStream/stream-chat-android/pull/5203)
 
 ### ⚠️ Changed
 
