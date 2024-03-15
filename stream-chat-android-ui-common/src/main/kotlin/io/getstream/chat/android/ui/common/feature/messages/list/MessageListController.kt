@@ -527,9 +527,11 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
-                unreadLabelState.value = channelUserRead.lastReadMessageId?.let {
-                    UnreadLabel(channelUserRead.unreadMessages, it)
-                }
+                unreadLabelState.value = channelUserRead.lastReadMessageId
+                    ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
+                    ?.let {
+                        UnreadLabel(channelUserRead.unreadMessages, it)
+                    }
             }.launchIn(scope)
     }
 
