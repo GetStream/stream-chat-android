@@ -8,7 +8,7 @@ On this page you'll learn how to create a simple message list screen, without us
 
 First, we create a view model that receives a `ChatClient` instance. It exposes a `uiState` property of type `StateFlow<MessageListUiState>`. This allows the UI layer to observe state changes and update the UI accordingly.
 
-Next, we define the `getMessages(cid: String)` method. It receives the _cid_ (channel id) as an argument from [the UI](#custom-ui) and calls the `chatClient.watchChannelAsState` method, passing the _cid_ to it. This returns a `StateFlow<ChannelState>`, which represents the state of that specific channel. We store this state in the `channelStateFlow` variable.
+Next, we define the `getMessages(cid: String)` method. It receives the `cid` (channel id) as an argument from [the UI](#custom-ui) and calls the `chatClient.watchChannelAsState` method, passing the `cid` to it. This returns a `StateFlow<ChannelState>`, which represents the state of that specific channel. We store this state in the `channelStateFlow` variable.
 
 Finally, we start collecting `channelStateFlow` and it's `messages: StateFlow<List<Message>>` property, and update `_uiState` accordingly.
 
@@ -48,13 +48,13 @@ data class MessageListUiState(
 
 ## Custom UI
 
-For the UI, we create a composable called `CustomMessageListScreen` that gets the view model that we defined in the [previous section](#custom-view-model) and the _cid_ (channel id) as parameters.
+For the UI, we create a composable called `CustomMessageListScreen` that gets the view model that we defined in the [previous section](#custom-view-model) and the `cid` (channel id) as parameters.
 
 :::note
-The _cid_ (channel id) is usually provided when the app navigates from a [channel list screen](02-custom-channel-list.mdx) to a message list screen, like we have here.
+The `cid` (channel id) is usually provided when the app navigates from a [channel list screen](02-custom-channel-list.mdx) to a message list screen, like we have here.
 :::
 
-The composable then starts observing our view model's `uiState: StateFlow` property for changes and triggers message list loading by calling the view model's `getMessages` method with the channel _cid_.
+The composable then starts observing our view model's `uiState: StateFlow` property for changes and triggers message list loading by calling the view model's `getMessages` method with the channel `cid`.
 
 Next, we pass the state to other functions to build the appropriate UI.
 
