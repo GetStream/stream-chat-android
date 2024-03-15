@@ -104,13 +104,20 @@ public fun ChannelList(
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ItemState) -> Unit = { channelItem ->
+    channelContent: @Composable (ItemState.ChannelItemState) -> Unit = { itemState ->
         val user by viewModel.user.collectAsState()
-        DefaultItem(
-            itemState = channelItem,
+        DefaultChannelItem(
+            channelItem = itemState,
             currentUser = user,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick,
+        )
+    },
+    searchResultContent: @Composable (ItemState.SearchResultItemState) -> Unit = { itemState ->
+        val user by viewModel.user.collectAsState()
+        DefaultSearchResultItem(
+            searchResultItemState = itemState,
+            currentUser = user,
             onSearchResultClick = onSearchResultClick,
         )
     },
@@ -132,7 +139,8 @@ public fun ChannelList(
         emptySearchContent = emptySearchContent,
         helperContent = helperContent,
         loadingMoreContent = loadingMoreContent,
-        itemContent = itemContent,
+        channelContent = channelContent,
+        searchResultContent = searchResultContent,
         divider = divider,
     )
 }
@@ -166,9 +174,11 @@ public fun ChannelList(
  * @param helperContent Composable that represents the helper content. Empty by default, but can be used to implement
  * scroll to top button.
  * @param loadingMoreContent: Composable that represents the loading more content, when we're loading the next page.
- * @param itemContent Composable that allows the user to completely customize the item UI.
+ * @param channelContent Composable that allows the user to completely customize the item UI.
  * It shows [ChannelItem] if left unchanged, with the actions provided by [onChannelClick] and
  * [onChannelLongClick].
+ * @param searchResultContent Composable that allows the user to completely customize the search result item UI.
+ * It shows [SearchResultItem] if left unchanged, with the actions provided by [onSearchResultClick].
  * @param divider Composable that allows the user to define an item divider.
  */
 @Composable
@@ -192,12 +202,18 @@ public fun ChannelList(
     },
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ItemState) -> Unit = { itemState ->
-        DefaultItem(
-            itemState = itemState,
+    channelContent: @Composable (ItemState.ChannelItemState) -> Unit = { itemState ->
+        DefaultChannelItem(
+            channelItem = itemState,
             currentUser = currentUser,
             onChannelClick = onChannelClick,
             onChannelLongClick = onChannelLongClick,
+        )
+    },
+    searchResultContent: @Composable (ItemState.SearchResultItemState) -> Unit = { itemState ->
+        DefaultSearchResultItem(
+            searchResultItemState = itemState,
+            currentUser = currentUser,
             onSearchResultClick = onSearchResultClick,
         )
     },
@@ -215,7 +231,13 @@ public fun ChannelList(
             onLastItemReached = onLastItemReached,
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
-            itemContent = itemContent,
+            itemContent = { itemState ->
+                WrapperItemContent(
+                    itemState = itemState,
+                    channelContent = channelContent,
+                    searchResultContent = searchResultContent,
+                )
+            },
             divider = divider,
         )
         searchQuery.query.isNotBlank() -> emptySearchContent(searchQuery.query)
@@ -227,31 +249,18 @@ public fun ChannelList(
  * The default item.
  *
  * @param itemState The item to represent.
- * @param currentUser The currently logged in user.
- * @param onChannelClick Handler when the user clicks on an a channel.
- * @param onChannelLongClick Handler when the user long taps on an a channel.
+ * @param channelContent Composable that represents the channel item.
+ * @param searchResultContent Composable that represents the search result item.
  */
 @Composable
-internal fun DefaultItem(
+internal fun WrapperItemContent(
     itemState: ItemState,
-    currentUser: User?,
-    onChannelClick: (Channel) -> Unit,
-    onChannelLongClick: (Channel) -> Unit,
-    onSearchResultClick: (Message) -> Unit,
+    channelContent: @Composable (ItemState.ChannelItemState) -> Unit,
+    searchResultContent: @Composable (ItemState.SearchResultItemState) -> Unit,
 ) {
     when (itemState) {
-        is ItemState.ChannelItemState -> DefaultChannelItem(
-            channelItem = itemState,
-            currentUser = currentUser,
-            onChannelClick = onChannelClick,
-            onChannelLongClick = onChannelLongClick,
-        )
-
-        is ItemState.SearchResultItemState -> DefaultSearchResultItem(
-            searchResultItemState = itemState,
-            currentUser = currentUser,
-            onSearchResultClick = onSearchResultClick,
-        )
+        is ItemState.ChannelItemState -> channelContent(itemState)
+        is ItemState.SearchResultItemState -> searchResultContent(itemState)
     }
 }
 

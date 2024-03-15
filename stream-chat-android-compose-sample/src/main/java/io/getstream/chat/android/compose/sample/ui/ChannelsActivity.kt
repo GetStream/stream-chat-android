@@ -51,6 +51,7 @@ import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
 import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
@@ -140,10 +141,8 @@ class ChannelsActivity : BaseConnectedActivity() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(it),
-                itemContent = {
-                    if (it is ItemState.ChannelItemState) {
-                        CustomChannelListItem(channelItem = it, user = user)
-                    }
+                channelContent = {
+                    CustomChannelListItem(channelItem = it, user = user)
                 },
                 divider = {
                     Spacer(
@@ -212,7 +211,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     query = query,
                     onValueChange = {
                         query = it
-                        listViewModel.setSearchQuery(it)
+                        listViewModel.setSearchQuery(SearchQuery.Channels(it))
                     },
                 )
 
