@@ -1,10 +1,10 @@
 # Custom Channel List
 
-In this cookbook recipe, we will show you how to implement a simple channel list screen, without using any of the SDK's UI components. We will rely only on the `ChatClient` for state and on standard Jetpack Compose for the UI.
+In this cookbook recipe, we will show you how to implement a simple channel list screen, without using any of our SDK's UI components. We will rely only on the low-level `ChatClient` for state, a completely custom view model and Jetpack Compose for the UI.
 
 ![Custom Channel List](../assets/cookbook_custom_channel_list.png)
 
-## Custom Channel List View Model
+## Custom View Model
 
 The UI state is handled by a view model, `CustomChannelListViewModel`. It receives a `ChatClient` instance as a constructor parameter. This is done for simplicity, you should use a repository class and a DI library in a real app.
 
@@ -60,9 +60,9 @@ init {
 }
 ```
 
-## Custom Channel List UI
+## Custom UI
 
-The channel list screen is represented by a composable called `CustomChannelListScreen`, which follows the standard _view model with UI state + UI Controller_ pattern. 
+The channel list screen is represented by a composable called `CustomChannelListScreen`, which gets the view model that we defined in the [previous section](#custom-view-model) as a parameter.
 
 We start by observing the view model's `uiState: StateFlow` property for changes. We then pass the `uiState.channels` list down the Composition to build the UI.
 
