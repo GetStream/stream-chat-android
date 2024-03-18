@@ -80,6 +80,7 @@ import kotlin.math.abs
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
  * on the list state.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
+ * @param itemModifier Modifier for styling the message item container.
  * @param itemContent Composable that represents the item that displays each message.
  */
 @Composable
@@ -103,6 +104,7 @@ public fun Messages(
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
+    itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ -> Modifier },
     itemContent: @Composable (MessageListItemState) -> Unit,
 ) {
     val lazyListState = messagesLazyListState.lazyListState
@@ -160,7 +162,9 @@ public fun Messages(
                         Modifier
                     }
 
-                Box(modifier = messageItemModifier) {
+                val itemModifier = itemModifier(index, item)
+                val finalItemModifier = messageItemModifier.then(itemModifier)
+                Box(modifier = finalItemModifier) {
                     itemContent(item)
 
                     if (index == 0 && lazyListState.isScrollInProgress) {
