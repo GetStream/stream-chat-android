@@ -73,6 +73,35 @@ public interface MessageOptionItemsFactory {
 }
 
 /**
+ * A factory that combines multiple [MessageOptionItemsFactory]s.
+ */
+private class CombinedMessageOptionItemsFactory(
+    private val factories: List<MessageOptionItemsFactory>,
+) : MessageOptionItemsFactory {
+
+    constructor(vararg factories: MessageOptionItemsFactory) : this(factories.toList())
+
+    override fun createMessageOptionItems(
+        selectedMessage: Message,
+        currentUser: User?,
+        isInThread: Boolean,
+        ownCapabilities: Set<String>,
+        style: MessageListViewStyle,
+    ): List<MessageOptionItem> {
+        return factories.flatMap {
+            it.createMessageOptionItems(selectedMessage, currentUser, isInThread, ownCapabilities, style)
+        }
+    }
+}
+
+/**
+ * Combines two [MessageOptionItemsFactory]s into a single [MessageOptionItemsFactory].
+ */
+public operator fun MessageOptionItemsFactory.plus(that: MessageOptionItemsFactory): MessageOptionItemsFactory {
+    return CombinedMessageOptionItemsFactory(this, that)
+}
+
+/**
  * The default implementation of [MessageOptionItemsFactory].
  *
  * @param context The context to load resources.

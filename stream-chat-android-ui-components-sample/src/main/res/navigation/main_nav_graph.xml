@@ -224,6 +224,12 @@
             app:destination="@id/groupChatInfoFragment"
             app:launchSingleTop="true"
             />
+
+        <action
+            android:id="@+id/action_chatFragment_to_messageDetailsFragment"
+            app:destination="@id/messageDetailsFragment"
+            app:launchSingleTop="true"
+            />
     </fragment>
 
     <fragment
@@ -397,6 +403,25 @@
             android:id="@+id/action_open_chat_info"
             app:destination="@id/chatInfoFragment"
             app:launchSingleTop="true"
+            />
+    </fragment>
+
+    <fragment
+        android:id="@+id/messageDetailsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.chat.messagelist.details.MessageDetailsFragment"
+        android:label="MessageDetailsFragment"
+        >
+
+        <argument
+            android:name="cid"
+            app:argType="string"
+            app:nullable="false"
+            />
+
+        <argument
+            android:name="messageId"
+            app:argType="string"
+            app:nullable="false"
             />
     </fragment>
 

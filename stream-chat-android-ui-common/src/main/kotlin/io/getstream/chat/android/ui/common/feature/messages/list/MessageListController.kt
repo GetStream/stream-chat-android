@@ -758,9 +758,11 @@ public class MessageListController(
         val groupedMessages = mutableListOf<MessageListItemState>()
         val membersMap = members.associateBy { it.user.id }
         val sortedReads = reads
-            .filter { it.user.id != currentUser?.id && !it.belongsToFreshlyAddedMember(membersMap) }
+            .filter {
+                it.user.id != currentUser?.id && membersMap.contains(it.user.id)
+                    && !it.belongsToFreshlyAddedMember(membersMap)
+            }
             .sortedBy { it.lastRead }
-        val lastRead = sortedReads.lastOrNull()?.lastRead
 
         val isThreadWithNoReplies = isInThread && messages.size == 1
         val isThreadWithReplies = isInThread && messages.size > 1
@@ -805,13 +807,14 @@ public class MessageListController(
             if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
                 groupedMessages.add(SystemMessageItemState(message = message))
             } else {
-                val isMessageRead = message.createdAt
-                    ?.let { lastRead != null && it <= lastRead }
-                    ?: false
-
                 val messageReadBy = message.createdAt?.let { messageCreatedAt ->
-                    sortedReads.filter { it.lastRead.after(messageCreatedAt) ?: false }
+                    sortedReads.filter {
+                        it.lastRead.after(messageCreatedAt)
+                            && membersMap[it.user.id]?.createdAt?.before(messageCreatedAt) == true
+                    }
                 } ?: emptyList()
+
+                val isMessageRead = messageReadBy.isNotEmpty()
 
                 val isMessageFocused = message.id == focusedMessage?.id
                 if (isMessageFocused) removeMessageFocus(message.id)
@@ -875,6 +878,12 @@ public class MessageListController(
     ): Boolean {
         val member = membersMap[user.id]
         val membershipAndLastReadDiff = member?.createdAt?.diff(lastRead)?.millis ?: Long.MAX_VALUE
+        if (member?.createdAt?.after(lastRead) == true) {
+            // If the member was added after the last read, we consider it as a freshly added member.
+            return true
+        }
+        // If the difference between the member's creation and the last read is less than the threshold, we consider it
+        // as a freshly added member.
         return membershipAndLastReadDiff < MEMBERSHIP_AND_LAST_READ_THRESHOLD_MS
     }
 
