@@ -144,6 +144,7 @@ public fun defaultMessageOptionsState(
     val canEditOwnMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_OWN_MESSAGE)
     val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
     val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
+    val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
 
     return listOfNotNull(
         if (isOwnMessage && isMessageFailed) {
@@ -212,7 +213,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (!isOwnMessage) {
+        if (canFlagMessage && !isOwnMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_flag_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_flag),

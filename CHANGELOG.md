@@ -58,6 +58,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Added `flag-message` capability support. [#5211](https://github.com/GetStream/stream-chat-android/pull/5211)
 
 ### ✅ Added
 
@@ -71,6 +72,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `flag-message` capability support. [#5211](https://github.com/GetStream/stream-chat-android/pull/5211)
 
 ### ⚠️ Changed
 
