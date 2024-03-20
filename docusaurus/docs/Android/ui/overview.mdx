@@ -1,0 +1,119 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Getting Started
+
+The **UI Components** library includes pre-built Android Views to easily load and display data from the Stream Chat API.
+
+:::info
+Already using Jetpack Compose? Check out our [Compose UI Components](../compose/overview.mdx).
+:::
+
+| ![Channel List component](../assets/sample-channels-light.png) | ![Message List component](../assets/sample-messages-light.png) |
+| --- | --- |
+
+This library builds on top of the offline library, and provides [ViewModels](#viewmodels) for most Views to easily populate them with data and handle input events.
+
+The [sample app](#sample-app) showcases the UI components in action.
+
+See the individual pages of the components to learn more about them.
+
+**Channel components**:
+
+- [Channel List Screen](channel-components/channel-list-screen.mdx)
+- [Channel List](channel-components/channel-list.mdx)
+- [Channel List Header](channel-components/channel-list-header.mdx)
+
+**Message components**:
+
+- [Message List Screen](message-components/message-list-screen.mdx)
+- [Message List](message-components/message-list.mdx)
+- [Message List Header](message-components/message-list-header.mdx)
+- [Message Composer](message-components/message-composer.mdx)
+
+**Utility components**:
+
+- [Mention List](utility-components/mention-list.mdx)
+- [Pinned Message List](utility-components/pinned-message-list.mdx)
+- [Search Views](utility-components/search-view.mdx)
+- [Attachment Gallery](utility-components/attachment-gallery.mdx)
+
+## Checklist
+
+For a successful integration of our UI Components, follow these steps:
+1. Dependency. Add the dependency to your app, as described on the [Dependencies](../basics/dependencies.mdx#ui-components) page.
+2. Set up the `ChatClient`. Learn how to initialize the ChatClient [here](https://getstream.io/chat/docs/android/?language=kotlin#chat-client).
+3. Handle user connection. Read how to connect a user [here](https://getstream.io/chat/docs/android/init_and_users/?language=kotlin#connecting-the-user) and info about User Tokens [here](https://getstream.io/chat/docs/android/tokens_and_authentication/?language=kotlin).
+4. State and Offline. Using the `StatePlugin` is mandatory if you want to use our UI Components. Read the [State Overview](../client/guides/state-plugin.mdx) page for more information. Also, it's a good idea to add [offline support](../client/guides/offline-support.mdx) for better UX.
+5. Theme. Since this library uses Material elements, make sure that you use a Material theme in your application before adding the components. This means that your app's theme should extend a theme from `Theme.MaterialComponents`, and not `Theme.AppCompat`. Find a correct example **below**. If you want to keep using an `AppCompat` theme for styling, you can inherit from a [Bridge Theme](https://m2.material.io/develop/android/docs/getting-started#bridge-themes) to support using Material based components.
+
+```xml
+<style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+```
+
+:::note
+Check out our [sample app](#sample-app) for a quick start in using our UI Components.
+:::
+
+## ViewModels
+
+Most UI components come with their own ViewModels. These are used to easily connect them to the client to fetch data and perform actions.
+
+These are Jetpack [ViewModels](https://developer.android.com/topic/libraries/architecture/viewmodel), so they allow the components to retain data across configuration changes. It's your responsibility to create these in the correct scope, usually in a Fragment or Activity.
+
+For example, if you've added a `MessageListView` to your layout, you can create a corresponding ViewModel like this:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// 1
+val factory = MessageListViewModelFactory(cid = "messaging:123")
+// 2
+val viewModel: MessageListViewModel by viewModels { factory }
+// 3
+viewModel.bindView(messageListView, viewLifecycleOwner)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// 1
+ViewModelProvider.Factory factory = new MessageListViewModelFactory
+        .Builder()
+        .cid("messaging:123")
+        .build();
+ViewModelProvider provider = new ViewModelProvider(this, factory);
+// 2
+MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
+// 3
+MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
+```
+</TabItem>
+</Tabs>
+
+1. Create the `ViewModel` factory, providing any necessary parameters.
+2. Fetch a ViewModel with Android ViewModel APIs, passing in the factory to be used.
+3. Call the `bindView` method of the SDK to connect the View and ViewModel, passing in the appropriate `LifecycleOwner`.
+
+`bindView` performs two-way binding: it sets up observers that push data from the ViewModel to the View, and sets up listeners that forward input events from the View to the ViewModel.
+
+:::note
+If you're setting your own listeners on the Views, make sure to do it _after_ calling `bindView`.
+:::
+
+You can learn more about setting up each UI component on their individual documentation pages.
+
+## Sample App
+
+The [UI Components sample app](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components-sample) is an open source, fully functional messaging application. It features threads, reactions, typing indicators, optimistic UI updates and offline storage. All built on top of our UI components.
+
+| ![Sample app login screen](../assets/sample-login-dark.png) | ![Sample app messages screen](../assets/sample-messages-dark.png) |
+| --- | --- |
+
+## Customization
+
+The UI components offer customization options via XML attributes as well as instance methods. You can check the individual pages of the components for more details about this. Components can also be customized globally via themes and style transformations. The [Theming](general-customization/theming.mdx) page describes all the available styling options for the SDK in detail.
+
+You can also use the [`ChatUI`](general-customization/chatui.mdx) object to customize the behavior of the UI Components. For example, it allows you to override fonts, add your own URL signing logic, or add custom avatar loading logic.
