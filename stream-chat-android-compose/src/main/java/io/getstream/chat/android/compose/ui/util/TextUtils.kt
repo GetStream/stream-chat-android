@@ -30,8 +30,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.util.Locale
 import java.util.regex.Pattern
 
-
-
 internal typealias AnnotationTag = String
 
 /**
@@ -43,7 +41,6 @@ internal const val AnnotationTagUrl: AnnotationTag = "URL"
  * The tag used to annotate emails in the message text.
  */
 internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
-
 
 /**
  * Takes the given message text and builds an annotated message text that shows links and allows for clicks,

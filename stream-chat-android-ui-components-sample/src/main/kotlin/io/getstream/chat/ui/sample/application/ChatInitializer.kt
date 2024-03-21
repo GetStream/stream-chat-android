@@ -17,7 +17,6 @@
 package io.getstream.chat.ui.sample.application
 
 import android.content.Context
-import android.widget.TextView
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
@@ -26,7 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
@@ -34,10 +32,8 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
-import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity

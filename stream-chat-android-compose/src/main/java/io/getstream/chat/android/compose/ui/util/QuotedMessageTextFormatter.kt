@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
@@ -5,7 +21,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -62,7 +77,12 @@ public fun interface QuotedMessageTextFormatter {
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             return DefaultQuotedMessageTextFormatter(
-                context, autoTranslationEnabled, typography, colors, textStyle, builder
+                context,
+                autoTranslationEnabled,
+                typography,
+                colors,
+                textStyle,
+                builder,
             )
         }
 
@@ -132,7 +152,9 @@ public fun interface QuotedMessageTextFormatter {
  * A builder for the annotated message text.
  */
 public typealias AnnotatedQuotedMessageTextBuilder = AnnotatedString.Builder.(
-    message: Message, replyMessage: Message?, currentUser: User?,
+    message: Message,
+    replyMessage: Message?,
+    currentUser: User?,
 ) -> Unit
 
 private class CompositeQuotedMessageTextFormatter(
