@@ -46,7 +46,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
@@ -65,11 +70,15 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
+import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -124,6 +133,8 @@ class MessagesActivity : BaseConnectedActivity() {
                         ),
                     )
                 },
+                messageTextFormatter = buildMessageTextFormatter(typography, colors),
+                quotedMessageTextFormatter = buildQuotedMessageTextFormatter(typography, colors),
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
@@ -150,6 +161,85 @@ class MessagesActivity : BaseConnectedActivity() {
     override fun onDestroy() {
         super.onDestroy()
         streamMediaRecorder.stopRecording()
+    }
+
+    @Composable
+    private fun buildMessageTextFormatter(
+        typography: StreamTypography,
+        colors: StreamColors,
+    ): MessageTextFormatter {
+        val defaultTextFormatter = MessageTextFormatter.defaultFormatter(
+            ChatApp.autoTranslationEnabled, typography, colors
+        ) { message, currentUser ->
+            addStyle(
+                SpanStyle(
+                    color = Color.Red,
+                ),
+                start = 0,
+                end = minOf(3, length),
+            )
+        }
+
+        val compositeTextFormatter = MessageTextFormatter.composite(
+            MessageTextFormatter.defaultFormatter(ChatApp.autoTranslationEnabled, typography, colors),
+            object : MessageTextFormatter {
+                override fun format(message: Message, currentUser: User?): AnnotatedString {
+                    return buildAnnotatedString {
+                        append(message.text)
+                        addStyle(
+                            SpanStyle(
+                                color = Color.Red,
+                            ),
+                            start = 0,
+                            end = minOf(3, message.text.length),
+                        )
+                    }
+                }
+            }
+        )
+        return compositeTextFormatter
+    }
+
+    @Composable
+    private fun buildQuotedMessageTextFormatter(
+        typography: StreamTypography,
+        colors: StreamColors,
+    ): QuotedMessageTextFormatter {
+        val defaultQuotedTextFormatter = QuotedMessageTextFormatter.defaultFormatter(
+            ChatApp.autoTranslationEnabled, LocalContext.current, typography, colors
+        ) { message, replyMessage, currentUser ->
+            addStyle(
+                SpanStyle(
+                    color = Color.Blue,
+                ),
+                start = 0,
+                end = minOf(3, length),
+            )
+        }
+
+        val compositeQuotedTextFormatter = QuotedMessageTextFormatter.composite(
+            QuotedMessageTextFormatter.defaultFormatter(
+                ChatApp.autoTranslationEnabled,
+                LocalContext.current,
+                typography,
+                colors
+            ),
+            object : QuotedMessageTextFormatter {
+                override fun format(message: Message, replyMessage: Message?, currentUser: User?): AnnotatedString {
+                    return buildAnnotatedString {
+                        append(message.text)
+                        addStyle(
+                            SpanStyle(
+                                color = Color.Blue,
+                            ),
+                            start = 0,
+                            end = minOf(3, message.text.length),
+                        )
+                    }
+                }
+            }
+        )
+        return defaultQuotedTextFormatter
     }
 
     @Composable

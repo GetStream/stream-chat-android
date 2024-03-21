@@ -17,6 +17,7 @@
 package io.getstream.chat.ui.sample.application
 
 import android.content.Context
+import android.widget.TextView
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
@@ -33,8 +34,10 @@ import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFacto
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
@@ -110,15 +113,19 @@ class ChatInitializer(
 
         // Using markdown as text transformer
         ChatUI.autoTranslationEnabled = autoTranslationEnabled
-        ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
-            if (autoTranslationEnabled) {
-                client.getCurrentUser()?.language?.let { language ->
-                    item.message.getTranslation(language).ifEmpty { item.message.text }
-                } ?: item.message.text
-            } else {
-                item.message.text
-            }
-        }
+        // ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
+        //     if (autoTranslationEnabled) {
+        //         client.getCurrentUser()?.language?.let { language ->
+        //             item.message.getTranslation(language).ifEmpty { item.message.text }
+        //         } ?: item.message.text
+        //     } else {
+        //         item.message.text
+        //     }
+        // }
+
+        // ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView, messageItem ->
+        //     textView.text = messageItem.message.text
+        // }
 
         // ChatUI.channelAvatarRenderer = ChannelAvatarRenderer { _, channel, _, targetProvider ->
         //     val targetView: AvatarImageView = targetProvider.regular()
