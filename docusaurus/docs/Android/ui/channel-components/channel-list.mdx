@@ -1,7 +1,7 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# ChannelListView
+# Channel List
 
 `ChannelListView` is a component that displays a list of channels available to the user. For users with a slower connection or that don't belong to any channels yet, `ChannelListView` also supports loading and empty states.
 
@@ -31,6 +31,10 @@ To use `ChannelListView`, include it in your XML layout as shown below:
 
 We recommend fetching data from Stream's API using `ChanneListViewModel`, and then rendering it inside `ChannelListView`.
 
+:::note
+You can read about `UserRepository` which is used in the example below in the [Client Overview](../../client/overview.mdx#lifecycle-management) section.
+:::
+
 The basic setup of the ViewModel and connecting it to the View is done the following way:
 
 <Tabs>
@@ -42,7 +46,7 @@ val viewModel: ChannelListViewModel by viewModels {
     ChannelListViewModelFactory(
         filter = Filters.and(
             Filters.eq("type", "messaging"),
-            Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
+            Filters.`in`("members", listOf(userRepository.getCurrentUser()!!.id))
         ),
         sort = QuerySortByField.descByName("last_updated"),
         limit = 30,
@@ -59,7 +63,7 @@ viewModel.bindView(channelListView, viewLifecycleOwner)
 // Instantiate the ViewModel
 FilterObject filter = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.in("members", Collections.singletonList(ChatClient.instance().getCurrentUser().getId()))
+        Filters.in("members", Collections.singletonList(userRepository.getCurrentUser().getId()))
 );
 
 ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()

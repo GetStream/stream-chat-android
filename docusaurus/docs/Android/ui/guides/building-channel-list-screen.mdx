@@ -46,6 +46,10 @@ To add these Views to your app, first create them in an XML layout:
 
 The Android SDK comes with [ViewModels](../overview.mdx#viewmodels) for its components which are responsible for providing all necessary data.
 
+:::note
+You can read about `UserRepository` which is used in the example below in the [Client Overview](../../client/overview.mdx#lifecycle-management) section.
+:::
+
 You can create these ViewModels the following way, providing any necessary parameters using a ViewModel factory:
 
 <Tabs>
@@ -57,7 +61,7 @@ val channelListHeaderViewModel: ChannelListHeaderViewModel by viewModels()
 val channelListFactory: ChannelListViewModelFactory = ChannelListViewModelFactory(
     filter = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()!!.id)),
+        Filters.`in`("members", listOf(userRepository.getCurrentUser()!!.id)),
     ),
     sort = QuerySortByField.descByName("last_updated"),
     limit = 30,
@@ -73,7 +77,7 @@ ChannelListHeaderViewModel channelListHeaderViewModel = new ViewModelProvider(th
 
 FilterObject filter = Filters.and(
         Filters.eq("type", "messaging"),
-        Filters.in("members", Collections.singletonList(ChatClient.instance().getCurrentUser().getId()))
+        Filters.in("members", Collections.singletonList(userRepository.getCurrentUser().getId()))
 );
 
 ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
