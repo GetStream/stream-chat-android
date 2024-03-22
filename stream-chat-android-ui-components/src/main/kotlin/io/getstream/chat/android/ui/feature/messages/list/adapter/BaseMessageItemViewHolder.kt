@@ -56,8 +56,6 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
      */
     @Suppress("UNCHECKED_CAST")
     internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff? = null) {
-        logger.v { "[bindListItem] #1; vh: ${javaClass.simpleName}, item: ${messageListItem.javaClass.simpleName}, " +
-            "diff: ${diff?.javaClass?.simpleName}" }
         messageListItem as T
 
         this.data = messageListItem

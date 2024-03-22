@@ -40,46 +40,22 @@ internal class MessageListItemAdapter(
         setHasStableIds(true)
     }
 
-    override fun submitList(list: List<MessageListItem>?, commitCallback: Runnable?) {
-        logger.w { "[submitList] #1; list: ${list?.mapIndexed { idx, item -> "${item.javaClass.simpleName}($idx)" }}" }
-        super.submitList(list) {
-            logger.w { "[submitList] #2; committed: ${list?.size}" }
-            commitCallback?.run()
-        }
-    }
-
-    override fun onCurrentListChanged(
-        previousList: MutableList<MessageListItem>,
-        currentList: MutableList<MessageListItem>
-    ) {
-        logger.w { "[onCurrentListChanged] previousList.size: ${previousList.size}, currentList.size: ${currentList.size}" }
-        super.onCurrentListChanged(previousList, currentList)
-    }
-
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
     override fun getItemViewType(position: Int): Int {
         val item = getItem(position)
-        val viewType = viewHolderFactory.getItemViewType(item)
-        logger.i { "[getItemViewType] position: $position, " +
-            "viewType: ${MessageListItemViewType.toString(viewType)}, item: ${item.javaClass.simpleName}" }
-        return viewType
+        return viewHolderFactory.getItemViewType(item)
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): BaseMessageItemViewHolder<out MessageListItem> {
-        val vh = viewHolderFactory.createViewHolder(parent, viewType)
-        logger.d { "[onCreateViewHolder] viewType: ${MessageListItemViewType.toString(viewType)}, " +
-            "viewHolder: ${vh.javaClass.simpleName}" }
-        return vh
+        return viewHolderFactory.createViewHolder(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
         val item = getItem(position)
-        logger.d { "[onBindViewHolder] position: $position, item: ${item.javaClass.simpleName}, " +
-            "vh: ${holder.javaClass.simpleName}" }
         holder.bindListItem(item, FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
     }
 
@@ -100,8 +76,6 @@ internal class MessageListItemAdapter(
         val item = getItem(position)
         val itemViewType = viewHolderFactory.getItemViewType(item)
         val holderViewType = viewHolderFactory.getItemViewType(holder)
-        logger.d { "[onBindViewHolder] position: $position, item: ${item.javaClass.simpleName}, " +
-            "vh: ${holder.javaClass.simpleName}, payloads.size: ${payloads.size}" }
         if (itemViewType != holderViewType) {
             logger.w { "[onBindViewHolder] viewType mismatch; item: ${MessageListItemViewType.toString(itemViewType)}" +
                 ", viewHolder: ${MessageListItemViewType.toString(holderViewType)}" }
