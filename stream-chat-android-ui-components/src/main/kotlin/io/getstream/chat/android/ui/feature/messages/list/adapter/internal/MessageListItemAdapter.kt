@@ -24,6 +24,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType
 import io.getstream.log.taggedLogger
 
 internal class MessageListItemAdapter(
@@ -42,7 +43,8 @@ internal class MessageListItemAdapter(
     override fun getItemId(position: Int): Long = getItem(position).getStableId()
 
     override fun getItemViewType(position: Int): Int {
-        return viewHolderFactory.getItemViewType(getItem(position))
+        val item = getItem(position)
+        return viewHolderFactory.getItemViewType(item)
     }
 
     override fun onCreateViewHolder(
@@ -53,7 +55,8 @@ internal class MessageListItemAdapter(
     }
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
-        holder.bindListItem(getItem(position), FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+        val item = getItem(position)
+        holder.bindListItem(item, FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
     }
 
     override fun onBindViewHolder(
@@ -70,7 +73,17 @@ internal class MessageListItemAdapter(
             .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
                 acc + messageListItemPayloadDiff
             }
-        holder.bindListItem(getItem(position), diff)
+        val item = getItem(position)
+        val itemViewType = viewHolderFactory.getItemViewType(item)
+        val holderViewType = viewHolderFactory.getItemViewType(holder)
+        if (itemViewType != holderViewType) {
+            logger.w {
+                "[onBindViewHolder] viewType mismatch; item: ${MessageListItemViewType.toString(itemViewType)}" +
+                    ", viewHolder: ${MessageListItemViewType.toString(holderViewType)}"
+            }
+            return
+        }
+        holder.bindListItem(item, diff)
     }
 
     override fun onViewRecycled(holder: BaseMessageItemViewHolder<out MessageListItem>) {

@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
-import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
@@ -110,15 +109,19 @@ class ChatInitializer(
 
         // Using markdown as text transformer
         ChatUI.autoTranslationEnabled = autoTranslationEnabled
-        ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
-            if (autoTranslationEnabled) {
-                client.getCurrentUser()?.language?.let { language ->
-                    item.message.getTranslation(language).ifEmpty { item.message.text }
-                } ?: item.message.text
-            } else {
-                item.message.text
-            }
-        }
+        // ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
+        //     if (autoTranslationEnabled) {
+        //         client.getCurrentUser()?.language?.let { language ->
+        //             item.message.getTranslation(language).ifEmpty { item.message.text }
+        //         } ?: item.message.text
+        //     } else {
+        //         item.message.text
+        //     }
+        // }
+
+        // ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView, messageItem ->
+        //     textView.text = messageItem.message.text
+        // }
 
         // ChatUI.channelAvatarRenderer = ChannelAvatarRenderer { _, channel, _, targetProvider ->
         //     val targetView: AvatarImageView = targetProvider.regular()
