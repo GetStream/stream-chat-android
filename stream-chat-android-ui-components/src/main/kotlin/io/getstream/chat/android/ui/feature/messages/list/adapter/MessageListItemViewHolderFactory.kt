@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter
 
-import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
@@ -53,6 +52,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.EmptyViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.LoadingMoreViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.SystemMessageViewHolder
@@ -174,6 +174,27 @@ public open class MessageListItemViewHolderFactory {
         return MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactoryManager)
     }
 
+    internal fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
+        return when (viewHolder) {
+            is DateDividerViewHolder -> DATE_DIVIDER
+            is MessageDeletedViewHolder -> MESSAGE_DELETED
+            is MessagePlainTextViewHolder -> PLAIN_TEXT
+            is CustomAttachmentsViewHolder -> CUSTOM_ATTACHMENTS
+            is LoadingMoreViewHolder -> LOADING_INDICATOR
+            is ThreadSeparatorViewHolder -> THREAD_SEPARATOR
+            is GiphyViewHolder -> GIPHY
+            is SystemMessageViewHolder -> SYSTEM_MESSAGE
+            is ErrorMessageViewHolder -> ERROR_MESSAGE
+            is EmptyViewHolder -> viewHolder.viewType
+            is LinkAttachmentsViewHolder -> LINK_ATTACHMENTS
+            is GiphyAttachmentViewHolder -> GIPHY_ATTACHMENT
+            is FileAttachmentsViewHolder -> FILE_ATTACHMENTS
+            is MediaAttachmentsViewHolder -> MEDIA_ATTACHMENT
+            is UnreadSeparatorViewHolder -> UNREAD_SEPARATOR
+            else -> throw IllegalArgumentException("Unhandled MessageList view holder: $viewHolder")
+        }
+    }
+
     /**
      * Creates a new ViewHolder to be used in the Message List.
      * The [viewType] parameter is determined by [getItemViewType].
@@ -189,17 +210,17 @@ public open class MessageListItemViewHolderFactory {
             CUSTOM_ATTACHMENTS -> createCustomAttachmentsViewHolder(parentView)
             LOADING_INDICATOR -> createLoadingMoreViewHolder(parentView)
             THREAD_SEPARATOR -> createThreadSeparatorViewHolder(parentView)
-            TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView)
+            TYPING_INDICATOR -> createEmptyMessageItemViewHolder(parentView, viewType)
             GIPHY -> createGiphyMessageItemViewHolder(parentView)
             SYSTEM_MESSAGE -> createSystemMessageItemViewHolder(parentView)
             ERROR_MESSAGE -> createErrorMessageItemViewHolder(parentView)
-            THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView)
+            THREAD_PLACEHOLDER -> createEmptyMessageItemViewHolder(parentView, viewType)
             LINK_ATTACHMENTS -> createLinkAttachmentsViewHolder(parentView)
             GIPHY_ATTACHMENT -> createGiphyAttachmentViewHolder(parentView)
             FILE_ATTACHMENTS -> createFileAttachmentsViewHolder(parentView)
             MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
             UNREAD_SEPARATOR -> createUnreadSeparatorViewHolder(parentView)
-            START_OF_THE_CHANNEL -> createEmptyMessageItemViewHolder(parentView)
+            START_OF_THE_CHANNEL -> createEmptyMessageItemViewHolder(parentView, viewType)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -378,11 +399,9 @@ public open class MessageListItemViewHolderFactory {
      */
     private fun createEmptyMessageItemViewHolder(
         parentView: ViewGroup,
+        viewType: Int,
     ): BaseMessageItemViewHolder<MessageListItem> {
-        return object :
-            BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
-            override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
-        }
+        return EmptyViewHolder(parentView, viewType)
     }
 
     /**
