@@ -23,11 +23,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.util.Locale
 import java.util.regex.Pattern
+
+internal typealias AnnotationTag = String
+
+/**
+ * The tag used to annotate URLs in the message text.
+ */
+internal const val AnnotationTagUrl: AnnotationTag = "URL"
+
+/**
+ * The tag used to annotate emails in the message text.
+ */
+internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 
 /**
  * Takes the given message text and builds an annotated message text that shows links and allows for clicks,
@@ -40,14 +53,33 @@ import java.util.regex.Pattern
  */
 @Composable
 @SuppressLint("RestrictedApi")
-internal fun buildAnnotatedMessageText(text: String, color: Color): AnnotatedString {
+internal fun buildAnnotatedMessageText(
+    text: String,
+    color: Color,
+): AnnotatedString {
+    return buildAnnotatedMessageText(
+        text = text,
+        textColor = color,
+        textFontStyle = ChatTheme.typography.body.fontStyle,
+        linkColor = ChatTheme.colors.primaryAccent,
+    )
+}
+
+@SuppressLint("RestrictedApi")
+internal fun buildAnnotatedMessageText(
+    text: String,
+    textColor: Color,
+    textFontStyle: FontStyle?,
+    linkColor: Color,
+    builder: (AnnotatedString.Builder).() -> Unit = {},
+): AnnotatedString {
     return buildAnnotatedString {
         // First we add the whole text to the [AnnotatedString] and style it as a regular text.
         append(text)
         addStyle(
             SpanStyle(
-                fontStyle = ChatTheme.typography.body.fontStyle,
-                color = color,
+                fontStyle = textFontStyle,
+                color = textColor,
             ),
             start = 0,
             end = text.length,
@@ -57,19 +89,22 @@ internal fun buildAnnotatedMessageText(text: String, color: Color): AnnotatedStr
         // as well as add a String annotation to it. This gives us the ability to open the URL on click.
         linkify(
             text = text,
-            tag = "URL",
+            tag = AnnotationTagUrl,
             pattern = PatternsCompat.AUTOLINK_WEB_URL,
             matchFilter = Linkify.sUrlMatchFilter,
             schemes = URL_SCHEMES,
-            linkColor = ChatTheme.colors.primaryAccent,
+            linkColor = linkColor,
         )
         linkify(
             text = text,
-            tag = "EMAIL",
+            tag = AnnotationTagEmail,
             pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
             schemes = EMAIL_SCHEMES,
-            linkColor = ChatTheme.colors.primaryAccent,
+            linkColor = linkColor,
         )
+
+        // Finally, we apply any additional styling that was passed in.
+        builder(this)
     }
 }
 

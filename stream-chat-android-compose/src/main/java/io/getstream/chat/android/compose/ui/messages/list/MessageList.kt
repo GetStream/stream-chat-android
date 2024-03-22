@@ -240,6 +240,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param helperContent Composable that, by default, represents the helper content featuring scrolling behavior based
  * on the list state.
  * @param loadingMoreContent Composable that represents the loading more content, when we're loading the next page.
+ * @param itemModifier Modifier for styling the item container.
  * @param itemContent Composable that represents each item in the list, that the user can override
  * for custom UI and behavior.
  */
@@ -272,6 +273,9 @@ public fun MessageList(
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
+    itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ ->
+        Modifier
+    },
     itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(
             messageListItemState = it,
@@ -300,6 +304,7 @@ public fun MessageList(
             onScrolledToBottom = onScrolledToBottom,
             helperContent = helperContent,
             loadingMoreContent = loadingMoreContent,
+            itemModifier = itemModifier,
             itemContent = itemContent,
             onMessagesEndReached = onMessagesPageEndReached,
             onScrollToBottom = onScrollToBottom,

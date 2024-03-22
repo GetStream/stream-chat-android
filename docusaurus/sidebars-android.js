@@ -93,8 +93,8 @@ module.exports = {
             "compose/utility-components/search-input",
           ],
         },
-        "compose/guides/customizing-image-and-video-previews",
         "compose/guides/custom-translations",
+        "compose/guides/customizing-image-and-video-previews",
         "compose/guides/implementing-own-capabilities",
       ]
     },

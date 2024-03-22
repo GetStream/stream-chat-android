@@ -23,7 +23,7 @@ If your app doesn't support all these languages, you might want to [remove some 
 | ![English](../../assets/compose_custom_translations_english.png) | ![Italian](../../assets/compose_custom_translations_italian.png) |
 
 
-### What is Localization?
+## What is Localization?
 If you deploy your app to users who speak another language, you might want to internationalize (localize) it. That means you need to write the app in a way that makes it possible to localize values like text and layouts for each language or locale that the app supports. For more information, see the official [Android documentation](https://developer.android.com/guide/topics/resources/localization).
 
 Support for different languages in the SDK is based on the standard [Android mechanism](https://developer.android.com/training/basics/supporting-devices/languages) of switching resources on system locale change. The locale will be set automatically, based on system preferences. You can provide custom localization for the SDK's string resources by overriding them in the locale-specific `/res/values` directories of your project.
@@ -34,7 +34,7 @@ All of the string resources names provided by Stream SDK are prefixed with `stre
 <string name="stream_compose_message_list_empty_messages">No messages</string>
 ```
 
-### Adding a new language
+## Adding a new language
 
 Let's see how you can add support for additional languages in the SDK. As an example, we'll implement a custom Polish language translation for the [`ChannelListHeader`](../channel-components/channel-list-header.mdx) UI component.
 
@@ -63,15 +63,15 @@ In order to do that, we need to add the following string resource to the target 
 
 As the result, your app will display _`Oczekiwanie na połączenie`_ text on devices set to a Polish locale.
 
-### Overriding existing languages
+## Overriding existing languages
 
 To override strings for a language supported by default, create new string resources in the locale-specific `/res/values-XX` directories of your project with the same resource `name`. [Here](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose/src/main/res/values) you can find a list of available text resources.
 
-### Overriding the default language
+## Overriding the default language
 
 To change the strings used by default, place the string resources you want to override inside the `/res/values` [directory](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose/src/main/res/values) directory.
 
-### Removing existing languages
+## Removing existing languages
 
 The Android UI Components include resources for all of the languages mentioned above. If your app doesn't support all those languages, you can exclude some of them by explicitly defining a list of supported languages inside your `build.gradle` file:
 
@@ -83,14 +83,14 @@ defaultConfig {
 
 With the configuration here, your app will include only _English_ and _Spanish_ resources.
 
-### Translating User Messages
+## Automatic Translation
 
 Stream Chat provides the ability to run users' messages through automatic translation.
 While machine translation is never perfect it can enable two users to communicate with
 each other without speaking the same language. 
 
 In order to enable automatic translation, the following steps are required to do in the Client SDKs:
-#### Enabling the feature in the Compose SDK through:
+### Enabling the feature in the Compose SDK
 ```kotlin
 ChatTheme(
     autoTranslationEnabled = true,
@@ -99,7 +99,55 @@ ChatTheme(
 }
 ```
 
-#### Enabling the feature for Push Notifications through:
+### Supporting auto-translation in the custom message transformers
+
+Please, take into account, that if you are using a custom `MessagePreviewFormatter`, 
+`MessageTextFormatter`, or `QuotedMessageTextFormatter` implementations you need to support the auto-translation feature by yourself.
+
+The following example shows how to do that:
+```kotlin
+
+val getTranslatedText: (Message, User?) -> String = { message, currentUser ->
+    when (autoTranslationEnabled) {
+        true -> currentUser?.language?.let { message.getTranslation(it) } ?: message.text
+        else -> message.text
+    }
+}
+
+ChatTheme(
+    messagePreviewFormatter = object : MessagePreviewFormatter {
+        override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
+            return buildAnnotatedString {
+                val translatedText = getTranslatedText(message, currentUser)
+                append(translatedText)
+                // add your custom styling here
+            }
+        }
+    },
+    messageTextFormatter = object : MessageTextFormatter {
+        override fun format(message: Message, currentUser: User?): AnnotatedString {
+            return buildAnnotatedString {
+                val translatedText = getTranslatedText(message, currentUser)
+                append(translatedText)
+                // Your custom styling here
+            }
+        }
+    },
+    quotedMessageTextFormatter = object : QuotedMessageTextFormatter {
+        override fun format(message: Message, replyMessage: Message?, currentUser: User?): AnnotatedString {
+            return buildAnnotatedString {
+                val translatedText = getTranslatedText(message, currentUser)
+                append(translatedText)
+                // Your custom styling here
+            }
+        }
+    }
+) {
+    // Your UI content
+}
+```
+
+### Enabling the feature for Push Notifications
 ```kotlin
 val notificationConfig = NotificationConfig(
     //...
@@ -118,7 +166,7 @@ ChatClient.Builder(apiKey, context)
     .build()
 
 ```
-#### Providing the language when connecting the user:
+### Providing the language when connecting the user
 ```kotlin
 client.connectUser(user = User(id = "userId", language = "en"), token = "userToken").await()
 ```

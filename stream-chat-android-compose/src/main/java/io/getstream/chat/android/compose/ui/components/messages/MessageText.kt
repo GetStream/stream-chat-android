@@ -35,8 +35,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastAny
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
+import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
+import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
@@ -66,18 +68,8 @@ public fun MessageText(
 ) {
     val context = LocalContext.current
 
-    val textColor = if (message.isMine(currentUser)) {
-        ChatTheme.ownMessageTheme.textStyle.color
-    } else {
-        ChatTheme.otherMessageTheme.textStyle.color
-    }
-    val displayedText = when (ChatTheme.autoTranslationEnabled) {
-        true -> currentUser?.language?.let { userLanguage ->
-            message.getTranslation(userLanguage).ifEmpty { message.text }
-        } ?: message.text
-        else -> message.text
-    }
-    val styledText = buildAnnotatedMessageText(displayedText, textColor)
+    val styledText = ChatTheme.messageTextFormatter.format(message, currentUser)
+
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
@@ -91,7 +83,7 @@ public fun MessageText(
         }
     }
 
-    if (annotations.isNotEmpty()) {
+    if (annotations.fastAny { it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail }) {
         ClickableText(
             modifier = modifier
                 .padding(
@@ -108,7 +100,7 @@ public fun MessageText(
                 position in it.start..it.end
             }?.item
 
-            if (targetUrl != null && targetUrl.isNotEmpty()) {
+            if (!targetUrl.isNullOrEmpty()) {
                 context.startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
