@@ -153,7 +153,6 @@
     <ID>NestedBlockDepth:MessageListHeaderView.kt$MessageListHeaderView$private fun renderSubtitleState()</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Attachment)</ID>
     <ID>ParameterListWrapping:MessageComposerViewModelBinding.kt$MessageComposerViewModelDefaults$(Boolean)</ID>
-    <ID>RethrowCaughtException:BaseMessageItemViewHolder.kt$BaseMessageItemViewHolder$throw e</ID>
     <ID>ReturnCount:AttachmentDestination.kt$AttachmentDestination$public fun showAttachment(message: Message, attachment: Attachment)</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(@FontRes fontRes: Int): Typeface?</ID>
     <ID>ReturnCount:ChatFontsImpl.kt$ChatFontsImpl$private fun getFont(fontPath: String): Typeface?</ID>

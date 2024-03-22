@@ -40,4 +40,27 @@ public object MessageListItemViewType {
     public const val LINK_ATTACHMENTS: Int = OFFSET + 15
     public const val UNREAD_SEPARATOR: Int = OFFSET + 16
     public const val START_OF_THE_CHANNEL: Int = OFFSET + 17
+
+    public fun toString(viewType: Int): String {
+        return when (viewType) {
+            DATE_DIVIDER -> "DATE_DIVIDER"
+            MESSAGE_DELETED -> "MESSAGE_DELETED"
+            PLAIN_TEXT -> "PLAIN_TEXT"
+            CUSTOM_ATTACHMENTS -> "CUSTOM_ATTACHMENTS"
+            LOADING_INDICATOR -> "LOADING_INDICATOR"
+            THREAD_SEPARATOR -> "THREAD_SEPARATOR"
+            TYPING_INDICATOR -> "TYPING_INDICATOR"
+            GIPHY -> "GIPHY"
+            SYSTEM_MESSAGE -> "SYSTEM_MESSAGE"
+            ERROR_MESSAGE -> "ERROR_MESSAGE"
+            THREAD_PLACEHOLDER -> "THREAD_PLACEHOLDER"
+            GIPHY_ATTACHMENT -> "GIPHY_ATTACHMENT"
+            MEDIA_ATTACHMENT -> "MEDIA_ATTACHMENT"
+            FILE_ATTACHMENTS -> "FILE_ATTACHMENTS"
+            LINK_ATTACHMENTS -> "LINK_ATTACHMENTS"
+            UNREAD_SEPARATOR -> "UNREAD_SEPARATOR"
+            START_OF_THE_CHANNEL -> "START_OF_THE_CHANNEL"
+            else -> "UNKNOWN"
+        }
+    }
 }

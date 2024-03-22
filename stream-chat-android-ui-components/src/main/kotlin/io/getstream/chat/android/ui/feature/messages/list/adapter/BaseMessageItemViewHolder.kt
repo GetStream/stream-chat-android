@@ -22,6 +22,7 @@ import android.view.View
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.ui.common.internal.animateHighlight
+import io.getstream.log.taggedLogger
 
 /**
  * Base ViewHolder used for displaying messages in
@@ -30,6 +31,8 @@ import io.getstream.chat.android.ui.common.internal.animateHighlight
 public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
+
+    private val logger by taggedLogger("Chat:MessageItemBaseVH")
 
     /**
      * The data that was last bound to this ViewHolder via [bindData].
@@ -59,6 +62,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         try {
             bindData(messageListItem, diff)
         } catch (e: Throwable) {
+            logger.e(e) { "[bindListItem] failed: $e" }
             throw e
         }
     }

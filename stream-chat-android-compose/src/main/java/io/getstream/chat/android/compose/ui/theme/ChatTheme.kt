@@ -44,6 +44,8 @@ import io.getstream.chat.android.compose.ui.messages.attachments.factory.Attachm
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
+import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
+import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
@@ -89,6 +91,12 @@ private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter>
 }
 private val LocalMessagePreviewFormatter = compositionLocalOf<MessagePreviewFormatter> {
     error("No MessagePreviewFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalMessageTextFormatter = compositionLocalOf<MessageTextFormatter> {
+    error("No MessageTextFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalQuotedMessageTextFormatter = compositionLocalOf<QuotedMessageTextFormatter> {
+    error("No QuotedMessageTextFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -245,6 +253,21 @@ public fun ChatTheme(
         shapes = shapes,
         colors = colors,
     ),
+    messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
+        autoTranslationEnabled = autoTranslationEnabled,
+        typography = typography,
+        colors = colors,
+        ownMessageTheme = ownMessageTheme,
+        otherMessageTheme = otherMessageTheme,
+    ),
+    quotedMessageTextFormatter: QuotedMessageTextFormatter = QuotedMessageTextFormatter.defaultFormatter(
+        autoTranslationEnabled = autoTranslationEnabled,
+        context = LocalContext.current,
+        typography = typography,
+        colors = colors,
+        ownMessageTheme = ownMessageTheme,
+        otherMessageTheme = otherMessageTheme,
+    ),
     streamMediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(LocalContext.current),
     content: @Composable () -> Unit,
 ) {
@@ -265,6 +288,8 @@ public fun ChatTheme(
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
+        LocalMessageTextFormatter provides messageTextFormatter,
+        LocalQuotedMessageTextFormatter provides quotedMessageTextFormatter,
         LocalSearchResultNameFormatter provides searchResultNameFormatter,
         LocalOwnMessageTheme provides ownMessageTheme,
         LocalOtherMessageTheme provides otherMessageTheme,
@@ -386,6 +411,22 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessagePreviewFormatter.current
+
+    /**
+     * Retrieves the current [MessageTextFormatter] at the call site's position in the hierarchy.
+     */
+    public val messageTextFormatter: MessageTextFormatter
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageTextFormatter.current
+
+    /**
+     * Retrieves the current [QuotedMessageTextFormatter] at the call site's position in the hierarchy.
+     */
+    public val quotedMessageTextFormatter: QuotedMessageTextFormatter
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalQuotedMessageTextFormatter.current
 
     /**
      * Retrieves the current [SearchResultNameFormatter] at the call site's position in the hierarchy.

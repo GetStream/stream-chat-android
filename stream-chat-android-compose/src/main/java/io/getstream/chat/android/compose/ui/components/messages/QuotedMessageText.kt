@@ -21,19 +21,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import io.getstream.chat.android.client.utils.attachment.isGiphy
-import io.getstream.chat.android.client.utils.attachment.isImage
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
-import io.getstream.chat.android.uiutils.extension.isAnyFileType
 
 /**
  * Default text element for quoted messages, with extra styling and padding for the chat bubble.
@@ -52,8 +46,6 @@ public fun QuotedMessageText(
     replyMessage: Message? = null,
     quoteMaxLines: Int = DefaultQuoteMaxLines,
 ) {
-    val attachment = message.attachments.firstOrNull()
-
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
@@ -64,46 +56,48 @@ public fun QuotedMessageText(
         }
     }
 
-    val displayedText = when (ChatTheme.autoTranslationEnabled) {
-        true -> currentUser?.language?.let { userLanguage ->
-            message.getTranslation(userLanguage).ifEmpty { message.text }
-        } ?: message.text
-        else -> message.text
-    }
-
-    val quotedMessageText = when {
-        displayedText.isNotBlank() -> displayedText
-
-        attachment != null -> when {
-            attachment.name != null -> attachment.name
-
-            attachment.text != null -> attachment.text
-
-            attachment.isImage() -> {
-                stringResource(R.string.stream_compose_quoted_message_image_tag)
-            }
-            attachment.isGiphy() -> {
-                stringResource(R.string.stream_compose_quoted_message_giphy_tag)
-            }
-            attachment.isAnyFileType() -> {
-                stringResource(R.string.stream_compose_quoted_message_file_tag)
-            }
-            else -> displayedText
-        }
-
-        else -> displayedText
-    }
-
-    checkNotNull(quotedMessageText) {
-        "quotedMessageText is null. Cannot display invalid message title."
-    }
-
-    val textColor = if (replyMessage?.isMine(currentUser) != false) {
-        ChatTheme.ownMessageTheme.textStyle.color
-    } else {
-        ChatTheme.otherMessageTheme.textStyle.color
-    }
-    val styledText = buildAnnotatedMessageText(quotedMessageText, textColor)
+    // val displayedText = when (ChatTheme.autoTranslationEnabled) {
+    //     true -> currentUser?.language?.let { userLanguage ->
+    //         message.getTranslation(userLanguage).ifEmpty { message.text }
+    //     } ?: message.text
+    //     else -> message.text
+    // }
+    //
+    // val attachment = message.attachments.firstOrNull()
+    // val quotedMessageText = when {
+    //     displayedText.isNotBlank() -> displayedText
+    //
+    //     attachment != null -> when {
+    //         attachment.name != null -> attachment.name
+    //
+    //         attachment.text != null -> attachment.text
+    //
+    //         attachment.isImage() -> {
+    //             stringResource(R.string.stream_compose_quoted_message_image_tag)
+    //         }
+    //         attachment.isGiphy() -> {
+    //             stringResource(R.string.stream_compose_quoted_message_giphy_tag)
+    //         }
+    //         attachment.isAnyFileType() -> {
+    //             stringResource(R.string.stream_compose_quoted_message_file_tag)
+    //         }
+    //         else -> displayedText
+    //     }
+    //
+    //     else -> displayedText
+    // }
+    //
+    // checkNotNull(quotedMessageText) {
+    //     "quotedMessageText is null. Cannot display invalid message title."
+    // }
+    //
+    // val textColor = if (replyMessage?.isMine(currentUser) != false) {
+    //     ChatTheme.ownMessageTheme.textStyle.color
+    // } else {
+    //     ChatTheme.otherMessageTheme.textStyle.color
+    // }
+    // val styledText = buildAnnotatedMessageText(quotedMessageText, textColor)
+    val styledText = ChatTheme.quotedMessageTextFormatter.format(message, replyMessage, currentUser)
 
     val horizontalPadding = ChatTheme.dimens.quotedMessageTextHorizontalPadding
     val verticalPadding = ChatTheme.dimens.quotedMessageTextVerticalPadding

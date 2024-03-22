@@ -2779,6 +2779,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public static final field THREAD_SEPARATOR I
 	public static final field TYPING_INDICATOR I
 	public static final field UNREAD_SEPARATOR I
+	public final fun toString (I)Ljava/lang/String;
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer {
