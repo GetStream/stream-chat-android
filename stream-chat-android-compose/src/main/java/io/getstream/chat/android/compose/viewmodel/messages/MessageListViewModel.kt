@@ -202,7 +202,7 @@ public class MessageListViewModel(
      * @param message The selected message.
      */
     public fun selectExtendedReactions(message: Message?) {
-        messageListController.selectReactions(message)
+        messageListController.selectExtendedReactions(message)
     }
 
     /**

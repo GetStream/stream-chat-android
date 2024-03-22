@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed `MessageListViewModel.selectExtendedReactions` not calling the proper function in `MessageListController`. [#5218](https://github.com/GetStream/stream-chat-android/pull/5218)
 
 ### ⬆️ Improved
 
