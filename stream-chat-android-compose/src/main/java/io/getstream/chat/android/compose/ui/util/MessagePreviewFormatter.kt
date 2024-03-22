@@ -98,8 +98,16 @@ private class DefaultMessagePreviewFormatter(
         message: Message,
         currentUser: User?,
     ): AnnotatedString {
+        val getTranslatedText: (Message, User?) -> String = { message, currentUser ->
+            when (autoTranslationEnabled) {
+                true -> currentUser?.language?.let { message.getTranslation(it) } ?: message.text
+                else -> message.text
+            }
+        }
         return buildAnnotatedString {
             message.let { message ->
+                val translatedText = getTranslatedText(message, currentUser)
+
                 val userLanguage = currentUser?.language.orEmpty()
                 val displayedText = when (autoTranslationEnabled) {
                     true -> message.getTranslation(userLanguage).ifEmpty { message.text }

@@ -178,6 +178,38 @@ You can find out more about it by reading the [class documentation](https://gith
 
 The date formatter can be customized by overriding `ChatTheme.dateFormatter` with your own implementation of `DateFormatter`.
 
+```kotlin
+ChatTheme(
+    dateFormatter = object : DateFormatter {
+        private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+        private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
+        
+        override fun formatDate(date: Date?): String {
+            date ?: return ""
+            return dateFormat.format(date)
+        }
+
+        override fun formatTime(date: Date?): String {
+            date ?: return ""
+            return timeFormat.format(date)
+        }
+
+        override fun formatRelativeTime(date: Date?): String {
+            date ?: return ""
+            return DateUtils.getRelativeDateTimeString(
+                applicationContext,
+                date.time,
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.WEEK_IN_MILLIS,
+                0
+            ).toString()
+        }
+    }
+) {
+    // Your UI content
+}
+```
+
 ### ChannelNameFormatter
 
 Used for formatting channel names. The default channel name formatter is Stream's `DefaultChannelNameFormatter`.
@@ -193,6 +225,67 @@ Used for formatting the preview message in `ChannelItem`. The default message pr
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/MessagePreviewFormatter.kt).
 
 The message preview formatter can be customized by overriding `ChatTheme.messagePreviewFormatter` with your own implementation of `MessagePreviewFormatter`
+
+```kotlin
+ChatTheme(
+    messagePreviewFormatter = object : MessagePreviewFormatter {
+        override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
+            return buildAnnotatedString {
+                append(message.text)
+                // add your custom styling here
+            }
+        }
+    }
+) {
+    // Your UI content
+}
+```
+
+### MessageTextFormatter
+
+Used for formatting the message text in `MessageText` component. The default message text formatter is Stream's `DefaultMessageTextFormatter`.
+
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/MessageTextFormatter.kt).
+
+The message text formatter can be customized by overriding `ChatTheme.messageTextFormatter` with your own implementation of `MessageTextFormatter`
+
+```kotlin
+ChatTheme(
+    messageTextFormatter = object : MessageTextFormatter {
+        override fun format(message: Message, currentUser: User?): AnnotatedString {
+            return buildAnnotatedString {
+                append(message.text)
+                // Your custom styling here
+            }
+        }
+    }
+) {
+    // Your UI content
+}
+```
+
+### QuotedMessageTextFormatter
+
+Used for formatting the quoted message text in `QuotedMessageText` component. The default quote message text formatter is Stream's `DefaultQuotedMessageTextFormatter`.
+
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/QuotedMessageTextFormatter.kt).
+
+The quote message text formatter can be customized by overriding `ChatTheme.quotedMessageTextFormatter` with your own implementation of `QuotedMessageTextFormatter`
+
+```kotlin
+ChatTheme(
+    quotedMessageTextFormatter = object : QuotedMessageTextFormatter {
+        override fun format(message: Message, replyMessage: Message?, currentUser: User?): AnnotatedString {
+            return buildAnnotatedString {
+                append(message.text)
+                // Your custom styling here
+            }
+        }
+    }
+) {
+    // Your UI content
+}
+```
 
 ### StreamCoilImageLoaderFactory
 
