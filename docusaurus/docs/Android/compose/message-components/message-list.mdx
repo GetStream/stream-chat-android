@@ -210,6 +210,7 @@ fun MessageList(
         )
     },
     loadingMoreContent: @Composable () -> Unit = { DefaultMessagesLoadingMoreIndicator() },
+    itemModifier: (index: Int, item: MessageListItemState) -> Modifier = { _, _ -> Modifier },
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItemState = messageListItem,
@@ -230,6 +231,7 @@ fun MessageList(
 * `emptyContent`: An empty placeholder used when no messages are available. By default displays a message that you can override.
 * `helperContent`: Composable that represents helper content for the message list. By default handles the scrolling behavior and shows a floating button that can be used to scroll to the bottom.
 * `loadingMoreContent`: Composable that represents the loading more content, when we're loading the next page.
+* `itemModifier`: Modifier for each item container in the list. Useful for things like the item size, padding, background and similar.
 * `itemContent`: Composable that allows you to fully override the UI and behavior of each message in the list. This function will be applied to each item in the list and you'll gain access to the `MessageListItemState` inside the lambda when building your custom UI.
 
 Here's an example of customizing the `Message` items in the list:
@@ -240,6 +242,10 @@ MessageList(
     modifier = Modifier
         .fillMaxSize()
         .background(ChatTheme.colors.appBackground),
+    itemModifier = { index, item ->
+        Modifier 
+            // Add your customizations here
+    },
     itemContent = { item ->
         if (item is MessageItemState) { // we check against other subclasses of 'MessageListItemState'
             val message = item.message

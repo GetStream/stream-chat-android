@@ -78,6 +78,7 @@
   * Can be overridden by `ChatTheme.messageTextFormatter`
 - Added `QuotedMessageTextFormatter` to format the quoted message text. [#5214](https://github.com/GetStream/stream-chat-android/pull/5214)
   * Can be overridden by `ChatTheme.quotedMessageTextFormatter` 
+- Added `itemModifier` parameter into both `MessageList` and `Messages` components to allow customizing the message item. [#5209](https://github.com/GetStream/stream-chat-android/pull/5209)
 
 ### ⚠️ Changed
 
