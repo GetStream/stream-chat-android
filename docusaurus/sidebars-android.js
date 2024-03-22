@@ -6,6 +6,7 @@ module.exports = {
       "items": [
         "basics/overview",
         "basics/dependencies",
+        "client/overview",
       ]
     },
     {

@@ -1,0 +1,111 @@
+# Getting Started
+
+First things first, you have to initialize the `ChatClient` in your application. 
+This is the main entry point for all the chat functionalities. 
+Typically you would initialize the `ChatClient` in your `Application` class.
+
+```kotlin
+ChatClient.Builder("YOUR_API_KEY", context)
+    // Set other configurations
+    .build()
+
+// Static reference to initialised client
+val client = ChatClient.instance()
+```
+
+## Connecting a User
+
+Once you have the `ChatClient` initialised, you can connect a user to the chat.
+
+Let's say you have a `User` model:    
+```kotlin
+val user = User(
+    id = "bender",
+    name = "Bender",
+    image = "https://bit.ly/321RmWb",
+)
+```
+
+Then you may can call the `connectUser` method with either a JWT token or a `TokenProvider` to connect the user to the chat.
+
+Here is an example of how to connect a user to the chat with a JWT token:
+```kotlin
+val token = "CHAT_USER_TOKEN"
+client.connectUser(user, token).enqueue { result ->
+    when (result) {
+        is Result.Success -> {
+            // Logged in
+            val loggedInUser: User = result.value.user
+            val connectionId: String = result.value.connectionId
+        }
+        is Result.Failure -> {
+            // Handle error
+            val error = result.value
+
+        }
+    }
+}
+```
+
+Here is an example of how to connect a user to the chat with a `TokenProvider`:
+```kotlin
+val tokenProvider = object : TokenProvider {
+    // Make a request to your backend to generate a valid token for the user
+    override fun loadToken(): String = yourTokenService.getToken(user)
+}
+client.connectUser(user, tokenProvider).enqueue { /* ... */ }
+```
+
+## Lifecycle Management
+
+Most commonly, you would want to call `ChatClient#connectUser` when the user logs in and `ChatClient#disconnect` when the user logs out.
+
+:::note
+Please take into account that the `ChatClient` cannot survive a process death.
+When the app process gets killed with the logged-in user, you will need to call `ChatClient#connectUser` again to re-establish the connection.
+:::
+
+To handle those scenarios, you could define some `UserRepository` in your application that would be responsible for storing the logged-in user until the user logs out.
+
+```kotlin
+interface UserRepository {
+    fun getCurrentUser(): User?
+    fun setCurrentUser(user: User)
+    fun clearCurrentUser()
+}
+```
+
+:::note
+Please note that the `UserRepository` is just an example.
+You can name it whatever you want and use any storage mechanism for the implementation (for example `SharedPreferences`, `Room`, etc.).
+The main idea is to have a storage which will be able to provide the logged-in user when the app restarts after a process death.
+:::
+
+Then when the user logs in, you would call `ChatClient#connectUser` and store the user in the `UserRepository`.
+
+```kotlin
+val user = User(/* ... */)
+client.connectUser(user, tokenProvider).enqueue { result ->
+    if (result is Result.Success) {
+        userRepository.setCurrentUser(result.value.user)
+    } else if (result is Result.Failure) {
+        // Handle error
+    }
+}
+```
+
+When the user logs out, you would call `ChatClient#disconnect` and clear the user from the `UserRepository`.
+```kotlin
+client.disconnect().enqueue { result ->
+    userRepository.clearCurrentUser()
+    // Handle result
+}
+```
+
+Please note that you should also call `ChatClient#connectUser` when the Application restarts after a process death and there is a logged-in user in the `UserRepository`.
+```kotlin
+val user = userRepository.getCurrentUser()
+if (user != null) {
+    client.connectUser(user, tokenProvider).enqueue { /* ... */ }
+}
+```
