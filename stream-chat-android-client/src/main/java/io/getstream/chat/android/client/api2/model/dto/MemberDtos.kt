@@ -30,6 +30,8 @@ internal data class UpstreamMemberDto(
     val shadow_banned: Boolean,
     val banned: Boolean = false,
     val channel_role: String?,
+    val notifications_muted: Boolean?,
+    val status: String?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -43,4 +45,6 @@ internal data class DownstreamMemberDto(
     val shadow_banned: Boolean = false,
     val banned: Boolean = false,
     val channel_role: String?,
+    val notifications_muted: Boolean?,
+    val status: String?,
 )

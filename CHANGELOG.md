@@ -10,6 +10,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added `Member.notificationsMuted` property support. [#5217](https://github.com/GetStream/stream-chat-android/pull/5217)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 ## stream-chat-android-client
 ### 🐞 Fixed
 
