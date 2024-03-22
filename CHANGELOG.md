@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed intermittent crash when opening a channel. [#5219](https://github.com/GetStream/stream-chat-android/pull/5219)
 
 ### ⬆️ Improved
 
