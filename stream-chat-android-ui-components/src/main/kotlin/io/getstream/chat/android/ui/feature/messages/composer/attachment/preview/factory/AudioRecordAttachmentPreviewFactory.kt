@@ -86,10 +86,12 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
 
         private val logger by taggedLogger("AttachRecordPreviewHolder")
 
-        private lateinit var attachment: Attachment
+        private var attachment: Attachment? = null
 
         init {
-            binding.removeButton.setOnClickListener { attachmentRemovalListener(attachment) }
+            binding.removeButton.setOnClickListener {
+                attachment?.also{ attachmentRemovalListener(it) }
+            }
             style?.audioRecordPlayerViewStyle?.also {
                 binding.playerView.setStyle(it)
             }
@@ -119,6 +121,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
         }
 
         override fun unbind() {
+            val attachment = attachment ?: return
             ChatClient.instance().audioPlayer.removeAudios(listOf(attachment.hashCode()))
         }
 
