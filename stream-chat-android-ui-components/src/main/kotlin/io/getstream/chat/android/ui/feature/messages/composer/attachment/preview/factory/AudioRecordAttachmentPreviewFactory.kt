@@ -90,7 +90,7 @@ public class AudioRecordAttachmentPreviewFactory : AttachmentPreviewFactory {
 
         init {
             binding.removeButton.setOnClickListener {
-                attachment?.also{ attachmentRemovalListener(it) }
+                attachment?.also { attachmentRemovalListener(it) }
             }
             style?.audioRecordPlayerViewStyle?.also {
                 binding.playerView.setStyle(it)
