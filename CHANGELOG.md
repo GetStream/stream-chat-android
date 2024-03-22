@@ -56,6 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed the crash happening while editing a message with a recording attachment. [#5220](https://github.com/GetStream/stream-chat-android/pull/5220)
 
 ### ⬆️ Improved
 
