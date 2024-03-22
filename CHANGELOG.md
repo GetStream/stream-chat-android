@@ -71,6 +71,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `itemModifier` parameter into both `MessageList` and `Messages` components to allow customizing the message item. [#5209](https://github.com/GetStream/stream-chat-android/pull/5209)
 
 ### ⚠️ Changed
 
