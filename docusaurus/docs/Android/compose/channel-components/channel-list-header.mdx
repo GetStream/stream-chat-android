@@ -10,13 +10,17 @@ Let's see how to use the header.
 
 ## Usage
 
+:::note
+You can read about `UserRepository` which is used in the example below in the [Client Overview](../../client/overview.mdx#lifecycle-management) section.
+:::
+
 To use the `ChannelListHeader`, you can add it to your UI, within `setContent()`:
 
 ```kotlin
 override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    val user = ChatClient.instance().getCurrentUser()
+    val user = userRepository.getCurrentUser()
     setContent {
         ChatTheme {
             ChannelListHeader(
