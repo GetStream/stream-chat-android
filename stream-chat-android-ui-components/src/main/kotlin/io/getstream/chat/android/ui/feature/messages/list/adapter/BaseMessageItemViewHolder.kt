@@ -96,7 +96,6 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
     public open fun onAttachedToWindow() {}
 }
 
-
 internal inline fun <reified T : MessageListItem> BaseMessageItemViewHolder<T>.canHandle(
-    messageListItem: MessageListItem
+    messageListItem: MessageListItem,
 ): Boolean = messageListItem is T

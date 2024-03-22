@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.ui.feature.messages.list.adapter
 
-import android.view.View
 import android.view.ViewGroup
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.common.AudioRecordPlayerViewStyle
