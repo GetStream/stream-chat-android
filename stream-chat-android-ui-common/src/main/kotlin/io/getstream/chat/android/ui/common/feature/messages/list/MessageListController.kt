@@ -759,8 +759,8 @@ public class MessageListController(
         val membersMap = members.associateBy { it.user.id }
         val sortedReads = reads
             .filter {
-                it.user.id != currentUser?.id && membersMap.contains(it.user.id)
-                    && !it.belongsToFreshlyAddedMember(membersMap)
+                it.user.id != currentUser?.id && membersMap.contains(it.user.id) &&
+                    !it.belongsToFreshlyAddedMember(membersMap)
             }
             .sortedBy { it.lastRead }
 
@@ -809,8 +809,8 @@ public class MessageListController(
             } else {
                 val messageReadBy = message.createdAt?.let { messageCreatedAt ->
                     sortedReads.filter {
-                        it.lastRead.after(messageCreatedAt)
-                            && membersMap[it.user.id]?.createdAt?.before(messageCreatedAt) == true
+                        it.lastRead.after(messageCreatedAt) &&
+                            membersMap[it.user.id]?.createdAt?.before(messageCreatedAt) == true
                     }
                 } ?: emptyList()
 

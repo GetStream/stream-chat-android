@@ -4,6 +4,8 @@
   <CurrentIssues>
     <ID>ComplexCondition:UserRepository.kt$UserRepository$apiKey != null &amp;&amp; id != null &amp;&amp; name != null &amp;&amp; token != null &amp;&amp; image != null</ID>
     <ID>ForbiddenComment:CustomChatClientDebugger.kt$CustomChatClientDebugger$// TODO: Implement your custom logic here</ID>
+    <ID>ForbiddenComment:MessageDetailsFragment.kt$MessageDetailsFragment$// TODO: Navigate up</ID>
+    <ID>ForbiddenComment:MessageDetailsFragment.kt$MessageDetailsFragment$// TODO: Show error</ID>
     <ID>LongMethod:ChatFragment.kt$ChatFragment$private fun initMessageListViewModel()</ID>
     <ID>LongMethod:ChatInitializer.kt$ChatInitializer$@Suppress("UNUSED_VARIABLE") fun init(apiKey: String)</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
@@ -51,6 +53,7 @@
     <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member</ID>
     <ID>MaxLineLength:GroupChatInfoMemberOptionsViewModel.kt$GroupChatInfoMemberOptionsViewModelFactory$"GroupChatInfoMemberOptionsViewModelFactory can only create instances of GroupChatInfoMemberOptionsViewModel"</ID>
     <ID>MaxLineLength:GroupChatInfoViewModel.kt$GroupChatInfoViewModel$shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size &lt;= COLLAPSED_MEMBERS_COUNT</ID>
+    <ID>MaxLineLength:MessageDetailsFragment.kt$MessageDetailsFragment$val</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDateDividerFragment)</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDeletedMessages)</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserOnlyFileAttachmentsMessages)</ID>
@@ -65,6 +68,9 @@
     <ID>MaxLineLength:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:SharedAttachment.kt$SharedAttachment$AttachmentItem : SharedAttachment</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
+    <ID>TooGenericExceptionCaught:MessageDetailsViewModel.kt$MessageDetailsViewModel$e: Exception</ID>
+    <ID>UnusedPrivateMember:MessageDetailsFragment.kt$MessageDetailsFragment$private fun observeMessage()</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
+    <ID>VariableNaming:MessageDetailsViewModel.kt$MessageDetailsViewModel$val _state = MutableStateFlow&lt;MessageDetailsViewState>(MessageDetailsViewState.Empty)</ID>
   </CurrentIssues>
 </SmellBaseline>
