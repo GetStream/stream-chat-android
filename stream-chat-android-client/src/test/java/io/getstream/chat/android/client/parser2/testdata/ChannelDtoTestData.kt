@@ -119,7 +119,9 @@ internal object ChannelDtoTestData {
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
             "shadow_banned": false,
             "banned": false,
-            "channel_role": "member"
+            "channel_role": "member",
+            "notifications_muted": false,
+            "status": "member"
            }
           ],
           "watchers": [${UserDtoTestData.downstreamJson}],
@@ -147,7 +149,9 @@ internal object ChannelDtoTestData {
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
             "shadow_banned": false,
             "banned": false,
-            "channel_role": "member"
+            "channel_role": "member",
+            "notifications_muted": false,
+            "status": "member"
            }
         }
         """.withoutWhitespace()
@@ -176,6 +180,8 @@ internal object ChannelDtoTestData {
                 shadow_banned = false,
                 banned = false,
                 channel_role = "member",
+                notifications_muted = false,
+                status = "member",
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -203,6 +209,8 @@ internal object ChannelDtoTestData {
             shadow_banned = false,
             banned = false,
             channel_role = "member",
+            notifications_muted = false,
+            status = "member",
         ),
         extraData = mapOf("draft" to true),
     )
@@ -308,7 +316,9 @@ internal object ChannelDtoTestData {
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
             "shadow_banned": false,
             "banned": false,
-            "channel_role": "member"
+            "channel_role": "member",
+            "notifications_muted": false,
+            "status": "member"
            }
           ],
           "watchers": [${UserDtoTestData.upstreamJson}],
@@ -352,6 +362,8 @@ internal object ChannelDtoTestData {
                 shadow_banned = false,
                 banned = false,
                 channel_role = "member",
+                notifications_muted = false,
+                status = "member",
             ),
         ),
         watchers = listOf(UserDtoTestData.upstreamUser),

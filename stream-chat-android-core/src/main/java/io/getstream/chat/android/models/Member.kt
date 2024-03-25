@@ -69,6 +69,14 @@ public data class Member(
      * The user's channel-level role.
      */
     val channelRole: String? = null,
+    /**
+     * If notifications are muted for the user in the channel.
+     */
+    val notificationsMuted: Boolean? = null,
+    /**
+     * The status of the user in the channel.
+     */
+    val status: String? = null,
 ) : UserEntity, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
@@ -82,6 +90,8 @@ public data class Member(
             "shadow_banned", "shadowBanned" -> shadowBanned
             "banned" -> banned
             "channel_role", "channelRole" -> channelRole
+            "notifications_muted", "notificationsMuted" -> notificationsMuted
+            "status" -> status
             else -> null
         }
     }

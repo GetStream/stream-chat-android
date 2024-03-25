@@ -33,7 +33,7 @@
 
     <TextView
         android:id="@+id/nameTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:singleLine="true"
@@ -42,10 +42,30 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
         app:layout_constraintEnd_toStartOf="@id/ownerTextView"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="An Amazing Guy"
+        />
+
+    <ImageView
+        android:id="@+id/mutedIcon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_mute"
+        android:textColor="@color/stream_ui_text_color_primary"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/nameTextView"
+        app:layout_constraintTop_toTopOf="@id/nameTextView"
+        app:layout_constraintStart_toEndOf="@id/nameTextView"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:tint="@color/stream_ui_text_color_secondary"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible"
         />
 
     <TextView

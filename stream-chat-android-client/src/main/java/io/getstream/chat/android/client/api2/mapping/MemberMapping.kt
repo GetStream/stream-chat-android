@@ -31,6 +31,8 @@ internal fun DownstreamMemberDto.toDomain(): Member =
         shadowBanned = shadow_banned,
         banned = banned,
         channelRole = channel_role,
+        notificationsMuted = notifications_muted,
+        status = status,
     )
 
 internal fun Member.toDto(): UpstreamMemberDto =
@@ -44,4 +46,6 @@ internal fun Member.toDto(): UpstreamMemberDto =
         shadow_banned = shadowBanned,
         banned = banned,
         channel_role = channelRole,
+        notifications_muted = notificationsMuted,
+        status = status,
     )

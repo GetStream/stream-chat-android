@@ -134,6 +134,7 @@ class ChatInfoGroupMemberViewHolder(
             member = this
             binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
+            binding.mutedIcon.isVisible = notificationsMuted == true
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
 
             val isOwner = item.member.user.id == item.createdBy.id

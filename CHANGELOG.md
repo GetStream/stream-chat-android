@@ -56,8 +56,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed the crash happening while editing a message with a recording attachment. [#5220](https://github.com/GetStream/stream-chat-android/pull/5220)
-- Fixed intermittent crash when opening a channel. [#5219](https://github.com/GetStream/stream-chat-android/pull/5219)
 
 ### ⬆️ Improved
 
@@ -69,15 +67,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed `MessageListViewModel.selectExtendedReactions` not calling the proper function in `MessageListController`. [#5218](https://github.com/GetStream/stream-chat-android/pull/5218)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageTextFormatter` to format the message text. [#5214](https://github.com/GetStream/stream-chat-android/pull/5214)
-  * Can be overridden by `ChatTheme.messageTextFormatter`
-- Added `QuotedMessageTextFormatter` to format the quoted message text. [#5214](https://github.com/GetStream/stream-chat-android/pull/5214)
-  * Can be overridden by `ChatTheme.quotedMessageTextFormatter` 
 
 ### ⚠️ Changed
 
@@ -93,6 +86,27 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# March 22th, 2024 - 6.2.2
+## stream-chat-android-core
+### ✅ Added
+- Added `Member.notificationsMuted` property support. [#5217](https://github.com/GetStream/stream-chat-android/pull/5217)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed the crash happening while editing a message with a recording attachment. [#5220](https://github.com/GetStream/stream-chat-android/pull/5220)
+- Fixed intermittent crash when opening a channel. [#5219](https://github.com/GetStream/stream-chat-android/pull/5219)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed `MessageListViewModel.selectExtendedReactions` not calling the proper function in `MessageListController`. [#5218](https://github.com/GetStream/stream-chat-android/pull/5218)
+
+### ✅ Added
+- Added `MessageTextFormatter` to format the message text. [#5214](https://github.com/GetStream/stream-chat-android/pull/5214)
+  * Can be overridden by `ChatTheme.messageTextFormatter`
+- Added `QuotedMessageTextFormatter` to format the quoted message text. [#5214](https://github.com/GetStream/stream-chat-android/pull/5214)
+  * Can be overridden by `ChatTheme.quotedMessageTextFormatter` 
+- Added `itemModifier` parameter into both `MessageList` and `Messages` components to allow customizing the message item. [#5209](https://github.com/GetStream/stream-chat-android/pull/5209)
 
 # March 20th, 2024 - 6.2.1
 ## stream-chat-android-ui-components
