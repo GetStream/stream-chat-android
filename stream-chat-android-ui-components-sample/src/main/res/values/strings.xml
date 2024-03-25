@@ -129,8 +129,11 @@
 
     <!-- Chat Screen -->
     <string name="message_forwarded">Forwarded</string>
+    <string name="message_details">Message details</string>
 
     <!-- Flag message -->
     <string name="message_flagged_title">Message Flagged</string>
     <string name="message_flagged_description">The message has been reported to a moderator.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

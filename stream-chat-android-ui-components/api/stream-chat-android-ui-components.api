@@ -3149,6 +3149,10 @@ public final class io/getstream/chat/android/ui/feature/messages/list/options/me
 	public final fun defaultFactory (Landroid/content/Context;)Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactoryKt {
+	public static final fun plus (Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory;Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory;)Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment : io/getstream/chat/android/ui/widgets/FullScreenDialogFragment {
 	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionsDialogFragment$Companion;
 	public static final field TAG Ljava/lang/String;
