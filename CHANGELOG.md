@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed `TextStyle` mismatch in `MessageTextFormmater` and `QuotedMessageTextFormatter`. [#5221](https://github.com/GetStream/stream-chat-android/pull/5221)
 
 ### ⬆️ Improved
 
