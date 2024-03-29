@@ -130,6 +130,7 @@ module.exports = {
             }
           ]
         },
+        "advanced/video-integration",
         "basics/logging",
         "basics/debugging",
         "client/moderation-tools",
