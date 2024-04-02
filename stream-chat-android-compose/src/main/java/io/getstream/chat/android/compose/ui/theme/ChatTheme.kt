@@ -39,6 +39,7 @@ import io.getstream.chat.android.client.header.VersionPrefixHeader
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
@@ -103,6 +104,9 @@ private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultName
 }
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalMessageOptionItemVisibility = compositionLocalOf<MessageOptionItemVisibility> {
+    error("No MessageOptionItemVisibility provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
     error(
@@ -181,11 +185,13 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
- * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
- * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
- * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
+ * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
+ * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
+ * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
- * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
+ * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
+ * @param messageOptionItemVisibility [MessageOptionItemVisibility] Determines menu item visibility in the
+ * message options menu. All options are visible by default.
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
@@ -227,6 +233,7 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
+    messageOptionItemVisibility: MessageOptionItemVisibility = MessageOptionItemVisibility(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     videoThumbnailsEnabled: Boolean = true,
@@ -298,6 +305,7 @@ public fun ChatTheme(
         LocalMessageComposerTheme provides messageComposerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
+        LocalMessageOptionItemVisibility provides messageOptionItemVisibility,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
@@ -443,6 +451,11 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
+
+    public val messageOptionItemVisibility: MessageOptionItemVisibility
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageOptionItemVisibility.current
 
     /**
      * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.

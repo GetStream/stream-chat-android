@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
@@ -114,6 +115,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
+                messageOptionItemVisibility = MessageOptionItemVisibility(),
                 allowUIAutomationTest = true,
                 messageComposerTheme = MessageComposerTheme.defaultTheme(typography).let { messageComposerTheme ->
                     messageComposerTheme.copy(
