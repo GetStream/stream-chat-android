@@ -31,5 +31,9 @@ public fun User.mergePartially(that: User): User = this.copy(
     banned = that.banned,
     name = that.name,
     image = that.image,
+    totalUnreadCount = that.totalUnreadCount,
+    unreadChannels = that.unreadChannels,
+    mutes = that.mutes,
+    channelMutes = that.channelMutes,
     extraData = that.extraData,
 )
