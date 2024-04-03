@@ -16,6 +16,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatClient.getChannel` to fetch a channel with no side effects. [#5227](https://github.com/GetStream/stream-chat-android/pull/5227)
+  * Added `ChannelClient.get` to fetch a channel with no side effects.
 
 ### ⚠️ Changed
 
