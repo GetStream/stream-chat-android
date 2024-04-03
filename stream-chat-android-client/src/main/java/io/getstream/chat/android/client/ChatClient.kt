@@ -77,6 +77,8 @@ import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
 import io.getstream.chat.android.client.errorhandler.onReactionError
+import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundException
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -1871,6 +1873,64 @@ internal constructor(
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
         return api.queryChannels(request)
+    }
+
+    /**
+     * Gets the channel from the server based on [cid].
+     *
+     * @param cid The full channel id. ie messaging:123.
+     * @param messageLimit The number of messages to retrieve for the channel.
+     * @param memberLimit The number of members to retrieve for the channel.
+     * @param state if true returns the Channel state.
+     */
+    public fun getChannel(
+        cid: String,
+        messageLimit: Int = 0,
+        memberLimit: Int = 0,
+        state: Boolean = false,
+    ): Call<Channel> {
+        return CoroutineCall(userScope) {
+            val request = QueryChannelsRequest(
+                filter = Filters.eq("cid", cid),
+                limit = 1,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            ).apply {
+                this.watch = false
+                this.state = state
+            }
+            when (val result = api.queryChannels(request).await()) {
+                is Result.Success -> {
+                    val channels = result.value
+                    if (channels.isEmpty()) {
+                        val cause = StreamChannelNotFoundException(cid)
+                        Result.Failure(Error.ThrowableError(cause.message, cause))
+                    } else {
+                        Result.Success(channels.first())
+                    }
+                }
+                is Result.Failure -> result
+            }
+        }
+    }
+
+    /**
+     * Gets the channel from the server based on [channelType] and [channelId].
+     *
+     * @param channelType The channel type.
+     * @param channelId The channel id.
+     * @param messageLimit The number of messages to retrieve for the channel.
+     * @param memberLimit The number of members to retrieve for the channel.
+     * @param state if true returns the Channel state.
+     */
+    public fun getChannel(
+        channelType: String,
+        channelId: String,
+        messageLimit: Int = 0,
+        memberLimit: Int = 0,
+        state: Boolean = false,
+    ): Call<Channel> {
+        return getChannel(cid = "$channelType:$channelId")
     }
 
     /**
