@@ -53,6 +53,10 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun flagUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun getAppSettings ()Lio/getstream/chat/android/models/AppSettings;
+	public final fun getChannel (Ljava/lang/String;IIZ)Lio/getstream/result/call/Call;
+	public final fun getChannel (Ljava/lang/String;Ljava/lang/String;IIZ)Lio/getstream/result/call/Call;
+	public static synthetic fun getChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IIZILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public static synthetic fun getChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;IIZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun getClientState ()Lio/getstream/chat/android/client/setup/state/ClientState;
 	public final fun getConfig ()Lio/getstream/chat/android/client/api/ChatClientConfig;
 	public final fun getConnectionId ()Ljava/lang/String;
@@ -539,6 +543,8 @@ public final class io/getstream/chat/android/client/channel/ChannelClient {
 	public final fun deleteReaction (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun disableSlowMode ()Lio/getstream/result/call/Call;
 	public final fun enableSlowMode (I)Lio/getstream/result/call/Call;
+	public final fun get (IIZ)Lio/getstream/result/call/Call;
+	public static synthetic fun get$default (Lio/getstream/chat/android/client/channel/ChannelClient;IIZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun getChannelId ()Ljava/lang/String;
 	public final fun getChannelType ()Ljava/lang/String;
 	public final fun getCid ()Ljava/lang/String;
@@ -800,6 +806,13 @@ public final class io/getstream/chat/android/client/errors/ChatErrorDetail {
 
 public final class io/getstream/chat/android/client/errors/cause/MessageModerationDeletedException : io/getstream/chat/android/client/errors/cause/StreamSdkException {
 	public fun <init> (Ljava/lang/String;)V
+}
+
+public final class io/getstream/chat/android/client/errors/cause/StreamChannelNotFoundException : io/getstream/chat/android/client/errors/cause/StreamException {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCid ()Ljava/lang/String;
+	public fun getMessage ()Ljava/lang/String;
 }
 
 public abstract class io/getstream/chat/android/client/errors/cause/StreamCodeException : io/getstream/chat/android/client/errors/cause/StreamException {

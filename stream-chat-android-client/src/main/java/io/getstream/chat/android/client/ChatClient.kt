@@ -77,7 +77,6 @@ import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
 import io.getstream.chat.android.client.errorhandler.onReactionError
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundException
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
