@@ -107,6 +107,26 @@ public class ChannelClient internal constructor(
     public val cid: String = "$channelType:$channelId"
 
     /**
+     * Gets the channel.
+     *
+     * @param messageLimit The number of messages to retrieve.
+     * @param memberLimit The number of members to retrieve.
+     * @param state Whether to retrieve the channel state or not.
+     */
+    public fun get(
+        messageLimit: Int = 0,
+        memberLimit: Int = 0,
+        state: Boolean = false,
+    ): Call<Channel> {
+        return client.getChannel(
+            cid = cid,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            state = state,
+        )
+    }
+
+    /**
      * Creates the id-based channel.
      * @see [ChatClient.createChannel]
      *
