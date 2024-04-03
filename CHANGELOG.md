@@ -71,8 +71,12 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `MessageOptionItemVisibility` class that controls menu item visibility in the selected message options menu.
+- Added new `ChatTheme.messageOptionItemVisibility` property of type `MessageOptionItemVisibility`.
+- Added docs sections that describe these changes.
 
 ### ⚠️ Changed
+- Used the new `ChatTheme.messageOptionItemVisibility` property in `defaultMessageOptionsState()` in combination with own capabilities to control menu option item visibility.
 
 ### ❌ Removed
 
