@@ -25,7 +25,6 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.RetroError
 import io.getstream.chat.android.client.utils.RetroSuccess
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.result.Error
 import io.getstream.result.Result
 import org.amshove.kluent.shouldBeEqualTo
@@ -158,7 +157,7 @@ internal class StreamFileUploaderTest {
 
         val result = streamFileUploader.sendImage(channelType, channelId, userId, File(""))
 
-        (result as Result.Success).value shouldBeEqualTo UploadedImage(file = file)
+        (result as Result.Success).value shouldBeEqualTo UploadedFile(file = file, thumbUrl = thumbUrl)
     }
 
     @Test

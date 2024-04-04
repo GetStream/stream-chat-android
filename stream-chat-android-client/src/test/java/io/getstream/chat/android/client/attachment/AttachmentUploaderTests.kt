@@ -22,7 +22,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomString
@@ -214,20 +213,8 @@ internal class AttachmentUploaderTests {
             ) doReturn TestCall(result)
         }
 
-        fun givenMockedImageUploads(channelType: String, channelId: String, result: Result<UploadedImage>) {
-            whenever(
-                clientMock.sendImage(
-                    eq(channelType),
-                    eq(channelId),
-                    any(),
-                    anyOrNull(),
-                ),
-            ) doReturn TestCall(result)
-        }
-
         fun givenMockedFileUploads(channelType: String, channelId: String, files: List<File>) = apply {
             for (file in files) {
-                val imageResult = Result.Success(UploadedImage(file.absolutePath))
                 val fileResult = Result.Success(UploadedFile(file = file.absolutePath))
 
                 whenever(
@@ -245,7 +232,7 @@ internal class AttachmentUploaderTests {
                         same(file),
                         anyOrNull(),
                     ),
-                ) doReturn TestCall(imageResult)
+                ) doReturn TestCall(fileResult)
             }
         }
 

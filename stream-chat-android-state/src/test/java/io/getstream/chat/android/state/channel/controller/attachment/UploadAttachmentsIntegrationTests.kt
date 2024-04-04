@@ -29,7 +29,6 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.randomAttachmentsWithFile
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
@@ -188,7 +187,6 @@ internal class UploadAttachmentsIntegrationTests {
 
     private fun mockFileUploadsSuccess(files: List<File>) {
         for (file in files) {
-            val imageResult = Result.Success(UploadedImage(file = "file"))
             val fileResult = Result.Success(UploadedFile(file = "file", thumbUrl = "thumbUrl"))
 
             whenever(
@@ -206,7 +204,7 @@ internal class UploadAttachmentsIntegrationTests {
                     any(),
                     anyOrNull(),
                 ),
-            ) doReturn TestCall(imageResult)
+            ) doReturn TestCall(fileResult)
         }
     }
 }

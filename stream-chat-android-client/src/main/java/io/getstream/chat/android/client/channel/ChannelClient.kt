@@ -88,7 +88,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Error
@@ -470,7 +469,7 @@ public class ChannelClient internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -479,7 +478,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedImage> {
+    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedFile> {
         return client.sendImage(channelType, channelId, file, callback)
     }
 
