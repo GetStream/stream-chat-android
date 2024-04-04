@@ -22,11 +22,13 @@ import androidx.compose.runtime.Immutable
  * Represents a successfully uploaded file.
  *
  * @param file The URL of the uploaded file.
- * @param thumbUrl The property is auto-generated when uploading videos using
- * Stream CDN and can be used to display video previews.
+ * @param thumbUrl The property is auto-generated when uploading videos using Stream CDN and can be used to display
+ * video previews.
+ * @param extraData The extra data associated with the uploaded file.
  */
 @Immutable
-public data class UploadedFile(
+public data class UploadedFile @JvmOverloads constructor(
     val file: String,
     val thumbUrl: String? = null,
+    val extraData: Map<String, Any> = emptyMap(),
 )
