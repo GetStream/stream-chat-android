@@ -88,7 +88,7 @@ internal class MessageListItemAdapter(
         val holderViewType = viewHolderFactory.getItemViewType(holder)
         if (itemViewType != holderViewType) {
             logger.w {
-                "[onBindViewHolder] #paylods; viewType mismatch; " +
+                "[onBindViewHolder] #payloads; viewType mismatch; " +
                     "item: ${MessageListItemViewType.toString(itemViewType)}, " +
                     "viewHolder: ${MessageListItemViewType.toString(holderViewType)}"
             }
