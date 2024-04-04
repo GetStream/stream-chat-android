@@ -234,6 +234,13 @@ class MessageListViewSnippets : Fragment() {
                 }
             }
 
+            override fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
+                if (viewHolder is TodayViewHolder) {
+                    return TODAY_VIEW_HOLDER_TYPE
+                }
+                return super.getItemViewType(viewHolder)
+            }
+
             private fun Date?.isLessThenDayAgo(): Boolean {
                 if (this == null) {
                     return false

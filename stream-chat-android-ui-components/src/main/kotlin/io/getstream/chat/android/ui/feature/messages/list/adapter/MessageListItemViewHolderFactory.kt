@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_SEPARATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.TYPING_INDICATOR
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.UNREAD_SEPARATOR
+import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemAdapter
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
@@ -174,7 +175,14 @@ public open class MessageListItemViewHolderFactory {
         return MessageListItemViewTypeMapper.getViewTypeValue(item, attachmentFactoryManager)
     }
 
-    internal fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
+    /**
+     * Returns a view type value based on the type of the given [viewHolder].
+     * The view type returned here will be used in [MessageListItemAdapter.onBindViewHolder]
+     * to check if the ViewHolder is of the correct type before binding the item.
+     *
+     * For built-in view types, see [MessageListItemViewType] and its constants.
+     */
+    public open fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
         return when (viewHolder) {
             is DateDividerViewHolder -> DATE_DIVIDER
             is MessageDeletedViewHolder -> MESSAGE_DELETED

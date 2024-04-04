@@ -220,6 +220,14 @@ public class MessageList extends Fragment {
 
             }
 
+            @Override
+            public int getItemViewType(@NonNull BaseMessageItemViewHolder<? extends MessageListItem> viewHolder) {
+                if (viewHolder instanceof TodayViewHolder) {
+                    return TODAY_VIEW_HOLDER_TYPE;
+                }
+                return super.getItemViewType(viewHolder);
+            }
+
             private boolean isLessThanDayAgo(Date date) {
                 if (date == null) return false;
                 long dayInMillis = TimeUnit.DAYS.toMillis(1);
