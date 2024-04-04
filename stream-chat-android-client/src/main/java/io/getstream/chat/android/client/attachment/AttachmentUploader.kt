@@ -270,6 +270,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 AttachmentType.IMAGE -> assetUrl
                 else -> uploadedFile.file
             },
+            extraData = extraData + uploadedFile.extraData,
         )
     }
 
