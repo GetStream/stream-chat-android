@@ -2,7 +2,6 @@ package io.getstream.chat.docs.kotlin.client.helpers
 
 import io.getstream.result.Error
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.result.Result
@@ -42,9 +41,9 @@ class MyFileUploader : FileUploader {
         userId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<UploadedImage> {
+    ): Result<UploadedFile> {
         return try {
-            Result.Success(UploadedImage(file = "url"))
+            Result.Success(UploadedFile(file = "url"))
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
         }
@@ -55,9 +54,9 @@ class MyFileUploader : FileUploader {
         channelId: String,
         userId: String,
         file: File,
-    ): Result<UploadedImage> {
+    ): Result<UploadedFile> {
         return try {
-            Result.Success(UploadedImage(file = "url"))
+            Result.Success(UploadedFile(file = "url"))
         } catch (e: Exception) {
             Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
         }

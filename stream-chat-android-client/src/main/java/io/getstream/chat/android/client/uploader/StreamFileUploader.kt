@@ -21,7 +21,6 @@ import io.getstream.chat.android.client.api2.mapping.toUploadedFile
 import io.getstream.chat.android.client.extensions.getMediaType
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.result.Result
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -80,7 +79,7 @@ internal class StreamFileUploader(
         userId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<UploadedImage> {
+    ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
         val filename = filenameSanitizer.sanitize(file.name)
         val part = MultipartBody.Part.createFormData("file", filename, body)
@@ -91,7 +90,7 @@ internal class StreamFileUploader(
             file = part,
             progressCallback = callback,
         ).execute().map {
-            UploadedImage(file = it.file)
+            UploadedFile(file = it.file)
         }
     }
 
@@ -100,7 +99,7 @@ internal class StreamFileUploader(
         channelId: String,
         userId: String,
         file: File,
-    ): Result<UploadedImage> {
+    ): Result<UploadedFile> {
         val body = file.asRequestBody(file.getMediaType())
         val filename = filenameSanitizer.sanitize(file.name)
         val part = MultipartBody.Part.createFormData("file", filename, body)
@@ -111,7 +110,7 @@ internal class StreamFileUploader(
             file = part,
             progressCallback = null,
         ).execute().map {
-            UploadedImage(file = it.file)
+            UploadedFile(file = it.file)
         }
     }
 

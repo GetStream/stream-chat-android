@@ -102,7 +102,6 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
@@ -382,7 +381,7 @@ constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback?,
-    ): Call<UploadedImage> {
+    ): Call<UploadedFile> {
         return CoroutineCall(coroutineScope) {
             if (callback != null) {
                 fileUploader.sendImage(
