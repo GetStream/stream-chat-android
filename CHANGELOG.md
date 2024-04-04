@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Shadowed messages are not increasing the unread count. [#5229](https://github.com/GetStream/stream-chat-android/pull/5229)
 
 ### ⬆️ Improved
 
