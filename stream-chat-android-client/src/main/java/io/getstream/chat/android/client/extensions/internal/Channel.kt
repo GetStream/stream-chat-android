@@ -69,7 +69,8 @@ public fun Channel.updateLastMessage(
                 unreadMessages = read.let {
                     val hasNewUnreadMessage = receivedEventDate.after(it.lastReceivedEventDate) &&
                         newMessages.size > messages.size &&
-                        newMessages.last().id == message.id
+                        newMessages.last().id == message.id &&
+                        !message.shadowed
                     if (hasNewUnreadMessage) it.unreadMessages.inc() else it.unreadMessages
                 },
             )
