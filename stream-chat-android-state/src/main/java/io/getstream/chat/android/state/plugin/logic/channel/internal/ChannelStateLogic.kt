@@ -660,6 +660,7 @@ internal class ChannelStateLogic(
                 message.user.id == clientState.user.value?.id ||
                     message.parentId?.takeUnless { message.showInChannel } != null
             }
+            ?.takeUnless { message.shadowed }
             ?.let {
                 updateRead(
                     it.copy(
