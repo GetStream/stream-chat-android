@@ -2755,6 +2755,7 @@ public class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageL
 	public fun <init> ()V
 	public fun createViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;
 	protected final fun getAttachmentFactoryManager ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;
+	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/messages/list/adapter/BaseMessageItemViewHolder;)I
 	public fun getItemViewType (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;)I
 	protected final fun getListenerContainer ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListenerContainer;
 	protected final fun getListeners ()Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;
