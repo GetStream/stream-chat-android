@@ -58,12 +58,15 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed crash when providing a custom message view holder. [#5232](https://github.com/GetStream/stream-chat-android/pull/5232)
 
 ### ⬆️ Improved
 
 ### ✅ Added
 
 ### ⚠️ Changed
+- 🚨Breaking change: Exposed `MessageListItemViewHolderFactory.getItemViewType` which returns the view type for the given view holder. [#5232](https://github.com/GetStream/stream-chat-android/pull/5232)
+  * You have to implement this method in your custom `MessageListItemViewHolderFactory` implementation along with another `getItemViewType` method, which returns the view type for the given message item.
 
 ### ❌ Removed
 
