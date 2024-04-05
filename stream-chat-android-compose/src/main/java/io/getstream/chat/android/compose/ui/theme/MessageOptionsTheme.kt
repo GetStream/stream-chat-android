@@ -20,7 +20,8 @@ import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 
 /**
- * Represents the theme for the message options.
+ * Represents the theme for the message option list in the selected message menu.
+ * For reaction option list theming, see [ReactionOptionsTheme].
  *
  * @param optionVisibility The visibility of the message options.
  *

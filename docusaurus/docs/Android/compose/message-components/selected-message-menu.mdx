@@ -151,6 +151,8 @@ By default, the `reactionTypes` parameter uses [`ChatTheme.reactionIconFactory`]
 
 The best way to customize reactions is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 
+You can also control the reaction list visibility by using your own implementation of `ReactionOptionsTheme` for the [`ChatTheme.reactionOptionsTheme`](../general-customization/chat-theme.mdx#reactionoptionstheme) parameter.
+
 #### Customizing the Appearance
 
 By default `SelectedMessageMenu` looks like a bottom sheet. However you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.

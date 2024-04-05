@@ -12,12 +12,13 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * `attachmentPreviewHandlers`: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
 * `quotedAttachmentFactories`: Used to process messages and show different types of attachment UI, when quoting a message that contains an attachment.
 * `reactionIconFactory`: Used to create a reaction icon for the given reaction type. You can use the default factory that supports a predefined set of reactions, or provide a custom one.
+* `reactionOptionsTheme`: Used to define the appearance of the reaction option list in the selected message menu. For theming the message option list in the same menu, see `messageOptionsTheme` below.
 * `dateFormatter`: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
 * `channelNameFormatter`: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
 * `messagePreviewFormatter`: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
 * `imageLoaderFactory`: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
 * `messageAlignmentProvider`: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
-* `messageOptionsTheme`: Used to define the appearance of the message option list in the selected message menu.
+* `messageOptionsTheme`: Used to define the appearance of the message option list in the selected message menu. For theming the reaction option list in the same menu, see `reactionOptionsTheme` above.
 * `messageOptionsUserReactionAlignment`: Used to define how message reactions are aligned when browsing all reactions for a given message.
 * `permissionHandlers`: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 * `attachmentsPickerTabFactories`: Used to display different tabs in the attachments picker dialog.
@@ -170,6 +171,12 @@ Used for defining reactions the user can add to messages. `ReactionIconFactory.d
 You can find their definitions in the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/util/ReactionIconFactory.kt).
 
 Reactions are easily customizable by passing in your own `ReactionIconFactory` which contains reactions and overriding `ChatTheme.reactionIconFactory` with it.
+
+### ReactionOptionsTheme
+
+Defines the appearance of the reaction option list in the selected message menu. Allows you to show/hide options through the `areReactionOptionsVisible` parameter.
+
+See the [class documentation](https://github.com/GetStream/stream-chat-android/blob/0817af6b82cd72d541ed5e816fef8a3a27441e69/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/ReactionOptionsTheme.kt) for more details.
 
 ### DateFormatter
 

@@ -19,7 +19,8 @@ package io.getstream.chat.android.compose.ui.theme
 import androidx.compose.runtime.Immutable
 
 /**
- * Represents the theme for the reaction options.
+ * Represents the theme for the reaction option list in the selected message menu.
+ * For message option list theming, see [MessageOptionsTheme].
  *
  * @param areReactionOptionsVisible The visibility of the reaction options.
  */
