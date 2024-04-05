@@ -83,6 +83,9 @@ private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentF
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
+    error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -183,6 +186,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
+ * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
@@ -219,6 +223,7 @@ public fun ChatTheme(
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
+    reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -290,6 +295,7 @@ public fun ChatTheme(
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
+        LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
@@ -393,6 +399,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionIconFactory.current
+
+    /**
+     * Retrieves the current [ReactionOptionsTheme] at the call site's position in the hierarchy.
+     */
+    public val reactionOptionsTheme: ReactionOptionsTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalReactionOptionsTheme.current
 
     /**
      * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.

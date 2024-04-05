@@ -65,6 +65,7 @@ import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
@@ -126,6 +127,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         ),
                     )
                 },
+                reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
                 messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                     optionVisibility = MessageOptionItemVisibility(),
                 ),
