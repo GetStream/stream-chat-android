@@ -1,99 +1,24 @@
-# UNRELEASED CHANGELOG
+# April 05th, 2024 - 6.3.0
 ## Common changes for all artifacts
 ### 🐞 Fixed
 - Shadowed messages are not increasing the unread count. [#5229](https://github.com/GetStream/stream-chat-android/pull/5229)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `ChatClient.getChannel` to fetch a channel with no side effects. [#5227](https://github.com/GetStream/stream-chat-android/pull/5227)
   * Added `ChannelClient.get` to fetch a channel with no side effects.
 - Added `UploadedFile.extraData` map field to include custom data to updated file attachments. [#5230](https://github.com/GetStream/stream-chat-android/pull/5230)
 
-### ⚠️ Changed
-
 ### ❌ Removed
 - Removed `UploadedImage` class, replace with `UploadedFile` class. [#5230](https://github.com/GetStream/stream-chat-android/pull/5230)
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed crash when providing a custom message view holder. [#5232](https://github.com/GetStream/stream-chat-android/pull/5232)
 
-### ⬆️ Improved
-
-### ✅ Added
-
 ### ⚠️ Changed
 - 🚨Breaking change: Exposed `MessageListItemViewHolderFactory.getItemViewType` which returns the view type for the given view holder. [#5232](https://github.com/GetStream/stream-chat-android/pull/5232)
   * You have to implement this method in your custom `MessageListItemViewHolderFactory` implementation along with another `getItemViewType` method, which returns the view type for the given message item.
-
-### ❌ Removed
-
-## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # March 26th, 2024 - 6.2.3
 ## stream-chat-android-compose
