@@ -128,7 +128,7 @@ fun SelectedMessageMenu(
 
 You can pass `defaultMessageOptionsState()` to the `messageOptions` parameter to get the default actions that we expose in our SDK. This function uses the [`ChatTheme.messageOptionsTheme.optionVisibility`](../general-customization/chat-theme.mdx#messageoptionstheme) property and [own capabilities](../guides/implementing-own-capabilities.mdx) under the hood to control which action is visible to the user.
 
-The values that `defaultMessageOptionsState()` gets from `ChatTheme.messageOptionsTheme.optionVisibility` take precedence over own capabilities, so you can pass your own implementation of [`MessageOptionTheme`](https://github.com/GetStream/stream-chat-android/blob/62c5243ecd4c51580c419c7c9a4d4af154d1cd89/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/messageoptions/MessageOptionItemVisibility.kt) to `ChatTheme.messageOptionsTheme` to control which options to show. This is useful when you are using `MessagesScreen`, for example, which sets up `SelectedMessageMenu` automatically.
+The values that `defaultMessageOptionsState()` gets from `ChatTheme.messageOptionsTheme.optionVisibility` take precedence over own capabilities, so you can pass your own implementation of [`MessageOptionTheme`](https://github.com/GetStream/stream-chat-android/blob/e01d636f66fb0986ab71288f4ddee92afe550fd0/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/MessageOptionsTheme.kt) to `ChatTheme.messageOptionsTheme` to control which options to show. This is useful when you are using `MessagesScreen`, for example, which sets up `SelectedMessageMenu` automatically.
 
 ```kotlin
 ChatTheme(
