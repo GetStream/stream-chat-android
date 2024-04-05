@@ -19,7 +19,7 @@ package io.getstream.chat.android.compose.ui.components.messageoptions
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 
 /**
- * Controls menu item visibility in the selected message options menu. All options are visible by default.
+ * Controls option visibility in the message options menu. All options are visible by default.
  *
  * @param isRetryMessageVisible Visibility of the retry failed message option.
  * @param isReplyVisible Visibility of the reply to message option (quote message).

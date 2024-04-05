@@ -146,8 +146,12 @@ public fun defaultMessageOptionsState(
     val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
     val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
 
+    val isThreadReplyPossible = !isInThread && isMessageSynced && canThreadReply
+    val isEditMessagePossible = ((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()
+    val isDeleteMessagePossible = canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)
+
     // options menu item visibility
-    val visibility = ChatTheme.messageOptionItemVisibility
+    val visibility = ChatTheme.messageOptionsTheme.optionVisibility
 
     return listOfNotNull(
         if (visibility.isRetryMessageVisible && isOwnMessage && isMessageFailed) {
@@ -172,7 +176,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isThreadReplyVisible && !isInThread && isMessageSynced && canThreadReply) {
+        if (visibility.isThreadReplyVisible && isThreadReplyPossible) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
@@ -205,8 +209,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isEditMessageVisible &&
-            (((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy())) {
+        if (visibility.isEditMessageVisible && isEditMessagePossible) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
@@ -239,7 +242,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (visibility.isDeleteMessageVisible && (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage))) {
+        if (visibility.isDeleteMessageVisible && isDeleteMessagePossible) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),
