@@ -128,7 +128,7 @@ class MessagesActivity : BaseConnectedActivity() {
                 },
                 messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                     optionVisibility = MessageOptionItemVisibility(),
-                )
+                ),
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
