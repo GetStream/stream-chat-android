@@ -511,7 +511,7 @@ internal class ChannelLogic(
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
                 channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                channelStateLogic.toggleHidden(false)
+                channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
                 event.message.copy(

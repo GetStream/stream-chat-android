@@ -128,7 +128,10 @@ public data class ChannelData(
             deletedAt = deletedAt,
             extraData = extraData,
             cooldown = cooldown,
-            lastMessageAt = messagesList.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt },
+            lastMessageAt = messagesList
+                .filterNot { it.shadowed }
+                .lastOrNull()
+                ?.let { it.createdAt ?: it.createdLocallyAt },
             createdBy = createdBy,
             messages = messages,
             members = members,

@@ -473,7 +473,7 @@ internal class EventHandlerSequential(
                         continue
                     }
                     val updatedChannel = channel.copy(
-                        hidden = false,
+                        hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
                         messages = channel.messages + listOf(enrichedMessage),
                     )
                     batch.addChannel(updatedChannel)
