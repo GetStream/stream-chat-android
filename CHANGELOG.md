@@ -1,6 +1,7 @@
 # UNRELEASED CHANGELOG
 ## Common changes for all artifacts
 ### 🐞 Fixed
+- Shadowed messages are filtered. [#5234](https://github.com/GetStream/stream-chat-android/pull/5234)
 
 ### ⬆️ Improved
 
