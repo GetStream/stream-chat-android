@@ -308,6 +308,31 @@ public fun ChatClient.loadNewerMessages(
 }
 
 /**
+ * Loads messages around the given message id.
+ *
+ * @param cid The full channel id i.e. "messaging:123".
+ * @param messageId The id of the message around which we want to load messages.
+ *
+ * @return The channel wrapped in [Call]. This channel contains messages around the requested message.
+ */
+public fun ChatClient.loadMessagesAroundId(
+    cid: String,
+    messageId: String,
+): Call<Channel> {
+    StreamLog.d(TAG) { "[loadMessagesAroundId] cid: $cid, messageId: $messageId" }
+    return CoroutineCall(inheritScope { Job(it) }) {
+        when (val cidValidationResult = validateCidWithResult(cid)) {
+            is Result.Success -> {
+                val (channelType, channelId) = cid.cidToTypeAndId()
+                logic.channel(channelType = channelType, channelId = channelId)
+                    .loadMessagesAroundId(messageId)
+            }
+            is Result.Failure -> cidValidationResult
+        }
+    }
+}
+
+/**
  * Cancels the message of "ephemeral" type.
  * Removes the message from local storage and state.
  *
