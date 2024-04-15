@@ -53,6 +53,7 @@ import io.getstream.chat.android.state.extensions.getMessageUsingCache
 import io.getstream.chat.android.state.extensions.getRepliesAsState
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.loadMessageById
+import io.getstream.chat.android.state.extensions.loadMessagesAroundId
 import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
@@ -117,8 +118,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -536,31 +539,58 @@ public class MessageListController(
     }
 
     private fun processMessageId() {
-        messageId?.takeUnless { it.isBlank() }?.let { messageId ->
-            logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
-            scope.launch {
-                if (parentMessageId != null) {
-                    enterThreadSequential(parentMessageId)
-                }
-
-                listState
-                    .onCompletion {
-                        logger.v { "[processMessageId] mode: ${_mode.value}" }
-                        when {
-                            _mode.value is MessageMode.Normal -> {
-                                focusChannelMessage(messageId)
+        messageId
+            ?.takeUnless { it.isBlank() }
+            ?.let { messageId ->
+                logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
+                scope.launch {
+                    if (parentMessageId != null) {
+                        enterThreadSequential(parentMessageId)
+                    }
+                    listState
+                        .onCompletion {
+                            logger.v { "[processMessageId] mode: ${_mode.value}" }
+                            when {
+                                _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
+                                _mode.value is MessageMode.MessageThread && parentMessageId != null ->
+                                    focusThreadMessage(
+                                        threadMessageId = messageId,
+                                        parentMessageId = parentMessageId,
+                                    )
                             }
-                            _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
-                                focusThreadMessage(
-                                    threadMessageId = messageId,
-                                    parentMessageId = parentMessageId,
-                                )
+                        }
+                        .first { it.messageItems.isNotEmpty() }
+                }
+            }
+            ?: scope.launch {
+                channelState.filterNotNull()
+                    .flatMapLatest {
+                        combine(
+                            it.messagesState.filterNot { messagesState -> messagesState is MessagesState.Loading },
+                            it.read.filterNot { read -> read?.lastReadMessageId == null },
+                        ) { messagesState, reads -> messagesState to reads }
+                    }
+                    .firstOrNull()
+                    ?.let { (messagesState, channelUserRead) ->
+                        val messages = (messagesState as? MessagesState.Result)?.messages ?: emptyList()
+                        channelUserRead?.lastReadMessageId?.let { lastReadMessageId ->
+                            if (messages.none { it.id == lastReadMessageId }) {
+                                chatClient.loadMessagesAroundId(cid, lastReadMessageId)
+                                    .await()
+                                    .onSuccess { channel -> channel.messages.focusUnreadMessage(lastReadMessageId) }
+                            } else {
+                                messages.focusUnreadMessage(lastReadMessageId)
                             }
                         }
                     }
-                    .first { it.messageItems.isNotEmpty() }
             }
-        }
+    }
+
+    private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
+        indexOfFirst { it.id == lastReadMessageId }
+            .takeIf { it != -1 }
+            ?.takeUnless { it >= size - 1 }
+            ?.let { focusChannelMessage(get(it + 1).id) }
     }
 
     private fun updateMessageList(newState: MessageListState) {

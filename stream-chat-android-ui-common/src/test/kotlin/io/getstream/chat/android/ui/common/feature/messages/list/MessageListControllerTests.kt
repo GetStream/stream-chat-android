@@ -554,7 +554,7 @@ internal class MessageListControllerTests {
                 }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
                 whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
                 whenever(channelState.reads) doReturn MutableStateFlow(listOf())
-                whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead())
+                whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
                 whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
                 whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
