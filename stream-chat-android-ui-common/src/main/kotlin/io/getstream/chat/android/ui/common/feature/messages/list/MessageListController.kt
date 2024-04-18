@@ -533,7 +533,7 @@ public class MessageListController(
                 unreadLabelState.value = channelUserRead.lastReadMessageId
                     ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
                     ?.let {
-                        UnreadLabel(channelUserRead.unreadMessages, it)
+                        UnreadLabel(channelUserRead.unreadMessages, it, true)
                     }
             }.launchIn(scope)
     }
@@ -2025,6 +2025,7 @@ public class MessageListController(
     private data class UnreadLabel(
         val unreadCount: Int,
         val lastReadMessageId: String,
+        val buttonVisibility: Boolean,
     )
 
     public companion object {
