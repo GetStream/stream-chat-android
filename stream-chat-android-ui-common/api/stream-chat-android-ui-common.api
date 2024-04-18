@@ -135,6 +135,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun clearNewMessageState ()V
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;Z)V
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
+	public final fun disableUnreadLabelButton ()V
 	public final fun dismissAllMessageActions ()V
 	public final fun dismissMessageAction (Lio/getstream/chat/android/ui/common/state/messages/MessageAction;)V
 	public final fun enterNormalMode ()V
@@ -185,6 +186,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun resendMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun scrollToBottom (ILkotlin/jvm/functions/Function0;)V
 	public static synthetic fun scrollToBottom$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;ILkotlin/jvm/functions/Function0;ILjava/lang/Object;)V
+	public final fun scrollToFirstUnreadMessage ()V
 	public final fun scrollToMessage (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun selectExtendedReactions (Lio/getstream/chat/android/models/Message;)V
 	public final fun selectMessage (Lio/getstream/chat/android/models/Message;)V
