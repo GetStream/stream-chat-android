@@ -515,10 +515,10 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
-        refreshUnreadLabel()
+        refreshUnreadLabel(true)
     }
 
-    private fun refreshUnreadLabel() {
+    private fun refreshUnreadLabel(shouldShowButton: Boolean) {
         val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
         channelState.filterNotNull()
             .flatMapLatest {
@@ -533,9 +533,38 @@ public class MessageListController(
                 unreadLabelState.value = channelUserRead.lastReadMessageId
                     ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
                     ?.let {
-                        UnreadLabel(channelUserRead.unreadMessages, it, true)
+                        UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton)
                     }
             }.launchIn(scope)
+    }
+
+    /**
+     * Disable the unread label button.
+     */
+    public fun disableUnreadLabelButton() {
+        unreadLabelState.value = unreadLabelState.value?.copy(buttonVisibility = false)
+    }
+
+    /**
+     * Scrolls to the first unread message in the channel.
+     */
+    public fun scrollToFirstUnreadMessage() {
+        unreadLabelState.value?.let { unreadLabel ->
+            val messages = messagesState.messageItems
+                .filterIsInstance<MessageItemState>()
+                .map { it.message }
+
+            messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
+                ?.let { messages.focusUnreadMessage(it.id) }
+                ?: {
+                    scope.launch {
+                        chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
+                            .await()
+                            .onSuccess { channel -> channel.messages.focusUnreadMessage(unreadLabel.lastReadMessageId) }
+                    }
+                }
+        }
+        disableUnreadLabelButton()
     }
 
     private fun processMessageId() {
@@ -1542,7 +1571,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    refreshUnreadLabel()
+                    refreshUnreadLabel(false)
                 }
             }
         }
