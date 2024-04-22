@@ -205,7 +205,10 @@ public class MessageListController(
      */
     public val user: StateFlow<User?> = clientState.user
 
-    private val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
+    /**
+     * Holds information about the unread label state.
+     */
+    public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -2051,7 +2054,7 @@ public class MessageListController(
         public data class UnpinMessageError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
-    private data class UnreadLabel(
+    public data class UnreadLabel(
         val unreadCount: Int,
         val lastReadMessageId: String,
         val buttonVisibility: Boolean,

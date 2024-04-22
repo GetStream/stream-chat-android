@@ -4177,6 +4177,7 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun getTargetMessage ()Landroidx/lifecycle/LiveData;
 	public final fun getUnreadCount ()Landroidx/lifecycle/LiveData;
+	public final fun getUnreadLabel ()Landroidx/lifecycle/LiveData;
 	public final fun getUser ()Landroidx/lifecycle/LiveData;
 	public final fun onEvent (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event;)V
 	public final fun scrollToBottom (ILkotlin/jvm/functions/Function0;)V
