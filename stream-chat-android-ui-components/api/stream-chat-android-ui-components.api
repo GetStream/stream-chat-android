@@ -2120,6 +2120,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnReplyMessageClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReplyMessageClickListener;)V
 	public final fun setOnScrollToBottomHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnScrollToBottomHandler;)V
 	public final fun setOnThreadClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener;)V
+	public final fun setOnUnreadLabelClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelClickListener;)V
 	public final fun setOnUnreadLabelReachedListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelReachedListener;)V
 	public final fun setOnUserClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserClickListener;)V
 	public final fun setOnUserReactionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserReactionClickListener;)V
@@ -2336,6 +2337,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener {
 	public abstract fun onThreadClick (Lio/getstream/chat/android/models/Message;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelClickListener {
+	public abstract fun onUnreadLabelClick ()V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelReachedListener {
