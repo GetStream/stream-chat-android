@@ -43,15 +43,22 @@ Then, you can provide a user token in one of two ways:
     }
     ```
 
-2. Using a TokenProvider which will be queried for a token when required:
+2. Using a `TokenProvider` which will be queried for a token when required:
 
     ```kotlin
     val tokenProvider = object : TokenProvider {
-        // Make a request to your backend to generate a valid token for the user
+        // Make a request to your backend to generate a valid token for the user.
+        // It is expected that "yourTokenService.getToken" never throws an exception.
+        // If the token cannot be loaded, it should return an empty string.
         override fun loadToken(): String = yourTokenService.getToken(user)
     }
     client.connectUser(user, tokenProvider).enqueue { /* ... */ }
     ```
+
+:::note
+Please ensure that the `TokenProvider.loadToken` implementation never throws an exception.
+If the token cannot be loaded, it should return an empty string.
+:::
 
 #### Using Development Tokens
 

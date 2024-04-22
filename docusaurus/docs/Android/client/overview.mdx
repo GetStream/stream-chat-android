@@ -50,11 +50,18 @@ client.connectUser(user, token).enqueue { result ->
 Here is an example of how to connect a user to the chat with a `TokenProvider`:
 ```kotlin
 val tokenProvider = object : TokenProvider {
-    // Make a request to your backend to generate a valid token for the user
+    // Make a request to your backend to generate a valid token for the user.
+    // It is expected that "yourTokenService.getToken" never throws an exception.
+    // If the token cannot be loaded, it should return an empty string.
     override fun loadToken(): String = yourTokenService.getToken(user)
 }
 client.connectUser(user, tokenProvider).enqueue { /* ... */ }
 ```
+
+:::note
+Please ensure that the `TokenProvider.loadToken` implementation never throws an exception. 
+If the token cannot be loaded, it should return an empty string.
+:::
 
 ## Lifecycle Management
 
