@@ -91,6 +91,11 @@
 
 ### ❌ Removed
 
+# April 19th, 2024 - 6.3.1
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix issue with the keyboard gets stuck when typing a message. [#5235](https://github.com/GetStream/stream-chat-android/pull/5235)
+
 # April 05th, 2024 - 6.3.0
 ## Common changes for all artifacts
 ### 🐞 Fixed
