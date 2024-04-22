@@ -594,28 +594,6 @@ public class MessageListController(
                         .first { it.messageItems.isNotEmpty() }
                 }
             }
-            ?: scope.launch {
-                channelState.filterNotNull()
-                    .flatMapLatest {
-                        combine(
-                            it.messagesState.filterNot { messagesState -> messagesState is MessagesState.Loading },
-                            it.read.filterNot { read -> read?.lastReadMessageId == null },
-                        ) { messagesState, reads -> messagesState to reads }
-                    }
-                    .firstOrNull()
-                    ?.let { (messagesState, channelUserRead) ->
-                        val messages = (messagesState as? MessagesState.Result)?.messages ?: emptyList()
-                        channelUserRead?.lastReadMessageId?.let { lastReadMessageId ->
-                            if (messages.none { it.id == lastReadMessageId }) {
-                                chatClient.loadMessagesAroundId(cid, lastReadMessageId)
-                                    .await()
-                                    .onSuccess { channel -> channel.messages.focusUnreadMessage(lastReadMessageId) }
-                            } else {
-                                messages.focusUnreadMessage(lastReadMessageId)
-                            }
-                        }
-                    }
-            }
     }
 
     private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
