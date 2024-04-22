@@ -116,4 +116,19 @@
 
     </ScrollView>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/unreadLabelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/stream_ui_spacing_small"
+        android:backgroundTint="@color/stream_ui_overlay_dark"
+        android:text="@string/stream_ui_message_list_unread_separator"
+        android:textColor="@color/stream_ui_white"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/chatMessagesRV"
+        app:layout_constraintStart_toStartOf="@+id/chatMessagesRV"
+        app:layout_constraintTop_toTopOf="@+id/chatMessagesRV"
+        app:cornerRadius="24dp"
+        />
 </merge>

@@ -31,6 +31,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator
+import com.google.android.material.button.MaterialButton
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -156,6 +157,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
+    private lateinit var unreadLabelButton: MaterialButton
 
     /**
      * Used to enable or disable parts of the UI depending
@@ -619,6 +621,7 @@ public class MessageListView : ConstraintLayout {
         initEmptyStateView()
 
         configureAttributes(attr)
+        unreadLabelButton = binding.unreadLabelButton
 
         binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
 
@@ -2011,6 +2014,22 @@ public class MessageListView : ConstraintLayout {
                 // Handled by a separate handler.
             }
         }
+    }
+
+    /**
+     * Hide the unread label button.
+     */
+    public fun hideUnreadLabelButton() {
+        unreadLabelButton.isVisible = false
+    }
+
+    /**
+     * Show the unread label button.
+     *
+     * @param unreadCount The number of unread messages.
+     */
+    public fun showUnreadLabelButton(unreadCount: Int) {
+        unreadLabelButton.isVisible = true
     }
     //endregion
 
