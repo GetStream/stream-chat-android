@@ -63,7 +63,7 @@ internal class SocketFactory(
                     "$baseWsUrl&authorization=$token&stream-auth-type=jwt"
                 }
             }
-        } catch (_: Throwable) {
+        } catch (_: UnsupportedEncodingException) {
             throw UnsupportedEncodingException("Unable to encode user details json: $json")
         }
     }
