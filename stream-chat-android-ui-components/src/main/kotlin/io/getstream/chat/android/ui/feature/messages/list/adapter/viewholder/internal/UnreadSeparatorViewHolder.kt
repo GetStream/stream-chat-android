@@ -22,6 +22,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemUnreadSeparatorBindi
 import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListListeners
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.DecoratedBaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.font.setTextStyle
@@ -30,6 +31,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 internal class UnreadSeparatorViewHolder(
     parent: ViewGroup,
     decorators: List<Decorator>,
+    private val messageListListeners: MessageListListeners?,
     private val style: MessageListItemStyle,
     internal val binding: StreamUiItemUnreadSeparatorBinding = StreamUiItemUnreadSeparatorBinding.inflate(
         parent.streamThemeInflater,
@@ -45,5 +47,10 @@ internal class UnreadSeparatorViewHolder(
         binding.unreadSeparatorLabel.setTextStyle(style.unreadSeparatorTextStyle)
         binding.unreadSeparatorLabel.text =
             context.resources.getString(R.string.stream_ui_message_list_unread_separator)
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        messageListListeners?.unreadLabelReachedListener?.onUnreadLabelReached()
     }
 }

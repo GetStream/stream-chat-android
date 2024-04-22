@@ -1942,6 +1942,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used when the unread label is reached.
+     *
+     * @param listener The listener to use.
+     */
+    public fun setOnUnreadLabelReachedListener(listener: OnUnreadLabelReachedListener) {
+        listenerContainer.unreadLabelReachedListener = listener
+    }
+
+    /**
      * Used to display the moderated message dialog when you long click on a message that has failed the moderation
      * check.
      *
@@ -2164,6 +2173,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnLinkClickListener {
         public fun onLinkClick(url: String): Boolean
+    }
+
+    public fun interface OnUnreadLabelReachedListener {
+        public fun onUnreadLabelReached()
     }
 
     @Deprecated(

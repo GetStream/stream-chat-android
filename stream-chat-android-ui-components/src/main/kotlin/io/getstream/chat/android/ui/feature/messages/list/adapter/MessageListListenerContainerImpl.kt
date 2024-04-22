@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMess
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
 import io.getstream.chat.android.ui.utils.ListenerDelegate
 
@@ -39,6 +40,7 @@ internal class MessageListListenerContainerImpl(
     userClickListener: OnUserClickListener = OnUserClickListener(EmptyFunctions.ONE_PARAM),
     giphySendListener: OnGiphySendListener = OnGiphySendListener(EmptyFunctions.ONE_PARAM),
     linkClickListener: OnLinkClickListener = OnLinkClickListener(EmptyFunctions.ONE_PARAM),
+    onUnreadLabelReachedListener: OnUnreadLabelReachedListener = OnUnreadLabelReachedListener { },
 ) : MessageListListeners {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Boolean = { _ -> false }
@@ -122,6 +124,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         OnLinkClickListener { url ->
             realListener().onLinkClick(url)
+        }
+    }
+
+    override var unreadLabelReachedListener: OnUnreadLabelReachedListener by ListenerDelegate(
+        onUnreadLabelReachedListener,
+    ) { realListener ->
+        OnUnreadLabelReachedListener {
+            realListener().onUnreadLabelReached()
         }
     }
 }
