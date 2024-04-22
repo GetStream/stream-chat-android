@@ -169,6 +169,12 @@ public class MessageListViewModel(
     public val insideSearch: LiveData<Boolean> = messageListController.isInsideSearch.asLiveData()
 
     /**
+     * Emits the current unread label state.
+     */
+    public val unreadLabel: LiveData<MessageListController.UnreadLabel> =
+        messageListController.unreadLabelState.filterNotNull().asLiveData()
+
+    /**
      * Initializes the full message list state conversion and collection.
      */
     init {
