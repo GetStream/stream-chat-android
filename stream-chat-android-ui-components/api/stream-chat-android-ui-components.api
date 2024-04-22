@@ -4195,6 +4195,8 @@ public abstract class io/getstream/chat/android/ui/viewmodel/messages/MessageLis
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$BackButtonPressed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4252,6 +4254,8 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$EndRegionReached : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$EndRegionReached;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -4280,8 +4284,21 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$HideUnreadLabel : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Z)V
+	public final fun component1 ()Z
+	public final fun copy (Z)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$HideUnreadLabel;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$HideUnreadLabel;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$HideUnreadLabel;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getNavigateToFirstUnreadMessage ()Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$LastMessageRead : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$LastMessageRead;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
