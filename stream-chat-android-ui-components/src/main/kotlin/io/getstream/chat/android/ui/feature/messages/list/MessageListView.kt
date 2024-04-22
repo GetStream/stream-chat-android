@@ -1942,6 +1942,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used when the user interacts with the unread label.
+     *
+     * @param listener The listener to use.
+     */
+    public fun setOnUnreadLabelClickListener(listener: OnUnreadLabelClickListener) {
+        unreadLabelButton.setOnClickListener { listener.onUnreadLabelClick() }
+    }
+
+    /**
      * Sets the handler used when the unread label is reached.
      *
      * @param listener The listener to use.
@@ -2173,6 +2182,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnLinkClickListener {
         public fun onLinkClick(url: String): Boolean
+    }
+
+    public fun interface OnUnreadLabelClickListener {
+        public fun onUnreadLabelClick()
     }
 
     public fun interface OnUnreadLabelReachedListener {
