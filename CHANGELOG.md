@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed `ChannelsState.isLoadingMore` being stuck. [#5239](https://github.com/GetStream/stream-chat-android/pull/5239)
 
 ### ⬆️ Improved
 
