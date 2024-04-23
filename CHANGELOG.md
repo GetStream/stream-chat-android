@@ -61,7 +61,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
+- Added a Button to jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
 
 ### ⚠️ Changed
 
@@ -74,7 +74,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
 
 ### ⚠️ Changed
 
