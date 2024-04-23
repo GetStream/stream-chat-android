@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListItemStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.MessageReplyStyle
 import io.getstream.chat.android.ui.feature.messages.list.ScrollButtonViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.UnreadLabelButtonStyle
 import io.getstream.chat.android.ui.feature.messages.list.UnsupportedAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.view.MediaAttachmentViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.reactions.edit.EditReactionsViewStyle
@@ -64,6 +65,9 @@ public object TransformStyle {
 
     @JvmStatic
     public var scrollButtonStyleTransformer: StyleTransformer<ScrollButtonViewStyle> = noopTransformer()
+
+    @JvmStatic
+    public var unreadLabelButtonStyleTransformer: StyleTransformer<UnreadLabelButtonStyle> = noopTransformer()
 
     @JvmStatic
     public var viewReactionsStyleTransformer: StyleTransformer<ViewReactionsViewStyle> = noopTransformer()

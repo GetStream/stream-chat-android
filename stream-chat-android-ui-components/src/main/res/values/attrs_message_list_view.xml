@@ -16,6 +16,10 @@
 -->
 <resources>
     <declare-styleable name="MessageListView">
+        <attr name="streamUiUnreadLabelButtonEnabled" format="boolean" />
+        <attr name="streamUiUnreadLabelButtonColor" format="color|reference" />
+        <attr name="streamUiUnreadLabelButtonRippleColor" format="color|reference" />
+
         <!-- Scroll button-->
         <attr name="streamUiScrollButtonEnabled" format="boolean" />
         <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
@@ -83,6 +87,17 @@
             <flag name="start" value="0x00800003" />
             <!-- Push object to the end of its container, not changing its size. -->
             <flag name="end" value="0x00800005" />
+        </attr>
+
+
+        <attr name="streamUiUnreadLabelButtonTextSize" format="dimension|reference" />
+        <attr name="streamUiUnreadLabelButtonTextColor" format="color|reference" />
+        <attr name="streamUiUnreadLabelButtonTextFont" format="reference" />
+        <attr name="streamUiUnreadLabelButtonFontAssets" format="string" />
+        <attr name="streamUiUnreadLabelButtonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
         <attr name="streamUiLoadMoreThreshold" format="integer" />
