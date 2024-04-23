@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list
 import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -157,7 +158,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
-    private lateinit var unreadLabelButton: MaterialButton
+    private var unreadLabelButton: MaterialButton? = null
 
     /**
      * Used to enable or disable parts of the UI depending
@@ -619,13 +620,26 @@ public class MessageListView : ConstraintLayout {
         initScrollHelper()
         initLoadingView()
         initEmptyStateView()
+        messageListViewStyle?.unreadLabelButtonStyle?.let { initUnreadLabelButton(it) }
 
         configureAttributes(attr)
-        unreadLabelButton = binding.unreadLabelButton
 
         binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
 
         layoutTransition = LayoutTransition()
+    }
+
+    private fun initUnreadLabelButton(unreadLabelButtonStyle: UnreadLabelButtonStyle) {
+        if (unreadLabelButtonStyle.unreadLabelButtonEnabled) {
+            unreadLabelButton = binding.unreadLabelButton
+            unreadLabelButton?.apply {
+                setTextStyle(unreadLabelButtonStyle.unreadLabelButtonTextStyle)
+                backgroundTintList = ColorStateList.valueOf(unreadLabelButtonStyle.unreadLabelButtonColor)
+                rippleColor = ColorStateList.valueOf(unreadLabelButtonStyle.unreadLabelButtonRippleColor)
+            }
+        } else {
+            binding.unreadLabelButton.isVisible = false
+        }
     }
 
     private fun initLoadingView() {
@@ -1947,7 +1961,7 @@ public class MessageListView : ConstraintLayout {
      * @param listener The listener to use.
      */
     public fun setOnUnreadLabelClickListener(listener: OnUnreadLabelClickListener) {
-        unreadLabelButton.setOnClickListener { listener.onUnreadLabelClick() }
+        unreadLabelButton?.setOnClickListener { listener.onUnreadLabelClick() }
     }
 
     /**
@@ -2038,7 +2052,7 @@ public class MessageListView : ConstraintLayout {
      * Hide the unread label button.
      */
     public fun hideUnreadLabelButton() {
-        unreadLabelButton.isVisible = false
+        unreadLabelButton?.isVisible = false
     }
 
     /**
@@ -2047,7 +2061,7 @@ public class MessageListView : ConstraintLayout {
      * @param unreadCount The number of unread messages.
      */
     public fun showUnreadLabelButton(unreadCount: Int) {
-        unreadLabelButton.isVisible = true
+        unreadLabelButton?.isVisible = true
     }
     //endregion
 
