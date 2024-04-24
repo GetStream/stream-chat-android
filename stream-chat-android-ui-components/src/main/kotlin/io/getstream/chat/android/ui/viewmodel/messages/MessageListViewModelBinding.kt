@@ -63,7 +63,16 @@ public fun MessageListViewModel.bindView(
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
-    view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
+    view.setMessageFlagHandler {
+        onEvent(
+            FlagMessage(
+                it,
+                reason = null,
+                customData = emptyMap(),
+                view::handleFlagMessageResult,
+            ),
+        )
+    }
     view.setMessagePinHandler { onEvent(MessageListViewModel.Event.PinMessage(it)) }
     view.setMessageUnpinHandler { onEvent(MessageListViewModel.Event.UnpinMessage(it)) }
     view.setMessageMarkAsUnreadHandler { onEvent(MessageListViewModel.Event.MarkAsUnreadMessage(it)) }

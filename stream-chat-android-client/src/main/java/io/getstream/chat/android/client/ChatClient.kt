@@ -2545,13 +2545,29 @@ internal constructor(
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
     @CheckResult
-    public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
+    public fun flagUser(
+        userId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> = api.flagUser(
+        userId,
+        reason,
+        customData,
+    )
 
     @CheckResult
     public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
 
     @CheckResult
-    public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
+    public fun flagMessage(
+        messageId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> = api.flagMessage(
+        messageId,
+        reason,
+        customData,
+    )
 
     @CheckResult
     public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)

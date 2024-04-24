@@ -672,7 +672,15 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             modifier = Modifier.padding(16.dp),
             title = stringResource(id = R.string.stream_compose_flag_message_title),
             message = stringResource(id = R.string.stream_compose_flag_message_text),
-            onPositiveAction = remember(listViewModel) { { listViewModel.flagMessage(flagAction.message) } },
+            onPositiveAction = remember(listViewModel) {
+                {
+                    listViewModel.flagMessage(
+                        flagAction.message,
+                        reason = null,
+                        customData = emptyMap(),
+                    )
+                }
+            },
             onDismiss = remember(listViewModel) { { listViewModel.dismissMessageAction(flagAction) } },
         )
     }
