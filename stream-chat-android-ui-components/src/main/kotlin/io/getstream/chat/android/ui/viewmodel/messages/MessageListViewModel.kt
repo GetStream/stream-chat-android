@@ -229,7 +229,11 @@ public class MessageListViewModel(
             is Event.ShadowBanUser -> messageListController.shadowBanUser(event.user.id)
             is Event.RemoveShadowBanFromUser -> messageListController.removeShadowBanFromUser(event.user.id)
             is Event.RemoveAttachment -> messageListController.removeAttachment(event.messageId, event.attachment)
-            is Event.FlagMessage -> messageListController.flagMessage(event.message) { result ->
+            is Event.FlagMessage -> messageListController.flagMessage(
+                event.message,
+                event.reason,
+                event.customData,
+            ) { result ->
                 event.resultHandler(result)
             }
             is Event.BanUser -> messageListController.banUser(
@@ -524,7 +528,12 @@ public class MessageListViewModel(
          * @param resultHandler Lambda function that handles the result of the operation.
          * e.g. if the message was successfully flagged or not.
          */
-        public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit) = { }) : Event()
+        public data class FlagMessage(
+            val message: Message,
+            val reason: String?,
+            val customData: Map<String, String>,
+            val resultHandler: ((Result<Flag>) -> Unit) = { },
+        ) : Event()
 
         /**
          * When the user pins a message.

@@ -1522,11 +1522,23 @@ public class MessageListController(
     /**
      * Flags the selected message.
      *
-     * @param message Message to delete.
+     * @param message Message to be flagged.
+     * @param reason The reason for flagging the message.
+     * @param customData Additional data to send with the flag.
+     * @param onResult Handler that notifies the result of the flag action.
      */
-    public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
+    public fun flagMessage(
+        message: Message,
+        reason: String?,
+        customData: Map<String, String>,
+        onResult: (Result<Flag>) -> Unit = {},
+    ) {
         _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
-        chatClient.flagMessage(message.id).enqueue { response ->
+        chatClient.flagMessage(
+            message.id,
+            reason,
+            customData,
+        ).enqueue { response ->
             onResult(response)
             if (response is Result.Failure) {
                 val error = response.value

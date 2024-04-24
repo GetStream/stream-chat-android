@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api2.UrlQueryPayload
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
@@ -49,7 +50,7 @@ internal interface ModerationApi {
     fun unmuteChannel(@Body body: MuteChannelRequest): RetrofitCall<CompletableResponse>
 
     @POST("/moderation/flag")
-    fun flag(@Body body: Map<String, String>): RetrofitCall<FlagResponse>
+    fun flag(@Body body: FlagRequest): RetrofitCall<FlagResponse>
 
     @POST("/moderation/unflag")
     fun unflag(@Body body: Map<String, String>): RetrofitCall<FlagResponse>
