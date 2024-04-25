@@ -7,6 +7,8 @@
 - `Channel.lastMessageAt` is not updated when there is a new message within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
 
 ### ✅ Added
+- Added `reason` and `custom` fields to flag message endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reason` and `custom` fields to flag user endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
 
 ### ⚠️ Changed
 
