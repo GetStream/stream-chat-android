@@ -50,8 +50,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun enableSlowMode (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun enrichUrl (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun fetchCurrentUser ()Lio/getstream/result/call/Call;
-	public final fun flagMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public final fun flagUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun flagMessage (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/result/call/Call;
+	public final fun flagUser (Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;)Lio/getstream/result/call/Call;
 	public final fun getAppSettings ()Lio/getstream/chat/android/models/AppSettings;
 	public final fun getChannel (Ljava/lang/String;IIZ)Lio/getstream/result/call/Call;
 	public final fun getChannel (Ljava/lang/String;Ljava/lang/String;IIZ)Lio/getstream/result/call/Call;

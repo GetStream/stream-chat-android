@@ -2,19 +2,20 @@ package io.getstream.chat.docs.java.client.cms;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.models.querysort.QuerySortByField;
-import io.getstream.chat.android.models.querysort.QuerySorter;
 import io.getstream.chat.android.client.channel.ChannelClient;
 import io.getstream.chat.android.models.BannedUser;
 import io.getstream.chat.android.models.BannedUsersSort;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.models.Filters;
 import io.getstream.chat.android.models.Flag;
 import io.getstream.chat.android.models.Mute;
 import io.getstream.chat.android.models.User;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
 
 public class Moderation {
     private ChatClient client;
@@ -28,7 +29,11 @@ public class Moderation {
         class Flags {
 
             public void flag() {
-                client.flagMessage("message-id").enqueue(result -> {
+                client.flagMessage(
+                        "message-id",
+                        "This message is inappropriate",
+                        Map.of("extra_info", "more details")
+                ).enqueue(result -> {
                     if (result.isSuccess()) {
                         // Message was flagged
                         Flag flag = result.getOrNull();
@@ -37,7 +42,11 @@ public class Moderation {
                     }
                 });
 
-                client.flagUser("user-id").enqueue(result -> {
+                client.flagUser(
+                        "user-id",
+                        "This user is a spammer",
+                        Map.of("extra_info", "more details")
+                ).enqueue(result -> {
                     if (result.isSuccess()) {
                         // User was flagged
                         Flag flag = result.getOrNull();
