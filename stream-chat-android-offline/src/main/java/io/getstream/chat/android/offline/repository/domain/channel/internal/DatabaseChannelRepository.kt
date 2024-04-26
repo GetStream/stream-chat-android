@@ -222,7 +222,11 @@ internal class DatabaseChannelRepository(
             insertChannel(
                 it.copy(
                     messages = listOf(lastMessage),
-                    lastMessageAt = lastMessage.createdAt ?: lastMessage.createdLocallyAt ?: Date(0),
+                    lastMessageAt = it.lastMessageAt
+                        .takeIf { lastMessage.parentId != null && !lastMessage.showInChannel }
+                        ?: lastMessage.createdAt
+                        ?: lastMessage.createdLocallyAt
+                        ?: Date(0),
                 ),
             )
         }
@@ -242,7 +246,10 @@ internal class DatabaseChannelRepository(
             lastMessageAt = maxOf(
                 lastMessageAt,
                 cachedChannel.lastMessageAt,
-                messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt ?: Date(0) },
+                messages
+                    .filterNot { it.parentId != null && !it.showInChannel }
+                    .lastOrNull()
+                    ?.let { it.createdAt ?: it.createdLocallyAt ?: Date(0) },
             ),
             hiddenMessagesBefore = hideMessagesBefore,
             members = members,

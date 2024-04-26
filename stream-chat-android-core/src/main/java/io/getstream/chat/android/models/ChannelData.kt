@@ -130,6 +130,7 @@ public data class ChannelData(
             cooldown = cooldown,
             lastMessageAt = messagesList
                 .filterNot { it.shadowed }
+                .filterNot { it.parentId != null && !it.showInChannel }
                 .lastOrNull()
                 ?.let { it.createdAt ?: it.createdLocallyAt },
             createdBy = createdBy,
