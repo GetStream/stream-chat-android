@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2.testdata
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamModerationDetailsDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -40,6 +41,14 @@ internal object MessageDtoTestData {
           "own_reactions": [],
           "reaction_counts": {"like":  2},
           "reaction_scores": {"like":  10},
+          "reaction_groups": {
+            "like": {
+              "count": 2,
+              "sum_scores": 10,
+              "first_reaction_at": "2020-06-10T11:04:31.588Z",
+              "last_reaction_at": "2020-06-10T11:04:31.588Z"
+            }
+          },
           "reply_count": 0,
           "deleted_reply_count": 0,
           "parent_id": "parentId",
@@ -127,6 +136,15 @@ internal object MessageDtoTestData {
         deleted_reply_count = 0,
         reaction_counts = mapOf("like" to 2),
         reaction_scores = mapOf("like" to 10),
+        reaction_groups = mapOf(
+            "like" to
+                DownstreamReactionGroupDto(
+                    count = 2,
+                    sum_scores = 10,
+                    first_reaction_at = Date(1591787071588),
+                    last_reaction_at = Date(1591787071588),
+                ),
+        ),
         latest_reactions = listOf(ReactionDtoTestData.downstreamReactionWithoutExtraData),
         own_reactions = emptyList(),
         show_in_channel = false,
@@ -184,6 +202,7 @@ internal object MessageDtoTestData {
           "own_reactions": [],
           "reaction_counts": {},
           "reaction_scores": {},
+          "reaction_groups": {},
           "reply_count": 0,
           "deleted_reply_count": 0,
           "pinned": false,
@@ -239,6 +258,7 @@ internal object MessageDtoTestData {
         deleted_reply_count = 0,
         reaction_counts = emptyMap(),
         reaction_scores = emptyMap(),
+        reaction_groups = emptyMap(),
         latest_reactions = emptyList(),
         own_reactions = emptyList(),
         show_in_channel = false,
@@ -296,6 +316,7 @@ internal object MessageDtoTestData {
           "own_reactions": [],
           "reaction_counts": {},
           "reaction_scores": {},
+          "reaction_groups": {},
           "reply_count": 1,
           "deleted_reply_count": 2,
           "pinned": false,
@@ -328,6 +349,7 @@ internal object MessageDtoTestData {
         deleted_reply_count = 2,
         reaction_counts = emptyMap(),
         reaction_scores = emptyMap(),
+        reaction_groups = emptyMap(),
         latest_reactions = emptyList(),
         own_reactions = emptyList(),
         show_in_channel = false,

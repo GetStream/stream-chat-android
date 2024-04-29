@@ -9,6 +9,7 @@
 ### ✅ Added
 - Added `reason` and `custom` fields to flag message endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
 - Added `reason` and `custom` fields to flag user endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reactionGroups` field to `Message` entity. [#5247](https://github.com/GetStream/stream-chat-android/pull/5247)
 
 ### ⚠️ Changed
 
