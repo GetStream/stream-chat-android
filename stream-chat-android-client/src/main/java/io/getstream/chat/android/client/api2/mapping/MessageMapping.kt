@@ -68,6 +68,7 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         pinnedBy = pinned_by?.toDomain(),
         reactionCounts = reaction_counts.orEmpty().toMutableMap(),
         reactionScores = reaction_scores.orEmpty().toMutableMap(),
+        reactionGroups = reaction_groups.orEmpty().mapValues { it.value.toDomain() },
         replyCount = reply_count,
         deletedReplyCount = deleted_reply_count,
         replyMessageId = quoted_message_id,
