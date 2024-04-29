@@ -31,6 +31,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PushProvider
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -145,6 +146,7 @@ public fun randomMessage(
     deletedReplyCount: Int = randomInt(),
     reactionCounts: Map<String, Int> = mapOf(),
     reactionScores: Map<String, Int> = mapOf(),
+    reactionGroups: Map<String, ReactionGroup> = mapOf(),
     syncStatus: SyncStatus = randomSyncStatus(),
     type: String = randomString(),
     latestReactions: List<Reaction> = listOf(),
@@ -182,6 +184,7 @@ public fun randomMessage(
     deletedReplyCount = deletedReplyCount,
     reactionCounts = reactionCounts,
     reactionScores = reactionScores,
+    reactionGroups = reactionGroups,
     syncStatus = syncStatus,
     type = type,
     latestReactions = latestReactions,
