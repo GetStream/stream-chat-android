@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -157,17 +158,32 @@ internal class MessageListViewModelTest {
         val messages = listOf(messageToFlag, message2)
         val messageState = MessagesState.Result(messages)
         val chatClient = MockChatClientBuilder().build()
+        val reason = randomString()
+        val customData = mapOf(randomString() to randomString())
 
         val viewModel = Fixture(chatClient = chatClient)
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
-            .givenFlagMessage(message = messageToFlag)
-            .get()
+            .givenFlagMessage(
+                message = messageToFlag,
+                reason = reason,
+                customData = customData,
+            ).get()
 
-        viewModel.onEvent(MessageListViewModel.Event.FlagMessage(messageToFlag))
+        viewModel.onEvent(
+            MessageListViewModel.Event.FlagMessage(
+                message = messageToFlag,
+                reason = reason,
+                customData = customData,
+            ),
+        )
 
-        verify(chatClient).flagMessage(messageId = messageToFlag.id)
+        verify(chatClient).flagMessage(
+            messageId = messageToFlag.id,
+            reason = reason,
+            customData = customData,
+        )
     }
 
     @Test
@@ -251,8 +267,14 @@ internal class MessageListViewModelTest {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
         }
 
-        fun givenFlagMessage(message: Message) = apply {
-            whenever(chatClient.flagMessage(message.id)) doReturn mock()
+        fun givenFlagMessage(message: Message, reason: String, customData: Map<String, String>) = apply {
+            whenever(
+                chatClient.flagMessage(
+                    messageId = message.id,
+                    reason = reason,
+                    customData = customData,
+                ),
+            ) doReturn mock()
         }
 
         fun givenDeleteMessage() = apply {
