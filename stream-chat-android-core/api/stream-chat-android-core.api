@@ -1424,6 +1424,34 @@ public final class io/getstream/chat/android/models/Reaction$Builder {
 	public final fun withUserId (Ljava/lang/String;)Lio/getstream/chat/android/models/Reaction$Builder;
 }
 
+public final class io/getstream/chat/android/models/ReactionGroup {
+	public fun <init> (IILjava/util/Date;Ljava/util/Date;)V
+	public final fun component1 ()I
+	public final fun component2 ()I
+	public final fun component3 ()Ljava/util/Date;
+	public final fun component4 ()Ljava/util/Date;
+	public final fun copy (IILjava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ReactionGroup;IILjava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/ReactionGroup;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getCount ()I
+	public final fun getFirstReactionAt ()Ljava/util/Date;
+	public final fun getLastReactionAt ()Ljava/util/Date;
+	public final fun getSumScore ()I
+	public fun hashCode ()I
+	public final fun newBuilder ()Lio/getstream/chat/android/models/ReactionGroup$Builder;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/models/ReactionGroup$Builder {
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/models/ReactionGroup;)V
+	public final fun build ()Lio/getstream/chat/android/models/ReactionGroup;
+	public final fun count (I)Lio/getstream/chat/android/models/ReactionGroup$Builder;
+	public final fun firstReactionAt (Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup$Builder;
+	public final fun lastReactionAt (Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup$Builder;
+	public final fun sumScore (I)Lio/getstream/chat/android/models/ReactionGroup$Builder;
+}
+
 public final class io/getstream/chat/android/models/SearchMessagesResult {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/SearchWarning;)V
