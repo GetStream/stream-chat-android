@@ -4,6 +4,7 @@
 - Shadowed messages are filtered. [#5234](https://github.com/GetStream/stream-chat-android/pull/5234)
 
 ### ⬆️ Improved
+- `Channel.lastMessageAt` is not updated when there is a new message within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
 
 ### ✅ Added
 
@@ -59,6 +60,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
 
 ### ✅ Added
 - Added a Button to jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
@@ -72,6 +74,7 @@
 - Fixed `ChannelsState.isLoadingMore` being stuck. [#5239](https://github.com/GetStream/stream-chat-android/pull/5239)
 
 ### ⬆️ Improved
+- Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
 
 ### ✅ Added
 
