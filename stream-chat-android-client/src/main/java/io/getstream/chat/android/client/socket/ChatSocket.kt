@@ -191,7 +191,6 @@ internal open class ChatSocket(
     }
 
     private suspend fun handleEvent(chatEvent: ChatEvent) {
-        StreamLog.v("Chat:Events") { "[handleEvent] Received $chatEvent" }
         when (chatEvent) {
             is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
             is HealthEvent -> healthMonitor.ack()

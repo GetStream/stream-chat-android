@@ -30,6 +30,7 @@ import io.getstream.chat.android.offline.repository.domain.message.internal.Mess
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
+import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserEntity
 import io.getstream.chat.android.randomBoolean
 import io.getstream.chat.android.randomCID
@@ -51,11 +52,12 @@ internal fun randomUserEntity(
     updatedAt: Date? = null,
     lastActive: Date? = null,
     invisible: Boolean = randomBoolean(),
+    privacySettings: PrivacySettingsEntity? = null,
     banned: Boolean = randomBoolean(),
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
 ): UserEntity =
-    UserEntity(id, originalId, name, role, image, createdAt, updatedAt, lastActive, invisible, banned, mutes, extraData)
+    UserEntity(id, originalId, name, role, image, createdAt, updatedAt, lastActive, invisible, privacySettings, banned, mutes, extraData)
 
 internal fun randomMessageEntity(
     id: String = randomString(),

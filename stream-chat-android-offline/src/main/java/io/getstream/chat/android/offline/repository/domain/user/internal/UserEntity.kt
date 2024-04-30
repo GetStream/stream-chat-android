@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import io.getstream.chat.android.PrivacySettings
 import java.util.Date
 
 /**
@@ -54,6 +55,7 @@ internal data class UserEntity(
     val updatedAt: Date? = null,
     val lastActive: Date? = null,
     val invisible: Boolean = false,
+    val privacySettings: PrivacySettingsEntity?,
     val banned: Boolean = false,
     val mutes: List<String> = emptyList(),
     val extraData: Map<String, Any> = emptyMap(),
