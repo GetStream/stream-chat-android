@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOL
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_UP
@@ -35,6 +36,7 @@ import io.getstream.chat.ui.sample.feature.componentbrowser.utils.randomChannel
 import io.getstream.chat.ui.sample.feature.componentbrowser.utils.randomMember
 import io.getstream.chat.ui.sample.feature.componentbrowser.utils.randomMessage
 import io.getstream.chat.ui.sample.feature.componentbrowser.utils.randomUser
+import java.util.Date
 
 @InternalStreamChatApi
 class ComponentBrowserHomeFragment : Fragment() {
@@ -116,11 +118,31 @@ class ComponentBrowserHomeFragment : Fragment() {
     private fun setupViewReactionsView() {
         binding.viewReactionsView.setMessage(
             message = randomMessage().copy(
-                reactionCounts = mutableMapOf(
-                    LOVE to 10,
-                    WUT to 20,
-                    LOL to 20,
-                    THUMBS_UP to 20,
+                reactionGroups = mutableMapOf(
+                    LOVE to ReactionGroup(
+                        count = 10,
+                        sumScore = 10,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
+                    WUT to ReactionGroup(
+                        count = 20,
+                        sumScore = 20,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
+                    LOL to ReactionGroup(
+                        count = 20,
+                        sumScore = 20,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
+                    THUMBS_UP to ReactionGroup(
+                        count = 20,
+                        sumScore = 20,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
                 ),
                 ownReactions = mutableListOf(
                     Reaction(type = LOVE),

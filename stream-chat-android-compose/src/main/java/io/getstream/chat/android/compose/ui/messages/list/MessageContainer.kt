@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
@@ -52,6 +53,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorIt
  * Represents the message item container that allows us to customize each type of item in the MessageList.
  *
  * @param messageListItemState The state of the message list item.
+ * @param reactionSorting The sorting of reactions for the message.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
@@ -70,6 +72,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorIt
 @Composable
 public fun MessageContainer(
     messageListItemState: MessageListItemState,
+    reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
@@ -91,6 +94,7 @@ public fun MessageContainer(
     messageItemContent: @Composable (MessageItemState) -> Unit = {
         DefaultMessageItem(
             messageItem = it,
+            reactionSorting = reactionSorting,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
@@ -233,9 +237,11 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun DefaultMessageItem(
     messageItem: MessageItemState,
+    reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
@@ -245,6 +251,7 @@ internal fun DefaultMessageItem(
 ) {
     MessageItem(
         messageItem = messageItem,
+        reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,

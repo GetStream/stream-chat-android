@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -172,6 +173,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = listViewModel,
+                    reactionSorting = ReactionSortingByFirstReactionAt,
                     messagesLazyListState = if (listViewModel.isInThread) rememberMessageListState() else lazyListState,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
