@@ -3856,6 +3856,7 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageKt {
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 	public static final fun getSupportedLatestReactions (Lio/getstream/chat/android/models/Message;)Ljava/util/List;
 	public static final fun getSupportedReactionCounts (Lio/getstream/chat/android/models/Message;)Ljava/util/Map;
+	public static final fun getSupportedReactionGroups (Lio/getstream/chat/android/models/Message;)Ljava/util/Map;
 	public static final fun getUpdatedAtOrNull (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 	public static final fun hasNoAttachments (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun hasReactions (Lio/getstream/chat/android/models/Message;)Z
