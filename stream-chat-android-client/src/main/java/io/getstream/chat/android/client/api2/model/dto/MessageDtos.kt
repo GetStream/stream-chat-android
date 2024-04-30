@@ -83,6 +83,7 @@ internal data class DownstreamMessageDto(
     val quoted_message_id: String?,
     val reaction_counts: Map<String, Int>?,
     val reaction_scores: Map<String, Int>?,
+    val reaction_groups: Map<String, DownstreamReactionGroupDto>?,
     val reply_count: Int,
     val deleted_reply_count: Int,
     val shadowed: Boolean = false,
