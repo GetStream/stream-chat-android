@@ -74,6 +74,7 @@ import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -93,6 +94,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  *
  * @param messageItem The message item to show, which holds the message and the group position, if the message is in
  * a group of messages from the same user.
+ * @param reactionSorting The sorting for the reactions, if we have any.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param modifier Modifier for styling.
  * @param onReactionsClick Handler when the user taps on message reactions.
@@ -116,6 +118,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 @Composable
 public fun MessageItem(
     messageItem: MessageItemState,
+    reactionSorting: ReactionSorting,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
@@ -129,6 +132,7 @@ public fun MessageItem(
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
             messageItem = it,
+            reactionSorting = reactionSorting,
             onReactionsClick = onReactionsClick,
         )
     },
@@ -253,11 +257,14 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
  * By default, we show if the message is pinned and a list of reactions for the message.
  *
  * @param messageItem The message item to show the content for.
+ * @param reactionSorting The sorting for the reactions, if we have any.
  * @param onReactionsClick Handler when the user taps on message reactions.
  */
+@Suppress("LongMethod")
 @Composable
 internal fun DefaultMessageItemHeaderContent(
     messageItem: MessageItemState,
+    reactionSorting: ReactionSorting,
     onReactionsClick: (Message) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -303,7 +310,7 @@ internal fun DefaultMessageItemHeaderContent(
             .filter { iconFactory.isReactionSupported(it.key) }
             .takeIf { it.isNotEmpty() }
             ?.toList()
-            ?.sortedBy { it.second.firstReactionAt }
+            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }
             ?.map { (type, _) ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)

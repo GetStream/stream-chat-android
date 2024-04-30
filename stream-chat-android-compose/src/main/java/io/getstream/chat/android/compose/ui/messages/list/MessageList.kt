@@ -35,6 +35,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -47,6 +49,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
  * @param viewModel The ViewModel that stores all the data and business logic required to show a
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
+ * @param reactionSorting The sorting of the reactions. Default: [ReactionSortingByFirstReactionAt].
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -77,6 +80,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
+    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
@@ -118,6 +122,7 @@ public fun MessageList(
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItemState = messageListItem,
+            reactionSorting = reactionSorting,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
@@ -128,6 +133,7 @@ public fun MessageList(
     },
 ) {
     MessageList(
+        reactionSorting = reactionSorting,
         modifier = modifier,
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
@@ -154,6 +160,7 @@ public fun MessageList(
  * The default message container item.
  *
  * @param messageListItemState The state of the message list item.
+ * @param reactionSorting The sorting of the reactions.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onLongItemClick Handler when the user long taps on an item.
@@ -161,9 +168,11 @@ public fun MessageList(
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun DefaultMessageContainer(
     messageListItemState: MessageListItemState,
+    reactionSorting: ReactionSorting,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
@@ -173,6 +182,7 @@ internal fun DefaultMessageContainer(
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
+        reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
@@ -219,6 +229,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param currentState The state of the component, represented by [MessageListState].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
+ * @param reactionSorting The sorting of the reactions.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -248,6 +259,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 public fun MessageList(
     currentState: MessageListState,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
@@ -279,6 +291,7 @@ public fun MessageList(
     itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(
             messageListItemState = it,
+            reactionSorting = reactionSorting,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
