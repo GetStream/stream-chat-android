@@ -297,13 +297,14 @@ internal fun DefaultMessageItemHeaderContent(
 
     if (!message.isDeleted()) {
         val ownReactions = message.ownReactions
-        val reactionCounts = message.reactionCounts.ifEmpty { return }
+        val reactionGroups = message.reactionGroups.ifEmpty { return }
         val iconFactory = ChatTheme.reactionIconFactory
-        reactionCounts
+        reactionGroups
             .filter { iconFactory.isReactionSupported(it.key) }
             .takeIf { it.isNotEmpty() }
-            ?.map { it.key }
-            ?.map { type ->
+            ?.toList()
+            ?.sortedBy { it.second.firstReactionAt }
+            ?.map { (type, _) ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(

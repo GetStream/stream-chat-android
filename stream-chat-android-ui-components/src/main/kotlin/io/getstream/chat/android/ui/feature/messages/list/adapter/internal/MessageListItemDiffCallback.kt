@@ -36,7 +36,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 oldMessage.text == newMessage.text &&
                     oldMessage.replyTo?.text == newMessage.replyTo?.text &&
                     oldMessage.reactionScores == newMessage.reactionScores &&
-                    oldMessage.reactionCounts == newMessage.reactionCounts &&
+                    oldMessage.reactionGroups == newMessage.reactionGroups &&
                     oldMessage.attachments == newMessage.attachments &&
                     oldMessage.replyCount == newMessage.replyCount &&
                     oldMessage.syncStatus == newMessage.syncStatus &&
@@ -74,7 +74,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             MessageListItemPayloadDiff(
                 text = oldMessage.text != newMessage.text,
                 replyText = oldMessage.replyTo?.text != newMessage.replyTo?.text,
-                reactions = (oldMessage.reactionCounts != newMessage.reactionCounts) || (oldMessage.reactionScores != newMessage.reactionScores),
+                reactions = (oldMessage.reactionGroups != newMessage.reactionGroups) || (oldMessage.reactionScores != newMessage.reactionScores),
                 attachments = oldMessage.attachments != newMessage.attachments,
                 replies = oldMessage.replyCount != newMessage.replyCount,
                 syncStatus = oldMessage.syncStatus != newMessage.syncStatus,
