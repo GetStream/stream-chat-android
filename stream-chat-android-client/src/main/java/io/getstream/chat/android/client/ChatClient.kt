@@ -2892,6 +2892,14 @@ internal constructor(
      */
     @CheckResult
     public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val currentUser = clientState.user.value
+        if (currentUser?.privacySettings?.typingIndicators?.enabled == false) {
+            logger.v { "[keystroke] rejected (typing indicators are disabled)" }
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Typing indicators are disabled for the current user."),
+            )
+        }
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
@@ -2933,6 +2941,14 @@ internal constructor(
      */
     @CheckResult
     public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val currentUser = clientState.user.value
+        if (currentUser?.privacySettings?.typingIndicators?.enabled == false) {
+            logger.v { "[stopTyping] rejected (typing indicators are disabled)" }
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Typing indicators are disabled for the current user."),
+            )
+        }
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()

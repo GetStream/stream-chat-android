@@ -88,6 +88,9 @@ public object ChannelCapabilities {
     public const val SET_CHANNEL_COOLDOWN: String = "set-channel-cooldown"
 
     /** Ability to send and receive typing events. */
+    @Deprecated(
+        "Use TYPING_EVENTS instead."
+    )
     public const val SEND_TYPING_EVENTS: String = "send-typing-events"
 
     /** Ability to update any message in the channel. */
