@@ -56,8 +56,10 @@ internal fun randomUserEntity(
     banned: Boolean = randomBoolean(),
     mutes: List<String> = emptyList(),
     extraData: Map<String, Any> = emptyMap(),
-): UserEntity =
-    UserEntity(id, originalId, name, role, image, createdAt, updatedAt, lastActive, invisible, privacySettings, banned, mutes, extraData)
+): UserEntity = UserEntity(
+    id, originalId, name, role, image, createdAt, updatedAt, lastActive,
+    invisible, privacySettings, banned, mutes, extraData,
+)
 
 internal fun randomMessageEntity(
     id: String = randomString(),

@@ -19,7 +19,6 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import io.getstream.chat.android.PrivacySettings
 import java.util.Date
 
 /**

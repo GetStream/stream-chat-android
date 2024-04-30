@@ -89,7 +89,7 @@ public object ChannelCapabilities {
 
     /** Ability to send and receive typing events. */
     @Deprecated(
-        "Use TYPING_EVENTS instead."
+        "Use TYPING_EVENTS instead.",
     )
     public const val SEND_TYPING_EVENTS: String = "send-typing-events"
 

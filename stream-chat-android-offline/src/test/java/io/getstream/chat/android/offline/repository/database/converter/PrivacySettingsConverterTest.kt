@@ -16,9 +16,7 @@
 
 package io.getstream.chat.android.offline.repository.database.converter
 
-import io.getstream.chat.android.offline.repository.database.converter.internal.ModerationDetailsConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.PrivacySettingsConverter
-import io.getstream.chat.android.offline.repository.domain.message.internal.ModerationDetailsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.PrivacySettingsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.ReadReceiptsEntity
 import io.getstream.chat.android.offline.repository.domain.user.internal.TypingIndicatorsEntity
@@ -38,10 +36,10 @@ internal class PrivacySettingsConverterTest {
         val converter = PrivacySettingsConverter()
         val settings = PrivacySettingsEntity(
             typingIndicators = TypingIndicatorsEntity(
-                enabled = false
+                enabled = false,
             ),
             readReceipts = ReadReceiptsEntity(
-                enabled = false
+                enabled = false,
             ),
         )
 
@@ -63,10 +61,10 @@ internal class PrivacySettingsConverterTest {
         val decoded = converter.stringToPrivacySettings(encoded)
         decoded shouldBeEqualTo PrivacySettingsEntity(
             typingIndicators = TypingIndicatorsEntity(
-                enabled = false
+                enabled = false,
             ),
             readReceipts = ReadReceiptsEntity(
-                enabled = false
+                enabled = false,
             ),
         )
     }

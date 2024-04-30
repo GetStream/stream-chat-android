@@ -19,8 +19,6 @@ package io.getstream.chat.android.offline.repository.domain.user.internal
 import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.ReadReceipts
 import io.getstream.chat.android.TypingIndicators
-import io.getstream.chat.android.models.MessageModerationAction
-import io.getstream.chat.android.models.MessageModerationDetails
 
 internal fun PrivacySettings.toEntity(): PrivacySettingsEntity {
     return PrivacySettingsEntity(

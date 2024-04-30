@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
-import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import kotlinx.coroutines.Job
