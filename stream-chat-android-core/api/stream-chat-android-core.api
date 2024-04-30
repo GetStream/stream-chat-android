@@ -1455,6 +1455,33 @@ public final class io/getstream/chat/android/models/ReactionGroup$Builder {
 	public final fun sumScore (I)Lio/getstream/chat/android/models/ReactionGroup$Builder;
 }
 
+public abstract interface class io/getstream/chat/android/models/ReactionSorting : java/util/Comparator {
+}
+
+public final class io/getstream/chat/android/models/ReactionSortingByCount : io/getstream/chat/android/models/ReactionSorting {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingByCount;
+	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
+	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+}
+
+public final class io/getstream/chat/android/models/ReactionSortingByFirstReactionAt : io/getstream/chat/android/models/ReactionSorting {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingByFirstReactionAt;
+	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
+	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+}
+
+public final class io/getstream/chat/android/models/ReactionSortingByLastReactionAt : io/getstream/chat/android/models/ReactionSorting {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingByLastReactionAt;
+	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
+	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+}
+
+public final class io/getstream/chat/android/models/ReactionSortingBySumScore : io/getstream/chat/android/models/ReactionSorting {
+	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingBySumScore;
+	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
+	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+}
+
 public final class io/getstream/chat/android/models/SearchMessagesResult {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/SearchWarning;)V
