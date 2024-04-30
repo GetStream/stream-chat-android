@@ -454,6 +454,13 @@
             <enum name="by_user_inverted" value="3" />
         </attr>
 
+        <attr name="streamUiMessageOptionsReactionSorting" format="enum">
+            <enum name="by_first_reaction_at" value="0" />
+            <enum name="by_last_reaction_at" value="1" />
+            <enum name="by_sum_score" value="2" />
+            <enum name="by_count" value="3" />
+        </attr>
+
         <!-- User reactions card -->
         <attr name="streamUiUserReactionsBackgroundColor" format="color" />
 

@@ -112,7 +112,7 @@ public class ViewReactionsView : RecyclerView {
     private fun createReactionItems(message: Message): List<ReactionItem> {
         return message.supportedReactionGroups
             .toList()
-            .sortedBy { it.second.firstReactionAt }
+            .sortedWith { o1, o2 -> reactionsViewStyle.reactionSorting.compare(o1.second, o2.second) }
             .mapNotNull { (type, _) ->
                 ChatUI.supportedReactions.getReactionDrawable(type)?.let {
                     ReactionItem(

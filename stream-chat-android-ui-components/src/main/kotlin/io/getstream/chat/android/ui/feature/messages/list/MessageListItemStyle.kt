@@ -500,6 +500,9 @@ public data class MessageListItemStyle(
                 .bubbleBorderWidthTheirs(R.styleable.MessageListView_streamUiMessageReactionsBubbleBorderWidthTheirs)
                 .bubbleColorMine(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorMine)
                 .bubbleColorTheirs(R.styleable.MessageListView_streamUiMessageReactionsBubbleColorTheirs)
+                .messageOptionsReactionSorting(
+                    R.styleable.MessageListView_streamUiMessageOptionsReactionSorting,
+                )
                 .build()
 
             val editReactionsViewStyle = EditReactionsViewStyle.Builder(attributes, context)
