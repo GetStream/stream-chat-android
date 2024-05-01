@@ -16,18 +16,26 @@
 
 package io.getstream.chat.android.models
 
+import io.getstream.log.StreamLog
+
+private const val TAG = "Chat:ReactionSorting"
+private const val DEBUG = false
+
 /**
  * A comparator used to sort [ReactionGroup]s.
  *
  */
-public interface ReactionSorting : Comparator<ReactionGroup>
+public fun interface ReactionSorting : Comparator<ReactionGroup>
 
 /**
  * Sorts [ReactionGroup]s by the sum of their scores.
  *
  */
-public object ReactionSortingBySumScore : ReactionSorting {
+public data object ReactionSortingBySumScore : ReactionSorting {
     override fun compare(o1: ReactionGroup, o2: ReactionGroup): Int {
+        if (DEBUG) {
+            StreamLog.v(TAG) { "[compareBySumScore] o1.type: ${o1.type}, o2.type: ${o2.type}" }
+        }
         return o1.sumScore.compareTo(o2.sumScore)
     }
 }
@@ -36,8 +44,11 @@ public object ReactionSortingBySumScore : ReactionSorting {
  * Sorts [ReactionGroup]s by their count.
  *
  */
-public object ReactionSortingByCount : ReactionSorting {
+public data object ReactionSortingByCount : ReactionSorting {
     override fun compare(o1: ReactionGroup, o2: ReactionGroup): Int {
+        if (DEBUG) {
+            StreamLog.v(TAG) { "[compareByCount] o1.type: ${o1.type}, o2.type: ${o2.type}" }
+        }
         return o1.count.compareTo(o2.count)
     }
 }
@@ -46,8 +57,11 @@ public object ReactionSortingByCount : ReactionSorting {
  * Sorts [ReactionGroup]s by the date of their last reaction.
  *
  */
-public object ReactionSortingByLastReactionAt : ReactionSorting {
+public data object ReactionSortingByLastReactionAt : ReactionSorting {
     override fun compare(o1: ReactionGroup, o2: ReactionGroup): Int {
+        if (DEBUG) {
+            StreamLog.v(TAG) { "[compareByLastReactionAt] o1.type: ${o1.type}, o2.type: ${o2.type}" }
+        }
         return o1.lastReactionAt.compareTo(o2.lastReactionAt)
     }
 }
@@ -56,8 +70,11 @@ public object ReactionSortingByLastReactionAt : ReactionSorting {
  * Sorts [ReactionGroup]s by the date of their first reaction.
  *
  */
-public object ReactionSortingByFirstReactionAt : ReactionSorting {
+public data object ReactionSortingByFirstReactionAt : ReactionSorting {
     override fun compare(o1: ReactionGroup, o2: ReactionGroup): Int {
+        if (DEBUG) {
+            StreamLog.v(TAG) { "[compareByFirstReactionAt] o1.type: ${o1.type}, o2.type: ${o2.type}" }
+        }
         return o1.firstReactionAt.compareTo(o2.firstReactionAt)
     }
 }

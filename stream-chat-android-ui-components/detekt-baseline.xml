@@ -128,7 +128,6 @@
     <ID>MaxLineLength:MessageListItemDecoratorProvider.kt$MessageListItemDecoratorProvider$*</ID>
     <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date</ID>
     <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$is MessageListItem.TypingItem</ID>
-    <ID>MaxLineLength:MessageListItemDiffCallback.kt$MessageListItemDiffCallback$reactions = (oldMessage.reactionCounts != newMessage.reactionCounts) || (oldMessage.reactionScores != newMessage.reactionScores)</ID>
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle$*</ID>
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorMine in 0.75..1.0) { "messageMaxWidthFactorMine cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorMine" }</ID>
     <ID>MaxLineLength:MessageListItemStyle.kt$MessageListItemStyle.Builder$require(messageMaxWidthFactorTheirs in 0.75..1.0) { "messageMaxWidthFactorTheirs cannot be lower than 0.75 and greater than 1! Current value: $messageMaxWidthFactorTheirs" }</ID>

@@ -15,6 +15,8 @@ import androidx.fragment.app.viewModels
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -156,6 +158,14 @@ class MessageListViewSnippets : Fragment() {
                     scrollButtonColor = Color.RED,
                     scrollButtonUnreadEnabled = false,
                     scrollButtonIcon = ContextCompat.getDrawable(requireContext(), R.drawable.stream_ui_ic_clock)!!,
+                ),
+            )
+        }
+
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+            defaultViewStyle.copy(
+                reactionsViewStyle = defaultViewStyle.reactionsViewStyle.copy(
+                    reactionSorting = ReactionSortingByCount,
                 ),
             )
         }

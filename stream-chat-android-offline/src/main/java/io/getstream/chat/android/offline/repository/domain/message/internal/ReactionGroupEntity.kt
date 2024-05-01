@@ -21,6 +21,10 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class ReactionGroupEntity(
+    /**
+     * The type of the reaction this group represents.
+     */
+    val type: String,
 
     /**
      *The number of users that have reacted with this reaction.

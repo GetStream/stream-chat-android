@@ -1469,18 +1469,20 @@ public final class io/getstream/chat/android/models/Reaction$Builder {
 }
 
 public final class io/getstream/chat/android/models/ReactionGroup {
-	public fun <init> (IILjava/util/Date;Ljava/util/Date;)V
-	public final fun component1 ()I
+	public fun <init> (Ljava/lang/String;IILjava/util/Date;Ljava/util/Date;)V
+	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()I
-	public final fun component3 ()Ljava/util/Date;
+	public final fun component3 ()I
 	public final fun component4 ()Ljava/util/Date;
-	public final fun copy (IILjava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ReactionGroup;IILjava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/ReactionGroup;
+	public final fun component5 ()Ljava/util/Date;
+	public final fun copy (Ljava/lang/String;IILjava/util/Date;Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/ReactionGroup;Ljava/lang/String;IILjava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/models/ReactionGroup;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCount ()I
 	public final fun getFirstReactionAt ()Ljava/util/Date;
 	public final fun getLastReactionAt ()Ljava/util/Date;
 	public final fun getSumScore ()I
+	public final fun getType ()Ljava/lang/String;
 	public fun hashCode ()I
 	public final fun newBuilder ()Lio/getstream/chat/android/models/ReactionGroup$Builder;
 	public fun toString ()Ljava/lang/String;
@@ -1494,6 +1496,7 @@ public final class io/getstream/chat/android/models/ReactionGroup$Builder {
 	public final fun firstReactionAt (Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup$Builder;
 	public final fun lastReactionAt (Ljava/util/Date;)Lio/getstream/chat/android/models/ReactionGroup$Builder;
 	public final fun sumScore (I)Lio/getstream/chat/android/models/ReactionGroup$Builder;
+	public final fun type (Ljava/lang/String;)Lio/getstream/chat/android/models/ReactionGroup$Builder;
 }
 
 public abstract interface class io/getstream/chat/android/models/ReactionSorting : java/util/Comparator {
@@ -1503,24 +1506,36 @@ public final class io/getstream/chat/android/models/ReactionSortingByCount : io/
 	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingByCount;
 	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
 	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ReactionSortingByFirstReactionAt : io/getstream/chat/android/models/ReactionSorting {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingByFirstReactionAt;
 	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
 	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ReactionSortingByLastReactionAt : io/getstream/chat/android/models/ReactionSorting {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingByLastReactionAt;
 	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
 	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/ReactionSortingBySumScore : io/getstream/chat/android/models/ReactionSorting {
 	public static final field INSTANCE Lio/getstream/chat/android/models/ReactionSortingBySumScore;
 	public fun compare (Lio/getstream/chat/android/models/ReactionGroup;Lio/getstream/chat/android/models/ReactionGroup;)I
 	public synthetic fun compare (Ljava/lang/Object;Ljava/lang/Object;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/models/SearchMessagesResult {

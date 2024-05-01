@@ -91,12 +91,15 @@ internal class ReactionGroupConverterTest {
                 ),
                 Arguments.of(
                     ReactionGroupEntity(
+                        type = type,
                         count = count,
                         sumScore = sumScore,
                         firstReactionAt = Date(0),
                         lastReactionAt = Date(0),
                     ),
-                    "{\"count\":$count," +
+                    "{" +
+                        "\"type\":\"$type\"," +
+                        "\"count\":$count," +
                         "\"sumScore\":$sumScore," +
                         "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
                         "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
@@ -112,12 +115,15 @@ internal class ReactionGroupConverterTest {
                     null,
                 ),
                 Arguments.of(
-                    "{\"count\":$count," +
+                    "{" +
+                        "\"type\":\"$type\"," +
+                        "\"count\":$count," +
                         "\"sumScore\":$sumScore," +
                         "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
                         "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
                         "\"}",
                     ReactionGroupEntity(
+                        type = type,
                         count = count,
                         sumScore = sumScore,
                         firstReactionAt = Date(0),
@@ -136,6 +142,7 @@ internal class ReactionGroupConverterTest {
                 Arguments.of(
                     mapOf(
                         type to ReactionGroupEntity(
+                            type = type,
                             count = count,
                             sumScore = sumScore,
                             firstReactionAt = Date(0),
@@ -143,7 +150,9 @@ internal class ReactionGroupConverterTest {
                         ),
                     ),
                     "{\"$type\":" +
-                        "{\"count\":$count," +
+                        "{" +
+                        "\"type\":\"$type\"," +
+                        "\"count\":$count," +
                         "\"sumScore\":$sumScore," +
                         "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
                         "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
@@ -161,7 +170,9 @@ internal class ReactionGroupConverterTest {
                 ),
                 Arguments.of(
                     "{\"$type\":" +
-                        "{\"count\":$count," +
+                        "{" +
+                        "\"type\":\"$type\"," +
+                        "\"count\":$count," +
                         "\"sumScore\":$sumScore," +
                         "\"firstReactionAt\":\"1970-01-01T00:00:00.000Z\"," +
                         "\"lastReactionAt\":\"1970-01-01T00:00:00.000Z" +
@@ -169,6 +180,7 @@ internal class ReactionGroupConverterTest {
                         "}",
                     mapOf(
                         type to ReactionGroupEntity(
+                            type = type,
                             count = count,
                             sumScore = sumScore,
                             firstReactionAt = Date(0),

@@ -120,24 +120,28 @@ class ComponentBrowserHomeFragment : Fragment() {
             message = randomMessage().copy(
                 reactionGroups = mutableMapOf(
                     LOVE to ReactionGroup(
+                        type = LOVE,
                         count = 10,
                         sumScore = 10,
                         firstReactionAt = Date(),
                         lastReactionAt = Date(),
                     ),
                     WUT to ReactionGroup(
+                        type = WUT,
                         count = 20,
                         sumScore = 20,
                         firstReactionAt = Date(),
                         lastReactionAt = Date(),
                     ),
                     LOL to ReactionGroup(
+                        type = LOL,
                         count = 20,
                         sumScore = 20,
                         firstReactionAt = Date(),
                         lastReactionAt = Date(),
                     ),
                     THUMBS_UP to ReactionGroup(
+                        type = THUMBS_UP,
                         count = 20,
                         sumScore = 20,
                         firstReactionAt = Date(),

@@ -514,11 +514,13 @@ public fun randomChatNetworkError(
     cause = cause,
 )
 public fun randomReactionGroup(
+    type: String = randomString(),
     sumScore: Int = randomInt(),
     count: Int = randomInt(),
     firstReactionAt: Date = randomDate(),
     lastReactionAt: Date = randomDate(),
 ): ReactionGroup = ReactionGroup(
+    type = type,
     sumScore = sumScore,
     count = count,
     firstReactionAt = firstReactionAt,
