@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.ui.sample.data.user
+package io.getstream.chat.android.client.api2.model.dto
 
-import io.getstream.chat.android.PrivacySettings
+import com.squareup.moshi.JsonClass
 
-data class SampleUser(
-    val apiKey: String,
-    val id: String,
-    val name: String,
-    val token: String,
-    val image: String,
-    val language: String = "",
-    val privacySettings: PrivacySettings? = null,
-) {
+@JsonClass(generateAdapter = true)
+internal data class PrivacySettingsDto(
+    val typing_indicators: TypingIndicatorsDto? = null,
+    val read_receipts: ReadReceiptsDto? = null,
+)
 
-    companion object {
-        val None: SampleUser = SampleUser("", "", "", "", "https://getstream.io/random_png?id=none&name=none&size=200")
-    }
-}
+@JsonClass(generateAdapter = true)
+internal data class TypingIndicatorsDto(
+    val enabled: Boolean,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class ReadReceiptsDto(
+    val enabled: Boolean,
+)

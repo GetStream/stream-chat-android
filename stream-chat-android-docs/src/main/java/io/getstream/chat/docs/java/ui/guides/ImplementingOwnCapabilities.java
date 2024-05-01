@@ -22,6 +22,7 @@ public class ImplementingOwnCapabilities {
         customOwnCapabilities.add(ChannelCapabilities.SEND_LINKS);
         customOwnCapabilities.add(ChannelCapabilities.UPLOAD_FILE);
         customOwnCapabilities.add(ChannelCapabilities.SEND_TYPING_EVENTS);
+        customOwnCapabilities.add(ChannelCapabilities.TYPING_EVENTS);
 
         MessageComposerState messageComposerState = new MessageComposerState(
                 "",

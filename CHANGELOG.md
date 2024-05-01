@@ -11,6 +11,7 @@
 - Added `reason` and `custom` fields to flag user endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
 - Added `reactionGroups` field to `Message` entity. [#5247](https://github.com/GetStream/stream-chat-android/pull/5247)
 - Added `ReactionSorting` interface to allow custom sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
+- Added `privacySettings` field to `User` entity. [#5249](https://github.com/GetStream/stream-chat-android/pull/5249)
 
 ### ⚠️ Changed
 
