@@ -46,8 +46,9 @@ internal fun DownstreamReactionDto.toDomain(): Reaction =
         extraData = extraData.toMutableMap(),
     )
 
-internal fun DownstreamReactionGroupDto.toDomain(): ReactionGroup =
+internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
     ReactionGroup(
+        type = type,
         count = count,
         sumScore = sum_scores,
         firstReactionAt = first_reaction_at,

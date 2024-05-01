@@ -71,6 +71,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -128,6 +129,7 @@ class MessagesActivity : BaseConnectedActivity() {
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
+                    reactionSorting = ReactionSortingByLastReactionAt,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
                     // TODO

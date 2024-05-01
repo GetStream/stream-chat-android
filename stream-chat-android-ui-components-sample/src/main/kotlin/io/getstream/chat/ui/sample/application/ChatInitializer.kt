@@ -17,6 +17,7 @@
 package io.getstream.chat.ui.sample.application
 
 import android.content.Context
+import android.graphics.Color
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
@@ -28,6 +29,7 @@ import io.getstream.chat.android.client.notifications.handler.NotificationHandle
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -35,6 +37,8 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
@@ -139,6 +143,24 @@ class ChatInitializer(
         //         audioRecordingSlideToCancelText = "Wash to cancel",
         //     )
         // }
+
+        // TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
+        //     defaultStyle.copy(
+        //         reactionsViewStyle = defaultStyle.reactionsViewStyle.copy(
+        //             bubbleBorderColorMine = Color.CYAN,
+        //             reactionSorting = ReactionSortingByLastReactionAtDesc
+        //             // reactionSorting = ReactionSortingByLastReactionAt
+        //             // reactionSorting = ReactionSortingByFirstReactionAt
+        //         )
+        //     )
+        // }
+        //
+        TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                bubbleBorderColorMine = Color.YELLOW,
+                reactionSorting = ReactionSortingByLastReactionAt
+            )
+        }
 
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }

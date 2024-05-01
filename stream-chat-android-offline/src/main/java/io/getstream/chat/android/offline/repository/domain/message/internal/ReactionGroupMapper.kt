@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.ReactionGroup
 
 internal fun ReactionGroupEntity.toModel(): ReactionGroup {
     return ReactionGroup(
+        type = type,
         count = count,
         sumScore = sumScore,
         firstReactionAt = firstReactionAt,
@@ -29,6 +30,7 @@ internal fun ReactionGroupEntity.toModel(): ReactionGroup {
 
 internal fun ReactionGroup.toEntity(): ReactionGroupEntity {
     return ReactionGroupEntity(
+        type = type,
         count = count,
         sumScore = sumScore,
         firstReactionAt = firstReactionAt,
