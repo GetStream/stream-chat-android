@@ -17,11 +17,7 @@
     <ID>LongParameterList:ConfirmationDialogFragment.kt$ConfirmationDialogFragment.Companion$( @DrawableRes iconResId: Int, @ColorRes iconTintResId: Int, title: String, description: String, confirmText: String, cancelText: String, hasConfirmButton: Boolean = true, )</ID>
     <ID>LongParameterList:CustomDecoratorProvider.kt$CustomDecoratorProvider$( channel: Channel, dateFormatter: DateFormatter, messageListViewStyle: MessageListViewStyle, showAvatarPredicate: MessageListView.ShowAvatarPredicate, messageBackgroundFactory: MessageBackgroundFactory, deletedMessageVisibility: () -> DeletedMessageVisibility, getLanguageDisplayName: (code: String) -> String, )</ID>
     <ID>MagicNumber:ChatFragment.kt$ChatFragment$4</ID>
-    <ID>MagicNumber:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$10</ID>
-    <ID>MagicNumber:ComponentBrowserHomeFragment.kt$ComponentBrowserHomeFragment$20</ID>
     <ID>MagicNumber:ComponentBrowserMessagesHeaderViewFragment.kt$ComponentBrowserMessagesHeaderViewFragment$3</ID>
-    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$10</ID>
-    <ID>MagicNumber:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$20</ID>
     <ID>MagicNumber:DataProvider.kt$100000L</ID>
     <ID>MagicNumber:DataProvider.kt$99</ID>
     <ID>MagicNumber:DateDividerComponentBrowserFragment.kt$DateDividerComponentBrowserFragment$6</ID>
