@@ -158,7 +158,7 @@ class ChatInitializer(
         TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
                 bubbleBorderColorMine = Color.YELLOW,
-                reactionSorting = ReactionSortingByLastReactionAt
+                reactionSorting = ReactionSortingByLastReactionAt,
             )
         }
 
