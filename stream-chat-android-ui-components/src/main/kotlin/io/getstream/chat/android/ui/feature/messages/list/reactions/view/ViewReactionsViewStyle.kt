@@ -22,6 +22,11 @@ import android.util.AttributeSet
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
 import androidx.annotation.StyleableRes
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByCount
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
+import io.getstream.chat.android.models.ReactionSortingBySumScore
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.helper.TransformStyle
@@ -57,6 +62,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @param verticalPadding The vertical padding to be applied to top and bottom of the view.
  * @param messageOptionsUserReactionOrientation The orientation of the bubble.
  * By default is [MessageOptionsUserReactionOrientation.BY_USER]
+ * @param reactionSorting The sorting of the reactions. By default is [ReactionSortingByFirstReactionAt]
  */
 public data class ViewReactionsViewStyle(
     @ColorInt public val bubbleBorderColorMine: Int,
@@ -78,6 +84,7 @@ public data class ViewReactionsViewStyle(
     @Px public val smallTailBubbleOffset: Int,
     @Px public val verticalPadding: Int,
     public val messageOptionsUserReactionOrientation: Int,
+    public val reactionSorting: ReactionSorting,
 ) : ViewStyle {
 
     internal companion object {
@@ -85,6 +92,11 @@ public data class ViewReactionsViewStyle(
         private val DEFAULT_BUBBLE_COLOR_MINE = R.color.stream_ui_grey_whisper
         private val DEFAULT_BUBBLE_COLOR_THEIRS = R.color.stream_ui_grey_gainsboro
         private val DEFAULT_BUBBLE_BORDER_WIDTH_MINE = 1.dpToPx() * 1.5f
+
+        private const val REACTION_SORTING_BY_FIRST_REACTION_AT = 0
+        private const val REACTION_SORTING_BY_LAST_REACTION_AT = 1
+        private const val REACTION_SORTING_BY_SUM_SCORE = 2
+        private const val REACTION_SORTING_BY_COUNT = 3
 
         operator fun invoke(context: Context, attrs: AttributeSet?): ViewReactionsViewStyle {
             context.obtainStyledAttributes(
@@ -102,6 +114,9 @@ public data class ViewReactionsViewStyle(
                     .bubbleColorTheirs(R.styleable.ViewReactionsView_streamUiReactionsBubbleColorTheirs)
                     .messageOptionsUserReactionBubbleOrientation(
                         R.styleable.ViewReactionsView_streamUiMessageOptionsUserReactionOrientation,
+                    )
+                    .messageOptionsReactionSorting(
+                        R.styleable.ViewReactionsView_streamUiReactionSorting,
                     )
                     .build()
             }
@@ -127,6 +142,8 @@ public data class ViewReactionsViewStyle(
             private var bubbleBorderWidthTheirs: Float? = null
             private var messageOptionsUserReactionOrientation: Int =
                 MessageOptionsUserReactionAlignment.BY_USER.value
+
+            private var reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt
 
             fun bubbleColorTheirs(@StyleableRes theirsBubbleColorAttribute: Int) = apply {
                 bubbleColorTheirs =
@@ -158,6 +175,11 @@ public data class ViewReactionsViewStyle(
             fun messageOptionsUserReactionBubbleOrientation(@StyleableRes bubbleOrientation: Int) = apply {
                 this.messageOptionsUserReactionOrientation =
                     array.getInt(bubbleOrientation, MessageOptionsUserReactionAlignment.BY_USER.value)
+            }
+
+            fun messageOptionsReactionSorting(@StyleableRes reactionSorting: Int) = apply {
+                this.reactionSorting =
+                    array.getInt(reactionSorting, REACTION_SORTING_BY_FIRST_REACTION_AT).getReactionSorting()
             }
 
             fun build(): ViewReactionsViewStyle {
@@ -206,7 +228,18 @@ public data class ViewReactionsViewStyle(
                     smallTailBubbleOffset = smallTailBubbleOffset,
                     verticalPadding = verticalPadding,
                     messageOptionsUserReactionOrientation = messageOptionsUserReactionOrientation,
+                    reactionSorting = reactionSorting,
                 ).let(TransformStyle.viewReactionsStyleTransformer::transform)
+            }
+        }
+
+        private fun Int.getReactionSorting(): ReactionSorting {
+            return when (this) {
+                REACTION_SORTING_BY_FIRST_REACTION_AT -> ReactionSortingByFirstReactionAt
+                REACTION_SORTING_BY_LAST_REACTION_AT -> ReactionSortingByLastReactionAt
+                REACTION_SORTING_BY_SUM_SCORE -> ReactionSortingBySumScore
+                REACTION_SORTING_BY_COUNT -> ReactionSortingByCount
+                else -> ReactionSortingByFirstReactionAt
             }
         }
     }

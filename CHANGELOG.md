@@ -9,6 +9,8 @@
 ### ✅ Added
 - Added `reason` and `custom` fields to flag message endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
 - Added `reason` and `custom` fields to flag user endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reactionGroups` field to `Message` entity. [#5247](https://github.com/GetStream/stream-chat-android/pull/5247)
+- Added `ReactionSorting` interface to allow custom sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
 
 ### ⚠️ Changed
 
@@ -66,6 +68,7 @@
 
 ### ✅ Added
 - Added a Button to jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
+- Added `ViewReactionsViewStyle.reactionSorting` field to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
 
 ### ⚠️ Changed
 
@@ -77,6 +80,7 @@
 
 ### ⬆️ Improved
 - Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+- MessageList accept `reactionSorting` parameter to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
 
 ### ✅ Added
 

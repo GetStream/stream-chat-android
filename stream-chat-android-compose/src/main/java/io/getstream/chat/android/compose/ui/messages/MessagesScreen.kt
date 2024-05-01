@@ -75,6 +75,8 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -102,6 +104,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * You can customize the behavior of the list through its parameters. For default behavior,
  * simply create an instance and pass in just the channel ID and the context.
  * @param showHeader If we're showing the header or not.
+ * @param reactionSorting The sorting type for reactions. Default is [ReactionSortingByFirstReactionAt].
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
@@ -117,6 +120,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
 public fun MessagesScreen(
     viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
+    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
@@ -232,6 +236,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
+                reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
