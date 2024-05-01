@@ -1,4 +1,4 @@
-# UNRELEASED CHANGELOG
+# May 01th, 2024 - 6.3.2
 ## Common changes for all artifacts
 ### 🐞 Fixed
 - Shadowed messages are filtered. [#5234](https://github.com/GetStream/stream-chat-android/pull/5234)
@@ -13,67 +13,13 @@
 - Added `ReactionSorting` interface to allow custom sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
 - Added `privacySettings` field to `User` entity. [#5249](https://github.com/GetStream/stream-chat-android/pull/5249)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
 
 ### ✅ Added
 - Added a Button to jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
 - Added `ViewReactionsViewStyle.reactionSorting` field to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -82,23 +28,6 @@
 ### ⬆️ Improved
 - Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
 - MessageList accept `reactionSorting` parameter to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # April 19th, 2024 - 6.3.1
 ## stream-chat-android-compose
