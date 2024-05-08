@@ -54,6 +54,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendMessageIdentif
 import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
+import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -1547,6 +1548,28 @@ internal constructor(
             }
             .precondition(plugins) { onGetRepliesPrecondition(messageId, limit) }
             .share(userScope) { GetRepliesIdentifier(messageId, limit) }
+    }
+
+    /**
+     * Fetch replies to the specified message with id [parentId] that are newer than the message with [lastId].
+     * If [lastId] is null, the oldest replies are returned.
+     *
+     * @param parentId The id of the parent message.
+     * @param limit The number of replies to fetch.
+     * @param lastId The id of the last message to fetch.
+     *
+     * @return Executable async [Call] responsible for fetching newer replies.
+     */
+    @CheckResult
+    public fun getNewerReplies(
+        parentId: String,
+        limit: Int,
+        lastId: String? = null,
+    ): Call<List<Message>> {
+        logger.d { "[getNewerReplies] parentId: $parentId, limit: $limit, lastId: $lastId" }
+
+        return api.getNewerReplies(parentId, limit, lastId)
+            .share(userScope) { getNewerRepliesIdentifier(parentId, limit, lastId) }
     }
 
     @CheckResult

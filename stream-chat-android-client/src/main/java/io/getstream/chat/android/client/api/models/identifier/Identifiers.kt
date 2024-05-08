@@ -126,6 +126,22 @@ internal fun GetRepliesIdentifier(
 }
 
 /**
+ * Identifier for a [ChatClient.getNewerReplies] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun getNewerRepliesIdentifier(
+    parentId: String,
+    limit: Int,
+    lastId: String? = null,
+): Int {
+    var result = "GetOlderReplies".hashCode()
+    result = 31 * result + parentId.hashCode()
+    result = 31 * result + limit.hashCode()
+    result = 31 * result + (lastId?.hashCode() ?: 0)
+    return result
+}
+
+/**
  * Identifier for a [ChatClient.getRepliesMore] call.
  */
 @Suppress("FunctionName", "MagicNumber")
