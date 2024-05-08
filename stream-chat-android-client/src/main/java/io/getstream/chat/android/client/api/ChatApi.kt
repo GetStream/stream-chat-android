@@ -111,6 +111,13 @@ internal interface ChatApi {
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
 
     @CheckResult
+    fun getNewerReplies(
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ): Call<List<Message>>
+
+    @CheckResult
     fun getReactions(
         messageId: String,
         offset: Int,

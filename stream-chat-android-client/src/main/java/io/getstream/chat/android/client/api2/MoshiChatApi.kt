@@ -751,6 +751,16 @@ constructor(
         }
     }
 
+    override fun getNewerReplies(
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ): Call<List<Message>> = messageApi.getNewerReplies(
+        parentId = parentId,
+        limit = limit,
+        lastId = lastId,
+    ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,

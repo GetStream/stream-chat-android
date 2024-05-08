@@ -50,6 +50,10 @@ internal class DistinctChatApiEnabler(
         return getApi().getReplies(messageId, limit)
     }
 
+    override fun getNewerReplies(parentId: String, limit: Int, lastId: String?): Call<List<Message>> {
+        return getApi().getNewerReplies(parentId, limit, lastId)
+    }
+
     override fun getReactions(messageId: String, offset: Int, limit: Int): Call<List<Reaction>> {
         return getApi().getReactions(messageId, offset, limit)
     }

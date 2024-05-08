@@ -115,6 +115,13 @@ internal interface MessageApi {
         @Query("limit") limit: Int,
     ): RetrofitCall<MessagesResponse>
 
+    @GET("/messages/{parent_id}/replies?sort=[{\"field\":\"created_at\",\"direction\":1}]")
+    fun getNewerReplies(
+        @Path("parent_id") parentId: String,
+        @Query("limit") limit: Int,
+        @Query("id_gt") lastId: String?,
+    ): RetrofitCall<MessagesResponse>
+
     @GET("/messages/{parent_id}/replies")
     fun getRepliesMore(
         @Path("parent_id") messageId: String,
