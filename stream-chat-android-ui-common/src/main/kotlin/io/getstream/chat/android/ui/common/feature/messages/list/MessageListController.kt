@@ -138,6 +138,7 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  *
  * @param cid The channel id in the format messaging:123.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
+ * @param threadLoadOrderOlderToNewer Determines the order in which the thread messages are loaded.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
  * message we want to scroll to is not in a thread, you can pass in a null value.
@@ -160,6 +161,7 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
 public class MessageListController(
     private val cid: String,
     private val clipboardHandler: ClipboardHandler,
+    public val threadLoadOrderOlderToNewer: Boolean,
     private val messageId: String? = null,
     private val parentMessageId: String? = null,
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
@@ -1018,18 +1020,50 @@ public class MessageListController(
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
         logger.i { "[loadNewerMessages] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
-        if (isInThread ||
-            clientState.isOffline ||
-            channelState.value?.endOfNewerMessages?.value == true
-        ) {
-            logger.w {
-                "[loadNewerMessages] rejected; isInThread: $isInThread, isOffline: ${clientState.isOffline}, " +
-                    "endOfNewerMessages: ${channelState.value?.endOfNewerMessages?.value}"
+        if (clientState.isOffline) return
+        _mode.value.run {
+            when (this) {
+                is MessageMode.Normal -> loadNewerChannelMessages(baseMessageId, messageLimit)
+                is MessageMode.MessageThread -> loadNewerMessagesInThread(this)
+            }
+        }
+    }
+
+    private fun loadNewerChannelMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
+        if (channelState.value?.endOfNewerMessages?.value == true) {
+            logger.d {
+                "[loadNewerChannelMessages] rejected; endOfNewerMessages: ${channelState.value?.endOfNewerMessages?.value}"
             }
             return
         }
-
         chatClient.loadNewerMessages(cid, baseMessageId, messageLimit).enqueue()
+    }
+
+    private fun loadNewerMessagesInThread(
+        threadMode: MessageMode.MessageThread,
+    ) {
+        logger.d { "[loadNewerMessagesInThread] endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}" }
+        if (threadMode.threadState?.endOfNewerMessages?.value == true ||
+            threadMode.threadState?.loading?.value == true ||
+            !threadLoadOrderOlderToNewer
+        ) {
+            logger.d {
+                "[loadNewerMessagesInThread] rejected; " +
+                    "endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}, " +
+                    "loading: ${threadMode.threadState?.loading?.value}, " +
+                    "threadLoadOrderOlderToNewer: $threadLoadOrderOlderToNewer"
+            }
+            return
+        }
+        logger.d { "[loadNewerMessagesInThread] loading newer messages:" +
+            "parentId: ${threadMode.parentMessage.id}, " +
+            "messageLimit: $messageLimit, " +
+            "lastId = ${threadMode.threadState?.newestInThread?.value?.id}" }
+        chatClient.getNewerReplies(
+            parentId = threadMode.parentMessage.id,
+            limit = messageLimit,
+            lastId = threadMode.threadState?.newestInThread?.value?.id,
+        ).enqueue()
     }
 
     /**
@@ -1061,6 +1095,7 @@ public class MessageListController(
     private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
         if (_threadListState.value.endOfOldMessagesReached ||
             _threadListState.value.isLoadingOlderMessages ||
+            threadLoadOrderOlderToNewer ||
             threadMode.threadState?.oldestInThread?.value == null
         ) {
             return
@@ -1086,7 +1121,8 @@ public class MessageListController(
     public suspend fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
-        val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
+
+        val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit, threadLoadOrderOlderToNewer)
 
         _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
@@ -1111,7 +1147,11 @@ public class MessageListController(
      */
     private suspend fun enterThreadSequential(parentMessage: Message) {
         logger.v { "[enterThreadSequential] parentMessage(id: ${parentMessage.id}, text: ${parentMessage.text})" }
-        val threadState = chatClient.awaitRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
+        val threadState = chatClient.awaitRepliesAsState(
+            parentMessage.id,
+            DEFAULT_MESSAGES_LIMIT,
+            threadLoadOrderOlderToNewer
+        )
         val channelState = channelState.value ?: return
 
         _messageActions.value = _messageActions.value + Reply(parentMessage)
