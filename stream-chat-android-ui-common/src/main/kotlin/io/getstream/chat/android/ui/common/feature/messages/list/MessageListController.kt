@@ -1032,7 +1032,8 @@ public class MessageListController(
     private fun loadNewerChannelMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
         if (channelState.value?.endOfNewerMessages?.value == true) {
             logger.d {
-                "[loadNewerChannelMessages] rejected; endOfNewerMessages: ${channelState.value?.endOfNewerMessages?.value}"
+                "[loadNewerChannelMessages] rejected; endOfNewerMessages: " +
+                    "${channelState.value?.endOfNewerMessages?.value}"
             }
             return
         }
@@ -1042,7 +1043,9 @@ public class MessageListController(
     private fun loadNewerMessagesInThread(
         threadMode: MessageMode.MessageThread,
     ) {
-        logger.d { "[loadNewerMessagesInThread] endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}" }
+        logger.d {
+            "[loadNewerMessagesInThread] endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}"
+        }
         if (threadMode.threadState?.endOfNewerMessages?.value == true ||
             threadMode.threadState?.loading?.value == true ||
             !threadLoadOrderOlderToNewer
@@ -1055,10 +1058,12 @@ public class MessageListController(
             }
             return
         }
-        logger.d { "[loadNewerMessagesInThread] loading newer messages:" +
-            "parentId: ${threadMode.parentMessage.id}, " +
-            "messageLimit: $messageLimit, " +
-            "lastId = ${threadMode.threadState?.newestInThread?.value?.id}" }
+        logger.d {
+            "[loadNewerMessagesInThread] loading newer messages:" +
+                "parentId: ${threadMode.parentMessage.id}, " +
+                "messageLimit: $messageLimit, " +
+                "lastId = ${threadMode.threadState?.newestInThread?.value?.id}"
+        }
         chatClient.getNewerReplies(
             parentId = threadMode.parentMessage.id,
             limit = messageLimit,
@@ -1092,6 +1097,7 @@ public class MessageListController(
      * @param threadMode Current thread mode containing information about the thread.
      * @param messageLimit The size of the message list page to load.
      */
+    @Suppress("ComplexCondition")
     private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
         if (_threadListState.value.endOfOldMessagesReached ||
             _threadListState.value.isLoadingOlderMessages ||
@@ -1150,7 +1156,7 @@ public class MessageListController(
         val threadState = chatClient.awaitRepliesAsState(
             parentMessage.id,
             DEFAULT_MESSAGES_LIMIT,
-            threadLoadOrderOlderToNewer
+            threadLoadOrderOlderToNewer,
         )
         val channelState = channelState.value ?: return
 
