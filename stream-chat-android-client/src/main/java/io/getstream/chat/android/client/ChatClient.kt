@@ -1547,7 +1547,7 @@ internal constructor(
                     plugin.onGetRepliesResult(result, messageId, limit)
                 }
             }
-            .precondition(plugins) { onGetRepliesPrecondition(messageId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesIdentifier(messageId, limit) }
     }
 
@@ -1570,6 +1570,19 @@ internal constructor(
         logger.d { "[getNewerReplies] parentId: $parentId, limit: $limit, lastId: $lastId" }
 
         return api.getNewerReplies(parentId, limit, lastId)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    logger.v { "[getNewerReplies] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetNewerRepliesRequest(parentId, limit, lastId)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[getNewerReplies] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetNewerRepliesResult(result, parentId, limit, lastId)
+                }
+            }
+            .precondition(plugins) { onGetRepliesPrecondition(parentId) }
             .share(userScope) { getNewerRepliesIdentifier(parentId, limit, lastId) }
     }
 
@@ -1594,7 +1607,7 @@ internal constructor(
                     plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
                 }
             }
-            .precondition(plugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
     }
 
