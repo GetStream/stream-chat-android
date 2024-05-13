@@ -178,6 +178,15 @@ public interface Plugin :
         /* No-Op */
     }
 
+    override suspend fun onGetNewerRepliesResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ) {
+        /* No-Op */
+    }
+
     override fun onGiphySendResult(cid: String, result: Result<Message>) {
         /* No-Op */
     }
