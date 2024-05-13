@@ -179,8 +179,7 @@ public fun Messages(
                     }
 
                     val newestMessageItem = (messages.firstOrNull { it is MessageItemState } as? MessageItemState)
-                    if (!startOfMessages &&
-                        index == 0 &&
+                    if (index == 0 &&
                         messages.isNotEmpty() &&
                         lazyListState.isScrollInProgress
                     ) {
