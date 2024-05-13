@@ -168,6 +168,15 @@ public class MessageListViewModel(
      */
     public val insideSearch: LiveData<Boolean> = messageListController.isInsideSearch.asLiveData()
 
+    public val shouldRequestMessagesAtBottom: LiveData<Boolean> = combine(
+        messageListController.isInsideSearch,
+        messageListController.mode,
+    ) { data ->
+        val isInsideSearch: Boolean = (data[0] as Boolean)
+        val isInThread: Boolean = (data[1] as MessageMode) is MessageMode.MessageThread
+        (isInsideSearch || (isInThread && messageListController.threadLoadOrderOlderToNewer))
+    }.asLiveData()
+
     /**
      * Emits the current unread label state.
      */

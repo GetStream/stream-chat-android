@@ -123,7 +123,7 @@ public fun MessageListViewModel.bindView(
     }
     loadMoreLiveData.observe(lifecycleOwner, view::setLoadingMore)
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
-    insideSearch.observe(lifecycleOwner, view::shouldRequestMessagesAtBottom)
+    shouldRequestMessagesAtBottom.observe(lifecycleOwner, view::shouldRequestMessagesAtBottom)
     unreadCount.observe(lifecycleOwner, view::setUnreadCount)
     unreadLabel.observe(lifecycleOwner) {
         when (it.buttonVisibility) {
