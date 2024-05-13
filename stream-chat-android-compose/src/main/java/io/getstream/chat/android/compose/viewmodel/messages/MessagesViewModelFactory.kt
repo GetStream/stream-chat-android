@@ -67,6 +67,7 @@ import java.io.File
  * Adds the separator item when the value is `true`.
  * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
+ * @param threadLoadOlderToNewer Configures if the thread should load older messages to newer messages.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -96,6 +97,7 @@ public class MessagesViewModelFactory(
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
+    private val threadLoadOlderToNewer: Boolean = false,
     private val isComposerLinkPreviewEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
 
@@ -123,6 +125,7 @@ public class MessagesViewModelFactory(
                 MessageListController(
                     cid = channelId,
                     clipboardHandler = clipboardHandler,
+                    threadLoadOrderOlderToNewer = threadLoadOlderToNewer,
                     messageId = messageId,
                     parentMessageId = parentMessageId,
                     messageLimit = messageLimit,
