@@ -35,16 +35,10 @@ internal class ThreadLogic(
 
     private val mutableState: ThreadMutableState = threadStateLogic.writeThreadState()
 
-    fun isLoadingOlderMessages(): Boolean = mutableState.loadingOlderMessages.value
-
     fun isLoadingMessages(): Boolean = mutableState.loading.value
 
     internal fun setLoading(isLoading: Boolean) {
         mutableState.setLoading(isLoading)
-    }
-
-    internal fun setLoadingOlderMessages(isLoading: Boolean) {
-        mutableState.setLoadingOlderMessages(isLoading)
     }
 
     /**
@@ -83,6 +77,18 @@ internal class ThreadLogic(
             messages.sortedBy { it.createdAt }
                 .firstOrNull()
                 ?: mutableState.oldestInThread.value,
+        )
+    }
+
+    internal fun setEndOfNewerMessages(isEnd: Boolean) {
+        mutableState.setEndOfNewerMessages(isEnd)
+    }
+
+    internal fun updateNewestMessageInThread(messages: List<Message>) {
+        mutableState.setNewestInThread(
+            messages.sortedBy { it.createdAt }
+                .lastOrNull()
+                ?: mutableState.newestInThread.value,
         )
     }
 
