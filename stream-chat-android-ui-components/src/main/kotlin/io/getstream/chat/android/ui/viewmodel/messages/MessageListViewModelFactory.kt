@@ -61,6 +61,7 @@ import java.io.File
  * Adds the separator item when the value is `true`.
  * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
+ * @param threadLoadOlderToNewer Configures if the thread should be loaded from older to newer messages.
  *
  * @see MessageListHeaderViewModel
  * @see MessageListViewModel
@@ -88,6 +89,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
+    private val threadLoadOlderToNewer: Boolean = false,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
@@ -97,6 +99,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 messageListController = MessageListController(
                     cid = cid,
                     clipboardHandler = {},
+                    threadLoadOrderOlderToNewer = threadLoadOlderToNewer,
                     messageLimit = messageLimit,
                     messageId = messageId,
                     parentMessageId = parentMessageId,
@@ -160,6 +163,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         private var mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext)
         private var userLookupHandler: UserLookupHandler? = null
         private var userLookupHandlerCompat: CompatUserLookupHandler? = null
+        private var threadLoadOlderToNewer: Boolean = false
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -219,6 +223,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             this.threadDateSeparatorHandler = threadDateSeparatorHandler
         }
 
+        public fun threadLoadOlderToNewer(threadLoadOlderToNewer: Boolean): Builder = apply {
+            this.threadLoadOlderToNewer = threadLoadOlderToNewer
+        }
+
         /**
          * Builds [MessageListViewModelFactory] instance.
          */
@@ -241,6 +249,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 dateSeparatorHandler = dateSeparatorHandler,
                 threadDateSeparatorHandler = threadDateSeparatorHandler,
                 messagePositionHandler = messagePositionHandler,
+                threadLoadOlderToNewer = threadLoadOlderToNewer,
             )
         }
     }
