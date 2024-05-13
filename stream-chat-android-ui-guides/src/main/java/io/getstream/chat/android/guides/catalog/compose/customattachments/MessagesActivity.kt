@@ -91,6 +91,7 @@ class MessagesActivity : AppCompatActivity() {
                 CustomMessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
+                    threadLoadOlderToNewer = false,
                 )
             }
         }
