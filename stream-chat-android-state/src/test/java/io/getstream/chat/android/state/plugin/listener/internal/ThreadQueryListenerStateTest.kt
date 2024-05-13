@@ -57,7 +57,7 @@ internal class ThreadQueryListenerStateTest {
     fun `given a request is already running, new requests are not allowed`() = runTest {
         whenever(threadLogic.isLoadingMessages()) doReturn true
 
-        val result = threadQueryListenerState.onGetRepliesPrecondition(message.id, randomInt())
+        val result = threadQueryListenerState.onGetRepliesPrecondition(message.id)
 
         result shouldBeInstanceOf Result.Failure::class
     }
@@ -66,25 +66,25 @@ internal class ThreadQueryListenerStateTest {
     fun `given a request is not running, new requests are allowed`() = runTest {
         whenever(threadLogic.isLoadingMessages()) doReturn false
 
-        val result = threadQueryListenerState.onGetRepliesPrecondition(message.id, randomInt())
+        val result = threadQueryListenerState.onGetRepliesPrecondition(message.id)
 
         result shouldBeInstanceOf Result.Success::class
     }
 
     @Test
     fun `given a request is already running for more replies, new requests are not allowed`() = runTest {
-        whenever(threadLogic.isLoadingOlderMessages()) doReturn true
+        whenever(threadLogic.isLoadingMessages()) doReturn true
 
-        val result = threadQueryListenerState.onGetRepliesMorePrecondition(message.id, randomString(), randomInt())
+        val result = threadQueryListenerState.onGetRepliesPrecondition(message.id)
 
         result shouldBeInstanceOf Result.Failure::class
     }
 
     @Test
     fun `given a request is not running for more replies, new requests are allowed`() = runTest {
-        whenever(threadLogic.isLoadingOlderMessages()) doReturn false
+        whenever(threadLogic.isLoadingMessages()) doReturn false
 
-        val result = threadQueryListenerState.onGetRepliesMorePrecondition(message.id, randomString(), randomInt())
+        val result = threadQueryListenerState.onGetRepliesPrecondition(message.id)
 
         result shouldBeInstanceOf Result.Success::class
     }
@@ -101,18 +101,8 @@ internal class ThreadQueryListenerStateTest {
         runTest {
             threadQueryListenerState.onGetRepliesMoreRequest(message.id, randomString(), randomInt())
 
-            verify(threadLogic).setLoadingOlderMessages(true)
+            verify(threadLogic).setLoading(true)
         }
-
-    @Test
-    fun `given the database returns values messages are upserted in the SDK`() = runTest {
-        whenever(messageRepository.selectMessagesForThread(eq(message.id), any())) doReturn messageList
-        whenever(threadLogic.getMessage(message.id)) doReturn message
-
-        threadQueryListenerState.onGetRepliesRequest(message.id, randomInt())
-
-        verify(threadLogic).upsertMessages(messageList)
-    }
 
     @Test
     fun `given response it successful, the state should be updated in the SDK`() = runTest {

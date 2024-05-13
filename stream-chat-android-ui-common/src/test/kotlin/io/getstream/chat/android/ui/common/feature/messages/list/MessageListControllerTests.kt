@@ -579,6 +579,7 @@ internal class MessageListControllerTests {
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,
                 deletedMessageVisibility = deletedMessageVisibility,
+                threadLoadOrderOlderToNewer = false,
             )
         }
     }

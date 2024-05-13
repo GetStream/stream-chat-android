@@ -183,6 +183,7 @@ internal class MessageListViewModelTest {
                     chatClient = chatClient,
                     cid = channelId,
                     clipboardHandler = mock(),
+                    threadLoadOrderOlderToNewer = false,
                 ),
 
             )
