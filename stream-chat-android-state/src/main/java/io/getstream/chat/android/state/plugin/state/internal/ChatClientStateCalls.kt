@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.state.extensions.state
 import io.getstream.chat.android.state.model.querychannels.pagination.internal.QueryChannelPaginationRequest
@@ -28,6 +29,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.log.taggedLogger
+import io.getstream.result.call.Call
 import io.getstream.result.call.launch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
@@ -93,9 +95,13 @@ internal class ChatClientStateCalls(
     }
 
     /** Reference request of the get thread replies query. */
-    internal suspend fun getReplies(messageId: String, messageLimit: Int): ThreadState {
+    internal suspend fun getReplies(
+        messageId: String,
+        messageLimit: Int,
+        olderToNewer: Boolean,
+    ): ThreadState {
         logger.d { "[getReplies] messageId: $messageId, messageLimit: $messageLimit" }
-        chatClient.getReplies(messageId, messageLimit).launch(scope)
+        repliesCall(olderToNewer, messageId, messageLimit).launch(scope)
         return deferredState
             .await()
             .thread(messageId)
@@ -111,14 +117,28 @@ internal class ChatClientStateCalls(
      *
      * @param messageId The id of the message we want to get replies for.
      * @param messageLimit The upper limit of how many replies should be fetched.
+     * @param olderToNewer If true, replies will be fetched from older to newer, otherwise from newer to older.
      *
      * @return The replies in the form of [ThreadState].
      */
-    internal suspend fun awaitReplies(messageId: String, messageLimit: Int): ThreadState {
+    internal suspend fun awaitReplies(
+        messageId: String,
+        messageLimit: Int,
+        olderToNewer: Boolean,
+    ): ThreadState {
         logger.d { "[awaitReplies] messageId: $messageId, messageLimit: $messageLimit" }
-        chatClient.getReplies(messageId, messageLimit).await()
+        repliesCall(olderToNewer, messageId, messageLimit).await()
         return deferredState
             .await()
             .thread(messageId)
+    }
+
+    private fun repliesCall(
+        olderToNewer: Boolean,
+        messageId: String,
+        messageLimit: Int,
+    ): Call<List<Message>> = when (olderToNewer) {
+        true -> chatClient.getNewerReplies(messageId, messageLimit)
+        false -> chatClient.getReplies(messageId, messageLimit)
     }
 }
