@@ -40,7 +40,11 @@ class MessagesActivity : AppCompatActivity() {
 
     // Create ViewModels for the Views
     private val factory: MessageListViewModelFactory by lazy {
-        MessageListViewModelFactory(applicationContext, requireNotNull(intent.getStringExtra(EXTRA_CID)))
+        MessageListViewModelFactory(
+            context = applicationContext,
+            cid = requireNotNull(intent.getStringExtra(EXTRA_CID)),
+            threadLoadOlderToNewer = false,
+        )
     }
     private val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }

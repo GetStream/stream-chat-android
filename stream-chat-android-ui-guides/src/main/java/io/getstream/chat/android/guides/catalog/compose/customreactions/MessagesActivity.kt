@@ -46,6 +46,7 @@ class MessagesActivity : AppCompatActivity() {
                     viewModelFactory = MessagesViewModelFactory(
                         context = this,
                         channelId = channelId,
+                        threadLoadOlderToNewer = true,
                     ),
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
