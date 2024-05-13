@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin
 
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.log.StreamLog
 import io.getstream.result.Error
@@ -39,6 +40,15 @@ internal class ThrottlingPlugin : Plugin {
     }
 
     override fun <T : Any> resolveDependency(klass: KClass<T>): T? = null
+    override suspend fun onGetNewerRepliesResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ) {
+
+    }
+
     override fun onUserSet(user: User) { /* No-op */ }
     override fun onUserDisconnected() {
         lastMarkReadMap.clear()
