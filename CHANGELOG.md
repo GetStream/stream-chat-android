@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
 
 ### ⬆️ Improved
 
