@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
 
 ### ⬆️ Improved
 
@@ -90,6 +91,37 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# May 01th, 2024 - 6.3.2
+## Common changes for all artifacts
+### 🐞 Fixed
+- Shadowed messages are filtered. [#5234](https://github.com/GetStream/stream-chat-android/pull/5234)
+
+### ⬆️ Improved
+- `Channel.lastMessageAt` is not updated when there is a new message within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+
+### ✅ Added
+- Added `reason` and `custom` fields to flag message endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reason` and `custom` fields to flag user endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reactionGroups` field to `Message` entity. [#5247](https://github.com/GetStream/stream-chat-android/pull/5247)
+- Added `ReactionSorting` interface to allow custom sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
+- Added `privacySettings` field to `User` entity. [#5249](https://github.com/GetStream/stream-chat-android/pull/5249)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+
+### ✅ Added
+- Added a Button to jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
+- Added `ViewReactionsViewStyle.reactionSorting` field to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed `ChannelsState.isLoadingMore` being stuck. [#5239](https://github.com/GetStream/stream-chat-android/pull/5239)
+
+### ⬆️ Improved
+- Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+- MessageList accept `reactionSorting` parameter to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
 
 # April 19th, 2024 - 6.3.1
 ## stream-chat-android-compose

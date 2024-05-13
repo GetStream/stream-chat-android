@@ -31,7 +31,7 @@ import io.getstream.chat.android.ui.feature.messages.list.reactions.internal.Rea
 import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.hasSingleReaction
-import io.getstream.chat.android.ui.utils.extensions.supportedReactionCounts
+import io.getstream.chat.android.ui.utils.extensions.supportedReactionGroups
 
 @InternalStreamChatApi
 public class ViewReactionsView : RecyclerView {
@@ -110,8 +110,10 @@ public class ViewReactionsView : RecyclerView {
     }
 
     private fun createReactionItems(message: Message): List<ReactionItem> {
-        return message.supportedReactionCounts.keys
-            .mapNotNull { type ->
+        return message.supportedReactionGroups
+            .toList()
+            .sortedWith { o1, o2 -> reactionsViewStyle.reactionSorting.compare(o1.second, o2.second) }
+            .mapNotNull { (type, _) ->
                 ChatUI.supportedReactions.getReactionDrawable(type)?.let {
                     ReactionItem(
                         type = type,
@@ -119,6 +121,6 @@ public class ViewReactionsView : RecyclerView {
                         reactionDrawable = it,
                     )
                 }
-            }.sortedBy { if (isMyMessage) it.isMine else !it.isMine }
+            }
     }
 }

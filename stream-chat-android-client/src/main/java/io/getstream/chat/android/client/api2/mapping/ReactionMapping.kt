@@ -17,8 +17,10 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
 
 internal fun Reaction.toDto(): UpstreamReactionDto =
     UpstreamReactionDto(
@@ -42,4 +44,13 @@ internal fun DownstreamReactionDto.toDomain(): Reaction =
         user = user?.toDomain(),
         userId = user_id,
         extraData = extraData.toMutableMap(),
+    )
+
+internal fun DownstreamReactionGroupDto.toDomain(type: String): ReactionGroup =
+    ReactionGroup(
+        type = type,
+        count = count,
+        sumScore = sum_scores,
+        firstReactionAt = first_reaction_at,
+        lastReactionAt = last_reaction_at,
     )

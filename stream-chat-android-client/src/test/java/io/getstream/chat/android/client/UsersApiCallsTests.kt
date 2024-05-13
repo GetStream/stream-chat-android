@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -123,12 +124,22 @@ internal class UsersApiCallsTests {
             date,
             date,
         )
+        val reason = randomString()
+        val customData = mapOf(randomString() to randomString())
 
         Mockito.`when`(
-            mock.api.flagUser(targetUserId),
+            mock.api.flagUser(
+                userId = targetUserId,
+                reason = reason,
+                customData = customData,
+            ),
         ).thenReturn(RetroSuccess(flag).toRetrofitCall())
 
-        val result = client.flagUser(targetUserId).await()
+        val result = client.flagUser(
+            userId = targetUserId,
+            reason = reason,
+            customData = customData,
+        ).await()
 
         verifySuccess(result, flag)
     }
@@ -151,12 +162,22 @@ internal class UsersApiCallsTests {
             date,
             date,
         )
+        val reason = randomString()
+        val customData = mapOf(randomString() to randomString())
 
         Mockito.`when`(
-            mock.api.flagUser(targetUserId),
+            mock.api.flagUser(
+                userId = targetUserId,
+                reason = reason,
+                customData = customData,
+            ),
         ).thenReturn(RetroSuccess(flag).toRetrofitCall())
 
-        val result = client.flagUser(targetUserId).await()
+        val result = client.flagUser(
+            userId = targetUserId,
+            reason = reason,
+            customData = customData,
+        ).await()
 
         verifySuccess(result, flag)
     }
@@ -178,12 +199,22 @@ internal class UsersApiCallsTests {
             date,
             date,
         )
+        val reason = randomString()
+        val customData = mapOf(randomString() to randomString())
 
         Mockito.`when`(
-            mock.api.flagMessage(targetMessageId),
+            mock.api.flagMessage(
+                messageId = targetMessageId,
+                reason = reason,
+                customData = customData,
+            ),
         ).thenReturn(RetroSuccess(flag).toRetrofitCall())
 
-        val result = client.flagMessage(targetMessageId).await()
+        val result = client.flagMessage(
+            messageId = targetMessageId,
+            reason = reason,
+            customData = customData,
+        ).await()
 
         verifySuccess(result, flag)
     }

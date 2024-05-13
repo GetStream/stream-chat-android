@@ -354,13 +354,21 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
-    fun flagUser(userId: String): Call<Flag>
+    fun flagUser(
+        userId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag>
 
     @CheckResult
     fun unflagUser(userId: String): Call<Flag>
 
     @CheckResult
-    fun flagMessage(messageId: String): Call<Flag>
+    fun flagMessage(
+        messageId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag>
 
     @CheckResult
     fun unflagMessage(messageId: String): Call<Flag>

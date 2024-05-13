@@ -1,7 +1,9 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Providing Custom Reactions
+# Reactions
+
+## Providing Custom Reactions
 
 By default, the UI Components SDK provides the following reaction options and corresponding icons for them:
 
@@ -86,10 +88,55 @@ ChatUI.setSupportedReactions(new SupportedReactions(context, reactions));
 
 In the example above, we defined a set of 4 custom reactions and provided corresponding icons for them. Notice that you need to provide icons for both normal and selected states.
 
-## The Resulting UI
+### The Resulting UI
 
 The code above will produce the following UI:
 
 | Message Options Overlay | Message List |
 | --- | --- |
 |![Message Options Overlay](../../assets/custom_reactions_message_options_overlay.png)|![Message List](../../assets/custom_reactions_message_list.png)|
+
+
+
+## Custom Reactions Sorting
+
+By default, the reactions are sorted by the time they were added (`ReactionSortingByFirstReactionAt`).
+If you want to change the sorting behavior, you can provide a custom `ReactionSorting` implementation or use one of the provided ones.
+
+You can sort the reactions by the following fields in `ReactionGroup`:
+- `count` - The number of times the reaction was added.
+- `sumScore` - The score value of the reaction. By default it is the same value as `count`.
+- `firstReactionAt` - The date of the first reaction from this type of reaction.
+- `lastReactionAt` - The date of the last reaction from this type of reaction.
+
+### Using TransformStyle
+
+In the example below, we are using the predefined `ReactionSortingByCount` implementation to sort the reactions by the number of times they were added.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultViewStyle ->
+    defaultViewStyle.reactionsViewStyle.copy(
+        reactionSorting = ReactionSortingByCount,
+    )
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageListItemStyleTransformer(defaultViewStyle -> {
+    return defaultViewStyle.getReactionsViewStyle().copy(
+        //... other properties
+        ReactionSortingByCount.INSTANCE
+    );
+});
+```
+</TabItem>
+</Tabs>
+
+
+

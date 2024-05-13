@@ -2545,13 +2545,29 @@ internal constructor(
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
     @CheckResult
-    public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
+    public fun flagUser(
+        userId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> = api.flagUser(
+        userId,
+        reason,
+        customData,
+    )
 
     @CheckResult
     public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
 
     @CheckResult
-    public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
+    public fun flagMessage(
+        messageId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> = api.flagMessage(
+        messageId,
+        reason,
+        customData,
+    )
 
     @CheckResult
     public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)
@@ -2876,6 +2892,14 @@ internal constructor(
      */
     @CheckResult
     public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val currentUser = clientState.user.value
+        if (currentUser?.privacySettings?.typingIndicators?.enabled == false) {
+            logger.v { "[keystroke] rejected (typing indicators are disabled)" }
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Typing indicators are disabled for the current user."),
+            )
+        }
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
@@ -2917,6 +2941,14 @@ internal constructor(
      */
     @CheckResult
     public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val currentUser = clientState.user.value
+        if (currentUser?.privacySettings?.typingIndicators?.enabled == false) {
+            logger.v { "[stopTyping] rejected (typing indicators are disabled)" }
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Typing indicators are disabled for the current user."),
+            )
+        }
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()

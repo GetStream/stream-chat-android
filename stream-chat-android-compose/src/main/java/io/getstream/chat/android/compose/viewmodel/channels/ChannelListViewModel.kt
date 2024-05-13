@@ -45,6 +45,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
 import io.getstream.result.call.toUnitCall
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,7 +86,7 @@ public class ChannelListViewModel(
      */
     private val filterFlow: MutableStateFlow<FilterObject?> = MutableStateFlow(initialFilters)
 
-    private val logger by taggedLogger("ChannelListVM")
+    private val logger by taggedLogger("Chat:ChannelListVM")
 
     /**
      * State flow that keeps the value of the current [QuerySorter] for channels.
@@ -223,6 +224,7 @@ public class ChannelListViewModel(
     private fun searchMessages() {
         val currentState = searchMessageState.value ?: return
         val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(user.value) ?: return
+        logger.d { "[searchMessages] query: '${currentState.query}'" }
         viewModelScope.launch {
             chatClient.searchMessages(
                 channelFilter = channelFilter,
@@ -231,6 +233,7 @@ public class ChannelListViewModel(
                 limit = channelLimit,
             ).await()
                 .onSuccess {
+                    logger.v { "[searchMessages] completed(messages.size: ${it.messages.size})" }
                     searchMessageState.value = currentState.copy(
                         messages = currentState.messages + it.messages,
                         isLoading = false,
@@ -239,6 +242,7 @@ public class ChannelListViewModel(
                     )
                 }
                 .onError {
+                    logger.e { "[searchMessages] failed: $it" }
                     searchMessageState.value = currentState.copy(
                         isLoading = false,
                         isLoadingMore = false,
@@ -257,7 +261,7 @@ public class ChannelListViewModel(
             memberLimit = memberLimit,
         )
 
-        logger.d { "Querying channels as state" }
+        logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
         queryChannelsState = chatClient.queryChannelsAsState(
             request = queryChannelsRequest,
             chatEventHandlerFactory = chatEventHandlerFactory,
@@ -274,10 +278,10 @@ public class ChannelListViewModel(
                             isLoading = true,
                             searchQuery = searchQuery.value,
                         ).also {
-                            logger.d { "Loading state for query" }
+                            logger.d { "[observeQueryChannels] state: Loading" }
                         }
                         ChannelsStateData.OfflineNoResults -> {
-                            logger.d { "No offline results. Channels are empty" }
+                            logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = emptyList(),
@@ -285,7 +289,7 @@ public class ChannelListViewModel(
                             )
                         }
                         is ChannelsStateData.Result -> {
-                            logger.d { "Received result for state of channels" }
+                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
                             channelsState.copy(
                                 isLoading = false,
                                 channelItems = createChannelItems(state.channels, channelMutes),
@@ -382,9 +386,12 @@ public class ChannelListViewModel(
      * Loads more data when the user reaches the end of the channels list.
      */
     public fun loadMore() {
-        logger.d { "Loading more channels" }
+        logger.d { "[loadMore] no args" }
 
-        if (chatClient.clientState.isOffline) return
+        if (chatClient.clientState.isOffline) {
+            logger.v { "[loadMore] rejected (client is offline)" }
+            return
+        }
         when (searchQuery.value) {
             is SearchQuery.Empty,
             is SearchQuery.Channels,
@@ -402,20 +409,30 @@ public class ChannelListViewModel(
     }
 
     private fun loadMoreQueryChannels() {
-        val currentConfig = QueryConfig(
-            filters = filterFlow.value ?: return,
+        logger.d { "[loadMoreQueryChannels] no args" }
+        val currentFilter = filterFlow.value
+        if (currentFilter == null) {
+            logger.v { "[loadMoreQueryChannels] rejected (no current filter)" }
+            return
+        }
+        val currentQuery = queryChannelsState.value?.nextPageRequest?.value
+        if (currentQuery == null) {
+            logger.v { "[loadMoreQueryChannels] rejected (no current query)" }
+            return
+        }
+        val nextQuery = currentQuery.copy(
+            filter = createQueryChannelsFilter(currentFilter, searchQuery.value.query),
             querySort = querySortFlow.value,
         )
-
-        channelsState = channelsState.copy(isLoadingMore = true)
-
-        val currentQuery = queryChannelsState.value?.nextPageRequest?.value
-
-        currentQuery?.copy(
-            filter = createQueryChannelsFilter(currentConfig.filters, searchQuery.value.query),
-            querySort = currentConfig.querySort,
-        )?.let { queryChannelsRequest ->
-            chatClient.queryChannels(queryChannelsRequest).enqueue()
+        viewModelScope.launch {
+            channelsState = channelsState.copy(isLoadingMore = true)
+            val result = chatClient.queryChannels(nextQuery).await()
+            if (result.isSuccess) {
+                logger.v { "[loadMoreQueryChannels] completed; channels.size: ${result.getOrNull()?.size}" }
+            } else {
+                logger.e { "[loadMoreQueryChannels] failed: ${result.errorOrNull()}" }
+            }
+            channelsState = channelsState.copy(isLoadingMore = false)
         }
     }
 

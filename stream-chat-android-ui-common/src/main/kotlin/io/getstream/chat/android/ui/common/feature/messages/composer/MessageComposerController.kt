@@ -164,7 +164,6 @@ public class MessageComposerController(
      */
     public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
         .map {
-            println("JcLog: messageValidator: -$messageValidator")
             messageValidator.canSendLinks = it.ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
             it.ownCapabilities
         }
@@ -183,7 +182,8 @@ public class MessageComposerController(
      * [SharingStarted.Eagerly] because this [StateFlow] has no collectors, its value is only
      * ever read directly.
      */
-    private val canSendTypingUpdates = ownCapabilities.map { it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
+    private val canSendTypingUpdates = ownCapabilities
+        .map { it.contains(ChannelCapabilities.TYPING_EVENTS) || it.contains(ChannelCapabilities.SEND_TYPING_EVENTS) }
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,

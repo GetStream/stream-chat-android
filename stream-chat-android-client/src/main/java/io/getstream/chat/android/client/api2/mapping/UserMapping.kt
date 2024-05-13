@@ -31,6 +31,7 @@ internal fun User.toDto(): UpstreamUserDto =
         name = name,
         image = image,
         invisible = isInvisible,
+        privacy_settings = privacySettings?.toDto(),
         language = language,
         role = role,
         devices = devices.map(Device::toDto),

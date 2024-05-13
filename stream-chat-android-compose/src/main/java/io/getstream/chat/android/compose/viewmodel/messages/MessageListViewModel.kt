@@ -267,8 +267,16 @@ public class MessageListViewModel(
      * @param message Message to delete.
      */
     @Suppress("ConvertArgumentToSet")
-    public fun flagMessage(message: Message) {
-        messageListController.flagMessage(message)
+    public fun flagMessage(
+        message: Message,
+        reason: String?,
+        customData: Map<String, String>,
+    ) {
+        messageListController.flagMessage(
+            message,
+            reason,
+            customData,
+        )
     }
 
     /**

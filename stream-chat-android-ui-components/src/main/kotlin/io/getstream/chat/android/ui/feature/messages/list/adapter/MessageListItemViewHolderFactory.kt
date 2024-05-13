@@ -290,7 +290,12 @@ public open class MessageListItemViewHolderFactory {
     private fun createUnreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.UnreadSeparatorItem> {
-        return UnreadSeparatorViewHolder(parentView, decoratorProvider.decorators, style)
+        return UnreadSeparatorViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listeners,
+            style,
+        )
     }
 
     /**

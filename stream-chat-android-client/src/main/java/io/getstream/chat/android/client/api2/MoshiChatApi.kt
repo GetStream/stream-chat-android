@@ -47,6 +47,9 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.FlagRequest
+import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
 import io.getstream.chat.android.client.api2.model.requests.GuestUserRequest
 import io.getstream.chat.android.client.api2.model.requests.HideChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.InviteMembersRequest
@@ -426,23 +429,43 @@ constructor(
         }
     }
 
-    override fun flagUser(userId: String): Call<Flag> =
-        flag(mutableMapOf("target_user_id" to userId))
+    override fun flagUser(
+        userId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> =
+        flag(
+            FlagUserRequest(
+                targetUserId = userId,
+                reason = reason,
+                custom = customData,
+            ),
+        )
 
     override fun unflagUser(userId: String): Call<Flag> =
         unflag(mutableMapOf("target_user_id" to userId))
 
-    override fun flagMessage(messageId: String): Call<Flag> =
-        flag(mutableMapOf("target_message_id" to messageId))
+    override fun flagMessage(
+        messageId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> =
+        flag(
+            FlagMessageRequest(
+                targetMessageId = messageId,
+                reason = reason,
+                custom = customData,
+            ),
+        )
 
     override fun unflagMessage(messageId: String): Call<Flag> =
         unflag(mutableMapOf("target_message_id" to messageId))
 
-    private fun flag(body: MutableMap<String, String>): Call<Flag> {
+    private fun flag(body: FlagRequest): Call<Flag> {
         return moderationApi.flag(body = body).map { response -> response.flag.toDomain() }
     }
 
-    private fun unflag(body: MutableMap<String, String>): Call<Flag> {
+    private fun unflag(body: Map<String, String>): Call<Flag> {
         return moderationApi.unflag(body = body).map { response -> response.flag.toDomain() }
     }
 

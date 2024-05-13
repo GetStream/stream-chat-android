@@ -53,6 +53,7 @@ import io.getstream.chat.android.state.extensions.getMessageUsingCache
 import io.getstream.chat.android.state.extensions.getRepliesAsState
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.loadMessageById
+import io.getstream.chat.android.state.extensions.loadMessagesAroundId
 import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
@@ -117,8 +118,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -202,7 +205,10 @@ public class MessageListController(
      */
     public val user: StateFlow<User?> = clientState.user
 
-    private val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
+    /**
+     * Holds information about the unread label state.
+     */
+    public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -512,10 +518,10 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
-        refreshUnreadLabel()
+        refreshUnreadLabel(true)
     }
 
-    private fun refreshUnreadLabel() {
+    private fun refreshUnreadLabel(shouldShowButton: Boolean) {
         val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
         channelState.filterNotNull()
             .flatMapLatest {
@@ -530,37 +536,71 @@ public class MessageListController(
                 unreadLabelState.value = channelUserRead.lastReadMessageId
                     ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
                     ?.let {
-                        UnreadLabel(channelUserRead.unreadMessages, it)
+                        UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton)
                     }
             }.launchIn(scope)
     }
 
-    private fun processMessageId() {
-        messageId?.takeUnless { it.isBlank() }?.let { messageId ->
-            logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
-            scope.launch {
-                if (parentMessageId != null) {
-                    enterThreadSequential(parentMessageId)
-                }
+    /**
+     * Disable the unread label button.
+     */
+    public fun disableUnreadLabelButton() {
+        unreadLabelState.value = unreadLabelState.value?.copy(buttonVisibility = false)
+    }
 
-                listState
-                    .onCompletion {
-                        logger.v { "[processMessageId] mode: ${_mode.value}" }
-                        when {
-                            _mode.value is MessageMode.Normal -> {
-                                focusChannelMessage(messageId)
-                            }
-                            _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
-                                focusThreadMessage(
-                                    threadMessageId = messageId,
-                                    parentMessageId = parentMessageId,
-                                )
+    /**
+     * Scrolls to the first unread message in the channel.
+     */
+    public fun scrollToFirstUnreadMessage() {
+        unreadLabelState.value?.let { unreadLabel ->
+            val messages = messagesState.messageItems
+                .filterIsInstance<MessageItemState>()
+                .map { it.message }
+
+            messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
+                ?.let { messages.focusUnreadMessage(it.id) }
+                ?: {
+                    scope.launch {
+                        chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
+                            .await()
+                            .onSuccess { channel -> channel.messages.focusUnreadMessage(unreadLabel.lastReadMessageId) }
+                    }
+                }
+        }
+        disableUnreadLabelButton()
+    }
+
+    private fun processMessageId() {
+        messageId
+            ?.takeUnless { it.isBlank() }
+            ?.let { messageId ->
+                logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
+                scope.launch {
+                    if (parentMessageId != null) {
+                        enterThreadSequential(parentMessageId)
+                    }
+                    listState
+                        .onCompletion {
+                            logger.v { "[processMessageId] mode: ${_mode.value}" }
+                            when {
+                                _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
+                                _mode.value is MessageMode.MessageThread && parentMessageId != null ->
+                                    focusThreadMessage(
+                                        threadMessageId = messageId,
+                                        parentMessageId = parentMessageId,
+                                    )
                             }
                         }
-                    }
-                    .first { it.messageItems.isNotEmpty() }
+                        .first { it.messageItems.isNotEmpty() }
+                }
             }
-        }
+    }
+
+    private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
+        indexOfFirst { it.id == lastReadMessageId }
+            .takeIf { it != -1 }
+            ?.takeUnless { it >= size - 1 }
+            ?.let { focusChannelMessage(get(it + 1).id) }
     }
 
     private fun updateMessageList(newState: MessageListState) {
@@ -1482,11 +1522,23 @@ public class MessageListController(
     /**
      * Flags the selected message.
      *
-     * @param message Message to delete.
+     * @param message Message to be flagged.
+     * @param reason The reason for flagging the message.
+     * @param customData Additional data to send with the flag.
+     * @param onResult Handler that notifies the result of the flag action.
      */
-    public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
+    public fun flagMessage(
+        message: Message,
+        reason: String?,
+        customData: Map<String, String>,
+        onResult: (Result<Flag>) -> Unit = {},
+    ) {
         _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
-        chatClient.flagMessage(message.id).enqueue { response ->
+        chatClient.flagMessage(
+            message.id,
+            reason,
+            customData,
+        ).enqueue { response ->
             onResult(response)
             if (response is Result.Failure) {
                 val error = response.value
@@ -1512,7 +1564,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    refreshUnreadLabel()
+                    refreshUnreadLabel(false)
                 }
             }
         }
@@ -1992,9 +2044,10 @@ public class MessageListController(
         public data class UnpinMessageError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
-    private data class UnreadLabel(
+    public data class UnreadLabel(
         val unreadCount: Int,
         val lastReadMessageId: String,
+        val buttonVisibility: Boolean,
     )
 
     public companion object {

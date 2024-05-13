@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.socket
 
+import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.token.TokenManager
@@ -90,11 +91,32 @@ internal class SocketFactory(
                 if (user.role.isNotBlank()) put("role", user.role)
                 user.banned?.also { put("banned", it) }
                 user.invisible?.also { put("invisible", it) }
+                user.privacySettings?.also { put("privacy_settings", it.reducePrivacySettings()) }
                 if (user.teams.isNotEmpty()) put("teams", user.teams)
                 if (user.language.isNotBlank()) put("language", user.language)
                 if (user.image.isNotBlank()) put("image", user.image)
                 if (user.name.isNotBlank()) put("name", user.name)
                 putAll(user.extraData)
+            }
+        }
+
+    private fun PrivacySettings.reducePrivacySettings(): Map<String, Any> = mutableMapOf<String, Any>()
+        .apply {
+            typingIndicators?.also {
+                put(
+                    "typing_indicators",
+                    mapOf<String, Any>(
+                        "enabled" to it.enabled,
+                    ),
+                )
+            }
+            readReceipts?.also {
+                put(
+                    "read_receipts",
+                    mapOf<String, Any>(
+                        "enabled" to it.enabled,
+                    ),
+                )
             }
         }
 

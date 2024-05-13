@@ -16,6 +16,9 @@
 
 package io.getstream.chat.ui.sample.application
 
+import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.ReadReceipts
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.ui.sample.data.user.SampleUser
 
 object AppConfig {
@@ -138,6 +141,17 @@ object AppConfig {
             image = "https://ca.slack-edge.com/T02RM6X6B-U034NG4FPNG-688fab30cc42-72",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.MVoS7rCos7o3D7fkUcCFHVThKrN0sAaENupmXHYX3vw",
             language = "fr",
+        ),
+        SampleUser(
+            apiKey = apiKey,
+            id = "kanat_ninja",
+            name = "Kanat Ninja",
+            image = "https://getstream.io/static/a4ba18b7dc1eedfa3ea4edbac74ce5e4/a3911/kanat-kiialbaev.webp",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXRfbmluamEifQ.s6We-MRy0ZXraiyLz8kShEPPIxXfqwUOOClfJgpTk8c",
+            privacySettings = PrivacySettings(
+                typingIndicators = TypingIndicators(enabled = false),
+                readReceipts = ReadReceipts(enabled = false),
+            ),
         ),
         SampleUser(
             apiKey = apiKey,

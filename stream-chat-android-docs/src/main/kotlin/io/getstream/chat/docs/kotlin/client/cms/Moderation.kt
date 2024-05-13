@@ -18,24 +18,34 @@ class Moderation(val client: ChatClient, val channelClient: ChannelClient) {
         inner class Flags {
 
             fun flag() {
-                client.flagMessage("message-id").enqueue { result ->
+                client.flagMessage(
+                    messageId = "message-id",
+                    reason = "This message is inappropriate",
+                    customData = mapOf("extra_info" to "more details"),
+                ).enqueue { result ->
                     when (result) {
                         is Result.Success -> {
                             // Message was flagged
                             val flag = result.value
                         }
+
                         is Result.Failure -> {
                             // Handler error
                         }
                     }
                 }
 
-                client.flagUser("user-id").enqueue { result ->
+                client.flagUser(
+                    userId = "user-id",
+                    reason = "This user is a spammer",
+                    customData = mapOf("extra_info" to "more details"),
+                ).enqueue { result ->
                     when (result) {
                         is Result.Success -> {
                             // User was flagged
                             val flag = result.value
                         }
+
                         is Result.Failure -> {
                             // Handler error
                         }

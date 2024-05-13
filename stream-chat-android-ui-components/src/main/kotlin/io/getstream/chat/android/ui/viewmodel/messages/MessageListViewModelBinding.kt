@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Even
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.EndRegionReached
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.FlagMessage
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.GiphyActionSelected
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.HideUnreadLabel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.LastMessageRead
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.MessageReaction
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel.Event.ReplyMessage
@@ -62,7 +63,16 @@ public fun MessageListViewModel.bindView(
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
-    view.setMessageFlagHandler { onEvent(FlagMessage(it, view::handleFlagMessageResult)) }
+    view.setMessageFlagHandler {
+        onEvent(
+            FlagMessage(
+                it,
+                reason = null,
+                customData = emptyMap(),
+                view::handleFlagMessageResult,
+            ),
+        )
+    }
     view.setMessagePinHandler { onEvent(MessageListViewModel.Event.PinMessage(it)) }
     view.setMessageUnpinHandler { onEvent(MessageListViewModel.Event.UnpinMessage(it)) }
     view.setMessageMarkAsUnreadHandler { onEvent(MessageListViewModel.Event.MarkAsUnreadMessage(it)) }
@@ -115,6 +125,12 @@ public fun MessageListViewModel.bindView(
     targetMessage.observe(lifecycleOwner, view::scrollToMessage)
     insideSearch.observe(lifecycleOwner, view::shouldRequestMessagesAtBottom)
     unreadCount.observe(lifecycleOwner, view::setUnreadCount)
+    unreadLabel.observe(lifecycleOwner) {
+        when (it.buttonVisibility) {
+            true -> view.showUnreadLabelButton(it.unreadCount)
+            false -> view.hideUnreadLabelButton()
+        }
+    }
 
     view.setAttachmentReplyOptionClickHandler { result ->
         onEvent(MessageListViewModel.Event.ReplyAttachment(result.cid, result.messageId))
@@ -141,4 +157,10 @@ public fun MessageListViewModel.bindView(
             view.showError(it)
         },
     )
+    view.setOnUnreadLabelClickListener {
+        onEvent(HideUnreadLabel(true))
+    }
+    view.setOnUnreadLabelReachedListener {
+        onEvent(HideUnreadLabel(false))
+    }
 }

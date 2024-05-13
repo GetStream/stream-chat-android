@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
@@ -63,6 +64,7 @@ internal class MoshiChatParser : ChatParser {
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
+            .add(FlagRequestAdapterFactory)
             .build()
     }
 

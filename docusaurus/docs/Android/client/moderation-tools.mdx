@@ -42,22 +42,38 @@ If a message was moderated, `moderationDetails` will have the following values:
 Any user is allowed to flag a message or a user. Flagging does not perform any particular action on the chat. The API will only trigger the related webhook event and make the message appear on your _Dashboard Chat Moderation_ view.
 
 ```kotlin
-client.flagMessage("message-id").enqueue { result -> 
-    if (result.isSuccess) { 
-        // Message was flagged 
-        val flag: Flag = result.data() 
-    } else { 
-        // Handle result.error() 
-    } 
-} 
+client.flagMessage(
+    messageId = "message-id",
+    reason = "This message is inappropriate",
+    customData = mapOf("extra_info" to "more details"),
+).enqueue { result ->
+    when (result) {
+        is Result.Success -> {
+            // Message was flagged
+            val flag = result.value
+        }
+
+        is Result.Failure -> {
+            // Handler error
+        }
+    }
+}
  
-client.flagUser("user-id").enqueue { result -> 
-    if (result.isSuccess) { 
-        // User was flagged 
-        val flag: Flag = result.data() 
-    } else { 
-        // Handle result.error() 
-    } 
+client.flagUser(
+    userId = "user-id",
+    reason = "This user is a spammer",
+    customData = mapOf("extra_info" to "more details"),
+).enqueue { result ->
+    when (result) {
+        is Result.Success -> {
+            // User was flagged
+            val flag = result.value
+        }
+
+        is Result.Failure -> {
+            // Handler error
+        }
+    }
 }
 ```
 
