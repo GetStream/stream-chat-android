@@ -45,9 +45,7 @@ internal class ThrottlingPlugin : Plugin {
         parentId: String,
         limit: Int,
         lastId: String?,
-    ) {
-
-    }
+    ) { /* No-op */ }
 
     override fun onUserSet(user: User) { /* No-op */ }
     override fun onUserDisconnected() {
