@@ -31,12 +31,17 @@ public interface ThreadState {
     /** If we are currently loading messages. */
     public val loading: StateFlow<Boolean>
 
-    /** If we are currently loading older messages. */
-    public val loadingOlderMessages: StateFlow<Boolean>
-
     /** If we've reached the earliest point in this thread. */
     public val endOfOlderMessages: StateFlow<Boolean>
 
-    /** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */
+    /** If we've reached the latest point in this thread. */
+    public val endOfNewerMessages: StateFlow<Boolean>
+
+    /** The oldest message available in this thread state.
+     * It's null when we haven't loaded any messages in thread yet. */
     public val oldestInThread: StateFlow<Message?>
+
+    /** The newest message available in this thread state.
+     * It's null when we haven't loaded any messages in thread yet. */
+    public val newestInThread: StateFlow<Message?>
 }
