@@ -39,6 +39,7 @@ import io.getstream.chat.android.state.plugin.state.global.internal.MutableGloba
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.toMutableState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -202,8 +203,12 @@ internal class LogicRegistry internal constructor(
         return threads.getOrPut(messageId) {
             val mutableState = stateRegistry.mutableThread(messageId)
             val stateLogic = ThreadStateLogic(mutableState)
-
-            ThreadLogic(stateLogic)
+            ThreadLogic(stateLogic).also { threadLogic ->
+                coroutineScope.launch {
+                    repos.selectMessage(messageId)?.let { threadLogic.upsertMessage(it) }
+                    repos.selectMessagesForThread(messageId, MESSAGE_LIMIT).let { threadLogic.upsertMessages(it) }
+                }
+            }
         }
     }
 
@@ -243,5 +248,9 @@ internal class LogicRegistry internal constructor(
         channels.clear()
         threads.clear()
         mutableGlobalState.destroy()
+    }
+
+    companion object {
+        private const val MESSAGE_LIMIT = 30
     }
 }
