@@ -39,8 +39,8 @@ internal class ThreadQueryListenerState(
 
     private val logger by taggedLogger("Chat:ThreadQueryListener")
 
-    override suspend fun onGetRepliesPrecondition(messageId: String, limit: Int): Result<Unit> {
-        val loadingMoreMessage = logic.thread(messageId).isLoadingMessages()
+    override suspend fun onGetRepliesPrecondition(parentId: String): Result<Unit> {
+        val loadingMoreMessage = logic.thread(parentId).isLoadingMessages()
 
         return if (loadingMoreMessage) {
             val errorMsg = "already loading messages for this thread, ignoring the load requests."
@@ -51,54 +51,51 @@ internal class ThreadQueryListenerState(
         }
     }
 
-    override suspend fun onGetRepliesRequest(messageId: String, limit: Int) {
-        val threadLogic = logic.thread(messageId)
+    override suspend fun onGetRepliesRequest(parentId: String, limit: Int) {
+        val threadLogic = logic.thread(parentId)
 
         threadLogic.setLoading(true)
-        val messages = messageRepository.selectMessagesForThread(messageId, limit).toMutableList()
-
-        // If the parent message is not inside the thread, it is necessary to add it.
-        if (threadLogic.getMessage(messageId) == null) {
-            messageRepository.selectMessage(messageId)?.let(messages::add)
-        }
-
-        if (messages.isNotEmpty()) {
-            threadLogic.upsertMessages(messages)
-        }
     }
 
-    override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) {
-        val threadLogic = logic.thread(messageId)
+    override suspend fun onGetRepliesResult(result: Result<List<Message>>, parentId: String, limit: Int) {
+        val threadLogic = logic.thread(parentId)
         threadLogic.setLoading(false)
         onResult(threadLogic, result, limit)
     }
 
-    override suspend fun onGetRepliesMorePrecondition(messageId: String, firstId: String, limit: Int): Result<Unit> {
-        val loadingMoreMessage = logic.thread(messageId).isLoadingOlderMessages()
-
-        return if (loadingMoreMessage) {
-            val errorMsg = "already loading messages for this thread, ignoring the load more requests."
-            logger.i { errorMsg }
-            Result.Failure(Error.GenericError(errorMsg))
-        } else {
-            Result.Success(Unit)
-        }
+    override suspend fun onGetRepliesMoreRequest(parentId: String, firstId: String, limit: Int) {
+        logic.thread(parentId).setLoading(true)
     }
 
-    override suspend fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int) {
-        logic.thread(messageId).setLoadingOlderMessages(true)
+    override suspend fun onGetNewerRepliesRequest(parentId: String, limit: Int, lastId: String?) {
+        logic.thread(parentId).setLoading(true)
     }
 
     override suspend fun onGetRepliesMoreResult(
         result: Result<List<Message>>,
-        messageId: String,
+        parentId: String,
         firstId: String,
         limit: Int,
     ) {
-        val threadLogic = logic.thread(messageId)
+        val threadLogic = logic.thread(parentId)
 
-        threadLogic.setLoadingOlderMessages(false)
+        threadLogic.setLoading(false)
         onResult(threadLogic, result, limit)
+    }
+
+    override suspend fun onGetNewerRepliesResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ) {
+        val threadLogic = logic.thread(parentId)
+        result.onSuccess { messages ->
+            threadLogic.upsertMessages(messages)
+            threadLogic.setEndOfNewerMessages(messages.size < limit)
+            threadLogic.updateNewestMessageInThread(messages)
+        }
+        threadLogic.setLoading(false)
     }
 
     private fun onResult(threadLogic: ThreadLogic?, result: Result<List<Message>>, limit: Int) {
