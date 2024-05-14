@@ -2151,8 +2151,8 @@ public final class io/getstream/chat/android/compose/util/extensions/ChannelCapa
 
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
-	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;)V
-	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;J)V
+	public synthetic fun <init> (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/querysort/QuerySorter;Lio/getstream/chat/android/models/FilterObject;IIILio/getstream/chat/android/state/event/handler/chat/factory/ChatEventHandlerFactory;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun deleteConversation (Lio/getstream/chat/android/models/Channel;)V
 	public final fun dismissChannelAction ()V
 	public final fun getActiveChannelAction ()Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;
