@@ -299,7 +299,7 @@ internal class ChannelListViewModelTest {
 
             val captor = argumentCaptor<QueryChannelsRequest>()
             verify(chatClient, times(2)).queryChannels(captor.capture())
-            captor.allValues `should be equal to` 2
+            captor.allValues.size `should be equal to` 2
             captor.firstValue.offset `should be equal to` 0
             captor.secondValue.offset `should be equal to` 30
         }
