@@ -43,6 +43,7 @@ import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
 import io.getstream.chat.android.ui.common.state.channels.actions.DeleteConversation
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -51,6 +52,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.doSuspendableAnswer
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
@@ -269,6 +271,39 @@ internal class ChannelListViewModelTest {
             autoCompleteFilterObject.value `should be equal to` "Search query"
         }
 
+    @Test
+    fun `Given channel list in content state and the current user is online When loading more channels Should filter out duplicate calls`() =
+        runTest {
+            val nextPageRequest = QueryChannelsRequest(
+                filter = queryFilter,
+                querySort = querySort,
+                offset = 30,
+                limit = 60,
+            )
+            val chatClient: ChatClient = mock()
+            val viewModel = Fixture(chatClient)
+                .givenCurrentUser()
+                .givenChannelsQuery()
+                .givenChannelsState(
+                    channelsStateData = ChannelsStateData.Result(listOf(channel1, channel2)),
+                    nextPageRequest = nextPageRequest,
+                    loading = false,
+                )
+                .givenChannelMutes()
+                .givenIsOffline(false)
+                .get()
+
+            viewModel.loadMore()
+            viewModel.loadMore()
+            viewModel.loadMore()
+
+            val captor = argumentCaptor<QueryChannelsRequest>()
+            verify(chatClient, times(2)).queryChannels(captor.capture())
+            captor.allValues `should be equal to` 2
+            captor.firstValue.offset `should be equal to` 0
+            captor.secondValue.offset `should be equal to` 30
+        }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
         private val channelClient: ChannelClient = mock(),
@@ -304,6 +339,13 @@ internal class ChannelListViewModelTest {
 
         fun givenChannelsQuery(channels: List<Channel> = emptyList()) = apply {
             whenever(chatClient.queryChannels(any())) doReturn channels.asCall()
+        }
+
+        fun givenChannelsQuery2(channels: List<Channel> = emptyList()) = apply {
+            whenever(chatClient.queryChannels(any())) doSuspendableAnswer {
+                delay(1)
+                channels.asCall()
+            }
         }
 
         fun givenDeleteChannel() = apply {
