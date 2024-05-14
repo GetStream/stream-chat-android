@@ -1556,7 +1556,7 @@ internal constructor(
      *
      * @param parentId The id of the parent message.
      * @param limit The number of replies to fetch.
-     * @param lastId The id of the last message to fetch.
+     * @param lastId The id of the last message to fetch from exclusively.
      *
      * @return Executable async [Call] responsible for fetching newer replies.
      */
