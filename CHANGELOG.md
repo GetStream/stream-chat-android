@@ -41,6 +41,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
 ### ⚠️ Changed
 
@@ -65,6 +66,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
 ### ⚠️ Changed
 
@@ -76,6 +78,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
 ### ⚠️ Changed
 
