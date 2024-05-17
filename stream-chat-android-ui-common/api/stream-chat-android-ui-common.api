@@ -356,6 +356,10 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Image
 	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/VideoHeadersProvider {
+	public abstract fun getVideoRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
+}
+
 public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion {
 }
 
