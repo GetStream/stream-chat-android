@@ -19,6 +19,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun getStyle ()Lio/getstream/chat/android/ui/font/ChatStyle;
 	public static final fun getSupportedReactions ()Lio/getstream/chat/android/ui/helper/SupportedReactions;
 	public static final fun getUserAvatarRenderer ()Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarRenderer;
+	public static final fun getVideoHeadersProvider ()Lio/getstream/chat/android/ui/common/helper/VideoHeadersProvider;
 	public static final fun getVideoThumbnailsEnabled ()Z
 	public static final fun setAttachmentFactoryManager (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/attachment/AttachmentFactoryManager;)V
 	public static final fun setAttachmentPreviewFactoryManager (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager;)V
@@ -39,6 +40,7 @@ public final class io/getstream/chat/android/ui/ChatUI {
 	public static final fun setStyle (Lio/getstream/chat/android/ui/font/ChatStyle;)V
 	public static final fun setSupportedReactions (Lio/getstream/chat/android/ui/helper/SupportedReactions;)V
 	public static final fun setUserAvatarRenderer (Lio/getstream/chat/android/ui/widgets/avatar/UserAvatarRenderer;)V
+	public static final fun setVideoHeadersProvider (Lio/getstream/chat/android/ui/common/helper/VideoHeadersProvider;)V
 	public static final fun setVideoThumbnailsEnabled (Z)V
 }
 
