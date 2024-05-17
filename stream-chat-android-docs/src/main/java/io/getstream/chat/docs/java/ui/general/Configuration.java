@@ -102,7 +102,7 @@ public class Configuration {
      * [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#adding-extra-headers-to-image-requests)
      */
     public void customizingImageHeaders() {
-        ChatUI.setImageHeadersProvider(() -> {
+        ChatUI.setImageHeadersProvider((url) -> {
             Map<String, String> headers = new HashMap<>();
             headers.put("token", "12345");
 

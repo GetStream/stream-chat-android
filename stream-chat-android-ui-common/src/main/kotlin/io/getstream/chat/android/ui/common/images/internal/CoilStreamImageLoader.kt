@@ -51,7 +51,7 @@ internal object CoilStreamImageLoader : StreamImageLoader {
             ?.let { url ->
                 val imageResult = context.streamImageLoader.execute(
                     ImageRequest.Builder(context)
-                        .headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+                        .headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
                         .data(url)
                         .applyTransformation(transformation)
                         .build(),
@@ -70,7 +70,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
     ): Disposable {
         val context = target.context
         val disposable = target.load(data, context.streamImageLoader) {
-            headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+            data?.toString()?.let { url ->
+                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
+            }
 
             if (placeholderResId != null) {
                 placeholder(placeholderResId)
@@ -100,7 +102,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
     ): Disposable {
         val context = target.context
         val disposable = target.load(data, context.streamImageLoader) {
-            headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+            data?.toString()?.let { url ->
+                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
+            }
 
             if (placeholderDrawable != null) {
                 placeholder(placeholderDrawable)
@@ -142,9 +146,12 @@ internal object CoilStreamImageLoader : StreamImageLoader {
         val context = target.context
 
         val drawable = withContext(DispatcherProvider.IO) {
+            val headersMap = data?.toString()?.let { url ->
+                imageHeadersProvider.getImageRequestHeaders(url)
+            } ?: emptyMap()
             val result = context.streamImageLoader.execute(
                 ImageRequest.Builder(context)
-                    .headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+                    .headers(headersMap.toHeaders())
                     .placeholder(placeholderDrawable)
                     .fallback(placeholderDrawable)
                     .error(placeholderDrawable)
@@ -183,7 +190,9 @@ internal object CoilStreamImageLoader : StreamImageLoader {
     ): Disposable {
         val context = target.context
         val disposable = target.load(uri, context.streamImageLoader) {
-            headers(imageHeadersProvider.getImageRequestHeaders().toHeaders())
+            uri?.toString()?.let { url ->
+                headers(imageHeadersProvider.getImageRequestHeaders(url).toHeaders())
+            }
 
             if (placeholderResId != null) {
                 placeholder(placeholderResId)

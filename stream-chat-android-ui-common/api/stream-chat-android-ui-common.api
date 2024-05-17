@@ -353,7 +353,7 @@ public final class io/getstream/chat/android/ui/common/helper/DateFormatter$Comp
 }
 
 public abstract interface class io/getstream/chat/android/ui/common/helper/ImageHeadersProvider {
-	public abstract fun getImageRequestHeaders ()Ljava/util/Map;
+	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
 public final class io/getstream/chat/android/ui/common/helper/internal/StorageHelper$Companion {
