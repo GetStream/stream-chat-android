@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.helper
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
 /**
  * Provides HTTP headers for video loading requests.
  */
@@ -30,6 +32,7 @@ public interface VideoHeadersProvider {
     public fun getVideoRequestHeaders(url: String): Map<String, String>
 }
 
-internal object DefaultVideoHeadersProvider : VideoHeadersProvider {
+@InternalStreamChatApi
+public object DefaultVideoHeadersProvider : VideoHeadersProvider {
     override fun getVideoRequestHeaders(url: String): Map<String, String> = emptyMap<String, String>()
 }
