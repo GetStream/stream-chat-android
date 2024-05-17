@@ -52,8 +52,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Created `VideoHeadersProvider` interface to provide headers for video requests. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
 
 ### ⚠️ Changed
+- The `ImageHeadersProvider.getImageRequestHeaders()` method use the url as a parameter. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
 
 ### ❌ Removed
 
