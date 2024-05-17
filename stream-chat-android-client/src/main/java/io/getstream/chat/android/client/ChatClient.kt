@@ -162,6 +162,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
@@ -3064,6 +3065,33 @@ internal constructor(
     @CheckResult
     public fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return api.downloadFile(fileUrl)
+    }
+
+    /**
+     * Get a list of threads for the current user.
+     *
+     * @param replyLimit The number of latest replies to fetch per thread. Defaults to 2.
+     * @param participantLimit The number of thread participants to request per thread. Defaults to 100.
+     * @param limit The number of threads to return. Defaults to 10.
+     * @param watch If true, all the channels corresponding to threads returned in response will be watched.
+     * Defaults to true.
+     * @param memberLimit The number of members to request per thread. Defaults to 100.
+     */
+    @CheckResult
+    public fun getThread(
+        replyLimit: Int = 2,
+        participantLimit: Int = 100,
+        limit: Int = 10,
+        watch: Boolean = true,
+        memberLimit: Int = 100,
+    ): Call<List<Thread>> {
+        return api.getThreads(
+            replyLimit = replyLimit,
+            participantLimit = participantLimit,
+            limit = limit,
+            watch = watch,
+            memberLimit = memberLimit,
+        )
     }
 
     private fun warmUp() {
