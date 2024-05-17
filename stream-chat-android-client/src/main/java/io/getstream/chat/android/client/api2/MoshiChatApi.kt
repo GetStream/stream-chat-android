@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
+import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
@@ -61,6 +62,7 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessage
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -104,6 +106,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VideoCallInfo
@@ -139,6 +142,7 @@ constructor(
     private val callApi: VideoCallApi,
     private val fileDownloadApi: FileDownloadApi,
     private val ogApi: OpenGraphApi,
+    private val threadsApi: ThreadsApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -1037,6 +1041,43 @@ constructor(
 
     override fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return fileDownloadApi.downloadFile(fileUrl)
+    }
+
+    /**
+     * Get a list of threads for the current user.
+     *
+     * @param replyLimit The number of latest replies to fetch per thread. Defaults to 2.
+     * @param participantLimit The number of thread participants to request per thread. Defaults to 100.
+     * @param limit The number of threads to return. Defaults to 10.
+     * @param watch If true, all the channels corresponding to threads returned in response will be watched.
+     * Defaults to true.
+     * @param memberLimit The number of members to request per thread. Defaults to 100.
+     */
+    override fun getThreads(
+        replyLimit: Int,
+        participantLimit: Int,
+        limit: Int,
+        watch: Boolean,
+        memberLimit: Int,
+    ): Call<List<Thread>> {
+        val lazyQueryThreads = {
+            threadsApi.getThreads(
+                connectionId,
+                QueryThreadsRequest(
+                    reply_limit = replyLimit,
+                    participant_limit = participantLimit,
+                    limit = limit,
+                    watch = watch,
+                    member_limit = memberLimit,
+                ),
+            ).map { response -> response.threads.map { it.toDomain() } }
+        }
+        return if (connectionId.isBlank() && watch) {
+            logger.i { "[getThreads] postponing because an active connection is required" }
+            postponeCall(lazyQueryThreads)
+        } else {
+            lazyQueryThreads()
+        }
     }
 
     override fun warmUp() {
