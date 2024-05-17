@@ -78,6 +78,8 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun getRepliesMore (Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun getSyncHistory (Ljava/util/List;Ljava/util/Date;)Lio/getstream/result/call/Call;
+	public final fun getThread (IIIZI)Lio/getstream/result/call/Call;
+	public static synthetic fun getThread$default (Lio/getstream/chat/android/client/ChatClient;IIIZIILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public static final fun getVERSION_PREFIX_HEADER ()Lio/getstream/chat/android/client/header/VersionPrefixHeader;
 	public final fun getVideoCallToken (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static final fun handlePushMessage (Lio/getstream/chat/android/models/PushMessage;)V
