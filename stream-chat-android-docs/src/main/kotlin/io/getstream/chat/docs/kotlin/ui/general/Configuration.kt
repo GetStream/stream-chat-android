@@ -94,7 +94,7 @@ private class ChatUiSnippets {
      */
     fun customizingImageHeaders() {
         ChatUI.imageHeadersProvider = object : ImageHeadersProvider {
-            override fun getImageRequestHeaders(): Map<String, String> {
+            override fun getImageRequestHeaders(url: String): Map<String, String> {
                 return mapOf("token" to "12345")
             }
         }
