@@ -136,6 +136,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mergePartially
+import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -1721,6 +1722,7 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
         return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+            .ensureId(getCurrentUser() ?: getStoredUser())
             .let { processedMessage ->
                 CoroutineCall(userScope) {
                     val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)

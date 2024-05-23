@@ -13,6 +13,7 @@
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
+- Fix `ChatClient.sendMessage()` method to be able to send multiple message in parallel. [#5266](https://github.com/GetStream/stream-chat-android/pull/5266)
 
 ### ⬆️ Improved
 

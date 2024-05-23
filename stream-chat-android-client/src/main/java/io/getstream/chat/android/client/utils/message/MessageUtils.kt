@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
 @file:JvmName("MessageUtils")
 
 package io.getstream.chat.android.client.utils.message
@@ -25,6 +26,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import java.util.UUID
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
 
@@ -146,3 +149,18 @@ public fun Message.isModerationFlag(): Boolean = moderationDetails?.action == Me
  */
 public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(currentUserId) &&
     (isError() && isModerationBounce())
+
+/**
+ * Ensures the message has an id.
+ * If the message doesn't have an id, a unique message id is generated.
+ * @return the message with an id.
+ */
+internal fun Message.ensureId(currentUser: User?): Message =
+    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+
+/**
+ * Returns a unique message id prefixed with user id.
+ */
+private fun generateMessageId(user: User?): String {
+    return "${user?.id}-${UUID.randomUUID()}"
+}
