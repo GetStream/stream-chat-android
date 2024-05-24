@@ -112,6 +112,9 @@
 - Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
 ## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed infinite progress bar on channel list screen. [#5259](https://github.com/GetStream/stream-chat-android/pull/5259)
+- Fixed thread replies are being scrolled to bottom. [#5261](https://github.com/GetStream/stream-chat-android/pull/5261)
 ### ✅ Added
 - Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
