@@ -1,99 +1,30 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# May 24th, 2024 - 6.4.0
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
 - Fix `ChatClient.sendMessage()` method to be able to send multiple message in parallel. [#5266](https://github.com/GetStream/stream-chat-android/pull/5266)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `ChatClient.getNewerReplies` to fetch newer replies for a message in a thread. [#5256](https://github.com/GetStream/stream-chat-android/pull/5256)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Created `VideoHeadersProvider` interface to provide headers for video requests. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
 
 ### ⚠️ Changed
 - The `ImageHeadersProvider.getImageRequestHeaders()` method use the url as a parameter. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
 
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # May 01th, 2024 - 6.3.2
 ## Common changes for all artifacts
