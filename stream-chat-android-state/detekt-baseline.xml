@@ -44,7 +44,6 @@
     <ID>MaxLineLength:StatePlugin.kt$StatePlugin$*</ID>
     <ID>MaxLineLength:StatePluginConfig.kt$StatePluginConfig$*</ID>
     <ID>MaxLineLength:SyncManager.kt$SyncManager$*</ID>
-    <ID>MaxLineLength:ThreadState.kt$ThreadState$/** The oldest message available in this thread state. It's null when we haven't loaded any messages in thread yet. */</ID>
     <ID>NestedBlockDepth:CustomObjectFiltering.kt$@Suppress("UNCHECKED_CAST") internal fun &lt;T : CustomObject> FilterObject.filter(t: T): Boolean</ID>
     <ID>ReturnCount:SyncManager.kt$SyncManager$@VisibleForTesting internal suspend fun performSync(cids: List&lt;String>)</ID>
     <ID>SwallowedException:CustomObjectFiltering.kt$e: ClassCastException</ID>
