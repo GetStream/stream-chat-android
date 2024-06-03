@@ -1174,10 +1174,7 @@ constructor(
                 max_votes_allowed = pollConfig.maxVotesAllowed,
                 allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
             ),
-        ).map {
-            println("JcLog: [createPoll] result: $it")
-            it.poll.toDomain()
-        }
+        ).map { it.poll.toDomain() }
     }
 
     override fun warmUp() {
