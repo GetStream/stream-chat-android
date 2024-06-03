@@ -39,6 +39,8 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
@@ -46,6 +48,7 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
 import okhttp3.ResponseBody
@@ -462,6 +465,18 @@ internal interface ChatApi {
         set: Map<String, Any>,
         unset: List<String>,
     ): Call<Thread>
+
+    @CheckResult
+    fun createPoll(pollConfig: PollConfig): Call<Poll>
+
+    @CheckResult
+    fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>
+
+    @CheckResult
+    fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote>
+
+    @CheckResult
+    fun closePoll(pollId: String): Call<Poll>
 
     fun warmUp()
 
