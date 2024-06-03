@@ -55,6 +55,9 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
+import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
+import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
@@ -67,6 +70,8 @@ import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventD
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -104,6 +109,9 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -115,6 +123,8 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
 
 internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
     return UpstreamConnectedEventDto(
@@ -175,6 +185,11 @@ internal fun ChatEventDto.toDomain(): ChatEvent {
         is UserStartWatchingEventDto -> toDomain()
         is UserStopWatchingEventDto -> toDomain()
         is UserUpdatedEventDto -> toDomain()
+        is PollClosedEventDto -> toDomain()
+        is PollDeletedEventDto -> toDomain()
+        is PollUpdatedEventDto -> toDomain()
+        is VoteCastedEventDto -> toDomain()
+        is VoteChangedEventDto -> toDomain()
     }
 }
 
@@ -699,6 +714,61 @@ private fun UserUpdatedEventDto.toDomain(): UserUpdatedEvent {
         user = user.toDomain(),
     )
 }
+
+private fun PollClosedEventDto.toDomain(): PollClosedEvent = PollClosedEvent(
+    type = type,
+    createdAt = created_at.date,
+    rawCreatedAt = created_at.rawDate,
+    cid = cid,
+    channelType = channel_type,
+    channelId = channel_id,
+    message = message.toDomain(),
+    poll = poll.toDomain(),
+)
+
+private fun PollDeletedEventDto.toDomain(): PollDeletedEvent = PollDeletedEvent(
+    type = type,
+    createdAt = created_at.date,
+    rawCreatedAt = created_at.rawDate,
+    cid = cid,
+    channelType = channel_type,
+    channelId = channel_id,
+    message = message.toDomain(),
+    poll = poll.toDomain(),
+)
+
+private fun PollUpdatedEventDto.toDomain(): PollUpdatedEvent = PollUpdatedEvent(
+    type = type,
+    createdAt = created_at.date,
+    rawCreatedAt = created_at.rawDate,
+    cid = cid,
+    channelType = channel_type,
+    channelId = channel_id,
+    message = message.toDomain(),
+    poll = poll.toDomain(),
+)
+
+private fun VoteCastedEventDto.toDomain(): VoteCastedEvent = VoteCastedEvent(
+    type = type,
+    createdAt = created_at.date,
+    rawCreatedAt = created_at.rawDate,
+    cid = cid,
+    channelType = channel_type,
+    channelId = channel_id,
+    message = message.toDomain(),
+    poll = poll.toDomain(),
+)
+
+private fun VoteChangedEventDto.toDomain(): VoteChangedEvent = VoteChangedEvent(
+    type = type,
+    createdAt = created_at.date,
+    rawCreatedAt = created_at.rawDate,
+    cid = cid,
+    channelType = channel_type,
+    channelId = channel_id,
+    message = message.toDomain(),
+    poll = poll.toDomain(),
+)
 
 private fun ConnectedEventDto.toDomain(): ConnectedEvent {
     return ConnectedEvent(
