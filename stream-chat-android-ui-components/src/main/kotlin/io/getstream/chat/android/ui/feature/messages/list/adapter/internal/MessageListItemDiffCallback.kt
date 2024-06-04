@@ -84,6 +84,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
                 user = oldMessage.user != newMessage.user,
                 mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers,
                 footer = oldItem.showMessageFooter != newItem.showMessageFooter,
+                poll = oldMessage.poll != newMessage.poll,
             )
         } else {
             null
