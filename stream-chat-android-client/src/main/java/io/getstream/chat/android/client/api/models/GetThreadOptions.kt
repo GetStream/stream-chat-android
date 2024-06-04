@@ -40,5 +40,4 @@ public data class GetThreadOptions @JvmOverloads constructor(
         map["member_limit"] = memberLimit.toString()
         return map
     }
-
 }

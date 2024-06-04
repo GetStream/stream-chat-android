@@ -33,8 +33,8 @@ import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
@@ -3081,11 +3081,40 @@ internal constructor(
         return api.queryThreads(query)
     }
 
+    /**
+     * Get a thread by message id.
+     *
+     * @param messageId The message id.
+     * @param options The query options.
+     */
+    @CheckResult
     public fun getThread(
         messageId: String,
         options: GetThreadOptions = GetThreadOptions(),
-    ) {
+    ): Call<Thread> {
         return api.getThread(messageId, options)
+    }
+
+    /**
+     * Partially updates specific [Thread] fields retaining the fields which were set previously.
+     *
+     * @param messageId The message ID.
+     * @param set The key-value data which will be added to the existing message object.
+     * @param unset The list of fields which will be removed from the existing message object.
+     *
+     * @return Executable async [Call] responsible for partially updating the message.
+     */
+    @CheckResult
+    public fun partialUpdateThread(
+        messageId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Thread> {
+        return api.partialUpdateThread(
+            messageId = messageId,
+            set = set,
+            unset = unset,
+        )
     }
 
     private fun warmUp() {

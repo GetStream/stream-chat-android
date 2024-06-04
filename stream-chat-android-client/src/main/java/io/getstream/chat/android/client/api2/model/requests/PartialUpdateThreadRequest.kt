@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+package io.getstream.chat.android.client.api2.model.requests
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 
 /**
- * Response for [ThreadsApi.queryThreads]
+ * Used to form a partial message update request.
+ * @see [ThreadsApi.partialUpdateMessage]
  *
- * @param threads: The list of threads.
- * @param duration: The duration of the request.
+ * @param set Sets new field values.
+ * @param unset Array of field names to unset.
  */
 @JsonClass(generateAdapter = true)
-internal data class GetThreadResponse(
-    val thread: DownstreamThreadDto,
-    val duration: String,
+internal data class PartialUpdateThreadRequest(
+    val set: Map<String, Any>,
+    val unset: List<String>,
 )

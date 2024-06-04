@@ -456,6 +456,13 @@ internal interface ChatApi {
     @CheckResult
     fun getThread(messageId: String, options: GetThreadOptions): Call<Thread>
 
+    @CheckResult
+    fun partialUpdateThread(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Thread>
+
     fun warmUp()
 
     fun releaseConnection()
