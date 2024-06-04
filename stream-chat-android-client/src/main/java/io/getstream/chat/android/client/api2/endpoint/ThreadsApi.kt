@@ -18,12 +18,14 @@ package io.getstream.chat.android.client.api2.endpoint
 
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest
-import io.getstream.chat.android.client.api2.model.response.GetThreadResponse
 import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
+import io.getstream.chat.android.client.api2.model.response.ThreadResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -49,5 +51,11 @@ internal interface ThreadsApi {
         @Path("message_id") messageId: String,
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @QueryMap options: Map<String, String>,
-    ): RetrofitCall<GetThreadResponse>
+    ): RetrofitCall<ThreadResponse>
+
+    @PATCH("/threads/{message_id}")
+    fun partialUpdateThread(
+        @Path("message_id") messageId: String,
+        @Body body: PartialUpdateThreadRequest,
+    ): RetrofitCall<ThreadResponse>
 }

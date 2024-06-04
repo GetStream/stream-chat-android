@@ -21,8 +21,8 @@ import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
+import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
@@ -61,6 +61,7 @@ import io.getstream.chat.android.client.api2.model.requests.MarkUnreadRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.MuteUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
@@ -1098,6 +1099,23 @@ constructor(
         } else {
             lazyGetThread()
         }
+    }
+
+    /**
+     * Partially update a thread.
+     *
+     * @param messageId The message id of the thread to update.
+     * @param set The fields to set.
+     * @param unset The fields to unset.
+     */
+    override fun partialUpdateThread(messageId: String, set: Map<String, Any>, unset: List<String>): Call<Thread> {
+        return threadsApi.partialUpdateThread(
+            messageId = messageId,
+            body = PartialUpdateThreadRequest(
+                set = set,
+                unset = unset,
+            ),
+        ).map { response -> response.thread.toDomain() }
     }
 
     override fun warmUp() {
