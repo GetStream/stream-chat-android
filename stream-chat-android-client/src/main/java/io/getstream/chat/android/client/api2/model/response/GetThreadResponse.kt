@@ -21,13 +21,13 @@ import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
 
 /**
- * Response for [ThreadsApi.getThreads]
+ * Response for [ThreadsApi.queryThreads]
  *
  * @param threads: The list of threads.
  * @param duration: The duration of the request.
  */
 @JsonClass(generateAdapter = true)
-internal data class ThreadsResponse(
-    val threads: List<DownstreamThreadDto>,
+internal data class GetThreadResponse(
+    val thread: DownstreamThreadDto,
     val duration: String,
 )
