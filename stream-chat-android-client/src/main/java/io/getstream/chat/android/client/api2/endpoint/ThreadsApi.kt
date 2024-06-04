@@ -19,21 +19,35 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest
-import io.getstream.chat.android.client.api2.model.response.ThreadsResponse
+import io.getstream.chat.android.client.api2.model.response.GetThreadResponse
+import io.getstream.chat.android.client.api2.model.response.QueryThreadsResponse
 import io.getstream.chat.android.client.call.RetrofitCall
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 @AuthenticatedApi
 internal interface ThreadsApi {
 
     /**
-     * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-getthread)
+     * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-querythreads)
      */
     @POST("/threads")
-    fun getThreads(
+    fun queryThreads(
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body request: QueryThreadsRequest,
-    ): RetrofitCall<ThreadsResponse>
+    ): RetrofitCall<QueryThreadsResponse>
+
+    /**
+     * [REST documentation](https://getstream.io/chat/docs/rest/#product:chat-getthread)
+     */
+    @GET("/threads/{message_id}")
+    fun getThread(
+        @Path("message_id") messageId: String,
+        @Query(QueryParams.CONNECTION_ID) connectionId: String,
+        @QueryMap options: Map<String, String>,
+    ): RetrofitCall<GetThreadResponse>
 }

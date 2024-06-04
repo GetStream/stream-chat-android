@@ -29,10 +29,12 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
@@ -3068,30 +3070,22 @@ internal constructor(
     }
 
     /**
-     * Get a list of threads for the current user.
+     * Query threads matching [query] request.
      *
-     * @param replyLimit The number of latest replies to fetch per thread. Defaults to 2.
-     * @param participantLimit The number of thread participants to request per thread. Defaults to 100.
-     * @param limit The number of threads to return. Defaults to 10.
-     * @param watch If true, all the channels corresponding to threads returned in response will be watched.
-     * Defaults to true.
-     * @param memberLimit The number of members to request per thread. Defaults to 100.
+     * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    public fun getThread(
-        replyLimit: Int = 2,
-        participantLimit: Int = 100,
-        limit: Int = 10,
-        watch: Boolean = true,
-        memberLimit: Int = 100,
+    public fun queryThreads(
+        query: QueryThreadsRequest,
     ): Call<List<Thread>> {
-        return api.getThreads(
-            replyLimit = replyLimit,
-            participantLimit = participantLimit,
-            limit = limit,
-            watch = watch,
-            memberLimit = memberLimit,
-        )
+        return api.queryThreads(query)
+    }
+
+    public fun getThread(
+        messageId: String,
+        options: GetThreadOptions = GetThreadOptions(),
+    ) {
+        return api.getThread(messageId, options)
     }
 
     private fun warmUp() {

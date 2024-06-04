@@ -20,8 +20,8 @@ import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 
 /**
- * Used for querying threads.
- * @see [ThreadsApi.queryThreads]
+ * Gets a thread.
+ * @see [ThreadsApi.getThread]
  *
  * @param watch If true, all the channels corresponding to threads returned in response will be watched.
  * Defaults to true.
@@ -32,7 +32,7 @@ import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
  * @param next The next pagination token. This token can be used to fetch the next page of threads.
  */
 @JsonClass(generateAdapter = true)
-internal data class QueryThreadsRequest(
+internal data class GetThreadRequest(
     val watch: Boolean = true,
     val reply_limit: Int = 2,
     val participant_limit: Int = 100,

@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.api2
 
 import io.getstream.chat.android.client.api.ChatApi
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api2.endpoint.ChannelApi
 import io.getstream.chat.android.client.api2.endpoint.ConfigApi
@@ -62,7 +64,6 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessage
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
-import io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
@@ -1044,7 +1045,7 @@ constructor(
     }
 
     /**
-     * Get a list of threads for the current user.
+     * Queries a list of threads for the current user.
      *
      * @param replyLimit The number of latest replies to fetch per thread. Defaults to 2.
      * @param participantLimit The number of thread participants to request per thread. Defaults to 100.
@@ -1053,30 +1054,49 @@ constructor(
      * Defaults to true.
      * @param memberLimit The number of members to request per thread. Defaults to 100.
      */
-    override fun getThreads(
-        replyLimit: Int,
-        participantLimit: Int,
-        limit: Int,
-        watch: Boolean,
-        memberLimit: Int,
+    override fun queryThreads(
+        query: QueryThreadsRequest,
     ): Call<List<Thread>> {
         val lazyQueryThreads = {
-            threadsApi.getThreads(
+            threadsApi.queryThreads(
                 connectionId,
-                QueryThreadsRequest(
-                    reply_limit = replyLimit,
-                    participant_limit = participantLimit,
-                    limit = limit,
-                    watch = watch,
-                    member_limit = memberLimit,
+                io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
+                    reply_limit = query.replyLimit,
+                    participant_limit = query.participantLimit,
+                    limit = query.limit,
+                    watch = query.watch,
+                    member_limit = query.memberLimit,
+                    next = query.next,
                 ),
             ).map { response -> response.threads.map { it.toDomain() } }
         }
-        return if (connectionId.isBlank() && watch) {
-            logger.i { "[getThreads] postponing because an active connection is required" }
+        return if (connectionId.isBlank() && query.watch) {
+            logger.i { "[queryThreads] postponing because an active connection is required" }
             postponeCall(lazyQueryThreads)
         } else {
             lazyQueryThreads()
+        }
+    }
+
+    /**
+     * Get a thread by message id.
+     *
+     * @param messageId The message id of the thread to retrieve.
+     * @param options The options for the request.
+     */
+    override fun getThread(messageId: String, options: GetThreadOptions): Call<Thread> {
+        val lazyGetThread = {
+            threadsApi.getThread(
+                messageId,
+                connectionId,
+                options.toMap(),
+            ).map { response -> response.thread.toDomain() }
+        }
+        return if (connectionId.isBlank() && options.watch) {
+            logger.i { "[getThread] postponing because an active connection is required" }
+            postponeCall(lazyGetThread)
+        } else {
+            lazyGetThread()
         }
     }
 

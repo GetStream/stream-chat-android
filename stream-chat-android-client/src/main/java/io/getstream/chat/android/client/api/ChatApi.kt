@@ -17,9 +17,11 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -438,23 +440,21 @@ internal interface ChatApi {
     fun downloadFile(fileUrl: String): Call<ResponseBody>
 
     /**
-     * Get a list of threads for the current user.
+     * Query threads matching [query] request.
      *
-     * @param replyLimit The number of latest replies to fetch per thread. Defaults to 2.
-     * @param participantLimit The number of thread participants to request per thread. Defaults to 100.
-     * @param limit The number of threads to return. Defaults to 10.
-     * @param watch If true, all the channels corresponding to threads returned in response will be watched.
-     * Defaults to true.
-     * @param memberLimit The number of members to request per thread. Defaults to 100.
+     * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    fun getThreads(
-        replyLimit: Int,
-        participantLimit: Int,
-        limit: Int,
-        watch: Boolean,
-        memberLimit: Int,
-    ): Call<List<Thread>>
+    fun queryThreads(query: QueryThreadsRequest): Call<List<Thread>>
+
+    /**
+     * Get a thread by [messageId].
+     *
+     * @param messageId The message id of the thread.
+     * @param options The options for the request.
+     */
+    @CheckResult
+    fun getThread(messageId: String, options: GetThreadOptions): Call<Thread>
 
     fun warmUp()
 
