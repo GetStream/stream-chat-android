@@ -44,7 +44,7 @@ public class DateDividerViewHolder internal constructor(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.DateSeparatorItem>(binding.root, decorators) {
 
-    override fun bindData(data: MessageListItem.DateSeparatorItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.DateSeparatorItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
 
         binding.dateLabel.text =

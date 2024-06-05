@@ -71,7 +71,7 @@ public class CustomAttachmentsViewHolder internal constructor(
 
     override fun messageContainerView(): View = binding.messageContainer
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
         bindMessageText()
         bindHorizontalBias()

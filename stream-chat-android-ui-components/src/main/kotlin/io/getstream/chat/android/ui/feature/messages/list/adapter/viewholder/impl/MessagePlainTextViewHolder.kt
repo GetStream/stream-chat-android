@@ -79,10 +79,10 @@ public class MessagePlainTextViewHolder internal constructor(
 
     override fun messageContainerView(): View = binding.messageContainer
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
-        val textUnchanged = diff?.text == false
-        val mentionsUnchanged = diff?.mentions == false
+        val textUnchanged = !diff.text
+        val mentionsUnchanged = !diff.mentions
         if (textUnchanged && mentionsUnchanged) return
 
         with(binding) {
