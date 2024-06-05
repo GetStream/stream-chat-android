@@ -36,8 +36,8 @@ internal class ErrorMessageViewHolder(
     ),
 ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        if (diff?.syncStatus == false) return
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
+        if (!diff.syncStatus) return
 
         val displayedText = data.message.getTranslatedText()
         binding.messageTextView.text = displayedText
