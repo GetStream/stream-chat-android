@@ -26,5 +26,5 @@ internal class EmptyViewHolder(
     parentView: ViewGroup,
     val viewType: Int,
 ) : BaseMessageItemViewHolder<MessageListItem>(View(parentView.context)) {
-    override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff?) = Unit
+    override fun bindData(data: MessageListItem, diff: MessageListItemPayloadDiff) = Unit
 }

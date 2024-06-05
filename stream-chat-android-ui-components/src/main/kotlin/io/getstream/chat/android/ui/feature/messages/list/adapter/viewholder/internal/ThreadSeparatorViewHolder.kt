@@ -41,7 +41,7 @@ internal class ThreadSeparatorViewHolder(
 
     override fun bindData(
         data: MessageListItem.ThreadSeparatorItem,
-        diff: MessageListItemPayloadDiff?,
+        diff: MessageListItemPayloadDiff,
     ) {
         super.bindData(data, diff)
 

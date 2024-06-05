@@ -226,7 +226,7 @@ class MessageListViewSnippets : Fragment() {
                 false),
         ) : BaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root) {
 
-            override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+            override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
                 binding.textLabel.text = data.message.text
             }
         }
