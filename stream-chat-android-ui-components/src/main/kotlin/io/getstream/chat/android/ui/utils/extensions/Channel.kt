@@ -28,7 +28,7 @@ import io.getstream.chat.android.uiutils.extension.getPreviewMessage
 
 internal fun Channel.isCurrentUserBanned(): Boolean {
     val currentUserId = ChatClient.instance().clientState.user.value?.id ?: return false
-    return members.any { it.user.id == currentUserId && it.banned == true }
+    return members.any { it.user.id == currentUserId && it.banned }
 }
 
 /**

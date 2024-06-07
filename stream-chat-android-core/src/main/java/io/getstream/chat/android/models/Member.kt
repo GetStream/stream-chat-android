@@ -58,12 +58,12 @@ public data class Member(
     /**
      * If channel member is shadow banned.
      */
-    val shadowBanned: Boolean? = false,
+    val shadowBanned: Boolean = false,
 
     /**
      * If channel member is banned.
      */
-    val banned: Boolean? = false,
+    val banned: Boolean = false,
 
     /**
      * The user's channel-level role.
