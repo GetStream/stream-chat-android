@@ -43,10 +43,10 @@ internal data class MemberEntity(
     var inviteRejectedAt: Date? = null,
 
     /** if channel member is shadow banned */
-    var shadowBanned: Boolean? = false,
+    var shadowBanned: Boolean = false,
 
     /** If channel member is banned. */
-    var banned: Boolean? = false,
+    var banned: Boolean = false,
 
     /** The user's channel-level role. */
     val channelRole: String? = null,
