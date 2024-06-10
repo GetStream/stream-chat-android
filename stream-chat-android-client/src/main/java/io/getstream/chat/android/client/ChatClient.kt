@@ -2379,7 +2379,7 @@ internal constructor(
      * @return a list of [UserBlock] which will contain the block that just occured.
      */
     @CheckResult
-    public fun blockUser(userId: String): Call<List<UserBlock>> {
+    public fun blockUser(userId: String): Call<UserBlock> {
         return api.blockUser(userId)
     }
 
@@ -2389,7 +2389,7 @@ internal constructor(
      * @param userId the user ID of the user that will be unblocked.
      */
     @CheckResult
-    public fun unblockUser(userId: String): Call<Unit> {
+    public fun unblockUser(userId: String): Call<UserBlock> {
         return api.unblockUser(userId)
     }
 

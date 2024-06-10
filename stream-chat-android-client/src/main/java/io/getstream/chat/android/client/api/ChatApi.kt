@@ -214,10 +214,10 @@ internal interface ChatApi {
     fun updateUsers(users: List<User>): Call<List<User>>
 
     @CheckResult
-    fun blockUser(userId: String): Call<List<UserBlock>>
+    fun blockUser(userId: String): Call<UserBlock>
 
     @CheckResult
-    fun unblockUser(userId: String): Call<Unit>
+    fun unblockUser(userId: String): Call<UserBlock>
 
     @CheckResult
     fun queryBlockedUsers(): Call<List<UserBlock>>
