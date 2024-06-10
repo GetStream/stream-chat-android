@@ -89,5 +89,5 @@ internal data class PartialUpdateUserDto(
 internal data class DownstreamUserBlockDto(
     val blocked_by_user_id: String,
     val blocked_user_id: String,
-    val created_at: String,
+    val created_at: Date,
 )

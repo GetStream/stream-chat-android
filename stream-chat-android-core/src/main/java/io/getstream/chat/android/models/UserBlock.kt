@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.models
 
+import java.util.Date
+
 /**
  * Represents a user block.
  *
@@ -23,4 +25,8 @@ package io.getstream.chat.android.models
  * @param userId the ID of the blocked user.
  * @param blockedAt when the action happened
  */
-public data class UserBlock(val blockedBy: String, val userId: String, val blockedAt: String)
+public data class UserBlock(
+    val blockedBy: String,
+    val userId: String,
+    val blockedAt: Date,
+)
