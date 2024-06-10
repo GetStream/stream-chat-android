@@ -33,6 +33,7 @@ import java.util.Date
  * @property allowAnswers If set to true, users can vote.
  * @property voteCountsByOption The number of votes for each option.
  * @property votes The list of votes.
+ * @property ownVotes The list of votes cast by the current user.
  */
 public data class Poll(
     val id: String,
@@ -46,6 +47,7 @@ public data class Poll(
     val allowAnswers: Boolean,
     val voteCountsByOption: Map<String, Int>,
     val votes: List<Vote>,
+    val ownVotes: List<Vote>,
 ) {
 
     /**
