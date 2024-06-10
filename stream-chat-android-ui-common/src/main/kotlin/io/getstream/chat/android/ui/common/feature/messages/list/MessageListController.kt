@@ -1878,6 +1878,32 @@ public class MessageListController(
     }
 
     /**
+     * Block a user. Unlike ban the block is not channel related but rather directly to the user.
+     *
+     * @param userId the id of the user that will be blocked.
+     */
+    public fun blockUser(userId: String) {
+        chatClient.blockUser(userId).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
+    }
+
+    /**
+     * Unblock a user.
+     *
+     * @param userId the id of the user that will be unblocked.
+     */
+    public fun unblockUser(userId: String) {
+        chatClient.unblockUser(userId).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
+    }
+
+    /**
      * Executes one of the actions for the given ephemeral giphy message.
      *
      * @param action The action to be executed.
