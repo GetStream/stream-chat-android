@@ -16,6 +16,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun addSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun appSettings ()Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
+	public final fun blockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun clearPersistence ()Lio/getstream/result/call/Call;
@@ -120,6 +121,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public final fun queryBannedUsers (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;)Lio/getstream/result/call/Call;
 	public static synthetic fun queryBannedUsers$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;Ljava/util/Date;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun queryBlockedUsers ()Lio/getstream/result/call/Call;
 	public final fun queryChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun queryChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/client/api/models/QueryChannelRequest;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun queryChannels (Lio/getstream/chat/android/client/api/models/QueryChannelsRequest;)Lio/getstream/result/call/Call;
@@ -178,6 +180,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun truncateChannel (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;)Lio/getstream/result/call/Call;
 	public static synthetic fun truncateChannel$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun unbanUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun unblockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unflagMessage (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unflagUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun unmuteChannel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;

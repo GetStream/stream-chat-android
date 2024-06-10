@@ -44,6 +44,7 @@ import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -211,6 +212,15 @@ internal interface ChatApi {
 
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>
+
+    @CheckResult
+    fun blockUser(userId: String): Call<List<UserBlock>>
+
+    @CheckResult
+    fun unblockUser(userId: String): Call<Unit>
+
+    @CheckResult
+    fun queryBlockedUsers(): Call<List<UserBlock>>
 
     @CheckResult
     fun partialUpdateUser(
