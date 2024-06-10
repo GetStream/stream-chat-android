@@ -1395,10 +1395,11 @@ public final class io/getstream/chat/android/models/OrFilterObject : io/getstrea
 }
 
 public final class io/getstream/chat/android/models/Poll {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;Ljava/util/List;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component10 ()Ljava/util/Map;
 	public final fun component11 ()Ljava/util/List;
+	public final fun component12 ()Ljava/util/List;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/util/List;
@@ -1407,8 +1408,8 @@ public final class io/getstream/chat/android/models/Poll {
 	public final fun component7 ()I
 	public final fun component8 ()Z
 	public final fun component9 ()Z
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;)Lio/getstream/chat/android/models/Poll;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Poll;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;Ljava/util/List;)Lio/getstream/chat/android/models/Poll;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/models/Poll;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/VotingVisibility;ZIZZLjava/util/Map;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Poll;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAllowAnswers ()Z
 	public final fun getAllowUserSuggestedOptions ()Z
@@ -1418,6 +1419,7 @@ public final class io/getstream/chat/android/models/Poll {
 	public final fun getMaxVotesAllowed ()I
 	public final fun getName ()Ljava/lang/String;
 	public final fun getOptions ()Ljava/util/List;
+	public final fun getOwnVotes ()Ljava/util/List;
 	public final fun getVoteCountsByOption ()Ljava/util/Map;
 	public final fun getVotes ()Ljava/util/List;
 	public final fun getVotes (Lio/getstream/chat/android/models/Option;)Ljava/util/List;

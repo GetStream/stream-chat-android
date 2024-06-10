@@ -42,7 +42,7 @@ internal fun DownstreamPollDto.toDomain(): Poll {
         allowAnswers = allow_answers,
         voteCountsByOption = vote_counts_by_option ?: emptyMap(),
         votes = latest_votes_by_option.values.flatten().map { it.toDomain() },
-
+        ownVotes = own_votes.map { it.toDomain() },
     )
 }
 
