@@ -25,6 +25,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed messages from hidden channels being shown up. [#5281](https://github.com/GetStream/stream-chat-android/pull/5281)
 
 ### ⬆️ Improved
 
