@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import java.util.Date
 
 internal fun Message.toDto(): UpstreamMessageDto =
     UpstreamMessageDto(
@@ -79,10 +80,15 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         text = text,
         threadParticipants = thread_participants.map(DownstreamUserDto::toDomain),
         type = type,
-        updatedAt = updated_at,
+        updatedAt = lastUpdateTime(),
         user = user.toDomain(),
         moderationDetails = moderation_details?.toDomain(),
         messageTextUpdatedAt = message_text_updated_at,
         poll = poll?.toDomain(),
         extraData = extraData.toMutableMap(),
     )
+
+private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
+    updated_at,
+    poll?.updated_at,
+).maxBy { it.time }
