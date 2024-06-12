@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.models
 
+import androidx.compose.runtime.Immutable
 import java.util.Date
 
 /**
@@ -35,6 +36,7 @@ import java.util.Date
  * @property votes The list of votes.
  * @property ownVotes The list of votes cast by the current user.
  */
+@Immutable
 public data class Poll(
     val id: String,
     val name: String,
@@ -65,6 +67,7 @@ public data class Poll(
  * @property id The unique identifier of the option.
  * @property text The text of the option.
  */
+@Immutable
 public data class Option(
     val id: String,
     val text: String,
@@ -102,6 +105,7 @@ public data class PollConfig(
  * @property updatedAt The last update date of the vote.
  * @property user The user who cast the vote.
  */
+@Immutable
 public data class Vote(
     val id: String,
     val pollId: String,
@@ -117,6 +121,7 @@ public data class Vote(
  * @property PUBLIC The votes are public.
  * @property ANONYMOUS The votes are anonymous.
  */
+@Immutable
 public enum class VotingVisibility {
     PUBLIC,
     ANONYMOUS,
