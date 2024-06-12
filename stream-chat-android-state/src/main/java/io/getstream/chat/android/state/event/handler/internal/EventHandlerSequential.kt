@@ -705,16 +705,7 @@ internal class EventHandlerSequential(
     }
 
     private fun List<ChatEvent>.extractMessageIds() = mapNotNull { event ->
-        when (event) {
-            is ReactionNewEvent -> event.reaction.messageId
-            is ReactionDeletedEvent -> event.reaction.messageId
-            is MessageDeletedEvent -> event.message.id
-            is MessageUpdatedEvent -> event.message.id
-            is NewMessageEvent -> event.message.id
-            is NotificationMessageNewEvent -> event.message.id
-            is ReactionUpdateEvent -> event.message.id
-            else -> null
-        }
+        (event as? HasMessage)?.message?.id
     }
 
     private fun StateFlow<List<Member>>.containsWithUserId(userId: String): Boolean {
