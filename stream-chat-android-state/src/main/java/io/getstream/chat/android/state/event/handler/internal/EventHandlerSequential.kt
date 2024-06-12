@@ -54,6 +54,9 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -62,6 +65,8 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
@@ -665,6 +670,21 @@ internal class EventHandlerSequential(
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     repos.insertCurrentUser(event.user)
+                }
+                is PollClosedEvent -> {
+                    batch.addMessage(event.message)
+                }
+                is PollDeletedEvent -> {
+                    batch.addMessage(event.message)
+                }
+                is PollUpdatedEvent -> {
+                    batch.addMessage(event.message)
+                }
+                is VoteCastedEvent -> {
+                    batch.addMessage(event.message)
+                }
+                is VoteChangedEvent -> {
+                    batch.addMessage(event.message)
                 }
                 else -> Unit
             }
