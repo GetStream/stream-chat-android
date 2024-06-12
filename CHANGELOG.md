@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed the message list to scroll to the bottom when a message reaction is added. [#5280](https://github.com/GetStream/stream-chat-android/pull/5280)
 
 ### ⬆️ Improved
 
