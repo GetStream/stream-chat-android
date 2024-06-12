@@ -56,7 +56,7 @@ internal class MessageListScrollHelper(
 
     internal var unreadCountEnabled: Boolean = true
 
-    private var areNewestMessagesLoaded: Boolean = true
+    private var endOfNewMessagesReached: Boolean = true
 
     private var bottomOffset: Int = 0
 
@@ -103,7 +103,10 @@ internal class MessageListScrollHelper(
                 }
 
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    logger.d { "[onScrolled] scrollToBottomButtonEnabled: $scrollToBottomButtonEnabled, currentList.size: ${currentList.size}" }
+                    logger.d {
+                        "[onScrolled] scrollToBottomButtonEnabled: $scrollToBottomButtonEnabled" +
+                            ", currentList.size: ${currentList.size}"
+                    }
                     if (!scrollToBottomButtonEnabled || currentList.isEmpty()) {
                         return
                     }
@@ -138,12 +141,15 @@ internal class MessageListScrollHelper(
      */
     private fun shouldScrollToBottomBeVisible(): Boolean {
         bottomOffset = calculateBottomOffset()
-        logger.d { "[shouldScrollToBottomBeVisible] bottomOffset: $bottomOffset, areNewestMessagesLoaded: $areNewestMessagesLoaded" }
-        isAtBottom = bottomOffset <= 0 && areNewestMessagesLoaded
+        logger.d {
+            "[shouldScrollToBottomBeVisible] bottomOffset: $bottomOffset" +
+                ", endOfNewMessagesReached: $endOfNewMessagesReached"
+        }
+        isAtBottom = bottomOffset <= 0 && endOfNewMessagesReached
 
         return when {
             adapter.itemCount == 0 -> false
-            !areNewestMessagesLoaded -> true
+            !endOfNewMessagesReached -> true
             else -> {
                 val hasInvisibleUnreadMessage = !isAtBottom
                 val hasScrolledUpEnough = bottomOffset > SCROLL_BUTTON_VISIBILITY_THRESHOLD
@@ -203,13 +209,16 @@ internal class MessageListScrollHelper(
         isThreadStart: Boolean,
         hasNewMessages: Boolean,
         isInitialList: Boolean,
-        areNewestMessagesLoaded: Boolean,
+        endOfNewMessagesReached: Boolean,
     ) {
-        logger.d { "[onMessageListChanged] areNewestMessagesLoaded: $areNewestMessagesLoaded" }
-        this.areNewestMessagesLoaded = areNewestMessagesLoaded
+        logger.d {
+            "[onMessageListChanged] isInitialList: $isInitialList" +
+                ", endOfNewMessagesReached: $endOfNewMessagesReached"
+        }
+        this.endOfNewMessagesReached = endOfNewMessagesReached
         scrollButtonView.isVisible = shouldScrollToBottomBeVisible()
 
-        if (!isThreadStart && shouldKeepScrollPosition(areNewestMessagesLoaded, hasNewMessages)) {
+        if (!isThreadStart && shouldKeepScrollPosition(endOfNewMessagesReached, hasNewMessages)) {
             return
         }
 
@@ -217,7 +226,7 @@ internal class MessageListScrollHelper(
             layoutManager.scrollToPosition(currentList.lastIndex)
             return
         }
-        val shouldScrollToBottom = shouldScrollToBottom(isInitialList, areNewestMessagesLoaded, hasNewMessages)
+        val shouldScrollToBottom = shouldScrollToBottom(isInitialList, endOfNewMessagesReached, hasNewMessages)
         logger.v { "[onMessageListChanged] shouldScrollToBottom: $shouldScrollToBottom" }
         if (shouldScrollToBottom) {
             layoutManager.scrollToPosition(currentList.lastIndex)
@@ -235,11 +244,16 @@ internal class MessageListScrollHelper(
 
     private fun shouldScrollToBottom(
         isInitialList: Boolean,
-        areNewestMessagesLoaded: Boolean,
+        endOfNewMessagesReached: Boolean,
         hasNewMessages: Boolean,
     ): Boolean {
+        logger.v {
+            "[shouldScrollToBottom] isInitialList: $isInitialList, " +
+                "endOfNewMessagesReached: $endOfNewMessagesReached, hasNewMessages: $hasNewMessages" +
+                ", isLastMessageMine: ${isLastMessageMine()}, "
+        }
         return hasNewMessages &&
-            areNewestMessagesLoaded &&
+            endOfNewMessagesReached &&
             (isInitialList || isLastMessageMine() || isAtBottom || alwaysScrollToBottom)
     }
 
