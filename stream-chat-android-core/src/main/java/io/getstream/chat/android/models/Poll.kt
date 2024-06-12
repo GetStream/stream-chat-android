@@ -35,6 +35,8 @@ import java.util.Date
  * @property voteCountsByOption The number of votes for each option.
  * @property votes The list of votes.
  * @property ownVotes The list of votes cast by the current user.
+ * @property createdAt The creation date of the poll.
+ * @property updatedAt The last update date of the poll.
  */
 @Immutable
 public data class Poll(
@@ -50,6 +52,8 @@ public data class Poll(
     val voteCountsByOption: Map<String, Int>,
     val votes: List<Vote>,
     val ownVotes: List<Vote>,
+    val createdAt: Date,
+    val updatedAt: Date,
 ) {
 
     /**

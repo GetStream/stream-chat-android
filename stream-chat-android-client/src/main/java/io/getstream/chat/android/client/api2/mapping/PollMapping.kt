@@ -43,6 +43,8 @@ internal fun DownstreamPollDto.toDomain(): Poll {
         voteCountsByOption = vote_counts_by_option ?: emptyMap(),
         votes = latest_votes_by_option.values.flatten().map { it.toDomain() },
         ownVotes = own_votes.map { it.toDomain() },
+        createdAt = created_at,
+        updatedAt = updated_at,
     )
 }
 
