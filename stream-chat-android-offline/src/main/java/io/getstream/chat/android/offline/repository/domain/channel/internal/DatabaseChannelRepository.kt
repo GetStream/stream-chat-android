@@ -153,9 +153,7 @@ internal class DatabaseChannelRepository(
      * @param deletedAt Date.
      */
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
-        channelCache[cid]?.let { cachedChannel ->
-            cacheChannel(listOf(cachedChannel.copy(deletedAt = deletedAt)))
-        }
+        channelCache.remove(cid)
         scope.launchWithMutex(dbMutex) { channelDao.setDeletedAt(cid, deletedAt) }
     }
 
@@ -167,14 +165,7 @@ internal class DatabaseChannelRepository(
      * @param hideMessagesBefore Date.
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
-        channelCache[cid]?.let { cachedChannel ->
-            cacheChannel(
-                cachedChannel.copy(
-                    hidden = hidden,
-                    hiddenMessagesBefore = hideMessagesBefore,
-                ),
-            )
-        }
+        channelCache.remove(cid)
         scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden, hideMessagesBefore) }
     }
 
@@ -185,9 +176,7 @@ internal class DatabaseChannelRepository(
      * @param hidden Date.
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
-        channelCache[cid]?.let { cachedChannel ->
-            cacheChannel(listOf(cachedChannel.copy(hidden = hidden)))
-        }
+        channelCache.remove(cid)
         scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden) }
     }
 
