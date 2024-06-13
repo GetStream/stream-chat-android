@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.result.Error
 import java.util.Date
 import java.util.concurrent.atomic.AtomicInteger
@@ -711,6 +712,7 @@ public data class VoteCastedEvent(
     override val channelId: String,
     override val message: Message,
     val poll: Poll,
+    val newVote: Vote,
 ) : CidEvent(), HasMessage
 
 /**
@@ -725,6 +727,7 @@ public data class VoteChangedEvent(
     override val channelId: String,
     override val message: Message,
     val poll: Poll,
+    val newVote: Vote,
 ) : CidEvent(), HasMessage
 
 /**
@@ -739,6 +742,7 @@ public data class VoteRemovedEvent(
     override val channelId: String,
     override val message: Message,
     val poll: Poll,
+    val removedVote: Vote,
 ) : CidEvent(), HasMessage
 
 /**

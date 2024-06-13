@@ -116,7 +116,7 @@ public data class Vote(
     val optionId: String,
     val createdAt: Date,
     val updatedAt: Date,
-    val user: User,
+    val user: User?,
 )
 
 /**

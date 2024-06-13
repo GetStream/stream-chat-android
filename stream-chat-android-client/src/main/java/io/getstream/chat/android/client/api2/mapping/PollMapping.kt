@@ -32,8 +32,8 @@ import io.getstream.chat.android.models.VotingVisibility
  */
 internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
     val ownUserId = currentUserId ?: own_votes.firstOrNull()?.user?.id
-    val votes = latest_votes_by_option.values.flatten().map { it.toDomain(currentUserId) }
-    val ownVotes = (own_votes.map { it.toDomain(currentUserId) } + votes.filter { it.user.id == ownUserId })
+    val votes = latest_votes_by_option?.values?.flatten()?.map { it.toDomain(currentUserId) } ?: emptyList()
+    val ownVotes = (own_votes.map { it.toDomain(currentUserId) } + votes.filter { it.user?.id == ownUserId })
         .associateBy { it.id }
         .values
         .toList()
@@ -77,7 +77,7 @@ internal fun DownstreamVoteDto.toDomain(currentUserId: UserId?): Vote = Vote(
     optionId = option_id,
     createdAt = created_at,
     updatedAt = updated_at,
-    user = user.toDomain(currentUserId),
+    user = user?.toDomain(currentUserId),
 )
 
 /**
