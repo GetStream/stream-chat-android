@@ -34,7 +34,7 @@ import org.junit.Test
 internal class TokenAuthInterceptorTests {
 
     val token = "token"
-    val parser = MoshiChatParser()
+    val parser = MoshiChatParser { "" }
 
     @Test
     fun undefinedToken() {
