@@ -218,6 +218,7 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun unpinMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun updateLastSeenMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun updateMessagePin (Lio/getstream/chat/android/models/Message;)V
+	public final fun updatePollOption (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Option;)V
 	public final fun updatePollState (Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/ui/common/state/messages/poll/PollSelectionType;)V
 	public final fun updateUserMute (Lio/getstream/chat/android/models/User;)V
 }
