@@ -17,8 +17,12 @@
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toEntity
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.toModel
@@ -198,3 +202,82 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
+
+internal fun Poll.toEntity(): PollEntity = PollEntity(
+    id = id,
+    name = name,
+    description = description,
+    options = options.map { it.toEntity() },
+    votes = votes.map { it.toEntity() },
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    votingVisibility = votingVisibility.toEntity(),
+    enforceUniqueVote = enforceUniqueVote,
+    maxVotesAllowed = maxVotesAllowed,
+    allowUserSuggestedOptions = allowUserSuggestedOptions,
+    allowAnswers = allowAnswers,
+    voteCountsByOption = voteCountsByOption,
+    ownVotes = ownVotes.map { it.toEntity() },
+    closed = closed,
+)
+
+internal fun Option.toEntity(): OptionEntity = OptionEntity(
+    id = id,
+    text = text,
+)
+
+internal fun Vote.toEntity(): VoteEntity = VoteEntity(
+    id = id,
+    optionId = optionId,
+    pollId = pollId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    userId = user?.id,
+)
+
+private fun VotingVisibility.toEntity(): String = when (this) {
+    VotingVisibility.ANONYMOUS -> "anonymous"
+    VotingVisibility.PUBLIC -> "public"
+}
+
+private suspend fun PollEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+): Poll = Poll(
+    id = id,
+    name = name,
+    description = description,
+    options = options.map(OptionEntity::toModel),
+    votes = votes.map { it.toModel(getUser) },
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    votingVisibility = votingVisibility.toVotingVisibility(),
+    enforceUniqueVote = enforceUniqueVote,
+    maxVotesAllowed = maxVotesAllowed,
+    allowUserSuggestedOptions = allowUserSuggestedOptions,
+    allowAnswers = allowAnswers,
+    voteCountsByOption = voteCountsByOption,
+    ownVotes = ownVotes.map { it.toModel(getUser) },
+    closed = closed,
+)
+
+private fun OptionEntity.toModel(): Option = Option(
+    id = id,
+    text = text,
+)
+
+private suspend fun VoteEntity.toModel(
+    getUser: suspend (userId: String) -> User,
+): Vote = Vote(
+    id = id,
+    optionId = optionId,
+    pollId = pollId,
+    createdAt = createdAt,
+    updatedAt = updatedAt,
+    user = userId?.let { getUser(it) },
+)
+
+private fun String.toVotingVisibility(): VotingVisibility = when (this) {
+    "public" -> VotingVisibility.PUBLIC
+    "anonymous" -> VotingVisibility.ANONYMOUS
+    else -> throw IllegalArgumentException("Unknown voting visibility: $this")
+}
