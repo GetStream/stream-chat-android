@@ -2185,6 +2185,27 @@ public class MessageListController(
     }
 
     /**
+     * Updates the poll option for the given message and poll.
+     *
+     * @param message The message containing the poll.
+     * @param poll The poll to update.
+     * @param option The option to update.
+     */
+    public fun updatePollOption(
+        message: Message,
+        poll: Poll,
+        option: Option,
+    ) {
+        scope.launch {
+            (
+                poll.ownVotes.firstOrNull { it.optionId == option.id }
+                    ?.let { chatClient.removePollVote(message.id, poll.id, it) }
+                    ?: chatClient.castPollVote(message.id, poll.id, option)
+                ).await()
+        }
+    }
+
+    /**
      * A class designed for error event propagation.
      *
      * @param streamError Contains the original [Throwable] along with a message.
