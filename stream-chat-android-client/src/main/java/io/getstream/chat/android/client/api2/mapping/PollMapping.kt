@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
 
@@ -29,7 +30,14 @@ import io.getstream.chat.android.models.VotingVisibility
  *
  * @return Poll
  */
-internal fun DownstreamPollDto.toDomain(): Poll {
+internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
+    val ownUserId = currentUserId ?: own_votes.firstOrNull()?.user?.id
+    val votes = latest_votes_by_option.values.flatten().map { it.toDomain(currentUserId) }
+    val ownVotes = (own_votes.map { it.toDomain(currentUserId) } + votes.filter { it.user.id == ownUserId })
+        .associateBy { it.id }
+        .values
+        .toList()
+
     return Poll(
         id = id,
         name = name,
@@ -41,8 +49,8 @@ internal fun DownstreamPollDto.toDomain(): Poll {
         allowUserSuggestedOptions = allow_user_suggested_options,
         allowAnswers = allow_answers,
         voteCountsByOption = vote_counts_by_option ?: emptyMap(),
-        votes = latest_votes_by_option.values.flatten().map { it.toDomain() },
-        ownVotes = own_votes.map { it.toDomain() },
+        votes = votes,
+        ownVotes = ownVotes,
         createdAt = created_at,
         updatedAt = updated_at,
     )
@@ -63,13 +71,13 @@ private fun DownstreamOptionDto.toDomain(): Option = Option(
  *
  * @return Vote
  */
-internal fun DownstreamVoteDto.toDomain(): Vote = Vote(
+internal fun DownstreamVoteDto.toDomain(currentUserId: UserId?): Vote = Vote(
     id = id,
     pollId = poll_id,
     optionId = option_id,
     createdAt = created_at,
     updatedAt = updated_at,
-    user = user.toDomain(),
+    user = user.toDomain(currentUserId),
 )
 
 /**

@@ -44,10 +44,13 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdap
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.models.UserId
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-internal class MoshiChatParser : ChatParser {
+internal class MoshiChatParser(
+    val currentUserIdProvider: () -> UserId?,
+) : ChatParser {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder()
@@ -125,7 +128,7 @@ internal class MoshiChatParser : ChatParser {
 
     @Suppress("UNCHECKED_CAST")
     private fun parseAndProcessEvent(raw: String): ChatEvent {
-        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain()
+        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain(currentUserIdProvider())
         return event.enrichIfNeeded()
     }
 }
