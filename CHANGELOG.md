@@ -61,6 +61,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
 
 ### ⬆️ Improved
 
