@@ -675,13 +675,47 @@ internal class ChannelLogic(
                 upsertEventMessage(event.message)
             }
             is VoteCastedEvent -> {
-                upsertEventMessage(event.message)
+                val ownVotes =
+                    (
+                        mutableState.getMessageById(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) +
+                        listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
+
+                upsertEventMessage(
+                    event.message.copy(
+                        poll = event.poll.copy(
+                            ownVotes = ownVotes.values.toList(),
+                        ),
+                    ),
+                )
             }
             is VoteChangedEvent -> {
-                upsertEventMessage(event.message)
+                val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) } ?: getMessage(
+                    event.message.id,
+                )?.poll?.ownVotes
+
+                upsertEventMessage(
+                    event.message.copy(
+                        poll = event.poll.copy(
+                            ownVotes = ownVotes ?: emptyList(),
+                        ),
+                    ),
+                )
             }
             is VoteRemovedEvent -> {
-                upsertEventMessage(event.message)
+                val ownVotes =
+                    (
+                        mutableState.getMessageById(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) - event.removedVote.id
+                upsertEventMessage(
+                    event.message.copy(
+                        poll = event.poll.copy(
+                            ownVotes = ownVotes.values.toList(),
+                        ),
+                    ),
+                )
             }
         }
     }
