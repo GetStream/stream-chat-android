@@ -49,6 +49,8 @@ public data class MessageListItemPayloadDiff(
         )
     }
 
+    public fun anyChanged(): Boolean = this != EMPTY
+
     public companion object {
         public val EMPTY: MessageListItemPayloadDiff = MessageListItemPayloadDiff(
             text = false,

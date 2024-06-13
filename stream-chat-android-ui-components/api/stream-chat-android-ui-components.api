@@ -2762,6 +2762,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 public final class io/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff {
 	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff$Companion;
 	public fun <init> (ZZZZZZZZZZZZZ)V
+	public final fun anyChanged ()Z
 	public final fun component1 ()Z
 	public final fun component10 ()Z
 	public final fun component11 ()Z
