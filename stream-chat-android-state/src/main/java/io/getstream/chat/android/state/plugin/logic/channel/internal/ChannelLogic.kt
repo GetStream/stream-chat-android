@@ -725,6 +725,9 @@ internal class ChannelLogic(
                     ),
                 )
             }
+            is VoteRemovedEvent -> {
+                upsertEventMessage(event.message)
+            }
         }
     }
 

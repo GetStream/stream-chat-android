@@ -831,6 +831,19 @@ private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEve
         removedVote = removedVote,
     )
 }
+private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEvent {
+    val newPoll = poll.toDomain(currentUserId)
+    return VoteRemovedEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        cid = cid,
+        channelType = channel_type,
+        channelId = channel_id,
+        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
+        poll = newPoll,
+    )
+}
 
 private fun ConnectedEventDto.toDomain(currentUserId: UserId?): ConnectedEvent {
     return ConnectedEvent(
