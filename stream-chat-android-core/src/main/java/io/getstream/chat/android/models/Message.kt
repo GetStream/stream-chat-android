@@ -232,6 +232,11 @@ public data class Message(
      * Date when the message text was updated
      */
     val messageTextUpdatedAt: Date? = null,
+
+    /**
+     * Contains poll configuration
+     */
+    val poll: Poll? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
@@ -328,6 +333,7 @@ public data class Message(
         append(", skipPushNotification=").append(skipPushNotification)
         append(", skipEnrichUrl=").append(skipEnrichUrl)
         if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
+        if (poll != null) append(", poll=").append(poll)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -379,6 +385,7 @@ public data class Message(
         private var skipEnrichUrl: Boolean = false
         private var moderationDetails: MessageModerationDetails? = null
         private var messageTextUpdatedAt: Date? = null
+        private var poll: Poll? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -422,6 +429,7 @@ public data class Message(
             skipEnrichUrl = message.skipEnrichUrl
             moderationDetails = message.moderationDetails
             messageTextUpdatedAt = message.messageTextUpdatedAt
+            poll = message.poll
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -493,6 +501,8 @@ public data class Message(
             this.messageTextUpdatedAt = messageTextUpdatedAt
         }
 
+        public fun withPoll(poll: Poll?): Builder = apply { this.poll = poll }
+
         public fun build(): Message {
             return Message(
                 id = id,
@@ -536,6 +546,7 @@ public data class Message(
                 skipEnrichUrl = skipEnrichUrl,
                 moderationDetails = moderationDetails,
                 messageTextUpdatedAt = messageTextUpdatedAt,
+                poll = poll,
             )
         }
     }

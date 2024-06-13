@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
+import io.getstream.chat.android.client.api2.endpoint.PollsApi
 import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
@@ -64,6 +65,9 @@ import io.getstream.chat.android.client.api2.model.requests.PartialUpdateMessage
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateThreadRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.PinnedMessagesRequest
+import io.getstream.chat.android.client.api2.model.requests.PollRequest
+import io.getstream.chat.android.client.api2.model.requests.PollUpdateRequest
+import io.getstream.chat.android.client.api2.model.requests.PollVoteRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryBannedUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.ReactionRequest
 import io.getstream.chat.android.client.api2.model.requests.RejectInviteRequest
@@ -78,6 +82,8 @@ import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.UpstreamOptionDto
+import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
@@ -106,6 +112,8 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
@@ -113,6 +121,8 @@ import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
@@ -145,6 +155,7 @@ constructor(
     private val fileDownloadApi: FileDownloadApi,
     private val ogApi: OpenGraphApi,
     private val threadsApi: ThreadsApi,
+    private val pollsApi: PollsApi,
     private val coroutineScope: CoroutineScope,
     private val userScope: UserScope,
 ) : ChatApi {
@@ -240,7 +251,9 @@ constructor(
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
             messageId = messageId,
-        ).map { response -> response.message.toDomain() }
+        ).map { response ->
+            response.message.toDomain()
+        }
     }
 
     override fun deleteMessage(messageId: String, hard: Boolean): Call<Message> {
@@ -1116,6 +1129,52 @@ constructor(
                 unset = unset,
             ),
         ).map { response -> response.thread.toDomain() }
+    }
+
+    override fun castPollVote(
+        messageId: String,
+        pollId: String,
+        optionId: String,
+    ): Call<Vote> {
+        return pollsApi.castPollVote(
+            messageId,
+            pollId,
+            PollVoteRequest(UpstreamVoteDto(optionId)),
+        ).map { it.vote.toDomain() }
+    }
+
+    override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> {
+        return pollsApi.removePollVote(
+            messageId,
+            pollId,
+            voteId,
+        ).map { it.vote.toDomain() }
+    }
+
+    override fun closePoll(pollId: String): Call<Poll> {
+        return pollsApi.updatePoll(
+            pollId,
+            PollUpdateRequest(
+                set = mapOf("is_closed" to true),
+            ),
+        ).map { it.poll.toDomain() }
+    }
+
+    override fun createPoll(pollConfig: PollConfig): Call<Poll> {
+        return pollsApi.createPoll(
+            PollRequest(
+                name = pollConfig.name,
+                description = pollConfig.description,
+                options = pollConfig.options.map(::UpstreamOptionDto),
+                voting_visibility = when (pollConfig.votingVisibility) {
+                    VotingVisibility.PUBLIC -> PollRequest.VOTING_VISIBILITY_PUBLIC
+                    VotingVisibility.ANONYMOUS -> PollRequest.VOTING_VISIBILITY_ANONYMOUS
+                },
+                enforce_unique_vote = pollConfig.enforceUniqueVote,
+                max_votes_allowed = pollConfig.maxVotesAllowed,
+                allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
+            ),
+        ).map { it.poll.toDomain() }
     }
 
     override fun warmUp() {
