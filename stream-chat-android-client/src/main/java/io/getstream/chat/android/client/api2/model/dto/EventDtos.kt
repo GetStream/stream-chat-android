@@ -518,6 +518,17 @@ internal data class VoteChangedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class VoteRemovedEventDto(
+    val type: String,
+    val cid: String,
+    val channel_type: String,
+    val channel_id: String,
+    val message: DownstreamMessageDto,
+    val poll: DownstreamPollDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,

@@ -72,6 +72,7 @@ import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -125,6 +126,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.UserId
@@ -193,6 +195,7 @@ internal fun ChatEventDto.toDomain(currentUserId: UserId?): ChatEvent {
         is PollUpdatedEventDto -> toDomain(currentUserId)
         is VoteCastedEventDto -> toDomain(currentUserId)
         is VoteChangedEventDto -> toDomain(currentUserId)
+        is VoteRemovedEventDto -> toDomain(currentUserId)
     }
 }
 
@@ -781,6 +784,19 @@ private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent
 private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEvent {
     val newPoll = poll.toDomain(currentUserId)
     return VoteChangedEvent(
+        type = type,
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        cid = cid,
+        channelType = channel_type,
+        channelId = channel_id,
+        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
+        poll = newPoll,
+    )
+}
+private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEvent {
+    val newPoll = poll.toDomain(currentUserId)
+    return VoteRemovedEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,

@@ -819,6 +819,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field POLL_UPDATED Ljava/lang/String;
 	public static final field POLL_VOTE_CASTED Ljava/lang/String;
 	public static final field POLL_VOTE_CHANGED Ljava/lang/String;
+	public static final field POLL_VOTE_REMOVED Ljava/lang/String;
 	public static final field REACTION_DELETED Ljava/lang/String;
 	public static final field REACTION_NEW Ljava/lang/String;
 	public static final field REACTION_UPDATED Ljava/lang/String;

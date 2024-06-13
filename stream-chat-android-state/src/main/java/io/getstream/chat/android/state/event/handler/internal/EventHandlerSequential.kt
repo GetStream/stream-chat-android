@@ -67,6 +67,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
@@ -684,6 +685,9 @@ internal class EventHandlerSequential(
                     batch.addMessage(event.message)
                 }
                 is VoteChangedEvent -> {
+                    batch.addMessage(event.message)
+                }
+                is VoteRemovedEvent -> {
                     batch.addMessage(event.message)
                 }
                 else -> Unit

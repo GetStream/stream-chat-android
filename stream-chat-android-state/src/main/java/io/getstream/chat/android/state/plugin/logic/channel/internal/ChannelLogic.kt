@@ -74,6 +74,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
@@ -677,6 +678,9 @@ internal class ChannelLogic(
                 upsertEventMessage(event.message)
             }
             is VoteChangedEvent -> {
+                upsertEventMessage(event.message)
+            }
+            is VoteRemovedEvent -> {
                 upsertEventMessage(event.message)
             }
         }
