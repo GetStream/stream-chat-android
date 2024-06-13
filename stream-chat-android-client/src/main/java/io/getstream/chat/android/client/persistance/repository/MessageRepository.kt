@@ -120,6 +120,8 @@ public interface MessageRepository {
      */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 
+    public suspend fun evictMessages()
+
     /**
      * Clear messages of this repository.
      */
