@@ -28,34 +28,14 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
 
     override fun areContentsTheSame(oldItem: MessageListItem, newItem: MessageListItem): Boolean {
         return when (oldItem) {
-            is MessageListItem.MessageItem -> {
-                newItem as MessageListItem.MessageItem
-                val oldMessage = oldItem.message
-                val newMessage = newItem.message
-
-                oldMessage.text == newMessage.text &&
-                    oldMessage.replyTo?.text == newMessage.replyTo?.text &&
-                    oldMessage.reactionScores == newMessage.reactionScores &&
-                    oldMessage.reactionGroups == newMessage.reactionGroups &&
-                    oldMessage.attachments == newMessage.attachments &&
-                    oldMessage.replyCount == newMessage.replyCount &&
-                    oldMessage.syncStatus == newMessage.syncStatus &&
-                    oldMessage.deletedAt == newMessage.deletedAt &&
-                    oldItem.positions == newItem.positions &&
-                    oldItem.isMessageRead == newItem.isMessageRead &&
-                    oldItem.isThreadMode == newItem.isThreadMode &&
-                    oldMessage.extraData == newMessage.extraData &&
-                    oldMessage.pinned == newMessage.pinned &&
-                    oldMessage.user == newMessage.user &&
-                    oldMessage.mentionedUsers == newMessage.mentionedUsers &&
-                    oldItem.showMessageFooter == newItem.showMessageFooter
-            }
-            is MessageListItem.DateSeparatorItem -> oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
+            is MessageListItem.MessageItem ->
+                getMessageListItemChangePayload(oldItem, newItem)?.anyChanged()?.not() ?: false
+            is MessageListItem.DateSeparatorItem ->
+                oldItem.date == (newItem as? MessageListItem.DateSeparatorItem)?.date
             is MessageListItem.ThreadSeparatorItem -> oldItem == (newItem as? MessageListItem.ThreadSeparatorItem)
             is MessageListItem.LoadingMoreIndicatorItem -> true
-            is MessageListItem.TypingItem -> oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(
-                User::id,
-            )
+            is MessageListItem.TypingItem ->
+                oldItem.users.map(User::id) == ((newItem) as? MessageListItem.TypingItem)?.users?.map(User::id)
             is MessageListItem.ThreadPlaceholderItem -> true
             is MessageListItem.UnreadSeparatorItem ->
                 oldItem.unreadCount == (newItem as? MessageListItem.UnreadSeparatorItem)?.unreadCount
@@ -65,29 +45,45 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
         }
     }
 
-    override fun getChangePayload(oldItem: MessageListItem, newItem: MessageListItem): Any? {
-        return if (oldItem is MessageListItem.MessageItem) {
-            newItem as MessageListItem.MessageItem
-            val oldMessage = oldItem.message
-            val newMessage = newItem.message
-
-            MessageListItemPayloadDiff(
-                text = oldMessage.text != newMessage.text,
-                replyText = oldMessage.replyTo?.text != newMessage.replyTo?.text,
-                reactions = (oldMessage.reactionGroups != newMessage.reactionGroups),
-                attachments = oldMessage.attachments != newMessage.attachments,
-                replies = oldMessage.replyCount != newMessage.replyCount,
-                syncStatus = oldMessage.syncStatus != newMessage.syncStatus,
-                deleted = oldMessage.deletedAt != newMessage.deletedAt,
-                positions = oldItem.positions != newItem.positions,
-                pinned = oldMessage.pinned != newMessage.pinned,
-                user = oldMessage.user != newMessage.user,
-                mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers,
-                footer = oldItem.showMessageFooter != newItem.showMessageFooter,
-                poll = oldMessage.poll != newMessage.poll,
-            )
-        } else {
-            null
+    private fun getMessageListItemChangePayload(
+        oldItem: MessageListItem,
+        newItem: MessageListItem,
+    ): MessageListItemPayloadDiff? {
+        return (oldItem as? MessageListItem.MessageItem)?.let { oldMessageItem ->
+            (newItem as? MessageListItem.MessageItem)?.let { newMessageItem ->
+                getMessageChangePayload(oldMessageItem, newMessageItem)
+            }
         }
     }
+
+    private fun getMessageChangePayload(
+        oldItem: MessageListItem.MessageItem,
+        newItem: MessageListItem.MessageItem,
+    ): MessageListItemPayloadDiff {
+        val oldMessage = oldItem.message
+        val newMessage = newItem.message
+
+        return MessageListItemPayloadDiff(
+            text = oldMessage.text != newMessage.text,
+            replyText = oldMessage.replyTo?.text != newMessage.replyTo?.text,
+            reactions = (oldMessage.reactionGroups != newMessage.reactionGroups),
+            attachments = oldMessage.attachments != newMessage.attachments,
+            replies = oldMessage.replyCount != newMessage.replyCount,
+            syncStatus = oldMessage.syncStatus != newMessage.syncStatus,
+            deleted = oldMessage.deletedAt != newMessage.deletedAt,
+            positions = oldItem.positions != newItem.positions,
+            pinned = oldMessage.pinned != newMessage.pinned,
+            user = oldMessage.user != newMessage.user,
+            mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers,
+            footer = oldItem.showMessageFooter != newItem.showMessageFooter,
+            poll = oldMessage.poll?.also {
+                println("JcLog: MessageListItemDiffCallback.getMessageChangePayload: oldMessage.poll = $it")
+            } != newMessage.poll?.also {
+                println("JcLog: MessageListItemDiffCallback.getMessageChangePayload: newMessage.poll = $it")
+            },
+        )
+    }
+
+    override fun getChangePayload(oldItem: MessageListItem, newItem: MessageListItem): Any? =
+        getMessageListItemChangePayload(oldItem, newItem)
 }
