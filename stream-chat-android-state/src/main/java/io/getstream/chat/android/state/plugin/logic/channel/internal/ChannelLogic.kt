@@ -726,7 +726,18 @@ internal class ChannelLogic(
                 )
             }
             is VoteRemovedEvent -> {
-                upsertEventMessage(event.message)
+                val ownVotes =
+                    (
+                        mutableState.getMessageById(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) - event.removedVote.id
+                upsertEventMessage(
+                    event.message.copy(
+                        poll = event.poll.copy(
+                            ownVotes = ownVotes.values.toList(),
+                        ),
+                    ),
+                )
             }
         }
     }
