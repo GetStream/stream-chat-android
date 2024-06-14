@@ -160,8 +160,10 @@ public class MessageReplyView : FrameLayout {
                             ?: context.getColorCompat(R.color.stream_ui_literal_transparent),
                     )
                     strokeWidth = style?.messageStrokeWidthMine ?: DEFAULT_STROKE_WIDTH
-                    setTint(style?.messageBackgroundColorMine
-                        ?: context.getColorCompat(R.color.stream_ui_white))
+                    setTint(
+                        style?.messageBackgroundColorMine
+                            ?: context.getColorCompat(R.color.stream_ui_white),
+                    )
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
@@ -170,8 +172,10 @@ public class MessageReplyView : FrameLayout {
                             ?: context.getColorCompat(R.color.stream_ui_grey_gainsboro),
                     )
                     strokeWidth = style?.messageStrokeWidthTheirs ?: DEFAULT_STROKE_WIDTH
-                    setTint(style?.messageBackgroundColorTheirs
-                        ?: context.getColorCompat(R.color.stream_ui_grey_whisper))
+                    setTint(
+                        style?.messageBackgroundColorTheirs
+                            ?: context.getColorCompat(R.color.stream_ui_grey_whisper),
+                    )
                 }
             }
         }

@@ -18,7 +18,6 @@ package io.getstream.chat.ui.sample.application
 
 import android.content.Context
 import android.graphics.Color
-import androidx.core.content.ContextCompat
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
@@ -41,7 +40,6 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.dec
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.ui.sample.BuildConfig
-import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
 import io.getstream.chat.ui.sample.feature.chat.messagelist.decorator.CustomDecoratorProviderFactory
