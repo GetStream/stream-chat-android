@@ -161,6 +161,9 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
@@ -171,6 +174,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.CompositeStreamLogger
@@ -183,6 +187,7 @@ import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import io.getstream.result.call.doOnResult
 import io.getstream.result.call.doOnStart
+import io.getstream.result.call.flatMap
 import io.getstream.result.call.map
 import io.getstream.result.call.retry
 import io.getstream.result.call.retry.RetryPolicy
@@ -1474,6 +1479,79 @@ internal constructor(
             sort = sort,
             pagination = pagination,
         )
+    }
+
+    /**
+     * Send a message with a poll to the given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param pollConfig The poll configuration.
+     *
+     * @return Executable async [Call] responsible for sending a poll.
+     */
+    @CheckResult
+    public fun sendPoll(
+        channelType: String,
+        channelId: String,
+        pollConfig: PollConfig,
+    ): Call<Message> {
+        return api.createPoll(pollConfig)
+            .flatMap { poll ->
+                sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    Message(extraData = mapOf("poll_id" to poll.id)),
+                )
+            }
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, option.id)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote to remove.
+     *
+     * @return Executable async [Call] responsible for removing a vote.
+     */
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ): Call<Vote> {
+        return api.removePollVote(messageId, pollId, vote.id)
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     *
+     * @return Executable async [Call] responsible for closing a poll.
+     */
+    @CheckResult
+    public fun closePoll(pollId: String): Call<Poll> {
+        return api.closePoll(pollId)
     }
 
     @CheckResult

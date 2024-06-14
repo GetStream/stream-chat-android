@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.result.Error
@@ -655,6 +656,76 @@ public data class UserUpdatedEvent(
     override val rawCreatedAt: String,
     override val user: User,
 ) : ChatEvent(), UserEvent
+
+/**
+ * Triggered when a poll is updated.
+ */
+public data class PollUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val message: Message,
+    val poll: Poll,
+) : CidEvent(), HasMessage
+
+/**
+ * Triggered when a poll is deleted.
+ */
+public data class PollDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val message: Message,
+    val poll: Poll,
+) : CidEvent(), HasMessage
+
+/**
+ * Triggered when a poll is closed.
+ */
+public data class PollClosedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val message: Message,
+    val poll: Poll,
+) : CidEvent(), HasMessage
+
+/**
+ * Triggered when a vote is casted.
+ */
+public data class VoteCastedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val message: Message,
+    val poll: Poll,
+) : CidEvent(), HasMessage
+
+/**
+ * Triggered when a vote is changed.
+ */
+public data class VoteChangedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val message: Message,
+    val poll: Poll,
+) : CidEvent(), HasMessage
 
 /**
  * Triggered when a user gets connected to the WS

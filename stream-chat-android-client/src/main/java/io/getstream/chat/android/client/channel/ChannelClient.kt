@@ -61,6 +61,9 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -72,6 +75,8 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -245,6 +250,11 @@ public class ChannelClient internal constructor(
             is UserStartWatchingEvent -> event.cid == cid
             is UserStopWatchingEvent -> event.cid == cid
             is ChannelUserUnbannedEvent -> event.cid == cid
+            is PollClosedEvent -> event.cid == cid
+            is PollDeletedEvent -> event.cid == cid
+            is PollUpdatedEvent -> event.cid == cid
+            is VoteCastedEvent -> event.cid == cid
+            is VoteChangedEvent -> event.cid == cid
             is UnknownEvent -> event.rawData["cid"] == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,

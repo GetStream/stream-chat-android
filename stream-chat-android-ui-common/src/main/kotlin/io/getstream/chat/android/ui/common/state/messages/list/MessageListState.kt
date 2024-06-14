@@ -51,6 +51,7 @@ public data class MessageListState(
 internal fun MessageListState.stringify(): String {
     return "MessageListState(" +
         "messageItems.size: ${messageItems.size}, " +
+        "newMessageState: $newMessageState, " +
         "endOfNewMessagesReached: $endOfNewMessagesReached, " +
         "endOfOldMessagesReached: $endOfOldMessagesReached, " +
         "isLoading: $isLoading, " +
@@ -59,6 +60,9 @@ internal fun MessageListState.stringify(): String {
         "currentUser.id: ${currentUser?.id}, " +
         "parentMessageId: $parentMessageId, " +
         "unreadCount: $unreadCount, " +
-        "newMessageState: $newMessageState, " +
         "selectedMessageState: $selectedMessageState)"
+}
+
+internal inline fun <reified T : MessageListItemState> MessageListState.lastItemOrNull(): T? {
+    return messageItems.lastOrNull { it is T } as T?
 }
