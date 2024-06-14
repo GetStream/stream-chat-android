@@ -36,7 +36,7 @@ import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
 internal class MessagePreviewView : FrameLayout {
 
-    private val binding = StreamUiMessagePreviewItemBinding.inflate(streamThemeInflater, this, true)
+    internal val binding = StreamUiMessagePreviewItemBinding.inflate(streamThemeInflater, this, true)
 
     constructor(context: Context) : super(context.createStreamThemeWrapper()) {
         init(null)
