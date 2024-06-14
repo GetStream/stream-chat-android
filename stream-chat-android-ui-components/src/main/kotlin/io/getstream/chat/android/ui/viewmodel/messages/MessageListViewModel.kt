@@ -29,6 +29,8 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.setMessageForReply
@@ -285,8 +287,13 @@ public class MessageListViewModel(
                 true -> messageListController.scrollToFirstUnreadMessage()
                 false -> messageListController.disableUnreadLabelButton()
             }
-
             is Event.BlockUser -> messageListController.blockUser(event.userId)
+            is Event.PollOptionUpdated -> messageListController.updatePollOption(
+                message = event.message,
+                poll = event.poll,
+                option = event.option,
+            )
+            is Event.PollClosed -> messageListController.closePoll(event.poll)
         }
     }
 
@@ -709,5 +716,25 @@ public class MessageListViewModel(
          * @param userId the id of the user that is blocked.
          */
         public data class BlockUser(val userId: String) : Event()
+
+        /**
+         * When the user updates a poll option.
+         *
+         * @param message The message containing the poll.
+         * @param poll The poll to be updated.
+         * @param option The option to be updated.
+         */
+        public data class PollOptionUpdated(
+            val message: Message,
+            val poll: Poll,
+            val option: Option,
+        ) : Event()
+
+        /**
+         * When the user closes a poll.
+         *
+         * @param poll The poll to be closed.
+         */
+        public data class PollClosed(val poll: Poll) : Event()
     }
 }
