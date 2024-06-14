@@ -18,6 +18,7 @@ package io.getstream.chat.ui.sample.application
 
 import android.content.Context
 import android.graphics.Color
+import androidx.core.content.ContextCompat
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
@@ -40,6 +41,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.dec
 import io.getstream.chat.android.ui.helper.StyleTransformer
 import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.ui.sample.BuildConfig
+import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
 import io.getstream.chat.ui.sample.feature.chat.messagelist.decorator.CustomDecoratorProviderFactory
@@ -161,6 +163,33 @@ class ChatInitializer(
                 reactionSorting = ReactionSortingByLastReactionAt,
             )
         }
+
+        /*val lightGray = ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                messageBackgroundColorMine = Color.BLACK,
+                messageBackgroundColorTheirs = lightGray,
+                textStyleMine = defaultStyle.textStyleMine.copy(
+                    color = Color.WHITE,
+                ),
+                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
+                    color = Color.BLACK,
+                ),
+            )
+        }
+
+        TransformStyle.messageReplyStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                messageBackgroundColorMine = lightGray,
+                messageBackgroundColorTheirs = Color.BLACK,
+                textStyleMine = defaultStyle.textStyleMine.copy(
+                    color = Color.BLACK,
+                ),
+                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
+                    color = Color.WHITE,
+                ),
+            )
+        }*/
 
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }
