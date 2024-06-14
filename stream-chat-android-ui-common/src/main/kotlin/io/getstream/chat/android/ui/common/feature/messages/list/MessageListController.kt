@@ -2206,6 +2206,17 @@ public class MessageListController(
     }
 
     /**
+     * Closes the given poll.
+     *
+     * @param poll The poll to close.
+     */
+    public fun closePoll(poll: Poll) {
+        scope.launch {
+            chatClient.closePoll(poll.id).await()
+        }
+    }
+
+    /**
      * A class designed for error event propagation.
      *
      * @param streamError Contains the original [Throwable] along with a message.
