@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
+    android:layout_marginBottom="@dimen/stream_ui_spacing_small"
+    android:background="?android:attr/selectableItemBackground"
+    >
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/check"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/stream_ui_poll_option_selector"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/option"
+        style="@style/StreamUiTextAppearance.Body"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/check"
+        app:layout_constraintEnd_toStartOf="@+id/avatarSecondVote"
+        android:textAppearance="@style/StreamUiTextAppearance.Body"
+        android:textColor="@color/stream_ui_text_color_primary"
+        tools:text="Option 1"
+        />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/votes"
+        style="@style/StreamUiTextAppearance.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/check"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textAppearance="@style/StreamUiTextAppearance.Body"
+        android:textColor="@color/stream_ui_text_color_primary"
+        tools:text="10"
+        />
+
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/avatarFirstVote"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_tiny"
+        app:layout_constraintTop_toTopOf="@+id/check"
+        app:layout_constraintEnd_toStartOf="@+id/votes"
+        />
+
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/avatarSecondVote"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintTop_toTopOf="@+id/check"
+        app:layout_constraintEnd_toEndOf="@+id/avatarFirstVote"
+        />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="check,option,avatarFirstVote,avatarSecondVote"
+        />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/votesPercentage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        app:layout_constraintTop_toBottomOf="@+id/barrier"
+        app:layout_constraintStart_toEndOf="@+id/check"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:trackCornerRadius="4dp"
+        app:trackThickness="8dp"
+        android:indeterminate="false"
+        />
+</androidx.constraintlayout.widget.ConstraintLayout>
