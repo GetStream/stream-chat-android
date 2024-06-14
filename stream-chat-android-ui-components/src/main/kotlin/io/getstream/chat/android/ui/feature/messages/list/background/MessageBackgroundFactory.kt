@@ -59,4 +59,9 @@ public interface MessageBackgroundFactory {
      * Background for message with image attachments.
      */
     public fun imageAttachmentMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
+
+    /**
+     * Background for poll messages.
+     */
+    public fun pollMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable
 }

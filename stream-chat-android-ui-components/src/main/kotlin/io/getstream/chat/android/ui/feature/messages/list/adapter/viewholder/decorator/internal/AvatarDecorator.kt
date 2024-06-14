@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
 
 internal class AvatarDecorator(
@@ -136,6 +137,17 @@ internal class AvatarDecorator(
      * @param data The item that holds all the information.
      */
     override fun decorateDeletedMessage(viewHolder: MessageDeletedViewHolder, data: MessageListItem.MessageItem) {
+        controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
+        setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
+    }
+
+    /**
+     * Decorates the avatar of the poll message, based on the message owner.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decoratePollMessage(viewHolder: PollViewHolder, data: MessageListItem.MessageItem) {
         controlVisibility(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine)
         setupAvatar(getAvatarView(viewHolder.binding.userAvatarMineView, viewHolder.binding.userAvatarView, data.isMine), data)
     }
