@@ -29,6 +29,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 
 internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle) : BaseDecorator() {
 
@@ -136,6 +137,20 @@ internal class MaxPossibleWidthDecorator(private val style: MessageListItemStyle
      */
     override fun decorateLinkAttachmentsMessage(
         viewHolder: LinkAttachmentsViewHolder,
+        data: MessageListItem.MessageItem,
+    ) {
+        applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)
+    }
+
+    /**
+     * Decorates the maximum width of the poll message, by changing
+     * the start and end margins of the container.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decoratePollMessage(
+        viewHolder: PollViewHolder,
         data: MessageListItem.MessageItem,
     ) {
         applyMaxPossibleWidth(viewHolder.binding.marginStart, viewHolder.binding.marginEnd, data)

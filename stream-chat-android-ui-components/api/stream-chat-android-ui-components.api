@@ -3044,6 +3044,7 @@ public abstract class io/getstream/chat/android/ui/feature/messages/list/adapter
 	protected abstract fun decorateLinkAttachmentsMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/LinkAttachmentsViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
 	protected abstract fun decorateMediaAttachmentsMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MediaAttachmentsViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
 	protected abstract fun decoratePlainTextMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/MessagePlainTextViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
+	protected fun decoratePollMessage (Lio/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/PollViewHolder;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/decorator/Decorator {
@@ -3178,6 +3179,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun imageAttachmentMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun linkAttachmentMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun plainTextMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public abstract fun pollMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public abstract fun textAndAttachmentMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 }
 
@@ -3190,6 +3192,7 @@ public class io/getstream/chat/android/ui/feature/messages/list/background/Messa
 	public fun imageAttachmentMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun linkAttachmentMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun plainTextMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
+	public fun pollMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 	public fun textAndAttachmentMessageBackground (Landroid/content/Context;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)Landroid/graphics/drawable/Drawable;
 }
 
