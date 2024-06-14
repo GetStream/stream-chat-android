@@ -46,6 +46,16 @@ public open class MessageBackgroundFactoryImpl(private val style: MessageListIte
     }
 
     /**
+     * Draws the background of messages containing polls.
+     *
+     * @param context [Context].
+     * @param data [MessageListItem.MessageItem].
+     */
+    override fun pollMessageBackground(context: Context, data: MessageListItem.MessageItem): Drawable {
+        return defaultBackground(context, data)
+    }
+
+    /**
      * Draws the background of messages containing image attachments.
      *
      * @param context [Context].

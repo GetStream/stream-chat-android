@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
@@ -64,6 +65,7 @@ private const val NO_READS = 0
  * message accordingly to the logic provided.
  * @property getLanguageDisplayName [String] Returns the language display name for the given language code.
  */
+@Suppress("TooManyFunctions")
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
@@ -160,6 +162,17 @@ internal class FootnoteDecorator(
      */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
+
+    override fun decoratePollMessage(
+        viewHolder: PollViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupFootnote(
         viewHolder.binding.footnote,

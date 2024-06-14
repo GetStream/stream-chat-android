@@ -27,6 +27,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.utils.extensions.dpToPxPrecise
 
@@ -136,6 +137,20 @@ internal class BackgroundDecorator(
     ) {
         viewHolder.binding.messageContainer.background =
             messageBackgroundFactory.plainTextMessageBackground(
+                viewHolder.binding.messageContainer.context,
+                data,
+            )
+    }
+
+    /**
+     * Decorates the background of the poll message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decoratePollMessage(viewHolder: PollViewHolder, data: MessageListItem.MessageItem) {
+        viewHolder.binding.messageContainer.background =
+            messageBackgroundFactory.pollMessageBackground(
                 viewHolder.binding.messageContainer.context,
                 data,
             )

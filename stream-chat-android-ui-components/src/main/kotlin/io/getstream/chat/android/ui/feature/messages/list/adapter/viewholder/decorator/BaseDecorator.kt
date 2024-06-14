@@ -28,6 +28,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 
 public abstract class BaseDecorator : Decorator {
 
@@ -47,6 +48,7 @@ public abstract class BaseDecorator : Decorator {
             is GiphyAttachmentViewHolder -> decorateGiphyAttachmentMessage(viewHolder, data)
             is FileAttachmentsViewHolder -> decorateFileAttachmentsMessage(viewHolder, data)
             is MediaAttachmentsViewHolder -> decorateMediaAttachmentsMessage(viewHolder, data)
+            is PollViewHolder -> decoratePollMessage(viewHolder, data)
             is DateDividerViewHolder -> Unit
             else -> Unit
         }.exhaustive
@@ -131,6 +133,17 @@ public abstract class BaseDecorator : Decorator {
      */
     protected open fun decorateGiphyMessage(
         viewHolder: GiphyViewHolder,
+        data: MessageListItem.MessageItem,
+    ): Unit = Unit
+
+    /**
+     * Applies various decorations to the [PollViewHolder].
+     *
+     * @param viewHolder The holder to be decorated.
+     * @param data The data used to define various decorations.
+     */
+    protected open fun decoratePollMessage(
+        viewHolder: PollViewHolder,
         data: MessageListItem.MessageItem,
     ): Unit = Unit
 }
