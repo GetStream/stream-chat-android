@@ -44,6 +44,12 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property emptyStateTextStyle Appearance for empty state text.
  * @property progressBarIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
  * @property messagePreviewStyle Style for single search result item.
+ * @property itemHeight Height of single search result item. Default value is [R.dimen.stream_ui_search_result_list_item_height].
+ * @property itemMarginStart Start margin for single search result item. Default value is [R.dimen.stream_ui_search_result_item_margin_start].
+ * @property itemMarginEnd End margin for single search result item. Default value is [R.dimen.stream_ui_search_result_item_margin_end].
+ * @property itemTitleMarginStart Start margin for title in single search result item. Default value is [R.dimen.stream_ui_search_result_item_title_margin_start].
+ * @property itemVerticalSpacerHeight Height of the single search result item vertical spacer. Default value is [R.dimen.stream_ui_search_result_item_vertical_spacer_height].
+ * @property itemVerticalSpacerPosition Position of the single search result item vertical spacer. Default value is [R.dimen.stream_ui_search_result_item_vertical_spacer_position].
  */
 public data class SearchResultListViewStyle(
     @ColorInt public val backgroundColor: Int,

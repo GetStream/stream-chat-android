@@ -65,6 +65,7 @@
 - Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
 
 ### ⬆️ Improved
+- Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
 
 ### ✅ Added
 
