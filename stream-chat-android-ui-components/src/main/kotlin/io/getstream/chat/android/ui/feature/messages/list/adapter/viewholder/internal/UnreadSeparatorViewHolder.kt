@@ -40,7 +40,7 @@ internal class UnreadSeparatorViewHolder(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.UnreadSeparatorItem>(binding.root, decorators) {
 
-    override fun bindData(data: MessageListItem.UnreadSeparatorItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.UnreadSeparatorItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
 
         binding.root.setBackgroundColor(style.unreadSeparatorBackgroundColor)

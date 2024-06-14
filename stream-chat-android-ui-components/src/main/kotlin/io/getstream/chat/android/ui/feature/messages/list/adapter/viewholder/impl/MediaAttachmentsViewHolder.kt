@@ -75,13 +75,13 @@ public class MediaAttachmentsViewHolder internal constructor(
 
     override fun messageContainerView(): View = binding.messageContainer
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         logger.d { "[bindData] data: $data, diff: $diff" }
         super.bindData(data, diff)
 
         bindMessageText()
         bindHorizontalBias()
-        if (diff?.attachments != false) {
+        if (diff.attachments) {
             logger.v { "[bindData] has attachments" }
             bindMediaAttachments()
             bindAudioRecordAttachments()

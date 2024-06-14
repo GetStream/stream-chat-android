@@ -19,10 +19,11 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.UserId
 
-internal fun DownstreamMemberDto.toDomain(): Member =
+internal fun DownstreamMemberDto.toDomain(currentUserId: UserId?): Member =
     Member(
-        user = user.toDomain(),
+        user = user.toDomain(currentUserId),
         createdAt = created_at,
         updatedAt = updated_at,
         isInvited = invited,

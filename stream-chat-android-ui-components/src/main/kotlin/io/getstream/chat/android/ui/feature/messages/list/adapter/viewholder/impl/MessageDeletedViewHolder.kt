@@ -39,10 +39,10 @@ public class MessageDeletedViewHolder internal constructor(
     ),
 ) : DecoratedBaseMessageItemViewHolder<MessageListItem.MessageItem>(binding.root, decorators) {
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
 
-        if (diff?.deleted == false) return
+        if (!diff.deleted) return
 
         binding.deleteLabel.setTextStyle(
             when (data.isTheirs) {

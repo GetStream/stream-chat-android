@@ -27,7 +27,7 @@ import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class UpstreamMessageDtoAdapterTest {
-    private val parser = MoshiChatParser()
+    private val parser = MoshiChatParser { "" }
 
     @Test
     fun `Serialize JSON message with custom fields`() {

@@ -45,6 +45,8 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
@@ -2027,6 +2029,38 @@ public class MessageListController(
      */
     public fun onCleared() {
         scope.cancel()
+    }
+
+    /**
+     * Updates the poll option for the given message and poll.
+     *
+     * @param message The message containing the poll.
+     * @param poll The poll to update.
+     * @param option The option to update.
+     */
+    public fun updatePollOption(
+        message: Message,
+        poll: Poll,
+        option: Option,
+    ) {
+        scope.launch {
+            (
+                poll.ownVotes.firstOrNull { it.optionId == option.id }
+                    ?.let { chatClient.removePollVote(message.id, poll.id, it) }
+                    ?: chatClient.castPollVote(message.id, poll.id, option)
+                ).await()
+        }
+    }
+
+    /**
+     * Closes the given poll.
+     *
+     * @param poll The poll to close.
+     */
+    public fun closePoll(poll: Poll) {
+        scope.launch {
+            chatClient.closePoll(poll.id).await()
+        }
     }
 
     /**

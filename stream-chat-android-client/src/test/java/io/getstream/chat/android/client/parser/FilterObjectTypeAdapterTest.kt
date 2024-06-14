@@ -31,7 +31,7 @@ import org.junit.jupiter.params.provider.MethodSource
 
 internal class FilterObjectTypeAdapterTest {
 
-    private val filterObjectAdapter = MoshiChatParser()
+    private val filterObjectAdapter = MoshiChatParser { "" }
 
     /** [writeArguments] */
     @ParameterizedTest

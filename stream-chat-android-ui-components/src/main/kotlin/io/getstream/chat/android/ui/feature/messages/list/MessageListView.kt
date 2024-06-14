@@ -45,6 +45,8 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.downloadAttachment
@@ -578,6 +580,9 @@ public class MessageListView : ConstraintLayout {
         // Empty
         false
     }
+    private val defaultOnPollOptionClickListener = OnPollOptionClickListener { _, _, _ -> false }
+    private val defaultOnPollCloseClickListener = OnPollCloseClickListener { false }
+    private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { false }
 
     private val listenerContainer = MessageListListenerContainerImpl(
         messageClickListener = defaultMessageClickListener,
@@ -590,6 +595,9 @@ public class MessageListView : ConstraintLayout {
         userClickListener = defaultUserClickListener,
         giphySendListener = defaultGiphySendListener,
         linkClickListener = defaultLinkClickListener,
+        onPollOptionClickListener = defaultOnPollOptionClickListener,
+        onPollCloseClickListener = defaultOnPollCloseClickListener,
+        onViewPollResultClickListener = defaultOnViewPollResultClickListener,
     )
     private var enterThreadListener = defaultEnterThreadListener
     private var userReactionClickListener = defaultUserReactionClickListener
@@ -1295,6 +1303,51 @@ public class MessageListView : ConstraintLayout {
         } else {
             listenerContainer.messageClickListener = OnMessageClickListener { message ->
                 listener.onMessageClick(message) || defaultMessageClickListener.onMessageClick(message)
+            }
+        }
+    }
+
+    /**
+     * Set the Poll Option click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnPollOptionClickListener(listener: OnPollOptionClickListener?) {
+        if (listener == null) {
+            listenerContainer.onPollOptionClickListener = defaultOnPollOptionClickListener
+        } else {
+            listenerContainer.onPollOptionClickListener = OnPollOptionClickListener { message, poll, option ->
+                listener.onPollOptionClick(message, poll, option)
+            }
+        }
+    }
+
+    /**
+     * Set the Poll Close click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnPollCloseClickListener(listener: OnPollCloseClickListener?) {
+        if (listener == null) {
+            listenerContainer.onPollCloseClickListener = defaultOnPollCloseClickListener
+        } else {
+            listenerContainer.onPollCloseClickListener = OnPollCloseClickListener { poll ->
+                listener.onPollCloseClick(poll)
+            }
+        }
+    }
+
+    /**
+     * Set the View Poll Result click listener to be used by MessageListView.
+     *
+     * @param listener The listener to use. If null, the default will be used instead.
+     */
+    public fun setOnViewPollResultClickListener(listener: OnViewPollResultClickListener?) {
+        if (listener == null) {
+            listenerContainer.onViewPollResultClickListener = defaultOnViewPollResultClickListener
+        } else {
+            listenerContainer.onViewPollResultClickListener = OnViewPollResultClickListener { poll ->
+                listener.onViewPollResultClick(poll)
             }
         }
     }
@@ -2090,6 +2143,18 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnMessageClickListener {
         public fun onMessageClick(message: Message): Boolean
+    }
+
+    public fun interface OnPollOptionClickListener {
+        public fun onPollOptionClick(message: Message, poll: Poll, option: Option): Boolean
+    }
+
+    public fun interface OnPollCloseClickListener {
+        public fun onPollCloseClick(poll: Poll): Boolean
+    }
+
+    public fun interface OnViewPollResultClickListener {
+        public fun onViewPollResultClick(poll: Poll): Boolean
     }
 
     @Deprecated(

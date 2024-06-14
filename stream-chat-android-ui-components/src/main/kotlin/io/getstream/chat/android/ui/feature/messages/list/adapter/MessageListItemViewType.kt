@@ -40,6 +40,7 @@ public object MessageListItemViewType {
     public const val LINK_ATTACHMENTS: Int = OFFSET + 15
     public const val UNREAD_SEPARATOR: Int = OFFSET + 16
     public const val START_OF_THE_CHANNEL: Int = OFFSET + 17
+    public const val POLL: Int = OFFSET + 18
 
     public fun toString(viewType: Int): String {
         return when (viewType) {
@@ -60,6 +61,7 @@ public object MessageListItemViewType {
             LINK_ATTACHMENTS -> "LINK_ATTACHMENTS"
             UNREAD_SEPARATOR -> "UNREAD_SEPARATOR"
             START_OF_THE_CHANNEL -> "START_OF_THE_CHANNEL"
+            POLL -> "POLL"
             else -> "UNKNOWN"
         }
     }

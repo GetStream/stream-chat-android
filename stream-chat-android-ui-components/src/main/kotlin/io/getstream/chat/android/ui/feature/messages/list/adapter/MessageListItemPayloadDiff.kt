@@ -29,6 +29,7 @@ public data class MessageListItemPayloadDiff(
     val user: Boolean,
     val mentions: Boolean,
     val footer: Boolean,
+    val poll: Boolean,
 ) {
     public operator fun plus(other: MessageListItemPayloadDiff): MessageListItemPayloadDiff {
         return MessageListItemPayloadDiff(
@@ -44,6 +45,43 @@ public data class MessageListItemPayloadDiff(
             user = user || other.user,
             mentions = mentions || other.mentions,
             footer = footer || other.footer,
+            poll = poll || other.poll,
+        )
+    }
+
+    public fun anyChanged(): Boolean = this != EMPTY
+
+    public companion object {
+        public val EMPTY: MessageListItemPayloadDiff = MessageListItemPayloadDiff(
+            text = false,
+            replyText = false,
+            reactions = false,
+            attachments = false,
+            replies = false,
+            syncStatus = false,
+            deleted = false,
+            positions = false,
+            pinned = false,
+            user = false,
+            mentions = false,
+            footer = false,
+            poll = false,
+        )
+
+        public val FULL: MessageListItemPayloadDiff = MessageListItemPayloadDiff(
+            text = true,
+            replyText = true,
+            reactions = true,
+            attachments = true,
+            replies = true,
+            syncStatus = true,
+            deleted = true,
+            positions = true,
+            pinned = true,
+            user = true,
+            mentions = true,
+            footer = true,
+            poll = true,
         )
     }
 }

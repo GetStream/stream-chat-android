@@ -43,6 +43,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
@@ -262,7 +263,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                     ),
                 )
-                viewHolder.bindListItem(messageItem)
+                viewHolder.bindListItem(messageItem, MessageListItemPayloadDiff.FULL)
             }
         }
     }

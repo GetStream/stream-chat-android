@@ -64,7 +64,7 @@ public class GiphyViewHolder internal constructor(
         }
     }
 
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
 
         applyStyle()

@@ -31,6 +31,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 
 internal class MessageContainerMarginDecorator(
     private val style: MessageListItemStyle,
@@ -140,6 +141,16 @@ internal class MessageContainerMarginDecorator(
         viewHolder: LinkAttachmentsViewHolder,
         data: MessageListItem.MessageItem,
     ) {
+        viewHolder.binding.run { configMargins(messageContainer, footnote, style) }
+    }
+
+    /**
+     * Decorates the message container of the poll message.
+     *
+     * @param viewHolder The holder to decorate.
+     * @param data The item that holds all the information.
+     */
+    override fun decoratePollMessage(viewHolder: PollViewHolder, data: MessageListItem.MessageItem) {
         viewHolder.binding.run { configMargins(messageContainer, footnote, style) }
     }
 

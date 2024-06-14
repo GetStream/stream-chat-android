@@ -34,6 +34,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENT
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.PLAIN_TEXT
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.POLL
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.START_OF_THE_CHANNEL
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
@@ -53,6 +54,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.EmptyViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.ErrorMessageViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.internal.LoadingMoreViewHolder
@@ -199,6 +201,7 @@ public open class MessageListItemViewHolderFactory {
             is FileAttachmentsViewHolder -> FILE_ATTACHMENTS
             is MediaAttachmentsViewHolder -> MEDIA_ATTACHMENT
             is UnreadSeparatorViewHolder -> UNREAD_SEPARATOR
+            is PollViewHolder -> POLL
             else -> throw IllegalArgumentException("Unhandled MessageList view holder: $viewHolder")
         }
     }
@@ -229,6 +232,7 @@ public open class MessageListItemViewHolderFactory {
             MEDIA_ATTACHMENT -> createMediaAttachmentsViewHolder(parentView)
             UNREAD_SEPARATOR -> createUnreadSeparatorViewHolder(parentView)
             START_OF_THE_CHANNEL -> createEmptyMessageItemViewHolder(parentView, viewType)
+            POLL -> createPollItemViewHolder(parentView)
             else -> throw IllegalArgumentException("Unhandled MessageList view type: $viewType")
         }
     }
@@ -287,6 +291,16 @@ public open class MessageListItemViewHolderFactory {
         )
     }
 
+    private fun createPollItemViewHolder(
+        parentView: ViewGroup,
+    ): BaseMessageItemViewHolder<MessageListItem.MessageItem> {
+        return PollViewHolder(
+            parentView,
+            decoratorProvider.decorators,
+            listeners,
+            style,
+        )
+    }
     private fun createUnreadSeparatorViewHolder(
         parentView: ViewGroup,
     ): BaseMessageItemViewHolder<MessageListItem.UnreadSeparatorItem> {

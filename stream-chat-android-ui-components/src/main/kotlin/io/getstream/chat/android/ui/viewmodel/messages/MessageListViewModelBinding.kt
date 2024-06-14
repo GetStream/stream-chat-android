@@ -19,6 +19,9 @@
 package io.getstream.chat.android.ui.viewmodel.messages
 
 import androidx.lifecycle.LifecycleOwner
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.android.ui.feature.gallery.toAttachment
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView
@@ -162,5 +165,11 @@ public fun MessageListViewModel.bindView(
     }
     view.setOnUnreadLabelReachedListener {
         onEvent(HideUnreadLabel(false))
+    }
+    view.setOnPollOptionClickListener { message: Message, poll: Poll, option: Option ->
+        true.also { onEvent(MessageListViewModel.Event.PollOptionUpdated(message, poll, option)) }
+    }
+    view.setOnPollCloseClickListener { poll: Poll ->
+        true.also { onEvent(MessageListViewModel.Event.PollClosed(poll)) }
     }
 }
