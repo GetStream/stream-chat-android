@@ -37,6 +37,7 @@ import java.util.Date
  * @property ownVotes The list of votes cast by the current user.
  * @property createdAt The creation date of the poll.
  * @property updatedAt The last update date of the poll.
+ * @property closed If set to true, the poll is closed and no more votes can be cast.
  */
 @Immutable
 public data class Poll(
@@ -54,6 +55,7 @@ public data class Poll(
     val ownVotes: List<Vote>,
     val createdAt: Date,
     val updatedAt: Date,
+    val closed: Boolean,
 ) {
 
     /**

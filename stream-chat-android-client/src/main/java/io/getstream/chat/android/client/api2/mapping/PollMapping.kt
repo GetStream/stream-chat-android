@@ -53,6 +53,7 @@ internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
         ownVotes = ownVotes,
         createdAt = created_at,
         updatedAt = updated_at,
+        closed = is_closed,
     )
 }
 
