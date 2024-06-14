@@ -2840,6 +2840,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/Me
 	public static final field MEDIA_ATTACHMENT I
 	public static final field MESSAGE_DELETED I
 	public static final field PLAIN_TEXT I
+	public static final field POLL I
 	public static final field START_OF_THE_CHANNEL I
 	public static final field SYSTEM_MESSAGE I
 	public static final field THREAD_PLACEHOLDER I
@@ -3161,6 +3162,13 @@ public final class io/getstream/chat/android/ui/feature/messages/list/adapter/vi
 	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
 	public final fun getBinding ()Lio/getstream/chat/android/ui/databinding/StreamUiItemMessagePlainTextBinding;
 	public fun messageContainerView ()Landroid/view/View;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/adapter/viewholder/impl/PollViewHolder : io/getstream/chat/android/ui/feature/messages/list/adapter/internal/DecoratedBaseMessageItemViewHolder {
+	public fun <init> (Landroid/view/ViewGroup;Ljava/util/List;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/databinding/StreamUiItemMessagePollBinding;)V
+	public synthetic fun <init> (Landroid/view/ViewGroup;Ljava/util/List;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListListeners;Lio/getstream/chat/android/ui/feature/messages/list/MessageListItemStyle;Lio/getstream/chat/android/ui/databinding/StreamUiItemMessagePollBinding;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
+	public synthetic fun bindData (Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItemPayloadDiff;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/background/MessageBackgroundFactory {

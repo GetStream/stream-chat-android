@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MEDIA_ATTACHMENT
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.MESSAGE_DELETED
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.PLAIN_TEXT
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.POLL
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.START_OF_THE_CHANNEL
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.SYSTEM_MESSAGE
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewType.THREAD_PLACEHOLDER
@@ -85,6 +86,7 @@ internal object MessageListItemViewTypeMapper {
         val containsOnlyLinks = message.containsOnlyLinkAttachments()
 
         return when {
+            message.isPoll() -> POLL
             message.isDeleted() -> MESSAGE_DELETED
             message.isError() && !message.isModerationBounce() -> ERROR_MESSAGE
             message.isSystem() -> SYSTEM_MESSAGE
@@ -99,6 +101,8 @@ internal object MessageListItemViewTypeMapper {
             else -> PLAIN_TEXT
         }
     }
+
+    private fun Message.isPoll() = poll != null
 
     /**
      * Checks if the message contains only image or video attachments (Can also optionally contain links).
