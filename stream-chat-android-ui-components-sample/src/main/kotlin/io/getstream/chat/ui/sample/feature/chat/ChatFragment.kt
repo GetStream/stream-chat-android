@@ -43,6 +43,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
+import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItemsFactory
+import io.getstream.chat.android.ui.feature.messages.list.options.message.plus
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
@@ -52,6 +54,8 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.chat.composer.CustomMessageComposerLeadingContent
+import io.getstream.chat.ui.sample.feature.chat.messagelist.options.CustomMessageOption
+import io.getstream.chat.ui.sample.feature.chat.messagelist.options.CustomMessageOptionItemsFactory
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import io.getstream.log.taggedLogger
@@ -301,6 +305,24 @@ class ChatFragment : Fragment() {
                     EditMessage -> messageComposerViewModel.performMessageAction(Edit(message))
                     SendAnyway -> messageListViewModel.onEvent(MessageListViewModel.Event.RetryMessage(message))
                     else -> Unit
+                }
+            }
+
+            setMessageOptionItemsFactory(
+                CustomMessageOptionItemsFactory(requireContext()) +
+                    MessageOptionItemsFactory.defaultFactory(requireContext()),
+            )
+
+            setCustomActionHandler { message, extra ->
+                when (extra[CustomMessageOption.TYPE]) {
+                    CustomMessageOption.TYPE_MESSAGE_DETAILS -> {
+                        findNavController().navigateSafely(
+                            ChatFragmentDirections.actionChatFragmentToMessageDetailsFragment(
+                                args.cid,
+                                message.id,
+                            ),
+                        )
+                    }
                 }
             }
         }
