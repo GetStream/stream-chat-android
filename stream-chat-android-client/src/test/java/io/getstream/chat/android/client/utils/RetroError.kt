@@ -43,7 +43,7 @@ internal class RetroError<T : Any>(
     fun toRetrofitCall(): RetrofitCall<T> {
         return RetrofitCall(
             call = this,
-            parser = MoshiChatParser(),
+            parser = MoshiChatParser { "" },
             CoroutineScope(DispatcherProvider.IO),
         )
     }

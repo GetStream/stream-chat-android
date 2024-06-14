@@ -17,12 +17,11 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.models.Device
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
 
 internal fun User.toDto(): UpstreamUserDto =
     UpstreamUserDto(
@@ -39,7 +38,7 @@ internal fun User.toDto(): UpstreamUserDto =
         extraData = extraData,
     )
 
-internal fun DownstreamUserDto.toDomain(): User =
+internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
     User(
         id = id,
         name = name ?: "",
@@ -56,8 +55,8 @@ internal fun DownstreamUserDto.toDomain(): User =
         lastActive = last_active,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
-        mutes = mutes.orEmpty().map(DownstreamMuteDto::toDomain),
+        mutes = mutes.orEmpty().map { it.toDomain(currentUserId) },
         teams = teams,
-        channelMutes = channel_mutes.orEmpty().map(DownstreamChannelMuteDto::toDomain),
+        channelMutes = channel_mutes.orEmpty().map { it.toDomain(currentUserId) },
         extraData = extraData.toMutableMap(),
     )

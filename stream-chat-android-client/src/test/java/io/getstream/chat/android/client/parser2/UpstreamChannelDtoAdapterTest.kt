@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 
 internal class UpstreamChannelDtoAdapterTest {
 
-    private val parser = MoshiChatParser()
+    private val parser = MoshiChatParser { "" }
 
     @Test
     fun `Serialize JSON channel with custom fields`() {
