@@ -2119,6 +2119,8 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;)V
 	public final fun setOnMessageRetryListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;)V
 	public final fun setOnModeratedMessageLongClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnModeratedMessageLongClickListener;)V
+	public final fun setOnPollCloseClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollCloseClickListener;)V
+	public final fun setOnPollOptionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollOptionClickListener;)V
 	public final fun setOnReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;)V
 	public final fun setOnReplyMessageClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReplyMessageClickListener;)V
 	public final fun setOnScrollToBottomHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnScrollToBottomHandler;)V
@@ -2127,6 +2129,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnUnreadLabelReachedListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelReachedListener;)V
 	public final fun setOnUserClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserClickListener;)V
 	public final fun setOnUserReactionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserReactionClickListener;)V
+	public final fun setOnViewPollResultClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnViewPollResultClickListener;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
@@ -2330,6 +2333,14 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun onModeratedMessageLongClick (Lio/getstream/chat/android/models/Message;)Z
 }
 
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollCloseClickListener {
+	public abstract fun onPollCloseClick (Lio/getstream/chat/android/models/Poll;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollOptionClickListener {
+	public abstract fun onPollOptionClick (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Option;)Z
+}
+
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener {
 	public abstract fun onReactionViewClick (Lio/getstream/chat/android/models/Message;)Z
 }
@@ -2360,6 +2371,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserReactionClickListener {
 	public abstract fun onUserReactionClick (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;Lio/getstream/chat/android/models/Reaction;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnViewPollResultClickListener {
+	public abstract fun onViewPollResultClick (Lio/getstream/chat/android/models/Poll;)Z
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener {
@@ -2855,6 +2870,9 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 	public abstract fun getMessageClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageClickListener;
 	public abstract fun getMessageLongClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageLongClickListener;
 	public abstract fun getMessageRetryListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnMessageRetryListener;
+	public abstract fun getOnPollCloseClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollCloseClickListener;
+	public abstract fun getOnPollOptionClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnPollOptionClickListener;
+	public abstract fun getOnViewPollResultClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnViewPollResultClickListener;
 	public abstract fun getReactionViewClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnReactionViewClickListener;
 	public abstract fun getThreadClickListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnThreadClickListener;
 	public abstract fun getUnreadLabelReachedListener ()Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUnreadLabelReachedListener;

@@ -30,10 +30,13 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLink
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollCloseClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.ThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.UserClickListener
@@ -68,6 +71,9 @@ public sealed interface MessageListListeners {
     public val giphySendListener: OnGiphySendListener
     public val linkClickListener: OnLinkClickListener
     public val unreadLabelReachedListener: OnUnreadLabelReachedListener
+    public val onPollOptionClickListener: OnPollOptionClickListener
+    public val onPollCloseClickListener: OnPollCloseClickListener
+    public val onViewPollResultClickListener: OnViewPollResultClickListener
 }
 
 @Deprecated(
