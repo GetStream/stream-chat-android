@@ -284,6 +284,10 @@ internal class ChannelMutableState(
         _channelData?.value = channelData
     }
 
+    fun updateChannelData(update: (ChannelData?) -> ChannelData?) {
+        _channelData?.value = update(_channelData?.value)
+    }
+
     /**
      * Sets replied message.
      *

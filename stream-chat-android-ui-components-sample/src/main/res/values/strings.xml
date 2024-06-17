@@ -103,6 +103,8 @@
     <string name="chat_info_error_delete_channel">Failed to delete channel</string>
 
     <string name="chat_group_info_owner">Owner</string>
+    <string name="chat_group_info_member">Member</string>
+    <string name="chat_group_info_moderator">Moderator</string>
     <string name="chat_group_info_option_mute">Mute Group</string>
     <string name="chat_group_info_option_hide">Hide Group</string>
     <string name="chat_group_info_option_show">Show Group</string>

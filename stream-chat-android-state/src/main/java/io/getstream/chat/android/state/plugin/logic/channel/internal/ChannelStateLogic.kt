@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
@@ -35,6 +36,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.mergeFromEvent
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
@@ -95,9 +98,56 @@ internal class ChannelStateLogic(
      *
      * @param channel the data of [Channel] to be updated.
      */
+    @Deprecated(
+        message = "This method will become private in the future. " +
+            "Use updateChannelData((ChannelData?) -> ChannelData?) instead.",
+        replaceWith = ReplaceWith("updateChannelData((ChannelData?) -> ChannelData?)"),
+    )
     fun updateChannelData(channel: Channel) {
         val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
-        mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
+        val newChannelData = channel.toChannelData().copy(ownCapabilities = currentOwnCapabilities)
+        mutableState.setChannelData(newChannelData)
+    }
+
+    /**
+     * Updates the channel data of the state of the SDK.
+     *
+     * @param update The update function to update the channel data.
+     */
+    fun updateChannelData(update: (ChannelData?) -> ChannelData?) {
+        mutableState.updateChannelData(update)
+    }
+
+    /**
+     * Updates the membership of the channel.
+     *
+     * @param membership The membership to be updated.
+     */
+    fun updateMembership(membership: Member) {
+        mutableState.updateChannelData { curData ->
+            curData?.copy(
+                membership = membership.takeIf { membership.getUserId() == curData.membership?.getUserId() }
+                    ?: curData.membership.also {
+                        logger.w {
+                            "[updateMembership] rejected; newMembershipUserId(${membership.getUserId()}) != " +
+                                "curMembershipUserId(${it?.getUserId()})"
+                        }
+                    },
+            )
+        }
+    }
+
+    /**
+     * Updates the channel data of the state of the SDK.
+     *
+     * @param event The event containing the channel data.
+     */
+    fun updateChannelData(event: HasChannel) {
+        mutableState.updateChannelData { curData ->
+            event.channel.toChannelData().let { newData ->
+                curData?.mergeFromEvent(newData) ?: newData
+            }
+        }
     }
 
     /**

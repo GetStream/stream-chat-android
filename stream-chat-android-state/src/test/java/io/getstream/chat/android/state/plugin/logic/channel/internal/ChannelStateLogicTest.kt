@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.randomCID
 import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.randomDate
@@ -90,7 +91,7 @@ internal class ChannelStateLogicTest {
             lastRead = Date(Long.MIN_VALUE),
             lastReadMessageId = randomString(),
         )
-        _channelData.value = ChannelData(randomChannel(), emptySet())
+        _channelData.value = randomChannel().toChannelData()
         _reads = emptyMap()
         _insideSearch.value = false
         _watcherCount.value = 0
@@ -112,7 +113,7 @@ internal class ChannelStateLogicTest {
         ),
     )
     private val _channelData: MutableStateFlow<ChannelData> =
-        MutableStateFlow(ChannelData(randomChannel(), emptySet()))
+        MutableStateFlow(randomChannel().toChannelData())
     private var _reads: Map<String, ChannelUserRead> = emptyMap()
     private val _insideSearch = MutableStateFlow(false)
     private val _watcherCount = MutableStateFlow(0)

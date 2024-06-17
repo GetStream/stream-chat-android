@@ -318,3 +318,24 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
          */
     )
 }
+
+@InternalStreamChatApi
+public fun Channel.toChannelData(): ChannelData {
+    return ChannelData(
+        type = type,
+        id = id,
+        name = name,
+        image = image,
+        frozen = frozen,
+        cooldown = cooldown,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
+        deletedAt = deletedAt,
+        memberCount = memberCount,
+        extraData = extraData,
+        createdBy = createdBy,
+        team = team,
+        ownCapabilities = ownCapabilities,
+        membership = membership,
+    )
+}
