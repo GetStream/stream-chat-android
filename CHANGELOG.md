@@ -67,6 +67,7 @@
   * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change. 
 
 ### ⬆️ Improved
+- Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
 
 ### ✅ Added
 

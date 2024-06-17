@@ -100,5 +100,13 @@
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
         </attr>
+
+        <attr name="streamUiSearchResulListItemHeight" format="dimension|reference" />
+        <attr name="streamUiSearchResulListItemMarginStart" format="dimension|reference" />
+        <attr name="streamUiSearchResulListItemMarginEnd" format="dimension|reference" />
+        <attr name="streamUiSearchResulListItemTitleMarginStart" format="dimension|reference" />
+        <attr name="streamUiSearchResulListItemVerticalSpacerHeight" format="dimension|reference" />
+        <attr name="streamUiSearchResulListItemVerticalSpacerPosition" format="float|dimension|reference" />
+        <attr name="streamUiSearchResulListItemSeparatorDrawable" format="reference" />
     </declare-styleable>
 </resources>
