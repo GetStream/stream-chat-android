@@ -21,6 +21,8 @@ import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
+import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.font.TextStyle
@@ -42,6 +44,12 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property emptyStateTextStyle Appearance for empty state text.
  * @property progressBarIcon Animated progress drawable. Default value is [R.drawable.stream_ui_rotating_indeterminate_progress_gradient].
  * @property messagePreviewStyle Style for single search result item.
+ * @property itemHeight Height of single search result item. Default value is [R.dimen.stream_ui_search_result_list_item_height].
+ * @property itemMarginStart Start margin for single search result item. Default value is [R.dimen.stream_ui_search_result_item_margin_start].
+ * @property itemMarginEnd End margin for single search result item. Default value is [R.dimen.stream_ui_search_result_item_margin_end].
+ * @property itemTitleMarginStart Start margin for title in single search result item. Default value is [R.dimen.stream_ui_search_result_item_title_margin_start].
+ * @property itemVerticalSpacerHeight Height of the single search result item vertical spacer. Default value is [R.dimen.stream_ui_search_result_item_vertical_spacer_height].
+ * @property itemVerticalSpacerPosition Position of the single search result item vertical spacer. Default value is [R.dimen.stream_ui_search_result_item_vertical_spacer_position].
  */
 public data class SearchResultListViewStyle(
     @ColorInt public val backgroundColor: Int,
@@ -51,6 +59,13 @@ public data class SearchResultListViewStyle(
     public val emptyStateTextStyle: TextStyle,
     public val progressBarIcon: Drawable,
     public val messagePreviewStyle: MessagePreviewStyle,
+    @Px public val itemHeight: Int,
+    @Px public val itemMarginStart: Int,
+    @Px public val itemMarginEnd: Int,
+    @Px public val itemTitleMarginStart: Int,
+    @Px public val itemVerticalSpacerHeight: Int,
+    @Px public val itemVerticalSpacerPosition: Float,
+    public val itemSeparator: Drawable,
 ) : ViewStyle {
     internal companion object {
         operator fun invoke(context: Context, attrs: AttributeSet?): SearchResultListViewStyle {
@@ -171,6 +186,43 @@ public data class SearchResultListViewStyle(
                     )
                     .build()
 
+                val itemHeight = a.getDimensionPixelSize(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemHeight,
+                    context.getDimension(R.dimen.stream_ui_search_result_list_item_height),
+                )
+
+                val itemMarginStart = a.getDimensionPixelSize(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemMarginStart,
+                    context.getDimension(R.dimen.stream_ui_search_result_item_margin_start),
+                )
+
+                val itemMarginEnd = a.getDimensionPixelSize(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemMarginEnd,
+                    context.getDimension(R.dimen.stream_ui_search_result_item_margin_end),
+                )
+
+                val itemTitleMarginStart = a.getDimensionPixelSize(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemTitleMarginStart,
+                    context.getDimension(R.dimen.stream_ui_search_result_item_title_margin_start),
+                )
+
+                val itemVerticalSpacerHeight = a.getDimensionPixelSize(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemVerticalSpacerHeight,
+                    context.getDimension(R.dimen.stream_ui_search_result_item_vertical_spacer_height),
+                )
+
+                val itemVerticalSpacerPosition = a.getFloat(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemVerticalSpacerPosition,
+                    ResourcesCompat.getFloat(
+                        context.resources,
+                        R.dimen.stream_ui_search_result_item_vertical_spacer_position,
+                    ),
+                )
+
+                val itemSeparator = a.getDrawable(
+                    R.styleable.SearchResultListView_streamUiSearchResulListItemSeparatorDrawable,
+                ) ?: context.getDrawableCompat(R.drawable.stream_ui_divider)!!
+
                 return SearchResultListViewStyle(
                     backgroundColor = backgroundColor,
                     searchInfoBarBackground = searchInfoBarBackground,
@@ -183,6 +235,13 @@ public data class SearchResultListViewStyle(
                         messageTextStyle = messageTextStyle,
                         messageTimeTextStyle = messageTimeTextStyle,
                     ),
+                    itemHeight = itemHeight,
+                    itemMarginStart = itemMarginStart,
+                    itemMarginEnd = itemMarginEnd,
+                    itemTitleMarginStart = itemTitleMarginStart,
+                    itemVerticalSpacerHeight = itemVerticalSpacerHeight,
+                    itemVerticalSpacerPosition = itemVerticalSpacerPosition,
+                    itemSeparator = itemSeparator,
                 ).let(TransformStyle.searchResultListViewStyleTransformer::transform)
             }
         }

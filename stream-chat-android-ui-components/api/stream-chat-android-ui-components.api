@@ -3531,20 +3531,34 @@ public abstract interface class io/getstream/chat/android/ui/feature/search/list
 }
 
 public final class io/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle : io/getstream/chat/android/ui/helper/ViewStyle {
-	public fun <init> (ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;)V
+	public fun <init> (ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;IIIIIFLandroid/graphics/drawable/Drawable;)V
 	public final fun component1 ()I
+	public final fun component10 ()I
+	public final fun component11 ()I
+	public final fun component12 ()I
+	public final fun component13 ()F
+	public final fun component14 ()Landroid/graphics/drawable/Drawable;
 	public final fun component2 ()Landroid/graphics/drawable/Drawable;
 	public final fun component3 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component4 ()Landroid/graphics/drawable/Drawable;
 	public final fun component5 ()Lio/getstream/chat/android/ui/font/TextStyle;
 	public final fun component6 ()Landroid/graphics/drawable/Drawable;
 	public final fun component7 ()Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;
-	public final fun copy (ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;)Lio/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle;
+	public final fun component8 ()I
+	public final fun component9 ()I
+	public final fun copy (ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;IIIIIFLandroid/graphics/drawable/Drawable;)Lio/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle;ILandroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/font/TextStyle;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;IIIIIFLandroid/graphics/drawable/Drawable;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/search/list/SearchResultListViewStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundColor ()I
 	public final fun getEmptyStateIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getEmptyStateTextStyle ()Lio/getstream/chat/android/ui/font/TextStyle;
+	public final fun getItemHeight ()I
+	public final fun getItemMarginEnd ()I
+	public final fun getItemMarginStart ()I
+	public final fun getItemSeparator ()Landroid/graphics/drawable/Drawable;
+	public final fun getItemTitleMarginStart ()I
+	public final fun getItemVerticalSpacerHeight ()I
+	public final fun getItemVerticalSpacerPosition ()F
 	public final fun getMessagePreviewStyle ()Lio/getstream/chat/android/ui/feature/messages/preview/MessagePreviewStyle;
 	public final fun getProgressBarIcon ()Landroid/graphics/drawable/Drawable;
 	public final fun getSearchInfoBarBackground ()Landroid/graphics/drawable/Drawable;
