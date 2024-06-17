@@ -17,9 +17,11 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun appSettings ()Lio/getstream/result/call/Call;
 	public final fun banUser (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;)Lio/getstream/result/call/Call;
 	public final fun blockUser (Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public final fun castPollVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Option;)Lio/getstream/result/call/Call;
 	public final fun channel (Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/ChannelClient;
 	public final fun clearPersistence ()Lio/getstream/result/call/Call;
+	public final fun closePoll (Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun connectAnonymousUser ()Lio/getstream/result/call/Call;
 	public final fun connectAnonymousUser (Ljava/lang/Long;)Lio/getstream/result/call/Call;
 	public static synthetic fun connectAnonymousUser$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/Long;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -133,6 +135,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public final fun rejectInvite (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun removeMembers (Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;)Lio/getstream/result/call/Call;
 	public static synthetic fun removeMembers$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/getstream/chat/android/models/Message;Ljava/lang/Boolean;ILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun removePollVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Vote;)Lio/getstream/result/call/Call;
 	public final fun removeShadowBan (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public final fun removeSocketListener (Lio/getstream/chat/android/client/socket/SocketListener;)V
 	public final fun searchMessages (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/FilterObject;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/result/call/Call;
@@ -149,6 +152,7 @@ public final class io/getstream/chat/android/client/ChatClient {
 	public static synthetic fun sendImage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;ILjava/lang/Object;)Lio/getstream/result/call/Call;
 	public final fun sendMessage (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Z)Lio/getstream/result/call/Call;
 	public static synthetic fun sendMessage$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)Lio/getstream/result/call/Call;
+	public final fun sendPoll (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/PollConfig;)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;Z)Lio/getstream/result/call/Call;
 	public final fun sendReaction (Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;)Lio/getstream/result/call/Call;
 	public static synthetic fun sendReaction$default (Lio/getstream/chat/android/client/ChatClient;Lio/getstream/chat/android/models/Reaction;ZLjava/lang/String;ILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -1800,6 +1804,81 @@ public final class io/getstream/chat/android/client/events/NotificationRemovedFr
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/events/PollClosedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasMessage {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Message;
+	public final fun component8 ()Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/client/events/PollClosedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/PollClosedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/PollClosedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/PollDeletedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasMessage {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Message;
+	public final fun component8 ()Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/client/events/PollDeletedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/PollDeletedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/PollDeletedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/PollUpdatedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasMessage {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Message;
+	public final fun component8 ()Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/client/events/PollUpdatedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/PollUpdatedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/PollUpdatedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/events/ReactionDeletedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasMessage, io/getstream/chat/android/client/events/HasReaction, io/getstream/chat/android/client/events/UserEvent {
 	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Reaction;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -2057,6 +2136,56 @@ public final class io/getstream/chat/android/client/events/UserUpdatedEvent : io
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/client/events/VoteCastedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasMessage {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Message;
+	public final fun component8 ()Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/client/events/VoteCastedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/VoteCastedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/VoteCastedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/VoteChangedEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasMessage {
+	public fun <init> (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/util/Date;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Ljava/lang/String;
+	public final fun component6 ()Ljava/lang/String;
+	public final fun component7 ()Lio/getstream/chat/android/models/Message;
+	public final fun component8 ()Lio/getstream/chat/android/models/Poll;
+	public final fun copy (Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/client/events/VoteChangedEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/VoteChangedEvent;Ljava/lang/String;Ljava/util/Date;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;ILjava/lang/Object;)Lio/getstream/chat/android/client/events/VoteChangedEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public final fun getPoll ()Lio/getstream/chat/android/models/Poll;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/client/extensions/AttachmentExtensionsKt {
 	public static final field EXTRA_DURATION Ljava/lang/String;
 	public static final field EXTRA_UPLOAD_ID Ljava/lang/String;
@@ -2286,6 +2415,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun evictMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

@@ -463,6 +463,61 @@ internal data class UserUpdatedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class PollUpdatedEventDto(
+    val type: String,
+    val cid: String,
+    val channel_type: String,
+    val channel_id: String,
+    val message: DownstreamMessageDto,
+    val poll: DownstreamPollDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class PollDeletedEventDto(
+    val type: String,
+    val cid: String,
+    val created_at: ExactDate,
+    val channel_type: String,
+    val channel_id: String,
+    val message: DownstreamMessageDto,
+    val poll: DownstreamPollDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class PollClosedEventDto(
+    val type: String,
+    val cid: String,
+    val created_at: ExactDate,
+    val channel_type: String,
+    val channel_id: String,
+    val message: DownstreamMessageDto,
+    val poll: DownstreamPollDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class VoteCastedEventDto(
+    val type: String,
+    val cid: String,
+    val created_at: ExactDate,
+    val channel_type: String,
+    val channel_id: String,
+    val message: DownstreamMessageDto,
+    val poll: DownstreamPollDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class VoteChangedEventDto(
+    val type: String,
+    val cid: String,
+    val channel_type: String,
+    val channel_id: String,
+    val message: DownstreamMessageDto,
+    val poll: DownstreamPollDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,

@@ -18,6 +18,8 @@
 ### ✅ Added
 - Added `ChatClient.getNewerReplies` to fetch newer replies for a message in a thread. [#5256](https://github.com/GetStream/stream-chat-android/pull/5256)
 - Added `ChatClient.getThreads` to fetch threads for the current users. [#5264](https://github.com/GetStream/stream-chat-android/pull/5264)
+- Added `ChatClient.sendPoll`, `ChatClient.castVotePoll`, `ChatClient.closePoll` and `ChatClient.removePollVote` methods to interact with Polls. [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
+- Added new `ChatEvents` related with Polls.  [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
 
 ### ⚠️ Changed
 
@@ -25,6 +27,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed messages from hidden channels being shown up. [#5281](https://github.com/GetStream/stream-chat-android/pull/5281)
 
 ### ⬆️ Improved
 
@@ -47,6 +50,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed the message list to scroll to the bottom when a message reaction is added. [#5280](https://github.com/GetStream/stream-chat-android/pull/5280)
 
 ### ⬆️ Improved
 
@@ -58,6 +62,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
 
 ### ⬆️ Improved
 

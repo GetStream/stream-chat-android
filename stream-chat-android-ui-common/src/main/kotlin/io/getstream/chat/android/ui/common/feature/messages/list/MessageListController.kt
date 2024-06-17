@@ -98,6 +98,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
@@ -118,10 +119,8 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -617,16 +616,13 @@ public class MessageListController(
         val last = newState.messageItems.filterIsInstance<MessageItemState>().lastOrNull()?.stringify()
         logger.d { "[updateMessageList] #messageList; first: $first, last: $last" }
 
-        val newLastMessage =
-            newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageItemState }?.let {
-                when (it) {
-                    is MessageItemState -> it.message
-                    is SystemMessageItemState -> it.message
-                    else -> null
-                }
-            }
+        val oldLastMessage = _messageListState.value.lastItemOrNull<HasMessageListItemState>()?.message
+        val newLastMessage = newState.lastItemOrNull<HasMessageListItemState>()?.message
 
-        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+        val newMessageState = when (oldLastMessage?.id != newLastMessage?.id) {
+            true -> getNewMessageState(newLastMessage, lastLoadedMessage)
+            else -> null
+        }
         setMessageListState(newState.copy(newMessageState = newMessageState))
         if (newMessageState != null) lastLoadedMessage = newLastMessage
     }

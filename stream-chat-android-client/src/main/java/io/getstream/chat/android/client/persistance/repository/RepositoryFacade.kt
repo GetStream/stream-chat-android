@@ -168,6 +168,16 @@ public class RepositoryFacade private constructor(
         messageRepository.deleteChannelMessages(cid)
     }
 
+    override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
+        channelsRepository.setHiddenForChannel(cid, hidden, hideMessagesBefore)
+        messageRepository.evictMessages()
+    }
+
+    override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
+        channelsRepository.setHiddenForChannel(cid, hidden)
+        messageRepository.evictMessages()
+    }
+
     public suspend fun storeStateForChannel(channel: Channel) {
         storeStateForChannels(listOf(channel))
     }

@@ -117,13 +117,13 @@ public class AttachmentGalleryActivity : AppCompatActivity() {
         binding = StreamUiActivityAttachmentGalleryBinding.inflate(streamThemeInflater)
         setContentView(binding.root)
         setupGalleryOverviewButton()
-        binding.closeButton.setOnClickListener { onBackPressed() }
+        binding.closeButton.setOnClickListener { finish() }
         viewModel.attachmentGalleryItemsLiveData.observe(this, ::setupGallery)
     }
 
     private fun setupGallery(attachmentGalleryItems: List<AttachmentGalleryItem>) {
         if (attachmentGalleryItems.isEmpty()) {
-            onBackPressed()
+            finish()
         } else {
             this.attachmentGalleryItems = attachmentGalleryItems
             setupGalleryAdapter()
