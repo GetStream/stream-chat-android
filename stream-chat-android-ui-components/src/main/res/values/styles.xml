@@ -364,8 +364,8 @@
         <item name="streamUiMessageTextStyleThreadSeparator">normal</item>
 
         <!-- Message Reply background color -->
-        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_grey_gainsboro</item>
-        <item name="streamUiMessageReplyBackgroundColorTheirs">@color/stream_ui_bars_background</item>
+        <item name="streamUiMessageReplyBackgroundColorMine">@color/stream_ui_bars_background</item>
+        <item name="streamUiMessageReplyBackgroundColorTheirs">@color/stream_ui_grey_gainsboro</item>
 
         <!-- Message Reply text style mine -->
         <item name="streamUiMessageReplyTextSizeMine">@dimen/stream_ui_text_medium</item>
@@ -863,6 +863,14 @@
         <item name="streamUiSearchResultListMessageTimeTextColor">@color/stream_ui_text_color_secondary</item>
         <item name="streamUiSearchResultListMessageTimeTextSize">@dimen/stream_ui_channel_item_message</item>
         <item name="streamUiSearchResultListMessageTimeTextStyle">normal</item>
+
+        <item name="streamUiSearchResulListItemHeight">@dimen/stream_ui_search_result_list_item_height</item>
+        <item name="streamUiSearchResulListItemMarginStart">@dimen/stream_ui_search_result_item_margin_start</item>
+        <item name="streamUiSearchResulListItemMarginEnd">@dimen/stream_ui_search_result_item_margin_end</item>
+        <item name="streamUiSearchResulListItemTitleMarginStart">@dimen/stream_ui_search_result_item_title_margin_start</item>
+        <item name="streamUiSearchResulListItemVerticalSpacerHeight">@dimen/stream_ui_search_result_item_vertical_spacer_height</item>
+        <item name="streamUiSearchResulListItemVerticalSpacerPosition">@dimen/stream_ui_search_result_item_vertical_spacer_position</item>
+        <item name="streamUiSearchResulListItemSeparatorDrawable">@drawable/stream_ui_divider</item>
     </style>
 
     <style name="StreamUi.AttachmentGallery.Options">

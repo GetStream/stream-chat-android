@@ -19,9 +19,14 @@ package io.getstream.chat.android.client.api2.endpoint
 import io.getstream.chat.android.client.api.AuthenticatedApi
 import io.getstream.chat.android.client.api.QueryParams
 import io.getstream.chat.android.client.api2.UrlQueryPayload
+import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.PartialUpdateUsersRequest
 import io.getstream.chat.android.client.api2.model.requests.QueryUsersRequest
+import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateUsersRequest
+import io.getstream.chat.android.client.api2.model.response.BlockUserResponse
+import io.getstream.chat.android.client.api2.model.response.QueryBlockedUsersResponse
+import io.getstream.chat.android.client.api2.model.response.UnblockUserResponse
 import io.getstream.chat.android.client.api2.model.response.UpdateUsersResponse
 import io.getstream.chat.android.client.api2.model.response.UsersResponse
 import io.getstream.chat.android.client.call.RetrofitCall
@@ -38,6 +43,16 @@ internal interface UserApi {
         @Query(QueryParams.CONNECTION_ID) connectionId: String,
         @Body body: UpdateUsersRequest,
     ): RetrofitCall<UpdateUsersResponse>
+
+    @POST("/users/block")
+    @JvmSuppressWildcards
+    fun blockUser(@Body body: BlockUserRequest): RetrofitCall<BlockUserResponse>
+
+    @POST("/users/unblock")
+    fun unblockUser(@Body body: UnblockUserRequest): RetrofitCall<UnblockUserResponse>
+
+    @GET
+    fun queryBlockedUsers(): RetrofitCall<QueryBlockedUsersResponse>
 
     @PATCH("/users")
     @JvmSuppressWildcards // See issue: https://github.com/square/retrofit/issues/3275
