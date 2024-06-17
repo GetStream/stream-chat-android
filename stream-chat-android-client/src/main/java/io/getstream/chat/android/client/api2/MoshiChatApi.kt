@@ -51,6 +51,7 @@ import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
 import io.getstream.chat.android.client.api2.model.requests.AddDeviceRequest
 import io.getstream.chat.android.client.api2.model.requests.AddMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.BanUserRequest
+import io.getstream.chat.android.client.api2.model.requests.BlockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagRequest
 import io.getstream.chat.android.client.api2.model.requests.FlagUserRequest
@@ -77,6 +78,7 @@ import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
+import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelPartialRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UpdateCooldownRequest
@@ -119,6 +121,7 @@ import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -814,6 +817,28 @@ constructor(
             body = UpdateUsersRequest(map),
         ).map { response ->
             response.users.values.map(DownstreamUserDto::toDomain)
+        }
+    }
+
+    override fun blockUser(userId: String): Call<UserBlock> {
+        return userApi.blockUser(
+            body = BlockUserRequest(userId),
+        ).map { response ->
+            response.block.toDomain()
+        }
+    }
+
+    override fun queryBlockedUsers(): Call<List<UserBlock>> {
+        return userApi.queryBlockedUsers().map {
+            it.blocks.toDomain()
+        }
+    }
+
+    override fun unblockUser(userId: String): Call<UserBlock> {
+        return userApi.unblockUser(
+            body = UnblockUserRequest(userId),
+        ).map {
+            it.block.toDomain()
         }
     }
 

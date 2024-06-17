@@ -171,6 +171,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -2026,6 +2027,7 @@ internal constructor(
                         Result.Success(channels.first())
                     }
                 }
+
                 is Result.Failure -> result
             }
         }
@@ -2445,6 +2447,36 @@ internal constructor(
     @CheckResult
     public fun updateUser(user: User): Call<User> {
         return updateUsers(listOf(user)).map { it.first() }
+    }
+
+    /**
+     * Block a user by ID.
+     *
+     * @param userId the ID of the user that will be blocked.
+     *
+     * @return a list of [UserBlock] which will contain the block that just occured.
+     */
+    @CheckResult
+    public fun blockUser(userId: String): Call<UserBlock> {
+        return api.blockUser(userId)
+    }
+
+    /**
+     * Unblock a user by ID.
+     *
+     * @param userId the user ID of the user that will be unblocked.
+     */
+    @CheckResult
+    public fun unblockUser(userId: String): Call<UserBlock> {
+        return api.unblockUser(userId)
+    }
+
+    /**
+     * Return na list of blocked users.
+     */
+    @CheckResult
+    public fun queryBlockedUsers(): Call<List<UserBlock>> {
+        return api.queryBlockedUsers()
     }
 
     /**
