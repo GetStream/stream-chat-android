@@ -77,6 +77,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -255,6 +256,7 @@ public class ChannelClient internal constructor(
             is PollUpdatedEvent -> event.cid == cid
             is VoteCastedEvent -> event.cid == cid
             is VoteChangedEvent -> event.cid == cid
+            is VoteRemovedEvent -> event.cid == cid
             is UnknownEvent -> event.rawData["cid"] == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,

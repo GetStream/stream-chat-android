@@ -18,11 +18,12 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DownstreamFlagDto
 import io.getstream.chat.android.models.Flag
+import io.getstream.chat.android.models.UserId
 
-internal fun DownstreamFlagDto.toDomain(): Flag {
+internal fun DownstreamFlagDto.toDomain(currentUserId: UserId?): Flag {
     return Flag(
-        user = user.toDomain(),
-        targetUser = target_user?.toDomain(),
+        user = user.toDomain(currentUserId),
+        targetUser = target_user?.toDomain(currentUserId),
         targetMessageId = target_message_id,
         reviewedBy = created_at,
         createdByAutomod = created_by_automod,
