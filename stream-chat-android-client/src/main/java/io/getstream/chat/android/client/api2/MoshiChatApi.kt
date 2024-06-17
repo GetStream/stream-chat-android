@@ -115,8 +115,8 @@ import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
