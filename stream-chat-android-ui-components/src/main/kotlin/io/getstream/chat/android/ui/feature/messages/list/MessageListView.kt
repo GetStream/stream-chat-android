@@ -52,6 +52,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.Delete
@@ -199,6 +200,9 @@ public class MessageListView : ConstraintLayout {
     private var messageFlagHandler = MessageFlagHandler {
         throw IllegalStateException("onMessageFlagHandler must be set.")
     }
+    private var messageUserBlockHandler = MessageUserBlockHandler {
+        throw IllegalStateException("onMessageFlagHandler must be set.")
+    }
     private var flagMessageResultHandler = FlagMessageResultHandler {
         // no-op
     }
@@ -338,6 +342,7 @@ public class MessageListView : ConstraintLayout {
                     replyMessageClickListener.onReplyClick(replyTo)
                     true
                 }
+
                 else -> false
             }
         }
@@ -511,6 +516,7 @@ public class MessageListView : ConstraintLayout {
                         attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
                         attachmentGalleryDestination
                     }
+
                     else -> AttachmentDestination(message, attachment, context)
                 }
 
@@ -1799,6 +1805,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Set a handler used to handle when a user is blocked.
+     *
+     * @param messageUserBlockHandler the handler
+     */
+    public fun setMessageUserBlockHandler(messageUserBlockHandler: MessageUserBlockHandler) {
+        this.messageUserBlockHandler = messageUserBlockHandler
+    }
+
+    /**
      * Sets the handler used to handle when the message is going to be unpinned.
      *
      * @param messageUnpinHandler The handler to use.
@@ -2016,6 +2031,7 @@ public class MessageListView : ConstraintLayout {
                 val displayedText = message.getTranslatedText()
                 context.copyToClipboard(displayedText)
             }
+
             is Edit -> messageEditHandler.onMessageEdit(message)
             is Pin -> {
                 if (message.pinned) {
@@ -2024,6 +2040,7 @@ public class MessageListView : ConstraintLayout {
                     messagePinHandler.onMessagePin(message)
                 }
             }
+
             is MarkAsUnread -> messageMarkAsUnreadHandler.onMessageMarkAsUnread(message)
             is Delete -> {
                 if (style.deleteConfirmationEnabled) {
@@ -2034,6 +2051,7 @@ public class MessageListView : ConstraintLayout {
                     messageDeleteHandler.onMessageDelete(message)
                 }
             }
+
             is FlagAction -> {
                 if (style.flagMessageConfirmationEnabled) {
                     confirmFlagMessageHandler.onConfirmFlagMessage(message) {
@@ -2043,9 +2061,14 @@ public class MessageListView : ConstraintLayout {
                     messageFlagHandler.onMessageFlag(message)
                 }
             }
+
             is CustomAction -> customActionHandler.onCustomAction(message, messageAction.extraProperties)
             is React -> {
                 // Handled by a separate handler.
+            }
+
+            is BlockUser -> {
+                messageUserBlockHandler.onUserBlocked(message)
             }
         }
     }
@@ -2293,6 +2316,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageFlagHandler {
         public fun onMessageFlag(message: Message)
+    }
+
+    public fun interface MessageUserBlockHandler {
+        public fun onUserBlocked(message: Message)
     }
 
     public fun interface MessagePinHandler {

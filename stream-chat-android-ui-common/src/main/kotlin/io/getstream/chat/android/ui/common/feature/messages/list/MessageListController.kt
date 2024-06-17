@@ -60,6 +60,7 @@ import io.getstream.chat.android.state.extensions.loadOlderMessages
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
@@ -1431,6 +1432,7 @@ public class MessageListController(
             is Delete, is FlagMessage -> {
                 _messageActions.value = _messageActions.value + messageAction
             }
+            is BlockUser -> blockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)

@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -120,6 +121,7 @@ public open class DefaultMessageOptionItemsFactory(
         val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
         val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
+        val canBlockUser = true
 
         return listOfNotNull(
             if (style.retryMessageEnabled && isOwnMessage && isMessageFailed) {
@@ -198,6 +200,15 @@ public open class DefaultMessageOptionItemsFactory(
                     optionText = context.getString(pinText),
                     optionIcon = context.getDrawableCompat(pinIcon)!!,
                     messageAction = Pin(selectedMessage),
+                )
+            } else {
+                null
+            },
+            if (style.blockUserEnabled && canBlockUser && !isOwnMessage) {
+                MessageOptionItem(
+                    optionText = context.getString(R.string.stream_ui_message_list_block_user),
+                    optionIcon = context.getDrawableCompat(style.blockUserIcon)!!,
+                    messageAction = BlockUser(selectedMessage),
                 )
             } else {
                 null

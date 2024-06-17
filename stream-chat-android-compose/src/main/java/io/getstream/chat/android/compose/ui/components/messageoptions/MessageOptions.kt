@@ -41,6 +41,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -145,6 +146,7 @@ public fun defaultMessageOptionsState(
     val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
     val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
     val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
+    val canBlockUser = true
 
     return listOfNotNull(
         if (isOwnMessage && isMessageFailed) {
@@ -229,6 +231,17 @@ public fun defaultMessageOptionsState(
                 title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
                 action = Pin(selectedMessage),
                 iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message),
+                iconColor = ChatTheme.colors.textLowEmphasis,
+                titleColor = ChatTheme.colors.textHighEmphasis,
+            )
+        } else {
+            null
+        },
+        if (canBlockUser) {
+            MessageOptionItemState(
+                title = R.string.stream_compose_block_user,
+                iconPainter = painterResource(R.drawable.stream_compose_ic_clear),
+                action = BlockUser(selectedMessage),
                 iconColor = ChatTheme.colors.textLowEmphasis,
                 titleColor = ChatTheme.colors.textHighEmphasis,
             )
