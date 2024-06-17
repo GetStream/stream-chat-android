@@ -162,6 +162,33 @@ class ChatInitializer(
             )
         }
 
+        /*val lightGray = ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                messageBackgroundColorMine = Color.BLACK,
+                messageBackgroundColorTheirs = lightGray,
+                textStyleMine = defaultStyle.textStyleMine.copy(
+                    color = Color.WHITE,
+                ),
+                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
+                    color = Color.BLACK,
+                ),
+            )
+        }
+
+        TransformStyle.messageReplyStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                messageBackgroundColorMine = lightGray,
+                messageBackgroundColorTheirs = Color.BLACK,
+                textStyleMine = defaultStyle.textStyleMine.copy(
+                    color = Color.BLACK,
+                ),
+                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
+                    color = Color.WHITE,
+                ),
+            )
+        }*/
+
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }
 }
