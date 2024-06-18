@@ -61,7 +61,7 @@ internal class SocketFactoryTest {
     }
 
     companion object {
-        private val chatParser: ChatParser = MoshiChatParser()
+        private val chatParser: ChatParser = MoshiChatParser { "" }
         private val endpoint = "https://${randomString().lowercase(Locale.getDefault())}/"
         private val apiKey = randomString()
         private val token = randomString()

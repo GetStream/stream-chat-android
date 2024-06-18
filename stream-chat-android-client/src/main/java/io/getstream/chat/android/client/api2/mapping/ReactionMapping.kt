@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionGroupDt
 import io.getstream.chat.android.client.api2.model.dto.UpstreamReactionDto
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.ReactionGroup
+import io.getstream.chat.android.models.UserId
 
 internal fun Reaction.toDto(): UpstreamReactionDto =
     UpstreamReactionDto(
@@ -34,14 +35,14 @@ internal fun Reaction.toDto(): UpstreamReactionDto =
         extraData = extraData,
     )
 
-internal fun DownstreamReactionDto.toDomain(): Reaction =
+internal fun DownstreamReactionDto.toDomain(currentUserId: UserId?): Reaction =
     Reaction(
         createdAt = created_at,
         messageId = message_id,
         score = score,
         type = type,
         updatedAt = updated_at,
-        user = user?.toDomain(),
+        user = user?.toDomain(currentUserId),
         userId = user_id,
         extraData = extraData.toMutableMap(),
     )

@@ -73,6 +73,7 @@ import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
 import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
 import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
@@ -144,6 +145,7 @@ internal class EventDtoAdapter(
     private val pollClosedEventAdapter = moshi.adapter(PollClosedEventDto::class.java)
     private val voteCastedEventAdapter = moshi.adapter(VoteCastedEventDto::class.java)
     private val voteChangedEventAdapter = moshi.adapter(VoteChangedEventDto::class.java)
+    private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -216,6 +218,7 @@ internal class EventDtoAdapter(
             EventType.POLL_CLOSED -> pollClosedEventAdapter
             EventType.POLL_VOTE_CASTED -> voteCastedEventAdapter
             EventType.POLL_VOTE_CHANGED -> voteChangedEventAdapter
+            EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
             else -> // Custom case, early return
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,

@@ -39,12 +39,7 @@ import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
-import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.PartialUpdateUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import io.getstream.chat.android.client.api2.model.requests.AcceptInviteRequest
@@ -89,7 +84,6 @@ import io.getstream.chat.android.client.api2.model.requests.UpstreamVoteDto
 import io.getstream.chat.android.client.api2.model.requests.VideoCallCreateRequest
 import io.getstream.chat.android.client.api2.model.requests.VideoCallTokenRequest
 import io.getstream.chat.android.client.api2.model.response.AppSettingsResponse
-import io.getstream.chat.android.client.api2.model.response.BannedUserResponse
 import io.getstream.chat.android.client.api2.model.response.ChannelResponse
 import io.getstream.chat.android.client.api2.model.response.CreateVideoCallResponse
 import io.getstream.chat.android.client.api2.model.response.TranslateMessageRequest
@@ -122,6 +116,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserId
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
@@ -145,6 +140,7 @@ import io.getstream.chat.android.client.api.models.SendActionRequest as DomainSe
 internal class MoshiChatApi
 @Suppress("LongParameterList")
 constructor(
+    val currentUserIdProvider: () -> UserId?,
     private val fileUploader: FileUploader,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
@@ -220,7 +216,7 @@ constructor(
                 skip_push = message.skipPushNotification,
                 skip_enrich_url = message.skipEnrichUrl,
             ),
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun updateMessage(
@@ -232,7 +228,7 @@ constructor(
                 message = message.toDto(),
                 skip_enrich_url = message.skipEnrichUrl,
             ),
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun partialUpdateMessage(
@@ -248,14 +244,14 @@ constructor(
                 unset = unset,
                 skip_enrich_url = skipEnrichUrl,
             ),
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun getMessage(messageId: String): Call<Message> {
         return messageApi.getMessage(
             messageId = messageId,
         ).map { response ->
-            response.message.toDomain()
+            response.message.toDomain(currentUserIdProvider())
         }
     }
 
@@ -263,7 +259,7 @@ constructor(
         return messageApi.deleteMessage(
             messageId = messageId,
             hard = if (hard) true else null,
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun getReactions(
@@ -275,7 +271,7 @@ constructor(
             messageId = messageId,
             offset = offset,
             limit = limit,
-        ).map { response -> response.reactions.map(DownstreamReactionDto::toDomain) }
+        ).map { response -> response.reactions.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun sendReaction(reaction: Reaction, enforceUnique: Boolean): Call<Reaction> {
@@ -285,7 +281,7 @@ constructor(
                 reaction = reaction.toDto(),
                 enforce_unique = enforceUnique,
             ),
-        ).map { response -> response.reaction.toDomain() }
+        ).map { response -> response.reaction.toDomain(currentUserIdProvider()) }
     }
 
     override fun deleteReaction(
@@ -295,7 +291,7 @@ constructor(
         return messageApi.deleteReaction(
             messageId = messageId,
             reactionType = reactionType,
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun addDevice(device: Device): Call<Unit> {
@@ -337,7 +333,7 @@ constructor(
                 user_id = this.userId,
                 timeout = timeout,
             ),
-        ).map { response -> response.mute.toDomain() }
+        ).map { response -> response.mute.toDomain(currentUserIdProvider()) }
     }
 
     override fun unmuteUser(userId: String): Call<Unit> {
@@ -484,11 +480,11 @@ constructor(
         unflag(mutableMapOf("target_message_id" to messageId))
 
     private fun flag(body: FlagRequest): Call<Flag> {
-        return moderationApi.flag(body = body).map { response -> response.flag.toDomain() }
+        return moderationApi.flag(body = body).map { response -> response.flag.toDomain(currentUserIdProvider()) }
     }
 
     private fun unflag(body: Map<String, String>): Call<Flag> {
-        return moderationApi.unflag(body = body).map { response -> response.flag.toDomain() }
+        return moderationApi.unflag(body = body).map { response -> response.flag.toDomain(currentUserIdProvider()) }
     }
 
     override fun banUser(
@@ -546,7 +542,7 @@ constructor(
                 created_at_before = createdAtBefore,
                 created_at_before_or_equal = createdAtBeforeOrEqual,
             ),
-        ).map { response -> response.bans.map(BannedUserResponse::toDomain) }
+        ).map { response -> response.bans.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun enableSlowMode(
@@ -604,7 +600,7 @@ constructor(
                 sort = sort,
                 pagination = pagination,
             ),
-        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+        ).map { response -> response.messages.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun updateChannel(
@@ -759,14 +755,19 @@ constructor(
     }
 
     private fun flattenChannel(response: ChannelResponse): Channel {
-        return response.channel.toDomain().let { channel ->
+        return response.channel.toDomain(currentUserIdProvider()).let { channel ->
             channel.copy(
                 watcherCount = response.watcher_count,
-                read = response.read.map { it.toDomain(channel.lastMessageAt ?: it.last_read) },
-                members = response.members.map(DownstreamMemberDto::toDomain),
-                membership = response.membership?.toDomain(),
-                messages = response.messages.map { it.toDomain().enrichWithCid(channel.cid) },
-                watchers = response.watchers.map(DownstreamUserDto::toDomain),
+                read = response.read.map {
+                    it.toDomain(
+                        currentUserIdProvider(),
+                        channel.lastMessageAt ?: it.last_read,
+                    )
+                },
+                members = response.members.map { it.toDomain(currentUserIdProvider()) },
+                membership = response.membership?.toDomain(currentUserIdProvider()),
+                messages = response.messages.map { it.toDomain(currentUserIdProvider()).enrichWithCid(channel.cid) },
+                watchers = response.watchers.map { it.toDomain(currentUserIdProvider()) },
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,
             ).syncUnreadCountWithReads()
@@ -781,13 +782,13 @@ constructor(
         parentId = parentId,
         limit = limit,
         lastId = lastId,
-    ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+    ).map { response -> response.messages.map { it.toDomain(currentUserIdProvider()) } }
 
     override fun getReplies(messageId: String, limit: Int): Call<List<Message>> {
         return messageApi.getReplies(
             messageId = messageId,
             limit = limit,
-        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+        ).map { response -> response.messages.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun getRepliesMore(messageId: String, firstId: String, limit: Int): Call<List<Message>> {
@@ -795,7 +796,7 @@ constructor(
             messageId = messageId,
             limit = limit,
             firstId = firstId,
-        ).map { response -> response.messages.map(DownstreamMessageDto::toDomain) }
+        ).map { response -> response.messages.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun sendAction(request: DomainSendActionRequest): Call<Message> {
@@ -807,7 +808,7 @@ constructor(
                 type = request.type,
                 form_data = request.formData,
             ),
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun updateUsers(users: List<User>): Call<List<User>> {
@@ -816,7 +817,7 @@ constructor(
             connectionId = connectionId,
             body = UpdateUsersRequest(map),
         ).map { response ->
-            response.users.values.map(DownstreamUserDto::toDomain)
+            response.users.values.map { it.toDomain(currentUserIdProvider()) }
         }
     }
 
@@ -849,21 +850,21 @@ constructor(
                 listOf(PartialUpdateUserDto(id = id, set = set, unset = unset)),
             ),
         ).map { response ->
-            response.users[id]!!.toDomain()
+            response.users[id]!!.toDomain(currentUserIdProvider())
         }
     }
 
     override fun getGuestUser(userId: String, userName: String): Call<GuestUser> {
         return guestApi.getGuestUser(
             body = GuestUserRequest.create(userId, userName),
-        ).map { response -> GuestUser(response.user.toDomain(), response.access_token) }
+        ).map { response -> GuestUser(response.user.toDomain(currentUserIdProvider()), response.access_token) }
     }
 
     override fun translate(messageId: String, language: String): Call<Message> {
         return messageApi.translate(
             messageId = messageId,
             request = TranslateMessageRequest(language),
-        ).map { response -> response.message.toDomain() }
+        ).map { response -> response.message.toDomain(currentUserIdProvider()) }
     }
 
     override fun og(url: String): Call<Attachment> {
@@ -882,7 +883,7 @@ constructor(
         return generalApi.searchMessages(newRequest)
             .map { response ->
                 response.results.map { resp ->
-                    resp.message.toDomain()
+                    resp.message.toDomain(currentUserIdProvider())
                         .let { message ->
                             (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
                                 ?.let(message::enrichWithCid)
@@ -913,7 +914,7 @@ constructor(
                 val results = response.results
 
                 val messages = results.map { resp ->
-                    resp.message.toDomain().let { message ->
+                    resp.message.toDomain(currentUserIdProvider()).let { message ->
                         (message.cid.takeUnless(CharSequence::isBlank) ?: message.channelInfo?.cid)
                             ?.let(message::enrichWithCid)
                             ?: message
@@ -1006,7 +1007,7 @@ constructor(
             userApi.queryUsers(
                 connectionId,
                 request,
-            ).map { response -> response.users.map(DownstreamUserDto::toDomain) }
+            ).map { response -> response.users.map { it.toDomain(currentUserIdProvider()) } }
         }
 
         return if (connectionId.isBlank() && queryUsers.presence) {
@@ -1036,7 +1037,7 @@ constructor(
         )
 
         return generalApi.queryMembers(request)
-            .map { response -> response.members.map(DownstreamMemberDto::toDomain) }
+            .map { response -> response.members.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun createVideoCall(
@@ -1069,14 +1070,14 @@ constructor(
             channelType = channelType,
             channelId = channelId,
             request = SendEventRequest(map),
-        ).map { response -> response.event.toDomain() }
+        ).map { response -> response.event.toDomain(currentUserIdProvider()) }
     }
 
     override fun getSyncHistory(channelIds: List<String>, lastSyncAt: String): Call<List<ChatEvent>> {
         return generalApi.getSyncHistory(
             body = SyncHistoryRequest(channelIds, lastSyncAt),
             connectionId = connectionId,
-        ).map { response -> response.events.map(ChatEventDto::toDomain) }
+        ).map { response -> response.events.map { it.toDomain(currentUserIdProvider()) } }
     }
 
     override fun downloadFile(fileUrl: String): Call<ResponseBody> {
@@ -1107,7 +1108,7 @@ constructor(
                     member_limit = query.memberLimit,
                     next = query.next,
                 ),
-            ).map { response -> response.threads.map { it.toDomain() } }
+            ).map { response -> response.threads.map { it.toDomain(currentUserIdProvider()) } }
         }
         return if (connectionId.isBlank() && query.watch) {
             logger.i { "[queryThreads] postponing because an active connection is required" }
@@ -1129,7 +1130,7 @@ constructor(
                 messageId,
                 connectionId,
                 options.toMap(),
-            ).map { response -> response.thread.toDomain() }
+            ).map { response -> response.thread.toDomain(currentUserIdProvider()) }
         }
         return if (connectionId.isBlank() && options.watch) {
             logger.i { "[getThread] postponing because an active connection is required" }
@@ -1153,7 +1154,7 @@ constructor(
                 set = set,
                 unset = unset,
             ),
-        ).map { response -> response.thread.toDomain() }
+        ).map { response -> response.thread.toDomain(currentUserIdProvider()) }
     }
 
     override fun castPollVote(
@@ -1165,7 +1166,7 @@ constructor(
             messageId,
             pollId,
             PollVoteRequest(UpstreamVoteDto(optionId)),
-        ).map { it.vote.toDomain() }
+        ).map { it.vote.toDomain(currentUserIdProvider()) }
     }
 
     override fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote> {
@@ -1173,7 +1174,7 @@ constructor(
             messageId,
             pollId,
             voteId,
-        ).map { it.vote.toDomain() }
+        ).map { it.vote.toDomain(currentUserIdProvider()) }
     }
 
     override fun closePoll(pollId: String): Call<Poll> {
@@ -1182,7 +1183,7 @@ constructor(
             PollUpdateRequest(
                 set = mapOf("is_closed" to true),
             ),
-        ).map { it.poll.toDomain() }
+        ).map { it.poll.toDomain(currentUserIdProvider()) }
     }
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {
@@ -1199,7 +1200,7 @@ constructor(
                 max_votes_allowed = pollConfig.maxVotesAllowed,
                 allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
             ),
-        ).map { it.poll.toDomain() }
+        ).map { it.poll.toDomain(currentUserIdProvider()) }
     }
 
     override fun warmUp() {

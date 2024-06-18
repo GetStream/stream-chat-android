@@ -107,7 +107,7 @@ public fun Message.users(): List<User> {
         ownReactions.mapNotNull(Reaction::user) +
         threadParticipants +
         (pinnedBy?.let { listOf(it) } ?: emptyList()) +
-        (poll?.votes?.map { it.user } ?: emptyList())
+        (poll?.votes?.mapNotNull { it.user } ?: emptyList())
 }
 
 /**

@@ -42,7 +42,7 @@ internal class RetrofitCallAdapterFactoryTests {
     val server = MockWebServer()
 
     private val factory: CallAdapter.Factory =
-        RetrofitCallAdapterFactory.create(MoshiChatParser(), CoroutineScope(Dispatchers.IO))
+        RetrofitCallAdapterFactory.create(MoshiChatParser { "" }, CoroutineScope(Dispatchers.IO))
     private lateinit var retrofit: Retrofit
 
     @Before
