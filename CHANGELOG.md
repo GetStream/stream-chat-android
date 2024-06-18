@@ -39,6 +39,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed member.role being missing when updating other members' roles in a channel. [#5290](https://github.com/GetStream/stream-chat-android/pull/5290)
 
 ### ⬆️ Improved
 
@@ -70,6 +71,7 @@
 - Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
 
 ### ✅ Added
+- Added additional message option for user blocking. [#5289](https://github.com/GetStream/stream-chat-android/pull/5289)
 
 ### ⚠️ Changed
 
