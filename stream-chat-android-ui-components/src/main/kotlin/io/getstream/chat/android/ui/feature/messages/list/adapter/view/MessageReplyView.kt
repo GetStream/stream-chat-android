@@ -153,27 +153,29 @@ public class MessageReplyView : FrameLayout {
                     }
                     setTint(color)
                 }
-                quotedMessage.isMine(ChatClient.instance().getCurrentUser()) -> {
+                isMine -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
-                    val color = if (isMine) {
-                        style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
-                    } else {
-                        style?.messageBackgroundColorMine ?: context.getColorCompat(R.color.stream_ui_grey_whisper)
-                    }
-                    setTint(color)
-                    style?.messageStrokeColorMine?.let(::setStrokeTint)
+                    setStrokeTint(
+                        style?.messageStrokeColorMine
+                            ?: context.getColorCompat(R.color.stream_ui_literal_transparent),
+                    )
                     strokeWidth = style?.messageStrokeWidthMine ?: DEFAULT_STROKE_WIDTH
+                    setTint(
+                        style?.messageBackgroundColorMine
+                            ?: context.getColorCompat(R.color.stream_ui_white),
+                    )
                 }
                 else -> {
                     paintStyle = Paint.Style.FILL_AND_STROKE
                     setStrokeTint(
                         style?.messageStrokeColorTheirs
-                            ?: context.getColorCompat(R.color.stream_ui_grey_whisper),
+                            ?: context.getColorCompat(R.color.stream_ui_grey_gainsboro),
                     )
                     strokeWidth = style?.messageStrokeWidthTheirs ?: DEFAULT_STROKE_WIDTH
-                    val tintColor =
-                        style?.messageBackgroundColorTheirs ?: context.getColorCompat(R.color.stream_ui_white)
-                    setTint(tintColor)
+                    setTint(
+                        style?.messageBackgroundColorTheirs
+                            ?: context.getColorCompat(R.color.stream_ui_grey_whisper),
+                    )
                 }
             }
         }

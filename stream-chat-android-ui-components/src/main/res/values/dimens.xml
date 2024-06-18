@@ -78,6 +78,16 @@
     <dimen name="stream_ui_search_input_icon_clear_height">24dp</dimen>
     <dimen name="stream_ui_search_input_icon_clear_margin_end">8dp</dimen>
 
+    <!--Search Result List Items-->
+    <dimen name="stream_ui_search_result_list_item_height">64dp</dimen>
+    <dimen name="stream_ui_search_result_item_margin_start">8dp</dimen>
+    <dimen name="stream_ui_search_result_item_margin_end">8dp</dimen>
+    <dimen name="stream_ui_search_result_item_title_margin_start">8dp</dimen>
+    <dimen name="stream_ui_search_result_item_vertical_spacer_height">0dp</dimen>
+    <item type="dimen" format="float" name="stream_ui_search_result_item_vertical_spacer_position">0.5</item>
+    <dimen name="stream_ui_search_result_item_option_icon_width">50dp</dimen>
+    <dimen name="stream_ui_search_result_item_loading_height">90dp</dimen>
+
     <!--Channel List Fragment -->
     <dimen name="stream_ui_channel_list_search_margin_top">8dp</dimen>
     <dimen name="stream_ui_channel_list_search_margin_start">8dp</dimen>

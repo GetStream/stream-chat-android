@@ -61,6 +61,12 @@ public object EventType {
     public const val NOTIFICATION_REMOVED_FROM_CHANNEL: String = "notification.removed_from_channel"
     public const val NOTIFICATION_MUTES_UPDATED: String = "notification.mutes_updated"
     public const val NOTIFICATION_CHANNEL_MUTES_UPDATED: String = "notification.channel_mutes_updated"
+    public const val POLL_UPDATED: String = "poll.updated"
+    public const val POLL_DELETED: String = "poll.deleted"
+    public const val POLL_VOTE_CASTED: String = "poll.vote_casted"
+    public const val POLL_VOTE_CHANGED: String = "poll.vote_changed"
+    public const val POLL_VOTE_REMOVED: String = "poll.vote_removed"
+    public const val POLL_CLOSED: String = "poll.closed"
     public const val CONNECTION_ERROR: String = "connection.error"
 
     /**
