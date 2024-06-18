@@ -104,8 +104,12 @@ internal class ChannelStateLogic(
         replaceWith = ReplaceWith("updateChannelData((ChannelData?) -> ChannelData?)"),
     )
     fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
-        val newChannelData = channel.toChannelData().copy(ownCapabilities = currentOwnCapabilities)
+        val newChannelData = channel.toChannelData().let {
+            when (it.ownCapabilities.isEmpty()) {
+                true -> it.copy(ownCapabilities = mutableState.channelData.value.ownCapabilities)
+                else -> it
+            }
+        }
         mutableState.setChannelData(newChannelData)
     }
 
