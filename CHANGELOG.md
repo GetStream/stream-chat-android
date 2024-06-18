@@ -12,11 +12,14 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
-- Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatClient.getNewerReplies` to fetch newer replies for a message in a thread. [#5256](https://github.com/GetStream/stream-chat-android/pull/5256)
+- Added `ChatClient.getThreads` to fetch threads for the current users. [#5264](https://github.com/GetStream/stream-chat-android/pull/5264)
+- Added `ChatClient.sendPoll`, `ChatClient.castVotePoll`, `ChatClient.closePoll` and `ChatClient.removePollVote` methods to interact with Polls. [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
+- Added new `ChatEvents` related with Polls.  [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
 
 ### ⚠️ Changed
 
@@ -24,6 +27,7 @@
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
+- Fixed messages from hidden channels being shown up. [#5281](https://github.com/GetStream/stream-chat-android/pull/5281)
 
 ### ⬆️ Improved
 
@@ -46,6 +50,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed the message list to scroll to the bottom when a message reaction is added. [#5280](https://github.com/GetStream/stream-chat-android/pull/5280)
 
 ### ⬆️ Improved
 
@@ -57,8 +62,12 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
+- Fixed quoted message styling to be consistent with `isMine` property. [#5287](https://github.com/GetStream/stream-chat-android/pull/5287)
+  * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change. 
 
 ### ⬆️ Improved
+- Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
 
 ### ✅ Added
 
@@ -91,6 +100,37 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# May 24th, 2024 - 6.4.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
+- Fix `ChatClient.sendMessage()` method to be able to send multiple message in parallel. [#5266](https://github.com/GetStream/stream-chat-android/pull/5266)
+
+### ✅ Added
+- Added `ChatClient.getNewerReplies` to fetch newer replies for a message in a thread. [#5256](https://github.com/GetStream/stream-chat-android/pull/5256)
+
+## stream-chat-android-state
+### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Created `VideoHeadersProvider` interface to provide headers for video requests. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
+
+### ⚠️ Changed
+- The `ImageHeadersProvider.getImageRequestHeaders()` method use the url as a parameter. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed infinite progress bar on channel list screen. [#5259](https://github.com/GetStream/stream-chat-android/pull/5259)
+- Fixed thread replies are being scrolled to bottom. [#5261](https://github.com/GetStream/stream-chat-android/pull/5261)
+### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
 
 # May 01th, 2024 - 6.3.2
 ## Common changes for all artifacts

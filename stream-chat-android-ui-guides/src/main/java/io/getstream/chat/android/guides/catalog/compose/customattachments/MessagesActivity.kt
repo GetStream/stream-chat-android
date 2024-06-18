@@ -91,6 +91,7 @@ class MessagesActivity : AppCompatActivity() {
                 CustomMessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
+                    threadLoadOlderToNewer = false,
                 )
             }
         }
@@ -100,16 +101,19 @@ class MessagesActivity : AppCompatActivity() {
      * A custom [MessagesScreen] with the support for date attachments.
      *
      * @param channelId The ID of the opened channel.
+     * @param threadLoadOlderToNewer Flag to load older messages to newer messages in the thread.
      * @param onBackPressed Handler for the back action.
      */
     @Composable
     fun CustomMessagesScreen(
         channelId: String,
+        threadLoadOlderToNewer: Boolean,
         onBackPressed: () -> Unit = {},
     ) {
         val factory = MessagesViewModelFactory(
             context = LocalContext.current,
             channelId = channelId,
+            threadLoadOlderToNewer = threadLoadOlderToNewer,
         )
 
         val messageListViewModel = viewModel(MessageListViewModel::class.java, factory = factory)

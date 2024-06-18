@@ -6,7 +6,6 @@
     <ID>ComplexCondition:MessageOptions.kt$((isOwnMessage &amp;&amp; canEditOwnMessage) || canEditAnyMessage) &amp;&amp; !selectedMessage.isGiphy()</ID>
     <ID>ComplexCondition:MessageTranslatedLabel.kt$!isGiphy &amp;&amp; !isDeleted &amp;&amp; userLanguage != i18nLanguage &amp;&amp; translatedText != messageItem.message.text</ID>
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
-    <ID>ComplexCondition:Messages.kt$!startOfMessages &amp;&amp; index == 0 &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", (recordingDuration - remainder) / 60_000)</ID>
@@ -57,6 +56,8 @@
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
+    <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryChannels()</ID>
+    <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryMessages()</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_HEIGHT_DP = 60</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_WIDTH = 4</ID>

@@ -1219,13 +1219,15 @@ public class MessageListView : ConstraintLayout {
                     messageListViewStyle?.messagesStart?.let(::chatMessageStart)
                 }
 
-                logger.v { "[handleNewWrapper] filteredList.size: ${filteredList.size}" }
+                logger.v {
+                    "[handleNewWrapper] isOldListEmpty: $isOldListEmpty, filteredList.size: ${filteredList.size}"
+                }
                 adapter.submitList(filteredList) {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
-                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
+                        endOfNewMessagesReached = listItem.areNewestMessagesLoaded,
                     )
                 }
             }

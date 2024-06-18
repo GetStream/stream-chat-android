@@ -213,7 +213,7 @@ internal class AttachmentGalleryVideoPageFragment : Fragment() {
 
     private fun loadVideo() {
         binding.videoView.apply {
-            setVideoURI(Uri.parse(assetUrl))
+            setVideoURI(Uri.parse(assetUrl), ChatUI.videoHeadersProvider.getVideoRequestHeaders(assetUrl ?: ""))
             this.setMediaController(mediaController)
             setOnErrorListener { _, _, _ ->
                 Toast.makeText(

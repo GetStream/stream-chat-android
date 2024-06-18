@@ -29,7 +29,8 @@ private object OverviewViewModelsSnippet {
                 chatClient = ChatClient.instance(),
                 channelId = "messaging:123",
                 enforceUniqueReactions = true,
-                messageLimit = 30
+                messageLimit = 30,
+                threadLoadOlderToNewer = false,
             )
         }
 

@@ -35,23 +35,36 @@ internal class ThreadQueryListenerDatabase(
     private val userRepository: UserRepository,
 ) : ThreadQueryListener {
 
-    override suspend fun onGetRepliesRequest(messageId: String, limit: Int) {
+    override suspend fun onGetRepliesRequest(parentId: String, limit: Int) {
         // Nothing to do.
     }
 
-    override suspend fun onGetRepliesResult(result: Result<List<Message>>, messageId: String, limit: Int) {
+    override suspend fun onGetRepliesResult(result: Result<List<Message>>, parentId: String, limit: Int) {
         onResult(result)
     }
 
-    override suspend fun onGetRepliesMoreRequest(messageId: String, firstId: String, limit: Int) {
+    override suspend fun onGetRepliesMoreRequest(parentId: String, firstId: String, limit: Int) {
+        // Nothing to do.
+    }
+
+    override suspend fun onGetNewerRepliesRequest(parentId: String, limit: Int, lastId: String?) {
         // Nothing to do.
     }
 
     override suspend fun onGetRepliesMoreResult(
         result: Result<List<Message>>,
-        messageId: String,
+        parentId: String,
         firstId: String,
         limit: Int,
+    ) {
+        onResult(result)
+    }
+
+    override suspend fun onGetNewerRepliesResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        limit: Int,
+        lastId: String?,
     ) {
         onResult(result)
     }

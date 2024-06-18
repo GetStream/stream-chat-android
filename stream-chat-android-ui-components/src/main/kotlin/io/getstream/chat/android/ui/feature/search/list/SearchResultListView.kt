@@ -20,7 +20,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.widget.Toast
 import android.widget.ViewFlipper
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import io.getstream.chat.android.models.Message
@@ -39,12 +38,12 @@ public class SearchResultListView : ViewFlipper {
 
     private val binding = StreamUiSearchResultListViewBinding.inflate(streamThemeInflater, this)
 
+    private val adapter: SearchResultListAdapter
+
     /**
      * Callback invoked when we've reached the end of messages.
      */
     private var loadMoreListener: LoadMoreListener? = null
-
-    private val adapter = SearchResultListAdapter()
 
     private val scrollListener = EndlessScrollListener(LOAD_MORE_THRESHOLD) {
         loadMoreListener?.onLoadMoreRequested()
@@ -53,34 +52,33 @@ public class SearchResultListView : ViewFlipper {
     public constructor(context: Context) : this(context, null)
 
     public constructor(context: Context, attrs: AttributeSet?) : super(context.createStreamThemeWrapper(), attrs) {
-        setupViewStyle(attrs)
+        val style = SearchResultListViewStyle(context, attrs)
+        adapter = SearchResultListAdapter(style)
+        setupViewStyle(style)
         setupView()
     }
 
-    private fun setupViewStyle(attrs: AttributeSet?) {
-        SearchResultListViewStyle(context, attrs).also { style ->
-            setBackgroundColor(style.backgroundColor)
-            binding.searchInfoBar.background = style.searchInfoBarBackground
-            binding.searchInfoBar.setTextStyle(style.searchInfoBarTextStyle)
-            binding.emptyImage.setImageDrawable(style.emptyStateIcon)
-            binding.emptyLabel.setTextStyle(style.emptyStateTextStyle)
-            binding.progressBar.indeterminateDrawable = style.progressBarIcon
-            adapter.messagePreviewStyle = style.messagePreviewStyle
-        }
+    private fun setupViewStyle(style: SearchResultListViewStyle) {
+        setBackgroundColor(style.backgroundColor)
+        binding.searchInfoBar.background = style.searchInfoBarBackground
+        binding.searchInfoBar.setTextStyle(style.searchInfoBarTextStyle)
+        binding.emptyImage.setImageDrawable(style.emptyStateIcon)
+        binding.emptyLabel.setTextStyle(style.emptyStateTextStyle)
+        binding.progressBar.indeterminateDrawable = style.progressBarIcon
+        binding.searchListView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                LinearLayoutManager.VERTICAL,
+            ).apply {
+                setDrawable(style.itemSeparator)
+            },
+        )
     }
 
     private fun setupView() {
         binding.searchListView.apply {
             setHasFixedSize(true)
             adapter = this@SearchResultListView.adapter
-            addItemDecoration(
-                DividerItemDecoration(
-                    context,
-                    LinearLayoutManager.VERTICAL,
-                ).apply {
-                    setDrawable(AppCompatResources.getDrawable(context, R.drawable.stream_ui_divider)!!)
-                },
-            )
             addOnScrollListener(scrollListener)
         }
     }

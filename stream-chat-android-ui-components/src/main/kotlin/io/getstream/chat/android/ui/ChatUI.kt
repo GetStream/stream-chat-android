@@ -18,7 +18,9 @@ package io.getstream.chat.android.ui
 
 import android.content.Context
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
@@ -68,6 +70,12 @@ public object ChatUI {
      */
     @JvmStatic
     public var imageHeadersProvider: ImageHeadersProvider by StreamImageLoader.instance()::imageHeadersProvider
+
+    /**
+     * Provides HTTP headers for video loading requests.
+     */
+    @JvmStatic
+    public var videoHeadersProvider: VideoHeadersProvider = DefaultVideoHeadersProvider
 
     /**
      * Allows setting default fonts used by UI components.

@@ -20,9 +20,16 @@ package io.getstream.chat.android.ui.common.helper
  * Provides HTTP headers for image loading requests.
  */
 public interface ImageHeadersProvider {
-    public fun getImageRequestHeaders(): Map<String, String>
+
+    /**
+     * Returns a map of headers to be used for the image loading request.
+     *
+     * @param url The URL of the image to load.
+     * @return A map of headers to be used for the image loading request.
+     */
+    public fun getImageRequestHeaders(url: String): Map<String, String>
 }
 
 internal object DefaultImageHeadersProvider : ImageHeadersProvider {
-    override fun getImageRequestHeaders(): Map<String, String> = emptyMap()
+    override fun getImageRequestHeaders(url: String): Map<String, String> = emptyMap<String, String>()
 }

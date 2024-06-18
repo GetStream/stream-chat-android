@@ -76,12 +76,17 @@ public open class MessageListFragment : Fragment() {
         requireArguments().getBoolean(ARG_SHOW_HEADER, false)
     }
 
+    protected val threadLoadOlderToNewer: Boolean by lazy(LazyThreadSafetyMode.NONE) {
+        requireArguments().getBoolean(ARG_THREAD_LOAD_OLDER_TO_NEWER, false)
+    }
+
     /** A ViewModel factory for creating message list relevant ViewModels. */
     protected val factory: MessageListViewModelFactory by lazy(LazyThreadSafetyMode.NONE) {
         MessageListViewModelFactory(
             context = requireContext().applicationContext,
             cid = cid,
             messageId = messageId,
+            threadLoadOlderToNewer = threadLoadOlderToNewer,
         )
     }
 
@@ -257,6 +262,7 @@ public open class MessageListFragment : Fragment() {
         private var showHeader: Boolean = false
         private var messageId: String? = null
         private var fragment: MessageListFragment? = null
+        private var threadLoadOlderToNewer = false
 
         /**
          * Custom theme for the screen.
@@ -280,6 +286,13 @@ public open class MessageListFragment : Fragment() {
         }
 
         /**
+         * Whether the thread messages should be loaded from older to newer.
+         */
+        public fun threadLoadOlderToNewer(threadLoadOlderToNewer: Boolean): Builder = apply {
+            this.threadLoadOlderToNewer = threadLoadOlderToNewer
+        }
+
+        /**
          * Sets custom message list Fragment. The Fragment must be a subclass of [MessageListFragment].
          */
         public fun <T : MessageListFragment> setFragment(fragment: T): Builder = apply {
@@ -298,6 +311,7 @@ public open class MessageListFragment : Fragment() {
                     ARG_CHANNEL_ID to this@Builder.cid,
                     ARG_MESSAGE_ID to this@Builder.messageId,
                     ARG_SHOW_HEADER to this@Builder.showHeader,
+                    ARG_THREAD_LOAD_OLDER_TO_NEWER to this@Builder.threadLoadOlderToNewer,
                 )
             }
         }
@@ -308,6 +322,7 @@ public open class MessageListFragment : Fragment() {
         private const val ARG_CHANNEL_ID: String = "cid"
         private const val ARG_MESSAGE_ID: String = "message_id"
         private const val ARG_SHOW_HEADER: String = "show_header"
+        private const val ARG_THREAD_LOAD_OLDER_TO_NEWER: String = "thread_load_older_to_newer"
 
         /**
          * Creates instances of [MessageListFragment].

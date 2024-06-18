@@ -29,9 +29,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
@@ -54,6 +56,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendMessageIdentif
 import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
+import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -135,6 +138,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mergePartially
+import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -157,14 +161,20 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.CompositeStreamLogger
@@ -177,6 +187,7 @@ import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import io.getstream.result.call.doOnResult
 import io.getstream.result.call.doOnStart
+import io.getstream.result.call.flatMap
 import io.getstream.result.call.map
 import io.getstream.result.call.retry
 import io.getstream.result.call.retry.RetryPolicy
@@ -1470,6 +1481,79 @@ internal constructor(
         )
     }
 
+    /**
+     * Send a message with a poll to the given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param pollConfig The poll configuration.
+     *
+     * @return Executable async [Call] responsible for sending a poll.
+     */
+    @CheckResult
+    public fun sendPoll(
+        channelType: String,
+        channelId: String,
+        pollConfig: PollConfig,
+    ): Call<Message> {
+        return api.createPoll(pollConfig)
+            .flatMap { poll ->
+                sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    Message(extraData = mapOf("poll_id" to poll.id)),
+                )
+            }
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, option.id)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote to remove.
+     *
+     * @return Executable async [Call] responsible for removing a vote.
+     */
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ): Call<Vote> {
+        return api.removePollVote(messageId, pollId, vote.id)
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     *
+     * @return Executable async [Call] responsible for closing a poll.
+     */
+    @CheckResult
+    public fun closePoll(pollId: String): Call<Poll> {
+        return api.closePoll(pollId)
+    }
+
     @CheckResult
     public fun getFileAttachments(
         channelType: String,
@@ -1545,8 +1629,43 @@ internal constructor(
                     plugin.onGetRepliesResult(result, messageId, limit)
                 }
             }
-            .precondition(plugins) { onGetRepliesPrecondition(messageId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesIdentifier(messageId, limit) }
+    }
+
+    /**
+     * Fetch replies to the specified message with id [parentId] that are newer than the message with [lastId].
+     * If [lastId] is null, the oldest replies are returned.
+     *
+     * @param parentId The id of the parent message.
+     * @param limit The number of replies to fetch.
+     * @param lastId The id of the last message to fetch from exclusively.
+     *
+     * @return Executable async [Call] responsible for fetching newer replies.
+     */
+    @CheckResult
+    public fun getNewerReplies(
+        parentId: String,
+        limit: Int,
+        lastId: String? = null,
+    ): Call<List<Message>> {
+        logger.d { "[getNewerReplies] parentId: $parentId, limit: $limit, lastId: $lastId" }
+
+        return api.getNewerReplies(parentId, limit, lastId)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    logger.v { "[getNewerReplies] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetNewerRepliesRequest(parentId, limit, lastId)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[getNewerReplies] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetNewerRepliesResult(result, parentId, limit, lastId)
+                }
+            }
+            .precondition(plugins) { onGetRepliesPrecondition(parentId) }
+            .share(userScope) { getNewerRepliesIdentifier(parentId, limit, lastId) }
     }
 
     @CheckResult
@@ -1570,7 +1689,7 @@ internal constructor(
                     plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
                 }
             }
-            .precondition(plugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
     }
 
@@ -1698,6 +1817,7 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
         return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+            .ensureId(getCurrentUser() ?: getStoredUser())
             .let { processedMessage ->
                 CoroutineCall(userScope) {
                     val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)
@@ -1907,6 +2027,7 @@ internal constructor(
                         Result.Success(channels.first())
                     }
                 }
+
                 is Result.Failure -> result
             }
         }
@@ -2326,6 +2447,36 @@ internal constructor(
     @CheckResult
     public fun updateUser(user: User): Call<User> {
         return updateUsers(listOf(user)).map { it.first() }
+    }
+
+    /**
+     * Block a user by ID.
+     *
+     * @param userId the ID of the user that will be blocked.
+     *
+     * @return a list of [UserBlock] which will contain the block that just occured.
+     */
+    @CheckResult
+    public fun blockUser(userId: String): Call<UserBlock> {
+        return api.blockUser(userId)
+    }
+
+    /**
+     * Unblock a user by ID.
+     *
+     * @param userId the user ID of the user that will be unblocked.
+     */
+    @CheckResult
+    public fun unblockUser(userId: String): Call<UserBlock> {
+        return api.unblockUser(userId)
+    }
+
+    /**
+     * Return na list of blocked users.
+     */
+    @CheckResult
+    public fun queryBlockedUsers(): Call<List<UserBlock>> {
+        return api.queryBlockedUsers()
     }
 
     /**
@@ -3026,6 +3177,54 @@ internal constructor(
     @CheckResult
     public fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return api.downloadFile(fileUrl)
+    }
+
+    /**
+     * Query threads matching [query] request.
+     *
+     * @param query [QueryThreadsRequest] with query parameters to get matching users.
+     */
+    @CheckResult
+    public fun queryThreads(
+        query: QueryThreadsRequest,
+    ): Call<List<Thread>> {
+        return api.queryThreads(query)
+    }
+
+    /**
+     * Get a thread by message id.
+     *
+     * @param messageId The message id.
+     * @param options The query options.
+     */
+    @CheckResult
+    public fun getThread(
+        messageId: String,
+        options: GetThreadOptions = GetThreadOptions(),
+    ): Call<Thread> {
+        return api.getThread(messageId, options)
+    }
+
+    /**
+     * Partially updates specific [Thread] fields retaining the fields which were set previously.
+     *
+     * @param messageId The message ID.
+     * @param set The key-value data which will be added to the existing message object.
+     * @param unset The list of fields which will be removed from the existing message object.
+     *
+     * @return Executable async [Call] responsible for partially updating the message.
+     */
+    @CheckResult
+    public fun partialUpdateThread(
+        messageId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Thread> {
+        return api.partialUpdateThread(
+            messageId = messageId,
+            set = set,
+            unset = unset,
+        )
     }
 
     private fun warmUp() {

@@ -150,6 +150,7 @@ public fun ChatClient.watchChannelAsState(
  *
  * @param messageId The ID of the original message the replies were made to.
  * @param messageLimit The number of messages that will be initially loaded.
+ * @param olderToNewer The flag that determines the order of the messages.
  * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
  * @return [ThreadState]
@@ -158,10 +159,13 @@ public fun ChatClient.watchChannelAsState(
 public suspend fun ChatClient.getRepliesAsState(
     messageId: String,
     messageLimit: Int,
+    olderToNewer: Boolean,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ): ThreadState {
-    StreamLog.d(TAG) { "[getRepliesAsState] messageId: $messageId, messageLimit: $messageLimit" }
-    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit)
+    StreamLog.d(TAG) {
+        "[getRepliesAsState] messageId: $messageId, messageLimit: $messageLimit, olderToNewer: $olderToNewer"
+    }
+    return requestsAsState(coroutineScope).getReplies(messageId, messageLimit, olderToNewer)
 }
 
 /**
@@ -172,6 +176,7 @@ public suspend fun ChatClient.getRepliesAsState(
  *
  * @param messageId The ID of the original message the replies were made to.
  * @param messageLimit The number of messages that will be initially loaded.
+ * @param olderToNewer The flag that determines the order of the messages.
  * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
  * @return [ThreadState] wrapped inside a [Call].
@@ -180,10 +185,11 @@ public suspend fun ChatClient.getRepliesAsState(
 public suspend fun ChatClient.awaitRepliesAsState(
     messageId: String,
     messageLimit: Int,
+    olderToNewer: Boolean,
 ): ThreadState {
     StreamLog.d(TAG) { "[awaitRepliesAsState] messageId: $messageId, messageLimit: $messageLimit" }
     return coroutineScope {
-        requestsAsState(scope = this).awaitReplies(messageId, messageLimit)
+        requestsAsState(scope = this).awaitReplies(messageId, messageLimit, olderToNewer)
     }
 }
 

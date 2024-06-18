@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 
 internal class UpstreamReactionDtoAdapterTest {
 
-    private val parser = MoshiChatParser()
+    private val parser = MoshiChatParser { "" }
 
     @Test
     fun `Serialize JSON reaction with custom fields`() {

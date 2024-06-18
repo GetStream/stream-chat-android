@@ -84,3 +84,10 @@ internal data class PartialUpdateUserDto(
     val set: Map<String, Any>,
     val unset: List<String>,
 )
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamUserBlockDto(
+    val blocked_by_user_id: String,
+    val blocked_user_id: String,
+    val created_at: Date,
+)

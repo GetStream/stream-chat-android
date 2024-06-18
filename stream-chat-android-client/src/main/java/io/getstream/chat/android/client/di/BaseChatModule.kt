@@ -47,6 +47,8 @@ import io.getstream.chat.android.client.api2.endpoint.GuestApi
 import io.getstream.chat.android.client.api2.endpoint.MessageApi
 import io.getstream.chat.android.client.api2.endpoint.ModerationApi
 import io.getstream.chat.android.client.api2.endpoint.OpenGraphApi
+import io.getstream.chat.android.client.api2.endpoint.PollsApi
+import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
 import io.getstream.chat.android.client.api2.endpoint.UserApi
 import io.getstream.chat.android.client.api2.endpoint.VideoCallApi
 import io.getstream.chat.android.client.clientstate.UserStateService
@@ -71,6 +73,7 @@ import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
+import io.getstream.chat.android.models.UserId
 import io.getstream.log.StreamLog
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -91,7 +94,7 @@ internal open class BaseChatModule(
     private val httpClientConfig: (OkHttpClient.Builder) -> OkHttpClient.Builder = { it },
 ) {
 
-    private val moshiParser: ChatParser by lazy { MoshiChatParser() }
+    private val moshiParser: ChatParser by lazy { MoshiChatParser(currentUserIdProvider) }
     private val socketFactory: SocketFactory by lazy { SocketFactory(moshiParser, tokenManager) }
 
     private val defaultNotifications by lazy { buildNotification(notificationsHandler, config.notificationConfig) }
@@ -118,6 +121,7 @@ internal open class BaseChatModule(
             config = config,
         )
     }
+    private val currentUserIdProvider: () -> UserId? = { userScope.userId.value }
 
     //region Modules
 
@@ -228,6 +232,7 @@ internal open class BaseChatModule(
 
     @Suppress("RemoveExplicitTypeArguments")
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
+        currentUserIdProvider,
         fileUploader ?: defaultFileUploader,
         buildRetrofitApi<UserApi>(),
         buildRetrofitApi<GuestApi>(),
@@ -240,6 +245,8 @@ internal open class BaseChatModule(
         buildRetrofitApi<VideoCallApi>(),
         buildRetrofitApi<FileDownloadApi>(),
         buildRetrofitApi<OpenGraphApi>(),
+        buildRetrofitApi<ThreadsApi>(),
+        buildRetrofitApi<PollsApi>(),
         userScope,
         userScope,
     ).let { originalApi ->
