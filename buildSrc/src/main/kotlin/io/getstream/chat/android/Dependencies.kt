@@ -72,7 +72,6 @@ object Versions {
     internal const val SHIMMER = "0.5.0"
     internal const val SHOT = "5.14.1"
     internal const val SPOTLESS = "6.20.0"
-    internal const val STFALCON_IMAGE_VIEWER = "1.0.1"
     internal const val STREAM_LOG = "1.1.4"
     internal const val STREAM_PUSH = "1.1.7"
     internal const val STREAM_RESULT = "1.2.0"

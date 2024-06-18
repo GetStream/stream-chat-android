@@ -83,6 +83,9 @@ private val LocalQuotedAttachmentFactories = compositionLocalOf<List<AttachmentF
 private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
     error("No reaction icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
+    error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -103,6 +106,9 @@ private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultName
 }
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalMessageOptionsTheme = compositionLocalOf<MessageOptionsTheme> {
+    error("No MessageOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageOptionsUserReactionAlignment = compositionLocalOf<MessageOptionsUserReactionAlignment> {
     error(
@@ -180,12 +186,16 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param attachmentPreviewHandlers Attachment preview handlers we provide.
  * @param quotedAttachmentFactories Quoted attachment factories that we provide.
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
+ * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
+ * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
- * @param dateFormatter [DateFormatter] used throughout the app for date and time information.
- * @param channelNameFormatter [ChannelNameFormatter] used throughout the app for channel names.
- * @param messagePreviewFormatter [MessagePreviewFormatter] used to generate a string preview for the given message.
+ * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
+ * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
+ * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
- * @param messageAlignmentProvider [MessageAlignmentProvider] used to provide message alignment for the given message.
+ * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
+ * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
+ * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
  * @param messageOptionsUserReactionAlignment Alignment of the user reaction inside the message options.
  * @param attachmentsPickerTabFactories Attachments picker tab factories that we provide.
  * @param videoThumbnailsEnabled Dictates whether video thumbnails will be displayed inside video previews.
@@ -215,6 +225,7 @@ public fun ChatTheme(
         AttachmentPreviewHandler.defaultAttachmentHandlers(LocalContext.current),
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
+    reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -227,6 +238,7 @@ public fun ChatTheme(
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
+    messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
     attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
     videoThumbnailsEnabled: Boolean = true,
@@ -285,6 +297,7 @@ public fun ChatTheme(
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
+        LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
@@ -298,6 +311,7 @@ public fun ChatTheme(
         LocalMessageComposerTheme provides messageComposerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
+        LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
         LocalAttachmentsPickerTabFactories provides attachmentsPickerTabFactories,
         LocalVideoThumbnailsEnabled provides videoThumbnailsEnabled,
@@ -389,6 +403,14 @@ public object ChatTheme {
         get() = LocalReactionIconFactory.current
 
     /**
+     * Retrieves the current [ReactionOptionsTheme] at the call site's position in the hierarchy.
+     */
+    public val reactionOptionsTheme: ReactionOptionsTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalReactionOptionsTheme.current
+
+    /**
      * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.
      */
     public val dateFormatter: DateFormatter
@@ -443,6 +465,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageAlignmentProvider.current
+
+    /**
+     * Retrieves the current [MessageOptionsTheme] at the call site's position in the hierarchy.
+     */
+    public val messageOptionsTheme: MessageOptionsTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessageOptionsTheme.current
 
     /**
      * Retrieves the current [MessageOptionsUserReactionAlignment] at the call site's position in the hierarchy.

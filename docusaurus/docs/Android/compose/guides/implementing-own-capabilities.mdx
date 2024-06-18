@@ -102,7 +102,7 @@ public fun defaultMessageOptionsState(
 ): List<MessageOptionItemState>
 ```
 
-This function uses `ownCapabilities` to produce the correct list of `MessageOptionItemState`.
+This function uses the [`ChatTheme.messageOptionsTheme.optionVisibility`](../general-customization/chat-theme.mdx#messageoptionstheme) property and `ownCapabilities` to produce the correct list of `MessageOptionItemState`. Read more about customizing what options `SelectedMessageMenu` shows [here](../message-components/selected-message-menu.mdx#customizing-the-menu-option-list).
 
 `defaultMessageOptionsState` regulates the following capabilities:
 
@@ -182,7 +182,7 @@ Additionally, the capability '**send-typing-events ***' is implemented in our `M
 our `MessageComposerViewModel`.
 Please keep this in mind should you wish to not use our `ViewModel`s.
 
-# How capabilities affect the UI
+## How capabilities affect the UI
 
 Let's take `MessageComposer` into consideration.
 If we left it with the default, empty set of own capabilities we would get the following result:
