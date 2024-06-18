@@ -78,8 +78,10 @@ public class MediaAttachmentsViewHolder internal constructor(
     override fun messageContainerView(): View = binding.messageContainer
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        logger.d { "[bindData] #$baPosition; data: Data(text=${data.message.text}, " +
-            "attachments.size=${data.message.attachments.size}), diff: $diff" }
+        logger.d {
+            "[bindData] #$baPosition; data: Data(text=${data.message.text}, " +
+                "attachments.size=${data.message.attachments.size}), diff: $diff"
+        }
         super.bindData(data, diff)
 
         bindMessageText()
@@ -114,8 +116,10 @@ public class MediaAttachmentsViewHolder internal constructor(
      * Updates the media attachments section of the message.
      */
     private fun bindMediaAttachments() {
-        logger.v { "[bindMediaAttachments] #$baPosition; " +
-            "data.message.attachments.type: ${data.message.attachments.map { it.type }}" }
+        logger.v {
+            "[bindMediaAttachments] #$baPosition; " +
+                "data.message.attachments.type: ${data.message.attachments.map { it.type }}"
+        }
         binding.mediaAttachmentView.setPadding(1.dpToPx())
         binding.mediaAttachmentView.setupBackground(data)
         binding.mediaAttachmentView.showAttachments(baPosition, data.message.attachments)
