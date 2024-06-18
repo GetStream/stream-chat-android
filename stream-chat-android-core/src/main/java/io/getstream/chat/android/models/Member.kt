@@ -24,7 +24,7 @@ import java.util.Date
  * Represents a channel member.
  */
 @Immutable
-public data class Member(
+public data class Member @JvmOverloads constructor(
     /**
      * The user who is a member of the channel.
      */

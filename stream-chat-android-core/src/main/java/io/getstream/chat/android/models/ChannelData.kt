@@ -41,7 +41,7 @@ import java.util.Date
  * @param membership Represents relationship of the current user to the channel.
  */
 @Immutable
-public data class ChannelData(
+public data class ChannelData @JvmOverloads constructor(
     val id: String,
     val type: String,
     val name: String = "",

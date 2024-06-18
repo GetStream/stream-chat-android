@@ -30,7 +30,7 @@ import androidx.compose.runtime.Immutable
  * @param image Channel's image.
  */
 @Immutable
-public data class ChannelInfo(
+public data class ChannelInfo @JvmOverloads constructor(
     val cid: String? = null,
     val id: String? = null,
     val type: String? = null,

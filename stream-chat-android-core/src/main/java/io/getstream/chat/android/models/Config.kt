@@ -20,7 +20,7 @@ import androidx.compose.runtime.Immutable
 import java.util.Date
 
 @Immutable
-public data class Config(
+public data class Config @JvmOverloads constructor(
 
     /**
      * Date of channel creation.

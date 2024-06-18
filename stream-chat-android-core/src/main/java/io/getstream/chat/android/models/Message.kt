@@ -21,7 +21,7 @@ import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
 @Immutable
-public data class Message(
+public data class Message @JvmOverloads constructor(
     /**
      * The unique string identifier of the message. This is either created by Stream
      * or set on the client side when the message is added.

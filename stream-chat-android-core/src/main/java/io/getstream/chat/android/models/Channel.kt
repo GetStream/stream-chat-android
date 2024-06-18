@@ -58,7 +58,7 @@ import java.util.Date
  * hopping to a quoted message a number pages away without retaining the newest messages in the list.
  */
 @Immutable
-public data class Channel(
+public data class Channel @JvmOverloads constructor(
     val id: String = "",
     val type: String = "",
     val name: String = "",

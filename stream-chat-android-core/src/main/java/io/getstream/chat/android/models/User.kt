@@ -46,7 +46,7 @@ import java.util.Date
  * @param deactivatedAt Date/time of deactivation.
  */
 @Immutable
-public data class User(
+public data class User @JvmOverloads constructor(
     val id: String = "",
     val role: String = "",
     val name: String = "",

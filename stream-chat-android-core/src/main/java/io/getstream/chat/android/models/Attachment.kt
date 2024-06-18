@@ -58,7 +58,7 @@ import java.io.File
  * when uploading the attachment or read when downloading it.
  */
 @Immutable
-public data class Attachment(
+public data class Attachment @JvmOverloads constructor(
     val authorName: String? = null,
     val authorLink: String? = null,
     val titleLink: String? = null,

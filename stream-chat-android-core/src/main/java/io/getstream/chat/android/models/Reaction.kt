@@ -20,7 +20,7 @@ import androidx.compose.runtime.Immutable
 import java.util.Date
 
 @Immutable
-public data class Reaction(
+public data class Reaction @JvmOverloads constructor(
     val messageId: String = "",
     val type: String = "",
     val score: Int = 0,
