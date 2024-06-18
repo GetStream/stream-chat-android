@@ -86,6 +86,7 @@
 - Added `MessageOptionItemVisibility` class that controls menu item visibility in the selected message options menu.
 - Added new `ChatTheme.messageOptionItemVisibility` property of type `MessageOptionItemVisibility`.
 - Added docs sections that describe these changes.
+- Added `AttachmentPickerTheme` to customize the `AttachmentsPicker` component. [#5297](https://github.com/GetStream/stream-chat-android/pull/5297)
 
 ### ⚠️ Changed
 - Used the new `ChatTheme.messageOptionItemVisibility` property in `defaultMessageOptionsState()` in combination with own capabilities to control menu option item visibility.
