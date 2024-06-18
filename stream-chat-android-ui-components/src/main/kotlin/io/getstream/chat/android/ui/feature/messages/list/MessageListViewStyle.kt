@@ -124,6 +124,8 @@ public data class MessageListViewStyle(
     val pinMessageEnabled: Boolean,
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
+    val blockUserIcon: Int,
+    val blockUserEnabled: Boolean,
     val copyTextEnabled: Boolean,
     val markAsUnreadEnabled: Boolean,
     val retryMessageEnabled: Boolean,
@@ -588,7 +590,19 @@ public data class MessageListViewStyle(
                     true,
                 )
 
+                val userBlockEnabled = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiBlockUserOptionEnabled,
+                    true,
+                )
+
+                val userBlockIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiBlockUserOptionIcon,
+                    R.drawable.stream_ui_ic_clear,
+                )
+
                 return MessageListViewStyle(
+                    blockUserEnabled = userBlockEnabled,
+                    blockUserIcon = userBlockIcon,
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
                     scrollButtonBottomMargin = scrollButtonMarginBottom,

@@ -85,6 +85,7 @@
     <string name="stream_compose_quoted_message_file_tag">File</string>
 
     <!-- Selected Message Menu -->
+    <string name="stream_compose_block_user">Block user</string>
     <string name="stream_compose_resend_message">Resend</string>
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
