@@ -79,7 +79,7 @@ public fun AttachmentsPicker(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.attachmentPickerTheme.backgroundOverlay)
             .clickable(
                 onClick = onDismiss,
                 indication = null,
@@ -94,7 +94,7 @@ public fun AttachmentsPicker(
             ),
             elevation = 4.dp,
             shape = shape,
-            backgroundColor = ChatTheme.colors.inputBackground,
+            backgroundColor = ChatTheme.attachmentPickerTheme.backgroundSecondary,
         ) {
             Column {
                 AttachmentPickerOptions(
@@ -113,7 +113,7 @@ public fun AttachmentsPicker(
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                    color = ChatTheme.colors.barsBackground,
+                    color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
                     tabFactories.getOrNull(selectedTabIndex)
                         ?.PickerTabContent(

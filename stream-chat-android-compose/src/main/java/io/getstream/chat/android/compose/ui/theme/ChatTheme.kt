@@ -154,6 +154,9 @@ private val LocalMessageUnreadSeparatorTheme = compositionLocalOf<MessageUnreadS
 private val LocalMessageComposerTheme = compositionLocalOf<MessageComposerTheme> {
     error("No MessageComposerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalAttachmentPickerTheme = compositionLocalOf<AttachmentPickerTheme> {
+    error("No AttachmentPickerTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAutoTranslationEnabled = compositionLocalOf<Boolean> {
     error(
         "No AutoTranslationEnabled Boolean provided! " +
@@ -207,6 +210,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param messageDateSeparatorTheme Theme of the message date separator.
  * @param messageUnreadSeparatorTheme Theme of the message unread separator.
  * @param messageComposerTheme Theme of the message composer.
+ * @param attachmentPickerTheme Theme of the attachment picker.
  * @param streamMediaRecorder Used for recording audio messages.
  * @param content The content shown within the theme wrapper.
  */
@@ -265,6 +269,7 @@ public fun ChatTheme(
         shapes = shapes,
         colors = colors,
     ),
+    attachmentPickerTheme: AttachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors),
     messageTextFormatter: MessageTextFormatter = MessageTextFormatter.defaultFormatter(
         autoTranslationEnabled = autoTranslationEnabled,
         typography = typography,
@@ -309,6 +314,7 @@ public fun ChatTheme(
         LocalMessageDateSeparatorTheme provides messageDateSeparatorTheme,
         LocalMessageUnreadSeparatorTheme provides messageUnreadSeparatorTheme,
         LocalMessageComposerTheme provides messageComposerTheme,
+        LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
@@ -551,6 +557,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalMessageComposerTheme.current
+
+    /**
+     * Retrieves the current [AttachmentPickerTheme] at the call site's position in the hierarchy.
+     */
+    public val attachmentPickerTheme: AttachmentPickerTheme
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalAttachmentPickerTheme.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
