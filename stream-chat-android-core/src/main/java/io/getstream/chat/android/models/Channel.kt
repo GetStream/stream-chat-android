@@ -319,7 +319,9 @@ public fun Channel.mergeChannelFromEvent(that: Channel): Channel {
     )
 }
 
-@InternalStreamChatApi
+/**
+ * Converts the channel to the channel data.
+ */
 public fun Channel.toChannelData(): ChannelData {
     return ChannelData(
         type = type,

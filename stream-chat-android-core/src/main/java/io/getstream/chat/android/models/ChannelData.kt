@@ -163,51 +163,6 @@ public data class ChannelData(
     public fun isUserAbleTo(channelCapability: String): Boolean {
         return ownCapabilities.contains(channelCapability)
     }
-
-    public companion object {
-        @InternalStreamChatApi
-        public fun fromChannel(channel: Channel): ChannelData {
-            return ChannelData(
-                type = channel.type,
-                id = channel.id,
-                name = channel.name,
-                image = channel.image,
-                frozen = channel.frozen,
-                cooldown = channel.cooldown,
-                createdAt = channel.createdAt,
-                updatedAt = channel.updatedAt,
-                deletedAt = channel.deletedAt,
-                memberCount = channel.memberCount,
-                extraData = channel.extraData,
-                createdBy = channel.createdBy,
-                team = channel.team,
-                ownCapabilities = channel.ownCapabilities,
-                membership = channel.membership,
-
-            )
-        }
-    }
-}
-
-@InternalStreamChatApi
-public fun ChannelData.mergeChannelFromEvent(that: Channel): ChannelData {
-    return copy(
-        name = that.name,
-        image = that.image,
-        frozen = that.frozen,
-        cooldown = that.cooldown,
-        team = that.team,
-        extraData = that.extraData,
-        memberCount = that.memberCount,
-        createdAt = that.createdAt,
-        updatedAt = that.updatedAt,
-        deletedAt = that.deletedAt,
-        createdBy = that.createdBy,
-        /* Do not merge (ownCapabilities, membership) fields.
-        ownCapabilities = that.ownCapabilities,
-        membership = that.membership,
-         */
-    )
 }
 
 @InternalStreamChatApi
