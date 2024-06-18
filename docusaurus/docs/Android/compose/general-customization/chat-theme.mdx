@@ -20,6 +20,7 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * `messageAlignmentProvider`: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
 * `messageOptionsTheme`: Used to define the appearance of the message option list in the selected message menu. For theming the reaction option list in the same menu, see `reactionOptionsTheme` above.
 * `messageOptionsUserReactionAlignment`: Used to define how message reactions are aligned when browsing all reactions for a given message.
+* `attachmentPickerTheme`: Used to define the appearance of the attachment picker dialog. You can use the default implementation, or customize it according to your needs.
 * `permissionHandlers`: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 * `attachmentsPickerTabFactories`: Used to display different tabs in the attachments picker dialog.
 * `videoThumbnailsEnabled`: Dictates whether video thumbnails will be displayed inside video previews. They are a paid feature and enabled by default and the pricing can be found [here](https://getstream.io/chat/pricing/).
@@ -324,6 +325,12 @@ Determines the alignment of the reaction icon inside user reactions. By default,
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment.kt).
 
 You can also align the reactions to the start of the user avatar or align them depending on the user who left them.
+
+### AttachmentPickerTheme
+
+Defines the appearance of the attachment picker dialog. The default attachment picker theme is `AttachmentPickerTheme.defaultTheme()`.
+
+See the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme.kt)
 
 ### PermissionHandlers
 
