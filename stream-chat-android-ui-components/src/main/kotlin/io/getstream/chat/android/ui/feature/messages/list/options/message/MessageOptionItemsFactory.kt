@@ -121,7 +121,6 @@ public open class DefaultMessageOptionItemsFactory(
         val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
         val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
         val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
-        val canBlockUser = true
 
         return listOfNotNull(
             if (style.retryMessageEnabled && isOwnMessage && isMessageFailed) {
@@ -204,7 +203,7 @@ public open class DefaultMessageOptionItemsFactory(
             } else {
                 null
             },
-            if (style.blockUserEnabled && canBlockUser && !isOwnMessage) {
+            if (style.blockUserEnabled && !isOwnMessage) {
                 MessageOptionItem(
                     optionText = context.getString(R.string.stream_ui_message_list_block_user),
                     optionIcon = context.getDrawableCompat(style.blockUserIcon)!!,

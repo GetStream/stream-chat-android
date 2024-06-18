@@ -146,7 +146,6 @@ public fun defaultMessageOptionsState(
     val canEditAnyMessage = ownCapabilities.contains(ChannelCapabilities.UPDATE_ANY_MESSAGE)
     val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
     val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
-    val canBlockUser = true
 
     return listOfNotNull(
         if (isOwnMessage && isMessageFailed) {
@@ -237,7 +236,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (canBlockUser) {
+        if (!isOwnMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_block_user,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_clear),
