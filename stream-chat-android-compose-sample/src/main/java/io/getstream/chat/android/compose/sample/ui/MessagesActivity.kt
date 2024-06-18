@@ -53,6 +53,7 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
@@ -63,6 +64,8 @@ import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
+import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
@@ -126,6 +129,10 @@ class MessagesActivity : BaseConnectedActivity() {
                         ),
                     )
                 },
+                reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
+                messageOptionsTheme = MessageOptionsTheme.defaultTheme(
+                    optionVisibility = MessageOptionItemVisibility(),
+                ),
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
