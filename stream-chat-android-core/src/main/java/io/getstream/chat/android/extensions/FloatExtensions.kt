@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.extensions
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+
+@InternalStreamChatApi
 public fun Float.limitTo(min: Float, max: Float): Float {
     return when {
         this < min -> min
@@ -24,6 +27,7 @@ public fun Float.limitTo(min: Float, max: Float): Float {
     }
 }
 
+@InternalStreamChatApi
 public fun Float.isInt(): Boolean {
     val diff = this - toInt()
     return diff <= 0

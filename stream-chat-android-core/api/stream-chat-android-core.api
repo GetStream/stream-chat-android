@@ -114,8 +114,6 @@ public final class io/getstream/chat/android/core/utils/date/DateUtils {
 }
 
 public final class io/getstream/chat/android/extensions/FloatExtensionsKt {
-	public static final fun isInt (F)Z
-	public static final fun limitTo (FFF)F
 }
 
 public final class io/getstream/chat/android/extensions/IntExtensionsKt {
