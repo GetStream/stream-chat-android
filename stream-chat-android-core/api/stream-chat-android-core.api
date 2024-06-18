@@ -554,6 +554,9 @@ public final class io/getstream/chat/android/models/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/ChannelDataKt {
+}
+
 public final class io/getstream/chat/android/models/ChannelInfo {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
@@ -578,6 +581,7 @@ public final class io/getstream/chat/android/models/ChannelInfo {
 }
 
 public final class io/getstream/chat/android/models/ChannelKt {
+	public static final fun toChannelData (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/ChannelData;
 }
 
 public final class io/getstream/chat/android/models/ChannelMute {
