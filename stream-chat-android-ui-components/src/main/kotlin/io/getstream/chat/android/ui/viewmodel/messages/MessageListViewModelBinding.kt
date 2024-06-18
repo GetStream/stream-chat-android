@@ -98,6 +98,13 @@ public fun MessageListViewModel.bindView(
         )
     }
     view.setOnScrollToBottomHandler { scrollToBottom { view.scrollToBottom() } }
+    view.setMessageUserBlockHandler { message ->
+        onEvent(
+            MessageListViewModel.Event.BlockUser(
+                message.user.id,
+            ),
+        )
+    }
 
     ownCapabilities.observe(lifecycleOwner) {
         view.setOwnCapabilities(it)

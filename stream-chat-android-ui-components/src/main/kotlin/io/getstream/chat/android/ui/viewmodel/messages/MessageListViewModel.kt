@@ -285,6 +285,8 @@ public class MessageListViewModel(
                 true -> messageListController.scrollToFirstUnreadMessage()
                 false -> messageListController.disableUnreadLabelButton()
             }
+
+            is Event.BlockUser -> messageListController.blockUser(event.userId)
         }
     }
 
@@ -700,5 +702,12 @@ public class MessageListViewModel(
          * @param navigateToFirstUnreadMessage If true, the user will be navigated to the first unread message.
          */
         public data class HideUnreadLabel(val navigateToFirstUnreadMessage: Boolean) : Event()
+
+        /**
+         * Block a user.
+         *
+         * @param userId the id of the user that is blocked.
+         */
+        public data class BlockUser(val userId: String) : Event()
     }
 }

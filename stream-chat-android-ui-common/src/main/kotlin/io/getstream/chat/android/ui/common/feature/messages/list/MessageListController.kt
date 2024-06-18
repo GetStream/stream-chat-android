@@ -60,6 +60,7 @@ import io.getstream.chat.android.state.extensions.loadOlderMessages
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
@@ -1431,6 +1432,7 @@ public class MessageListController(
             is Delete, is FlagMessage -> {
                 _messageActions.value = _messageActions.value + messageAction
             }
+            is BlockUser -> blockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
@@ -1867,6 +1869,32 @@ public class MessageListController(
      */
     public fun removeShadowBanFromUser(userId: String) {
         chatClient.channel(cid).removeShadowBan(userId).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
+    }
+
+    /**
+     * Block a user. Unlike ban the block is not channel related but rather directly to the user.
+     *
+     * @param userId the id of the user that will be blocked.
+     */
+    public fun blockUser(userId: String) {
+        chatClient.blockUser(userId).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
+    }
+
+    /**
+     * Unblock a user.
+     *
+     * @param userId the id of the user that will be unblocked.
+     */
+    public fun unblockUser(userId: String) {
+        chatClient.unblockUser(userId).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.BlockUserError(it)
             }
