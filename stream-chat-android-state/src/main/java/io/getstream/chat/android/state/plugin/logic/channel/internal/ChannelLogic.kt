@@ -568,6 +568,7 @@ internal class ChannelLogic(
             }
             is MemberUpdatedEvent -> {
                 channelStateLogic.upsertMember(event.member)
+                channelStateLogic.updateMembership(event.member)
             }
             is NotificationAddedToChannelEvent -> {
                 channelStateLogic.upsertMembers(event.channel.members)
@@ -585,10 +586,10 @@ internal class ChannelLogic(
                 channelStateLogic.deleteWatcher(event)
             }
             is ChannelUpdatedEvent -> {
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is ChannelUpdatedByUserEvent -> {
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is ChannelHiddenEvent -> {
                 channelStateLogic.toggleHidden(true)
@@ -626,11 +627,11 @@ internal class ChannelLogic(
             }
             is NotificationInviteAcceptedEvent -> {
                 channelStateLogic.addMember(event.member)
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is NotificationInviteRejectedEvent -> {
                 channelStateLogic.deleteMember(event.member)
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is NotificationChannelMutesUpdatedEvent -> {
                 event.me.channelMutes.any { mute ->

@@ -147,8 +147,15 @@ public fun defaultMessageOptionsState(
     val canMarkAsUnread = ownCapabilities.contains(ChannelCapabilities.READ_EVENTS)
     val canFlagMessage = ownCapabilities.contains(ChannelCapabilities.FLAG_MESSAGE)
 
+    val isThreadReplyPossible = !isInThread && isMessageSynced && canThreadReply
+    val isEditMessagePossible = ((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()
+    val isDeleteMessagePossible = canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)
+
+    // options menu item visibility
+    val visibility = ChatTheme.messageOptionsTheme.optionVisibility
+
     return listOfNotNull(
-        if (isOwnMessage && isMessageFailed) {
+        if (visibility.isRetryMessageVisible && isOwnMessage && isMessageFailed) {
             MessageOptionItemState(
                 title = R.string.stream_compose_resend_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_resend),
@@ -159,7 +166,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (isMessageSynced && canQuoteMessage) {
+        if (visibility.isReplyVisible && isMessageSynced && canQuoteMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_reply),
@@ -170,7 +177,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (!isInThread && isMessageSynced && canThreadReply) {
+        if (visibility.isThreadReplyVisible && isThreadReplyPossible) {
             MessageOptionItemState(
                 title = R.string.stream_compose_thread_reply,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_thread),
@@ -181,7 +188,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (canMarkAsUnread) {
+        if (visibility.isMarkAsUnreadVisible && canMarkAsUnread) {
             MessageOptionItemState(
                 title = R.string.stream_compose_mark_as_unread,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_mark_as_unread),
@@ -192,7 +199,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (isTextOnlyMessage || hasLinks) {
+        if (visibility.isCopyTextVisible && (isTextOnlyMessage || hasLinks)) {
             MessageOptionItemState(
                 title = R.string.stream_compose_copy_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_copy),
@@ -203,7 +210,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (((isOwnMessage && canEditOwnMessage) || canEditAnyMessage) && !selectedMessage.isGiphy()) {
+        if (visibility.isEditMessageVisible && isEditMessagePossible) {
             MessageOptionItemState(
                 title = R.string.stream_compose_edit_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_edit),
@@ -214,7 +221,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (canFlagMessage && !isOwnMessage) {
+        if (visibility.isFlagMessageVisible && canFlagMessage && !isOwnMessage) {
             MessageOptionItemState(
                 title = R.string.stream_compose_flag_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_flag),
@@ -225,7 +232,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (isMessageSynced && canPinMessage) {
+        if (visibility.isPinMessageVisible && isMessageSynced && canPinMessage) {
             MessageOptionItemState(
                 title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message,
                 action = Pin(selectedMessage),
@@ -247,7 +254,7 @@ public fun defaultMessageOptionsState(
         } else {
             null
         },
-        if (canDeleteAnyMessage || (isOwnMessage && canDeleteOwnMessage)) {
+        if (visibility.isDeleteMessageVisible && isDeleteMessagePossible) {
             MessageOptionItemState(
                 title = R.string.stream_compose_delete_message,
                 iconPainter = painterResource(R.drawable.stream_compose_ic_delete),

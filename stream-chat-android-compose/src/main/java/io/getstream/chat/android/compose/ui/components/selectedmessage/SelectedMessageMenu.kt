@@ -77,7 +77,7 @@ public fun SelectedMessageMenu(
     headerContent: @Composable ColumnScope.() -> Unit = {
         val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
 
-        if (canLeaveReaction) {
+        if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
             DefaultSelectedMessageReactionOptions(
                 message = message,
                 reactionTypes = reactionTypes,

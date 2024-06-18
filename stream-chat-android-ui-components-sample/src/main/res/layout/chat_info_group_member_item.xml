@@ -41,7 +41,7 @@
         android:textSize="@dimen/stream_ui_text_medium"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
-        app:layout_constraintEnd_toStartOf="@id/ownerTextView"
+        app:layout_constraintEnd_toStartOf="@id/channelRoleView"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
@@ -77,7 +77,7 @@
         android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
-        app:layout_constraintEnd_toStartOf="@id/ownerTextView"
+        app:layout_constraintEnd_toStartOf="@id/channelRoleView"
         app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         app:layout_constraintVertical_chainStyle="packed"
@@ -85,14 +85,13 @@
         />
 
     <TextView
-        android:id="@+id/ownerTextView"
+        android:id="@+id/channelRoleView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="@string/chat_group_info_owner"
         android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_text_small"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
