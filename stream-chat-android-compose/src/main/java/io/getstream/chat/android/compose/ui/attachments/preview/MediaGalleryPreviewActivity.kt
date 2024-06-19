@@ -38,7 +38,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -81,6 +80,8 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -105,7 +106,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -113,6 +113,12 @@ import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil.CoilImageState
+import com.skydoves.landscapist.coil.rememberCoilImageState
+import com.skydoves.landscapist.components.rememberImageComponent
+import com.skydoves.landscapist.placeholder.shimmer.Shimmer
+import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -131,15 +137,14 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.toMediaGaller
 import io.getstream.chat.android.compose.state.mediagallerypreview.toMessage
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.components.LoadingIndicator
-import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.compose.viewmodel.mediapreview.MediaGalleryPreviewViewModel
@@ -753,41 +758,45 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         ) {
             // Used as a workaround for Coil's lack of a retry policy.
             // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-            var retryHash by remember {
-                mutableStateOf(0)
-            }
+            var retryHash by remember { mutableIntStateOf(0) }
 
             val data = attachment.imagePreviewUrl
-            val painter =
-                rememberStreamImagePainter(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(data)
-                        .crossfade(true)
-                        .setParameter(key = RetryHash, value = retryHash)
-                        .build(),
-                )
+            val context = LocalContext.current
+            val imageRequest = remember(retryHash) {
+                ImageRequest.Builder(context)
+                    .data(data)
+                    .crossfade(true)
+                    .setParameter(key = RetryHash, value = retryHash)
+                    .build()
+            }
+
+            var imageState by rememberCoilImageState()
 
             val density = LocalDensity.current
             val parentSize = Size(density.run { maxWidth.toPx() }, density.run { maxHeight.toPx() })
             var imageSize by remember { mutableStateOf(Size(0f, 0f)) }
 
-            var currentScale by remember { mutableStateOf(DefaultZoomScale) }
+            var currentScale by remember { mutableFloatStateOf(DefaultZoomScale) }
             var translation by remember { mutableStateOf(Offset(0f, 0f)) }
 
-            val scale by animateFloatAsState(targetValue = currentScale)
+            val scale by animateFloatAsState(targetValue = currentScale, label = "")
 
             // Used to refresh the request for the current page
             // if it has previously failed.
             onImageNeedsToReload(
                 data = data,
                 connectionState = mediaGalleryPreviewViewModel.connectionState,
-                asyncImagePainterState = painter.state,
+                coilImageState = imageState,
             ) {
                 retryHash++
             }
 
-            val transformModifier = if (painter.state is AsyncImagePainter.State.Success) {
-                val size = painter.intrinsicSize
+            val transformModifier = if (imageState is CoilImageState.Success) {
+                val state = imageState as CoilImageState.Success
+                val size = Size(
+                    state.drawable?.intrinsicWidth?.toFloat() ?: 0f,
+                    state.drawable?.intrinsicHeight?.toFloat() ?: 0f,
+                )
                 Modifier
                     .aspectRatio(size.width / size.height, true)
                     .background(color = ChatTheme.colors.overlay)
@@ -799,14 +808,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 modifier = Modifier.fillMaxWidth(),
                 contentAlignment = Alignment.Center,
             ) {
-                MediaPreviewPlaceHolder(
-                    asyncImagePainterState = painter.state,
-                    isImage = attachment.isImage(),
-                    progressIndicatorStrokeWidth = 6.dp,
-                    progressIndicatorFillMaxSizePercentage = 0.2f,
-                )
-
-                Image(
+                StreamImage(
                     modifier = transformModifier
                         .graphicsLayer(
                             scaleY = scale,
@@ -877,8 +879,25 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                                 }
                             }
                         },
-                    painter = painter,
-                    contentDescription = null,
+                    imageRequest = { imageRequest },
+                    component = rememberImageComponent {
+                        +ShimmerPlugin(
+                            Shimmer.Resonate(
+                                baseColor = ChatTheme.colors.threadSeparatorGradientStart,
+                                highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                            ),
+                        )
+                    },
+                    failure = {
+                        Icon(
+                            tint = ChatTheme.colors.textLowEmphasis,
+                            modifier = Modifier.fillMaxSize(0.4f),
+                            painter = painterResource(
+                                id = R.drawable.stream_compose_ic_image_picker,
+                            ),
+                            contentDescription = null,
+                        )
+                    },
                 )
 
                 Log.d("isCurrentPage", "${page != pagerState.currentPage}")
@@ -992,13 +1011,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     null
                 }
 
-                val painter = rememberStreamImagePainter(data = data)
-
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier.fillMaxSize(),
                 ) {
-                    Image(
+                    StreamImage(
                         modifier = Modifier
                             .clickable {
                                 shouldShowProgressBar = true
@@ -1015,8 +1032,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                             }
                             .fillMaxSize()
                             .background(color = Color.Black),
-                        painter = painter,
-                        contentDescription = null,
+                        data = { data },
                     )
 
                     if (shouldShowPlayButton) {
@@ -1544,19 +1560,22 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     null
                 }
 
-            val painter = rememberStreamImagePainter(
-                model = ImageRequest.Builder(LocalContext.current)
+            val context = LocalContext.current
+            val imageRequest = remember(retryHash) {
+                ImageRequest.Builder(context)
                     .data(data)
                     .setParameter(RetryHash, retryHash.toString())
-                    .build(),
-            )
+                    .build()
+            }
+
+            var imageState by rememberCoilImageState()
 
             // Used to refresh the request for the current page
             // if it has previously failed.
             onImageNeedsToReload(
                 data = data,
                 connectionState = mediaGalleryPreviewViewModel.connectionState,
-                asyncImagePainterState = painter.state,
+                coilImageState = imageState,
             ) {
                 retryHash++
             }
@@ -1567,21 +1586,31 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 ChatTheme.colors.videoBackgroundMediaGalleryPicker
             }
 
-            Image(
+            StreamImage(
                 modifier = Modifier
                     .padding(1.dp)
                     .fillMaxSize()
                     .background(color = backgroundColor),
-                painter = painter,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-            )
-
-            MediaPreviewPlaceHolder(
-                asyncImagePainterState = painter.state,
-                isImage = isImage,
-                progressIndicatorStrokeWidth = 3.dp,
-                progressIndicatorFillMaxSizePercentage = 0.3f,
+                imageRequest = { imageRequest },
+                imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+                component = rememberImageComponent {
+                    +ShimmerPlugin(
+                        Shimmer.Resonate(
+                            baseColor = ChatTheme.colors.threadSeparatorGradientStart,
+                            highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                        ),
+                    )
+                },
+                failure = {
+                    Icon(
+                        tint = ChatTheme.colors.textLowEmphasis,
+                        modifier = Modifier.fillMaxSize(0.4f),
+                        painter = painterResource(
+                            id = R.drawable.stream_compose_ic_image_picker,
+                        ),
+                        contentDescription = null,
+                    )
+                },
             )
 
             Avatar(
@@ -1602,7 +1631,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 initials = user.initials,
             )
 
-            if (isVideo && painter.state !is AsyncImagePainter.State.Loading) {
+            if (isVideo && imageState !is CoilImageState.Loading) {
                 PlayButton(
                     modifier = Modifier
                         .shadow(6.dp, shape = CircleShape)

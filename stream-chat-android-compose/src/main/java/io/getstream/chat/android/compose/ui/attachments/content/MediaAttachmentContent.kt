@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import android.annotation.SuppressLint
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -35,13 +36,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -54,9 +56,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.animation.crossfade.CrossfadePlugin
+import com.skydoves.landscapist.coil.CoilImageState
+import com.skydoves.landscapist.coil.rememberCoilImageState
+import com.skydoves.landscapist.components.rememberImageComponent
+import com.skydoves.landscapist.placeholder.shimmer.Shimmer
+import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
@@ -64,11 +71,10 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
-import io.getstream.chat.android.compose.ui.components.MediaPreviewPlaceHolder
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.RetryHash
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.ui.util.onImageNeedsToReload
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
@@ -368,6 +374,7 @@ internal fun RowScope.MultipleMediaAttachments(
  * @param overlayContent Represents the content overlaid above attachment previews.
  * Usually used to display a play button over video previews.
  */
+@SuppressLint("UnrememberedMutableInteractionSource")
 @Suppress("LongParameterList", "LongMethod")
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -395,27 +402,29 @@ internal fun MediaAttachmentContentItem(
 
     // Used as a workaround for Coil's lack of a retry policy.
     // See: https://github.com/coil-kt/coil/issues/884#issuecomment-975932886
-    var retryHash by remember {
-        mutableStateOf(0)
-    }
+    var retryHash by remember { mutableIntStateOf(0) }
 
     val data =
         if (isImage || (isVideo && ChatTheme.videoThumbnailsEnabled)) {
             when (message.syncStatus) {
                 SyncStatus.COMPLETED ->
                     attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+
                 else -> attachment.upload
             }
         } else {
             null
         }
 
-    val painter = rememberStreamImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
+    val context = LocalContext.current
+    val model = remember(retryHash) {
+        ImageRequest.Builder(context)
             .data(data)
             .setParameter(key = RetryHash, value = retryHash)
-            .build(),
-    )
+            .build()
+    }
+
+    var imageState by rememberCoilImageState()
 
     val mixedMediaPreviewLauncher = rememberLauncherForActivityResult(
         contract = MediaGalleryPreviewContract(),
@@ -427,7 +436,7 @@ internal fun MediaAttachmentContentItem(
     onImageNeedsToReload(
         data = data,
         connectionState = connectionState,
-        asyncImagePainterState = painter.state,
+        coilImageState = imageState,
     ) {
         retryHash++
     }
@@ -467,24 +476,35 @@ internal fun MediaAttachmentContentItem(
                 ChatTheme.colors.videoBackgroundMessageList
             }
 
-        Image(
+        StreamImage(
             modifier = modifier
                 .fillMaxSize()
                 .background(backgroundColor),
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+            imageRequest = { model },
+            onImageStateChanged = { imageState = it },
+            component = rememberImageComponent {
+                +ShimmerPlugin(
+                    Shimmer.Resonate(
+                        baseColor = ChatTheme.colors.threadSeparatorGradientStart,
+                        highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                    ),
+                )
+                +CrossfadePlugin()
+            },
+            failure = {
+                Icon(
+                    tint = ChatTheme.colors.disabled,
+                    modifier = Modifier.fillMaxSize(0.4f),
+                    painter = painterResource(
+                        id = R.drawable.stream_compose_ic_image_picker,
+                    ),
+                    contentDescription = null,
+                )
+            },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
 
-        MediaPreviewPlaceHolder(
-            asyncImagePainterState = painter.state,
-            progressIndicatorStrokeWidth = 3.dp,
-            progressIndicatorFillMaxSizePercentage = 0.25f,
-            isImage = isImage,
-            placeholderIconTintColor = ChatTheme.colors.disabled,
-        )
-
-        if (painter.state !is AsyncImagePainter.State.Loading) {
+        if (imageState !is CoilImageState.Loading) {
             overlayContent(attachment.type)
         }
     }

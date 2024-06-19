@@ -34,7 +34,7 @@ import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.placeholder.placeholder.PlaceholderPlugin
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamNetworkImage
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 
 /**
@@ -76,7 +76,7 @@ public fun Avatar(
     }
 
     val cdnImageResizing = ChatTheme.streamCdnImageResizing
-    StreamNetworkImage(
+    StreamImage(
         modifier = modifier.clip(shape).clickable { onClick?.invoke() },
         data = { imageUrl.applyStreamCdnImageResizingIfEnabled(cdnImageResizing) },
         loading = {

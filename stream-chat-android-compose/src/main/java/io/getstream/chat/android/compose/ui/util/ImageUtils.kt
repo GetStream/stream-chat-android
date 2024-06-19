@@ -96,7 +96,7 @@ public fun Modifier.mirrorRtl(layoutDirection: LayoutDirection): Modifier {
  * @param failure Content to be displayed when the request is failed.
  */
 @Composable
-public fun StreamNetworkImage(
+public fun StreamImage(
     data: () -> Any?,
     modifier: Modifier = Modifier,
     component: ImageComponent = rememberImageComponent {},
@@ -143,7 +143,7 @@ public fun StreamNetworkImage(
  * @param failure Content to be displayed when the request is failed.
  */
 @Composable
-public fun StreamNetworkImage(
+public fun StreamImage(
     imageRequest: () -> ImageRequest,
     modifier: Modifier = Modifier,
     component: ImageComponent = rememberImageComponent {},
@@ -190,10 +190,10 @@ public fun StreamNetworkImage(
  * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
  */
 @Deprecated(
-    message = "Use StreamNetworkImage instead",
+    message = "Use StreamImage instead",
     replaceWith = ReplaceWith(
-        expression = "StreamNetworkImage(data = { data })",
-        imports = arrayOf("com.skydoves.landscapist.coil.CoilImage"),
+        expression = "StreamImage(data = { data })",
+        imports = arrayOf("io.getstream.chat.android.compose.ui.util.StreamImage"),
     ),
 )
 @Composable
@@ -241,10 +241,10 @@ public fun rememberStreamImagePainter(
  * @return The [AsyncImagePainter] that remembers the request and the image that we want to show.
  */
 @Deprecated(
-    message = "Use StreamNetworkImage instead",
+    message = "Use StreamImage instead",
     replaceWith = ReplaceWith(
-        expression = "StreamNetworkImage(imageRequest = { imageRequest })",
-        imports = arrayOf("com.skydoves.landscapist.coil.CoilImage"),
+        expression = "StreamImage(imageRequest = { imageRequest })",
+        imports = arrayOf("io.getstream.chat.android.compose.ui.util.StreamImage"),
     ),
 )
 @Composable

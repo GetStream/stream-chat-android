@@ -16,16 +16,15 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -42,26 +41,25 @@ public fun FileAttachmentQuotedContent(
 ) {
     val isImage = attachment.type == "image"
 
-    val painter = if (isImage) {
+    val data = if (isImage) {
         val dataToLoad =
             attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
                 ?: attachment.upload
 
-        rememberStreamImagePainter(dataToLoad)
+        dataToLoad
     } else {
-        painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
+        MimeTypeIconProvider.getIconRes(attachment.mimeType)
     }
 
     val startPadding = ChatTheme.dimens.quotedMessageAttachmentStartPadding
     val verticalPadding = ChatTheme.dimens.quotedMessageAttachmentTopPadding
     val size = ChatTheme.dimens.quotedMessageAttachmentPreviewSize
 
-    Image(
+    StreamImage(
         modifier = modifier
             .padding(start = startPadding, top = verticalPadding, bottom = verticalPadding)
             .size(size),
-        painter = painter,
-        contentDescription = null,
-        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit,
+        data = { data },
+        imageOptions = ImageOptions(contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit),
     )
 }

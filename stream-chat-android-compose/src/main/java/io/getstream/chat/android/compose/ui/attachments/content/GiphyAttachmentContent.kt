@@ -43,12 +43,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.components.rememberImageComponent
+import com.skydoves.landscapist.placeholder.shimmer.Shimmer
+import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.GiphyInfoType
 import io.getstream.chat.android.ui.common.utils.GiphySizingMode
@@ -101,8 +105,6 @@ public fun GiphyAttachmentContent(
 
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
 
-    val painter = rememberStreamImagePainter(giphyInfo?.url)
-
     val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
     val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
 
@@ -129,6 +131,7 @@ public fun GiphyAttachmentContent(
                                 ),
                             )
                         }
+
                         else -> calculateResultingDimensions(
                             maxWidth = maxWidth,
                             maxHeight = maxHeight,
@@ -156,11 +159,18 @@ public fun GiphyAttachmentContent(
                 onLongClick = { onLongItemClick(message) },
             ),
     ) {
-        Image(
+        StreamImage(
             modifier = Modifier.fillMaxSize(),
-            painter = painter,
-            contentDescription = null,
-            contentScale = contentScale,
+            data = { giphyInfo?.url },
+            component = rememberImageComponent {
+                +ShimmerPlugin(
+                    Shimmer.Resonate(
+                        baseColor = ChatTheme.colors.threadSeparatorGradientStart,
+                        highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                    ),
+                )
+            },
+            imageOptions = ImageOptions(contentScale = contentScale),
         )
 
         Image(
