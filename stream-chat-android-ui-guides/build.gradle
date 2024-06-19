@@ -4,6 +4,7 @@ import io.getstream.chat.android.Versions
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 apply from: "${rootDir}/scripts/android.gradle"
@@ -31,10 +32,6 @@ android {
     buildFeatures {
         viewBinding true
         compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
     }
 
     lintOptions {

@@ -3,6 +3,7 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'androidx.baselineprofile'
@@ -77,10 +78,6 @@ android {
     buildFeatures {
         compose true
         buildConfig true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
     }
 
     lintOptions {

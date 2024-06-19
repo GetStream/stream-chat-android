@@ -20,7 +20,6 @@ apply plugin: MinorBumpPlugin
 apply plugin: VersionPrintPlugin
 apply plugin: ChangelogAddModelSectionPlugin
 
-
 buildscript {
     repositories {
         maven { url "https://plugins.gradle.org/m2/" }
@@ -31,6 +30,7 @@ buildscript {
     dependencies {
         classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
+        classpath Dependencies.composeCompilerPlugin
         classpath Dependencies.googleServicesPlugin
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin
