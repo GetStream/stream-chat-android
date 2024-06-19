@@ -48,10 +48,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil.CoilImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -125,14 +126,11 @@ internal fun DefaultImagesPickerItem(
                 onClick = { onImageSelected(imageItem) },
             ),
     ) {
-        AsyncImage(
-            model = imageRequest,
-            imageLoader = LocalStreamImageLoader.current,
+        CoilImage(
+            imageRequest = { imageRequest },
+            imageLoader = { LocalStreamImageLoader.current },
             modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            onSuccess = {
-            },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
 
         if (imageItem.isSelected) {

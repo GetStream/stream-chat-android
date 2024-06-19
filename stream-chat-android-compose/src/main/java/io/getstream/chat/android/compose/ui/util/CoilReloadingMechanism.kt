@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.util
 
-import coil.compose.AsyncImagePainter
 import coil.network.HttpException
+import com.skydoves.landscapist.coil.CoilImageState
 import io.getstream.chat.android.models.ConnectionState
 
 /**
@@ -26,19 +26,19 @@ import io.getstream.chat.android.models.ConnectionState
  *
  * @param data The data containing the image.
  * @param connectionState The state of the network connection
- * @param asyncImagePainterState The state of the async image painter
+ * @param coilImageState The state of the async image painter
  * @param onReload The lambda function called when the conditions have been met and the image needs to be reloaded.
  */
 internal fun onImageNeedsToReload(
     data: Any?,
     connectionState: ConnectionState,
-    asyncImagePainterState: AsyncImagePainter.State,
+    coilImageState: CoilImageState,
     onReload: () -> Unit,
 ) {
     if (data != null && connectionState is ConnectionState.Connected &&
-        asyncImagePainterState is AsyncImagePainter.State.Error
+        coilImageState is CoilImageState.Failure
     ) {
-        val errorCode = (asyncImagePainterState.result.throwable as? HttpException)?.response?.code
+        val errorCode = (coilImageState.reason as? HttpException)?.response?.code
 
         if (errorCode == UnsatisfiableRequest) {
             onReload()
