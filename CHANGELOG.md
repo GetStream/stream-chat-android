@@ -65,7 +65,8 @@
 ### 🐞 Fixed
 - Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
 - Fixed quoted message styling to be consistent with `isMine` property. [#5287](https://github.com/GetStream/stream-chat-android/pull/5287)
-  * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change. 
+  * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change.
+- Fixed video being displayed in voice recording attachment. [#5296](https://github.com/GetStream/stream-chat-android/pull/5296)
 
 ### ⬆️ Improved
 - Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
