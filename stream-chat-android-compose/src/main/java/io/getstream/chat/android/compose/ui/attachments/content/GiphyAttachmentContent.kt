@@ -165,8 +165,8 @@ public fun GiphyAttachmentContent(
             component = rememberImageComponent {
                 +ShimmerPlugin(
                     Shimmer.Resonate(
-                        baseColor = ChatTheme.colors.threadSeparatorGradientStart,
-                        highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                        baseColor = ChatTheme.colors.mediaShimmerBase,
+                        highlightColor = ChatTheme.colors.mediaShimmerHighlights,
                     ),
                 )
             },

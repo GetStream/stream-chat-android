@@ -883,8 +883,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                     component = rememberImageComponent {
                         +ShimmerPlugin(
                             Shimmer.Resonate(
-                                baseColor = ChatTheme.colors.threadSeparatorGradientStart,
-                                highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                                baseColor = ChatTheme.colors.mediaShimmerBase,
+                                highlightColor = ChatTheme.colors.mediaShimmerHighlights,
                             ),
                         )
                     },
@@ -1596,8 +1596,8 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
                 component = rememberImageComponent {
                     +ShimmerPlugin(
                         Shimmer.Resonate(
-                            baseColor = ChatTheme.colors.threadSeparatorGradientStart,
-                            highlightColor = ChatTheme.colors.threadSeparatorGradientEnd,
+                            baseColor = ChatTheme.colors.mediaShimmerBase,
+                            highlightColor = ChatTheme.colors.mediaShimmerHighlights,
                         ),
                     )
                 },
