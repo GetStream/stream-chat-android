@@ -114,8 +114,6 @@ public final class io/getstream/chat/android/core/utils/date/DateUtils {
 }
 
 public final class io/getstream/chat/android/extensions/FloatExtensionsKt {
-	public static final fun isInt (F)Z
-	public static final fun limitTo (FFF)F
 }
 
 public final class io/getstream/chat/android/extensions/IntExtensionsKt {
@@ -617,6 +615,9 @@ public final class io/getstream/chat/android/models/ChannelData {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/models/ChannelDataKt {
+}
+
 public final class io/getstream/chat/android/models/ChannelInfo {
 	public fun <init> ()V
 	public fun <init> (Ljava/lang/String;)V
@@ -646,6 +647,7 @@ public final class io/getstream/chat/android/models/ChannelInfo {
 }
 
 public final class io/getstream/chat/android/models/ChannelKt {
+	public static final fun toChannelData (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/ChannelData;
 }
 
 public final class io/getstream/chat/android/models/ChannelMute {

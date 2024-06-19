@@ -32,8 +32,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil.CoilImage
+import com.skydoves.landscapist.components.rememberImageComponent
+import com.skydoves.landscapist.placeholder.placeholder.PlaceholderPlugin
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.docs.R
 import io.getstream.chat.docs.kotlin.cookbook.ui.common.OnListEndReached
@@ -98,19 +101,22 @@ private fun CustomChannelListItem(channel: Channel, onChannelClick: (String) -> 
 @Composable
 private fun ChannelImage(url: String) {
     // We use coil for getting the images
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(url)
-            .crossfade(durationMillis = 500)
-            .build(),
-        contentDescription = null,
+    val context = LocalContext.current
+    CoilImage(
+        imageRequest = {
+            ImageRequest.Builder(context)
+                .data(url)
+                .crossfade(durationMillis = 500)
+                .build()
+        },
         modifier = Modifier
             .size(45.dp)
             .clip(shape = RoundedCornerShape(15.dp)),
-        contentScale = ContentScale.Crop,
-        error = painterResource(id = R.drawable.ic_avatar),
-        fallback = painterResource(id = R.drawable.ic_avatar),
-        placeholder = painterResource(id = R.drawable.ic_avatar),
+        imageOptions = ImageOptions(contentScale = ContentScale.Crop),
+        component = rememberImageComponent {
+            +PlaceholderPlugin.Loading(painterResource(id = R.drawable.ic_avatar))
+            +PlaceholderPlugin.Failure(painterResource(id = R.drawable.ic_avatar))
+        },
     )
 }
 
