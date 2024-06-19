@@ -118,4 +118,5 @@ dependencies {
     compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar')
     implementation Dependencies.coil
     implementation Dependencies.composeLandscapistCoil
+    implementation Dependencies.composeLandscapistPlaceholder
 }
