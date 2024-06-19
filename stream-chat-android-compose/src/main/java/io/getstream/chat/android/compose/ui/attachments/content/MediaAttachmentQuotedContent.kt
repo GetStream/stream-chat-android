@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -33,12 +32,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isImgur
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -71,10 +71,9 @@ public fun MediaAttachmentQuotedContent(
             isGiphy -> attachment.imagePreviewUrl
             isImageContent || (isVideo && ChatTheme.videoThumbnailsEnabled) ->
                 attachment.imagePreviewUrl?.applyStreamCdnImageResizingIfEnabled(ChatTheme.streamCdnImageResizing)
+
             else -> null
         }
-
-    val imagePainter = rememberStreamImagePainter(data = data)
 
     Box(
         modifier = modifier
@@ -88,13 +87,12 @@ public fun MediaAttachmentQuotedContent(
             .clip(ChatTheme.shapes.quotedAttachment),
         contentAlignment = Alignment.Center,
     ) {
-        Image(
+        StreamImage(
             modifier = Modifier
                 .fillMaxSize(1f)
                 .background(backgroundColor),
-            painter = imagePainter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+            data = { data },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
 
         if (isVideo) {

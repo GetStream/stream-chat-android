@@ -94,6 +94,9 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
+    implementation Dependencies.composeLandscapistPlaceholder
+    implementation Dependencies.composeLandscapistAnimation
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
