@@ -134,6 +134,7 @@ object Dependencies {
     const val composeStableMarker = "com.github.skydoves:compose-stable-marker:${Versions.COMPOSE_STABLE_MARKER}"
     const val composeLandscapistCoil = "com.github.skydoves:landscapist-coil:${Versions.LANDSCAPIST}"
     const val composeLandscapistPlaceholder = "com.github.skydoves:landscapist-placeholder:${Versions.LANDSCAPIST}"
+    const val composeLandscapistAnimation = "com.github.skydoves:landscapist-animation:${Versions.LANDSCAPIST}"
     const val composeLifecycle = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.ANDROIDX_LIFECYCLE}"
     const val coroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.COROUTINES}"
     const val coroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.COROUTINES}"

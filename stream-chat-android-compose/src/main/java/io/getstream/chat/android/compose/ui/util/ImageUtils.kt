@@ -144,7 +144,7 @@ public fun StreamNetworkImage(
  */
 @Composable
 public fun StreamNetworkImage(
-    model: () -> ImageRequest,
+    imageRequest: () -> ImageRequest,
     modifier: Modifier = Modifier,
     component: ImageComponent = rememberImageComponent {},
     imageOptions: ImageOptions = ImageOptions(),
@@ -160,7 +160,7 @@ public fun StreamNetworkImage(
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
     CoilImage(
-        imageRequest = model,
+        imageRequest = imageRequest,
         imageLoader = { LocalStreamImageLoader.current },
         modifier = modifier,
         component = component,
@@ -243,7 +243,7 @@ public fun rememberStreamImagePainter(
 @Deprecated(
     message = "Use StreamNetworkImage instead",
     replaceWith = ReplaceWith(
-        expression = "StreamNetworkImage(model = { model })",
+        expression = "StreamNetworkImage(imageRequest = { imageRequest })",
         imports = arrayOf("com.skydoves.landscapist.coil.CoilImage"),
     ),
 )
