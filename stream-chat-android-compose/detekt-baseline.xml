@@ -39,6 +39,7 @@
     <ID>MagicNumber:MediaAttachmentFactory.kt$0.25f</ID>
     <ID>MagicNumber:MediaAttachmentQuotedContent.kt$0.8f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
+    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.4f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
     <ID>MagicNumber:MediaPreviewPlaceHolder.kt$0.4f</ID>
     <ID>MagicNumber:MessageComposer.kt$1000</ID>
@@ -47,8 +48,6 @@
     <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:MediaAttachmentContent.kt$0.4f</ID>
-    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$0.4f</ID>qw
-    <ID>MagicNumber:MediaGalleryPreviewActivity.kt$0.4f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
     <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
