@@ -76,11 +76,11 @@ dependencies {
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
-    implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
 
     // Coil
     androidTestImplementation Dependencies.coil
-    androidTestImplementation Dependencies.composeCoil
+    androidTestImplementation Dependencies.composeLandscapistCoil
     androidTestImplementation Dependencies.coilGif
     androidTestImplementation Dependencies.coilVideo
 

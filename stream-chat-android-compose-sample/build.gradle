@@ -115,7 +115,7 @@ dependencies {
     implementation Dependencies.composeAccompanistPager
 
     // Coil
-    implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
 
     // Firebase
     implementation Dependencies.firebaseAnalytics

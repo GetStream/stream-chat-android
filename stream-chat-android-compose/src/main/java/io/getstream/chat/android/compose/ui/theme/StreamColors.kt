@@ -93,6 +93,8 @@ public data class StreamColors(
     public val giphyMessageBackground: Color,
     public val threadSeparatorGradientStart: Color,
     public val threadSeparatorGradientEnd: Color,
+    public val mediaShimmerBase: Color,
+    public val mediaShimmerHighlights: Color,
     @Deprecated("Use MessageTheme.textStyle.color instead", level = DeprecationLevel.ERROR)
     public val ownMessageText: Color = textHighEmphasis,
     @Deprecated("Use MessageTheme.textStyle.color instead", level = DeprecationLevel.ERROR)
@@ -142,6 +144,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background),
+            mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
+            mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
             ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
             otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background),
@@ -180,6 +184,8 @@ public data class StreamColors(
             giphyMessageBackground = colorResource(R.color.stream_compose_bars_background_dark),
             threadSeparatorGradientStart = colorResource(R.color.stream_compose_input_background_dark),
             threadSeparatorGradientEnd = colorResource(R.color.stream_compose_app_background_dark),
+            mediaShimmerBase = colorResource(R.color.stream_compose_input_background),
+            mediaShimmerHighlights = colorResource(R.color.stream_compose_app_background),
             ownMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
             otherMessageText = colorResource(R.color.stream_compose_text_high_emphasis_dark),
             imageBackgroundMessageList = colorResource(R.color.stream_compose_input_background_dark),

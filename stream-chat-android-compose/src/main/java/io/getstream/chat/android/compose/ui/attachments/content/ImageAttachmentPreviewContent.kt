@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,9 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 
@@ -56,18 +56,17 @@ public fun ImageAttachmentPreviewContent(
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
     ) {
         items(attachments) { image ->
-            val painter = rememberStreamImagePainter(data = image.upload ?: image.imagePreviewUrl)
+            val data = image.upload ?: image.imagePreviewUrl
 
             Box(
                 modifier = Modifier
                     .size(95.dp)
                     .clip(RoundedCornerShape(16.dp)),
             ) {
-                Image(
+                StreamImage(
                     modifier = Modifier.fillMaxSize(),
-                    painter = painter,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
+                    data = { data },
+                    imageOptions = ImageOptions(contentScale = ContentScale.Crop),
                 )
 
                 CancelIcon(

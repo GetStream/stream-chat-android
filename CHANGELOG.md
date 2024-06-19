@@ -65,7 +65,8 @@
 ### 🐞 Fixed
 - Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
 - Fixed quoted message styling to be consistent with `isMine` property. [#5287](https://github.com/GetStream/stream-chat-android/pull/5287)
-  * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change. 
+  * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change.
+- Fixed video being displayed in voice recording attachment. [#5296](https://github.com/GetStream/stream-chat-android/pull/5296)
 
 ### ⬆️ Improved
 - Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
@@ -86,9 +87,11 @@
 - Added `MessageOptionItemVisibility` class that controls menu item visibility in the selected message options menu.
 - Added new `ChatTheme.messageOptionItemVisibility` property of type `MessageOptionItemVisibility`.
 - Added docs sections that describe these changes.
+- Added `StreamImage` Composable functions to load internal images, such as profile images, attatchments, and other media files.
 
 ### ⚠️ Changed
 - Used the new `ChatTheme.messageOptionItemVisibility` property in `defaultMessageOptionsState()` in combination with own capabilities to control menu option item visibility.
+- Now, Compose components use `StreamImage`, which delegates [Landscapist-Coil](https://github.com/skydoves/landscapist) for loading internal images.
 
 ### ❌ Removed
 

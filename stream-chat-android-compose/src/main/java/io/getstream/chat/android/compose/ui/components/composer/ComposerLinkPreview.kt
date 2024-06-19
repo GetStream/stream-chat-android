@@ -22,7 +22,6 @@ import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -48,9 +47,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -128,19 +128,17 @@ public fun ComposerLinkPreview(
 private fun ComposerLinkImagePreview(attachment: Attachment) {
     val imagePreviewUrl = attachment.imagePreviewUrl ?: return
     val theme = ChatTheme.messageComposerTheme.linkPreview
-    val painter = rememberStreamImagePainter(data = imagePreviewUrl)
     Box(
         modifier = Modifier.padding(theme.imagePadding),
         contentAlignment = Alignment.Center,
     ) {
-        Image(
+        StreamImage(
+            data = { imagePreviewUrl },
             modifier = Modifier
                 .height(theme.imageSize.height)
                 .width(theme.imageSize.width)
                 .clip(theme.imageShape),
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
     }
 }
