@@ -125,6 +125,7 @@ public fun AttachmentsPicker(
                     AnimatedContent(targetState = selectedTabIndex, label = "") {
                         tabFactories.getOrNull(it)
                             ?.PickerTabContent(
+                                onBackPressed = onDismiss,
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
@@ -192,7 +193,7 @@ private fun AttachmentPickerOptions(
                     modifier = Modifier
                         .weight(1f)
                         .mirrorRtl(layoutDirection = layoutDirection),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                     tint = if (hasPickedAttachments) {
                         ChatTheme.colors.primaryAccent

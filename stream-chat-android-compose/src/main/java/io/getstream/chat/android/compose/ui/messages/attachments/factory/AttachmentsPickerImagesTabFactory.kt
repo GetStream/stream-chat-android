@@ -86,6 +86,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun PickerTabContent(
+        onBackPressed: () -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

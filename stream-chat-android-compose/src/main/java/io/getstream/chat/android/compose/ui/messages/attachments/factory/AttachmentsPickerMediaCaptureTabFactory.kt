@@ -85,6 +85,7 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun PickerTabContent(
+        onBackPressed: () -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

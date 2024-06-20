@@ -66,6 +66,7 @@ private object AttachmentsPickerUsageSnippet {
                                 onAttachmentsSelected = { attachments ->
                                     // Handle selected attachments
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = {
                                     // Handle dismiss
                                 }
@@ -117,6 +118,7 @@ private object AttachmentsPickerHandlingActionsSnippet {
                                     attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                                     composerViewModel.addSelectedAttachments(attachments)
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = { // Reset the UI state and dismiss the picker
                                     attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                                     attachmentsPickerViewModel.dismissAttachments()
@@ -163,6 +165,7 @@ private object AttachmentsPickerCustomizationSnippet {
                                 onAttachmentsSelected = { attachments ->
                                     // Handle selected attachments
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = {
                                     // Handle dismiss
                                 }
@@ -201,6 +204,7 @@ private object AttachmentsPickerCustomizationSnippet {
                                 onAttachmentsSelected = { attachments ->
                                     // Handle selected attachments
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = {
                                     // Handle dismiss
                                 }
@@ -236,6 +240,7 @@ private object AttachmentsPickerCustomizationSnippet {
 
             @Composable
             override fun PickerTabContent(
+                onBackPressed: () -> Unit,
                 attachments: List<AttachmentPickerItemState>,
                 onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
                 onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

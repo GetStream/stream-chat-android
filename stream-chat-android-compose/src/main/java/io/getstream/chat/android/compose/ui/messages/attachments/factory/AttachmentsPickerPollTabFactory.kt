@@ -18,12 +18,11 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,6 +30,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionHeader
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
@@ -73,6 +73,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
      */
     @Composable
     override fun PickerTabContent(
+        onBackPressed: () -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
@@ -83,6 +84,12 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
         ) {
+            PollOptionHeader(
+                modifier = Modifier.fillMaxWidth(),
+                enabledCreation = true,
+                onPollCreateClicked = {},
+                onBackPressed = onBackPressed,
+            )
         }
     }
 }
