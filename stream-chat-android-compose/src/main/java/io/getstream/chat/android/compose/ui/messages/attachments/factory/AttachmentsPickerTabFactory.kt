@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
-import android.content.Context
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -32,11 +31,6 @@ public interface AttachmentsPickerTabFactory {
      * The attachment picker mode that this factory handles.
      */
     public val attachmentsPickerMode: AttachmentsPickerMode
-
-    /**
-     *  A custom action that can be executed instead of [PickerTabContent] Composable.
-     */
-    public val onTabAction: ((Context) -> Unit)?
 
     /**
      * Determines if the picker tab is enabled.

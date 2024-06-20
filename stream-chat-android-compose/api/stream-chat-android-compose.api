@@ -273,6 +273,9 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 
 public abstract class io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
+	public synthetic fun <init> (ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun isFullContent ()Z
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/CustomPickerMode : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
@@ -1323,7 +1326,7 @@ public final class io/getstream/chat/android/compose/ui/messages/MessagesScreenK
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/AttachmentsPickerKt {
-	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;II)V
+	public static final fun AttachmentsPicker (Lio/getstream/chat/android/compose/viewmodel/messages/AttachmentsPickerViewModel;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Ljava/util/List;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerFilesTabFactory : io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactory {
@@ -1332,7 +1335,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
-	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1342,7 +1344,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
-	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1352,7 +1353,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
-	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1371,7 +1371,6 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
-	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1386,7 +1385,6 @@ public abstract interface class io/getstream/chat/android/compose/ui/messages/at
 	public abstract fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public abstract fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
-	public abstract fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public abstract fun isPickerTabEnabled ()Z
 }
 
@@ -1889,8 +1887,8 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamColors$Compa
 public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/StreamDimens$Companion;
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
 	public final fun component10-D9Ej5fM ()F
 	public final fun component11-D9Ej5fM ()F
@@ -1937,12 +1935,13 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun component49-D9Ej5fM ()F
 	public final fun component5-D9Ej5fM ()F
 	public final fun component50-D9Ej5fM ()F
+	public final fun component51-D9Ej5fM ()F
 	public final fun component6-D9Ej5fM ()F
 	public final fun component7-D9Ej5fM ()F
 	public final fun component8-D9Ej5fM ()F
 	public final fun component9-D9Ej5fM ()F
-	public final fun copy-1ChE538 (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
-	public static synthetic fun copy-1ChE538$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public final fun copy-xXNDtns (FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
+	public static synthetic fun copy-xXNDtns$default (Lio/getstream/chat/android/compose/ui/theme/StreamDimens;FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFIILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/StreamDimens;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachmentsContentFileUploadWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentFileWidth-D9Ej5fM ()F
@@ -1959,6 +1958,7 @@ public final class io/getstream/chat/android/compose/ui/theme/StreamDimens {
 	public final fun getAttachmentsContentUnsupportedWidth-D9Ej5fM ()F
 	public final fun getAttachmentsContentVideoMaxHeight-D9Ej5fM ()F
 	public final fun getAttachmentsContentVideoWidth-D9Ej5fM ()F
+	public final fun getAttachmentsPickerHeight-D9Ej5fM ()F
 	public final fun getChannelAvatarSize-D9Ej5fM ()F
 	public final fun getChannelItemHorizontalPadding-D9Ej5fM ()F
 	public final fun getChannelItemVerticalPadding-D9Ej5fM ()F
@@ -2356,12 +2356,14 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun getHasPickedFiles ()Z
 	public final fun getHasPickedImages ()Z
 	public final fun getImages ()Ljava/util/List;
+	public final fun getPolls ()Ljava/util/List;
 	public final fun getSelectedAttachments ()Ljava/util/List;
 	public final fun isShowingAttachments ()Z
 	public final fun loadData ()V
 	public final fun setAttachments (Ljava/util/List;)V
 	public final fun setFiles (Ljava/util/List;)V
 	public final fun setImages (Ljava/util/List;)V
+	public final fun setPolls (Ljava/util/List;)V
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {

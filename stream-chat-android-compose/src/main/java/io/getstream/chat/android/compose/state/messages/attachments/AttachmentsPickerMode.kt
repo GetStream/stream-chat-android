@@ -19,7 +19,9 @@ package io.getstream.chat.android.compose.state.messages.attachments
 /**
  * Represents the currently active attachment picker mode.
  */
-public sealed class AttachmentsPickerMode
+public sealed class AttachmentsPickerMode(
+    public val isFullContent: Boolean = false,
+)
 
 /**
  * Represents the mode with media files from the device.
@@ -39,7 +41,7 @@ public data object MediaCapture : AttachmentsPickerMode()
 /**
  * Represents the mode, creates a poll.
  */
-public data object Poll : AttachmentsPickerMode()
+public data object Poll : AttachmentsPickerMode(isFullContent = true)
 
 /**
  * User-customizable picker mode, with any number of extra properties.

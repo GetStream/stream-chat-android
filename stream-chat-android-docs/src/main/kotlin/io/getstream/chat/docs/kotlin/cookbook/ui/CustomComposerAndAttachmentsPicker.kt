@@ -78,6 +78,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
                     attachmentsPickerViewModel.isShowingAttachments -> {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                     }
+
                     else -> onBackClick()
                 }
             }
@@ -203,7 +204,8 @@ private fun CustomAttachmentsPicker(
     var shouldShowMenu by remember { mutableStateOf(true) }
     var selectedOptionIndex by remember { mutableStateOf(-1) }
 
-    Box( // Gray overlay
+    Box(
+        // Gray overlay
         modifier = Modifier
             .fillMaxSize()
             .background(ChatTheme.colors.overlay)
@@ -308,14 +310,17 @@ private fun AttachmentsTypeMenuItem(
                 backgroundColor = Color(0xFFCCCCFF)
                 label = "Images"
             }
+
             is Files -> {
                 backgroundColor = Color(0xFFFFCCCC)
                 label = "Files"
             }
+
             is MediaCapture -> {
                 backgroundColor = Color(0xFFFFCC99)
                 label = "Camera"
             }
+
             else -> {
                 backgroundColor = Color.LightGray
                 label = "Other"

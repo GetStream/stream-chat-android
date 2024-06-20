@@ -16,9 +16,15 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
-import android.content.Context
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import io.getstream.chat.android.compose.R
@@ -38,13 +44,6 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
      */
     override val attachmentsPickerMode: AttachmentsPickerMode
         get() = Poll
-
-    /**
-     *  A custom action that can be executed instead of [PickerTabContent] Composable.
-     */
-    public override val onTabAction: ((Context) -> Unit) = {
-        // TODO: start a poll activity
-    }
 
     /**
      * Emits a file icon for this tab.
@@ -79,5 +78,11 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+        ) {
+        }
     }
 }

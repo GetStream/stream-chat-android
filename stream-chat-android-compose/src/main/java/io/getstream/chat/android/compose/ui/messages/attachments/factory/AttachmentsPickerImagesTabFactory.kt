@@ -17,7 +17,6 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
-import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
@@ -56,11 +55,6 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
      */
     override val attachmentsPickerMode: AttachmentsPickerMode
         get() = Images
-
-    /**
-     *  A custom action that can be executed instead of [PickerTabContent] Composable.
-     */
-    public override val onTabAction: ((Context) -> Unit)? = null
 
     /**
      * Emits an image icon for this tab.
@@ -131,6 +125,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
                     onImageSelected = onAttachmentItemSelected,
                 )
             }
+
             else -> {
                 val revokedPermissionState = storagePermissionState.revokedPermissions.first()
                 MissingPermissionContent(revokedPermissionState)
