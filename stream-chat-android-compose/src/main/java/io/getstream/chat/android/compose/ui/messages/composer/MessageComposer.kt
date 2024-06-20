@@ -548,7 +548,7 @@ internal fun DefaultComposerIntegrations(
                         .padding(4.dp),
                     content = {
                         Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_attachments),
+                            painter = painterResource(id = R.drawable.stream_compose_ic_add),
                             contentDescription = stringResource(id = R.string.stream_compose_attachments),
                             tint = if (isAttachmentsButtonEnabled) {
                                 ChatTheme.colors.textLowEmphasis

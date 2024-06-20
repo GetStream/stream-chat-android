@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
+import android.content.Context
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.material.Icon
@@ -53,6 +54,11 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
      */
     override val attachmentsPickerMode: AttachmentsPickerMode
         get() = Files
+
+    /**
+     *  A custom action that can be executed instead of [PickerTabContent] Composable.
+     */
+    public override val onTabAction: ((Context) -> Unit)? = null
 
     /**
      * Emits a file icon for this tab.

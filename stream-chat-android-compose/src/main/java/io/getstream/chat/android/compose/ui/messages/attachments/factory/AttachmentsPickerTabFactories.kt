@@ -29,6 +29,7 @@ public object AttachmentsPickerTabFactories {
      * @param filesTabEnabled If the factory that allows users to pick files is included in the resulting list.
      * @param takeImageEnabled If the factory that allows users to start image capture is included in the resulting list.
      * @param recordVideoEnabled If the factory that allows users to start video capture is included in the resulting list.
+     * @param pollEnabled If the factory that allows users to create a poll.
      * @return The default list of attachment picker tab factories.
      */
     public fun defaultFactories(
@@ -36,6 +37,7 @@ public object AttachmentsPickerTabFactories {
         filesTabEnabled: Boolean = true,
         takeImageEnabled: Boolean = true,
         recordVideoEnabled: Boolean = true,
+        pollEnabled: Boolean = true,
     ): List<AttachmentsPickerTabFactory> {
         return listOfNotNull(
             if (imagesTabEnabled) AttachmentsPickerImagesTabFactory() else null,
@@ -45,16 +47,20 @@ public object AttachmentsPickerTabFactories {
                     AttachmentsPickerMediaCaptureTabFactory(
                         AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
                     )
+
                 takeImageEnabled ->
                     AttachmentsPickerMediaCaptureTabFactory(
                         AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
                     )
+
                 recordVideoEnabled ->
                     AttachmentsPickerMediaCaptureTabFactory(
                         AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
                     )
+
                 else -> null
             },
+            if (pollEnabled) AttachmentsPickerPollTabFactory() else null,
         )
     }
 }

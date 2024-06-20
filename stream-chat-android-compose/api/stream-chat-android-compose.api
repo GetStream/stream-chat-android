@@ -292,18 +292,32 @@ public final class io/getstream/chat/android/compose/state/messages/attachments/
 public final class io/getstream/chat/android/compose/state/messages/attachments/Files : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Files;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/Images : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Images;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/state/messages/attachments/MediaCapture : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/MediaCapture;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/state/messages/attachments/Poll : io/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/state/messages/attachments/Poll;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -1318,6 +1332,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
+	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1327,6 +1342,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
+	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1336,6 +1352,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
+	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public fun isPickerTabEnabled ()Z
 }
 
@@ -1348,17 +1365,28 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public static fun values ()[Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerMediaCaptureTabFactory$PickerMediaMode;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerPollTabFactory : io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactory {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
+	public fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
+	public fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
+	public fun isPickerTabEnabled ()Z
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories {
 	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;
-	public final fun defaultFactories (ZZZZ)Ljava/util/List;
-	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZILjava/lang/Object;)Ljava/util/List;
+	public final fun defaultFactories (ZZZZZ)Ljava/util/List;
+	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZZILjava/lang/Object;)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactory {
 	public abstract fun PickerTabContent (Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public abstract fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
 	public abstract fun getAttachmentsPickerMode ()Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentsPickerMode;
+	public abstract fun getOnTabAction ()Lkotlin/jvm/functions/Function1;
 	public abstract fun isPickerTabEnabled ()Z
 }
 

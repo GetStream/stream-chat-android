@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -96,14 +98,17 @@ public fun AttachmentsPicker(
             shape = shape,
             backgroundColor = ChatTheme.colors.inputBackground,
         ) {
+            val context = LocalContext.current
             Column {
                 AttachmentPickerOptions(
                     hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
                     tabFactories = tabFactories,
                     tabIndex = selectedTabIndex,
-                    onTabClick = { index, attachmentPickerMode ->
-                        selectedTabIndex = index
-                        attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
+                    onTabClick = { index, attachmentPickerMode, onTabAction ->
+                        onTabAction?.invoke(context) ?: let {
+                            selectedTabIndex = index
+                            attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
+                        }
                     },
                     onSendAttachmentsClick = {
                         onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
@@ -115,7 +120,7 @@ public fun AttachmentsPicker(
                     shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
                     color = ChatTheme.colors.barsBackground,
                 ) {
-                    tabFactories.getOrNull(selectedTabIndex)
+                    tabFactories.getOrNull(selectedTabIndex)?.takeIf { it.onTabAction == null }
                         ?.PickerTabContent(
                             attachments = attachmentsPickerViewModel.attachments,
                             onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
@@ -145,7 +150,7 @@ private fun AttachmentPickerOptions(
     hasPickedAttachments: Boolean,
     tabFactories: List<AttachmentsPickerTabFactory>,
     tabIndex: Int,
-    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
+    onTabClick: (Int, AttachmentsPickerMode, ((Context) -> Unit)?) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
     Row(
@@ -166,7 +171,7 @@ private fun AttachmentPickerOptions(
                             isSelected = isSelected,
                         )
                     },
-                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode) },
+                    onClick = { onTabClick(index, tabFactory.attachmentsPickerMode, tabFactory.onTabAction) },
                 )
             }
         }

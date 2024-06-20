@@ -56,6 +56,11 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
         get() = MediaCapture
 
     /**
+     *  A custom action that can be executed instead of [PickerTabContent] Composable.
+     */
+    public override val onTabAction: ((Context) -> Unit)? = null
+
+    /**
      * Emits a camera icon for this tab.
      *
      * @param isEnabled If the tab is enabled.
