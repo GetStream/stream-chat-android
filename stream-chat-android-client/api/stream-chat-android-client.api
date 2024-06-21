@@ -705,11 +705,6 @@ public final class io/getstream/chat/android/client/channel/ChannelClientExtensi
 	public static final fun subscribeFor (Lio/getstream/chat/android/client/channel/ChannelClient;[Lkotlin/reflect/KClass;Lio/getstream/chat/android/client/ChatEventListener;)Lio/getstream/chat/android/client/utils/observable/Disposable;
 }
 
-public final class io/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic$DefaultImpls {
-	public static synthetic fun upsertMessage$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
-	public static synthetic fun upsertMessages$default (Lio/getstream/chat/android/client/channel/ChannelMessagesUpdateLogic;Ljava/util/List;ZZILjava/lang/Object;)V
-}
-
 public abstract interface class io/getstream/chat/android/client/channel/state/ChannelState {
 	public abstract fun getChannelConfig ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getChannelData ()Lkotlinx/coroutines/flow/StateFlow;
@@ -820,10 +815,6 @@ public final class io/getstream/chat/android/client/debugger/SendMessageDebugger
 
 public final class io/getstream/chat/android/client/errorhandler/ErrorHandler$Companion {
 	public static final field DEFAULT_PRIORITY I
-}
-
-public final class io/getstream/chat/android/client/errorhandler/ErrorHandler$DefaultImpls {
-	public static fun compareTo (Lio/getstream/chat/android/client/errorhandler/ErrorHandler;Lio/getstream/chat/android/client/errorhandler/ErrorHandler;)I
 }
 
 public final class io/getstream/chat/android/client/errors/ChatError {
@@ -2245,9 +2236,6 @@ public final class io/getstream/chat/android/client/extensions/MessageExtensions
 	public static final fun getCreatedAtOrThrow (Lio/getstream/chat/android/models/Message;)Ljava/util/Date;
 }
 
-public final class io/getstream/chat/android/client/extensions/SharedPreferencesKt {
-}
-
 public final class io/getstream/chat/android/client/extensions/StringExtensionsKt {
 	public static final fun cidToTypeAndId (Ljava/lang/String;)Lkotlin/Pair;
 	public static final fun createResizedStreamCdnImageUrl (Ljava/lang/String;FFLio/getstream/chat/android/models/streamcdn/image/StreamCdnResizeImageMode;Lio/getstream/chat/android/models/streamcdn/image/StreamCdnCropImageMode;)Ljava/lang/String;
@@ -2255,29 +2243,8 @@ public final class io/getstream/chat/android/client/extensions/StringExtensionsK
 	public static final fun getStreamCdnHostedImageDimensions (Ljava/lang/String;)Lio/getstream/chat/android/models/streamcdn/image/StreamCdnOriginalImageDimensions;
 }
 
-public final class io/getstream/chat/android/client/extensions/internal/ChannelKt {
-}
-
 public final class io/getstream/chat/android/client/extensions/internal/ChatEventKt {
 	public static final fun enrichIfNeeded (Lio/getstream/chat/android/client/events/ChatEvent;)Lio/getstream/chat/android/client/events/ChatEvent;
-}
-
-public final class io/getstream/chat/android/client/extensions/internal/MemberKt {
-}
-
-public final class io/getstream/chat/android/client/extensions/internal/MessageKt {
-}
-
-public final class io/getstream/chat/android/client/extensions/internal/MessageReactionsKt {
-}
-
-public final class io/getstream/chat/android/client/extensions/internal/PairKt {
-}
-
-public final class io/getstream/chat/android/client/extensions/internal/ReactionKt {
-}
-
-public final class io/getstream/chat/android/client/extensions/internal/UserKt {
 }
 
 public final class io/getstream/chat/android/client/header/VersionPrefixHeader$Compose : io/getstream/chat/android/client/header/VersionPrefixHeader {
@@ -2831,9 +2798,6 @@ public final class io/getstream/chat/android/client/sync/SyncState {
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/client/sync/SyncStateKt {
-}
-
 public abstract interface class io/getstream/chat/android/client/token/TokenProvider {
 	public abstract fun loadToken ()Ljava/lang/String;
 }
@@ -2872,16 +2836,10 @@ public abstract interface class io/getstream/chat/android/client/utils/ProgressC
 	public abstract fun onSuccess (Ljava/lang/String;)V
 }
 
-public final class io/getstream/chat/android/client/utils/ResultUtilsKt {
-}
-
 public final class io/getstream/chat/android/client/utils/TimeProvider {
 	public static final field INSTANCE Lio/getstream/chat/android/client/utils/TimeProvider;
 	public final fun provideCurrentTimeInMilliseconds ()J
 	public final fun provideCurrentTimeInSeconds ()J
-}
-
-public final class io/getstream/chat/android/client/utils/UserUtilsKt {
 }
 
 public final class io/getstream/chat/android/client/utils/attachment/AttachmentUtilsKt {
@@ -2893,15 +2851,6 @@ public final class io/getstream/chat/android/client/utils/attachment/AttachmentU
 	public static final fun isImgur (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isLink (Lio/getstream/chat/android/models/Attachment;)Z
 	public static final fun isVideo (Lio/getstream/chat/android/models/Attachment;)Z
-}
-
-public final class io/getstream/chat/android/client/utils/channel/ChannelUtilsKt {
-}
-
-public final class io/getstream/chat/android/client/utils/internal/MessageUtilsKt {
-}
-
-public final class io/getstream/chat/android/client/utils/internal/ValidationKt {
 }
 
 public final class io/getstream/chat/android/client/utils/internal/toggle/ToggleService$Companion {

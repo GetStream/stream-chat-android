@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView
  */
 public class EndlessScrollListener(
     private val loadMoreThreshold: Int,
-    private inline val loadMoreListener: () -> Unit,
+    private val loadMoreListener: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
     init {

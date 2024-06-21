@@ -61,6 +61,7 @@ buildscript {
     dependencies {
         classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
+        classpath Dependencies.composeCompilerPlugin
         classpath Dependencies.googleServicesPlugin
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin

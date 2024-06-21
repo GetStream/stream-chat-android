@@ -60,7 +60,7 @@ public fun QuotedMessageAttachmentContent(
     )
 
     quoteAttachmentFactory?.content?.invoke(
-        modifier = modifier,
-        attachmentState = attachmentState,
+        modifier,
+        attachmentState,
     )
 }

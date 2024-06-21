@@ -3,6 +3,7 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-disabled.gradle"
@@ -67,10 +68,6 @@ android {
         viewBinding true
         compose true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
-    }
 }
 
 repositories {
@@ -93,7 +90,6 @@ dependencies {
     implementation project(":stream-chat-android-markdown-transformer")
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation

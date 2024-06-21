@@ -616,7 +616,7 @@ public final class io/getstream/chat/android/ui/feature/gallery/AttachmentGaller
 	public final fun component9 ()Ljava/lang/String;
 	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/ui/feature/gallery/AttachmentGalleryResultItem;
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/gallery/AttachmentGalleryResultItem;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/gallery/AttachmentGalleryResultItem;
-	public fun describeContents ()I
+	public final fun describeContents ()I
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAssetUrl ()Ljava/lang/String;
 	public final fun getAuthorLink ()Ljava/lang/String;
@@ -637,7 +637,7 @@ public final class io/getstream/chat/android/ui/feature/gallery/AttachmentGaller
 	public fun hashCode ()I
 	public final fun isMine ()Z
 	public fun toString ()Ljava/lang/String;
-	public fun writeToParcel (Landroid/os/Parcel;I)V
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class io/getstream/chat/android/ui/feature/gallery/AttachmentGalleryResultItem$Creator : android/os/Parcelable$Creator {
@@ -3856,28 +3856,10 @@ public final class io/getstream/chat/android/ui/utils/Debouncer {
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
 }
 
-public final class io/getstream/chat/android/ui/utils/ImageUtilsKt {
-}
-
 public final class io/getstream/chat/android/ui/utils/extensions/ChannelKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/models/Channel;)Lio/getstream/chat/android/models/Message;
 	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;)Ljava/lang/String;
 	public static synthetic fun getMembersStatusText$default (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/ConstraintLayoutKt {
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/ContextKt {
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/EditTextKt {
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/IntKt {
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/MessageItemKt {
 }
 
 public final class io/getstream/chat/android/ui/utils/extensions/MessageKt {
@@ -3905,12 +3887,6 @@ public final class io/getstream/chat/android/ui/utils/extensions/MessageListStat
 
 public final class io/getstream/chat/android/ui/utils/extensions/UserKt {
 	public static final fun getLastSeenText (Lio/getstream/chat/android/models/User;Landroid/content/Context;)Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/ViewGroupKt {
-}
-
-public final class io/getstream/chat/android/ui/utils/extensions/ViewKt {
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/channels/ChannelListHeaderViewModel : androidx/lifecycle/ViewModel {

@@ -4,6 +4,7 @@ import io.getstream.chat.android.Versions
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
     id 'shot'
 }
 
@@ -36,10 +37,6 @@ android {
         compose true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
-    }
-
     lintOptions {
         disable 'MissingTranslation'
     }
@@ -70,7 +67,6 @@ dependencies {
     implementation Dependencies.materialComponents
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
