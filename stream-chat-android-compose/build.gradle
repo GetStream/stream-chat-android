@@ -40,6 +40,11 @@ android {
     }
 }
 
+composeCompiler {
+    enableStrongSkippingMode = true
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+}
+
 baselineProfile {
     baselineProfileOutputDir = "."
     filter {
@@ -55,16 +60,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
                 '-opt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
                 '-opt-in=kotlin.RequiresOptIn',
-        ]
-        freeCompilerArgs += [
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
-        ]
-        freeCompilerArgs += [
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
         ]
     }
 }
