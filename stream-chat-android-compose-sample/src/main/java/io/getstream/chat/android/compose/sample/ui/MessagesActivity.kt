@@ -62,6 +62,7 @@ import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
@@ -129,6 +130,11 @@ class MessagesActivity : BaseConnectedActivity() {
                         ),
                     )
                 },
+                attachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors).copy(
+                    backgroundOverlay = colors.overlayDark,
+                    backgroundSecondary = colors.inputBackground,
+                    backgroundPrimary = colors.barsBackground,
+                ),
                 reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
                 messageOptionsTheme = MessageOptionsTheme.defaultTheme(
                     optionVisibility = MessageOptionItemVisibility(),
