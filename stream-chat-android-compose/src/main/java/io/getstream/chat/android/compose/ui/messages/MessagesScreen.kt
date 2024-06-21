@@ -19,8 +19,8 @@ package io.getstream.chat.android.compose.ui.messages
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -570,21 +570,17 @@ private fun BoxScope.AttachmentsPickerMenu(
         exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
         var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp
+        val screenHeight = LocalConfiguration.current.screenHeightDp
+        val pickerHeight by animateDpAsState(
+            targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
+            label = "full sized picker animation",
+        )
 
         AttachmentsPicker(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             modifier = Modifier
-                .animateContentSize()
                 .align(Alignment.BottomCenter)
-                .height(
-                    if (isFullScreenContent) {
-                        screenHeight.dp
-                    } else {
-                        ChatTheme.dimens.attachmentsPickerHeight
-                    },
-                )
+                .height(pickerHeight)
                 .animateEnterExit(
                     enter = slideInVertically(
                         initialOffsetY = { height -> height },

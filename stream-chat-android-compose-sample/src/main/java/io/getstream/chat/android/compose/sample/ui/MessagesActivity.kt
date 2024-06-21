@@ -21,7 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -47,6 +47,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -213,22 +214,18 @@ class MessagesActivity : BaseConnectedActivity() {
             }
 
             if (isShowingAttachments) {
-                var isFullScreenContent by remember { mutableStateOf(false) }
-                val configuration = LocalConfiguration.current
-                val screenHeight = configuration.screenHeightDp
+                var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
+                val screenHeight = LocalConfiguration.current.screenHeightDp
+                val pickerHeight by animateDpAsState(
+                    targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
+                    label = "full sized picker animation",
+                )
 
                 AttachmentsPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
                     modifier = Modifier
-                        .animateContentSize()
                         .align(Alignment.BottomCenter)
-                        .height(
-                            if (isFullScreenContent) {
-                                screenHeight.dp
-                            } else {
-                                ChatTheme.dimens.attachmentsPickerHeight
-                            },
-                        ),
+                        .height(pickerHeight),
                     shape = if (isFullScreenContent) {
                         RoundedCornerShape(0.dp)
                     } else {
