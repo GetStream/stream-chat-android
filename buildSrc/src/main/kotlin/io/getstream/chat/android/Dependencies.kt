@@ -3,7 +3,7 @@
 package io.getstream.chat.android
 
 object Versions {
-    internal const val ANDROID_GRADLE_PLUGIN = "8.2.0"
+    internal const val ANDROID_GRADLE_PLUGIN = "8.4.2"
     internal const val ANDROID_JUNIT5_GRADLE_PLUGIN = "1.9.3.0"
     internal const val ANDROID_LEGACY_SUPPORT = "1.0.0"
     internal const val ANDROIDX_ACTIVITY_COMPOSE = "1.7.2"
@@ -58,7 +58,7 @@ object Versions {
     internal const val LANDSCAPIST = "2.3.4"
     internal const val LEAK_CANARY = "2.4"
     internal const val MATERIAL_COMPONENTS = "1.8.0"
-    internal const val MACRO_BENCHMARK = "1.2.0"
+    internal const val MACRO_BENCHMARK = "1.2.3"
     internal const val MARKWON = "4.6.2"
     internal const val MOCKITO_KOTLIN = "5.0.0"
     internal const val MOCKITO = "5.4.0"
