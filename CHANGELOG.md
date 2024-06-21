@@ -84,15 +84,15 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Added `MessageOptionItemVisibility` class that controls menu item visibility in the selected message options menu.
-- Added new `ChatTheme.messageOptionItemVisibility` property of type `MessageOptionItemVisibility`.
-- Added docs sections that describe these changes.
-- Added `StreamImage` Composable functions to load internal images, such as profile images, attachments, and other media files.
+- Added `MessageOptionItemVisibility` class that controls menu item visibility in the selected message options menu. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Added new `ChatTheme.messageOptionItemVisibility` property of type `MessageOptionItemVisibility`. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Added docs sections that describe these changes. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Added `StreamImage` Composable functions to load internal images, such as profile images, attachments, and other media files. [#5299](https://github.com/GetStream/stream-chat-android/pull/5299)
 - Added `AttachmentPickerTheme` to customize the `AttachmentsPicker` component. [#5297](https://github.com/GetStream/stream-chat-android/pull/5297)
 
 ### ⚠️ Changed
-- Used the new `ChatTheme.messageOptionItemVisibility` property in `defaultMessageOptionsState()` in combination with own capabilities to control menu option item visibility.
-- Now, Compose components use `StreamImage`, which delegates [Landscapist-Coil](https://github.com/skydoves/landscapist) for loading internal images.
+- Used the new `ChatTheme.messageOptionItemVisibility` property in `defaultMessageOptionsState()` in combination with own capabilities to control menu option item visibility. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Now, Compose components use `StreamImage`, which delegates [Landscapist-Coil](https://github.com/skydoves/landscapist) for loading internal images. [#5299](https://github.com/GetStream/stream-chat-android/pull/5299)
 
 ### ❌ Removed
 
