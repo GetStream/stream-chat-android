@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,11 +30,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.ui.attachments.factory.DefaultPreviewItemOverlayContent
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -89,7 +89,7 @@ private fun MediaAttachmentPreviewItem(
     onAttachmentRemoved: (Attachment) -> Unit,
     overlayContent: @Composable (attachmentType: String?) -> Unit,
 ) {
-    val painter = rememberStreamImagePainter(data = mediaAttachment.upload ?: mediaAttachment.imagePreviewUrl)
+    val data = mediaAttachment.upload ?: mediaAttachment.imagePreviewUrl
 
     Box(
         modifier = Modifier
@@ -97,11 +97,10 @@ private fun MediaAttachmentPreviewItem(
             .clip(RoundedCornerShape(16.dp)),
         contentAlignment = Alignment.Center,
     ) {
-        Image(
+        StreamImage(
             modifier = Modifier.fillMaxSize(),
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
+            data = { data },
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
 
         overlayContent(mediaAttachment.type)

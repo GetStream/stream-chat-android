@@ -16,16 +16,15 @@
 
 package io.getstream.chat.android.compose.ui.components.attachments.files
 
-import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
+import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
+import io.getstream.chat.android.compose.ui.util.StreamImage
 
 /**
  * Represents the image that's shown in file picker items. This can be either an image/icon that represents the file
@@ -41,12 +40,10 @@ public fun FilesPickerItemImage(
     val attachment = fileItem.attachmentMetaData
     val isImage = fileItem.attachmentMetaData.type == "image"
 
-    val painter = if (isImage) {
-        val dataToLoad = attachment.uri ?: attachment.file
-
-        rememberStreamImagePainter(dataToLoad)
+    val data = if (isImage) {
+        attachment.uri ?: attachment.file
     } else {
-        painterResource(id = MimeTypeIconProvider.getIconRes(attachment.mimeType))
+        MimeTypeIconProvider.getIconRes(attachment.mimeType)
     }
 
     val shape = if (isImage) ChatTheme.shapes.imageThumbnail else null
@@ -55,10 +52,15 @@ public fun FilesPickerItemImage(
         if (shape != null) baseModifier.clip(shape) else baseModifier
     }
 
-    Image(
+    StreamImage(
         modifier = imageModifier,
-        painter = painter,
-        contentDescription = null,
-        contentScale = if (isImage) ContentScale.Crop else ContentScale.Fit,
+        data = { data },
+        imageOptions = ImageOptions(
+            contentScale = if (isImage) {
+                ContentScale.Crop
+            } else {
+                ContentScale.Fit
+            },
+        ),
     )
 }
