@@ -189,4 +189,6 @@
 
     <!--  Poll  -->
     <string name="stream_compose_poll_title" translatable="false">Create Poll</string>
+    <string name="stream_compose_poll_questions_title" translatable="false">Questions</string>
+    <string name="stream_compose_poll_questions_description" translatable="false">Ask a question</string>
 </resources>

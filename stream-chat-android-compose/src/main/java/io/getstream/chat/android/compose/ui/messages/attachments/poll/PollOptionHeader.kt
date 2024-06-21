@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
+import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -48,7 +49,7 @@ import io.getstream.chat.android.compose.ui.util.mirrorRtl
 @Composable
 public fun PollOptionHeader(
     modifier: Modifier = Modifier,
-    color: Color = ChatTheme.colors.barsBackground,
+    color: Color = ChatTheme.colors.appBackground,
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = 0.dp,
     onBackPressed: () -> Unit = {},
@@ -133,10 +134,14 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
     )
 }
 
-@Preview
+@Preview(name = "PollOptionHeader Light Mode")
+@Preview(name = "PollOptionHeader Dark Mode", uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun PollOptionHeaderPreview() {
     ChatTheme {
-        PollOptionHeader(enabledCreation = true, onPollCreateClicked = {})
+        Column {
+            PollOptionHeader(enabledCreation = true, onPollCreateClicked = {})
+            PollOptionHeader(enabledCreation = false, onPollCreateClicked = {})
+        }
     }
 }

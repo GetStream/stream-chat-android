@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,14 +25,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionHeader
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionQuestions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
@@ -82,7 +90,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .background(ChatTheme.colors.appBackground),
         ) {
             PollOptionHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -90,6 +99,28 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 onPollCreateClicked = {},
                 onBackPressed = onBackPressed,
             )
+
+            val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
+
+            PollOptionQuestions(
+                question = question,
+                onQuestionChanged = onQuestionChanged,
+            )
+        }
+    }
+}
+
+@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AttachmentsPickerPollTabFactoryContentPreview() {
+    ChatTheme {
+        AttachmentsPickerPollTabFactory().PickerTabContent(
+            onBackPressed = { },
+            attachments = emptyList(),
+            onAttachmentsChanged = {},
+            onAttachmentItemSelected = {},
+        ) {
         }
     }
 }

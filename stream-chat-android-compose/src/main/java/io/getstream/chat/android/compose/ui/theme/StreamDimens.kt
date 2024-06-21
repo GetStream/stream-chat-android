@@ -139,6 +139,7 @@ public data class StreamDimens(
     public val attachmentsContentVideoWidth: Dp,
     public val attachmentsContentGroupPreviewWidth: Dp,
     public val attachmentsContentGroupPreviewHeight: Dp,
+    public val pollOptionInputHeight: Dp,
 ) {
 
     public companion object {
@@ -197,6 +198,7 @@ public data class StreamDimens(
             attachmentsContentVideoWidth = 250.dp,
             attachmentsContentGroupPreviewWidth = 250.dp,
             attachmentsContentGroupPreviewHeight = 250.dp,
+            pollOptionInputHeight = 56.dp,
         )
     }
 }
