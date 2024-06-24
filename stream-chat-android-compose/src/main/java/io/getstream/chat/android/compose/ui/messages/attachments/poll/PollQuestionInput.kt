@@ -41,7 +41,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onQuestionChanged The lambda parameter to apply user input changes.
  */
 @Composable
-public fun PollOptionQuestions(
+public fun PollQuestionInput(
     modifier: Modifier = Modifier,
     title: String = stringResource(id = R.string.stream_compose_poll_questions_title),
     question: String,
@@ -71,7 +71,7 @@ public fun PollOptionQuestions(
 @Composable
 private fun PollOptionQuestionsPreview() {
     ChatTheme {
-        PollOptionQuestions(
+        PollQuestionInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(ChatTheme.colors.appBackground),

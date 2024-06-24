@@ -47,7 +47,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
 @Composable
-public fun PollOptionHeader(
+public fun PollCreationHeader(
     modifier: Modifier = Modifier,
     color: Color = ChatTheme.colors.appBackground,
     shape: Shape = ChatTheme.shapes.header,
@@ -140,8 +140,8 @@ internal fun DefaultPollOptionsHeaderTrailingContent(
 private fun PollOptionHeaderPreview() {
     ChatTheme {
         Column {
-            PollOptionHeader(enabledCreation = true, onPollCreateClicked = {})
-            PollOptionHeader(enabledCreation = false, onPollCreateClicked = {})
+            PollCreationHeader(enabledCreation = true, onPollCreateClicked = {})
+            PollCreationHeader(enabledCreation = false, onPollCreateClicked = {})
         }
     }
 }

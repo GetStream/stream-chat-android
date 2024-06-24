@@ -25,10 +25,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,8 +36,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionHeader
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionQuestions
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
@@ -93,16 +92,19 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .verticalScroll(rememberScrollState())
                 .background(ChatTheme.colors.appBackground),
         ) {
-            PollOptionHeader(
+            val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
+            val questions: List<String> = remember { mutableListOf() }
+
+            val isEnabled = question.isNotBlank()
+
+            PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
-                enabledCreation = true,
+                enabledCreation = isEnabled,
                 onPollCreateClicked = {},
                 onBackPressed = onBackPressed,
             )
 
-            val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-
-            PollOptionQuestions(
+            PollQuestionInput(
                 question = question,
                 onQuestionChanged = onQuestionChanged,
             )
