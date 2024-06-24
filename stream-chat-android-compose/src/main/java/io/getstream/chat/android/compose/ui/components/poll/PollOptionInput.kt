@@ -61,7 +61,9 @@ import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
  * @param modifier Modifier for styling.
  * @param description Description that you want to display if they [value] is blank.
  * @param enabled If the Composable is enabled for text input or not.
- * @param maxLines The number of lines that are allowed in the input, no limit by default.
+ * @param maxLines The number of lines that are allowed in the input.
+ * @param maxLength The number of maxLength that are allowed in the input.
+ * @param innerPadding The number of letter length that are allowed in the input.
  * @param innerPadding The padding inside the input field, around the label or input.
  * @param keyboardOptions The [KeyboardOptions] to be applied to the input.
  * @param decorationBox Composable function that represents the input field decoration as it's filled with content.
@@ -74,6 +76,7 @@ public fun PollOptionInput(
     description: String = stringResource(id = R.string.stream_compose_poll_questions_description),
     enabled: Boolean = true,
     maxLines: Int = 1,
+    maxLength: Int = 80,
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
@@ -91,7 +94,11 @@ public fun PollOptionInput(
                 .padding(innerPadding)
                 .semantics { contentDescription = description },
             value = value,
-            onValueChange = onValueChange,
+            onValueChange = {
+                if (it.length <= maxLength) {
+                    onValueChange.invoke(it)
+                }
+            },
             visualTransformation = {
                 val styledText = buildAnnotatedMessageText(
                     text = it.text,
