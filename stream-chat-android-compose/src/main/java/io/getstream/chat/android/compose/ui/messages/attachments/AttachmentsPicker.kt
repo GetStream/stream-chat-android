@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -82,7 +83,7 @@ public fun AttachmentsPicker(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.attachmentPickerTheme.backgroundOverlay)
             .clickable(
                 onClick = onDismiss,
                 indication = null,
@@ -97,7 +98,7 @@ public fun AttachmentsPicker(
             ),
             elevation = 4.dp,
             shape = shape,
-            backgroundColor = ChatTheme.colors.inputBackground,
+            backgroundColor = ChatTheme.attachmentPickerTheme.backgroundSecondary,
         ) {
             Column {
                 if (selectedAttachmentsPickerMode == null || selectedAttachmentsPickerMode?.isFullContent == false) {
@@ -119,8 +120,8 @@ public fun AttachmentsPicker(
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    shape = shape,
-                    color = ChatTheme.colors.barsBackground,
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
                     AnimatedContent(targetState = selectedTabIndex, label = "") {
                         tabFactories.getOrNull(it)
