@@ -35,6 +35,10 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -71,13 +75,22 @@ public fun PollQuestionList(
     questions: List<String>,
     itemHeightSize: Dp = 56.dp,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-    onItemChanged: (Int, Int) -> Unit,
+    onItemChanged: ((Int, Int) -> Unit)? = null,
 ) {
-    val reorderableLazyListState = rememberReorderableLazyListState(lazyListState) { from, to ->
-        onItemChanged.invoke(from.index, to.index)
+    var questionList by remember(questions) { mutableStateOf(questions) }
+
+    val reorderableLazyListState = rememberReorderableLazyListState(
+        lazyListState = lazyListState,
+        scrollThreshold = itemHeightSize,
+    ) { from, to ->
+        onItemChanged?.invoke(from.index, to.index) ?: let {
+            questionList = questionList.toMutableList().apply {
+                add(to.index, removeAt(from.index))
+            }
+        }
     }
 
-    val heightIn = questions.size * (itemHeightSize.value + 8)
+    val heightIn = questionList.size * (itemHeightSize.value + 8)
 
     Text(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -96,7 +109,7 @@ public fun PollQuestionList(
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(questions, key = { it }) {
+        items(questionList, key = { it }) {
             ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
                 Row(
                     modifier = Modifier
@@ -138,7 +151,6 @@ private fun PollQuestionListPreview() {
     ChatTheme {
         PollQuestionList(
             questions = List(10) { "This is a poll item $it" },
-            onItemChanged = { _, _ -> },
         )
     }
 }

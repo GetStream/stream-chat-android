@@ -141,11 +141,6 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollQuestionList(
                 lazyListState = questionListLazyState,
                 questions = questions,
-                onItemChanged = { from, to ->
-                    val temp = questions[from]
-                    questions[from] = questions[to]
-                    questions[to] = temp
-                },
             )
         }
     }
