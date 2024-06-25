@@ -1447,6 +1447,13 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollQuestionListKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollQuestionListKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollCreationHeaderKt {
 	public static final fun PollCreationHeader-ncDEMA4 (Landroidx/compose/ui/Modifier;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
@@ -1456,7 +1463,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollQuestionListKt {
-	public static final fun PollQuestionList (Ljava/util/List;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PollQuestionList-jIwJxvA (Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Ljava/util/List;FLandroidx/compose/foundation/layout/PaddingValues;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/ComposableSingletons$MessageComposerKt {

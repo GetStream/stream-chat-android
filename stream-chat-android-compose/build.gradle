@@ -100,6 +100,9 @@ dependencies {
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
+    // UI
+    implementation Dependencies.reorderable
+
     // Tests
     testImplementation project(':stream-chat-android-test')
     testImplementation testFixtures(project(":stream-chat-android-core"))

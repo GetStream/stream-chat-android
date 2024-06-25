@@ -18,17 +18,25 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,8 +46,10 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsP
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import kotlinx.coroutines.launch
 
 /**
  * Holds the information required to add support for "poll" tab in the attachment picker.
@@ -86,16 +96,35 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
+        val coroutineScope = rememberCoroutineScope()
+        val questionListLazyState = rememberLazyListState()
+        val nestedScrollConnection = remember {
+            object : NestedScrollConnection {
+                override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                    val delta = -available.y
+                    coroutineScope.launch {
+                        questionListLazyState.scrollBy(delta)
+                    }
+                    return Offset.Zero
+                }
+            }
+        }
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .nestedScroll(nestedScrollConnection)
                 .verticalScroll(rememberScrollState())
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val questions: List<String> = remember { mutableListOf() }
+            val questions = remember { mutableStateListOf<String>() }
 
-            val isEnabled = question.isNotBlank()
+            LaunchedEffect(key1 = Unit) {
+                questions.addAll(List(30) { "$it" })
+            }
+
+            val isEnabled = question.isNotBlank() && questions.isNotEmpty()
 
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -107,6 +136,16 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollQuestionInput(
                 question = question,
                 onQuestionChanged = onQuestionChanged,
+            )
+
+            PollQuestionList(
+                lazyListState = questionListLazyState,
+                questions = questions,
+                onItemChanged = { from, to ->
+                    val temp = questions[from]
+                    questions[from] = questions[to]
+                    questions[to] = temp
+                },
             )
         }
     }
@@ -122,7 +161,6 @@ private fun AttachmentsPickerPollTabFactoryContentPreview() {
             attachments = emptyList(),
             onAttachmentsChanged = {},
             onAttachmentItemSelected = {},
-        ) {
-        }
+        ) {}
     }
 }
