@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -118,10 +119,10 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val questions = remember { mutableStateListOf<String>() }
+            val questions = remember { mutableStateListOf<PollOptionItem>() }
 
             LaunchedEffect(key1 = Unit) {
-                questions.addAll(List(30) { "This is a poll item $it" })
+                questions.addAll(List(5) { PollOptionItem("This is a poll item $it") })
             }
 
             val isEnabled = question.isNotBlank() && questions.isNotEmpty()
@@ -141,6 +142,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollQuestionList(
                 lazyListState = questionListLazyState,
                 questions = questions,
+                onQuestionsChanged = {},
             )
         }
     }

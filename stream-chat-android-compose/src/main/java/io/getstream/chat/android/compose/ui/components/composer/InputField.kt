@@ -98,7 +98,7 @@ public fun InputField(
     BasicTextField(
         modifier = modifier
             .border(border = border, shape = theme.borderShape)
-            .clip(theme.borderShape)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(theme.backgroundColor)
             .padding(innerPadding)
             .semantics { contentDescription = description },

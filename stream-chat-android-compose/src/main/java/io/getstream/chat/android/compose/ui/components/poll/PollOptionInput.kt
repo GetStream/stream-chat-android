@@ -85,7 +85,7 @@ public fun PollOptionInput(
     val colors = ChatTheme.colors
     val textColor = ChatTheme.colors.textHighEmphasis
 
-    Box(modifier = Modifier.height(ChatTheme.dimens.pollOptionInputHeight)) {
+    Box(modifier = modifier.height(ChatTheme.dimens.pollOptionInputHeight)) {
         BasicTextField(
             modifier = Modifier
                 .fillMaxSize()
@@ -122,9 +122,9 @@ public fun PollOptionInput(
 
         if (value.isBlank()) {
             Text(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
                     .align(Alignment.CenterStart)
                     .semantics { contentDescription = description },
                 text = description,

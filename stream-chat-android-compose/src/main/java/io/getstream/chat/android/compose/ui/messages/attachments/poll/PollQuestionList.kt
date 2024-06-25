@@ -21,7 +21,9 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +32,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -44,12 +46,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -61,10 +63,10 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
  * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state.
  * @param title The title of the question list.
- * @param questions The list of questions. The type of the list is String.
+ * @param questions The list of questions. The type of the list is [PollOptionItem]].
+ * @param onQuestionsChanged This lambda will be executed when the item of the question list is reordered.
  * @param itemHeightSize The height size of the question item.
  * @param itemInnerPadding The inner padding size of the question item.
- * @param onItemChanged This lambda will be executed when the item of the question list is reordered.
  * It provides the index information [from] and [to] as a receiver, so you must swap the item of the [questions] list.
  */
 @Composable
@@ -72,10 +74,10 @@ public fun PollQuestionList(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     title: String = stringResource(id = R.string.stream_compose_poll_option_title),
-    questions: List<String>,
-    itemHeightSize: Dp = 56.dp,
+    questions: List<PollOptionItem>,
+    onQuestionsChanged: (List<PollOptionItem>) -> Unit,
+    itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
-    onItemChanged: ((Int, Int) -> Unit)? = null,
 ) {
     var questionList by remember(questions) { mutableStateOf(questions) }
 
@@ -83,10 +85,9 @@ public fun PollQuestionList(
         lazyListState = lazyListState,
         scrollThreshold = itemHeightSize,
     ) { from, to ->
-        onItemChanged?.invoke(from.index, to.index) ?: let {
-            questionList = questionList.toMutableList().apply {
-                add(to.index, removeAt(from.index))
-            }
+        questionList = questionList.toMutableList().apply {
+            add(to.index, removeAt(from.index))
+            onQuestionsChanged.invoke(questionList)
         }
     }
 
@@ -109,25 +110,26 @@ public fun PollQuestionList(
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        items(questionList, key = { it }) {
-            ReorderableItem(reorderableLazyListState, key = it) { isDragging ->
+        itemsIndexed(questionList, key = { _, item -> item.key }) { index, item ->
+            ReorderableItem(reorderableLazyListState, key = item.key) { _ ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(itemHeightSize)
                         .clip(shape = ChatTheme.shapes.pollOptionInput)
-                        .background(ChatTheme.colors.inputBackground)
-                        .padding(itemInnerPadding),
+                        .background(ChatTheme.colors.inputBackground),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
+                    PollOptionInput(
                         modifier = Modifier.weight(1f),
-                        text = it,
-                        color = ChatTheme.colors.textHighEmphasis,
-                        fontStyle = ChatTheme.typography.body.fontStyle,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        value = item.title,
+                        onValueChange = { newTitle ->
+                            questionList.toMutableList().apply {
+                                this[index] = item.copy(title = newTitle)
+                                questionList = this
+                            }
+                        },
+                        decorationBox = { innerTextField -> innerTextField.invoke() },
                     )
 
                     IconButton(
@@ -143,6 +145,33 @@ public fun PollQuestionList(
             }
         }
     }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(itemHeightSize)
+            .padding(horizontal = 16.dp)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .background(ChatTheme.messageComposerTheme.inputField.backgroundColor)
+            .clickable {
+                questionList = questionList
+                    .toMutableList()
+                    .apply {
+                        add(PollOptionItem(title = ""))
+                        onQuestionsChanged.invoke(this)
+                    }
+            },
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterStart)
+                .padding(itemInnerPadding),
+            text = stringResource(id = R.string.stream_compose_poll_option_description),
+            color = ChatTheme.colors.textLowEmphasis,
+            fontSize = 16.sp,
+        )
+    }
 }
 
 @Preview
@@ -150,7 +179,8 @@ public fun PollQuestionList(
 private fun PollQuestionListPreview() {
     ChatTheme {
         PollQuestionList(
-            questions = List(10) { "This is a poll item $it" },
+            questions = List(10) { PollOptionItem("This is a poll item $it") },
+            onQuestionsChanged = {},
         )
     }
 }

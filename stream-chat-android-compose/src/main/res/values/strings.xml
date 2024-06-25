@@ -192,4 +192,5 @@
     <string name="stream_compose_poll_questions_title" translatable="false">Questions</string>
     <string name="stream_compose_poll_questions_description" translatable="false">Ask a question</string>
     <string name="stream_compose_poll_option_title" translatable="false">Options</string>
+    <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
 </resources>
