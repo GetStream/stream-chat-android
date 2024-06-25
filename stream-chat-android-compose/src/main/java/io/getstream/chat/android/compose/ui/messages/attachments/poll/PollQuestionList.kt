@@ -19,6 +19,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -31,7 +32,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +39,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,10 +50,24 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
+/**
+ * The Poll Creation Question List is a Composable that enables users to create and reorder question items easily.
+ *
+ * @param modifier The [Modifier] for styling.
+ * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
+ * scroll state.
+ * @param title The title of the question list.
+ * @param questions The list of questions. The type of the list is String.
+ * @param itemHeightSize The height size of the question item.
+ * @param itemInnerPadding The inner padding size of the question item.
+ * @param onItemChanged This lambda will be executed when the item of the question list is reordered.
+ * It provides the index information [from] and [to] as a receiver, so you must swap the item of the [questions] list.
+ */
 @Composable
 public fun PollQuestionList(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
+    title: String = stringResource(id = R.string.stream_compose_poll_option_title),
     questions: List<String>,
     itemHeightSize: Dp = 56.dp,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
@@ -63,9 +79,17 @@ public fun PollQuestionList(
 
     val heightIn = questions.size * (itemHeightSize.value + 8)
 
+    Text(
+        modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+        text = title,
+        color = ChatTheme.colors.textHighEmphasis,
+        style = ChatTheme.typography.title3,
+        fontSize = 16.sp,
+    )
+
     LazyColumn(
         modifier = modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxWidth()
             .heightIn(max = heightIn.dp),
         userScrollEnabled = false,
@@ -97,13 +121,24 @@ public fun PollQuestionList(
                         modifier = Modifier.draggableHandle(),
                         onClick = {},
                     ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_reply),
+                        Image(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_drag_handle),
                             contentDescription = null,
                         )
                     }
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun PollQuestionListPreview() {
+    ChatTheme {
+        PollQuestionList(
+            questions = List(10) { "This is a poll item $it" },
+            onItemChanged = { _, _ -> },
+        )
     }
 }

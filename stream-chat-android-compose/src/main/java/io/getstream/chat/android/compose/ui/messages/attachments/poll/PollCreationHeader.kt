@@ -46,6 +46,23 @@ import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 
+/**
+ * Poll's creation header (toolbar) Composable that consist of several components.
+ *
+ * @param modifier The [Modifier] for styling.
+ * @param color The color of the surface.
+ * @param shape The shape of the surface.
+ * @param elevation The elevation of the surface.
+ * @param onBackPressed A lambda that will be executed if users click the back button on the default [leadingContent].
+ * @param enabledCreation Represents if user can click the creation button or not.
+ * @param onPollCreateClicked A lambda that will be executed if users click the poll creation button.
+ * @param leadingContent Customizable composable function that represents the leading content of a poll creation item, usually
+ * holding a back action button.
+ * @param centerContent Customizable composable function that represents the center content of a poll creation item, usually
+ * holding information about the title.
+ * @param trailingContent Customizable composable function that represents the trailing content of a poll creation item,
+ * usually holding the creation action button.
+ */
 @Composable
 public fun PollCreationHeader(
     modifier: Modifier = Modifier,

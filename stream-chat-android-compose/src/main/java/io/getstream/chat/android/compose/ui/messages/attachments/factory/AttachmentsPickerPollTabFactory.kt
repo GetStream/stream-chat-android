@@ -121,7 +121,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             val questions = remember { mutableStateListOf<String>() }
 
             LaunchedEffect(key1 = Unit) {
-                questions.addAll(List(30) { "$it" })
+                questions.addAll(List(30) { "This is a poll item $it" })
             }
 
             val isEnabled = question.isNotBlank() && questions.isNotEmpty()
