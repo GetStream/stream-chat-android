@@ -63,7 +63,7 @@ import sh.calvin.reorderable.rememberReorderableLazyListState
  * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state.
  * @param title The title of the question list.
- * @param questions The list of questions. The type of the list is [PollOptionItem]].
+ * @param questions The list of pre-questions. The type of the list is [PollOptionItem].
  * @param onQuestionsChanged This lambda will be executed when the item of the question list is reordered.
  * @param itemHeightSize The height size of the question item.
  * @param itemInnerPadding The inner padding size of the question item.
@@ -74,7 +74,7 @@ public fun PollQuestionList(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     title: String = stringResource(id = R.string.stream_compose_poll_option_title),
-    questions: List<PollOptionItem>,
+    questions: List<PollOptionItem> = emptyList(),
     onQuestionsChanged: (List<PollOptionItem>) -> Unit,
     itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
@@ -127,6 +127,7 @@ public fun PollQuestionList(
                             questionList.toMutableList().apply {
                                 this[index] = item.copy(title = newTitle)
                                 questionList = this
+                                onQuestionsChanged.invoke(this)
                             }
                         },
                         decorationBox = { innerTextField -> innerTextField.invoke() },

@@ -26,8 +26,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,7 +43,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -119,13 +116,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val questions = remember { mutableStateListOf<PollOptionItem>() }
-
-            LaunchedEffect(key1 = Unit) {
-                questions.addAll(List(5) { PollOptionItem("This is a poll item $it") })
-            }
-
-            val isEnabled = question.isNotBlank() && questions.isNotEmpty()
+            val isEnabled = question.isNotBlank()
 
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -141,8 +132,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
 
             PollQuestionList(
                 lazyListState = questionListLazyState,
-                questions = questions,
-                onQuestionsChanged = {},
+                onQuestionsChanged = {
+                },
             )
         }
     }
