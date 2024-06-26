@@ -97,7 +97,11 @@ public fun AttachmentsPicker(
                 interactionSource = remember { MutableInteractionSource() },
             ),
             elevation = 4.dp,
-            shape = shape,
+            shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
+                RoundedCornerShape(0.dp)
+            } else {
+                shape
+            },
             backgroundColor = ChatTheme.attachmentPickerTheme.backgroundSecondary,
         ) {
             Column {
@@ -120,7 +124,11 @@ public fun AttachmentsPicker(
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
+                        RoundedCornerShape(0.dp)
+                    } else {
+                        shape
+                    },
                     color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
                     AnimatedContent(targetState = selectedTabIndex, label = "") {

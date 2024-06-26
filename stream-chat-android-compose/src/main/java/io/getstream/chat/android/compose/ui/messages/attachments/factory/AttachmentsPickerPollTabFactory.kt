@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationDiscardDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
@@ -123,12 +124,20 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
             val isEnabled = question.isNotBlank() && questionItemList.isNotEmpty() && !hasErrorOnOptions
+            val hasChanges = question.isNotBlank() || questionItemList.isNotEmpty()
+            var isShowingDiscardDialog by remember { mutableStateOf(false) }
 
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
                 enabledCreation = isEnabled,
                 onPollCreateClicked = {},
-                onBackPressed = onBackPressed,
+                onBackPressed = {
+                    if (!hasChanges) {
+                        onBackPressed.invoke()
+                    } else {
+                        isShowingDiscardDialog = true
+                    }
+                },
             )
 
             PollQuestionInput(
@@ -143,6 +152,16 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                     hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
                 },
             )
+
+            if (isShowingDiscardDialog) {
+                PollCreationDiscardDialog(
+                    onCancelClicked = { isShowingDiscardDialog = false },
+                    onDiscardClicked = {
+                        isShowingDiscardDialog = false
+                        onBackPressed.invoke()
+                    },
+                )
+            }
         }
     }
 }
