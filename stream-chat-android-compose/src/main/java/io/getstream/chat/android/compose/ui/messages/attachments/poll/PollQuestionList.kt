@@ -163,7 +163,7 @@ public fun PollQuestionList(
                         decorationBox = { innerTextField ->
                             if (item.pollOptionError == null) {
                                 innerTextField.invoke()
-                            } else {
+                            } else if (item.title.isNotBlank()) {
                                 Column {
                                     Text(
                                         modifier = Modifier
