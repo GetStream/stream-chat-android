@@ -27,7 +27,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,6 +46,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -100,7 +100,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     ) {
         val coroutineScope = rememberCoroutineScope()
         val questionListLazyState = rememberLazyListState()
-        var questionItemSize by remember { mutableIntStateOf(0) }
+        var questionItemList by remember { mutableStateOf(emptyList<PollOptionItem>()) }
         var hasErrorOnOptions by remember { mutableStateOf(false) }
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
@@ -122,7 +122,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val isEnabled = question.isNotBlank() && questionItemSize > 0 && !hasErrorOnOptions
+            val isEnabled = question.isNotBlank() && questionItemList.isNotEmpty() && !hasErrorOnOptions
 
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -139,7 +139,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollQuestionList(
                 lazyListState = questionListLazyState,
                 onQuestionsChanged = {
-                    questionItemSize = it.size
+                    questionItemList = it
                     hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
                 },
             )
