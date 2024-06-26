@@ -26,10 +26,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -38,6 +41,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.util.fastAny
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -96,6 +100,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     ) {
         val coroutineScope = rememberCoroutineScope()
         val questionListLazyState = rememberLazyListState()
+        var questionItemSize by remember { mutableIntStateOf(0) }
+        var hasErrorOnOptions by remember { mutableStateOf(false) }
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -116,7 +122,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val isEnabled = question.isNotBlank()
+            val isEnabled = question.isNotBlank() && questionItemSize > 0 && !hasErrorOnOptions
 
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
@@ -133,6 +139,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollQuestionList(
                 lazyListState = questionListLazyState,
                 onQuestionsChanged = {
+                    questionItemSize = it.size
+                    hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
                 },
             )
         }

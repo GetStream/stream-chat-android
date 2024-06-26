@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import java.util.UUID
 
 /**
@@ -29,4 +30,15 @@ import java.util.UUID
 public data class PollOptionItem(
     public val title: String,
     public val key: String = UUID.randomUUID().toString(),
+    public val pollOptionError: PollOptionError? = null,
 )
+
+@Stable
+public sealed class PollOptionError {
+    public abstract val message: String
+
+    @Immutable
+    public data class Duplicated(
+        override val message: String,
+    ) : PollOptionError()
+}

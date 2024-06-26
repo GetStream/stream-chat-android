@@ -21,9 +21,11 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -44,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -79,6 +82,7 @@ public fun PollQuestionList(
     itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
 ) {
+    val context = LocalContext.current
     var questionList by remember(questions) { mutableStateOf(questions) }
 
     val reorderableLazyListState = rememberReorderableLazyListState(
@@ -116,6 +120,15 @@ public fun PollQuestionList(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(itemHeightSize)
+                        .border(
+                            width = 1.dp,
+                            color = if (item.pollOptionError == null) {
+                                ChatTheme.colors.inputBackground
+                            } else {
+                                ChatTheme.colors.errorAccent
+                            },
+                            shape = ChatTheme.shapes.pollOptionInput,
+                        )
                         .clip(shape = ChatTheme.shapes.pollOptionInput)
                         .background(ChatTheme.colors.inputBackground),
                     verticalAlignment = Alignment.CenterVertically,
@@ -123,14 +136,47 @@ public fun PollQuestionList(
                     PollOptionInput(
                         modifier = Modifier.weight(1f),
                         value = item.title,
+                        innerPadding = if (item.pollOptionError == null) {
+                            PaddingValues(horizontal = 16.dp, vertical = 18.dp)
+                        } else {
+                            PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                        },
                         onValueChange = { newTitle ->
                             questionList.toMutableList().apply {
-                                this[index] = item.copy(title = newTitle)
+                                val duplicated = this.any { it.title == newTitle }
+                                if (duplicated) {
+                                    this[index] = item.copy(
+                                        title = newTitle,
+                                        pollOptionError = PollOptionError.Duplicated(
+                                            context.getString(R.string.stream_compose_poll_option_error_duplicated),
+                                        ),
+                                    )
+                                } else {
+                                    this[index] =
+                                        item.copy(title = newTitle, pollOptionError = null)
+                                }
+
                                 questionList = this
                                 onQuestionsChanged.invoke(this)
                             }
                         },
-                        decorationBox = { innerTextField -> innerTextField.invoke() },
+                        decorationBox = { innerTextField ->
+                            if (item.pollOptionError == null) {
+                                innerTextField.invoke()
+                            } else {
+                                Column {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(bottom = 4.dp),
+                                        text = item.pollOptionError.message,
+                                        color = ChatTheme.colors.errorAccent,
+                                        fontSize = 12.sp,
+                                    )
+                                    innerTextField.invoke()
+                                }
+                            }
+                        },
                     )
 
                     IconButton(
