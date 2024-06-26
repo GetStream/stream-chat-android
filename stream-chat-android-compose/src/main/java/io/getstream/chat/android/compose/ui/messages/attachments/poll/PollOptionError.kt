@@ -17,18 +17,19 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.compose.runtime.Immutable
-import java.util.UUID
+import androidx.compose.runtime.Stable
 
-/**
- * The option item for creating a poll.
- *
- * @property title The title of this poll item.
- * @property key The key that identifies this poll item.
- * @property pollOptionError Indicates this option has an error.
- */
+@Stable
+public sealed interface PollOptionError {
+    public val message: String
+}
+
 @Immutable
-public data class PollOptionItem(
-    public val title: String,
-    public val key: String = UUID.randomUUID().toString(),
-    public val pollOptionError: PollOptionError? = null,
-)
+public data class PollOptionDuplicated(
+    override val message: String,
+) : PollOptionError
+
+@Immutable
+public data class PollOptionNumberExceed(
+    override val message: String,
+) : PollOptionError

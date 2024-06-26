@@ -20,15 +20,17 @@ import androidx.compose.runtime.Immutable
 import java.util.UUID
 
 /**
- * The option item for creating a poll.
+ * The option switch item for creating a poll.
  *
  * @property title The title of this poll item.
+ * @property enabled Indicates if this switch is enabled or not.
  * @property key The key that identifies this poll item.
  * @property pollOptionError Indicates this option has an error.
  */
 @Immutable
-public data class PollOptionItem(
+public data class PollSwitchItem(
     public val title: String,
+    public val enabled: Boolean,
     public val key: String = UUID.randomUUID().toString(),
     public val pollOptionError: PollOptionError? = null,
 )

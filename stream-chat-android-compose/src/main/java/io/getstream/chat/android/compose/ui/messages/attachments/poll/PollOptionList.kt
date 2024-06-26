@@ -60,42 +60,42 @@ import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
 
 /**
- * The Poll Creation Question List is a Composable that enables users to create and reorder question items easily.
+ * The Poll Creation option list that is a Composable that enables users to create and reorder question items easily.
  *
  * @param modifier The [Modifier] for styling.
  * @param lazyListState State of the lazy list that represents the list of messages. Useful for controlling the
  * scroll state.
  * @param title The title of the question list.
- * @param questions The list of pre-questions. The type of the list is [PollOptionItem].
+ * @param optionItems The list of pre-questions. The type of the list is [PollOptionItem].
  * @param onQuestionsChanged This lambda will be executed when the item of the question list is reordered.
  * @param itemHeightSize The height size of the question item.
  * @param itemInnerPadding The inner padding size of the question item.
- * It provides the index information [from] and [to] as a receiver, so you must swap the item of the [questions] list.
+ * It provides the index information [from] and [to] as a receiver, so you must swap the item of the [optionItems] list.
  */
 @Composable
-public fun PollQuestionList(
+public fun PollOptionList(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     title: String = stringResource(id = R.string.stream_compose_poll_option_title),
-    questions: List<PollOptionItem> = emptyList(),
+    optionItems: List<PollOptionItem> = emptyList(),
     onQuestionsChanged: (List<PollOptionItem>) -> Unit,
     itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
 ) {
     val context = LocalContext.current
-    var questionList by remember(questions) { mutableStateOf(questions) }
+    var optionItemList by remember(optionItems) { mutableStateOf(optionItems) }
 
     val reorderableLazyListState = rememberReorderableLazyListState(
         lazyListState = lazyListState,
         scrollThreshold = itemHeightSize,
     ) { from, to ->
-        questionList = questionList.toMutableList().apply {
+        optionItemList = optionItemList.toMutableList().apply {
             add(to.index, removeAt(from.index))
-            onQuestionsChanged.invoke(questionList)
+            onQuestionsChanged.invoke(optionItemList)
         }
     }
 
-    val heightIn = questionList.size * (itemHeightSize.value + 8)
+    val heightIn = optionItemList.size * (itemHeightSize.value + 8)
 
     Text(
         modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
@@ -114,7 +114,7 @@ public fun PollQuestionList(
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        itemsIndexed(questionList, key = { _, item -> item.key }) { index, item ->
+        itemsIndexed(optionItemList, key = { _, item -> item.key }) { index, item ->
             ReorderableItem(reorderableLazyListState, key = item.key) { _ ->
                 Row(
                     modifier = Modifier
@@ -142,12 +142,12 @@ public fun PollQuestionList(
                             PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                         },
                         onValueChange = { newTitle ->
-                            questionList.toMutableList().apply {
+                            optionItemList.toMutableList().apply {
                                 val duplicated = this.any { it.title == newTitle }
                                 if (duplicated) {
                                     this[index] = item.copy(
                                         title = newTitle,
-                                        pollOptionError = PollOptionError.Duplicated(
+                                        pollOptionError = PollOptionDuplicated(
                                             context.getString(R.string.stream_compose_poll_option_error_duplicated),
                                         ),
                                     )
@@ -156,7 +156,7 @@ public fun PollQuestionList(
                                         item.copy(title = newTitle, pollOptionError = null)
                                 }
 
-                                questionList = this
+                                optionItemList = this
                                 onQuestionsChanged.invoke(this)
                             }
                         },
@@ -201,7 +201,7 @@ public fun PollQuestionList(
             .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(ChatTheme.messageComposerTheme.inputField.backgroundColor)
             .clickable {
-                questionList = questionList
+                optionItemList = optionItemList
                     .toMutableList()
                     .apply {
                         add(PollOptionItem(title = ""))
@@ -225,8 +225,8 @@ public fun PollQuestionList(
 @Composable
 private fun PollQuestionListPreview() {
     ChatTheme {
-        PollQuestionList(
-            questions = List(10) { PollOptionItem("This is a poll item $it") },
+        PollOptionList(
+            optionItems = List(10) { PollOptionItem("This is a poll item $it") },
             onQuestionsChanged = {},
         )
     }

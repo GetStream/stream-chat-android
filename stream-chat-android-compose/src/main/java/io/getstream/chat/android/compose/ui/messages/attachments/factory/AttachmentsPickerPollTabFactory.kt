@@ -20,7 +20,9 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -40,6 +42,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
@@ -48,8 +51,10 @@ import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationDiscardDialog
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreationHeader
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionList
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.launch
@@ -101,7 +106,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     ) {
         val coroutineScope = rememberCoroutineScope()
         val questionListLazyState = rememberLazyListState()
-        var questionItemList by remember { mutableStateOf(emptyList<PollOptionItem>()) }
+        var optionItemList by remember { mutableStateOf(emptyList<PollOptionItem>()) }
+        var switchItemList by remember { mutableStateOf(emptyList<PollSwitchItem>()) }
         var hasErrorOnOptions by remember { mutableStateOf(false) }
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
@@ -123,8 +129,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val isEnabled = question.isNotBlank() && questionItemList.isNotEmpty() && !hasErrorOnOptions
-            val hasChanges = question.isNotBlank() || questionItemList.isNotEmpty()
+            val isEnabled = question.isNotBlank() && optionItemList.isNotEmpty() && !hasErrorOnOptions
+            val hasChanges = question.isNotBlank() || optionItemList.isNotEmpty()
             var isShowingDiscardDialog by remember { mutableStateOf(false) }
 
             PollCreationHeader(
@@ -145,11 +151,19 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 onQuestionChanged = onQuestionChanged,
             )
 
-            PollQuestionList(
+            PollOptionList(
                 lazyListState = questionListLazyState,
                 onQuestionsChanged = {
-                    questionItemList = it
+                    optionItemList = it
                     hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
+                },
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            PollSwitchList(
+                pollSwitchItems = switchItemList,
+                onSwitchesChanged = {
                 },
             )
 

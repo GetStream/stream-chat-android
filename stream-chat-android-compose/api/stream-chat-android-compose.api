@@ -1445,21 +1445,21 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollOptionListKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollOptionListKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollQuestionInputKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollQuestionInputKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
 	public static field lambda-2 Lkotlin/jvm/functions/Function2;
 	public fun <init> ()V
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
-	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
-}
-
-public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollQuestionListKt {
-	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/poll/ComposableSingletons$PollQuestionListKt;
-	public static field lambda-1 Lkotlin/jvm/functions/Function2;
-	public static field lambda-2 Lkotlin/jvm/functions/Function2;
-	public fun <init> ()V
-	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
@@ -1471,21 +1471,20 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public static final fun PollCreationHeader-ncDEMA4 (Landroidx/compose/ui/Modifier;JLandroidx/compose/ui/graphics/Shape;FLkotlin/jvm/functions/Function0;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
-public abstract class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError {
-	public static final field $stable I
-	public abstract fun getMessage ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError$Duplicated : io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError {
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionDuplicated : io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError$Duplicated;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError$Duplicated;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError$Duplicated;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionDuplicated;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionDuplicated;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionDuplicated;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getMessage ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError {
+	public abstract fun getMessage ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionItem {
@@ -1505,12 +1504,47 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionListKt {
+	public static final fun PollOptionList-PfoAEA0 (Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;FLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionNumberExceed : io/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionNumberExceed;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionNumberExceed;Ljava/lang/String;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionNumberExceed;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getMessage ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollQuestionInputKt {
 	public static final fun PollQuestionInput (Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollQuestionListKt {
-	public static final fun PollQuestionList-PfoAEA0 (Landroidx/compose/ui/Modifier;Landroidx/compose/foundation/lazy/LazyListState;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/functions/Function1;FLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;II)V
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;)V
+	public synthetic fun <init> (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Z
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;
+	public final fun copy (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getEnabled ()Z
+	public final fun getKey ()Ljava/lang/String;
+	public final fun getPollOptionError ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;
+	public final fun getTitle ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchListKt {
+	public static final fun PollSwitchList-hGBTI10 (Landroidx/compose/ui/Modifier;Ljava/util/List;Lkotlin/jvm/functions/Function1;FLandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/ComposableSingletons$MessageComposerKt {
