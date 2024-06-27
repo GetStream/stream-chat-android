@@ -27,7 +27,7 @@ public interface ChannelMessagesUpdateLogic {
 
     public fun upsertMessages(
         messages: List<Message>,
-        shouldRefreshMessages: Boolean = false
+        shouldRefreshMessages: Boolean = false,
     )
 
     public fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean)

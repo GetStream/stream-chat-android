@@ -130,7 +130,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
-import kotlin.math.log
 import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
 
 /**

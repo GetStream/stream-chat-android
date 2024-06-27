@@ -232,8 +232,10 @@ internal class ChannelStateLogic(
     }
 
     override fun delsertPinnedMessage(message: Message) {
-        logger.d { "[delsertPinnedMessage] pinned: ${message.pinned}, message.id: ${message.id}" +
-            ", message.text: ${message.text}" }
+        logger.d {
+            "[delsertPinnedMessage] pinned: ${message.pinned}, message.id: ${message.id}" +
+                ", message.text: ${message.text}"
+        }
         if (message.pinned) {
             upsertPinnedMessages(listOf(message), false)
         } else {

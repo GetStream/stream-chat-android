@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.compose.sample.data
 
-import io.getstream.chat.android.PrivacySettings
-import io.getstream.chat.android.ReadReceipts
-import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.models.User
 
 /**
