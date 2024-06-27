@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.text.input.KeyboardType
 import java.util.UUID
 
 /**
@@ -32,5 +33,12 @@ public data class PollSwitchItem(
     public val title: String,
     public val enabled: Boolean,
     public val key: String = UUID.randomUUID().toString(),
+    public val pollSwitchInput: PollSwitchInput? = null,
     public val pollOptionError: PollOptionError? = null,
+)
+
+public data class PollSwitchInput(
+    public var value: Any,
+    public val maxValue: Any? = null,
+    public val keyboardType: KeyboardType = KeyboardType.Text,
 )

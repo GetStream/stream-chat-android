@@ -1180,7 +1180,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollOptionInputKt {
-	public static final fun PollOptionInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Ljava/lang/String;ZIILandroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/text/KeyboardOptions;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+	public static final fun PollOptionInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Ljava/lang/String;ZIILandroidx/compose/ui/graphics/Shape;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/text/KeyboardOptions;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 	public static final fun PollOptionInputPreview (Landroidx/compose/runtime/Composer;I)V
 }
 
@@ -1531,20 +1531,40 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/pol
 	public static final fun PollQuestionInput (Landroidx/compose/ui/Modifier;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput {
+	public static final field $stable I
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Object;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/Object;Ljava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun component2 ()Ljava/lang/Object;
+	public final fun component3-PjHm6EE ()I
+	public final fun copy-GLO5gmY (Ljava/lang/Object;Ljava/lang/Object;I)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
+	public static synthetic fun copy-GLO5gmY$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Ljava/lang/Object;Ljava/lang/Object;IILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getKeyboardType-PjHm6EE ()I
+	public final fun getMaxValue ()Ljava/lang/Object;
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public final fun setValue (Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem {
 	public static final field $stable I
-	public fun <init> (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;)V
-	public synthetic fun <init> (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;)V
+	public synthetic fun <init> (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()Z
 	public final fun component3 ()Ljava/lang/String;
-	public final fun component4 ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;
-	public final fun copy (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;
+	public final fun component4 ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
+	public final fun component5 ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;
+	public final fun copy (Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;Ljava/lang/String;ZLjava/lang/String;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchItem;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getEnabled ()Z
 	public final fun getKey ()Ljava/lang/String;
 	public final fun getPollOptionError ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollOptionError;
+	public final fun getPollSwitchInput ()Lio/getstream/chat/android/compose/ui/messages/attachments/poll/PollSwitchInput;
 	public final fun getTitle ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;

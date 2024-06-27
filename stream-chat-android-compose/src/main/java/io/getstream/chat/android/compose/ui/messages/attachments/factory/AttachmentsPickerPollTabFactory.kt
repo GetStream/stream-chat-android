@@ -28,6 +28,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
@@ -53,6 +55,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreati
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
+import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -121,6 +124,30 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             }
         }
 
+        LaunchedEffect(key1 = Unit) {
+            switchItemList = listOf(
+                PollSwitchItem(title = "title", enabled = true),
+                PollSwitchItem(title = "title", enabled = true),
+                PollSwitchItem(title = "title", enabled = false),
+                PollSwitchItem(
+                    title = "title",
+                    enabled = true,
+                    pollSwitchInput = PollSwitchInput(
+                        value = 11,
+                        maxValue = 10,
+                        keyboardType = KeyboardType.Decimal,
+                    ),
+                ),
+                PollSwitchItem(
+                    title = "title",
+                    enabled = true,
+                    pollSwitchInput = PollSwitchInput(
+                        value = "test",
+                    ),
+                ),
+            )
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -164,6 +191,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollSwitchList(
                 pollSwitchItems = switchItemList,
                 onSwitchesChanged = {
+                    switchItemList = it
+                    hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
                 },
             )
 

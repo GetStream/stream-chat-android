@@ -16,12 +16,16 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -31,9 +35,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,10 +49,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.poll.PollOptionInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -68,7 +79,7 @@ public fun PollSwitchList(
     itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 ) {
     var switchItemList by remember(pollSwitchItems) { mutableStateOf(pollSwitchItems) }
-    val heightIn = pollSwitchItems.size * (itemHeightSize.value + 8)
+    val heightIn = pollSwitchItems.size * (itemHeightSize.value * 2 + 8)
 
     LazyColumn(
         modifier = modifier
@@ -83,7 +94,14 @@ public fun PollSwitchList(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(itemHeightSize)
+                    .animateContentSize()
+                    .height(
+                        if (item.pollSwitchInput != null && item.enabled) {
+                            itemHeightSize * 2
+                        } else {
+                            itemHeightSize
+                        },
+                    )
                     .border(
                         width = 1.dp,
                         color = if (item.pollOptionError == null) {
@@ -96,53 +114,130 @@ public fun PollSwitchList(
                     .clip(shape = ChatTheme.shapes.pollOptionInput)
                     .background(ChatTheme.colors.inputBackground),
             ) {
-                Row(
+                val layoutDirection = LocalLayoutDirection.current
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(itemInnerPadding),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        text = item.title,
-                        color = ChatTheme.colors.textHighEmphasis,
-                        fontSize = 16.sp,
-                    )
-
-                    Switch(
-                        colors = SwitchDefaults.colors().copy(
-                            checkedTrackColor = ChatTheme.colors.infoAccent,
-                            checkedBorderColor = ChatTheme.colors.infoAccent,
-                            uncheckedTrackColor = ChatTheme.colors.textLowEmphasis,
-                            uncheckedBorderColor = ChatTheme.colors.textLowEmphasis,
+                        .align(Alignment.Center)
+                        .padding(
+                            start = itemInnerPadding.calculateStartPadding(layoutDirection = layoutDirection),
+                            end = itemInnerPadding.calculateEndPadding(layoutDirection = layoutDirection),
                         ),
-                        thumbContent = {
-                            Box(
-                                modifier = Modifier
-                                    .size(24.dp)
-                                    .clip(CircleShape)
-                                    .background(
-                                        color = if (item.enabled) {
-                                            Color.White
-                                        } else {
-                                            ChatTheme.colors.disabled
-                                        },
-                                    ),
-                            )
-                        },
-                        checked = item.enabled,
-                        onCheckedChange = {
-                            switchItemList.toMutableList().apply {
-                                this[index] = item.copy(
-                                    enabled = it,
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            text = item.title,
+                            color = ChatTheme.colors.textHighEmphasis,
+                            fontSize = 16.sp,
+                        )
+
+                        Switch(
+                            colors = SwitchDefaults.colors().copy(
+                                checkedTrackColor = ChatTheme.colors.infoAccent,
+                                checkedBorderColor = ChatTheme.colors.infoAccent,
+                                uncheckedTrackColor = ChatTheme.colors.textLowEmphasis,
+                                uncheckedBorderColor = ChatTheme.colors.textLowEmphasis,
+                            ),
+                            thumbContent = {
+                                Box(
+                                    modifier = Modifier
+                                        .size(24.dp)
+                                        .clip(CircleShape)
+                                        .background(
+                                            color = if (item.enabled) {
+                                                Color.White
+                                            } else {
+                                                ChatTheme.colors.disabled
+                                            },
+                                        ),
                                 )
-                                switchItemList = this
-                                onSwitchesChanged.invoke(this)
-                            }
-                        },
-                    )
+                            },
+                            checked = item.enabled,
+                            onCheckedChange = {
+                                switchItemList.toMutableList().apply {
+                                    this[index] = item.copy(
+                                        enabled = it,
+                                        pollOptionError = null,
+                                    )
+                                    switchItemList = this
+                                    onSwitchesChanged.invoke(this)
+                                }
+                            },
+                        )
+                    }
+
+                    val switchInput = item.pollSwitchInput ?: return@Column
+                    val context = LocalContext.current
+
+                    if (item.enabled) {
+                        PollOptionInput(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            value = switchInput.value.toString(),
+                            shape = RoundedCornerShape(0.dp),
+                            keyboardOptions = KeyboardOptions(keyboardType = switchInput.keyboardType),
+                            onValueChange = { newValue ->
+                                switchItemList.toMutableList().apply {
+                                    if (switchInput.keyboardType == KeyboardType.Number ||
+                                        switchInput.keyboardType == KeyboardType.Decimal
+                                    ) {
+                                        val newInt = if (newValue.isBlank()) 0 else newValue.toInt()
+                                        val maxInt = switchInput.maxValue?.toString()?.toInt() ?: 0
+
+                                        if (newInt > maxInt) {
+                                            this[index] = item.copy(
+                                                pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
+                                                pollOptionError = PollOptionNumberExceed(
+                                                    context.getString(
+                                                        R.string.stream_compose_poll_option_error_exceed,
+                                                        maxInt,
+                                                    ),
+                                                ),
+                                            )
+                                        } else {
+                                            this[index] = item.copy(
+                                                pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
+                                                pollOptionError = null,
+                                            )
+                                        }
+                                    } else {
+                                        this[index] = item.copy(
+                                            pollSwitchInput = item.pollSwitchInput.copy(value = newValue),
+                                            pollOptionError = null,
+                                        )
+                                    }
+
+                                    switchItemList = this
+                                    onSwitchesChanged.invoke(this)
+                                }
+                            },
+                            innerPadding = PaddingValues(vertical = 4.dp),
+                            decorationBox = { innerTextField ->
+                                if (item.pollOptionError == null) {
+                                    innerTextField.invoke()
+                                } else if (item.title.isNotBlank()) {
+                                    Column {
+                                        Text(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(bottom = 4.dp),
+                                            text = item.pollOptionError.message,
+                                            color = ChatTheme.colors.errorAccent,
+                                            fontSize = 12.sp,
+                                        )
+                                        innerTextField.invoke()
+                                    }
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -160,6 +255,21 @@ private fun PollSwitchListPreview() {
                     PollSwitchItem(title = "title", enabled = true),
                     PollSwitchItem(title = "title", enabled = true),
                     PollSwitchItem(title = "title", enabled = false),
+                    PollSwitchItem(
+                        title = "title",
+                        enabled = true,
+                        pollSwitchInput = PollSwitchInput(value = "qwdqdqwd"),
+                    ),
+                    PollSwitchItem(
+                        title = "title",
+                        enabled = true,
+                        pollOptionError = PollOptionNumberExceed("error!"),
+                        pollSwitchInput = PollSwitchInput(
+                            value = 11,
+                            maxValue = 10,
+                            keyboardType = KeyboardType.Decimal,
+                        ),
+                    ),
                 ),
                 onSwitchesChanged = {},
             )

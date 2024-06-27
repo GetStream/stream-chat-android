@@ -33,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -77,6 +78,7 @@ public fun PollOptionInput(
     enabled: Boolean = true,
     maxLines: Int = 1,
     maxLength: Int = 80,
+    shape: Shape = ChatTheme.shapes.pollOptionInput,
     innerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 18.dp),
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
@@ -89,7 +91,7 @@ public fun PollOptionInput(
         BasicTextField(
             modifier = Modifier
                 .fillMaxSize()
-                .clip(shape = ChatTheme.shapes.pollOptionInput)
+                .clip(shape = shape)
                 .background(ChatTheme.colors.inputBackground)
                 .padding(innerPadding)
                 .semantics { contentDescription = description },

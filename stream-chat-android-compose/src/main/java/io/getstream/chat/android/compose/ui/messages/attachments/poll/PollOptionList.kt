@@ -226,7 +226,11 @@ public fun PollOptionList(
 private fun PollQuestionListPreview() {
     ChatTheme {
         PollOptionList(
-            optionItems = List(10) { PollOptionItem("This is a poll item $it") },
+            optionItems = List(5) { PollOptionItem("This is a poll item $it") } +
+                PollOptionItem(
+                    title = "This is a poll item with error",
+                    pollOptionError = PollOptionDuplicated("duplicated!"),
+                ),
             onQuestionsChanged = {},
         )
     }
