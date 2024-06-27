@@ -85,6 +85,7 @@ dependencies {
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
+    implementation Dependencies.composeMaterial3
 
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel

@@ -16,23 +16,37 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.poll
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Text
+import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -51,9 +65,8 @@ public fun PollSwitchList(
     pollSwitchItems: List<PollSwitchItem>,
     onSwitchesChanged: (List<PollSwitchItem>) -> Unit,
     itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight,
-    itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+    itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
 ) {
-    val context = LocalContext.current
     var switchItemList by remember(pollSwitchItems) { mutableStateOf(pollSwitchItems) }
     val heightIn = pollSwitchItems.size * (itemHeightSize.value + 8)
 
@@ -67,6 +80,89 @@ public fun PollSwitchList(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         itemsIndexed(switchItemList, key = { _, item -> item.key }) { index, item ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(itemHeightSize)
+                    .border(
+                        width = 1.dp,
+                        color = if (item.pollOptionError == null) {
+                            ChatTheme.colors.inputBackground
+                        } else {
+                            ChatTheme.colors.errorAccent
+                        },
+                        shape = ChatTheme.shapes.pollOptionInput,
+                    )
+                    .clip(shape = ChatTheme.shapes.pollOptionInput)
+                    .background(ChatTheme.colors.inputBackground),
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(itemInnerPadding),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        text = item.title,
+                        color = ChatTheme.colors.textHighEmphasis,
+                        fontSize = 16.sp,
+                    )
+
+                    Switch(
+                        colors = SwitchDefaults.colors().copy(
+                            checkedTrackColor = ChatTheme.colors.infoAccent,
+                            checkedBorderColor = ChatTheme.colors.infoAccent,
+                            uncheckedTrackColor = ChatTheme.colors.textLowEmphasis,
+                            uncheckedBorderColor = ChatTheme.colors.textLowEmphasis,
+                        ),
+                        thumbContent = {
+                            Box(
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        color = if (item.enabled) {
+                                            Color.White
+                                        } else {
+                                            ChatTheme.colors.disabled
+                                        },
+                                    ),
+                            )
+                        },
+                        checked = item.enabled,
+                        onCheckedChange = {
+                            switchItemList.toMutableList().apply {
+                                this[index] = item.copy(
+                                    enabled = it,
+                                )
+                                switchItemList = this
+                                onSwitchesChanged.invoke(this)
+                            }
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PollSwitchListPreview() {
+    ChatTheme {
+        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+            PollSwitchList(
+                modifier = Modifier.fillMaxWidth(),
+                pollSwitchItems = listOf(
+                    PollSwitchItem(title = "title", enabled = true),
+                    PollSwitchItem(title = "title", enabled = true),
+                    PollSwitchItem(title = "title", enabled = false),
+                ),
+                onSwitchesChanged = {},
+            )
         }
     }
 }

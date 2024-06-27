@@ -12,6 +12,7 @@ object Versions {
     internal const val ANDROIDX_APPCOMPAT = "1.6.1"
     internal const val ANDROIDX_COMPOSE = "1.6.8"
     public const val ANDROIDX_COMPOSE_COMPILER = "1.5.10"
+    internal const val ANDROIDX_COMPOSE_MATERIAL3 = "1.2.1"
     internal const val ANDROIDX_CORE_TEST = "2.2.0"
     internal const val ANDROIDX_FRAGMENT = "1.6.1"
     internal const val ANDROIDX_KTX = "1.10.1"
@@ -125,6 +126,7 @@ object Dependencies {
     const val composeUiTooling = "androidx.compose.ui:ui-tooling:${Versions.ANDROIDX_COMPOSE}"
     const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.ANDROIDX_COMPOSE}"
     const val composeMaterial = "androidx.compose.material:material:${Versions.ANDROIDX_COMPOSE}"
+    const val composeMaterial3 = "androidx.compose.material3:material3:${Versions.ANDROIDX_COMPOSE_MATERIAL3}"
     const val composeAccompanistPermissions =
         "com.google.accompanist:accompanist-permissions:${Versions.COMPOSE_ACCOMPANIST}"
     const val composeAccompanistPager = "com.google.accompanist:accompanist-pager:${Versions.COMPOSE_ACCOMPANIST}"
