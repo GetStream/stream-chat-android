@@ -229,7 +229,7 @@ internal class ChannelStateLogicTest {
         channelStateLogic.propagateChannelQuery(channel, request)
 
         verify(mutableState, times(0)).updateCachedLatestMessages(any())
-        verify(mutableState, times(0)).upsertMessages(any(), any())
+        verify(mutableState, times(0)).upsertMessages(any())
     }
 
     @Test
@@ -246,7 +246,7 @@ internal class ChannelStateLogicTest {
             messageLimit = 30,
         )
 
-        verify(mutableState, times(0)).upsertMessages(any(), any())
+        verify(mutableState, times(0)).upsertMessages(any())
     }
 
     @Test
@@ -259,7 +259,7 @@ internal class ChannelStateLogicTest {
             .withMessages(Pagination.GREATER_THAN, randomString(), 1)
 
         channelStateLogic.propagateChannelQuery(channel, filteringRequest)
-        verify(mutableState).upsertMessages(any(), any())
+        verify(mutableState).upsertMessages(any())
     }
 
     @Test
@@ -271,7 +271,7 @@ internal class ChannelStateLogicTest {
         val request = QueryChannelRequest().apply { isNotificationUpdate = true }.withMessages(1)
         channelStateLogic.propagateChannelQuery(channel, request)
 
-        verify(mutableState, times(0)).upsertMessages(any(), any())
+        verify(mutableState, times(0)).upsertMessages(any())
     }
 
     @Test
@@ -309,6 +309,6 @@ internal class ChannelStateLogicTest {
 
         channelStateLogic.upsertMessage(updatedMessage, false)
 
-        verify(mutableState).upsertMessages(eq(listOf(updatedMessage)), any())
+        verify(mutableState).upsertMessages(eq(listOf(updatedMessage)))
     }
 }

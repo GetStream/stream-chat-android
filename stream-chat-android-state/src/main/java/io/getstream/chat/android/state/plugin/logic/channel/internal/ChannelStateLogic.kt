@@ -222,53 +222,79 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    override fun upsertMessage(message: Message, updateCount: Boolean) {
-        logger.d {
-            "[upsertMessage] message.id: ${message.id}, " +
-                "message.text: ${message.text}, updateCount: $updateCount"
-        }
+    override fun upsertMessage(message: Message) {
+        logger.d { "[upsertMessage] message.id: ${message.id}, message.text: ${message.text}" }
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
-            upsertMessages(listOf(message), updateCount = updateCount)
+            upsertMessages(listOf(message))
         } else {
             mutableState.updateCachedLatestMessages(parseCachedMessages(listOf(message)))
         }
     }
 
+    override fun delsertPinnedMessage(message: Message) {
+        logger.d { "[delsertPinnedMessage] pinned: ${message.pinned}, message.id: ${message.id}" +
+            ", message.text: ${message.text}" }
+        if (message.pinned) {
+            upsertPinnedMessages(listOf(message), false)
+        } else {
+            mutableState.deletePinnedMessage(message)
+        }
+    }
+
     /**
-     * Upsert members in the channel.
+     * Upsert messages in the channel.
      *
      * @param messages the list of [Message] to be upserted
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
             "[upsertMessages] messages.size: ${messages.size}, first: ${first?.text?.take(TEXT_LIMIT)}, " +
-                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages, " +
-                "updateCount: $updateCount"
+                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages"
         }
+        messages.filter { it.isReply() }.forEach(::addQuotedMessage)
         when (shouldRefreshMessages) {
-            true -> {
-                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
-                mutableState.setMessages(messages)
-
-                if (updateCount) {
-                    mutableState.clearCountedMessages()
-                    mutableState.insertCountedMessages(messages.map { it.id })
-                }
-            }
-            false -> {
+            true -> mutableState.setMessages(messages)
+            else -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
-                val newMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
-                    .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
 
-                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
+                val newMessages = messages.filter { isMessageNewerThanCurrent(oldMessages[it.id], it) }
+                    .let { attachmentUrlValidator.updateValidAttachmentsUrl(it, oldMessages) }
 
-                val normalizedMessages =
-                    newMessages.flatMap { message -> normalizeReplyMessages(message) ?: emptyList() }
-                mutableState.upsertMessages(newMessages + normalizedMessages, updateCount)
+                val normalizedReplies = newMessages.flatMap { normalizeReplyMessages(it) ?: emptyList() }
+                mutableState.upsertMessages(newMessages + normalizedReplies)
+            }
+        }
+    }
+
+    /**
+     * Upsert pinned messages in the channel.
+     *
+     * @param messages the list of pinned [Message]s to be upserted
+     * @param shouldRefreshMessages if the current messages should be removed or not and only
+     * new messages should be kept.
+     */
+    override fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+        val first = messages.firstOrNull()
+        val last = messages.lastOrNull()
+        logger.d {
+            "[upsertPinnedMessages] messages.size: ${messages.size}, first: ${first?.text?.take(TEXT_LIMIT)}, " +
+                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages"
+        }
+        messages.filter { it.isReply() }.forEach(::addQuotedMessage)
+        when (shouldRefreshMessages) {
+            true -> mutableState.setPinnedMessages(messages)
+            else -> {
+                val oldMessages = mutableState.rawPinnedMessages
+
+                val newMessages = messages.filter { isMessageNewerThanCurrent(oldMessages[it.id], it) }
+                    .let { attachmentUrlValidator.updateValidAttachmentsUrl(it, oldMessages) }
+
+                val normalizedReplies = newMessages.flatMap { normalizeReplyMessages(it) ?: emptyList() }
+                mutableState.upsertPinnedMessages(newMessages + normalizedReplies)
             }
         }
     }
@@ -501,8 +527,10 @@ internal class ChannelStateLogic(
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
+                upsertPinnedMessages(channel.pinnedMessages, shouldRefreshMessages)
             } else {
-                upsertCachedMessages(channel.messages)
+                // will leave only unique messages in the list
+                upsertCachedMessages(channel.pinnedMessages + channel.messages)
             }
         }
 
@@ -680,8 +708,8 @@ internal class ChannelStateLogic(
     }
 
     private fun addQuotedMessage(message: Message) {
-        (message.replyTo?.id ?: message.replyMessageId)?.let { replyId ->
-            mutableState.addQuotedMessage(replyId, message.id)
+        (message.replyTo?.id ?: message.replyMessageId)?.let { quotedMessageId ->
+            mutableState.addQuotedMessage(quotedMessageId, message.id)
         }
     }
 

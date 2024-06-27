@@ -16,6 +16,9 @@
 
 package io.getstream.chat.android.compose.sample.data
 
+import io.getstream.chat.android.PrivacySettings
+import io.getstream.chat.android.ReadReceipts
+import io.getstream.chat.android.TypingIndicators
 import io.getstream.chat.android.models.User
 
 /**
@@ -173,6 +176,16 @@ object PredefinedUserCredentials {
                 language = "fr",
             ),
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXQifQ.MVoS7rCos7o3D7fkUcCFHVThKrN0sAaENupmXHYX3vw",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
+                id = "kanat_ninja",
+                name = "Kanat Ninja",
+                image = "https://getstream.io/static/a4ba18b7dc1eedfa3ea4edbac74ce5e4/a3911/kanat-kiialbaev.webp",
+            ),
+
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXRfbmluamEifQ.s6We-MRy0ZXraiyLz8kShEPPIxXfqwUOOClfJgpTk8c",
         ),
         UserCredentials(
             apiKey = API_KEY,

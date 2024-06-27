@@ -130,6 +130,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import java.util.Date
+import kotlin.math.log
 import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
 
 /**
@@ -234,7 +235,8 @@ public class MessageListController(
                 state.channelData,
                 state.membersCount,
                 state.watcherCount,
-            ) { _, _, _ ->
+                state.pinnedMessages,
+            ) { _, _, _, _ ->
                 state.toChannel()
             }
         }
@@ -1473,6 +1475,7 @@ public class MessageListController(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessageState' to null.
      */
     public fun removeOverlay() {
+        logger.v { "[removeOverlay] no args" }
         _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
         setMessageListState(_messageListState.value.copy(selectedMessageState = null))
     }

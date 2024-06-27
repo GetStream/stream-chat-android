@@ -471,10 +471,9 @@ internal class ChannelLogic(
     }
 
     private fun upsertEventMessage(message: Message) {
-        channelStateLogic.upsertMessage(
-            message.copy(ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions),
-            updateCount = false,
-        )
+        val ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions
+        channelStateLogic.upsertMessage(message.copy(ownReactions = ownReactions))
+        channelStateLogic.delsertPinnedMessage(message.copy(ownReactions = ownReactions))
     }
 
     /**
