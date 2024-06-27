@@ -262,6 +262,7 @@ private fun CustomAttachmentsPicker(
                                 onAttachmentsSubmitted = {
                                     onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
                                 },
+                                onBackPressed = { onDismiss.invoke() }
                             )
                     }
                 }
