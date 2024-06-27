@@ -377,14 +377,6 @@ public final class io/getstream/chat/android/ui/common/images/internal/StreamIma
 	public final fun instance ()Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader;
 }
 
-public final class io/getstream/chat/android/ui/common/images/internal/StreamImageLoader$DefaultImpls {
-	public static synthetic fun load$default (Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/disposable/Disposable;
-	public static synthetic fun load$default (Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/disposable/Disposable;
-	public static synthetic fun loadAndResize$default (Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader;Landroid/widget/ImageView;Ljava/lang/Object;Landroid/graphics/drawable/Drawable;Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun loadAsBitmap$default (Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader;Landroid/content/Context;Ljava/lang/String;Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader$ImageTransformation;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
-	public static synthetic fun loadVideoThumbnail$default (Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader;Landroid/widget/ImageView;Landroid/net/Uri;Ljava/lang/Integer;Lio/getstream/chat/android/ui/common/images/internal/StreamImageLoader$ImageTransformation;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/disposable/Disposable;
-}
-
 public abstract class io/getstream/chat/android/ui/common/images/internal/StreamImageLoader$ImageTransformation {
 	public static final field $stable I
 }
@@ -436,9 +428,6 @@ public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdn
 
 public final class io/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing$Companion {
 	public final fun defaultStreamCdnImageResizing ()Lio/getstream/chat/android/ui/common/images/resizing/StreamCdnImageResizing;
-}
-
-public final class io/getstream/chat/android/ui/common/images/resizing/StringExtensionsKt {
 }
 
 public final class io/getstream/chat/android/ui/common/notifications/StreamCoilUserIconBuilder : io/getstream/chat/android/client/notifications/handler/UserIconBuilder {
@@ -1234,9 +1223,6 @@ public abstract class io/getstream/chat/android/ui/common/state/messages/list/Mo
 	public abstract fun getText ()I
 }
 
-public final class io/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageOptionKt {
-}
-
 public final class io/getstream/chat/android/ui/common/state/messages/list/MyOwn : io/getstream/chat/android/ui/common/state/messages/list/NewMessageState {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/Long;)V
@@ -1512,9 +1498,6 @@ public final class io/getstream/chat/android/ui/common/utils/extensions/ContextK
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/FlowKt {
 	public static final fun onFirst (Lkotlinx/coroutines/flow/Flow;Lkotlin/jvm/functions/Function1;)Lkotlinx/coroutines/flow/Flow;
-}
-
-public final class io/getstream/chat/android/ui/common/utils/extensions/MessageFooterVisibilityKt {
 }
 
 public final class io/getstream/chat/android/ui/common/utils/extensions/MessageKt {

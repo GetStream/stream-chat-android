@@ -146,7 +146,7 @@ public interface MentionSuggestionsAdapter {
  */
 private class MentionsAdapter(
     private val style: MessageComposerViewStyle,
-    private inline val mentionSelectionListener: (User) -> Unit,
+    private val mentionSelectionListener: (User) -> Unit,
 ) : SimpleListAdapter<User, MentionsViewHolder>(), MentionSuggestionsAdapter {
 
     /**

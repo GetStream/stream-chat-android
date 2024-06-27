@@ -4,6 +4,7 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'kotlin-parcelize'
 apply plugin: "de.mannodermaus.android-junit5"
 apply plugin: 'androidx.baselineprofile'
@@ -37,10 +38,12 @@ android {
     buildFeatures {
         compose true
     }
+}
 
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
-    }
+composeCompiler {
+    enableStrongSkippingMode = true
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("compose_compiler_config.conf")
 }
 
 baselineProfile {
@@ -59,16 +62,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 '-opt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
                 '-opt-in=kotlin.RequiresOptIn',
         ]
-        freeCompilerArgs += [
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
-        ]
-        freeCompilerArgs += [
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
-        ]
     }
 }
 
@@ -80,7 +73,6 @@ dependencies {
     implementation Dependencies.streamLog
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
