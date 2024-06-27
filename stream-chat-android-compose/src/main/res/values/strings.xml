@@ -199,4 +199,8 @@
     <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Are you sure want to discard your poll?</string>
     <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Keep Editing</string>
     <string name="stream_compose_poll_option_discard_dialog_confirm" translatable="false">Discard</string>
+    <string name="stream_compose_poll_option_switch_multiple_answers" translatable="false">Multiple answers</string>
+    <string name="stream_compose_poll_option_switch_anonymous_poll" translatable="false">Anonymous poll</string>
+    <string name="stream_compose_poll_option_switch_suggest_option" translatable="false">Suggest an option</string>
+    <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
 </resources>

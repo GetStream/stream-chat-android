@@ -61,6 +61,7 @@ public fun PollCreationDiscardDialog(
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .clip(RoundedCornerShape(16.dp))
                 .background(ChatTheme.colors.overlay),
         ) {
             Column(
@@ -68,8 +69,8 @@ public fun PollCreationDiscardDialog(
                     .fillMaxWidth()
                     .padding(horizontal = 34.dp)
                     .align(Alignment.Center)
-                    .background(ChatTheme.colors.appBackground)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(ChatTheme.colors.appBackground),
             ) {
                 Column(
                     modifier = Modifier.padding(vertical = 32.dp, horizontal = 16.dp),

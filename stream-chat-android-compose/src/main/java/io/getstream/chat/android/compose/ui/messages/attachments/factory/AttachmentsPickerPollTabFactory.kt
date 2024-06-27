@@ -40,6 +40,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -124,26 +125,25 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             }
         }
 
+        val context = LocalContext.current
         LaunchedEffect(key1 = Unit) {
             switchItemList = listOf(
-                PollSwitchItem(title = "title", enabled = true),
-                PollSwitchItem(title = "title", enabled = true),
-                PollSwitchItem(title = "title", enabled = false),
                 PollSwitchItem(
-                    title = "title",
-                    enabled = true,
-                    pollSwitchInput = PollSwitchInput(
-                        value = 11,
-                        maxValue = 10,
-                        keyboardType = KeyboardType.Decimal,
-                    ),
+                    title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
+                    pollSwitchInput = PollSwitchInput(keyboardType = KeyboardType.Decimal, maxValue = 2, value = 0),
+                    enabled = false,
                 ),
                 PollSwitchItem(
-                    title = "title",
-                    enabled = true,
-                    pollSwitchInput = PollSwitchInput(
-                        value = "test",
-                    ),
+                    context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
+                    enabled = false,
+                ),
+                PollSwitchItem(
+                    context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
+                    enabled = false,
+                ),
+                PollSwitchItem(
+                    context.getString(R.string.stream_compose_poll_option_switch_add_comment),
+                    enabled = false,
                 ),
             )
         }
@@ -156,8 +156,8 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 .background(ChatTheme.colors.appBackground),
         ) {
             val (question, onQuestionChanged) = rememberSaveable { mutableStateOf("") }
-            val isEnabled = question.isNotBlank() && optionItemList.isNotEmpty() && !hasErrorOnOptions
-            val hasChanges = question.isNotBlank() || optionItemList.isNotEmpty()
+            val isEnabled = question.isNotBlank() && optionItemList.any { it.title.isNotBlank() } && !hasErrorOnOptions
+            val hasChanges = question.isNotBlank() || optionItemList.any { it.title.isNotBlank() }
             var isShowingDiscardDialog by remember { mutableStateOf(false) }
 
             PollCreationHeader(
