@@ -28,6 +28,7 @@ import java.util.Date
 internal data class ChannelResponse(
     val channel: DownstreamChannelDto,
     val messages: List<DownstreamMessageDto> = emptyList(),
+    val pinned_messages: List<DownstreamMessageDto> = emptyList(),
     val members: List<DownstreamMemberDto> = emptyList(),
     val membership: DownstreamMemberDto?,
     val watchers: List<DownstreamUserDto> = emptyList(),

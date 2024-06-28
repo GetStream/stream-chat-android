@@ -534,6 +534,7 @@ internal class MessageListControllerTests {
                 ),
             ),
             messagesState: StateFlow<List<Message>> = MutableStateFlow(emptyList()),
+            pinnedMessagesState: StateFlow<List<Message>> = MutableStateFlow(emptyList()),
             membersState: StateFlow<List<Member>> = MutableStateFlow(emptyList()),
             membersCountState: StateFlow<Int> = MutableStateFlow(0),
             watchersState: StateFlow<List<User>> = MutableStateFlow(emptyList()),
@@ -549,6 +550,7 @@ internal class MessageListControllerTests {
                 whenever(channelState.watchers) doReturn watchersState
                 whenever(channelState.watcherCount) doReturn watchersCountState
                 whenever(channelState.messages) doReturn messagesState
+                whenever(channelState.pinnedMessages) doReturn pinnedMessagesState
                 whenever(channelState.messagesState) doReturn messagesState.map { messages ->
                     MessagesState.Result(messages)
                 }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))

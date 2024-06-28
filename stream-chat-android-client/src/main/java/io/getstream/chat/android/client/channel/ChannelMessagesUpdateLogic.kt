@@ -23,13 +23,16 @@ import io.getstream.chat.android.models.Message
 @InternalStreamChatApi
 public interface ChannelMessagesUpdateLogic {
 
-    public fun upsertMessage(message: Message, updateCount: Boolean = true)
+    public fun upsertMessage(message: Message)
 
     public fun upsertMessages(
         messages: List<Message>,
         shouldRefreshMessages: Boolean = false,
-        updateCount: Boolean = true,
     )
+
+    public fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean)
+
+    public fun delsertPinnedMessage(message: Message)
 
     public fun listenForChannelState(): ChannelState
 

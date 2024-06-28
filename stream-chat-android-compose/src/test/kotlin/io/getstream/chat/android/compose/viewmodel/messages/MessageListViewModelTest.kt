@@ -163,6 +163,7 @@ internal class MessageListViewModelTest {
                 whenever(it.membersCount) doReturn MutableStateFlow(randomInt())
                 whenever(it.watcherCount) doReturn MutableStateFlow(randomInt())
                 whenever(it.messagesState) doReturn MutableStateFlow(messageState)
+                whenever(it.pinnedMessages) doReturn MutableStateFlow(emptyList())
                 whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
                 whenever(it.reads) doReturn MutableStateFlow(listOf())
                 whenever(it.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))

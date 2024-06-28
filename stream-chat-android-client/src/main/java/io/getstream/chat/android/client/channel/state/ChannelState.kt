@@ -52,6 +52,9 @@ public interface ChannelState {
     /** The message collection of this channel. */
     public val messages: StateFlow<List<Message>>
 
+    /** The pinned message collection of this channel. */
+    public val pinnedMessages: StateFlow<List<Message>>
+
     /** Strong typed state of message collection of this channel. See [MessagesState] for more details.*/
     public val messagesState: StateFlow<MessagesState>
 
