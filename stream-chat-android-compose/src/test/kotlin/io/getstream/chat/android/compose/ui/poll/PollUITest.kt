@@ -122,7 +122,7 @@ internal class PollUITest : BaseComposeTest() {
             PollCreationDiscardDialog(
                 usePlatformDefaultWidth = true,
                 onCancelClicked = { },
-                onDiscardClicked = {}
+                onDiscardClicked = {},
             )
         }
     }
