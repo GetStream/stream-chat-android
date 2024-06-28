@@ -75,16 +75,7 @@ public final class io/getstream/chat/android/client/errors/ChatErrorCode$Compani
 	public final fun isAuthenticationError (I)Z
 }
 
-public final class io/getstream/chat/android/client/errors/ChatErrorKt {
-}
-
-public final class io/getstream/chat/android/client/errors/NetworkErrorKt {
-}
-
 public abstract interface annotation class io/getstream/chat/android/core/ExperimentalStreamChatApi : java/lang/annotation/Annotation {
-}
-
-public final class io/getstream/chat/android/core/internal/ExtensionsKt {
 }
 
 public abstract interface annotation class io/getstream/chat/android/core/internal/InternalStreamChatApi : java/lang/annotation/Annotation {
@@ -98,9 +89,6 @@ public final class io/getstream/chat/android/core/internal/fsm/FiniteStateMachin
 	public final fun invoke (Lkotlin/jvm/functions/Function1;)Lio/getstream/chat/android/core/internal/fsm/FiniteStateMachine;
 }
 
-public final class io/getstream/chat/android/core/internal/lazy/ParameterizedLazyKt {
-}
-
 public final class io/getstream/chat/android/core/utils/Debouncer {
 	public fun <init> (JLkotlinx/coroutines/CoroutineScope;)V
 	public synthetic fun <init> (JLkotlinx/coroutines/CoroutineScope;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -108,12 +96,6 @@ public final class io/getstream/chat/android/core/utils/Debouncer {
 	public final fun shutdown ()V
 	public final fun submit (Lkotlin/jvm/functions/Function0;)V
 	public final fun submitSuspendable (Lkotlin/jvm/functions/Function1;)V
-}
-
-public final class io/getstream/chat/android/core/utils/date/DateUtils {
-}
-
-public final class io/getstream/chat/android/extensions/FloatExtensionsKt {
 }
 
 public final class io/getstream/chat/android/extensions/IntExtensionsKt {
@@ -552,9 +534,6 @@ public final class io/getstream/chat/android/models/ChannelData {
 	public final fun isUserAbleTo (Ljava/lang/String;)Z
 	public final fun toChannel (Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;Ljava/util/List;IZ)Lio/getstream/chat/android/models/Channel;
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/models/ChannelDataKt {
 }
 
 public final class io/getstream/chat/android/models/ChannelInfo {

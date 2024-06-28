@@ -4,6 +4,7 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'de.mannodermaus.android-junit5'
 apply plugin: 'androidx.baselineprofile'
 
@@ -47,10 +48,6 @@ android {
     buildFeatures {
         compose true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
-    }
 }
 
 baselineProfile {
@@ -77,7 +74,6 @@ dependencies {
     implementation Dependencies.streamLog
     implementation Dependencies.streamPushPermissionsSnackbar
     implementation Dependencies.streamResult
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeRuntime
 
     implementation Dependencies.androidxActivityKtx

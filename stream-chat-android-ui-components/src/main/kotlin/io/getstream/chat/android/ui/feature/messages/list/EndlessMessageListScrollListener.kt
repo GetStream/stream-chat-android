@@ -32,8 +32,8 @@ import io.getstream.log.StreamLog
  */
 public class EndlessMessageListScrollListener(
     private val loadMoreThreshold: Int,
-    private inline val loadMoreAtTopListener: () -> Unit,
-    private inline val loadMoreAtBottomListener: () -> Unit,
+    private val loadMoreAtTopListener: () -> Unit,
+    private val loadMoreAtBottomListener: () -> Unit,
 ) : RecyclerView.OnScrollListener() {
 
     init {

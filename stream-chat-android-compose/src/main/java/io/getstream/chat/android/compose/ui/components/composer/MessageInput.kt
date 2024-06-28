@@ -99,11 +99,11 @@ public fun MessageInput(
                     val previewFactory = ChatTheme.attachmentFactories.firstOrNull { it.canHandle(attachments) }
 
                     previewFactory?.previewContent?.invoke(
-                        modifier = Modifier
+                        Modifier
                             .fillMaxWidth()
                             .wrapContentHeight(),
-                        attachments = attachments,
-                        onAttachmentRemoved = onAttachmentRemoved,
+                        attachments,
+                        onAttachmentRemoved,
                     )
 
                     Spacer(modifier = Modifier.size(16.dp))

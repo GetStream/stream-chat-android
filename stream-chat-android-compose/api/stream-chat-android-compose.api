@@ -197,11 +197,11 @@ public final class io/getstream/chat/android/compose/state/mediagallerypreview/M
 	public static final field $stable I
 	public static final field CREATOR Landroid/os/Parcelable$Creator;
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType;)V
-	public fun describeContents ()I
+	public final fun describeContents ()I
 	public final fun getMessageId ()Ljava/lang/String;
 	public final fun getParentMessageId ()Ljava/lang/String;
 	public final fun getResultType ()Lio/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResultType;
-	public fun writeToParcel (Landroid/os/Parcel;I)V
+	public final fun writeToParcel (Landroid/os/Parcel;I)V
 }
 
 public final class io/getstream/chat/android/compose/state/mediagallerypreview/MediaGalleryPreviewResult$Creator : android/os/Parcelable$Creator {
@@ -2475,9 +2475,6 @@ public final class io/getstream/chat/android/compose/util/KeyValuePair {
 	public final fun getValue ()Ljava/lang/Object;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/getstream/chat/android/compose/util/extensions/ChannelCapabilitiesKt {
 }
 
 public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelListViewModel : androidx/lifecycle/ViewModel {
