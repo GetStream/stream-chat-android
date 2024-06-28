@@ -307,7 +307,7 @@ internal class ChannelStateLogicTest {
             updatedLocallyAt = randomDateAfter((message.updatedLocallyAt ?: message.updatedAt ?: NEVER).time),
         )
 
-        channelStateLogic.upsertMessage(updatedMessage, false)
+        channelStateLogic.upsertMessage(updatedMessage)
 
         verify(mutableState).upsertMessages(eq(listOf(updatedMessage)))
     }
