@@ -298,12 +298,14 @@ internal class MessageListViewModelTest {
                 messages = emptyList(),
             ),
             messages: List<Message> = listOf(),
+            pinnedMessages: List<Message> = listOf(),
         ) = apply {
             val channelState: ChannelState = mock {
                 whenever(it.cid) doReturn CID
                 whenever(it.channelId) doReturn CHANNEL_ID
                 whenever(it.channelType) doReturn CHANNEL_TYPE
                 whenever(it.messages) doReturn MutableStateFlow(messages)
+                whenever(it.pinnedMessages) doReturn MutableStateFlow(pinnedMessages)
                 whenever(it.channelData) doReturn MutableStateFlow(channelData)
                 whenever(it.channelConfig) doReturn MutableStateFlow(Config())
                 whenever(it.members) doReturn MutableStateFlow(listOf())
