@@ -16,10 +16,13 @@
 
 package io.getstream.chat.android.compose.ui
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -36,7 +39,11 @@ internal abstract class BaseComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
-                ChatTheme(isInDarkMode = isInDarkMode) { composable.invoke() }
+                ChatTheme(isInDarkMode = isInDarkMode) {
+                    Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                        composable.invoke()
+                    }
+                }
             }
         }
     }
@@ -47,8 +54,16 @@ internal abstract class BaseComposeTest {
                 LocalInspectionMode provides true,
             ) {
                 Column {
-                    ChatTheme(isInDarkMode = true) { composable.invoke() }
-                    ChatTheme(isInDarkMode = false) { composable.invoke() }
+                    ChatTheme(isInDarkMode = true) {
+                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                            composable.invoke()
+                        }
+                    }
+                    ChatTheme(isInDarkMode = false) {
+                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                            composable.invoke()
+                        }
+                    }
                 }
             }
         }
@@ -60,8 +75,16 @@ internal abstract class BaseComposeTest {
                 LocalInspectionMode provides true,
             ) {
                 Row {
-                    ChatTheme(isInDarkMode = true) { composable.invoke() }
-                    ChatTheme(isInDarkMode = false) { composable.invoke() }
+                    ChatTheme(isInDarkMode = true) {
+                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                            composable.invoke()
+                        }
+                    }
+                    ChatTheme(isInDarkMode = false) {
+                        Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
+                            composable.invoke()
+                        }
+                    }
                 }
             }
         }

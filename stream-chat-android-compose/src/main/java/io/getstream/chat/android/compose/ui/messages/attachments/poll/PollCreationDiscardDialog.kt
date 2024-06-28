@@ -49,13 +49,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @Composable
 public fun PollCreationDiscardDialog(
+    usePlatformDefaultWidth: Boolean = false,
     onCancelClicked: () -> Unit,
     onDiscardClicked: () -> Unit,
 ) {
     Dialog(
         onDismissRequest = onDiscardClicked,
         properties = DialogProperties(
-            usePlatformDefaultWidth = false,
+            usePlatformDefaultWidth = usePlatformDefaultWidth,
         ),
     ) {
         Box(
