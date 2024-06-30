@@ -767,6 +767,7 @@ constructor(
                 members = response.members.map { it.toDomain(currentUserIdProvider()) },
                 membership = response.membership?.toDomain(currentUserIdProvider()),
                 messages = response.messages.map { it.toDomain(currentUserIdProvider()).enrichWithCid(channel.cid) },
+                pinnedMessages = response.pinned_messages.map { it.toDomain(currentUserIdProvider()).enrichWithCid(channel.cid) },
                 watchers = response.watchers.map { it.toDomain(currentUserIdProvider()) },
                 hidden = response.hidden,
                 hiddenMessagesBefore = response.hide_messages_before,

@@ -234,7 +234,8 @@ public class MessageListController(
                 state.channelData,
                 state.membersCount,
                 state.watcherCount,
-            ) { _, _, _ ->
+                state.pinnedMessages,
+            ) { _, _, _, _ ->
                 state.toChannel()
             }
         }
@@ -1473,6 +1474,7 @@ public class MessageListController(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessageState' to null.
      */
     public fun removeOverlay() {
+        logger.v { "[removeOverlay] no args" }
         _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
         setMessageListState(_messageListState.value.copy(selectedMessageState = null))
     }
