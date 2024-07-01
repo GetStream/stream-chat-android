@@ -75,7 +75,7 @@ public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onTabClick: (Int, AttachmentsPickerMode) -> Unit,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
