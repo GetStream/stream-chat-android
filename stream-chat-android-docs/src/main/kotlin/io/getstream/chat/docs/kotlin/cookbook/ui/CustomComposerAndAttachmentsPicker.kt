@@ -42,6 +42,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -256,13 +258,18 @@ private fun CustomAttachmentsPicker(
 
                         tabFactories.getOrNull(selectedOptionIndex)
                             ?.PickerTabContent(
+                                onAttachmentPickerAction = { pickerAction ->
+                                    when (pickerAction) {
+                                        AttachmentPickerBack -> onDismiss.invoke()
+                                        AttachmentPickerPollCreation -> Unit
+                                    }
+                                },
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
                                 onAttachmentsSubmitted = {
                                     onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
                                 },
-                                onBackPressed = { onDismiss.invoke() }
                             )
                     }
                 }

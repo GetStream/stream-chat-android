@@ -132,7 +132,7 @@ internal class PollUITest : BaseComposeTest() {
         snapshot {
             val pollCreationTabFactory = AttachmentsPickerPollTabFactory()
             pollCreationTabFactory.PickerTabContent(
-                onBackPressed = { },
+                onAttachmentPickerAction = {},
                 attachments = listOf(),
                 onAttachmentsChanged = {},
                 onAttachmentItemSelected = {},
@@ -146,7 +146,7 @@ internal class PollUITest : BaseComposeTest() {
         snapshot(isInDarkMode = true) {
             val pollCreationTabFactory = AttachmentsPickerPollTabFactory()
             pollCreationTabFactory.PickerTabContent(
-                onBackPressed = { },
+                onAttachmentPickerAction = {},
                 attachments = listOf(),
                 onAttachmentsChanged = {},
                 onAttachmentItemSelected = {},

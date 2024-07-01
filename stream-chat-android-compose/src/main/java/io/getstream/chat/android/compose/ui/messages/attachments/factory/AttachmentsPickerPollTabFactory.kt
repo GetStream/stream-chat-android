@@ -91,6 +91,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     /**
      * Emits content that allows users to create a poll in this tab.
      *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
      * @param onAttachmentItemSelected Handler when the item selection state changes.
@@ -98,7 +99,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
      */
     @Composable
     override fun PickerTabContent(
-        onBackPressed: () -> Unit,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
@@ -137,10 +138,12 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
             PollCreationHeader(
                 modifier = Modifier.fillMaxWidth(),
                 enabledCreation = isEnabled,
-                onPollCreateClicked = {},
+                onPollCreateClicked = {
+                    onAttachmentPickerAction.invoke(AttachmentPickerPollCreation)
+                },
                 onBackPressed = {
                     if (!hasChanges) {
-                        onBackPressed.invoke()
+                        onAttachmentPickerAction.invoke(AttachmentPickerBack)
                     } else {
                         isShowingDiscardDialog = true
                     }
@@ -175,7 +178,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                     onCancelClicked = { isShowingDiscardDialog = false },
                     onDiscardClicked = {
                         isShowingDiscardDialog = false
-                        onBackPressed.invoke()
+                        onAttachmentPickerAction.invoke(AttachmentPickerBack)
                     },
                 )
             }
@@ -189,7 +192,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
 private fun AttachmentsPickerPollTabFactoryContentPreview() {
     ChatTheme {
         AttachmentsPickerPollTabFactory().PickerTabContent(
-            onBackPressed = { },
+            onAttachmentPickerAction = {},
             attachments = emptyList(),
             onAttachmentsChanged = {},
             onAttachmentItemSelected = {},

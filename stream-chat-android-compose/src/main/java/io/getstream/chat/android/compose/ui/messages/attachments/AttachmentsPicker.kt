@@ -47,6 +47,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -134,7 +136,12 @@ public fun AttachmentsPicker(
                     AnimatedContent(targetState = selectedTabIndex, label = "") {
                         tabFactories.getOrNull(it)
                             ?.PickerTabContent(
-                                onBackPressed = onDismiss,
+                                onAttachmentPickerAction = { pickerAction ->
+                                    when (pickerAction) {
+                                        AttachmentPickerBack -> onDismiss.invoke()
+                                        AttachmentPickerPollCreation -> Unit
+                                    }
+                                },
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },

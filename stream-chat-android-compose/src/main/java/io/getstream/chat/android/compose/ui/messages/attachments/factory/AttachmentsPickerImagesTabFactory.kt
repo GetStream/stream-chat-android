@@ -78,6 +78,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
     /**
      * Emits content that allows users to pick images in this tab.
      *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
      * @param onAttachmentItemSelected Handler when the item selection state changes.
@@ -86,7 +87,7 @@ public class AttachmentsPickerImagesTabFactory : AttachmentsPickerTabFactory {
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun PickerTabContent(
-        onBackPressed: () -> Unit,
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
