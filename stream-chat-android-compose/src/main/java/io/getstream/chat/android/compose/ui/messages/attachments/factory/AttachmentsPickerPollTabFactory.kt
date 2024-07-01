@@ -139,7 +139,14 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 modifier = Modifier.fillMaxWidth(),
                 enabledCreation = isEnabled,
                 onPollCreateClicked = {
-                    onAttachmentPickerAction.invoke(AttachmentPickerPollCreation)
+                    onAttachmentPickerAction.invoke(
+                        AttachmentPickerPollCreation(
+                            question = question,
+                            options = optionItemList,
+                            switches = switchItemList,
+                        ),
+                    )
+                    onAttachmentPickerAction.invoke(AttachmentPickerBack)
                 },
                 onBackPressed = {
                     if (!hasChanges) {

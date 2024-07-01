@@ -61,18 +61,21 @@ public class DefaultPollSwitchItemFactory(
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
                 pollSwitchInput = PollSwitchInput(keyboardType = KeyboardType.Decimal, maxValue = 2, value = 0),
+                key = "maxVotesAllowed",
                 enabled = false,
             ),
             PollSwitchItem(
-                context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
+                title = context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
+                key = "votingVisibility",
                 enabled = false,
             ),
             PollSwitchItem(
-                context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
+                title = context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
+                key = "allowUserSuggestedOptions",
                 enabled = false,
             ),
             PollSwitchItem(
-                context.getString(R.string.stream_compose_poll_option_switch_add_comment),
+                title = context.getString(R.string.stream_compose_poll_option_switch_add_comment),
                 enabled = false,
             ),
         )

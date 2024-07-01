@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
@@ -393,6 +394,15 @@ public class MessageListViewModel(
      */
     public fun performGiphyAction(action: GiphyAction) {
         messageListController.performGiphyAction(action)
+    }
+
+    /**
+     * Creates a poll with the given [pollConfig].
+     *
+     * @param pollConfig Configuration for creating a poll.
+     */
+    public fun createPoll(pollConfig: PollConfig) {
+        messageListController.createPoll(pollConfig = pollConfig)
     }
 
     /**
