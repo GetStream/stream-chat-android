@@ -47,6 +47,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
@@ -62,6 +63,7 @@ import io.getstream.chat.android.models.Attachment
  *
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
+ * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onDismiss Handler when the user dismisses the UI.
  * @param modifier Modifier for styling.
@@ -73,6 +75,7 @@ public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
     onTabClick: (Int, AttachmentsPickerMode) -> Unit,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
@@ -139,7 +142,7 @@ public fun AttachmentsPicker(
                                 onAttachmentPickerAction = { pickerAction ->
                                     when (pickerAction) {
                                         AttachmentPickerBack -> onDismiss.invoke()
-                                        AttachmentPickerPollCreation -> Unit
+                                        is AttachmentPickerPollCreation -> onAttachmentPickerAction.invoke(pickerAction)
                                     }
                                 },
                                 attachments = attachmentsPickerViewModel.attachments,
