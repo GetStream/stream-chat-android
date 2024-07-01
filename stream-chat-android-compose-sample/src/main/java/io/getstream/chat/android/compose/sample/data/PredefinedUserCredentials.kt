@@ -177,6 +177,16 @@ object PredefinedUserCredentials {
         UserCredentials(
             apiKey = API_KEY,
             user = User(
+                id = "kanat_ninja",
+                name = "Kanat Ninja",
+                image = "https://getstream.io/static/a4ba18b7dc1eedfa3ea4edbac74ce5e4/a3911/kanat-kiialbaev.webp",
+            ),
+
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoia2FuYXRfbmluamEifQ.s6We-MRy0ZXraiyLz8kShEPPIxXfqwUOOClfJgpTk8c",
+        ),
+        UserCredentials(
+            apiKey = API_KEY,
+            user = User(
                 id = "qatest1",
                 name = "QA Test 1",
                 image = "https://getstream.imgix.net/images/random_svg/QT.png",
