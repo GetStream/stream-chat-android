@@ -129,6 +129,7 @@
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
+    <string name="stream_compose_poll_option">Poll</string>
     <string name="stream_compose_capture_option">Media capture</string>
     <string name="stream_compose_send_attachment">Send attachment</string>
     <string name="stream_compose_recent_files">Recent Files</string>
@@ -185,4 +186,21 @@
     <string name="stream_compose_cd_send_button" translatable="false">Send button</string>
     <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
     <string name="stream_compose_cd_record_audio_message" translatable="false">Record audio message</string>
+
+    <!--  Poll  -->
+    <string name="stream_compose_poll_title" translatable="false">Create Poll</string>
+    <string name="stream_compose_poll_questions_title" translatable="false">Questions</string>
+    <string name="stream_compose_poll_questions_description" translatable="false">Ask a question</string>
+    <string name="stream_compose_poll_option_title" translatable="false">Options</string>
+    <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
+    <string name="stream_compose_poll_option_error_duplicated" translatable="false">This is already an option</string>
+    <string name="stream_compose_poll_option_error_exceed" translatable="false">Type a number under the %d</string>
+    <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Discard poll</string>
+    <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Are you sure want to discard your poll?</string>
+    <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Keep Editing</string>
+    <string name="stream_compose_poll_option_discard_dialog_confirm" translatable="false">Discard</string>
+    <string name="stream_compose_poll_option_switch_multiple_answers" translatable="false">Multiple answers</string>
+    <string name="stream_compose_poll_option_switch_anonymous_poll" translatable="false">Anonymous poll</string>
+    <string name="stream_compose_poll_option_switch_suggest_option" translatable="false">Suggest an option</string>
+    <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
 </resources>

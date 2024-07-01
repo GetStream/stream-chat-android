@@ -20,6 +20,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -40,6 +41,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -96,7 +98,7 @@ public fun InputField(
     BasicTextField(
         modifier = modifier
             .border(border = border, shape = theme.borderShape)
-            .clip(theme.borderShape)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(theme.backgroundColor)
             .padding(innerPadding)
             .semantics { contentDescription = description },
@@ -124,4 +126,17 @@ public fun InputField(
         enabled = enabled,
         keyboardOptions = keyboardOptions,
     )
+}
+
+@Preview
+@Composable
+private fun InputFieldPreview() {
+    ChatTheme {
+        InputField(
+            modifier = Modifier.fillMaxWidth(),
+            value = "InputFieldPreview",
+            onValueChange = { _ -> },
+            decorationBox = { innerTextField -> innerTextField.invoke() },
+        )
+    }
 }

@@ -77,6 +77,7 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
     /**
      * Emits content that allows users to start media capture.
      *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
      * @param onAttachmentItemSelected Handler when the item selection state changes.
@@ -85,6 +86,7 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
     override fun PickerTabContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

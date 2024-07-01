@@ -7,6 +7,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'kotlin-parcelize'
 apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: 'app.cash.paparazzi'
 apply plugin: 'androidx.baselineprofile'
 
 ext {
@@ -77,6 +78,7 @@ dependencies {
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
+    implementation Dependencies.composeMaterial3
 
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
@@ -91,6 +93,9 @@ dependencies {
     implementation Dependencies.composeLandscapistAnimation
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
+
+    // UI
+    implementation Dependencies.reorderable
 
     // Tests
     testImplementation project(':stream-chat-android-test')

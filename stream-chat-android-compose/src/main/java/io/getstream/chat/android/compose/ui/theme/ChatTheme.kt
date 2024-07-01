@@ -41,10 +41,12 @@ import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactorie
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactories
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
+import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
+import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
@@ -85,6 +87,12 @@ private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
 }
 private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
     error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalPollSwitchItemFactory = compositionLocalOf<PollSwitchItemFactory> {
+    error(
+        "No reaction poll switch item factory provided! Make sure to wrap all usages of Stream components " +
+            "in a ChatTheme.",
+    )
 }
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -230,6 +238,7 @@ public fun ChatTheme(
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
+    pollSwitchItemFactory: PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = LocalContext.current),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
@@ -303,6 +312,7 @@ public fun ChatTheme(
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
+        LocalPollSwitchItemFactory provides pollSwitchItemFactory,
         LocalDateFormatter provides dateFormatter,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
@@ -415,6 +425,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionOptionsTheme.current
+
+    /**
+     * Retrieves the current [PollSwitchItemFactory] at the call site's position in the hierarchy.
+     */
+    public val pollSwitchitemFactory: PollSwitchItemFactory
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalPollSwitchItemFactory.current
 
     /**
      * Retrieves the current [DateFormatter] at the call site's position in the hierarchy.
