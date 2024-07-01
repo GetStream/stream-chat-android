@@ -28,7 +28,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,10 +39,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
@@ -56,7 +53,6 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollCreati
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollOptionList
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollQuestionInput
-import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchInput
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -110,8 +106,9 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     ) {
         val coroutineScope = rememberCoroutineScope()
         val questionListLazyState = rememberLazyListState()
+        val pollSwitchItemFactory = ChatTheme.pollSwitchitemFactory
         var optionItemList by remember { mutableStateOf(emptyList<PollOptionItem>()) }
-        var switchItemList by remember { mutableStateOf(emptyList<PollSwitchItem>()) }
+        var switchItemList: List<PollSwitchItem> by remember { mutableStateOf(pollSwitchItemFactory.providePollSwitchItemList()) }
         var hasErrorOnOptions by remember { mutableStateOf(false) }
         val nestedScrollConnection = remember {
             object : NestedScrollConnection {
@@ -123,29 +120,6 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                     return Offset.Zero
                 }
             }
-        }
-
-        val context = LocalContext.current
-        LaunchedEffect(key1 = Unit) {
-            switchItemList = listOf(
-                PollSwitchItem(
-                    title = context.getString(R.string.stream_compose_poll_option_switch_multiple_answers),
-                    pollSwitchInput = PollSwitchInput(keyboardType = KeyboardType.Decimal, maxValue = 2, value = 0),
-                    enabled = false,
-                ),
-                PollSwitchItem(
-                    context.getString(R.string.stream_compose_poll_option_switch_anonymous_poll),
-                    enabled = false,
-                ),
-                PollSwitchItem(
-                    context.getString(R.string.stream_compose_poll_option_switch_suggest_option),
-                    enabled = false,
-                ),
-                PollSwitchItem(
-                    context.getString(R.string.stream_compose_poll_option_switch_add_comment),
-                    enabled = false,
-                ),
-            )
         }
 
         Column(

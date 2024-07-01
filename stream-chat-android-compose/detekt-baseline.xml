@@ -55,6 +55,7 @@
     <ID>MagicNumber:PollSwitchList.kt$8</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
+    <ID>MaxLineLength:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$var switchItemList: List&lt;PollSwitchItem> by remember { mutableStateOf(pollSwitchItemFactory.providePollSwitchItemList()) }</ID>
     <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
     <ID>MaxLineLength:MediaAttachmentContent.kt$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
