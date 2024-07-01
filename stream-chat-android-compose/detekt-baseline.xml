@@ -11,7 +11,7 @@
     <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", remainder / 1000)</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>LongMethod:AttachmentsPicker.kt$@Composable public fun AttachmentsPicker( attachmentsPickerViewModel: AttachmentsPickerViewModel, onAttachmentsSelected: (List&lt;Attachment>) -> Unit, onTabClick: (Int, AttachmentsPickerMode) -> Unit, onDismiss: () -> Unit, modifier: Modifier = Modifier, tabFactories: List&lt;AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories, shape: Shape = ChatTheme.shapes.bottomSheet, )</ID>
-    <ID>LongMethod:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$@Composable override fun PickerTabContent( onBackPressed: () -> Unit, attachments: List&lt;AttachmentPickerItemState>, onAttachmentsChanged: (List&lt;AttachmentPickerItemState>) -> Unit, onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit, onAttachmentsSubmitted: (List&lt;AttachmentMetaData>) -> Unit, )</ID>
+    <ID>LongMethod:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$@Composable override fun PickerTabContent( onAttachmentPickerAction: (AttachmentPickerAction) -> Unit, attachments: List&lt;AttachmentPickerItemState>, onAttachmentsChanged: (List&lt;AttachmentPickerItemState>) -> Unit, onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit, onAttachmentsSubmitted: (List&lt;AttachmentMetaData>) -> Unit, )</ID>
     <ID>LongMethod:AudioRecordAttachmentContent.kt$@Composable public fun AudioRecordAttachmentContent( modifier: Modifier = Modifier, audioTrack: Attachment, onPlayPress: (Attachment) -> Unit, )</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
@@ -64,6 +64,7 @@
     <ID>MaxLineLength:MessageOptions.kt$title = if (selectedMessage.pinned) R.string.stream_compose_unpin_message else R.string.stream_compose_pin_message</ID>
     <ID>MaxLineLength:MessagesScreen.kt$*</ID>
     <ID>MaxLineLength:PollCreationHeader.kt$*</ID>
+    <ID>MaxLineLength:PollSwitchItem.kt$PollSwitchInput$*</ID>
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
     <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryChannels()</ID>
