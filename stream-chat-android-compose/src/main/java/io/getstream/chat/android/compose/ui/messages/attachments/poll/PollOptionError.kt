@@ -19,16 +19,31 @@ package io.getstream.chat.android.compose.ui.messages.attachments.poll
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 
+/**
+ * Indicates the error of the poll while configuring the options.
+ *
+ * @property message The error message of this option.
+ */
 @Stable
 public sealed interface PollOptionError {
     public val message: String
 }
 
+/**
+ * This error indicates that this poll creation contains a duplicated option item.
+ *
+ * @property message The error message of this option.
+ */
 @Immutable
 public data class PollOptionDuplicated(
     override val message: String,
 ) : PollOptionError
 
+/**
+ * This error indicates that this poll creation input (number type) is exceed the maximum value.
+ *
+ * @property message The error message of this option.
+ */
 @Immutable
 public data class PollOptionNumberExceed(
     override val message: String,

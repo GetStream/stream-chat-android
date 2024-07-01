@@ -37,6 +37,13 @@ public data class PollSwitchItem(
     public val pollOptionError: PollOptionError? = null,
 )
 
+/**
+ * The input information that will be used to create a poll switch item.
+ *
+ * @property value The default value of the switch.
+ * @property maxValue The maximum vale of the switch. Normally, you can use the limit of the decimal format of the [value].
+ * @property keyboardType The type of the input of the switch and decide the keyboard type of the input.
+ */
 public data class PollSwitchInput(
     public var value: Any,
     public val maxValue: Any? = null,
