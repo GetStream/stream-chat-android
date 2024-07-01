@@ -180,6 +180,7 @@ class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
 
     @Composable
     override fun PickerTabContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

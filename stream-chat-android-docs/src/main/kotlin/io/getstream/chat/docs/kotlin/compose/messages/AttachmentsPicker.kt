@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -240,7 +241,7 @@ private object AttachmentsPickerCustomizationSnippet {
 
             @Composable
             override fun PickerTabContent(
-                onBackPressed: () -> Unit,
+                onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
                 attachments: List<AttachmentPickerItemState>,
                 onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
                 onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
