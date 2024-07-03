@@ -55,6 +55,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
+import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -67,6 +68,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLab
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
+import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -357,10 +359,12 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message,
             )
         }
+
         message.isDeleted() &&
             messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             OwnedMessageVisibilityContent(message = message)
         }
+
         else -> {
             MessageFooter(messageItem = messageItem)
         }
@@ -409,7 +413,13 @@ internal fun DefaultMessageItemCenterContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
-    if (messageItem.message.isEmojiOnlyWithoutBubble()) {
+    if (messageItem.message.isPoll() && messageItem.isMine) {
+        PollMessageContent(
+            modifier = modifier,
+            messageItem = messageItem,
+            onLongItemClick = onLongItemClick,
+        )
+    } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
             modifier = modifier,
             messageItem = messageItem,

@@ -206,6 +206,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             channelName(Modifier)
         }
 
+        // TODO(Jaewoong): Poll message preview
         val lastMessageText = channel.getLastMessage(currentUser)?.let { lastMessage ->
             ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
         } ?: AnnotatedString("")

@@ -47,4 +47,11 @@ internal object PreviewMessageData {
         type = MessageType.REGULAR,
         ownReactions = mutableListOf(Reaction(messageId = "message-id-3", type = "haha")),
     )
+
+    val messageWithError: Message = Message(
+        id = "message-id-4",
+        text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+        createdAt = Date(),
+        type = MessageType.ERROR,
+    )
 }

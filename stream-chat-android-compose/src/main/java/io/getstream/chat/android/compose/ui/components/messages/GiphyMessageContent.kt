@@ -41,8 +41,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.attachments.content.MessageAttachmentsContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Message
@@ -196,6 +198,18 @@ internal fun GiphyButton(
             overflow = TextOverflow.Ellipsis,
             color = textColor,
             textAlign = TextAlign.Center,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun GiphyMessageContentPreview() {
+    ChatTheme {
+        GiphyMessageContent(
+            modifier = Modifier.size(600.dp),
+            message = PreviewMessageData.message1,
+            onGiphyActionClick = {},
         )
     }
 }
