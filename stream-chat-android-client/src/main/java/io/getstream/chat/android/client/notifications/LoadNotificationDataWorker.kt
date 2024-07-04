@@ -33,6 +33,7 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
+import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.zipWith
 
@@ -41,7 +42,7 @@ internal class LoadNotificationDataWorker(
     workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
 
-    private val logger by taggedLogger("Chat:Notifications-Loader")
+    private val logger by taggedLogger(TAG)
 
     override suspend fun doWork(): Result {
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
@@ -49,6 +50,8 @@ internal class LoadNotificationDataWorker(
         val messageId: String = inputData.getString(DATA_MESSAGE_ID)!!
 
         setForeground(createForegroundInfo())
+
+        logger.d { "[doWork] cid: $channelType:$channelId, messageId: $messageId"}
 
         return try {
             val client: ChatClient = ChatClient.instance()
@@ -72,15 +75,16 @@ internal class LoadNotificationDataWorker(
                         client.getMessage(messageParentId).await()
                     }
                     ChatClient.displayNotification(channel = channel, message = message)
+                    logger.v { "[doWork] completed" }
                     Result.success()
                 }
                 is io.getstream.result.Result.Failure -> {
-                    logger.e { "Error while loading notification data: ${result.value}" }
+                    logger.e { "[doWork] failed: ${result.value}" }
                     Result.failure()
                 }
             }
         } catch (exception: IllegalStateException) {
-            logger.e { "Error while loading notification data: ${exception.message}" }
+            logger.e { "[doWork] failed unexpectedly: ${exception.message}" }
             Result.failure()
         }
     }
@@ -133,6 +137,7 @@ internal class LoadNotificationDataWorker(
     }
 
     internal companion object {
+        private const val TAG = "Chat:Notifications-Loader"
         private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
         private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
         private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
@@ -146,6 +151,7 @@ internal class LoadNotificationDataWorker(
             channelType: String,
             messageId: String,
         ) {
+            StreamLog.d(TAG) { "/start/ cid: $channelType:$channelId, messageId: $messageId" }
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(
                     workDataOf(
@@ -166,6 +172,7 @@ internal class LoadNotificationDataWorker(
         }
 
         fun cancel(context: Context) {
+            StreamLog.d(TAG) { "/cancel/ no args" }
             WorkManager.getInstance(context).cancelUniqueWork(LOAD_NOTIFICATION_DATA_WORK_NAME)
         }
     }
