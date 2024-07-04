@@ -85,6 +85,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed deleted pinned messages being highlighted as pinned. [#5315](https://github.com/GetStream/stream-chat-android/pull/5315)
+- Fixed the url used when click on the link. [#5314](https://github.com/GetStream/stream-chat-android/pull/5314)
 
 ### ⬆️ Improved
 - Enabled Strong Skipping Mode for Compose compiler and improved Compose performance. [#5303](https://github.com/GetStream/stream-chat-android/pull/5303)
