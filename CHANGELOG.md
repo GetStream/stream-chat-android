@@ -20,6 +20,7 @@
 - Added `ChatClient.getThreads` to fetch threads for the current users. [#5264](https://github.com/GetStream/stream-chat-android/pull/5264)
 - Added `ChatClient.sendPoll`, `ChatClient.castVotePoll`, `ChatClient.closePoll` and `ChatClient.removePollVote` methods to interact with Polls. [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
 - Added new `ChatEvents` related with Polls.  [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
+- Added pinned messages parsing. [#5306](https://github.com/GetStream/stream-chat-android/pull/5306)
 
 ### ⚠️ Changed
 
@@ -44,8 +45,10 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelState.pinnedMessage` to obtain the pinned message in a channel. [#5306](https://github.com/GetStream/stream-chat-android/pull/5306)
 
 ### ⚠️ Changed
+- Delete a pinned message from the pinned list if it was deleted. [#5315](https://github.com/GetStream/stream-chat-android/pull/5315)
 
 ### ❌ Removed
 
@@ -56,6 +59,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added pinned messages support to `MessageListController`. [#5306](https://github.com/GetStream/stream-chat-android/pull/5306)
 
 ### ⚠️ Changed
 
@@ -80,6 +84,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed deleted pinned messages being highlighted as pinned. [#5315](https://github.com/GetStream/stream-chat-android/pull/5315)
 
 ### ⬆️ Improved
 - Enabled Strong Skipping Mode for Compose compiler and improved Compose performance. [#5303](https://github.com/GetStream/stream-chat-android/pull/5303)

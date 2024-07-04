@@ -51,7 +51,7 @@ internal class LoadNotificationDataWorker(
 
         setForeground(createForegroundInfo())
 
-        logger.d { "[doWork] cid: $channelType:$channelId, messageId: $messageId"}
+        logger.d { "[doWork] cid: $channelType:$channelId, messageId: $messageId" }
 
         return try {
             val client: ChatClient = ChatClient.instance()
