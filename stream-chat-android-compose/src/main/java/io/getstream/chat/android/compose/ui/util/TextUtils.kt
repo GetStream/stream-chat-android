@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import java.util.Locale
 import java.util.regex.Pattern
 
 internal typealias AnnotationTag = String
@@ -137,7 +136,7 @@ private fun AnnotatedString.Builder.linkify(
 
         val linkText = requireNotNull(matcher.group(0)!!)
 
-        val url = linkText.fixPrefix(schemes)
+        val url = linkText.ensureLowercaseScheme(schemes)
 
         addStringAnnotation(
             tag = tag,
@@ -148,15 +147,16 @@ private fun AnnotatedString.Builder.linkify(
     }
 }
 
-private fun String.fixPrefix(schemes: List<String>): String =
-    lowercase(Locale.getDefault())
-        .let {
-            if (schemes.none { scheme -> it.startsWith(scheme) }) {
-                schemes[0] + it
-            } else {
-                it
-            }
+internal fun String.ensureLowercaseScheme(schemes: List<String>): String =
+    schemes.fold(this) { acc, scheme ->
+        acc.replace(scheme, scheme.lowercase(), ignoreCase = true)
+    }.let { url ->
+        if (schemes.none { url.startsWith(it) }) {
+            schemes[0].lowercase() + url
+        } else {
+            url
         }
+    }
 
 private val URL_SCHEMES = listOf("http://", "https://")
 private val EMAIL_SCHEMES = listOf("mailto:")
