@@ -54,4 +54,11 @@ internal object PreviewMessageData {
         createdAt = Date(),
         type = MessageType.ERROR,
     )
+
+    val messageWithPoll: Message = Message(
+        id = "message-id-5",
+        createdAt = Date(),
+        type = MessageType.REGULAR,
+        poll = PreviewPollData.poll1,
+    )
 }

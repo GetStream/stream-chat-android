@@ -24,7 +24,6 @@
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:MessagesScreen.kt$@OptIn(ExperimentalAnimationApi::class) @Composable private fun BoxScope.AttachmentsPickerMenu( listViewModel: MessageListViewModel, attachmentsPickerViewModel: AttachmentsPickerViewModel, composerViewModel: MessageComposerViewModel, )</ID>
     <ID>LongMethod:PollCreationDiscardDialog.kt$@Composable public fun PollCreationDiscardDialog( usePlatformDefaultWidth: Boolean = false, onCancelClicked: () -> Unit, onDiscardClicked: () -> Unit, )</ID>
-    <ID>LongMethod:PollMessageContent.kt$@Composable public fun PollMessageContent( modifier: Modifier, messageItem: MessageItemState, onLongItemClick: (Message) -> Unit = {}, )</ID>
     <ID>LongMethod:PollOptionList.kt$@Composable public fun PollOptionList( modifier: Modifier = Modifier, lazyListState: LazyListState = rememberLazyListState(), title: String = stringResource(id = R.string.stream_compose_poll_option_title), optionItems: List&lt;PollOptionItem> = emptyList(), onQuestionsChanged: (List&lt;PollOptionItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp), )</ID>
     <ID>LongMethod:PollSwitchList.kt$@Composable public fun PollSwitchList( modifier: Modifier = Modifier, pollSwitchItems: List&lt;PollSwitchItem>, onSwitchesChanged: (List&lt;PollSwitchItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp), )</ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
@@ -55,6 +54,7 @@
     <ID>MagicNumber:PollOptionList.kt$5</ID>
     <ID>MagicNumber:PollOptionList.kt$8</ID>
     <ID>MagicNumber:PollSwitchList.kt$8</ID>
+    <ID>MagicNumber:PreviewPollData.kt$PreviewPollData$10</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
     <ID>MaxLineLength:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$var switchItemList: List&lt;PollSwitchItem> by remember { mutableStateOf(pollSwitchItemFactory.providePollSwitchItemList()) }</ID>
