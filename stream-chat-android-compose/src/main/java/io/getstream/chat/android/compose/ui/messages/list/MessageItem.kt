@@ -55,6 +55,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
+import io.getstream.chat.android.client.utils.message.isPinnedAndNotDeleted
 import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -166,8 +167,10 @@ public fun MessageItem(
         )
     }
 
-    val backgroundColor =
-        if (focusState is MessageFocused || message.pinned) ChatTheme.colors.highlight else Color.Transparent
+    val backgroundColor = when (focusState is MessageFocused || message.isPinnedAndNotDeleted()) {
+        true -> ChatTheme.colors.highlight
+        else -> Color.Transparent
+    }
     val shouldAnimateBackground = !message.pinned && focusState != null
 
     val color = if (shouldAnimateBackground) {
@@ -270,7 +273,7 @@ internal fun DefaultMessageItemHeaderContent(
     val message = messageItem.message
     val currentUser = messageItem.currentUser
 
-    if (message.pinned) {
+    if (message.isPinnedAndNotDeleted()) {
         val pinnedByUser = if (message.pinnedBy?.id == currentUser?.id) {
             stringResource(id = R.string.stream_compose_message_list_you)
         } else {
