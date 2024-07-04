@@ -23,6 +23,8 @@ import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
@@ -37,6 +39,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisi
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import io.getstream.log.taggedLogger
+import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -403,6 +406,23 @@ public class MessageListViewModel(
      */
     public fun createPoll(pollConfig: PollConfig) {
         messageListController.createPoll(pollConfig = pollConfig)
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param message The message where the poll is.
+     * @param poll The poll that want to be casted a vote.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    public fun castVote(message: Message, poll: Poll, option: Option) {
+        messageListController.castVote(
+            messageId = message.id,
+            pollId = poll.id,
+            option = option,
+        )
     }
 
     /**

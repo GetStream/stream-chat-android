@@ -76,6 +76,8 @@ import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -101,6 +103,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  * @param modifier Modifier for styling.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
+ * @param onCastVote Handler for casting a vote on an option.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
@@ -125,6 +128,7 @@ public fun MessageItem(
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -145,6 +149,7 @@ public fun MessageItem(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onCastVote = onCastVote,
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -403,6 +408,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
+ * @param onCastVote Handler when a user cast a vote on an option.
  */
 @Composable
 internal fun DefaultMessageItemCenterContent(
@@ -411,12 +417,14 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    onCastVote: (Message, Poll, Option) -> Unit,
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll() && messageItem.isMine) {
         PollMessageContent(
             modifier = modifier,
             messageItem = messageItem,
+            onCastVote = onCastVote,
             onLongItemClick = onLongItemClick,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {

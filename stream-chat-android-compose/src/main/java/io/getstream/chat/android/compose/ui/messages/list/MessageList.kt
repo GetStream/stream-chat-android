@@ -35,6 +35,8 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -93,6 +95,13 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
+    onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
+        viewModel.castVote(
+            message,
+            poll,
+            option,
+        )
+    },
     onQuotedMessageClick: (Message) -> Unit = { message ->
         viewModel.scrollToMessage(
             messageId = message.id,
@@ -124,6 +133,7 @@ public fun MessageList(
             messageListItemState = messageListItem,
             reactionSorting = reactionSorting,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onCastVote = onCastVote,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
@@ -167,6 +177,7 @@ public fun MessageList(
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onCastVote Handler for casting a vote on an option.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -178,6 +189,7 @@ internal fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onCastVote: (Message, Poll, Option) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
 ) {
     MessageContainer(
@@ -187,6 +199,7 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
+        onCastVote = onCastVote,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
     )
@@ -267,6 +280,7 @@ public fun MessageList(
     onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
@@ -292,6 +306,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageListItemState = it,
             reactionSorting = reactionSorting,
+            onCastVote = onCastVote,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
@@ -322,6 +337,7 @@ public fun MessageList(
             onMessagesEndReached = onMessagesPageEndReached,
             onScrollToBottom = onScrollToBottom,
         )
+
         else -> emptyContent()
     }
 }

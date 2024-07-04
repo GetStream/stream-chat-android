@@ -45,6 +45,7 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -108,6 +109,7 @@ import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
+import io.getstream.result.call.Call
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1725,21 +1727,43 @@ public class MessageListController(
      *
      * @param pollConfig Configuration for creating a poll.
      */
-    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
+    public fun createPoll(pollConfig: PollConfig) {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             chatClient.sendPoll(
                 channelType = channelType,
                 channelId = channelId,
                 pollConfig = pollConfig,
-            ).enqueue { response ->
-                onResult(response)
-                if (response is Result.Failure) {
-                    onActionResult(response.value) {
-                        ErrorEvent.PollCreationError(it)
-                    }
+            ).enqueue(onError = { error ->
+                onActionResult(error) {
+                    ErrorEvent.PollCreationError(it)
                 }
-            }
+            })
         }
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    public fun castVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ) {
+        chatClient.castPollVote(
+            messageId = messageId,
+            pollId = pollId,
+            option = option,
+        ).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.PollCastingVoteError(it)
+            }
+        })
     }
 
     /**
@@ -2133,6 +2157,13 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class PollCreationError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while casting a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollCastingVoteError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.

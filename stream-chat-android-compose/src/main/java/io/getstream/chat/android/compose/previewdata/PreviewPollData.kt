@@ -53,7 +53,11 @@ internal object PreviewPollData {
         maxVotesAllowed = 1,
         allowUserSuggestedOptions = false,
         allowAnswers = true,
-        voteCountsByOption = mapOf("option1" to 10),
+        voteCountsByOption = mapOf(
+            option1.id to 3,
+            option2.id to 1,
+            option3.id to 1,
+        ),
         votes = listOf(
             Vote(
                 id = UUID.randomUUID().toString(),

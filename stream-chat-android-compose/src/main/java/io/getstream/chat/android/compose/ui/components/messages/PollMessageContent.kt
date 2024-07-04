@@ -23,18 +23,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -56,12 +62,14 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  *
  * @param messageItem The message item to show the content for.
  * @param modifier Modifier for styling.
+ * @param onCastVote Callback when a user cast a vote on an option.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  */
 @Composable
 public fun PollMessageContent(
     modifier: Modifier,
     messageItem: MessageItemState,
+    onCastVote: (Message, Poll, Option) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -94,7 +102,11 @@ public fun PollMessageContent(
             shape = messageBubbleShape,
             color = messageBubbleColor,
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
-            content = { PollMessageContent(poll = poll) },
+            content = {
+                PollMessageContent(poll = poll, onCastVote = { option ->
+                    onCastVote.invoke(message, poll, option)
+                })
+            },
         )
     } else {
         Box(modifier = modifier) {
@@ -127,12 +139,26 @@ public fun PollMessageContent(
 }
 
 @Composable
-private fun PollMessageContent(poll: Poll) {
+private fun PollMessageContent(
+    poll: Poll,
+    onCastVote: (Option) -> Unit,
+) {
+    val checkedMap = remember { mutableStateMapOf<String, Boolean>() }
+
+    LaunchedEffect(key1 = poll) {
+        poll.options.forEach { option ->
+            checkedMap[option.id] = false
+        }
+    }
+
+    val heightMax = LocalConfiguration.current.screenHeightDp
+
     LazyColumn(
         modifier = Modifier.padding(
             horizontal = 10.dp,
             vertical = 12.dp,
-        ),
+        ).heightIn(max = heightMax.dp),
+        userScrollEnabled = false,
     ) {
         item {
             Text(
@@ -157,24 +183,57 @@ private fun PollMessageContent(poll: Poll) {
             items = poll.options,
             key = { it.id },
         ) { option ->
-            val voteCount = poll.votes.count { it.optionId == option.id }
-            PollOptionItem(option = option, voteCount = voteCount, totalVoteCount = poll.votes.size)
+            val voteCount = poll.voteCountsByOption[option.id] ?: 0
+            PollOptionItem(
+                poll = poll,
+                option = option,
+                voteCount = voteCount,
+                totalVoteCount = poll.votes.size,
+                checkedCount = checkedMap.count { it.value },
+                checked = checkedMap[option.id] ?: false,
+                onCheckChanged = { checked ->
+                    checkedMap[option.id] = checked
+                    onCastVote.invoke(option)
+                },
+            )
         }
     }
 }
 
 @Composable
-private fun PollOptionItem(option: Option, voteCount: Int, totalVoteCount: Int) {
+private fun PollOptionItem(
+    poll: Poll,
+    option: Option,
+    voteCount: Int,
+    totalVoteCount: Int,
+    checkedCount: Int,
+    checked: Boolean,
+    onCheckChanged: (Boolean) -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(bottom = 8.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 2.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
+            if (!poll.closed) {
+                Checkbox(
+                    checked = checked,
+                    onCheckedChange = { changed ->
+                        if (!changed) {
+                            onCheckChanged.invoke(false)
+                        } else if (checkedCount < poll.maxVotesAllowed) {
+                            onCheckChanged.invoke(true)
+                        }
+                    },
+                )
+            }
+
             Text(
                 modifier = Modifier
                     .weight(1f)
@@ -221,6 +280,7 @@ private fun PollMessageContentPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(4.dp),
+                onCastVote = { _, _, _ -> },
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithPoll,
                     isMine = true,
@@ -231,6 +291,7 @@ private fun PollMessageContentPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(6.dp),
+                onCastVote = { _, _, _ -> },
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithError,
                     isMine = true,

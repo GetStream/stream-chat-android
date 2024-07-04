@@ -36,6 +36,8 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
@@ -58,6 +60,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorIt
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ * @param onCastVote Handler for casting a vote on an option.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param dateSeparatorContent Composable that represents date separators.
@@ -76,6 +79,7 @@ public fun MessageContainer(
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -98,6 +102,7 @@ public fun MessageContainer(
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
+            onCastVote = onCastVote,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
@@ -246,6 +251,7 @@ internal fun DefaultMessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onCastVote: (Message, Poll, Option) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
@@ -255,6 +261,7 @@ internal fun DefaultMessageItem(
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
+        onCastVote = onCastVote,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
