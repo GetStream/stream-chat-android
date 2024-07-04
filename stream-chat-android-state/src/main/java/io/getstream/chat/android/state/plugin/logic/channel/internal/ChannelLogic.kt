@@ -94,7 +94,6 @@ import io.getstream.result.Result
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import java.util.Date
-import kotlin.math.log
 
 /**
  * This class contains all the logic to manipulate and modify the state of the corresponding channel.
