@@ -215,6 +215,8 @@ private fun PollOptionItem(
     checked: Boolean,
     onCheckChanged: (Boolean) -> Unit,
 ) {
+    val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -273,7 +275,11 @@ private fun PollOptionItem(
                 .clip(RoundedCornerShape(4.dp))
                 .height(4.dp),
             progress = progress,
-            color = ChatTheme.colors.primaryAccent,
+            color = if (isVotedByMine) {
+                ChatTheme.colors.infoAccent
+            } else {
+                ChatTheme.colors.primaryAccent
+            },
             backgroundColor = ChatTheme.colors.inputBackground,
         )
     }
