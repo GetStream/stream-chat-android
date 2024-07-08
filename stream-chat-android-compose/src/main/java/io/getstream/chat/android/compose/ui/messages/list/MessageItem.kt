@@ -420,7 +420,7 @@ internal fun DefaultMessageItemCenterContent(
     onCastVote: (Message, Poll, Option) -> Unit,
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
-    if (messageItem.message.isPoll() && messageItem.isMine) {
+    if (messageItem.message.isPoll()) {
         PollMessageContent(
             modifier = modifier,
             messageItem = messageItem,

@@ -35,9 +35,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -146,14 +143,6 @@ private fun PollMessageContent(
     poll: Poll,
     onCastVote: (Option) -> Unit,
 ) {
-    val checkedMap = remember { mutableStateMapOf<String, Boolean>() }
-
-    LaunchedEffect(key1 = poll) {
-        poll.options.forEach { option ->
-            checkedMap[option.id] = false
-        }
-    }
-
     val heightMax = LocalConfiguration.current.screenHeightDp
 
     LazyColumn(
@@ -189,17 +178,16 @@ private fun PollMessageContent(
             key = { it.id },
         ) { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
+            val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
+
             PollOptionItem(
                 poll = poll,
                 option = option,
                 voteCount = voteCount,
                 totalVoteCount = poll.votes.size,
-                checkedCount = checkedMap.count { it.value },
-                checked = checkedMap[option.id] ?: false,
-                onCheckChanged = { checked ->
-                    checkedMap[option.id] = checked
-                    onCastVote.invoke(option)
-                },
+                checkedCount = poll.ownVotes.count { it.optionId == option.id },
+                checked = isVotedByMine,
+                onCheckChanged = { onCastVote.invoke(option) },
             )
         }
     }
@@ -213,7 +201,7 @@ private fun PollOptionItem(
     totalVoteCount: Int,
     checkedCount: Int,
     checked: Boolean,
-    onCheckChanged: (Boolean) -> Unit,
+    onCheckChanged: () -> Unit,
 ) {
     val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
 
@@ -231,11 +219,9 @@ private fun PollOptionItem(
             if (!poll.closed) {
                 PollItemCheckBox(
                     enabled = checked,
-                    onCheckChanged = { changed ->
-                        if (!changed) {
-                            onCheckChanged.invoke(false)
-                        } else if (checkedCount < poll.maxVotesAllowed) {
-                            onCheckChanged.invoke(true)
+                    onCheckChanged = { _ ->
+                        if (checkedCount < poll.maxVotesAllowed && !checked) {
+                            onCheckChanged.invoke()
                         }
                     },
                 )
