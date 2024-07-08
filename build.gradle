@@ -108,22 +108,8 @@ allprojects {
             }
         }
 
-        // fetch dagger plugin only
-        mavenCentral() {
-            content {
-                includeGroup("com.google.dagger")
-                includeGroup("com.google.dagger.hilt.android")
-            }
-            mavenContent {
-                releasesOnly()
-            }
-        }
-
-        // fetch plugins from gradle plugin portal (https://plugins.gradle.org)
-        gradlePluginPortal()
-
-        // fetch plugins from gradle maven publication
-        maven { url "https://plugins.gradle.org/m2/" }
+        // Fallback for the rest of the dependencies
+        mavenCentral()
     }
 }
 
