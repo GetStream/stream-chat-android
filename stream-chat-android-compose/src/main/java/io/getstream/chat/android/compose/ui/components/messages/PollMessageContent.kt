@@ -18,6 +18,7 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,8 +29,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
@@ -40,9 +41,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -154,10 +157,12 @@ private fun PollMessageContent(
     val heightMax = LocalConfiguration.current.screenHeightDp
 
     LazyColumn(
-        modifier = Modifier.padding(
-            horizontal = 10.dp,
-            vertical = 12.dp,
-        ).heightIn(max = heightMax.dp),
+        modifier = Modifier
+            .padding(
+                horizontal = 10.dp,
+                vertical = 12.dp,
+            )
+            .heightIn(max = heightMax.dp),
         userScrollEnabled = false,
     ) {
         item {
@@ -222,9 +227,9 @@ private fun PollOptionItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (!poll.closed) {
-                Checkbox(
-                    checked = checked,
-                    onCheckedChange = { changed ->
+                PollItemCheckBox(
+                    enabled = checked,
+                    onCheckChanged = { changed ->
                         if (!changed) {
                             onCheckChanged.invoke(false)
                         } else if (checkedCount < poll.maxVotesAllowed) {
@@ -237,9 +242,11 @@ private fun PollOptionItem(
             Text(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(bottom = 2.dp),
+                    .padding(start = 4.dp, bottom = 2.dp),
                 text = option.text,
                 color = ChatTheme.colors.textHighEmphasis,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
             )
@@ -262,12 +269,54 @@ private fun PollOptionItem(
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
+                .padding(start = 22.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .height(4.dp),
             progress = progress,
             color = ChatTheme.colors.primaryAccent,
             backgroundColor = ChatTheme.colors.inputBackground,
         )
+    }
+}
+
+@Composable
+private fun PollItemCheckBox(
+    modifier: Modifier = Modifier,
+    enabled: Boolean,
+    onCheckChanged: (Boolean) -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(18.dp)
+            .background(
+                if (enabled) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.disabled
+                },
+                CircleShape,
+            )
+            .padding(1.dp)
+            .background(
+                if (enabled) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.inputBackground
+                },
+                CircleShape,
+            )
+            .clickable { onCheckChanged.invoke(!enabled) },
+    ) {
+        if (enabled) {
+            Icon(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(3.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
+                tint = Color.White,
+                contentDescription = null,
+            )
+        }
     }
 }
 
@@ -296,6 +345,24 @@ private fun PollMessageContentPreview() {
                     message = PreviewMessageData.messageWithError,
                     isMine = true,
                 ),
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PollItemCheckBoxPreview() {
+    ChatTheme {
+        Row {
+            PollItemCheckBox(
+                enabled = false,
+                onCheckChanged = {},
+            )
+
+            PollItemCheckBox(
+                enabled = true,
+                onCheckChanged = {},
             )
         }
     }
