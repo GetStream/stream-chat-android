@@ -67,6 +67,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed quoted message styling. [#5316](https://github.com/GetStream/stream-chat-android/pull/5316)
 
 ### ⬆️ Improved
 
