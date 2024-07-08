@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.channels
 
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ItemState.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
