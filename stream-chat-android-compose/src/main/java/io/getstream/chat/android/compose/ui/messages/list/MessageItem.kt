@@ -55,8 +55,8 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
-import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isPinnedAndNotDeleted
+import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
