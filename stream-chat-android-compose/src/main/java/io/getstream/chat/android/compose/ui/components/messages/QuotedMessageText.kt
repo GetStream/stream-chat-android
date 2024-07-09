@@ -51,8 +51,8 @@ public fun QuotedMessageText(
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
         else -> when (replyMessage?.isMine(currentUser) != false) {
-            true -> ChatTheme.ownMessageTheme.textStyle
-            else -> ChatTheme.otherMessageTheme.textStyle
+            true -> ChatTheme.ownMessageTheme.quotedTextStyle
+            else -> ChatTheme.otherMessageTheme.quotedTextStyle
         }
     }
 

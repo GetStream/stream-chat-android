@@ -76,6 +76,11 @@ public fun Message.isErrorOrFailed(): Boolean = isError() || isFailed()
 public fun Message.isDeleted(): Boolean = deletedAt != null
 
 /**
+ * @return If the message is pinned and not deleted.
+ */
+public fun Message.isPinnedAndNotDeleted(): Boolean = pinned && !isDeleted()
+
+/**
  * @return If the message type is regular.
  */
 public fun Message.isRegular(): Boolean = type == MessageType.REGULAR

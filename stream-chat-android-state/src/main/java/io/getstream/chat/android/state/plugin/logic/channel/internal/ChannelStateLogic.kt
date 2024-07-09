@@ -27,6 +27,8 @@ import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPinnedAndNotDeleted
 import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -233,10 +235,10 @@ internal class ChannelStateLogic(
 
     override fun delsertPinnedMessage(message: Message) {
         logger.d {
-            "[delsertPinnedMessage] pinned: ${message.pinned}, message.id: ${message.id}" +
-                ", message.text: ${message.text}"
+            "[delsertPinnedMessage] pinned: ${message.pinned}, deleted: ${message.isDeleted()}" +
+                ", message.id: ${message.id}, message.text: ${message.text}"
         }
-        if (message.pinned) {
+        if (message.isPinnedAndNotDeleted()) {
             upsertPinnedMessages(listOf(message), false)
         } else {
             mutableState.deletePinnedMessage(message)

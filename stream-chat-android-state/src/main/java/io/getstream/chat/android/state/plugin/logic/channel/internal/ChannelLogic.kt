@@ -367,12 +367,17 @@ internal class ChannelLogic(
     }
 
     internal fun deleteMessage(message: Message) {
+        logger.d { "[deleteMessage] message.id: ${message.id}, message.text: ${message.text}" }
         channelStateLogic.deleteMessage(message)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
+    internal fun upsertMessage(message: Message) {
+        logger.d { "[upsertMessage] message.id: ${message.id}, message.text: ${message.text}" }
+        channelStateLogic.upsertMessage(message)
+    }
 
     internal fun upsertMessages(messages: List<Message>) {
+        logger.d { "[upsertMessages] messages.size: ${messages.size}" }
         channelStateLogic.upsertMessages(messages)
     }
 
