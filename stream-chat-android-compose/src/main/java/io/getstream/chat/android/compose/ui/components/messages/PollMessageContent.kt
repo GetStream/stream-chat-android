@@ -41,7 +41,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -70,6 +72,7 @@ public fun PollMessageContent(
     modifier: Modifier,
     messageItem: MessageItemState,
     onCastVote: (Message, Poll, Option) -> Unit,
+    onClosePoll: (String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -90,7 +93,7 @@ public fun PollMessageContent(
         }
 
         else -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.backgroundColor
+            true -> ChatTheme.colors.linkBackground
             else -> ChatTheme.otherMessageTheme.backgroundColor
         }
     }
@@ -103,9 +106,14 @@ public fun PollMessageContent(
             color = messageBubbleColor,
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
             content = {
-                PollMessageContent(poll = poll, onCastVote = { option ->
-                    onCastVote.invoke(message, poll, option)
-                })
+                PollMessageContent(
+                    poll = poll,
+                    isMine = ownsMessage,
+                    onCastVote = { option ->
+                        onCastVote.invoke(message, poll, option)
+                    },
+                    onClosePoll = onClosePoll,
+                )
             },
         )
     } else {
@@ -141,9 +149,12 @@ public fun PollMessageContent(
 @Composable
 private fun PollMessageContent(
     poll: Poll,
+    isMine: Boolean,
+    onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
 ) {
     val heightMax = LocalConfiguration.current.screenHeightDp
+    val isClosed = poll.closed
 
     LazyColumn(
         modifier = Modifier
@@ -174,7 +185,7 @@ private fun PollMessageContent(
         }
 
         items(
-            items = poll.options,
+            items = poll.options.take(10),
             key = { it.id },
         ) { option ->
             val voteCount = poll.voteCountsByOption[option.id] ?: 0
@@ -189,6 +200,17 @@ private fun PollMessageContent(
                 checked = isVotedByMine,
                 onCheckChanged = { onCastVote.invoke(option) },
             )
+        }
+
+        item { }
+
+        if (isMine && !isClosed) {
+            item {
+                PollOptionButton(
+                    text = stringResource(id = R.string.stream_compose_poll_end_vote),
+                    onButtonClicked = { onClosePoll.invoke(poll.id) },
+                )
+            }
         }
     }
 }
@@ -257,7 +279,13 @@ private fun PollOptionItem(
         LinearProgressIndicator(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 22.dp)
+                .padding(
+                    start = if (poll.closed) {
+                        0.dp
+                    } else {
+                        22.dp
+                    },
+                )
                 .clip(RoundedCornerShape(4.dp))
                 .height(4.dp),
             progress = progress,
@@ -312,6 +340,23 @@ private fun PollItemCheckBox(
     }
 }
 
+@Composable
+private fun PollOptionButton(
+    text: String,
+    onButtonClicked: () -> Unit,
+) {
+    Text(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 11.dp)
+            .clickable { onButtonClicked.invoke() },
+        textAlign = TextAlign.Center,
+        text = text,
+        color = ChatTheme.colors.primaryAccent,
+        fontSize = 16.sp,
+    )
+}
+
 @Preview
 @Composable
 private fun PollMessageContentPreview() {
@@ -322,6 +367,7 @@ private fun PollMessageContentPreview() {
                     .fillMaxWidth()
                     .padding(4.dp),
                 onCastVote = { _, _, _ -> },
+                onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithPoll,
                     isMine = true,
@@ -333,6 +379,7 @@ private fun PollMessageContentPreview() {
                     .fillMaxWidth()
                     .padding(6.dp),
                 onCastVote = { _, _, _ -> },
+                onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithError,
                     isMine = true,
@@ -356,6 +403,17 @@ private fun PollItemCheckBoxPreview() {
                 enabled = true,
                 onCheckChanged = {},
             )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun PollOptionButtonPreview() {
+    ChatTheme {
+        Column {
+            PollOptionButton("End Vote") {}
+            PollOptionButton("View Result") {}
         }
     }
 }

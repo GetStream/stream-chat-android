@@ -92,5 +92,6 @@
     <string name="stream_ui_message_list_error_unpin_message">Failed to unpin message</string>
     <string name="stream_ui_message_list_error_delete_message">Failed to delete message</string>
     <string name="stream_ui_message_list_error_create_poll">Failed to create a poll</string>
+    <string name="stream_ui_message_list_error_close_poll">Failed to close a poll</string>
     <string name="stream_ui_message_list_error_cast_vote">Failed to cast a vote</string>
 </resources>

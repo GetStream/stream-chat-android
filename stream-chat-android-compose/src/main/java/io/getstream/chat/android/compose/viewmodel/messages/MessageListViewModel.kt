@@ -426,6 +426,15 @@ public class MessageListViewModel(
     }
 
     /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     */
+    public fun closePoll(pollId: String) {
+        messageListController.closePoll(pollId = pollId)
+    }
+
+    /**
      * Scrolls to message if in list otherwise get the message from backend. Does not work for threads.
      *
      * @param messageId The [Message] id we wish to scroll to.

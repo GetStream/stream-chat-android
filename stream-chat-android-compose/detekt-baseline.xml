@@ -24,7 +24,8 @@
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:MessagesScreen.kt$@OptIn(ExperimentalAnimationApi::class) @Composable private fun BoxScope.AttachmentsPickerMenu( listViewModel: MessageListViewModel, attachmentsPickerViewModel: AttachmentsPickerViewModel, composerViewModel: MessageComposerViewModel, )</ID>
     <ID>LongMethod:PollCreationDiscardDialog.kt$@Composable public fun PollCreationDiscardDialog( usePlatformDefaultWidth: Boolean = false, onCancelClicked: () -> Unit, onDiscardClicked: () -> Unit, )</ID>
-    <ID>LongMethod:PollMessageContent.kt$@Composable public fun PollMessageContent( modifier: Modifier, messageItem: MessageItemState, onCastVote: (Message, Poll, Option) -> Unit, onLongItemClick: (Message) -> Unit = {}, )</ID>
+    <ID>LongMethod:PollMessageContent.kt$@Composable private fun PollOptionItem( poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, checkedCount: Int, checked: Boolean, onCheckChanged: () -> Unit, )</ID>
+    <ID>LongMethod:PollMessageContent.kt$@Composable public fun PollMessageContent( modifier: Modifier, messageItem: MessageItemState, onCastVote: (Message, Poll, Option) -> Unit, onClosePoll: (String) -> Unit, onLongItemClick: (Message) -> Unit = {}, )</ID>
     <ID>LongMethod:PollOptionList.kt$@Composable public fun PollOptionList( modifier: Modifier = Modifier, lazyListState: LazyListState = rememberLazyListState(), title: String = stringResource(id = R.string.stream_compose_poll_option_title), optionItems: List&lt;PollOptionItem> = emptyList(), onQuestionsChanged: (List&lt;PollOptionItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp), )</ID>
     <ID>LongMethod:PollSwitchList.kt$@Composable public fun PollSwitchList( modifier: Modifier = Modifier, pollSwitchItems: List&lt;PollSwitchItem>, onSwitchesChanged: (List&lt;PollSwitchItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp), )</ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
@@ -34,7 +35,7 @@
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val url: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
     <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, statefulStreamMediaRecorder: StatefulStreamMediaRecorder?, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
-    <ID>LongParameterList:PollMessageContent.kt$( poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, checkedCount: Int, checked: Boolean, onCheckChanged: (Boolean) -> Unit, )</ID>
+    <ID>LongParameterList:PollMessageContent.kt$( poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, checkedCount: Int, checked: Boolean, onCheckChanged: () -> Unit, )</ID>
     <ID>MagicNumber:AudioRecording.kt$2.5f</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$0.4</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$100F</ID>
@@ -53,6 +54,7 @@
     <ID>MagicNumber:MessageComposer.kt$60_000</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>
+    <ID>MagicNumber:PollMessageContent.kt$10</ID>
     <ID>MagicNumber:PollOptionList.kt$5</ID>
     <ID>MagicNumber:PollOptionList.kt$8</ID>
     <ID>MagicNumber:PollSwitchList.kt$8</ID>

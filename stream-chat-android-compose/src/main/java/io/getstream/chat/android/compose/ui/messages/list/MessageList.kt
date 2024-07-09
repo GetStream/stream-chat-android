@@ -97,10 +97,13 @@ public fun MessageList(
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
         viewModel.castVote(
-            message,
-            poll,
-            option,
+            message = message,
+            poll = poll,
+            option = option,
         )
+    },
+    onClosePoll: (String) -> Unit = { pollId ->
+        viewModel.closePoll(pollId = pollId)
     },
     onQuotedMessageClick: (Message) -> Unit = { message ->
         viewModel.scrollToMessage(
@@ -134,6 +137,7 @@ public fun MessageList(
             reactionSorting = reactionSorting,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onCastVote = onCastVote,
+            onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
@@ -178,6 +182,7 @@ public fun MessageList(
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onCastVote Handler for casting a vote on an option.
+ * @param onClosePoll Handler for closing a poll.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -190,6 +195,7 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
+    onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
 ) {
     MessageContainer(
@@ -200,6 +206,7 @@ internal fun DefaultMessageContainer(
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
         onCastVote = onCastVote,
+        onClosePoll = onClosePoll,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
     )
@@ -281,6 +288,7 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
@@ -307,6 +315,7 @@ public fun MessageList(
             messageListItemState = it,
             reactionSorting = reactionSorting,
             onCastVote = onCastVote,
+            onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,

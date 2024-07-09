@@ -109,7 +109,6 @@ import io.getstream.log.TaggedLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
-import io.getstream.result.call.Call
 import io.getstream.result.call.enqueue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1747,8 +1746,6 @@ public class MessageListController(
      * @param messageId The message id where the poll is.
      * @param pollId The poll id.
      * @param option The option to vote for.
-     *
-     * @return Executable async [Call] responsible for casting a vote.
      */
     public fun castVote(
         messageId: String,
@@ -1764,6 +1761,20 @@ public class MessageListController(
                 ErrorEvent.PollCastingVoteError(it)
             }
         })
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     */
+    public fun closePoll(pollId: String) {
+        chatClient.closePoll(pollId = pollId)
+            .enqueue(onError = { error ->
+                onActionResult(error) {
+                    ErrorEvent.PollCastingVoteError(it)
+                }
+            })
     }
 
     /**
@@ -2164,6 +2175,13 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class PollCastingVoteError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while closing a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollClosingError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.

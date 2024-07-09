@@ -104,6 +104,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onCastVote Handler for casting a vote on an option.
+ * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
@@ -129,6 +130,7 @@ public fun MessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -150,6 +152,7 @@ public fun MessageItem(
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
             onCastVote = onCastVote,
+            onClosePoll = onClosePoll,
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -409,6 +412,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onCastVote Handler when a user cast a vote on an option.
+ * @param onClosePoll Handler when a user close a poll.
  */
 @Composable
 internal fun DefaultMessageItemCenterContent(
@@ -418,6 +422,8 @@ internal fun DefaultMessageItemCenterContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit,
+    onClosePoll: (String) -> Unit,
+
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {
@@ -425,6 +431,7 @@ internal fun DefaultMessageItemCenterContent(
             modifier = modifier,
             messageItem = messageItem,
             onCastVote = onCastVote,
+            onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
