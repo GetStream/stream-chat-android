@@ -2525,6 +2525,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 }
 
 public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
+	public static fun getErrorHandler (Lio/getstream/chat/android/client/plugin/Plugin;)Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
 	public static fun onAttachmentSendRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onCreateChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/result/Result;

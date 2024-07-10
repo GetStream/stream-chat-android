@@ -112,7 +112,8 @@ public class StatePlugin internal constructor(
     SendAttachmentListener by SendAttachmentListenerState(logic),
     FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState) {
 
-    override var errorHandler: ErrorHandler = errorHandlerFactory.create()
+    private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }
+    override fun getErrorHandler(): ErrorHandler = lazyErrorHandler
 
     override fun onUserSet(user: User) {
         syncManager.start()

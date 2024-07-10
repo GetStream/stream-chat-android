@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.offline.plugin.internal
 
-import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.CreateChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
@@ -92,8 +91,6 @@ internal class OfflinePlugin(
     SendAttachmentListener by sendAttachmentListener,
     GetMessageListener by getMessageListener,
     FetchCurrentUserListener by fetchCurrentUserListener {
-
-    override val errorHandler: ErrorHandler? = null
 
     override fun onUserSet(user: User) {
         /* No-Op */
