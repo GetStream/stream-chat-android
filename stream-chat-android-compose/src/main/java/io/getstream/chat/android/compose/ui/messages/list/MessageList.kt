@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -102,6 +103,13 @@ public fun MessageList(
             option = option,
         )
     },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { message, poll, vote ->
+        viewModel.removeVote(
+            message = message,
+            poll = poll,
+            vote = vote,
+        )
+    },
     onClosePoll: (String) -> Unit = { pollId ->
         viewModel.closePoll(pollId = pollId)
     },
@@ -137,6 +145,7 @@ public fun MessageList(
             reactionSorting = reactionSorting,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
             onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
@@ -195,6 +204,7 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -206,6 +216,7 @@ internal fun DefaultMessageContainer(
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
         onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
         onClosePoll = onClosePoll,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
@@ -288,6 +299,7 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
@@ -315,6 +327,7 @@ public fun MessageList(
             messageListItemState = it,
             reactionSorting = reactionSorting,
             onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,

@@ -81,6 +81,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
@@ -131,6 +132,7 @@ public fun MessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -153,6 +155,7 @@ public fun MessageItem(
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
             onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
             onClosePoll = onClosePoll,
         )
     },
@@ -415,6 +418,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onCastVote Handler when a user cast a vote on an option.
+ * @param onRemoveVote Handler when a user cast a remove on an option.
  * @param onClosePoll Handler when a user close a poll.
  */
 @Composable
@@ -425,6 +429,7 @@ internal fun DefaultMessageItemCenterContent(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
     onClosePoll: (String) -> Unit,
 
 ) {
@@ -434,6 +439,7 @@ internal fun DefaultMessageItemCenterContent(
             modifier = modifier,
             messageItem = messageItem,
             onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
         )

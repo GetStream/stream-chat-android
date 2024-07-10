@@ -56,6 +56,7 @@ import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 
@@ -65,6 +66,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  * @param messageItem The message item to show the content for.
  * @param modifier Modifier for styling.
  * @param onCastVote Callback when a user cast a vote on an option.
+ * @param onRemoveVote Callback when a user remove a vote on an option.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  */
 @Composable
@@ -72,6 +74,7 @@ public fun PollMessageContent(
     modifier: Modifier,
     messageItem: MessageItemState,
     onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
     onClosePoll: (String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
@@ -111,6 +114,9 @@ public fun PollMessageContent(
                     isMine = ownsMessage,
                     onCastVote = { option ->
                         onCastVote.invoke(message, poll, option)
+                    },
+                    onRemoveVote = { vote ->
+                        onRemoveVote.invoke(message, poll, vote)
                     },
                     onClosePoll = onClosePoll,
                 )
@@ -152,6 +158,7 @@ private fun PollMessageContent(
     isMine: Boolean,
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
+    onRemoveVote: (Vote) -> Unit,
 ) {
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
@@ -198,7 +205,11 @@ private fun PollMessageContent(
                 totalVoteCount = poll.votes.size,
                 checkedCount = poll.ownVotes.count { it.optionId == option.id },
                 checked = isVotedByMine,
-                onCheckChanged = { onCastVote.invoke(option) },
+                onCastVote = { onCastVote.invoke(option) },
+                onRemoveVote = {
+                    val vote = poll.votes.firstOrNull { it.optionId == option.id } ?: return@PollOptionItem
+                    onRemoveVote.invoke(vote)
+                },
             )
         }
 
@@ -223,7 +234,8 @@ private fun PollOptionItem(
     totalVoteCount: Int,
     checkedCount: Int,
     checked: Boolean,
-    onCheckChanged: () -> Unit,
+    onCastVote: () -> Unit,
+    onRemoveVote: () -> Unit,
 ) {
     val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
 
@@ -241,9 +253,11 @@ private fun PollOptionItem(
             if (!poll.closed) {
                 PollItemCheckBox(
                     enabled = checked,
-                    onCheckChanged = { _ ->
-                        if (checkedCount < poll.maxVotesAllowed && !checked) {
-                            onCheckChanged.invoke()
+                    onCheckChanged = { enabled ->
+                        if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
+                            onCastVote.invoke()
+                        } else if (!enabled) {
+                            onRemoveVote.invoke()
                         }
                     },
                 )
@@ -367,6 +381,7 @@ private fun PollMessageContentPreview() {
                     .fillMaxWidth()
                     .padding(4.dp),
                 onCastVote = { _, _, _ -> },
+                onRemoveVote = { _, _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithPoll,
@@ -379,6 +394,7 @@ private fun PollMessageContentPreview() {
                     .fillMaxWidth()
                     .padding(6.dp),
                 onCastVote = { _, _, _ -> },
+                onRemoveVote = { _, _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithError,

@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
@@ -422,6 +423,21 @@ public class MessageListViewModel(
             messageId = message.id,
             pollId = poll.id,
             option = option,
+        )
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param message The message where the poll is.
+     * @param poll The poll that want to be casted a vote.
+     * @param vote The vote that should be removed.
+     */
+    public fun removeVote(message: Message, poll: Poll, vote: Vote) {
+        messageListController.removeVote(
+            messageId = message.id,
+            pollId = poll.id,
+            vote = vote,
         )
     }
 

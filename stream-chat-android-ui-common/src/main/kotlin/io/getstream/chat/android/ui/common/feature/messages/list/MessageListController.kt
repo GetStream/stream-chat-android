@@ -49,6 +49,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
 import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.state.extensions.getMessageUsingCache
@@ -1764,6 +1765,29 @@ public class MessageListController(
     }
 
     /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote that should be removed.
+     */
+    public fun removeVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ) {
+        chatClient.removePollVote(
+            messageId = messageId,
+            pollId = pollId,
+            vote = vote,
+        ).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.PollCastingVoteError(it)
+            }
+        })
+    }
+
+    /**
      * Close a poll in a message.
      *
      * @param pollId The poll id.
@@ -2175,6 +2199,13 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class PollCastingVoteError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while removing a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollRemovingVoteError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while closing a vote.

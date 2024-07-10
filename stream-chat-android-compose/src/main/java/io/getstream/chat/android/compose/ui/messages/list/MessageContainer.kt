@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
@@ -81,6 +82,7 @@ public fun MessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -105,6 +107,7 @@ public fun MessageContainer(
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
             onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
             onClosePoll = onClosePoll,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -242,6 +245,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user clicks on the message thread.
  * @param onCastVote Handler for casting a vote on an option.
+ * @param onRemoveVote Handler for removing a vote on an option.
  * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onQuotedMessageClick Handler for quoted message click action.
@@ -257,6 +261,7 @@ internal fun DefaultMessageItem(
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
     onClosePoll: (String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -268,6 +273,7 @@ internal fun DefaultMessageItem(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
         onClosePoll = onClosePoll,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
