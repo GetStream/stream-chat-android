@@ -1197,6 +1197,13 @@ public final class io/getstream/chat/android/compose/ui/components/moderatedmess
 	public static final fun ModeratedMessageOptionItem (Lio/getstream/chat/android/ui/common/state/messages/list/ModeratedMessageOption;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollMoreOptionsDialogKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollMoreOptionsDialogKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionInputKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/poll/ComposableSingletons$PollOptionInputKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
@@ -1209,7 +1216,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollMoreOptionsDialogKt {
-	public static final fun PollMoreOptionsDialog (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PollMoreOptionsDialog (Lio/getstream/chat/android/models/Poll;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollOptionInputKt {

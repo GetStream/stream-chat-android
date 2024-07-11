@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.ui.common.state.messages.poll
 
-import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 
 /**
  * Holds the state of the poll.
  *
- * @property moreOptions The more options that should be displayed.
+ * @property currentPoll The more options that should be displayed.
  */
 public data class PollState(
-    public val moreOptions: List<Option>? = null,
+    public val currentPoll: Poll? = null,
 )
 
 internal fun PollState.stringify(): String {
     return "PollState(" +
-        "moreOptions: $moreOptions)"
+        "currentPoll: $currentPoll)"
 }

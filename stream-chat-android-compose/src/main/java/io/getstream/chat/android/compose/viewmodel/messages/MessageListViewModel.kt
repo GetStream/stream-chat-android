@@ -122,7 +122,7 @@ public class MessageListViewModel(
      * Whether is the poll option details should be shown or not.
      */
     public val isShowingPollOptionDetails: Boolean
-        get() = pollState.moreOptions != null
+        get() = pollState.currentPoll != null
 
     /**
      * Gives us information about the online state of the device.
@@ -207,10 +207,10 @@ public class MessageListViewModel(
     /**
      * Triggered when the user taps the show more options button on the poll message.
      *
-     * @param poll Current poll that holds all the information.
+     * @param poll The poll that holds the details to be drawn on the more options screen.
      */
     public fun displayPollMoreOptions(poll: Poll?) {
-        messageListController.displayPollMoreOptions(poll?.options)
+        messageListController.displayPollMoreOptions(poll)
     }
 
     /**

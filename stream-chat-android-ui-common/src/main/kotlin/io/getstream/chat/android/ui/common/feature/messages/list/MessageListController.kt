@@ -46,6 +46,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -1432,10 +1433,10 @@ public class MessageListController(
     /**
      * Triggered when the user taps the show more options button on the poll message.
      *
-     * @param options A list of [Option] that should be displayed on the screen.
+     * @param poll The poll that holds the details to be drawn on the more options screen.
      */
-    public fun displayPollMoreOptions(options: List<Option>?) {
-        _pollState.value = _pollState.value.copy(moreOptions = options)
+    public fun displayPollMoreOptions(poll: Poll?) {
+        _pollState.value = _pollState.value.copy(currentPoll = poll)
     }
 
     /**

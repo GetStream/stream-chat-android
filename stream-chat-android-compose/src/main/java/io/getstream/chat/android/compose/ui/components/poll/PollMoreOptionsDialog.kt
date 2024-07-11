@@ -14,17 +14,49 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalAnimationApi::class)
+
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewPollData
+import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.models.Poll
 
 /**
  * A dialog that should be shown if a user taps the seeing more options on the poll message.
@@ -34,20 +66,124 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  */
 @Composable
 public fun PollMoreOptionsDialog(
+    poll: Poll?,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
     Popup(
+        alignment = Alignment.BottomCenter,
         onDismissRequest = onDismissRequest,
     ) {
-        BackHandler { onBackPressed.invoke() }
+        AnimatedContent(
+            targetState = poll,
+            transitionSpec = {
+                fadeIn() + slideInVertically(
+                    animationSpec = tween(400),
+                    initialOffsetY = { fullHeight -> fullHeight },
+                ) with
+                    fadeOut(animationSpec = tween(200)) +
+                    slideOutVertically(animationSpec = tween(400))
+            },
+            label = "poll more options dialog",
+        ) { currentPoll ->
+            if (currentPoll != null) {
+                BackHandler { onBackPressed.invoke() }
 
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(ChatTheme.colors.appBackground),
-        ) {
-            Text(text = "poll option details!")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(ChatTheme.colors.appBackground),
+                ) {
+                    PollMoreOptionsHeader(onBackPressed = onBackPressed)
+
+                    PollMoreOptionsTitle(title = currentPoll.name)
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    PollMoreOptionsContent(poll = currentPoll)
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun PollMoreOptionsHeader(
+    onBackPressed: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val layoutDirection = LocalLayoutDirection.current
+
+        BackButton(
+            modifier = Modifier
+                .mirrorRtl(layoutDirection = layoutDirection)
+                .padding(end = 32.dp),
+            painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
+            onBackPressed = onBackPressed,
+        )
+
+        Text(
+            text = stringResource(id = R.string.stream_compose_poll_options),
+            style = ChatTheme.typography.title3Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
+    }
+}
+
+@Composable
+private fun PollMoreOptionsTitle(title: String) {
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .background(ChatTheme.colors.inputBackground)
+            .padding(16.dp),
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterStart),
+            text = title,
+            color = ChatTheme.colors.textHighEmphasis,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+        )
+    }
+}
+
+@Composable
+private fun PollMoreOptionsContent(poll: Poll) {
+    val options = poll.options
+
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .background(ChatTheme.colors.inputBackground)
+            .padding(16.dp),
+    ) {
+    }
+}
+
+@Preview
+@Composable
+private fun PollMoreOptionsDialogPreview() {
+    ChatTheme {
+        PollMoreOptionsDialog(
+            poll = PreviewPollData.poll1,
+            onBackPressed = {},
+            onDismissRequest = {},
+        )
     }
 }

@@ -742,13 +742,12 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
 
 @Composable
 private fun PollDialogs(listViewModel: MessageListViewModel) {
-    val isVisible = listViewModel.isShowingPollOptionDetails
-
     val dismiss = { listViewModel.displayPollMoreOptions(null) }
-    if (isVisible) {
-        PollMoreOptionsDialog(
-            onDismissRequest = { dismiss.invoke() },
-            onBackPressed = { dismiss.invoke() },
-        )
-    }
+    val poll = listViewModel.pollState.currentPoll
+
+    PollMoreOptionsDialog(
+        poll = poll,
+        onDismissRequest = { dismiss.invoke() },
+        onBackPressed = { dismiss.invoke() },
+    )
 }
