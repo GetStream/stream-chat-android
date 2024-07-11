@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
@@ -86,6 +87,11 @@ public class MessageListViewModel(
     public val messageMode: MessageMode by messageListController.mode.asState(viewModelScope)
 
     /**
+     * Holds the current [PollState] that's used for the messages list.
+     */
+    public val pollState: PollState by messageListController.pollState.asState(viewModelScope)
+
+    /**
      * The information for the current [Channel].
      */
     public val channel: Channel by messageListController.channel.asState(viewModelScope)
@@ -111,6 +117,12 @@ public class MessageListViewModel(
      */
     public val isShowingOverlay: Boolean
         get() = currentMessagesState.selectedMessageState != null
+
+    /**
+     * Whether is the poll option details should be shown or not.
+     */
+    public val isShowingPollOptionDetails: Boolean
+        get() = pollState.moreOptions != null
 
     /**
      * Gives us information about the online state of the device.
@@ -190,6 +202,15 @@ public class MessageListViewModel(
      */
     public fun selectMessage(message: Message?) {
         messageListController.selectMessage(message)
+    }
+
+    /**
+     * Triggered when the user taps the show more options button on the poll message.
+     *
+     * @param poll Current poll that holds all the information.
+     */
+    public fun displayPollMoreOptions(poll: Poll?) {
+        messageListController.displayPollMoreOptions(poll?.options)
     }
 
     /**

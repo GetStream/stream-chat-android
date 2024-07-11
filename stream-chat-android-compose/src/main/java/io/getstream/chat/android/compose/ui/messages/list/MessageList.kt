@@ -110,6 +110,9 @@ public fun MessageList(
             vote = vote,
         )
     },
+    onMoreOption: (Poll) -> Unit = { poll ->
+        viewModel.displayPollMoreOptions(poll = poll)
+    },
     onClosePoll: (String) -> Unit = { pollId ->
         viewModel.closePoll(pollId = pollId)
     },
@@ -146,6 +149,7 @@ public fun MessageList(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
+            onMoreOption = onMoreOption,
             onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
@@ -205,6 +209,7 @@ internal fun DefaultMessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
+    onMoreOption: (Poll) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -217,6 +222,7 @@ internal fun DefaultMessageContainer(
         onGiphyActionClick = onGiphyActionClick,
         onCastVote = onCastVote,
         onRemoveVote = onRemoveVote,
+        onMoreOption = onMoreOption,
         onClosePoll = onClosePoll,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
@@ -300,6 +306,7 @@ public fun MessageList(
     onScrolledToBottom: () -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    onMoreOption: (Poll) -> Unit = { _ -> },
     onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
@@ -328,6 +335,7 @@ public fun MessageList(
             reactionSorting = reactionSorting,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
+            onMoreOption = onMoreOption,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,

@@ -104,6 +104,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
+import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -289,6 +290,13 @@ public class MessageListController(
     private val _messageListState: MutableStateFlow<MessageListState> =
         MutableStateFlow(MessageListState(isLoading = true))
     public val messageListState: StateFlow<MessageListState> = _messageListState
+
+    /**
+     * Current state of the poll.
+     */
+    private val _pollState: MutableStateFlow<PollState> =
+        MutableStateFlow(PollState())
+    public val pollState: StateFlow<PollState> = _pollState
 
     /**
      * Current state of the thread message list.
@@ -1419,6 +1427,15 @@ public class MessageListController(
         } else {
             setMessageListState(_messageListState.value.copy(selectedMessageState = selectedMessageState))
         }
+    }
+
+    /**
+     * Triggered when the user taps the show more options button on the poll message.
+     *
+     * @param options A list of [Option] that should be displayed on the screen.
+     */
+    public fun displayPollMoreOptions(options: List<Option>?) {
+        _pollState.value = _pollState.value.copy(moreOptions = options)
     }
 
     /**

@@ -83,6 +83,7 @@ public fun MessageContainer(
     onThreadClick: (Message) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    onMoreOption: (Poll) -> Unit,
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -108,6 +109,7 @@ public fun MessageContainer(
             onThreadClick = onThreadClick,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
+            onMoreOption = onMoreOption,
             onClosePoll = onClosePoll,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -246,6 +248,7 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
  * @param onThreadClick Handler when the user clicks on the message thread.
  * @param onCastVote Handler for casting a vote on an option.
  * @param onRemoveVote Handler for removing a vote on an option.
+ * @param onMoreOption Handler for seeing more options.
  * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onQuotedMessageClick Handler for quoted message click action.
@@ -262,6 +265,7 @@ internal fun DefaultMessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
+    onMoreOption: (Poll) -> Unit,
     onClosePoll: (String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -274,6 +278,7 @@ internal fun DefaultMessageItem(
         onThreadClick = onThreadClick,
         onCastVote = onCastVote,
         onRemoveVote = onRemoveVote,
+        onMoreOption = onMoreOption,
         onClosePoll = onClosePoll,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,

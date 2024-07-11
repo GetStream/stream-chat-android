@@ -106,6 +106,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
  * @param onCastVote Handler for casting a vote on an option.
+ * @param onMoreOption Handler for seeing more options.
  * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
@@ -133,6 +134,7 @@ public fun MessageItem(
     onThreadClick: (Message) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    onMoreOption: (Poll) -> Unit = { _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -156,6 +158,7 @@ public fun MessageItem(
             onQuotedMessageClick = onQuotedMessageClick,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
+            onMoreOption = onMoreOption,
             onClosePoll = onClosePoll,
         )
     },
@@ -430,6 +433,7 @@ internal fun DefaultMessageItemCenterContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
+    onMoreOption: (Poll) -> Unit,
     onClosePoll: (String) -> Unit,
 
 ) {
@@ -440,6 +444,7 @@ internal fun DefaultMessageItemCenterContent(
             messageItem = messageItem,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
+            onMoreOption = onMoreOption,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
         )

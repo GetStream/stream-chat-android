@@ -66,6 +66,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  * @param messageItem The message item to show the content for.
  * @param modifier Modifier for styling.
  * @param onCastVote Callback when a user cast a vote on an option.
+ * @param onMoreOption Callback when a user clicked seeing more options.
  * @param onRemoveVote Callback when a user remove a vote on an option.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  */
@@ -75,6 +76,7 @@ public fun PollMessageContent(
     messageItem: MessageItemState,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
+    onMoreOption: (Poll) -> Unit,
     onClosePoll: (String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
@@ -118,6 +120,7 @@ public fun PollMessageContent(
                     onRemoveVote = { vote ->
                         onRemoveVote.invoke(message, poll, vote)
                     },
+                    onMoreOption = onMoreOption,
                     onClosePoll = onClosePoll,
                 )
             },
@@ -159,6 +162,7 @@ private fun PollMessageContent(
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
+    onMoreOption: (Poll) -> Unit,
 ) {
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
@@ -213,7 +217,15 @@ private fun PollMessageContent(
             )
         }
 
-        item { }
+        if (poll.options.size > 10) {
+            val additionalOptionSize = poll.options.size - 10
+            item {
+                PollOptionButton(
+                    text = stringResource(id = R.string.stream_compose_poll_see_more_options, additionalOptionSize),
+                    onButtonClicked = { onMoreOption.invoke(poll) },
+                )
+            }
+        }
 
         if (isMine && !isClosed) {
             item {
@@ -271,7 +283,6 @@ private fun PollOptionItem(
                 color = ChatTheme.colors.textHighEmphasis,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
             )
 
@@ -279,7 +290,6 @@ private fun PollOptionItem(
                 modifier = Modifier.padding(bottom = 2.dp),
                 text = voteCount.toString(),
                 color = ChatTheme.colors.textHighEmphasis,
-                fontWeight = FontWeight.Medium,
                 fontSize = 16.sp,
             )
         }
@@ -382,6 +392,7 @@ private fun PollMessageContentPreview() {
                     .padding(4.dp),
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
+                onMoreOption = { _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithPoll,
@@ -395,6 +406,7 @@ private fun PollMessageContentPreview() {
                     .padding(6.dp),
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
+                onMoreOption = { _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithError,
