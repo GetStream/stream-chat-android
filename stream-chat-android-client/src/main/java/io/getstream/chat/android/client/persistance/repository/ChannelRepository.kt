@@ -58,7 +58,7 @@ public interface ChannelRepository {
     /**
      * Updates a [Message] from a [Channel.messages].
      *
-     * @param message [Message] to delete.
+     * @param message [Message] to update.
      */
     public suspend fun updateChannelMessage(message: Message)
 
