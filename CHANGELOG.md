@@ -34,6 +34,8 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed channel cache not being updated when a message is soft deleted. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+- Expired/deleted pinned messages are filtered out. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 
 ### ⬆️ Improved
 
@@ -49,6 +51,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `TimeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 
 ### ⚠️ Changed
 
@@ -72,6 +75,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatTheme.timeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 
 ### ⚠️ Changed
 

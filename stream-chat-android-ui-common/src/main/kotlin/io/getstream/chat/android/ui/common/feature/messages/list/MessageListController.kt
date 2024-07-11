@@ -246,9 +246,6 @@ public class MessageListController(
             )
         }
         .distinctUntilChanged()
-        .onEach {
-            logger.w { "[observeChannel] channel.pinnedMessages: ${it.pinnedMessages.map { it.text }}" }
-        }
         .stateIn(scope = scope, started = SharingStarted.Eagerly, Channel())
 
     /**
