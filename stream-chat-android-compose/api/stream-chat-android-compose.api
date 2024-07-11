@@ -1208,6 +1208,10 @@ public final class io/getstream/chat/android/compose/ui/components/poll/Composab
 	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/components/poll/PollMoreOptionsDialogKt {
+	public static final fun PollMoreOptionsDialog (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+}
+
 public final class io/getstream/chat/android/compose/ui/components/poll/PollOptionInputKt {
 	public static final fun PollOptionInput (Ljava/lang/String;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Ljava/lang/String;ZIILandroidx/compose/ui/graphics/Shape;Landroidx/compose/foundation/layout/PaddingValues;Landroidx/compose/foundation/text/KeyboardOptions;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;III)V
 	public static final fun PollOptionInputPreview (Landroidx/compose/runtime/Composer;I)V

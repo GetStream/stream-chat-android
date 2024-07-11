@@ -40,7 +40,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -55,7 +54,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
@@ -64,6 +62,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.StatefulStre
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
+import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
@@ -308,7 +307,7 @@ public fun MessagesScreen(
             skipEnrichUrl = skipEnrichUrl,
         )
         MessageDialogs(listViewModel = listViewModel)
-        PollMoreOptionDialog(listViewModel = listViewModel)
+        PollDialogs(listViewModel = listViewModel)
     }
 }
 
@@ -742,24 +741,14 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
 }
 
 @Composable
-private fun PollMoreOptionDialog(listViewModel: MessageListViewModel) {
+private fun PollDialogs(listViewModel: MessageListViewModel) {
     val isVisible = listViewModel.isShowingPollOptionDetails
 
+    val dismiss = { listViewModel.displayPollMoreOptions(null) }
     if (isVisible) {
-        Popup(
-            onDismissRequest = { listViewModel.displayPollMoreOptions(null) },
-        ) {
-            BackHandler {
-                listViewModel.displayPollMoreOptions(null)
-            }
-
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ChatTheme.colors.appBackground),
-            ) {
-                Text(text = "poll option details!")
-            }
-        }
+        PollMoreOptionsDialog(
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
+        )
     }
 }
