@@ -18,5 +18,6 @@
     <ID>MaxLineLength:UserEntity.kt$UserEntity$*</ID>
     <ID>NestedBlockDepth:FilterObjectConverter.kt$private fun Map.Entry&lt;String, Any>.toFilterObject(): FilterObject</ID>
     <ID>SpreadOperator:FilterObjectConverter.kt$(*(this.value as List&lt;Map&lt;String, Any>>).map(Map&lt;String, Any>::toFilterObject).toTypedArray())</ID>
+    <ID>TooManyFunctions:DatabaseMessageRepository.kt$DatabaseMessageRepository : MessageRepository</ID>
   </CurrentIssues>
 </SmellBaseline>

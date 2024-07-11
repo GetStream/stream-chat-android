@@ -246,6 +246,9 @@ public class MessageListController(
             )
         }
         .distinctUntilChanged()
+        .onEach {
+            logger.w { "[observeChannel] channel.pinnedMessages: ${it.pinnedMessages.map { it.text }}" }
+        }
         .stateIn(scope = scope, started = SharingStarted.Eagerly, Channel())
 
     /**
@@ -411,6 +414,7 @@ public class MessageListController(
      * load the message if it is not in the list and scroll to it.
      */
     init {
+        logger.i { "<init> cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
         observeMessagesListState()
         processMessageId()
     }
@@ -577,7 +581,7 @@ public class MessageListController(
         messageId
             ?.takeUnless { it.isBlank() }
             ?.let { messageId ->
-                logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
+                logger.d { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
                 scope.launch {
                     if (parentMessageId != null) {
                         enterThreadSequential(parentMessageId)
@@ -1017,7 +1021,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
-        logger.i { "[loadNewerMessages] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
+        logger.d { "[loadNewerMessages] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
         if (clientState.isOffline) return
         _mode.value.run {
             when (this) {
@@ -1075,7 +1079,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadOlderMessages(messageLimit: Int = this.messageLimit) {
-        logger.i { "[loadOlderMessages] messageLimit: $messageLimit" }
+        logger.d { "[loadOlderMessages] messageLimit: $messageLimit" }
         if (clientState.isOffline) return
 
         _mode.value.run {
@@ -1207,7 +1211,7 @@ public class MessageListController(
      * @param onResult Handler that notifies the result of the load action.
      */
     public fun loadMessageById(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
-        logger.i { "[loadMessageById] messageId: $messageId" }
+        logger.d { "[loadMessageById] messageId: $messageId" }
         chatClient.loadMessageById(cid, messageId).enqueue { result ->
             onResult(result)
             if (result is Result.Failure) {
@@ -1542,7 +1546,7 @@ public class MessageListController(
 
         val lastSeenMessageId = this.lastSeenMessageId
         if (lastSeenMessageId == messageId) {
-            logger.w { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
+            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
             return
         }
         this.lastSeenMessageId = messageId

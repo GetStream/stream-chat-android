@@ -713,6 +713,8 @@ internal class EventHandlerSequential(
                 is MessageDeletedEvent -> {
                     if (event.hardDelete) {
                         repos.deleteChannelMessage(event.message)
+                    } else {
+                        repos.markMessageAsDeleted(event.message)
                     }
                 }
                 is MemberRemovedEvent -> {

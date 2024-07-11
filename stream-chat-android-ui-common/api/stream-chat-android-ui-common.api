@@ -359,6 +359,16 @@ public abstract interface class io/getstream/chat/android/ui/common/helper/Image
 	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
 
+public abstract interface class io/getstream/chat/android/ui/common/helper/TimeProvider : kotlin/jvm/functions/Function0 {
+	public static final field Companion Lio/getstream/chat/android/ui/common/helper/TimeProvider$Companion;
+	public static fun getDEFAULT ()Lio/getstream/chat/android/ui/common/helper/TimeProvider;
+	public abstract fun invoke ()Ljava/lang/Long;
+}
+
+public final class io/getstream/chat/android/ui/common/helper/TimeProvider$Companion {
+	public final fun getDEFAULT ()Lio/getstream/chat/android/ui/common/helper/TimeProvider;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/VideoHeadersProvider {
 	public abstract fun getVideoRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }

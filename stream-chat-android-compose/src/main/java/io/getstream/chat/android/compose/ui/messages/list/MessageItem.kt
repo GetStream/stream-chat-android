@@ -55,7 +55,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
-import io.getstream.chat.android.client.utils.message.isPinnedAndNotDeleted
+import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -167,7 +167,7 @@ public fun MessageItem(
         )
     }
 
-    val backgroundColor = when (focusState is MessageFocused || message.isPinnedAndNotDeleted()) {
+    val backgroundColor = when (focusState is MessageFocused || message.isPinned(ChatTheme.timeProvider)) {
         true -> ChatTheme.colors.highlight
         else -> Color.Transparent
     }
@@ -273,7 +273,7 @@ internal fun DefaultMessageItemHeaderContent(
     val message = messageItem.message
     val currentUser = messageItem.currentUser
 
-    if (message.isPinnedAndNotDeleted()) {
+    if (message.isPinned(ChatTheme.timeProvider)) {
         val pinnedByUser = if (message.pinnedBy?.id == currentUser?.id) {
             stringResource(id = R.string.stream_compose_message_list_you)
         } else {
