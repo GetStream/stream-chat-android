@@ -266,6 +266,10 @@ internal class MockMessageRepository : MessageRepository {
         TODO("Not yet implemented")
     }
 
+    override suspend fun evictMessage(messageId: String) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun clear() {
         messages.clear()
     }

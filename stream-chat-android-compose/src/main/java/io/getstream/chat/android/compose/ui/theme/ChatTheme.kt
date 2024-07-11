@@ -50,6 +50,7 @@ import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
 import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
@@ -88,6 +89,9 @@ private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme>
 }
 private val LocalDateFormatter = compositionLocalOf<DateFormatter> {
     error("No DateFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalTimeProvider = compositionLocalOf<TimeProvider> {
+    error("No TimeProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalChannelNameFormatter = compositionLocalOf<ChannelNameFormatter> {
     error("No ChannelNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -193,6 +197,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * For theming the message option list in the same menu, use [messageOptionsTheme].
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
+ * @param timeProvider [TimeProvider] Used throughout the app for time information.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
@@ -232,6 +237,7 @@ public fun ChatTheme(
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
+    timeProvider: TimeProvider = TimeProvider.DEFAULT,
     channelNameFormatter: ChannelNameFormatter = ChannelNameFormatter.defaultFormatter(LocalContext.current),
     messagePreviewFormatter: MessagePreviewFormatter = MessagePreviewFormatter.defaultFormatter(
         context = LocalContext.current,
@@ -304,6 +310,7 @@ public fun ChatTheme(
         LocalReactionIconFactory provides reactionIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalDateFormatter provides dateFormatter,
+        LocalTimeProvider provides timeProvider,
         LocalChannelNameFormatter provides channelNameFormatter,
         LocalMessagePreviewFormatter provides messagePreviewFormatter,
         LocalMessageTextFormatter provides messageTextFormatter,
@@ -423,6 +430,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalDateFormatter.current
+
+    /**
+     * Retrieves the current [TimeProvider] at the call site's position in the hierarchy.
+     */
+    public val timeProvider: TimeProvider
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalTimeProvider.current
 
     /**
      * Retrieves the current [ChannelNameFormatter] at the call site's position in the hierarchy.

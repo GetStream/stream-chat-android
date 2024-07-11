@@ -78,7 +78,27 @@ public fun Message.isDeleted(): Boolean = deletedAt != null
 /**
  * @return If the message is pinned and not deleted.
  */
+@Deprecated(
+    message = "This function is deprecated, please use isPinned() instead",
+    replaceWith = ReplaceWith("isPinned()"),
+)
 public fun Message.isPinnedAndNotDeleted(): Boolean = pinned && !isDeleted()
+
+/**
+ * @return If the message is a valid pinned message.
+ *
+ * @param now A function that provides the current time in milliseconds.
+ */
+@InternalStreamChatApi
+public inline fun Message.isPinned(
+    now: () -> Long = { System.currentTimeMillis() },
+): Boolean = pinned && !isDeleted() && !isPinExpired(now)
+
+/**
+ * @return If the message is a valid pinned message.
+ */
+@InternalStreamChatApi
+public inline fun Message.isPinExpired(now: () -> Long): Boolean = pinExpires?.let { it.time > now() } ?: false
 
 /**
  * @return If the message type is regular.

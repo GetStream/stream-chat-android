@@ -48,6 +48,7 @@ public class StateRegistry constructor(
     private val userStateFlow: StateFlow<User?>,
     private var latestUsers: StateFlow<Map<String, User>>,
     private val job: Job,
+    private val now: () -> Long,
     private val scope: CoroutineScope,
 ) {
 
@@ -92,7 +93,7 @@ public class StateRegistry constructor(
      */
     internal fun mutableChannel(channelType: String, channelId: String): ChannelMutableState {
         return channels.getOrPut(channelType to channelId) {
-            ChannelMutableState(channelType, channelId, userStateFlow, latestUsers)
+            ChannelMutableState(channelType, channelId, userStateFlow, latestUsers, now)
         }
     }
 
