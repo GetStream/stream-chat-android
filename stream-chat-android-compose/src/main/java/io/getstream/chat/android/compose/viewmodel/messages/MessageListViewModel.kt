@@ -40,6 +40,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisi
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import io.getstream.chat.android.ui.common.state.messages.poll.PollState
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
@@ -122,7 +123,7 @@ public class MessageListViewModel(
      * Whether is the poll option details should be shown or not.
      */
     public val isShowingPollOptionDetails: Boolean
-        get() = pollState.currentPoll != null
+        get() = pollState.selectedPoll != null
 
     /**
      * Gives us information about the online state of the device.
@@ -207,10 +208,10 @@ public class MessageListViewModel(
     /**
      * Triggered when the user taps the show more options button on the poll message.
      *
-     * @param poll The poll that holds the details to be drawn on the more options screen.
+     * @param selectedPoll The poll that holds the details to be drawn on the more options screen.
      */
-    public fun displayPollMoreOptions(poll: Poll?) {
-        messageListController.displayPollMoreOptions(poll)
+    public fun displayPollMoreOptions(selectedPoll: SelectedPoll?) {
+        messageListController.displayPollMoreOptions(selectedPoll)
     }
 
     /**

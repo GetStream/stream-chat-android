@@ -76,7 +76,7 @@ public fun PollMessageContent(
     messageItem: MessageItemState,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Poll) -> Unit,
+    onMoreOption: (Message, Poll) -> Unit,
     onClosePoll: (String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
@@ -112,6 +112,7 @@ public fun PollMessageContent(
             border = if (messageItem.isMine) null else BorderStroke(1.dp, ChatTheme.colors.borders),
             content = {
                 PollMessageContent(
+                    message = message,
                     poll = poll,
                     isMine = ownsMessage,
                     onCastVote = { option ->
@@ -157,12 +158,13 @@ public fun PollMessageContent(
 
 @Composable
 private fun PollMessageContent(
+    message: Message,
     poll: Poll,
     isMine: Boolean,
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
-    onMoreOption: (Poll) -> Unit,
+    onMoreOption: (Message, Poll) -> Unit,
 ) {
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
@@ -222,7 +224,7 @@ private fun PollMessageContent(
             item {
                 PollOptionButton(
                     text = stringResource(id = R.string.stream_compose_poll_see_more_options, additionalOptionSize),
-                    onButtonClicked = { onMoreOption.invoke(poll) },
+                    onButtonClicked = { onMoreOption.invoke(message, poll) },
                 )
             }
         }
@@ -240,6 +242,7 @@ private fun PollMessageContent(
 
 @Composable
 private fun PollOptionItem(
+    modifier: Modifier = Modifier,
     poll: Poll,
     option: Option,
     voteCount: Int,
@@ -252,7 +255,7 @@ private fun PollOptionItem(
     val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
     ) {
@@ -324,7 +327,7 @@ private fun PollOptionItem(
 }
 
 @Composable
-private fun PollItemCheckBox(
+internal fun PollItemCheckBox(
     modifier: Modifier = Modifier,
     enabled: Boolean,
     onCheckChanged: (Boolean) -> Unit,
@@ -392,7 +395,7 @@ private fun PollMessageContentPreview() {
                     .padding(4.dp),
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
-                onMoreOption = { _ -> },
+                onMoreOption = { _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithPoll,
@@ -406,7 +409,7 @@ private fun PollMessageContentPreview() {
                     .padding(6.dp),
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
-                onMoreOption = { _ -> },
+                onMoreOption = { _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithError,

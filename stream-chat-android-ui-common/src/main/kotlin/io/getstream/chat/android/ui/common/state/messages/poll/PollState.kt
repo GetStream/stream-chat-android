@@ -16,18 +16,27 @@
 
 package io.getstream.chat.android.ui.common.state.messages.poll
 
+import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 
 /**
  * Holds the state of the poll.
  *
- * @property currentPoll The more options that should be displayed.
+ * @property selectedPoll The more options that should be displayed.
  */
+@Immutable
 public data class PollState(
-    public val currentPoll: Poll? = null,
+    public val selectedPoll: SelectedPoll? = null,
+)
+
+@Immutable
+public data class SelectedPoll(
+    val poll: Poll,
+    val message: Message,
 )
 
 internal fun PollState.stringify(): String {
     return "PollState(" +
-        "currentPoll: $currentPoll)"
+        "selectedPoll: $selectedPoll)"
 }

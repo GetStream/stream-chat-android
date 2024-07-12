@@ -29,7 +29,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +36,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -47,16 +50,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewPollData
 import io.getstream.chat.android.compose.ui.components.BackButton
+import io.getstream.chat.android.compose.ui.components.messages.PollItemCheckBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
  * A dialog that should be shown if a user taps the seeing more options on the poll message.
@@ -66,7 +72,8 @@ import io.getstream.chat.android.models.Poll
  */
 @Composable
 public fun PollMoreOptionsDialog(
-    poll: Poll?,
+    selectedPoll: SelectedPoll?,
+    listViewModel: MessageListViewModel,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
@@ -75,7 +82,7 @@ public fun PollMoreOptionsDialog(
         onDismissRequest = onDismissRequest,
     ) {
         AnimatedContent(
-            targetState = poll,
+            targetState = selectedPoll,
             transitionSpec = {
                 fadeIn() + slideInVertically(
                     animationSpec = tween(400),
@@ -87,20 +94,41 @@ public fun PollMoreOptionsDialog(
             label = "poll more options dialog",
         ) { currentPoll ->
             if (currentPoll != null) {
+                val poll = currentPoll.poll
+                val message = currentPoll.message
+
                 BackHandler { onBackPressed.invoke() }
 
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(ChatTheme.colors.appBackground),
                 ) {
-                    PollMoreOptionsHeader(onBackPressed = onBackPressed)
+                    item { PollMoreOptionsHeader(onBackPressed = onBackPressed) }
 
-                    PollMoreOptionsTitle(title = currentPoll.name)
+                    item { PollMoreOptionsTitle(title = poll.name) }
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
 
-                    PollMoreOptionsContent(poll = currentPoll)
+                    pollMoreOptionsContent(
+                        poll = poll,
+                        onCastVote = { option ->
+                            listViewModel.castVote(
+                                message = message,
+                                poll = poll,
+                                option = option,
+                            )
+                        },
+                        onRemoveVote = { vote ->
+                            listViewModel.removeVote(
+                                message = message,
+                                poll = poll,
+                                vote = vote,
+                            )
+                        },
+                    )
+
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
                 }
             }
         }
@@ -160,30 +188,91 @@ private fun PollMoreOptionsTitle(title: String) {
     }
 }
 
-@Composable
-private fun PollMoreOptionsContent(poll: Poll) {
+private fun LazyListScope.pollMoreOptionsContent(
+    poll: Poll,
+    onCastVote: (Option) -> Unit,
+    onRemoveVote: (Vote) -> Unit,
+) {
     val options = poll.options
+    itemsIndexed(
+        items = options,
+        key = { _, option -> option.id },
+    ) { index, option ->
+        val voteCount = poll.voteCountsByOption[option.id] ?: 0
+        val isVotedByMine = poll.ownVotes.any { it.optionId == option.id }
 
-    Box(
-        modifier = Modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .heightIn(min = 56.dp)
-            .clip(shape = ChatTheme.shapes.pollOptionInput)
-            .background(ChatTheme.colors.inputBackground)
-            .padding(16.dp),
-    ) {
+        PollMoreOptionItem(
+            index = index,
+            poll = poll,
+            option = option,
+            voteCount = voteCount,
+            checkedCount = poll.ownVotes.count { it.optionId == option.id },
+            checked = isVotedByMine,
+            onCastVote = { onCastVote.invoke(option) },
+            onRemoveVote = {
+                val vote = poll.votes.firstOrNull { it.optionId == option.id } ?: return@PollMoreOptionItem
+                onRemoveVote.invoke(vote)
+            },
+        )
     }
 }
 
-@Preview
 @Composable
-private fun PollMoreOptionsDialogPreview() {
-    ChatTheme {
-        PollMoreOptionsDialog(
-            poll = PreviewPollData.poll1,
-            onBackPressed = {},
-            onDismissRequest = {},
+internal fun PollMoreOptionItem(
+    index: Int,
+    poll: Poll,
+    option: Option,
+    voteCount: Int,
+    checkedCount: Int,
+    checked: Boolean,
+    onCastVote: () -> Unit,
+    onRemoveVote: () -> Unit,
+) {
+    val shape = if (index == 0) {
+        RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
+    } else if (index == poll.options.size - 1) {
+        RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+    } else {
+        RoundedCornerShape(0.dp)
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .background(color = ChatTheme.colors.inputBackground, shape = shape)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (!poll.closed) {
+            PollItemCheckBox(
+                enabled = checked,
+                onCheckChanged = { enabled ->
+                    if (enabled && checkedCount < poll.maxVotesAllowed && !checked) {
+                        onCastVote.invoke()
+                    } else if (!enabled) {
+                        onRemoveVote.invoke()
+                    }
+                },
+            )
+        }
+
+        Text(
+            modifier = Modifier
+                .weight(1f)
+                .padding(start = 4.dp, bottom = 2.dp),
+            text = option.text,
+            color = ChatTheme.colors.textHighEmphasis,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            fontSize = 16.sp,
+        )
+
+        Text(
+            modifier = Modifier.padding(bottom = 2.dp),
+            text = voteCount.toString(),
+            color = ChatTheme.colors.textHighEmphasis,
+            fontSize = 16.sp,
         )
     }
 }

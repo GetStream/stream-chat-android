@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
  * Default MessageList component, that relies on [MessageListViewModel] to connect all the data
@@ -110,8 +111,8 @@ public fun MessageList(
             vote = vote,
         )
     },
-    onMoreOption: (Poll) -> Unit = { poll ->
-        viewModel.displayPollMoreOptions(poll = poll)
+    onMoreOption: (Message, Poll) -> Unit = { message, poll ->
+        viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message))
     },
     onClosePoll: (String) -> Unit = { pollId ->
         viewModel.closePoll(pollId = pollId)
@@ -209,7 +210,7 @@ internal fun DefaultMessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Poll) -> Unit,
+    onMoreOption: (Message, Poll) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -306,7 +307,7 @@ public fun MessageList(
     onScrolledToBottom: () -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
-    onMoreOption: (Poll) -> Unit = { _ -> },
+    onMoreOption: (Message, Poll) -> Unit = { _, _ -> },
     onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},

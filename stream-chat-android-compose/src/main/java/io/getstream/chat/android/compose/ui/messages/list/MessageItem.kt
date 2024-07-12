@@ -134,7 +134,7 @@ public fun MessageItem(
     onThreadClick: (Message) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
-    onMoreOption: (Poll) -> Unit = { _ -> },
+    onMoreOption: (Message, Poll) -> Unit = { _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -433,7 +433,7 @@ internal fun DefaultMessageItemCenterContent(
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Poll) -> Unit,
+    onMoreOption: (Message, Poll) -> Unit,
     onClosePoll: (String) -> Unit,
 
 ) {
