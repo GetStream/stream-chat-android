@@ -41,6 +41,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
@@ -132,6 +133,7 @@ public fun MessageItem(
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     onMoreOption: (Message, Poll) -> Unit = { _, _ -> },
@@ -156,6 +158,7 @@ public fun MessageItem(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
             onMoreOption = onMoreOption,
@@ -252,11 +255,10 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    if (!messageItem.isMine &&
-        (
-            messageItem.showMessageFooter ||
-                messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
-                messageItem.groupPosition.contains(MessagePosition.NONE)
+    if (!messageItem.isMine && (
+            messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(
+                MessagePosition.NONE,
+            )
             )
     ) {
         UserAvatar(
@@ -325,20 +327,15 @@ internal fun DefaultMessageItemHeaderContent(
         val ownReactions = message.ownReactions
         val reactionGroups = message.reactionGroups.ifEmpty { return }
         val iconFactory = ChatTheme.reactionIconFactory
-        reactionGroups
-            .filter { iconFactory.isReactionSupported(it.key) }
-            .takeIf { it.isNotEmpty() }
-            ?.toList()
-            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }
-            ?.map { (type, _) ->
+        reactionGroups.filter { iconFactory.isReactionSupported(it.key) }.takeIf { it.isNotEmpty() }?.toList()
+            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }?.map { (type, _) ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(
                     painter = reactionIcon.getPainter(isSelected),
                     type = type,
                 )
-            }
-            ?.let { options ->
+            }?.let { options ->
                 MessageReactions(
                     modifier = Modifier
                         .clickable(
@@ -377,8 +374,7 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
             )
         }
 
-        message.isDeleted() &&
-            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
+        message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             OwnedMessageVisibilityContent(message = message)
         }
 
@@ -431,6 +427,7 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     onMoreOption: (Message, Poll) -> Unit,
@@ -439,6 +436,13 @@ internal fun DefaultMessageItemCenterContent(
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {
+        val poll = messageItem.message.poll
+        LaunchedEffect(key1 = poll) {
+            if (poll != null) {
+                onPollUpdated.invoke(messageItem.message, poll)
+            }
+        }
+
         PollMessageContent(
             modifier = modifier,
             messageItem = messageItem,

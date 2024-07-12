@@ -46,6 +46,7 @@ import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
@@ -1437,6 +1438,21 @@ public class MessageListController(
      */
     public fun displayPollMoreOptions(selectedPoll: SelectedPoll?) {
         _pollState.value = _pollState.value.copy(selectedPoll = selectedPoll)
+    }
+
+    /**
+     * Triggered when the poll information has been changed and need to sync on the poll states.
+     *
+     * @param poll The poll that holds the details to be drawn on the more options screen.
+     * @param message The message that contains the poll information.
+     */
+    public fun updatePollState(poll: Poll, message: Message) {
+        _pollState.value = _pollState.value.copy(
+            selectedPoll = SelectedPoll(
+                poll = poll,
+                message = message,
+            ),
+        )
     }
 
     /**

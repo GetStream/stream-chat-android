@@ -260,7 +260,7 @@ internal fun PollMoreOptionItem(
         Text(
             modifier = Modifier
                 .weight(1f)
-                .padding(start = 4.dp, bottom = 2.dp),
+                .padding(start = 16.dp),
             text = option.text,
             color = ChatTheme.colors.textHighEmphasis,
             maxLines = 2,

@@ -97,6 +97,13 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
+    onPollUpdated: (Message, Poll) -> Unit = { message, poll ->
+        if (viewModel.isShowingPollOptionDetails &&
+            viewModel.pollState.selectedPoll?.poll?.id == poll.id
+        ) {
+            viewModel.updatePollState(poll, message)
+        }
+    },
     onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
         viewModel.castVote(
             message = message,
@@ -151,6 +158,7 @@ public fun MessageList(
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
             onMoreOption = onMoreOption,
+            onPollUpdated = onPollUpdated,
             onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
@@ -208,6 +216,7 @@ internal fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     onMoreOption: (Message, Poll) -> Unit,
@@ -221,6 +230,7 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
+        onPollUpdated = onPollUpdated,
         onCastVote = onCastVote,
         onRemoveVote = onRemoveVote,
         onMoreOption = onMoreOption,
@@ -305,6 +315,7 @@ public fun MessageList(
     onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     onMoreOption: (Message, Poll) -> Unit = { _, _ -> },
@@ -334,6 +345,7 @@ public fun MessageList(
         DefaultMessageContainer(
             messageListItemState = it,
             reactionSorting = reactionSorting,
+            onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
             onMoreOption = onMoreOption,

@@ -759,6 +759,7 @@ private fun PollUpdatedEventDto.toDomain(currentUserId: UserId?): PollUpdatedEve
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
+
         cid = cid,
         channelType = channel_type,
         channelId = channel_id,

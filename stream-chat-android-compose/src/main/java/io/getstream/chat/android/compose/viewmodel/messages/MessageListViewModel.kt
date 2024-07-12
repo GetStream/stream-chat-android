@@ -215,6 +215,16 @@ public class MessageListViewModel(
     }
 
     /**
+     * Triggered when the poll information has been changed and need to sync on the poll states.
+     *
+     * @param poll The poll that holds the details to be drawn on the more options screen.
+     * @param message The message that contains the poll information.
+     */
+    public fun updatePollState(poll: Poll, message: Message) {
+        messageListController.updatePollState(poll, message)
+    }
+
+    /**
      * Triggered when the user taps on and selects message reactions.
      *
      * @param message The message that contains the reactions.
