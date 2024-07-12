@@ -171,6 +171,7 @@ internal class TypingEventsTest {
         private val stateRegistry = StateRegistry(
             job = mock(),
             scope = scope,
+            now = { System.currentTimeMillis() },
             userStateFlow = MutableStateFlow(user),
             latestUsers = MutableStateFlow(emptyMap()),
         )

@@ -75,8 +75,9 @@ internal class WhenHandleEvent : SynchronizedCoroutineTest {
         userFlow,
         MutableStateFlow(
             mapOf(currentUser.id to currentUser),
-        ),
-    )
+        )
+    ) { System.currentTimeMillis() }
+
     private val channelStateLogic: ChannelStateLogic = mock {
         on(it.writeChannelState()) doReturn channelMutableState
     }
