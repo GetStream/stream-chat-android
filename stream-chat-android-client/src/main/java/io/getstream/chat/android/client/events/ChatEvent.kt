@@ -45,6 +45,10 @@ public sealed class CidEvent : ChatEvent() {
     public abstract val channelId: String
 }
 
+public sealed class CidEvent2 : ChatEvent() {
+    public abstract val cid: String
+}
+
 public sealed interface UserEvent {
     public val user: User
 }
@@ -666,11 +670,9 @@ public data class PollUpdatedEvent(
     override val createdAt: Date,
     override val rawCreatedAt: String?,
     override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
     override val message: Message,
     val poll: Poll,
-) : CidEvent(), HasMessage
+) : CidEvent2(), HasMessage
 
 /**
  * Triggered when a poll is deleted.
@@ -680,11 +682,9 @@ public data class PollDeletedEvent(
     override val createdAt: Date,
     override val rawCreatedAt: String?,
     override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
     override val message: Message,
     val poll: Poll,
-) : CidEvent(), HasMessage
+) : CidEvent2(), HasMessage
 
 /**
  * Triggered when a poll is closed.
@@ -694,11 +694,9 @@ public data class PollClosedEvent(
     override val createdAt: Date,
     override val rawCreatedAt: String?,
     override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
     override val message: Message,
     val poll: Poll,
-) : CidEvent(), HasMessage
+) : CidEvent2(), HasMessage
 
 /**
  * Triggered when a vote is casted.
@@ -708,12 +706,10 @@ public data class VoteCastedEvent(
     override val createdAt: Date,
     override val rawCreatedAt: String?,
     override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
     override val message: Message,
     val poll: Poll,
     val newVote: Vote,
-) : CidEvent(), HasMessage
+) : CidEvent2(), HasMessage
 
 /**
  * Triggered when a vote is changed.
@@ -723,12 +719,10 @@ public data class VoteChangedEvent(
     override val createdAt: Date,
     override val rawCreatedAt: String?,
     override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
     override val message: Message,
     val poll: Poll,
     val newVote: Vote,
-) : CidEvent(), HasMessage
+) : CidEvent2(), HasMessage
 
 /**
  * Triggered when a vote is removed.
@@ -738,12 +732,10 @@ public data class VoteRemovedEvent(
     override val createdAt: Date,
     override val rawCreatedAt: String?,
     override val cid: String,
-    override val channelType: String,
-    override val channelId: String,
     override val message: Message,
     val poll: Poll,
     val removedVote: Vote,
-) : CidEvent(), HasMessage
+) : CidEvent2(), HasMessage
 
 /**
  * Triggered when a user gets connected to the WS

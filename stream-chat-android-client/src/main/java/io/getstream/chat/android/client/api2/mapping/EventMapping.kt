@@ -732,8 +732,6 @@ private fun PollClosedEventDto.toDomain(currentUserId: UserId?): PollClosedEvent
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
         message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         poll = newPoll,
     )
@@ -746,8 +744,6 @@ private fun PollDeletedEventDto.toDomain(currentUserId: UserId?): PollDeletedEve
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
         message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         poll = newPoll,
     )
@@ -759,10 +755,7 @@ private fun PollUpdatedEventDto.toDomain(currentUserId: UserId?): PollUpdatedEve
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
-
         cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
         message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         poll = newPoll,
     )
@@ -785,10 +778,8 @@ private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         poll = newPoll,
+        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         newVote = pollVote,
     )
 }
@@ -810,10 +801,8 @@ private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEve
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         poll = newPoll,
+        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         newVote = pollVote,
     )
 }
@@ -825,10 +814,8 @@ private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEve
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        channelType = channel_type,
-        channelId = channel_id,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         poll = newPoll,
+        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         removedVote = removedVote,
     )
 }
