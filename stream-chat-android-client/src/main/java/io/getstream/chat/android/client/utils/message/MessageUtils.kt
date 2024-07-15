@@ -98,7 +98,8 @@ public inline fun Message.isPinned(
  * @return If the message is a valid pinned message.
  */
 @InternalStreamChatApi
-public inline fun Message.isPinExpired(now: () -> Long): Boolean = pinExpires?.let { it.time > now() } ?: false
+@PublishedApi
+internal inline fun Message.isPinExpired(now: () -> Long): Boolean = pinExpires?.let { it.time > now() } ?: false
 
 /**
  * @return If the message type is regular.
