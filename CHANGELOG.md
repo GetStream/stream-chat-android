@@ -61,6 +61,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
 
 ### ✅ Added
 
@@ -73,6 +74,7 @@
 - Fixed quoted message styling. [#5316](https://github.com/GetStream/stream-chat-android/pull/5316)
 
 ### ⬆️ Improved
+- Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
 
 ### ✅ Added
 - Added `ChatTheme.timeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
