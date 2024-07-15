@@ -428,6 +428,7 @@ internal class MessageComposerViewModelTest {
 
         fun givenSendMessage(message: Message = Message()) = apply {
             whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+            whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
         fun get(): MessageComposerViewModel {
