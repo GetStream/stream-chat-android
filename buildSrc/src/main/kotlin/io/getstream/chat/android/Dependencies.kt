@@ -155,7 +155,7 @@ object Dependencies {
     const val flipper = "com.facebook.flipper:flipper:${Versions.FLIPPER}"
     const val flipperNetwork = "com.facebook.flipper:flipper-network-plugin:${Versions.FLIPPER}"
     const val flipperLoader = "com.facebook.soloader:soloader:${Versions.FLIPPER_SO_LOADER}"
-    const val gitversionerPlugin = "com.pascalwelsch.gitversioner:gitversioner:${Versions.GITVERSIONER}"
+    const val gitversionerPlugin = "com.github.passsy:gradle-gitVersioner-plugin:${Versions.GITVERSIONER}"
     const val googleServicesPlugin = "com.google.gms:google-services:${Versions.GOOGLE_SERVICES}"
     const val gradleNexusPublishPlugin = "io.github.gradle-nexus:publish-plugin:${Versions.GRADLE_NEXUS_PUBLISH_PLUGIN}"
     const val gradleVersionsPlugin = "com.github.ben-manes:gradle-versions-plugin:${Versions.GRADLE_VERSIONS_PLUGIN}"
