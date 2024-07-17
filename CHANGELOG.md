@@ -1,74 +1,17 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# July 17th, 2024 - 6.4.2
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fixed channel cache not being updated when a message is soft deleted. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 - Expired/deleted pinned messages are filtered out. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 - Clear channels' cache on `channel.hidden` event. [#5324](https://github.com/GetStream/stream-chat-android/pull/5324)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `TimeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
-### 🐞 Fixed
-
 ### ⬆️ Improved
 - Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -79,21 +22,6 @@
 
 ### ✅ Added
 - Added `ChatTheme.timeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # July 05th, 2024 - 6.4.1
 ## stream-chat-android-client
