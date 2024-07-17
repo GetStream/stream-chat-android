@@ -710,6 +710,12 @@ internal class EventHandlerSequential(
                     repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+                is ChannelHiddenEvent -> {
+                    repos.evictChannel(event.cid)
+                    if (event.clearHistory) {
+                        repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    }
+                }
                 is MessageDeletedEvent -> {
                     if (event.hardDelete) {
                         repos.deleteChannelMessage(event.message)

@@ -597,6 +597,9 @@ internal class ChannelLogic(
             }
             is ChannelHiddenEvent -> {
                 channelStateLogic.toggleHidden(true)
+                if (event.clearHistory) {
+                    removeMessagesBefore(event.createdAt)
+                }
             }
             is ChannelVisibleEvent -> {
                 channelStateLogic.toggleHidden(false)
