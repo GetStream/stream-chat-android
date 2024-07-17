@@ -36,6 +36,7 @@
 ### 🐞 Fixed
 - Fixed channel cache not being updated when a message is soft deleted. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 - Expired/deleted pinned messages are filtered out. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+- Clear channels' cache on `channel.hidden` event. [#5324](https://github.com/GetStream/stream-chat-android/pull/5324)
 
 ### ⬆️ Improved
 
