@@ -17,6 +17,7 @@
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
@@ -50,6 +51,7 @@ class MessageListTest : ComposeScreenshotTest() {
                 ),
                 currentUser = TestData.user1(),
             ),
+            reactionSorting = ReactionSortingByCount,
         )
     }
 
@@ -81,6 +83,7 @@ class MessageListTest : ComposeScreenshotTest() {
                 ),
                 currentUser = TestData.user1(),
             ),
+            reactionSorting = ReactionSortingByCount,
         )
     }
 }

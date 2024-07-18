@@ -51,7 +51,9 @@ import io.getstream.log.StreamLog
 import io.getstream.log.TaggedLogger
 import io.getstream.result.Result
 import io.getstream.result.call.Call
+import io.getstream.result.call.doOnResult
 import io.getstream.result.call.map
+import io.getstream.result.onSuccessSuspend
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -601,7 +603,15 @@ public class MessageComposerController(
                 channelType,
                 channelId,
                 message.copy(showInChannel = isInThread && alsoSendToChannel.value),
-            )
+            ).doOnResult(scope) { result ->
+                result.onSuccessSuspend { resultMessage ->
+                    chatClient.markMessageRead(
+                        channelType = channelType,
+                        channelId = channelId,
+                        messageId = resultMessage.id,
+                    ).await()
+                }
+            }
         }
         dismissMessageActions()
         clearData()

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.plugin
-
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import kotlin.reflect.KClass
+package io.getstream.chat.android.ui.common.helper
 
 /**
- * Resolves requested dependencies.
+ * An interface that provides the current time in milliseconds.
  */
-@InternalStreamChatApi
-public interface DependencyResolver {
+public fun interface TimeProvider : () -> Long {
 
     /**
-     * Resolves dependencies to [T] objects.
-     *
-     * @see [KClass] to look for.
+     * Returns the current time in milliseconds.
      */
-    @InternalStreamChatApi
-    public fun <T : Any> resolveDependency(klass: KClass<T>): T? = null
+    override fun invoke(): Long
+
+    public companion object {
+        /**
+         * The default implementation of [TimeProvider] that returns the current time in milliseconds.
+         */
+        @JvmStatic
+        public val DEFAULT: TimeProvider = TimeProvider { System.currentTimeMillis() }
+    }
 }

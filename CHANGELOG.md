@@ -67,7 +67,6 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fixed quoted message styling. [#5316](https://github.com/GetStream/stream-chat-android/pull/5316)
 
 ### ⬆️ Improved
 
@@ -87,6 +86,31 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# July 17th, 2024 - 6.4.2
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed channel cache not being updated when a message is soft deleted. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+- Expired/deleted pinned messages are filtered out. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+- Clear channels' cache on `channel.hidden` event. [#5324](https://github.com/GetStream/stream-chat-android/pull/5324)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added `TimeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed quoted message styling. [#5316](https://github.com/GetStream/stream-chat-android/pull/5316)
+
+### ⬆️ Improved
+- Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
+
+### ✅ Added
+- Added `ChatTheme.timeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
 
 # July 05th, 2024 - 6.4.1
 ## stream-chat-android-client

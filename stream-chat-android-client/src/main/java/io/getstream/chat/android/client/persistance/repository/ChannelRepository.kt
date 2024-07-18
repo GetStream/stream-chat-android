@@ -56,6 +56,13 @@ public interface ChannelRepository {
     public suspend fun deleteChannelMessage(message: Message)
 
     /**
+     * Updates a [Message] from a [Channel.messages].
+     *
+     * @param message [Message] to update.
+     */
+    public suspend fun updateChannelMessage(message: Message)
+
+    /**
      * Selects all channels' cids.
      *
      * @return A list of channels' cids stored in the repository.

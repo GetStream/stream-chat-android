@@ -18,8 +18,8 @@ package io.getstream.chat.android.uitests.snapshot.compose.channels
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ItemState.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
