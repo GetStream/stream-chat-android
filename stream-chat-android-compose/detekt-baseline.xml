@@ -25,7 +25,7 @@
     <ID>LongMethod:MessagesScreen.kt$@OptIn(ExperimentalAnimationApi::class) @Composable private fun BoxScope.AttachmentsPickerMenu( listViewModel: MessageListViewModel, attachmentsPickerViewModel: AttachmentsPickerViewModel, composerViewModel: MessageComposerViewModel, )</ID>
     <ID>LongMethod:PollCreationDiscardDialog.kt$@Composable public fun PollCreationDiscardDialog( usePlatformDefaultWidth: Boolean = false, onCancelClicked: () -> Unit, onDiscardClicked: () -> Unit, )</ID>
     <ID>LongMethod:PollMessageContent.kt$@Composable private fun PollMessageContent( message: Message, poll: Poll, isMine: Boolean, onClosePoll: (String) -> Unit, onCastVote: (Option) -> Unit, onRemoveVote: (Vote) -> Unit, onMoreOption: (Message, Poll) -> Unit, )</ID>
-    <ID>LongMethod:PollMessageContent.kt$@Composable private fun PollOptionItem( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
+    <ID>LongMethod:PollMessageContent.kt$@Composable private fun PollOptionItem( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, users: List&lt;User>, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
     <ID>LongMethod:PollMessageContent.kt$@Composable public fun PollMessageContent( modifier: Modifier, messageItem: MessageItemState, onCastVote: (Message, Poll, Option) -> Unit, onRemoveVote: (Message, Poll, Vote) -> Unit, onMoreOption: (Message, Poll) -> Unit, onClosePoll: (String) -> Unit, onLongItemClick: (Message) -> Unit = {}, )</ID>
     <ID>LongMethod:PollOptionList.kt$@Composable public fun PollOptionList( modifier: Modifier = Modifier, lazyListState: LazyListState = rememberLazyListState(), title: String = stringResource(id = R.string.stream_compose_poll_option_title), optionItems: List&lt;PollOptionItem> = emptyList(), onQuestionsChanged: (List&lt;PollOptionItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp), )</ID>
     <ID>LongMethod:PollSwitchList.kt$@Composable public fun PollSwitchList( modifier: Modifier = Modifier, pollSwitchItems: List&lt;PollSwitchItem>, onSwitchesChanged: (List&lt;PollSwitchItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp), )</ID>
@@ -38,7 +38,7 @@
     <ID>LongParameterList:MessageItem.kt$( messageItem: MessageItemState, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, onPollUpdated: (Message, Poll) -> Unit, onCastVote: (Message, Poll, Option) -> Unit, onRemoveVote: (Message, Poll, Vote) -> Unit, onMoreOption: (Message, Poll) -> Unit, onClosePoll: (String) -> Unit, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
     <ID>LongParameterList:PollMessageContent.kt$( message: Message, poll: Poll, isMine: Boolean, onClosePoll: (String) -> Unit, onCastVote: (Option) -> Unit, onRemoveVote: (Vote) -> Unit, onMoreOption: (Message, Poll) -> Unit, )</ID>
-    <ID>LongParameterList:PollMessageContent.kt$( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
+    <ID>LongParameterList:PollMessageContent.kt$( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, users: List&lt;User>, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
     <ID>LongParameterList:PollMessageContent.kt$( modifier: Modifier, messageItem: MessageItemState, onCastVote: (Message, Poll, Option) -> Unit, onRemoveVote: (Message, Poll, Vote) -> Unit, onMoreOption: (Message, Poll) -> Unit, onClosePoll: (String) -> Unit, onLongItemClick: (Message) -> Unit = {}, )</ID>
     <ID>LongParameterList:PollMoreOptionsDialog.kt$( index: Int, poll: Poll, option: Option, voteCount: Int, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
     <ID>MagicNumber:AudioRecording.kt$2.5f</ID>
@@ -59,6 +59,7 @@
     <ID>MagicNumber:MessageComposer.kt$60_000</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>
+    <ID>MagicNumber:PollMessageContent.kt$0.5f</ID>
     <ID>MagicNumber:PollMessageContent.kt$10</ID>
     <ID>MagicNumber:PollMoreOptionsDialog.kt$200</ID>
     <ID>MagicNumber:PollMoreOptionsDialog.kt$400</ID>

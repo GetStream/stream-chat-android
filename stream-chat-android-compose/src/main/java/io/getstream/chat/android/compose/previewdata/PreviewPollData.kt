@@ -65,7 +65,7 @@ internal object PreviewPollData {
                 optionId = option1.id,
                 createdAt = Date(),
                 updatedAt = Date(),
-                user = null,
+                user = PreviewUserData.user1,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
@@ -73,7 +73,7 @@ internal object PreviewPollData {
                 optionId = option1.id,
                 createdAt = Date(),
                 updatedAt = Date(),
-                user = null,
+                user = PreviewUserData.user2,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
@@ -81,7 +81,7 @@ internal object PreviewPollData {
                 optionId = option1.id,
                 createdAt = Date(),
                 updatedAt = Date(),
-                user = null,
+                user = PreviewUserData.user3,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
@@ -89,7 +89,7 @@ internal object PreviewPollData {
                 optionId = option2.id,
                 createdAt = Date(),
                 updatedAt = Date(),
-                user = null,
+                user = PreviewUserData.user4,
             ),
             Vote(
                 id = UUID.randomUUID().toString(),
@@ -97,7 +97,7 @@ internal object PreviewPollData {
                 optionId = option3.id,
                 createdAt = Date(),
                 updatedAt = Date(),
-                user = null,
+                user = PreviewUserData.user5,
             ),
         ),
         ownVotes = listOf(),

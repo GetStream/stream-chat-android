@@ -51,11 +51,13 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.previewdata.PreviewMessageData
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -208,6 +210,7 @@ private fun PollMessageContent(
                 poll = poll,
                 option = option,
                 voteCount = voteCount,
+                users = poll.votes.filter { it.optionId == option.id }.mapNotNull { it.user },
                 totalVoteCount = poll.votes.size,
                 checkedCount = poll.ownVotes.count { it.optionId == option.id },
                 checked = isVotedByMine,
@@ -247,6 +250,7 @@ private fun PollOptionItem(
     option: Option,
     voteCount: Int,
     totalVoteCount: Int,
+    users: List<User>,
     checkedCount: Int,
     checked: Boolean,
     onCastVote: () -> Unit,
@@ -280,7 +284,7 @@ private fun PollOptionItem(
 
             Text(
                 modifier = Modifier
-                    .weight(1f)
+                    .weight(0.5f)
                     .padding(start = 4.dp, bottom = 2.dp),
                 text = option.text,
                 color = ChatTheme.colors.textHighEmphasis,
@@ -289,12 +293,21 @@ private fun PollOptionItem(
                 fontSize = 16.sp,
             )
 
-            Text(
-                modifier = Modifier.padding(bottom = 2.dp),
-                text = voteCount.toString(),
-                color = ChatTheme.colors.textHighEmphasis,
-                fontSize = 16.sp,
-            )
+            Row {
+                if (voteCount > 0) {
+                    UserAvatarRow(
+                        modifier = Modifier.padding(end = 2.dp),
+                        users = users,
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.padding(bottom = 2.dp),
+                    text = voteCount.toString(),
+                    color = ChatTheme.colors.textHighEmphasis,
+                    fontSize = 16.sp,
+                )
+            }
         }
 
         val progress = if (voteCount == 0 || totalVoteCount == 0) {
