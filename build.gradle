@@ -40,22 +40,18 @@ buildscript {
             }
         }
 
-        // fetch dagger plugin only
-        mavenCentral() {
+        maven {
+            url "https://jitpack.io"
             content {
-                includeGroup("com.google.dagger")
-                includeGroup("com.google.dagger.hilt.android")
-            }
-            mavenContent {
-                releasesOnly()
+                includeModule("com.github.passsy", "gradle-gitVersioner-plugin")
             }
         }
 
         // fetch plugins from gradle plugin portal (https://plugins.gradle.org)
         gradlePluginPortal()
 
-        // fetch plugins from gradle maven publication
-        maven { url "https://plugins.gradle.org/m2/" }
+        // Fallback for the rest of the dependencies
+        mavenCentral()
     }
 
     dependencies {

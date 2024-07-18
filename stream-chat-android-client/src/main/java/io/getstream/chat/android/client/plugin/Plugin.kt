@@ -78,7 +78,7 @@ public interface Plugin :
     GetMessageListener,
     FetchCurrentUserListener {
 
-    public val errorHandler: ErrorHandler?
+    public fun getErrorHandler(): ErrorHandler? = null
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,

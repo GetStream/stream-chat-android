@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -46,6 +47,7 @@ internal class ChannelMutableState(
     override val channelId: String,
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
+    private val now: () -> Long,
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
@@ -115,7 +117,7 @@ internal class ChannelMutableState(
 
     /** a list of pinned messages sorted by message.createdAt */
     private val sortedVisiblePinnedMessages: StateFlow<List<Message>> =
-        messagesTransformation(pinnedMessagesList)
+        messagesTransformation(pinnedMessagesList) { it.isPinned(now) }
 
     override val messagesState: StateFlow<MessagesState> =
         combineStates(loading, sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
@@ -126,12 +128,16 @@ internal class ChannelMutableState(
             }
         }
 
-    private fun messagesTransformation(messages: StateFlow<Collection<Message>>): StateFlow<List<Message>> {
+    private fun messagesTransformation(
+        messages: StateFlow<Collection<Message>>,
+        extraPredicate: (Message) -> Boolean = { true },
+    ): StateFlow<List<Message>> {
         return combineStates(messages, userFlow) { messageCollection, user ->
             messageCollection.asSequence()
                 .filter { it.parentId == null || it.showInChannel }
                 .filter { it.user.id == user?.id || !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .filter(extraPredicate)
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
         }

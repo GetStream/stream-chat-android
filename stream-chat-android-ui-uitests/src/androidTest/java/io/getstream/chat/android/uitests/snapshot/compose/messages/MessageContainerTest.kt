@@ -18,6 +18,7 @@ package io.getstream.chat.android.uitests.snapshot.compose.messages
 
 import io.getstream.chat.android.compose.ui.messages.list.MessageContainer
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
@@ -30,16 +31,25 @@ class MessageContainerTest : ComposeScreenshotTest() {
 
     @Test
     fun dateSeparator() = runScreenshotTest {
-        MessageContainer(DateSeparatorItemState(TestData.date1()))
+        MessageContainer(
+            DateSeparatorItemState(TestData.date1()),
+            reactionSorting = ReactionSortingByCount,
+        )
     }
 
     @Test
     fun threadSeparator() = runScreenshotTest {
-        MessageContainer(ThreadDateSeparatorItemState(date = Date(), replyCount = 5))
+        MessageContainer(
+            ThreadDateSeparatorItemState(date = Date(), replyCount = 5),
+            reactionSorting = ReactionSortingByCount,
+        )
     }
 
     @Test
     fun systemMessage() = runScreenshotTest {
-        MessageContainer(SystemMessageItemState(Message(text = "System message")))
+        MessageContainer(
+            SystemMessageItemState(Message(text = "System message")),
+            reactionSorting = ReactionSortingByCount,
+        )
     }
 }

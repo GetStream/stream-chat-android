@@ -219,6 +219,31 @@ ChatTheme(
 }
 ```
 
+### TimeProvider
+
+Used for providing the current time. The default time provider is `TimeProvider.DEFAULT`.
+
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/helper/TimeProvider.kt).
+
+The time provider can be customized by overriding `ChatTheme.timeProvider` with your own implementation of `TimeProvider`.
+
+```kotlin
+ChatTheme(
+    timeProvider = object : TimeProvider {
+        override fun invoke(): Long {
+            // Return the current time in milliseconds
+            // System.currentTimeMillis() is the default implementation
+            // You can use your own implementation here which can be synchronized with a server
+            // to avoid local clock tampering
+            return System.currentTimeMillis()
+        }
+    }
+) {
+    // Your UI content
+}
+
+```
+
 ### ChannelNameFormatter
 
 Used for formatting channel names. The default channel name formatter is Stream's `DefaultChannelNameFormatter`.
