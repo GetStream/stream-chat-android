@@ -236,7 +236,7 @@ private fun PollMessageContent(
         item {
             PollOptionButton(
                 text = stringResource(id = R.string.stream_compose_poll_view_result),
-                onButtonClicked = { },
+                onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewResult) },
             )
         }
 

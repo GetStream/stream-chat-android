@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
+import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
@@ -99,6 +100,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
 
 /**
@@ -745,10 +747,21 @@ private fun PollDialogs(listViewModel: MessageListViewModel) {
     val dismiss = { listViewModel.displayPollMoreOptions(null) }
     val selectedPoll = listViewModel.pollState.selectedPoll
 
-    PollMoreOptionsDialog(
-        selectedPoll = selectedPoll,
-        onDismissRequest = { dismiss.invoke() },
-        onBackPressed = { dismiss.invoke() },
-        listViewModel = listViewModel,
-    )
+    if (selectedPoll?.pollSelectionType == PollSelectionType.MoreOption) {
+        PollMoreOptionsDialog(
+            selectedPoll = selectedPoll,
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
+            listViewModel = listViewModel,
+        )
+    }
+
+    if (selectedPoll?.pollSelectionType == PollSelectionType.ViewResult) {
+        PollViewResultDialog(
+            selectedPoll = selectedPoll,
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
+            listViewModel = listViewModel,
+        )
+    }
 }

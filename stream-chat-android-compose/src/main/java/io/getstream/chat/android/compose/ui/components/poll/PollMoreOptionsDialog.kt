@@ -67,6 +67,8 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 /**
  * A dialog that should be shown if a user taps the seeing more options on the poll message.
  *
+ * @param selectedPoll The current poll that contains all the states.
+ * @param listViewModel The [MessageListViewModel] used to read state from.
  * @param onDismissRequest Handler for dismissing the dialog.
  * @param onBackPressed Handler for pressing a back button.
  */
@@ -86,7 +88,7 @@ public fun PollMoreOptionsDialog(
             transitionSpec = {
                 fadeIn() + slideInVertically(
                     animationSpec = tween(400),
-                    initialOffsetY = { fullHeight -> fullHeight },
+                    initialOffsetY = { fullHeight -> fullHeight / 2 },
                 ) with
                     fadeOut(animationSpec = tween(200)) +
                     slideOutVertically(animationSpec = tween(400))
