@@ -88,6 +88,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -136,7 +137,7 @@ public fun MessageItem(
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
-    onMoreOption: (Message, Poll) -> Unit = { _, _ -> },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -161,7 +162,7 @@ public fun MessageItem(
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
-            onMoreOption = onMoreOption,
+            selectPoll = selectPoll,
             onClosePoll = onClosePoll,
         )
     },
@@ -430,7 +431,7 @@ internal fun DefaultMessageItemCenterContent(
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Message, Poll) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
 
 ) {
@@ -448,7 +449,7 @@ internal fun DefaultMessageItemCenterContent(
             messageItem = messageItem,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
-            onMoreOption = onMoreOption,
+            selectPoll = selectPoll,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
         )

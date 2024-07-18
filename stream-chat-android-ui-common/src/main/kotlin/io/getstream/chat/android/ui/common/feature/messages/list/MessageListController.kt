@@ -105,6 +105,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
@@ -1446,11 +1447,12 @@ public class MessageListController(
      * @param poll The poll that holds the details to be drawn on the more options screen.
      * @param message The message that contains the poll information.
      */
-    public fun updatePollState(poll: Poll, message: Message) {
+    public fun updatePollState(poll: Poll, message: Message, pollSelectionType: PollSelectionType) {
         _pollState.value = _pollState.value.copy(
             selectedPoll = SelectedPoll(
                 poll = poll,
                 message = message,
+                pollSelectionType = pollSelectionType,
             ),
         )
     }

@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.common.state.messages.poll
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 
@@ -34,7 +35,15 @@ public data class PollState(
 public data class SelectedPoll(
     val poll: Poll,
     val message: Message,
+    val pollSelectionType: PollSelectionType,
 )
+
+@Stable
+public sealed class PollSelectionType {
+    public data object MoreOption : PollSelectionType()
+
+    public data object ViewResult : PollSelectionType()
+}
 
 internal fun PollState.stringify(): String {
     return "PollState(" +

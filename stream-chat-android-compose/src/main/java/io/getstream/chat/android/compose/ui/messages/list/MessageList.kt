@@ -43,6 +43,7 @@ import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
@@ -98,10 +99,11 @@ public fun MessageList(
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
     onPollUpdated: (Message, Poll) -> Unit = { message, poll ->
+        val selectedPoll = viewModel.pollState.selectedPoll
         if (viewModel.isShowingPollOptionDetails &&
-            viewModel.pollState.selectedPoll?.poll?.id == poll.id
+            selectedPoll != null && selectedPoll.poll.id == poll.id
         ) {
-            viewModel.updatePollState(poll, message)
+            viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
         }
     },
     onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
@@ -118,8 +120,8 @@ public fun MessageList(
             vote = vote,
         )
     },
-    onMoreOption: (Message, Poll) -> Unit = { message, poll ->
-        viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message))
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { message, poll, selectionType ->
+        viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message, selectionType))
     },
     onClosePoll: (String) -> Unit = { pollId ->
         viewModel.closePoll(pollId = pollId)
@@ -157,7 +159,7 @@ public fun MessageList(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
-            onMoreOption = onMoreOption,
+            selectPoll = selectPoll,
             onPollUpdated = onPollUpdated,
             onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
@@ -219,7 +221,7 @@ internal fun DefaultMessageContainer(
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Message, Poll) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
 ) {
@@ -233,7 +235,7 @@ internal fun DefaultMessageContainer(
         onPollUpdated = onPollUpdated,
         onCastVote = onCastVote,
         onRemoveVote = onRemoveVote,
-        onMoreOption = onMoreOption,
+        selectPoll = selectPoll,
         onClosePoll = onClosePoll,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
@@ -318,7 +320,7 @@ public fun MessageList(
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
-    onMoreOption: (Message, Poll) -> Unit = { _, _ -> },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
@@ -348,7 +350,7 @@ public fun MessageList(
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
-            onMoreOption = onMoreOption,
+            selectPoll = selectPoll,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,

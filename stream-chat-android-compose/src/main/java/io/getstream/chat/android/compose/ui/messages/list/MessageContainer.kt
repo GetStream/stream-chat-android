@@ -51,6 +51,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
@@ -84,7 +85,7 @@ public fun MessageContainer(
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
-    onMoreOption: (Message, Poll) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -111,7 +112,7 @@ public fun MessageContainer(
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
-            onMoreOption = onMoreOption,
+            selectPoll = selectPoll,
             onClosePoll = onClosePoll,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
@@ -268,7 +269,7 @@ internal fun DefaultMessageItem(
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Message, Poll) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -282,7 +283,7 @@ internal fun DefaultMessageItem(
         onPollUpdated = onPollUpdated,
         onCastVote = onCastVote,
         onRemoveVote = onRemoveVote,
-        onMoreOption = onMoreOption,
+        selectPoll = selectPoll,
         onClosePoll = onClosePoll,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,

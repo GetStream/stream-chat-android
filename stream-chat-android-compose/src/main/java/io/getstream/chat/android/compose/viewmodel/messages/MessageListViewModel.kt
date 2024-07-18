@@ -39,6 +39,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.log.taggedLogger
@@ -220,8 +221,8 @@ public class MessageListViewModel(
      * @param poll The poll that holds the details to be drawn on the more options screen.
      * @param message The message that contains the poll information.
      */
-    public fun updatePollState(poll: Poll, message: Message) {
-        messageListController.updatePollState(poll, message)
+    public fun updatePollState(poll: Poll, message: Message, pollSelectionType: PollSelectionType) {
+        messageListController.updatePollState(poll, message, pollSelectionType)
     }
 
     /**

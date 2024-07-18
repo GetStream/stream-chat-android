@@ -61,6 +61,7 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
  * Message content for the poll, which distinguishes the owner and users and allows them to interact.
@@ -78,7 +79,7 @@ public fun PollMessageContent(
     messageItem: MessageItemState,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
-    onMoreOption: (Message, Poll) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
@@ -123,7 +124,7 @@ public fun PollMessageContent(
                     onRemoveVote = { vote ->
                         onRemoveVote.invoke(message, poll, vote)
                     },
-                    onMoreOption = onMoreOption,
+                    selectPoll = selectPoll,
                     onClosePoll = onClosePoll,
                 )
             },
@@ -166,7 +167,7 @@ private fun PollMessageContent(
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
-    onMoreOption: (Message, Poll) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
 ) {
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
@@ -227,9 +228,16 @@ private fun PollMessageContent(
             item {
                 PollOptionButton(
                     text = stringResource(id = R.string.stream_compose_poll_see_more_options, additionalOptionSize),
-                    onButtonClicked = { onMoreOption.invoke(message, poll) },
+                    onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
                 )
             }
+        }
+
+        item {
+            PollOptionButton(
+                text = stringResource(id = R.string.stream_compose_poll_view_result),
+                onButtonClicked = { },
+            )
         }
 
         if (isMine && !isClosed) {
@@ -408,7 +416,7 @@ private fun PollMessageContentPreview() {
                     .padding(4.dp),
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
-                onMoreOption = { _, _ -> },
+                selectPoll = { _, _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithPoll,
@@ -422,7 +430,7 @@ private fun PollMessageContentPreview() {
                     .padding(6.dp),
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
-                onMoreOption = { _, _ -> },
+                selectPoll = { _, _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
                     message = PreviewMessageData.messageWithError,
