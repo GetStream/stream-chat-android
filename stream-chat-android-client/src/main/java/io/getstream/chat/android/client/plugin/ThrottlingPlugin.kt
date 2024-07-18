@@ -24,7 +24,6 @@ import io.getstream.result.Result
 import kotlin.reflect.KClass
 
 internal class ThrottlingPlugin : Plugin {
-    override val errorHandler = null
     private val lastMarkReadMap: MutableMap<String, Long> = mutableMapOf()
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> {

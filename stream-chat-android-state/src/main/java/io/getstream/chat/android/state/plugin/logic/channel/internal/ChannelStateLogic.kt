@@ -28,7 +28,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
-import io.getstream.chat.android.client.utils.message.isPinnedAndNotDeleted
+import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -65,6 +65,7 @@ internal class ChannelStateLogic(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val now: () -> Long = { System.currentTimeMillis() },
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
 
@@ -238,7 +239,7 @@ internal class ChannelStateLogic(
             "[delsertPinnedMessage] pinned: ${message.pinned}, deleted: ${message.isDeleted()}" +
                 ", message.id: ${message.id}, message.text: ${message.text}"
         }
-        if (message.isPinnedAndNotDeleted()) {
+        if (message.isPinned(now)) {
             upsertPinnedMessages(listOf(message), false)
         } else {
             mutableState.deletePinnedMessage(message)
@@ -295,6 +296,7 @@ internal class ChannelStateLogic(
                 val oldMessages = mutableState.rawPinnedMessages
 
                 val newMessages = messages.filter { isMessageNewerThanCurrent(oldMessages[it.id], it) }
+                    .filter { it.isPinned(now) }
                     .let { attachmentUrlValidator.updateValidAttachmentsUrl(it, oldMessages) }
 
                 val normalizedReplies = newMessages.flatMap { normalizeReplyMessages(it) ?: emptyList() }

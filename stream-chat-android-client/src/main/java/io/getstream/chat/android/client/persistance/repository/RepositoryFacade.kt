@@ -128,6 +128,12 @@ public class RepositoryFacade private constructor(
         channelsRepository.deleteChannelMessage(message)
     }
 
+    @InternalStreamChatApi
+    public suspend fun markMessageAsDeleted(message: Message) {
+        messageRepository.evictMessage(message.id)
+        channelsRepository.updateChannelMessage(message)
+    }
+
     override suspend fun insertReaction(reaction: Reaction) {
         val messageId = reaction.messageId
         if (messageId.isEmpty()) {
