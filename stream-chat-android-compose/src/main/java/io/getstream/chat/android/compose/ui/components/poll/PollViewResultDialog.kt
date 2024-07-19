@@ -37,6 +37,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
@@ -178,6 +180,41 @@ private fun PollViewResultItem(
                 text = stringResource(id = R.string.stream_compose_poll_vote_counts, votes.size),
                 color = ChatTheme.colors.textHighEmphasis,
                 fontSize = 16.sp,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        votes.forEach { vote ->
+            PollVoteItem(vote = vote)
+        }
+    }
+}
+
+@Composable
+private fun PollVoteItem(vote: Vote) {
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val user = vote.user
+        if (user != null) {
+            UserAvatar(
+                modifier = Modifier.size(20.dp),
+                user = user,
+                showOnlineIndicator = false,
+            )
+
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 4.dp)
+                    .weight(1f),
+                text = user.name,
+                color = ChatTheme.colors.textHighEmphasis,
+                fontSize = 14.sp,
             )
         }
     }
