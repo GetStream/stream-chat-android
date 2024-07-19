@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.channel.internal
 import android.util.LruCache
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.utils.date.maxOf
 import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
@@ -97,7 +98,25 @@ internal class DatabaseChannelRepository(
 
     override suspend fun deleteChannelMessage(message: Message) {
         channelCache[message.cid]?.let { cachedChannel ->
-            val updatedChannel = cachedChannel.copy(messages = cachedChannel.messages.filter { it.id != message.id })
+            val updatedChannel = cachedChannel.copy(
+                messages = cachedChannel.messages.filter { it.id != message.id },
+                pinnedMessages = cachedChannel.pinnedMessages.filter { it.id != message.id },
+            )
+            cacheChannel(updatedChannel)
+        }
+    }
+
+    override suspend fun updateChannelMessage(message: Message) {
+        channelCache[message.cid]?.let { cachedChannel ->
+            val updatedChannel = cachedChannel.copy(
+                messages = cachedChannel.messages.map { if (it.id == message.id) message else it },
+                pinnedMessages = cachedChannel.pinnedMessages.mapNotNull { existing ->
+                    when (existing.id == message.id) {
+                        true -> message.takeUnless { it.isDeleted() }
+                        else -> existing
+                    }
+                },
+            )
             cacheChannel(updatedChannel)
         }
     }

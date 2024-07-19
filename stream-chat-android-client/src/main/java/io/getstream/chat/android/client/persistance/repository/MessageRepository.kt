@@ -120,7 +120,17 @@ public interface MessageRepository {
      */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
 
+    /**
+     * Evict messages from the repository.
+     */
     public suspend fun evictMessages()
+
+    /**
+     * Evicts a message from the repository.
+     *
+     * @param messageId String.
+     */
+    public suspend fun evictMessage(messageId: String)
 
     /**
      * Clear messages of this repository.

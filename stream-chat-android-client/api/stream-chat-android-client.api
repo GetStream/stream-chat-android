@@ -2380,6 +2380,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun setChannelDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun setHiddenForChannel (Ljava/lang/String;ZLjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun setHiddenForChannel (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun updateChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun updateLastMessageForChannel (Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun updateMembersForChannel (Ljava/lang/String;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
@@ -2394,6 +2395,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun deleteChannelMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun evictMessage (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun evictMessages (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessage (Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun insertMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -2505,6 +2507,7 @@ public abstract interface class io/getstream/chat/android/client/plugin/Plugin :
 }
 
 public final class io/getstream/chat/android/client/plugin/Plugin$DefaultImpls {
+	public static fun getErrorHandler (Lio/getstream/chat/android/client/plugin/Plugin;)Lio/getstream/chat/android/client/errorhandler/ErrorHandler;
 	public static fun onAttachmentSendRequest (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onChannelMarkReadPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun onCreateChannelPrecondition (Lio/getstream/chat/android/client/plugin/Plugin;Lio/getstream/chat/android/models/User;Ljava/lang/String;Ljava/util/List;)Lio/getstream/result/Result;
@@ -2844,6 +2847,7 @@ public final class io/getstream/chat/android/client/utils/message/MessageUtils {
 	public static final fun isGiphy (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isGiphyEphemeral (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isModerationError (Lio/getstream/chat/android/models/Message;Ljava/lang/String;)Z
+	public static final fun isPinExpired (Lio/getstream/chat/android/models/Message;Lkotlin/jvm/functions/Function0;)Z
 	public static final fun isPinnedAndNotDeleted (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isPoll (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isRegular (Lio/getstream/chat/android/models/Message;)Z

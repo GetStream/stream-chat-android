@@ -103,6 +103,7 @@ public class StreamStatePluginFactory(
             clientState.user,
             repositoryFacade.observeLatestUsers(),
             scope.coroutineContext.job,
+            config.now,
             scope,
         )
 
@@ -117,6 +118,7 @@ public class StreamStatePluginFactory(
             client = chatClient,
             coroutineScope = scope,
             queryingChannelsFree = isQueryingFree,
+            now = config.now,
         )
 
         chatClient.logicRegistry = logic

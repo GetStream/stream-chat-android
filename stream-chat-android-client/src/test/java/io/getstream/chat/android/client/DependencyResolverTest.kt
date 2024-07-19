@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.client
 
-import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.factory.PluginFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
@@ -183,7 +182,6 @@ public class DependencyResolverTest {
     private class PluginDependency(
         private val classes: Map<KClass<*>, Any>,
     ) : Plugin {
-        override val errorHandler: ErrorHandler? = null
         override fun onUserSet(user: User) {
             /** NO-OP */
         }

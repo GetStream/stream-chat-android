@@ -371,7 +371,7 @@ internal constructor(
      * Error handlers for API calls.
      */
     private val errorHandlers: List<ErrorHandler>
-        get() = plugins.mapNotNull { it.errorHandler }.sorted()
+        get() = plugins.mapNotNull { it.getErrorHandler() }.sorted()
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
