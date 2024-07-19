@@ -27,10 +27,37 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.with
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.Text
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
+import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
@@ -69,7 +96,112 @@ public fun PollViewResultDialog(
                 val message = currentPoll.message
 
                 BackHandler { onBackPressed.invoke() }
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(ChatTheme.colors.appBackground),
+                ) {
+                    item {
+                        PollDialogHeader(
+                            title = stringResource(id = R.string.stream_compose_poll_results),
+                            onBackPressed = onBackPressed,
+                        )
+                    }
+
+                    item { PollViewResultTitle(title = poll.name) }
+
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
+
+                    pollViewResultContent(poll = poll)
+
+                    item { Spacer(modifier = Modifier.height(16.dp)) }
+                }
             }
         }
+    }
+}
+
+private fun LazyListScope.pollViewResultContent(
+    poll: Poll,
+) {
+    val votes = poll.votes
+    val options = poll.options.sortedByDescending { option -> votes.count { it.optionId == option.id } }
+
+    itemsIndexed(
+        items = options,
+        key = { _, option -> option.id },
+    ) { index, option ->
+        PollViewResultItem(
+            index = index,
+            option = option,
+            votes = votes.filter { it.optionId == option.id },
+        )
+    }
+}
+
+@Composable
+private fun PollViewResultItem(
+    index: Int,
+    option: Option,
+    votes: List<Vote>,
+) {
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .fillMaxWidth()
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .background(ChatTheme.colors.inputBackground)
+            .padding(16.dp),
+    ) {
+        Row(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                text = option.text,
+                color = ChatTheme.colors.textHighEmphasis,
+                fontWeight = FontWeight.Medium,
+                fontSize = 16.sp,
+            )
+
+            if (index == 0) {
+                Icon(
+                    modifier = Modifier.padding(end = 8.dp),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_award),
+                    tint = ChatTheme.colors.textHighEmphasis,
+                    contentDescription = null,
+                )
+            }
+
+            Text(
+                text = stringResource(id = R.string.stream_compose_poll_vote_counts, votes.size),
+                color = ChatTheme.colors.textHighEmphasis,
+                fontSize = 16.sp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun PollViewResultTitle(title: String) {
+    Box(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
+            .background(ChatTheme.colors.inputBackground)
+            .padding(16.dp),
+    ) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.CenterStart),
+            text = title,
+            color = ChatTheme.colors.textHighEmphasis,
+            fontWeight = FontWeight.Medium,
+            fontSize = 16.sp,
+        )
     }
 }

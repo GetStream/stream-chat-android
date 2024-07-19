@@ -45,8 +45,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,10 +52,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.components.BackButton
 import io.getstream.chat.android.compose.ui.components.messages.PollItemCheckBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -106,7 +102,12 @@ public fun PollMoreOptionsDialog(
                         .fillMaxSize()
                         .background(ChatTheme.colors.appBackground),
                 ) {
-                    item { PollMoreOptionsHeader(onBackPressed = onBackPressed) }
+                    item {
+                        PollDialogHeader(
+                            title = stringResource(id = R.string.stream_compose_poll_options),
+                            onBackPressed = onBackPressed,
+                        )
+                    }
 
                     item { PollMoreOptionsTitle(title = poll.name) }
 
@@ -134,36 +135,6 @@ public fun PollMoreOptionsDialog(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun PollMoreOptionsHeader(
-    onBackPressed: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        val layoutDirection = LocalLayoutDirection.current
-
-        BackButton(
-            modifier = Modifier
-                .mirrorRtl(layoutDirection = layoutDirection)
-                .padding(end = 32.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
-            onBackPressed = onBackPressed,
-        )
-
-        Text(
-            text = stringResource(id = R.string.stream_compose_poll_options),
-            style = ChatTheme.typography.title3Bold,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis,
-        )
     }
 }
 
