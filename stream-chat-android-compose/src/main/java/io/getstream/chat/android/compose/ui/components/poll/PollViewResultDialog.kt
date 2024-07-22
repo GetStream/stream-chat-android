@@ -56,7 +56,6 @@ import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
@@ -66,14 +65,12 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * A dialog that should be shown if a user taps the seeing result of the votes.
  *
  * @param selectedPoll The current poll that contains all the states.
- * @param listViewModel The [MessageListViewModel] used to read state from.
  * @param onDismissRequest Handler for dismissing the dialog.
  * @param onBackPressed Handler for pressing a back button.
  */
 @Composable
 public fun PollViewResultDialog(
     selectedPoll: SelectedPoll?,
-    listViewModel: MessageListViewModel,
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {

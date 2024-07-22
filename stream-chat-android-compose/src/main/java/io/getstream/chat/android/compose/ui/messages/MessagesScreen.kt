@@ -761,7 +761,6 @@ private fun PollDialogs(listViewModel: MessageListViewModel) {
             selectedPoll = selectedPoll,
             onDismissRequest = { dismiss.invoke() },
             onBackPressed = { dismiss.invoke() },
-            listViewModel = listViewModel,
         )
     }
 }

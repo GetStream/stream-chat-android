@@ -1251,7 +1251,7 @@ public final class io/getstream/chat/android/compose/ui/components/poll/PollOpti
 }
 
 public final class io/getstream/chat/android/compose/ui/components/poll/PollViewResultDialogKt {
-	public static final fun PollViewResultDialog (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+	public static final fun PollViewResultDialog (Lio/getstream/chat/android/ui/common/state/messages/poll/SelectedPoll;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/reactionoptions/ComposableSingletons$ExtendedReactionsOptionsKt {
