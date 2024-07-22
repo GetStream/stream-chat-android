@@ -131,6 +131,11 @@ public fun Message.isGiphy(): Boolean = command == AttachmentType.GIPHY
 public fun Message.isPoll(): Boolean = poll != null
 
 /**
+ * @return If the message is related to the poll.
+ */
+public fun Message.isPollClosed(): Boolean = poll?.closed == true
+
+/**
  * @return If the message is a temporary message to select a gif.
  */
 public fun Message.isGiphyEphemeral(): Boolean = isGiphy() && isEphemeral()
