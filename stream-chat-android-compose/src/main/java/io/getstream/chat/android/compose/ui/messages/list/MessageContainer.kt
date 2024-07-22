@@ -59,6 +59,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorIt
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param dateSeparatorContent Composable that represents date separators.
  * @param threadSeparatorContent Composable that represents thread separators.
