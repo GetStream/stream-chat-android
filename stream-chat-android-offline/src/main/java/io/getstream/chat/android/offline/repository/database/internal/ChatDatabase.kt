@@ -69,7 +69,7 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         CommandInnerEntity::class,
         SyncStateEntity::class,
     ],
-    version = 75,
+    version = 76,
     exportSchema = false,
 )
 @TypeConverters(
