@@ -99,6 +99,7 @@ public fun ChannelsScreen(
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
+        key = viewModelFactory.viewModelKey,
         factory = viewModelFactory,
     )
 
