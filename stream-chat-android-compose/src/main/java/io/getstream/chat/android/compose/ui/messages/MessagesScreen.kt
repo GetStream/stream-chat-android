@@ -77,6 +77,7 @@ import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -126,7 +127,7 @@ public fun MessagesScreen(
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
-    onUserAvatarClick: (String) -> Unit = {},
+    onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,

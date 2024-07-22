@@ -146,8 +146,8 @@ class MessagesActivity : BaseConnectedActivity() {
                     reactionSorting = ReactionSortingByLastReactionAt,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
-                    onUserAvatarClick = { id ->
-                        Log.i("MessagesActivity", "user avatar clicked: $id")
+                    onUserAvatarClick = { user ->
+                        Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                     },
                     // TODO
                     // statefulStreamMediaRecorder = statefulStreamMediaRecorder
