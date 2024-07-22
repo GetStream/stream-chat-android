@@ -75,6 +75,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Exposed user avatar click listener in MessagesScreen.kt
 
 ### ⚠️ Changed
 
