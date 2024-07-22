@@ -78,6 +78,7 @@ public fun MessageContainer(
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onUserAvatarClick: ((String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
@@ -101,6 +102,9 @@ public fun MessageContainer(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = {
+                onUserAvatarClick?.invoke(it.message.user.id)
+            },
         )
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
@@ -247,6 +251,7 @@ internal fun DefaultMessageItem(
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onUserAvatarClick: () -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     MessageItem(
@@ -257,6 +262,7 @@ internal fun DefaultMessageItem(
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
+        onUserAvatarClick = onUserAvatarClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
     )
 }
