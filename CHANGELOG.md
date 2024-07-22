@@ -12,6 +12,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Fixed pinned message expire date validation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
 
 ### ⬆️ Improved
 
@@ -36,6 +37,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed channel cache not being updated on message unpin operation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
 
 ### ⬆️ Improved
 
