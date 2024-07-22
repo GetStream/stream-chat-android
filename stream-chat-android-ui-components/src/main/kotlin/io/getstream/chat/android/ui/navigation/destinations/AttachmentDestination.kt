@@ -82,7 +82,7 @@ public open class AttachmentDestination(
             }
 
             AttachmentType.GIPHY -> url = attachment.thumbUrl
-            AttachmentType.PRODUCT -> url = attachment.url
+            AttachmentType.PRODUCT -> url = attachment.assetUrl
         }
 
         if (url.isNullOrEmpty()) {

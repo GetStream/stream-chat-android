@@ -18,8 +18,10 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- `Attachment` class doesn't use `url` property anymore. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
 
 ### ❌ Removed
+- Removed `url` property of `Attachment` class. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
 
 ## stream-chat-android-offline
 ### 🐞 Fixed
