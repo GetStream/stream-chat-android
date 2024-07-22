@@ -56,7 +56,6 @@ internal data class AttachmentEntity(
     val text: String?,
     val type: String?,
     val image: String?,
-    val url: String?,
     val name: String?,
     val fallback: String?,
     val uploadFilePath: String?,
