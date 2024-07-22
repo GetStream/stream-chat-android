@@ -183,7 +183,7 @@ public class MediaGalleryPreviewViewModel(
         if (message.text.isNotEmpty() || numberOfAttachments > 1) {
             message = message.copy(
                 attachments = attachments.filterNot {
-                    it.url == currentMediaAttachment.url
+                    it.assetUrl == currentMediaAttachment.assetUrl
                 },
                 skipEnrichUrl = skipEnrichUrl,
             )
