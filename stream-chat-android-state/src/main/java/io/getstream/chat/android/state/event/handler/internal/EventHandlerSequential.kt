@@ -723,6 +723,9 @@ internal class EventHandlerSequential(
                         repos.markMessageAsDeleted(event.message)
                     }
                 }
+                is MessageUpdatedEvent -> {
+                    repos.updateChannelMessage(event.message)
+                }
                 is MemberRemovedEvent -> {
                     repos.evictChannel(event.cid)
                 }

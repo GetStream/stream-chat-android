@@ -42,6 +42,7 @@ internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
     private val scope: CoroutineScope,
+    private val now: () -> Long = { System.currentTimeMillis() }
 ) : RepositoryFactory {
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
@@ -74,7 +75,7 @@ internal class DatabaseRepositoryFactory(
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
         return databaseChannelRepository ?: run {
-            DatabaseChannelRepository(scope, database.channelStateDao(), getUser, getMessage)
+            DatabaseChannelRepository(scope, database.channelStateDao(), getUser, getMessage, now)
                 .also { repository ->
                     repositoriesCache[ChannelRepository::class.java] = repository
                 }
