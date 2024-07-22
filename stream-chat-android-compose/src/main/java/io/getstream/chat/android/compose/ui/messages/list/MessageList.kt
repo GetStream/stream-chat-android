@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -100,7 +101,7 @@ public fun MessageList(
             parentMessageId = message.parentId,
         )
     },
-    onUserAvatarClick: ((String) -> Unit)? = null,
+    onUserAvatarClick: ((User) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -182,7 +183,7 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
-    onUserAvatarClick: ((String) -> Unit)? = null,
+    onUserAvatarClick: ((User) -> Unit)? = null,
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -280,7 +281,7 @@ public fun MessageList(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
-    onUserAvatarClick: ((String) -> Unit)? = null,
+    onUserAvatarClick: ((User) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
