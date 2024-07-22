@@ -65,6 +65,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.

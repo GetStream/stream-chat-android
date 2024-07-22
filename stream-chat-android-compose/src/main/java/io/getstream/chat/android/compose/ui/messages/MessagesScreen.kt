@@ -109,6 +109,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
