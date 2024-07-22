@@ -148,7 +148,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onHeaderTitleClick = {},
                     onUserAvatarClick = { id ->
                         Log.i("MessagesActivity", "user avatar clicked: $id")
-                    }
+                    },
                     // TODO
                     // statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )
