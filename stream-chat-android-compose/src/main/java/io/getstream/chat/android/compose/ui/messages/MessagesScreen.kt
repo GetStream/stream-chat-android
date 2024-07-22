@@ -125,6 +125,7 @@ public fun MessagesScreen(
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onUserAvatarClick: (String) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -246,6 +247,7 @@ public fun MessagesScreen(
                         listViewModel.openMessageThread(message)
                     }
                 },
+                onUserAvatarClick = onUserAvatarClick,
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->

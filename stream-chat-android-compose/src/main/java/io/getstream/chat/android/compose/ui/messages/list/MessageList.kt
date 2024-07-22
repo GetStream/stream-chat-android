@@ -99,6 +99,7 @@ public fun MessageList(
             parentMessageId = message.parentId,
         )
     },
+    onUserAvatarClick: ((String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -129,6 +130,7 @@ public fun MessageList(
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = onUserAvatarClick,
         )
     },
 ) {
@@ -179,6 +181,7 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onUserAvatarClick: ((String) -> Unit)? = null,
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -189,6 +192,7 @@ internal fun DefaultMessageContainer(
         onGiphyActionClick = onGiphyActionClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
+        onUserAvatarClick = onUserAvatarClick,
     )
 }
 
@@ -275,6 +279,7 @@ public fun MessageList(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
+    onUserAvatarClick: ((String) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -298,6 +303,7 @@ public fun MessageList(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = onUserAvatarClick,
         )
     },
 ) {

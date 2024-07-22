@@ -126,9 +126,13 @@ public fun MessageItem(
     onThreadClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onUserAvatarClick: (() -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemLeadingContent(messageItem = it)
+        DefaultMessageItemLeadingContent(
+            messageItem = it,
+            onUserAvatarClick = onUserAvatarClick,
+        )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
@@ -230,6 +234,7 @@ public fun MessageItem(
 @Composable
 internal fun RowScope.DefaultMessageItemLeadingContent(
     messageItem: MessageItemState,
+    onUserAvatarClick: (() -> Unit)? = null,
 ) {
     val modifier = Modifier
         .padding(start = 8.dp, end = 8.dp)
@@ -248,6 +253,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
             user = messageItem.message.user,
             textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false,
+            onClick = onUserAvatarClick,
         )
     } else {
         Spacer(modifier = modifier)
