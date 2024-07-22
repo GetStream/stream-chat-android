@@ -62,7 +62,7 @@ import kotlin.reflect.KClass
  */
 public class StreamOfflinePluginFactory @JvmOverloads constructor(
     private val appContext: Context,
-    private val now: () -> Long = { System.currentTimeMillis() }
+    private val now: () -> Long = { System.currentTimeMillis() },
 ) : PluginFactory, RepositoryFactory.Provider {
 
     private val logger by taggedLogger("Chat:OfflinePluginFactory")

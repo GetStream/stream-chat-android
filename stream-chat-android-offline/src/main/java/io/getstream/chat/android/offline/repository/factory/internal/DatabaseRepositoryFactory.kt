@@ -42,7 +42,7 @@ internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
     private val scope: CoroutineScope,
-    private val now: () -> Long = { System.currentTimeMillis() }
+    private val now: () -> Long = { System.currentTimeMillis() },
 ) : RepositoryFactory {
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()

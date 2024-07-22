@@ -554,7 +554,7 @@ internal class ChannelMutableState(
 
     private inline fun setPinned(producer: (Map<String, Message>) -> Map<String, Message>) {
         val curPinnedMessages = _pinnedMessages?.value
-        curPinnedMessages ?:return
+        curPinnedMessages ?: return
         val newPinnedMessages = producer(curPinnedMessages)
         logger.v { "[setPinned] pinned.size: ${curPinnedMessages.size} => ${newPinnedMessages.size}" }
         _pinnedMessages?.value = newPinnedMessages
