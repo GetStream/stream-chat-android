@@ -1,22 +1,7 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# July 23th, 2024 - 6.4.3
 ## stream-chat-android-client
 ### 🐞 Fixed
 - Fixed pinned message expire date validation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
-
-### ⬆️ Improved
-
-### ✅ Added
 
 ### ⚠️ Changed
 - `Attachment` class doesn't use `url` property anymore. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
@@ -24,73 +9,14 @@
 ### ❌ Removed
 - Removed `url` property of `Attachment` class. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
 
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fixed channel cache not being updated on message unpin operation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-components
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-compose
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Exposed user avatar click listener in MessagesScreen.kt
 - Added ability to create multiple instance of ChannelListViewModel with differing parameters
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # July 17th, 2024 - 6.4.2
 ## stream-chat-android-state
