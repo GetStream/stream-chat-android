@@ -37,7 +37,6 @@ import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandl
  * @param memberLimit How many members are fetched for each channel item when loading channels.
  * @param messageLimit How many messages are fetched for each channel item when loading channels.
  * @param chatEventHandlerFactory The instance of [ChatEventHandlerFactory] used to create [ChatEventHandler].
- * @param viewModelKey Optional key for for cases where the app needs multiple instances with varying parameters.
  */
 public class ChannelViewModelFactory(
     private val chatClient: ChatClient = ChatClient.instance(),
@@ -47,7 +46,6 @@ public class ChannelViewModelFactory(
     private val memberLimit: Int = ChannelListViewModel.DEFAULT_MEMBER_LIMIT,
     private val messageLimit: Int = ChannelListViewModel.DEFAULT_MESSAGE_LIMIT,
     private val chatEventHandlerFactory: ChatEventHandlerFactory = ChatEventHandlerFactory(chatClient.clientState),
-    public val viewModelKey: String? = null,
 ) : ViewModelProvider.Factory {
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
