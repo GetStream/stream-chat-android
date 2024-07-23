@@ -76,7 +76,7 @@
 
 ### ✅ Added
 - Exposed user avatar click listener in MessagesScreen.kt
-
+- Added ability to create multiple instance of ChannelListViewModel with differing parameters
 ### ⚠️ Changed
 
 ### ❌ Removed
