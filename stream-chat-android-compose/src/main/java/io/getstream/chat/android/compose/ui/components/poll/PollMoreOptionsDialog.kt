@@ -141,7 +141,7 @@ public fun PollMoreOptionsDialog(
 }
 
 @Composable
-private fun PollMoreOptionsTitle(title: String) {
+internal fun PollMoreOptionsTitle(title: String) {
     Box(
         modifier = Modifier
             .padding(16.dp)
@@ -163,7 +163,7 @@ private fun PollMoreOptionsTitle(title: String) {
     }
 }
 
-private fun LazyListScope.pollMoreOptionsContent(
+internal fun LazyListScope.pollMoreOptionsContent(
     poll: Poll,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,

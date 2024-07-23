@@ -122,7 +122,7 @@ public fun PollViewResultDialog(
     }
 }
 
-private fun LazyListScope.pollViewResultContent(
+internal fun LazyListScope.pollViewResultContent(
     poll: Poll,
 ) {
     val votes = poll.votes
@@ -219,7 +219,7 @@ private fun PollVoteItem(vote: Vote) {
 }
 
 @Composable
-private fun PollViewResultTitle(title: String) {
+internal fun PollViewResultTitle(title: String) {
     Box(
         modifier = Modifier
             .padding(16.dp)
@@ -243,7 +243,7 @@ private fun PollViewResultTitle(title: String) {
 
 @Preview
 @Composable
-private fun PollViewResultDialogPreview() {
+internal fun PollViewResultDialogPreview() {
     val poll = PreviewPollData.poll1
 
     ChatTheme {
