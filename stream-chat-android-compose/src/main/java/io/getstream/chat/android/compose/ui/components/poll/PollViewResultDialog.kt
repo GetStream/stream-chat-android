@@ -50,10 +50,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewPollData
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
@@ -92,7 +94,6 @@ public fun PollViewResultDialog(
         ) { currentPoll ->
             if (currentPoll != null) {
                 val poll = currentPoll.poll
-                val message = currentPoll.message
 
                 BackHandler { onBackPressed.invoke() }
 
@@ -237,5 +238,34 @@ private fun PollViewResultTitle(title: String) {
             fontWeight = FontWeight.Medium,
             fontSize = 16.sp,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun PollViewResultDialogPreview() {
+    val poll = PreviewPollData.poll1
+
+    ChatTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ChatTheme.colors.appBackground),
+        ) {
+            item {
+                PollDialogHeader(
+                    title = stringResource(id = R.string.stream_compose_poll_results),
+                    onBackPressed = {},
+                )
+            }
+
+            item { PollViewResultTitle(title = poll.name) }
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
+            pollViewResultContent(poll = poll)
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+        }
     }
 }

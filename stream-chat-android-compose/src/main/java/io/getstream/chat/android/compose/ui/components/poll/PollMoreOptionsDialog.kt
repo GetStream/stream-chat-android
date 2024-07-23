@@ -48,10 +48,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.previewdata.PreviewPollData
 import io.getstream.chat.android.compose.ui.components.messages.PollItemCheckBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
@@ -247,5 +249,38 @@ internal fun PollMoreOptionItem(
             color = ChatTheme.colors.textHighEmphasis,
             fontSize = 16.sp,
         )
+    }
+}
+
+@Preview
+@Composable
+private fun PollMoreOptionsDialogPreview() {
+    val poll = PreviewPollData.poll1
+
+    ChatTheme {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(ChatTheme.colors.appBackground),
+        ) {
+            item {
+                PollDialogHeader(
+                    title = stringResource(id = R.string.stream_compose_poll_options),
+                    onBackPressed = {},
+                )
+            }
+
+            item { PollMoreOptionsTitle(title = poll.name) }
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+
+            pollMoreOptionsContent(
+                poll = poll,
+                onCastVote = {},
+                onRemoveVote = {},
+            )
+
+            item { Spacer(modifier = Modifier.height(16.dp)) }
+        }
     }
 }
