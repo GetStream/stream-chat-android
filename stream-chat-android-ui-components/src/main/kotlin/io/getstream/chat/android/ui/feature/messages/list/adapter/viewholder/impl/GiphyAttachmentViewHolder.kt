@@ -101,7 +101,7 @@ public class GiphyAttachmentViewHolder internal constructor(
      * @param data The data that holds all the information required to show a Giphy.
      * @param diff The difference from the previous draw.
      */
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         super.bindData(data, diff)
 
         binding.messageText.isVisible = data.message.text.isNotEmpty()

@@ -816,6 +816,7 @@ private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEve
         newVote = pollVote,
     )
 }
+
 private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEvent {
     val removedVote = poll_vote.toDomain(currentUserId)
     val newPoll = poll.toDomain(currentUserId)

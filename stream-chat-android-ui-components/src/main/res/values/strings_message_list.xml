@@ -91,4 +91,8 @@
     <string name="stream_ui_message_list_error_mark_as_unread_message">Failed to mark as unread message</string>
     <string name="stream_ui_message_list_error_unpin_message">Failed to unpin message</string>
     <string name="stream_ui_message_list_error_delete_message">Failed to delete message</string>
+
+    <!-- Poll -->
+    <string name="stream_ui_poll_end_vote">End Vote</string>
+    <string name="stream_ui_poll_view_results">View Results</string>
 </resources>

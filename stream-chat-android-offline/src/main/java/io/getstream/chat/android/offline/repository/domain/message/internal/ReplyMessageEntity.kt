@@ -100,6 +100,7 @@ internal data class ReplyMessageInnerEntity(
     val moderationDetails: ModerationDetailsEntity? = null,
     /** Date when the message text was updated **/
     val messageTextUpdatedAt: Date? = null,
+    val poll: PollEntity? = null,
 )
 
 internal const val REPLY_MESSAGE_ENTITY_TABLE_NAME = "stream_chat_reply_message"

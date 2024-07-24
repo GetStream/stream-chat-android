@@ -23,10 +23,13 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnLink
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageLongClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMessageRetryListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollCloseClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnViewPollResultClickListener
 import io.getstream.chat.android.ui.utils.ListenerDelegate
 
 internal class MessageListListenerContainerImpl(
@@ -41,6 +44,9 @@ internal class MessageListListenerContainerImpl(
     giphySendListener: OnGiphySendListener = OnGiphySendListener(EmptyFunctions.ONE_PARAM),
     linkClickListener: OnLinkClickListener = OnLinkClickListener(EmptyFunctions.ONE_PARAM),
     onUnreadLabelReachedListener: OnUnreadLabelReachedListener = OnUnreadLabelReachedListener { },
+    onPollOptionClickListener: OnPollOptionClickListener,
+    onPollCloseClickListener: OnPollCloseClickListener,
+    onViewPollResultClickListener: OnViewPollResultClickListener,
 ) : MessageListListeners {
     private object EmptyFunctions {
         val ONE_PARAM: (Any) -> Boolean = { _ -> false }
@@ -132,6 +138,30 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         OnUnreadLabelReachedListener {
             realListener().onUnreadLabelReached()
+        }
+    }
+
+    override var onPollOptionClickListener: OnPollOptionClickListener by ListenerDelegate(
+        onPollOptionClickListener,
+    ) { realListener ->
+        OnPollOptionClickListener { message, poll, option ->
+            realListener().onPollOptionClick(message, poll, option)
+        }
+    }
+
+    override var onPollCloseClickListener: OnPollCloseClickListener by ListenerDelegate(
+        onPollCloseClickListener,
+    ) { realListener ->
+        OnPollCloseClickListener { poll ->
+            realListener().onPollCloseClick(poll)
+        }
+    }
+
+    override var onViewPollResultClickListener: OnViewPollResultClickListener by ListenerDelegate(
+        onViewPollResultClickListener,
+    ) { realListener ->
+        OnViewPollResultClickListener { poll ->
+            realListener().onViewPollResultClick(poll)
         }
     }
 }

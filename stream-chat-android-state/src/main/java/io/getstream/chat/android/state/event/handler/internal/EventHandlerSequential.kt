@@ -127,7 +127,7 @@ private const val TAG_SOCKET = "Chat:SocketEvent"
  * Processes events sequentially. That means a new event will not be processed
  * until the previous event processing is not completed.
  */
-@Suppress("LongParameterList", "TooManyFunctions")
+@Suppress("LongParameterList", "TooManyFunctions", "LargeClass")
 internal class EventHandlerSequential(
     private val currentUserId: UserId,
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
@@ -682,13 +682,45 @@ internal class EventHandlerSequential(
                     batch.addMessage(event.message)
                 }
                 is VoteCastedEvent -> {
-                    batch.addMessage(event.message)
+                    val ownVotes = (
+                        batch.getCurrentMessage(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) +
+                        listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
+                    batch.addMessage(
+                        event.message.copy(
+                            poll = event.poll.copy(
+                                ownVotes = ownVotes.values.toList(),
+                            ),
+                        ),
+                    )
                 }
                 is VoteChangedEvent -> {
-                    batch.addMessage(event.message)
+                    val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
+                        ?: batch.getCurrentMessage(
+                            event.message.id,
+                        )?.poll?.ownVotes
+                    batch.addMessage(
+                        event.message.copy(
+                            poll = event.poll.copy(
+                                ownVotes = ownVotes ?: emptyList(),
+                            ),
+                        ),
+                    )
                 }
                 is VoteRemovedEvent -> {
-                    batch.addMessage(event.message)
+                    val ownVotes =
+                        (
+                            batch.getCurrentMessage(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                                ?: emptyMap()
+                            ) - event.removedVote.id
+                    batch.addMessage(
+                        event.message.copy(
+                            poll = event.poll.copy(
+                                ownVotes = ownVotes.values.toList(),
+                            ),
+                        ),
+                    )
                 }
                 else -> Unit
             }
