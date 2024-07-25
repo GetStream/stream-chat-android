@@ -36,6 +36,7 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -69,6 +70,9 @@ internal class ChannelStateLogic(
     private val now: () -> Long = { System.currentTimeMillis() },
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
+
+    private val polls = mutableMapOf<String, Poll>()
+    private val messageIdsWithPoll = mutableMapOf<String, Set<String>>()
 
     private val logger by taggedLogger(TAG)
     private val processedMessageIds = LruCache<String, Boolean>(CACHE_SIZE)
@@ -275,6 +279,7 @@ internal class ChannelStateLogic(
                 mutableState.upsertMessages(newMessages + normalizedReplies)
             }
         }
+        messages.forEach { it.storePoll() }
     }
 
     /**
@@ -305,6 +310,7 @@ internal class ChannelStateLogic(
                 mutableState.upsertPinnedMessages(newMessages + normalizedReplies)
             }
         }
+        messages.forEach { it.storePoll() }
     }
 
     /**
@@ -761,6 +767,24 @@ internal class ChannelStateLogic(
             }
         processedMessageIds.put(message.id, true)
     }
+
+    private fun Message.storePoll() {
+        poll?.let {
+            upsertPoll(it)
+            messageIdsWithPoll[it.id] = messageIdsWithPoll[it.id].orEmpty() + id
+        }
+    }
+
+    fun upsertPoll(poll: Poll) {
+        polls[poll.id] = poll
+        messageIdsWithPoll[poll.id]?.forEach {
+            mutableState.getMessageById(it)?.let { message ->
+                mutableState.upsertMessage(message.copy(poll = poll))
+            }
+        }
+    }
+
+    fun getPoll(pollId: String): Poll? = polls[pollId]
 
     private companion object {
         private const val TAG = "Chat:ChannelStateLogic"
