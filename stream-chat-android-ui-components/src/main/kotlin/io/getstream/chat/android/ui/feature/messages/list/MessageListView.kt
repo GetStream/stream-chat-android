@@ -1242,7 +1242,7 @@ public class MessageListView : ConstraintLayout {
 
     private fun MessageListItemAdapter.submitListOnAnimationsFinished(
         filteredList: List<MessageListItem>,
-        commitCallback : () -> Unit
+        commitCallback: () -> Unit,
     ) {
         val animator = binding.chatMessagesRV.itemAnimator
         if (animator?.isRunning == true) {
