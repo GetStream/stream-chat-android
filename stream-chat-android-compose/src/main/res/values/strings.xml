@@ -205,7 +205,7 @@
     <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
     <string name="stream_compose_poll_view_result" translatable="false">View Results</string>
     <string name="stream_compose_poll_end_vote" translatable="false">End Vote</string>
-    <string name="stream_compose_poll_see_more_options" translatable="false">See %d More Options</string>
+    <string name="stream_compose_poll_see_more_options" translatable="false">See All %d Options</string>
     <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
     <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
     <string name="stream_compose_poll_vote_counts" translatable="false">%d votes</string>

@@ -19,14 +19,14 @@
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +44,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -76,24 +77,28 @@ public fun PollViewResultDialog(
     onDismissRequest: () -> Unit,
     onBackPressed: () -> Unit,
 ) {
+    val state = remember {
+        MutableTransitionState(false).apply {
+            // Start the animation immediately.
+            targetState = true
+        }
+    }
     Popup(
         alignment = Alignment.BottomCenter,
         onDismissRequest = onDismissRequest,
     ) {
-        AnimatedContent(
-            targetState = selectedPoll,
-            transitionSpec = {
-                fadeIn() + slideInVertically(
-                    animationSpec = tween(400),
-                    initialOffsetY = { fullHeight -> fullHeight / 2 },
-                ) with
-                    fadeOut(animationSpec = tween(200)) +
-                    slideOutVertically(animationSpec = tween(400))
-            },
-            label = "poll more options dialog",
-        ) { currentPoll ->
-            if (currentPoll != null) {
-                val poll = currentPoll.poll
+        AnimatedVisibility(
+            visibleState = state,
+            enter = fadeIn() + slideInVertically(
+                animationSpec = tween(400),
+                initialOffsetY = { fullHeight -> fullHeight / 2 },
+            ),
+            exit = fadeOut(animationSpec = tween(200)) +
+                slideOutVertically(animationSpec = tween(400)),
+            label = "poll view result dialog",
+        ) {
+            if (selectedPoll != null) {
+                val poll = selectedPoll.poll
 
                 BackHandler { onBackPressed.invoke() }
 
