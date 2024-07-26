@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.components.avatar
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -68,16 +69,14 @@ public fun UserAvatarRow(
     if (users.isEmpty()) return
 
     Row(
-        modifier = modifier
-            .width(IntrinsicSize.Min)
-            .offset(x = ((users.size - 1) * offset).dp),
+        modifier = modifier.width(IntrinsicSize.Min),
+        horizontalArrangement = Arrangement.spacedBy((-offset).dp),
     ) {
         users.take(maxAvatarCount).forEachIndexed { index, user ->
             UserAvatar(
                 modifier = Modifier
                     .size(size)
-                    .zIndex((users.size - index).toFloat())
-                    .offset(x = -(index.dp * offset)),
+                    .zIndex((users.size - index).toFloat()),
                 user = user,
                 shape = shape,
                 textStyle = textStyle,
