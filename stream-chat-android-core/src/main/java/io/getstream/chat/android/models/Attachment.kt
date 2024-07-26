@@ -72,14 +72,13 @@ public data class Attachment(
     val text: String? = null,
     val type: String? = null,
     val image: String? = null,
-    val url: String? = null,
     val name: String? = null,
     val fallback: String? = null,
     val originalHeight: Int? = null,
     val originalWidth: Int? = null,
 
     /**
-     * The local file to upload when the attachment is sent. The [url] property
+     * The local file to upload when the attachment is sent. The [assetUrl] property
      * will be populated with the URL of the uploaded file when done.
      *
      * Leaving this property empty means that there is no file to upload for
@@ -133,7 +132,6 @@ public data class Attachment(
         if (text != null) append(", text=\"").append(text).append("\"")
         if (type != null) append(", type=\"").append(type).append("\"")
         if (image != null) append(", image=").append(image)
-        if (url != null) append(", url=").append(url.shorten())
         if (name != null) append(", name=").append(name)
         if (fallback != null) append(", fallback=").append(fallback)
         if (originalHeight != null) append(", origH=").append(originalHeight)
@@ -170,7 +168,6 @@ public data class Attachment(
         private var text: String? = null
         private var type: String? = null
         private var image: String? = null
-        private var url: String? = null
         private var name: String? = null
         private var fallback: String? = null
         private var originalHeight: Int? = null
@@ -193,7 +190,6 @@ public data class Attachment(
             text = attachment.text
             type = attachment.type
             image = attachment.image
-            url = attachment.url
             name = attachment.name
             fallback = attachment.fallback
             originalHeight = attachment.originalHeight
@@ -215,7 +211,6 @@ public data class Attachment(
         public fun withText(text: String?): Builder = apply { this.text = text }
         public fun withType(type: String?): Builder = apply { this.type = type }
         public fun withImage(image: String?): Builder = apply { this.image = image }
-        public fun withUrl(url: String?): Builder = apply { this.url = url }
         public fun withName(name: String?): Builder = apply { this.name = name }
         public fun withFallback(fallback: String?): Builder = apply { this.fallback = fallback }
         public fun withOriginalHeight(originalHeight: Int?): Builder = apply { this.originalHeight = originalHeight }
@@ -238,7 +233,6 @@ public data class Attachment(
             text = text,
             type = type,
             image = image,
-            url = url,
             name = name,
             fallback = fallback,
             originalHeight = originalHeight,

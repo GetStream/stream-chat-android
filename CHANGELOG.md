@@ -87,6 +87,26 @@
 
 ### ❌ Removed
 
+# July 23th, 2024 - 6.4.3
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed pinned message expire date validation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
+
+### ⚠️ Changed
+- `Attachment` class doesn't use `url` property anymore. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
+
+### ❌ Removed
+- Removed `url` property of `Attachment` class. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed channel cache not being updated on message unpin operation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
+
+## stream-chat-android-compose
+### ✅ Added
+- Exposed user avatar click listener in MessagesScreen.kt
+- Added ability to create multiple instance of ChannelListViewModel with differing parameters
+
 # July 17th, 2024 - 6.4.2
 ## stream-chat-android-state
 ### 🐞 Fixed
@@ -105,6 +125,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed quoted message styling. [#5316](https://github.com/GetStream/stream-chat-android/pull/5316)
+- Fixed checkbox visibility in `MessageComposer`'s footer when dark theme is used. [#5318](https://github.com/GetStream/stream-chat-android/pull/5318)
 
 ### ⬆️ Improved
 - Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
@@ -159,7 +180,6 @@
 ### 🐞 Fixed
 - Fixed deleted pinned messages being highlighted as pinned. [#5315](https://github.com/GetStream/stream-chat-android/pull/5315)
 - Fixed the url used when click on the link. [#5314](https://github.com/GetStream/stream-chat-android/pull/5314)
-- Fixed checkbox visibility in `MessageComposer`'s footer when dark theme is used. [#5318](https://github.com/GetStream/stream-chat-android/pull/5318)
 
 ### ⬆️ Improved
 - Enabled Strong Skipping Mode for Compose compiler and improved Compose performance. [#5303](https://github.com/GetStream/stream-chat-android/pull/5303)

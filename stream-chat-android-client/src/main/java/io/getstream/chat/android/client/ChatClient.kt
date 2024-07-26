@@ -1932,6 +1932,10 @@ internal constructor(
      */
     @CheckResult
     public fun pinMessage(message: Message, expirationDate: Date? = null): Call<Message> {
+        logger.d {
+            "[pinMessage] message: Message(id=${message.id}, text=${message.text})" +
+                ", expirationDate: $expirationDate"
+        }
         val set: MutableMap<String, Any> = LinkedHashMap()
         set["pinned"] = true
         expirationDate?.let { set["pin_expires"] = it }
@@ -1951,6 +1955,10 @@ internal constructor(
      */
     @CheckResult
     public fun pinMessage(message: Message, timeout: Int): Call<Message> {
+        logger.d {
+            "[pinMessage] message: Message(id=${message.id}, text=${message.text})" +
+                ", timeout: $timeout seconds"
+        }
         val calendar = Calendar.getInstance().apply {
             add(Calendar.SECOND, timeout)
         }
@@ -1972,6 +1980,7 @@ internal constructor(
      */
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> {
+        logger.d { "[unpinMessage] message: Message(text=${message.text}, id=${message.id})" }
         return partialUpdateMessage(
             messageId = message.id,
             set = mapOf("pinned" to false),

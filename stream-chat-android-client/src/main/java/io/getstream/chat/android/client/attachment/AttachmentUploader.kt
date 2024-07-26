@@ -211,7 +211,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
         logger.d { "[onSuccessfulUpload] #uploader; attachment ${augmentedAttachment.uploadId} uploaded successfully" }
-        progressCallback?.onSuccess(augmentedAttachment.url)
+        progressCallback?.onSuccess(augmentedAttachment.assetUrl)
         return Result.Success(augmentedAttachment.copy(uploadState = Attachment.UploadState.Success))
     }
 
@@ -256,7 +256,6 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
             name = file.name,
             fileSize = file.length().toInt(),
             mimeType = mimeType,
-            url = uploadedFile.file,
             uploadState = Attachment.UploadState.Success,
             title = title.takeUnless { it.isNullOrBlank() } ?: file.name,
             thumbUrl = uploadedFile.thumbUrl,
@@ -266,10 +265,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 AttachmentType.VIDEO -> uploadedFile.thumbUrl
                 else -> imageUrl
             },
-            assetUrl = when (attachmentType) {
-                AttachmentType.IMAGE -> assetUrl
-                else -> uploadedFile.file
-            },
+            assetUrl = uploadedFile.file,
             extraData = extraData + uploadedFile.extraData,
         )
     }

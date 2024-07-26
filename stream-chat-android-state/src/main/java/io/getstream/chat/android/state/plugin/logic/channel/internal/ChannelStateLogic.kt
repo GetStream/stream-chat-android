@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPinExpired
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
@@ -236,7 +237,8 @@ internal class ChannelStateLogic(
 
     override fun delsertPinnedMessage(message: Message) {
         logger.d {
-            "[delsertPinnedMessage] pinned: ${message.pinned}, deleted: ${message.isDeleted()}" +
+            "[delsertPinnedMessage] pinned: ${message.pinned}, pinExpired: ${message.isPinExpired(now)}" +
+                ", deleted: ${message.isDeleted()}" +
                 ", message.id: ${message.id}, message.text: ${message.text}"
         }
         if (message.isPinned(now)) {

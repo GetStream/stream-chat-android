@@ -73,6 +73,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
  * @param viewModelFactory The factory used to build the ViewModels and power the behavior.
  * You can use the default implementation by not passing in an instance yourself, or you
  * can customize the behavior using its parameters.
+ * @param viewModelKey Key to differentiate between instances of [ChannelListViewModel].
  * @param title Header title.
  * @param isShowingHeader If we show the header or hide it.
  * @param searchMode The search mode for the screen.
@@ -87,6 +88,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ViewInfo
 @Suppress("LongMethod")
 public fun ChannelsScreen(
     viewModelFactory: ChannelViewModelFactory = ChannelViewModelFactory(),
+    viewModelKey: String? = null,
     title: String = "Stream Chat",
     isShowingHeader: Boolean = true,
     searchMode: SearchMode = SearchMode.None,
@@ -99,6 +101,7 @@ public fun ChannelsScreen(
 ) {
     val listViewModel: ChannelListViewModel = viewModel(
         ChannelListViewModel::class.java,
+        key = viewModelKey,
         factory = viewModelFactory,
     )
 

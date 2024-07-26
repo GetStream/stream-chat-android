@@ -27,7 +27,6 @@ import kotlinx.parcelize.Parcelize
  * for the proper functioning of the Media Gallery Preview screen.
  *
  * @param name The name of the attachment.
- * @param url The URL of the file.
  * @param thumbUrl The URL for the thumbnail version of the attachment,
  * given the attachment has a visual quality, e.g. is a video, an image,
  * a link to a website or similar.
@@ -45,7 +44,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 internal class MediaGalleryPreviewActivityAttachmentState(
     val name: String?,
-    val url: String?,
     val thumbUrl: String?,
     val imageUrl: String?,
     val assetUrl: String?,
@@ -60,7 +58,6 @@ internal class MediaGalleryPreviewActivityAttachmentState(
 internal fun Attachment.toMediaGalleryPreviewActivityAttachmentState(): MediaGalleryPreviewActivityAttachmentState =
     MediaGalleryPreviewActivityAttachmentState(
         name = this.name,
-        url = this.url,
         thumbUrl = this.thumbUrl,
         imageUrl = this.imageUrl,
         assetUrl = this.assetUrl,
@@ -74,7 +71,6 @@ internal fun Attachment.toMediaGalleryPreviewActivityAttachmentState(): MediaGal
  */
 internal fun MediaGalleryPreviewActivityAttachmentState.toAttachment(): Attachment = Attachment(
     name = this.name,
-    url = this.url,
     thumbUrl = this.thumbUrl,
     imageUrl = this.imageUrl,
     assetUrl = this.assetUrl,
