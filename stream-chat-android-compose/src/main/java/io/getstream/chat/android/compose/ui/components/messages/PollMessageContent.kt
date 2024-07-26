@@ -224,10 +224,9 @@ private fun PollMessageContent(
         }
 
         if (poll.options.size > 10) {
-            val additionalOptionSize = poll.options.size - 10
             item {
                 PollOptionButton(
-                    text = stringResource(id = R.string.stream_compose_poll_see_more_options, additionalOptionSize),
+                    text = stringResource(id = R.string.stream_compose_poll_see_more_options, poll.options.size),
                     onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.MoreOption) },
                 )
             }
