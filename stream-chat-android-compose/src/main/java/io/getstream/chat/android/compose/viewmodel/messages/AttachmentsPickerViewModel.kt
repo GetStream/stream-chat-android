@@ -62,6 +62,11 @@ public class AttachmentsPickerViewModel(
     public var attachments: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
 
     /**
+     * List of polls available, from the system.
+     */
+    public var polls: List<AttachmentPickerItemState> by mutableStateOf(emptyList())
+
+    /**
      * Gives us info if there are any file items that are selected.
      */
     public val hasPickedFiles: Boolean

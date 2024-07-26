@@ -483,7 +483,7 @@ internal class ChannelMutableState(
      * @param message message to be upserted.
      */
     fun upsertMessage(message: Message) {
-        _messages?.apply { value = value + (message.id to message) }
+        upsertMessages(listOf(message))
     }
 
     fun upsertUserPresence(user: User) {
@@ -536,6 +536,13 @@ internal class ChannelMutableState(
 
     fun upsertMessages(updatedMessages: Collection<Message>) {
         _messages?.apply { value += updatedMessages.associateBy(Message::id) }
+        _pinnedMessages?.value
+            ?.let { pinnedMessages ->
+                val pinnedMessageIds = pinnedMessages.keys
+                updatedMessages
+                    .filter { pinnedMessageIds.contains(it.id) }
+                    .let { upsertPinnedMessages(it) }
+            }
     }
 
     fun setMessages(messages: List<Message>) {
