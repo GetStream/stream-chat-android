@@ -83,8 +83,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
-import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
