@@ -112,6 +112,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
@@ -141,9 +142,13 @@ public fun MessageItem(
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onUserAvatarClick: (() -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
-        DefaultMessageItemLeadingContent(messageItem = it)
+        DefaultMessageItemLeadingContent(
+            messageItem = it,
+            onUserAvatarClick = onUserAvatarClick,
+        )
     },
     headerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
         DefaultMessageItemHeaderContent(
@@ -250,6 +255,7 @@ public fun MessageItem(
 @Composable
 internal fun RowScope.DefaultMessageItemLeadingContent(
     messageItem: MessageItemState,
+    onUserAvatarClick: (() -> Unit)? = null,
 ) {
     val modifier = Modifier
         .padding(start = 8.dp, end = 8.dp)
@@ -267,6 +273,7 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
             user = messageItem.message.user,
             textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false,
+            onClick = onUserAvatarClick,
         )
     } else {
         Spacer(modifier = modifier)

@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
@@ -65,6 +66,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onCastVote Handler for casting a vote on an option.
  * @param onClosePoll Handler for closing a poll.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param dateSeparatorContent Composable that represents date separators.
  * @param threadSeparatorContent Composable that represents thread separators.
@@ -89,6 +91,7 @@ public fun MessageContainer(
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onUserAvatarClick: ((User) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
@@ -117,6 +120,9 @@ public fun MessageContainer(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = {
+                onUserAvatarClick?.invoke(it.message.user)
+            },
         )
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
@@ -272,6 +278,7 @@ internal fun DefaultMessageItem(
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onUserAvatarClick: () -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     MessageItem(
@@ -287,6 +294,7 @@ internal fun DefaultMessageItem(
         onClosePoll = onClosePoll,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
+        onUserAvatarClick = onUserAvatarClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
     )
 }

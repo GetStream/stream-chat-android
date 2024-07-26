@@ -35,15 +35,15 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
     @Test
     fun `Given message with 3 attachments When update it in DB Should keep only 3 newer attachments`(): Unit =
         runTest {
-            val attachment1 = randomAttachment(url = "url1")
-            val attachment2 = randomAttachment(url = "url2")
-            val attachment3 = randomAttachment(url = "url3")
+            val attachment1 = randomAttachment(assetUrl = "url1")
+            val attachment2 = randomAttachment(assetUrl = "url2")
+            val attachment3 = randomAttachment(assetUrl = "url3")
             val message = randomMessage(attachments = mutableListOf(attachment1, attachment2, attachment3))
             repos.insertMessage(message)
 
-            val newAttachment1 = attachment1.copy(url = "newUrl1")
-            val newAttachment2 = attachment2.copy(url = "newUrl2")
-            val newAttachment3 = attachment3.copy(url = "newUrl3")
+            val newAttachment1 = attachment1.copy(assetUrl = "newUrl1")
+            val newAttachment2 = attachment2.copy(assetUrl = "newUrl2")
+            val newAttachment3 = attachment3.copy(assetUrl = "newUrl3")
             repos.insertMessage(
                 message.copy(
                     attachments = mutableListOf(newAttachment1, newAttachment2, newAttachment3),
@@ -53,9 +53,9 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
             val messageFromDb = requireNotNull(repos.selectMessage(message.id))
 
             messageFromDb.attachments.size `should be equal to` 3
-            messageFromDb.attachments[0].url `should be equal to` "newUrl1"
-            messageFromDb.attachments[1].url `should be equal to` "newUrl2"
-            messageFromDb.attachments[2].url `should be equal to` "newUrl3"
+            messageFromDb.attachments[0].assetUrl `should be equal to` "newUrl1"
+            messageFromDb.attachments[1].assetUrl `should be equal to` "newUrl2"
+            messageFromDb.attachments[2].assetUrl `should be equal to` "newUrl3"
         }
 
     @Test

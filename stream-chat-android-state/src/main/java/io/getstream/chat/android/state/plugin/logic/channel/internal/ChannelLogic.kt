@@ -673,55 +673,40 @@ internal class ChannelLogic(
             is UnknownEvent,
             is UserDeletedEvent,
             -> Unit // Ignore these events
-            is PollClosedEvent -> {
-                upsertEventMessage(event.message)
-            }
-            is PollDeletedEvent -> {
-                upsertEventMessage(event.message)
-            }
-            is PollUpdatedEvent -> {
-                upsertEventMessage(event.message)
-            }
+            is PollClosedEvent -> channelStateLogic.upsertPoll(event.poll)
+            is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
+            is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.poll)
             is VoteCastedEvent -> {
                 val ownVotes =
                     (
-                        mutableState.getMessageById(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
                             ?: emptyMap()
                         ) +
                         listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
-
-                upsertEventMessage(
-                    event.message.copy(
-                        poll = event.poll.copy(
-                            ownVotes = ownVotes.values.toList(),
-                        ),
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        ownVotes = ownVotes.values.toList(),
                     ),
                 )
             }
             is VoteChangedEvent -> {
-                val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) } ?: getMessage(
-                    event.message.id,
-                )?.poll?.ownVotes
-
-                upsertEventMessage(
-                    event.message.copy(
-                        poll = event.poll.copy(
-                            ownVotes = ownVotes ?: emptyList(),
-                        ),
+                val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
+                    ?: channelStateLogic.getPoll(event.poll.id)?.ownVotes
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        ownVotes = ownVotes ?: emptyList(),
                     ),
                 )
             }
             is VoteRemovedEvent -> {
                 val ownVotes =
                     (
-                        mutableState.getMessageById(event.message.id)?.poll?.ownVotes?.associateBy { it.id }
+                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
                             ?: emptyMap()
                         ) - event.removedVote.id
-                upsertEventMessage(
-                    event.message.copy(
-                        poll = event.poll.copy(
-                            ownVotes = ownVotes.values.toList(),
-                        ),
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        ownVotes = ownVotes.values.toList(),
                     ),
                 )
             }

@@ -85,6 +85,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -119,6 +120,7 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
@@ -135,6 +137,7 @@ public fun MessagesScreen(
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -258,6 +261,7 @@ public fun MessagesScreen(
                         listViewModel.openMessageThread(message)
                     }
                 },
+                onUserAvatarClick = onUserAvatarClick,
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->

@@ -455,12 +455,12 @@ internal class ChannelMutableState(
     fun deleteMessage(message: Message) {
         logger.v { "[deleteMessage] message.id: ${message.id}" }
         _messages?.apply { value = value - message.id }
-        _pinnedMessages?.apply { value = value - message.id }
+        setPinned { pinned -> pinned - message.id }
     }
 
     fun deletePinnedMessage(message: Message) {
-        logger.v { "[deletePinnedMessage] message.id: ${message.id}" }
-        _pinnedMessages?.apply { value = value - message.id }
+        logger.v { "[deletePinnedMessage] message.id=${message.id}, message.text=${message.text}" }
+        setPinned { pinned -> pinned - message.id }
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
@@ -483,7 +483,7 @@ internal class ChannelMutableState(
      * @param message message to be upserted.
      */
     fun upsertMessage(message: Message) {
-        _messages?.apply { value = value + (message.id to message) }
+        upsertMessages(listOf(message))
     }
 
     fun upsertUserPresence(user: User) {
@@ -529,12 +529,20 @@ internal class ChannelMutableState(
         } ?: false
 
     fun removeMessagesBefore(date: Date) {
+        logger.d { "[removeMessagesBefore] date: $date" }
         _messages?.apply { value = value.filter { it.value.wasCreatedAfter(date) } }
-        _pinnedMessages?.apply { value = value.filter { it.value.wasCreatedAfter(date) } }
+        setPinned { pinned -> pinned.filter { it.value.wasCreatedAfter(date) } }
     }
 
     fun upsertMessages(updatedMessages: Collection<Message>) {
         _messages?.apply { value += updatedMessages.associateBy(Message::id) }
+        _pinnedMessages?.value
+            ?.let { pinnedMessages ->
+                val pinnedMessageIds = pinnedMessages.keys
+                updatedMessages
+                    .filter { pinnedMessageIds.contains(it.id) }
+                    .let { upsertPinnedMessages(it) }
+            }
     }
 
     fun setMessages(messages: List<Message>) {
@@ -542,11 +550,21 @@ internal class ChannelMutableState(
     }
 
     fun setPinnedMessages(messages: List<Message>) {
-        _pinnedMessages?.value = messages.associateBy(Message::id)
+        logger.d { "[setPinnedMessages] messages.size: ${messages.size}" }
+        setPinned { messages.associateBy(Message::id) }
     }
 
     fun upsertPinnedMessages(messages: Collection<Message>) {
-        _pinnedMessages?.apply { value += messages.associateBy(Message::id) }
+        logger.d { "[upsertPinnedMessages] messages.size: ${messages.size}" }
+        setPinned { pinned -> pinned + messages.associateBy(Message::id) }
+    }
+
+    private inline fun setPinned(producer: (Map<String, Message>) -> Map<String, Message>) {
+        val curPinnedMessages = _pinnedMessages?.value
+        curPinnedMessages ?: return
+        val newPinnedMessages = producer(curPinnedMessages)
+        logger.v { "[setPinned] pinned.size: ${curPinnedMessages.size} => ${newPinnedMessages.size}" }
+        _pinnedMessages?.value = newPinnedMessages
     }
 
     private fun cacheLatestMessages() {
