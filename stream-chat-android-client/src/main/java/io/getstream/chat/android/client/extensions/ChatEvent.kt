@@ -24,15 +24,9 @@ import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NewMessageEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
-import io.getstream.chat.android.client.events.PollClosedEvent
-import io.getstream.chat.android.client.events.PollDeletedEvent
-import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
-import io.getstream.chat.android.client.events.VoteCastedEvent
-import io.getstream.chat.android.client.events.VoteChangedEvent
-import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 
 public fun ChatEvent.enrichIfNeeded(): ChatEvent = when (this) {
@@ -46,11 +40,5 @@ public fun ChatEvent.enrichIfNeeded(): ChatEvent = when (this) {
     is ChannelTruncatedEvent -> copy(message = message?.enrichWithCid(cid))
     is ChannelUpdatedByUserEvent -> copy(message = message?.enrichWithCid(cid))
     is NotificationMessageNewEvent -> copy(message = message.enrichWithCid(cid))
-    is PollUpdatedEvent -> copy(message = message.enrichWithCid(cid))
-    is PollDeletedEvent -> copy(message = message.enrichWithCid(cid))
-    is PollClosedEvent -> copy(message = message.enrichWithCid(cid))
-    is VoteCastedEvent -> copy(message = message.enrichWithCid(cid))
-    is VoteChangedEvent -> copy(message = message.enrichWithCid(cid))
-    is VoteRemovedEvent -> copy(message = message.enrichWithCid(cid))
     else -> this
 }

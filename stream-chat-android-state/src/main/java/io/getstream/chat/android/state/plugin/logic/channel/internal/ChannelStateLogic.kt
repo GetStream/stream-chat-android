@@ -28,6 +28,7 @@ import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPinExpired
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
@@ -35,6 +36,7 @@ import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
@@ -68,6 +70,9 @@ internal class ChannelStateLogic(
     private val now: () -> Long = { System.currentTimeMillis() },
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
+
+    private val polls = mutableMapOf<String, Poll>()
+    private val messageIdsWithPoll = mutableMapOf<String, Set<String>>()
 
     private val logger by taggedLogger(TAG)
     private val processedMessageIds = LruCache<String, Boolean>(CACHE_SIZE)
@@ -236,7 +241,8 @@ internal class ChannelStateLogic(
 
     override fun delsertPinnedMessage(message: Message) {
         logger.d {
-            "[delsertPinnedMessage] pinned: ${message.pinned}, deleted: ${message.isDeleted()}" +
+            "[delsertPinnedMessage] pinned: ${message.pinned}, pinExpired: ${message.isPinExpired(now)}" +
+                ", deleted: ${message.isDeleted()}" +
                 ", message.id: ${message.id}, message.text: ${message.text}"
         }
         if (message.isPinned(now)) {
@@ -273,6 +279,7 @@ internal class ChannelStateLogic(
                 mutableState.upsertMessages(newMessages + normalizedReplies)
             }
         }
+        messages.forEach { it.storePoll() }
     }
 
     /**
@@ -303,6 +310,7 @@ internal class ChannelStateLogic(
                 mutableState.upsertPinnedMessages(newMessages + normalizedReplies)
             }
         }
+        messages.forEach { it.storePoll() }
     }
 
     /**
@@ -759,6 +767,24 @@ internal class ChannelStateLogic(
             }
         processedMessageIds.put(message.id, true)
     }
+
+    private fun Message.storePoll() {
+        poll?.let {
+            upsertPoll(it)
+            messageIdsWithPoll[it.id] = messageIdsWithPoll[it.id].orEmpty() + id
+        }
+    }
+
+    fun upsertPoll(poll: Poll) {
+        polls[poll.id] = poll
+        messageIdsWithPoll[poll.id]?.forEach {
+            mutableState.getMessageById(it)?.let { message ->
+                mutableState.upsertMessage(message.copy(poll = poll))
+            }
+        }
+    }
+
+    fun getPoll(pollId: String): Poll? = polls[pollId]
 
     private companion object {
         private const val TAG = "Chat:ChannelStateLogic"

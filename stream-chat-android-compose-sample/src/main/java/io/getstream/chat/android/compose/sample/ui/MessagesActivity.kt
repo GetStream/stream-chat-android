@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.sample.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
@@ -154,6 +155,9 @@ class MessagesActivity : BaseConnectedActivity() {
                     reactionSorting = ReactionSortingByLastReactionAt,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
+                    onUserAvatarClick = { user ->
+                        Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
+                    },
                     // TODO
                     // statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )

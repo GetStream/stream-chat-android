@@ -127,8 +127,7 @@ import io.getstream.chat.android.client.events.UserUpdatedEvent
 import io.getstream.chat.android.client.events.VoteCastedEvent
 import io.getstream.chat.android.client.events.VoteChangedEvent
 import io.getstream.chat.android.client.events.VoteRemovedEvent
-import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.models.UserId
 
 internal fun ConnectedEvent.toDto(): UpstreamConnectedEventDto {
@@ -727,42 +726,49 @@ private fun UserUpdatedEventDto.toDomain(currentUserId: UserId?): UserUpdatedEve
 
 private fun PollClosedEventDto.toDomain(currentUserId: UserId?): PollClosedEvent {
     val newPoll = poll.toDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
     return PollClosedEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
+        channelType = channelType,
+        channelId = channelId,
         poll = newPoll,
     )
 }
 
 private fun PollDeletedEventDto.toDomain(currentUserId: UserId?): PollDeletedEvent {
     val newPoll = poll.toDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
     return PollDeletedEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
+        channelType = channelType,
+        channelId = channelId,
         poll = newPoll,
     )
 }
 
 private fun PollUpdatedEventDto.toDomain(currentUserId: UserId?): PollUpdatedEvent {
     val newPoll = poll.toDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
     return PollUpdatedEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
+        channelType = channelType,
+        channelId = channelId,
         poll = newPoll,
     )
 }
 
 private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent {
     val pollVote = poll_vote.toDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
     val newPoll = poll.toDomain(currentUserId)
         .let { poll ->
             pollVote.takeIf { it.user?.id == currentUserId }
@@ -778,14 +784,16 @@ private fun VoteCastedEventDto.toDomain(currentUserId: UserId?): VoteCastedEvent
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
+        channelType = channelType,
+        channelId = channelId,
         poll = newPoll,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         newVote = pollVote,
     )
 }
 
 private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEvent {
     val pollVote = poll_vote.toDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
     val newPoll = poll.toDomain(currentUserId)
         .let { poll ->
             pollVote.takeIf { it.user?.id == currentUserId }
@@ -801,21 +809,24 @@ private fun VoteChangedEventDto.toDomain(currentUserId: UserId?): VoteChangedEve
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
+        channelType = channelType,
+        channelId = channelId,
         poll = newPoll,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         newVote = pollVote,
     )
 }
 private fun VoteRemovedEventDto.toDomain(currentUserId: UserId?): VoteRemovedEvent {
     val removedVote = poll_vote.toDomain(currentUserId)
+    val (channelType, channelId) = cid.cidToTypeAndId()
     val newPoll = poll.toDomain(currentUserId)
     return VoteRemovedEvent(
         type = type,
         createdAt = created_at.date,
         rawCreatedAt = created_at.rawDate,
         cid = cid,
+        channelType = channelType,
+        channelId = channelId,
         poll = newPoll,
-        message = message.toDomain(currentUserId).enrichWithPoll(newPoll),
         removedVote = removedVote,
     )
 }
@@ -874,13 +885,3 @@ private fun UnknownEventDto.toDomain(currentUserId: UserId?): UnknownEvent {
         rawData = rawData,
     )
 }
-
-private fun Message.enrichWithPoll(newPoll: Poll): Message =
-    newPoll.takeUnless { it.updatedAt < poll?.updatedAt }
-        ?.let {
-            copy(
-                poll = it,
-                updatedAt = listOfNotNull(updatedAt, it.updatedAt).maxBy { it.time },
-            )
-        }
-        ?: this
