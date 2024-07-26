@@ -37,6 +37,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
@@ -65,6 +66,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
@@ -99,6 +101,7 @@ public fun MessageList(
             parentMessageId = message.parentId,
         )
     },
+    onUserAvatarClick: ((User) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -129,6 +132,7 @@ public fun MessageList(
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = onUserAvatarClick,
         )
     },
 ) {
@@ -179,6 +183,7 @@ internal fun DefaultMessageContainer(
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onUserAvatarClick: ((User) -> Unit)? = null,
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -189,6 +194,7 @@ internal fun DefaultMessageContainer(
         onGiphyActionClick = onGiphyActionClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
+        onUserAvatarClick = onUserAvatarClick,
     )
 }
 
@@ -275,6 +281,7 @@ public fun MessageList(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
+    onUserAvatarClick: ((User) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -298,6 +305,7 @@ public fun MessageList(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = onUserAvatarClick,
         )
     },
 ) {

@@ -1643,8 +1643,10 @@ public class MessageListController(
      *
      * @param message The message to pin.
      */
-    public fun pinMessage(message: Message) {
-        chatClient.pinMessage(message).enqueue(onError = { error ->
+    @JvmOverloads
+    public fun pinMessage(message: Message, expiresAt: Date? = null) {
+        logger.d { "[pinMessage] message.id: ${message.id}, message.text: ${message.text}, expiresAt: $expiresAt" }
+        chatClient.pinMessage(message, expiresAt).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PinMessageError(it)
             }
@@ -1657,6 +1659,7 @@ public class MessageListController(
      * @param message The message to unpin.
      */
     public fun unpinMessage(message: Message) {
+        logger.d { "[unpinMessage] message.id: ${message.id}, message.text: ${message.text}" }
         chatClient.unpinMessage(message).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.UnpinMessageError(it)
