@@ -23,6 +23,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.CustomPickerMode
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -66,6 +67,7 @@ private object AttachmentsPickerUsageSnippet {
                                 onAttachmentsSelected = { attachments ->
                                     // Handle selected attachments
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = {
                                     // Handle dismiss
                                 }
@@ -117,6 +119,7 @@ private object AttachmentsPickerHandlingActionsSnippet {
                                     attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                                     composerViewModel.addSelectedAttachments(attachments)
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = { // Reset the UI state and dismiss the picker
                                     attachmentsPickerViewModel.changeAttachmentState(showAttachments = false)
                                     attachmentsPickerViewModel.dismissAttachments()
@@ -163,6 +166,7 @@ private object AttachmentsPickerCustomizationSnippet {
                                 onAttachmentsSelected = { attachments ->
                                     // Handle selected attachments
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = {
                                     // Handle dismiss
                                 }
@@ -201,6 +205,7 @@ private object AttachmentsPickerCustomizationSnippet {
                                 onAttachmentsSelected = { attachments ->
                                     // Handle selected attachments
                                 },
+                                onTabClick = { _, _ -> },
                                 onDismiss = {
                                     // Handle dismiss
                                 }
@@ -236,6 +241,7 @@ private object AttachmentsPickerCustomizationSnippet {
 
             @Composable
             override fun PickerTabContent(
+                onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
                 attachments: List<AttachmentPickerItemState>,
                 onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
                 onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

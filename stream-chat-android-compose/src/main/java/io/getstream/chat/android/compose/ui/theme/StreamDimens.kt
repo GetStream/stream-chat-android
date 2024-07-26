@@ -130,6 +130,7 @@ public data class StreamDimens(
     public val quotedMessageAttachmentEndPadding: Dp,
     public val groupAvatarInitialsXOffset: Dp,
     public val groupAvatarInitialsYOffset: Dp,
+    public val attachmentsPickerHeight: Dp,
     public val attachmentsContentImageMaxHeight: Dp,
     public val attachmentsContentGiphyMaxWidth: Dp = attachmentsContentGiphyWidth,
     public val attachmentsContentGiphyMaxHeight: Dp = attachmentsContentGiphyHeight,
@@ -138,6 +139,7 @@ public data class StreamDimens(
     public val attachmentsContentVideoWidth: Dp,
     public val attachmentsContentGroupPreviewWidth: Dp,
     public val attachmentsContentGroupPreviewHeight: Dp,
+    public val pollOptionInputHeight: Dp,
 ) {
 
     public companion object {
@@ -189,12 +191,14 @@ public data class StreamDimens(
             quotedMessageAttachmentEndPadding = 0.dp,
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
+            attachmentsPickerHeight = 350.dp,
             attachmentsContentImageMaxHeight = 600.dp,
             attachmentsContentVideoMaxHeight = 400.dp,
             attachmentsContentMediaGridSpacing = 2.dp,
             attachmentsContentVideoWidth = 250.dp,
             attachmentsContentGroupPreviewWidth = 250.dp,
             attachmentsContentGroupPreviewHeight = 250.dp,
+            pollOptionInputHeight = 56.dp,
         )
     }
 }
