@@ -56,7 +56,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed crash in `MessageListView` when posting a message to en empty channel. [#5332](https://github.com/GetStream/stream-chat-android/pull/5332)
+- Fixed crash in `MessageListView` when posting a message to an empty channel. [#5332](https://github.com/GetStream/stream-chat-android/pull/5332)
 
 ### ⬆️ Improved
 
