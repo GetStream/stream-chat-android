@@ -1,0 +1,282 @@
+# Video and Audio Calls Integration
+
+Initiating video calls in a chat app is a very common scenario. The best way to achieve this is to use our [Video SDK](https://getstream.io/video/docs/android/).
+
+This page will guide you through the process of adding video calls capabilities into a chat application.
+
+:::note
+The starting point for this guide is the resulting application from our [step-by-step tutorial](https://getstream.io/tutorials/android-chat/). Also, the final code for this guide can be found here.
+:::
+
+## Dependencies
+
+Add the Video SDK Compose dependency to the tutorial's `app/build.gradle` file and change the `minSdk` property from _21_ to _24_.
+
+```groovy
+android {
+    //...
+    defaultConfig {
+        //...
+        minSdk 24
+        //...
+    }
+    //...
+}
+//...
+dependencies {
+    //...
+    implementation "io.getstream:stream-video-android-ui-compose:$version"
+    //...
+}
+```
+
+
+
+## Adding a Video Call Button
+
+Edit the tutorial's message list in [`MessagesActivity4`](https://getstream.io/tutorials/android-chat/#:~:text=MessagesActivity4,for%20extended%20customization) by adding a `MessageListHeader` in the `Scaffold` `topBar` parameter.
+
+Also, add a _Video Call_ button by using the header's `trailingContent` parameter. The `onClick` handler starts the `VideoCallActivity` that we'll add in the next section.
+
+![Message List Header with Video Call button](../assets/video_integration_video_call_button.png)
+
+```kotlin
+topBar = {
+    val connectionState by listViewModel.connectionState.collectAsState()
+
+    MessageListHeader(
+        channel = listViewModel.channel,
+        currentUser = user,
+        connectionState = connectionState,
+        modifier = Modifier.height(55.dp),
+        onBackPressed = { finish() },
+        trailingContent = {
+            IconButton(
+                onClick = {
+                    startActivity(
+                        VideoCallActivity.getIntent(
+                            context = context,
+                            callMembers = listViewModel.channel.members.map { it.user.id }
+                        )
+                    )
+                },
+                content = {
+                    Icon(
+                        imageVector = Icons.Default.Videocam,
+                        contentDescription = "Video Call",
+                        tint = ChatTheme.colors.textHighEmphasis,
+                    )
+                }
+            )
+        },
+    )
+}
+```
+
+## Creating a Video Call Activity
+
+Add a new activity to the project, named `VideoCallActivity`. This activity will act as the screen that the person who initiated the call will see (_outgoing call_ screen), as well as the screen that the call receivers will see (_incoming call_ screen).
+
+You can find the full code for this activity below. We'll break it down in the following sections.
+
+### Full Code
+
+```kotlin
+class VideoCallActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Authentication
+        val userId = "TODO_REPLACE"
+        val userToken = "TODO_REPLACE"
+        val apiKey = "TODO_REPLACE"
+        val callId = "TODO_REPLACE"
+
+        val user = User(
+            id = userId,
+            name = "Tutorial" // Used in the UI
+        )
+
+        // Stream Video client init
+        // In a production app we recommend initializing the client in your Application class or DI module
+        val videoClient = StreamVideoBuilder(
+            context = applicationContext,
+            apiKey = apiKey,
+            user = user,
+            token = userToken,
+        ).build()
+
+        // Create a call
+        val call = videoClient.call("default", callId)
+
+        lifecycleScope.launch {
+            // We get the chat channel members as an intent extra and use them as call members
+            val callMembers: List<String> = intent.getStringArrayExtra(KEY_MEMBERS_ARRAY)?.asList() ?: emptyList()
+            // Passing ring = true will cause a push notification to appear for the receivers
+            val result = call.create(ring = true, memberIds = callMembers)
+            result.onError {
+                Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
+                Log.e("VideoCallActivity", it.message)
+                finish()
+            }
+        }
+
+        setContent {
+            // Request runtime permissions for camera and microphone
+            LaunchCallPermissions(call = call)
+
+            VideoTheme {
+                RingingCallContent(
+                    call = call,
+                    onAcceptedContent = {
+                        CallContent(
+                            call = call,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    },
+                    onRejectedContent = {
+                        rejectCall(call)
+                    },
+                    onNoAnswerContent = {
+                        finish()
+                    },
+                )
+            }
+        }
+    }
+
+    private fun rejectCall(call: Call) {
+        lifecycleScope.launch {
+            call.reject()
+            withContext(Dispatchers.Main) { finish() }
+        }
+    }
+
+    companion object {
+        const val KEY_MEMBERS_ARRAY: String = "callMembers"
+
+        fun getIntent(context: Context, callMembers: List<String>): Intent {
+            return Intent(context, VideoCallActivity::class.java).apply {
+                putExtra(KEY_MEMBERS_ARRAY, callMembers.toTypedArray())
+            }
+        }
+    }
+}
+```
+
+### User Authentication
+
+For this integration to work, we need a valid user token. The user token is usually generated by your server side API. When the user logs-in to your app you return the user token that gives them access to the call. To make this guide easier to follow, we'll generate a user token for you.
+
+:::caution
+You need to update the values for the `userId`, `userToken`, `apiKey` and `callId` variables with the generated values below.
+:::
+
+```kotlin
+// Authentication
+val userId = "TODO_REPLACE"
+val userToken = "TODO_REPLACE"
+val apiKey = "TODO_REPLACE"
+val callId = "TODO_REPLACE"
+```
+
+<!-- TODO: add token generation section -->
+
+Next, we create a user object that we'll use when [initializing](#video-sdk-initialization) the video client. Usually, these users are provided by your own backend. Alternatively, you can use guest or anonymous users.
+
+```kotlin
+val user = User(
+    id = userId,
+    name = "Tutorial" // Used in the UI
+)
+```
+
+### Video SDK Initialization
+
+We initialize the video client by passing the API key, the user that we created earlier and the user token.
+
+```kotlin
+// Stream Video client init
+// In a production app we recommend initializing the client in your Application class or DI module.
+val videoClient = StreamVideoBuilder(
+    context = applicationContext,
+    apiKey = apiKey,
+    user = user,
+    token = userToken,
+).build()
+```
+
+### Creating a Call
+
+Now that we've created the video client, we can also create a call. We do that by calling `call.create()`. We pass `ring = true` in order to show a _Receiving call_ notification for the receivers and the chat channel members as call members (see starting the `VideoCallActivity` in the [Adding a Video Call Button](#adding-a-video-call-button) section).
+
+```kotlin
+// Create a call
+val call = videoClient.call("default", callId)
+
+lifecycleScope.launch {
+    // We get the chat channel members as an intent extra and use them as call members
+    val callMembers: List<String> = intent.getStringArrayExtra(KEY_MEMBERS_ARRAY)?.asList() ?: emptyList()
+    // Passing ring = true will cause a push notification to appear for the receivers
+    val result = call.create(ring = true, memberIds = callMembers)
+    result.onError {
+        Toast.makeText(applicationContext, it.message, Toast.LENGTH_LONG).show()
+        Log.e("VideoCallActivity", it.message)
+        finish()
+    }
+}
+```
+
+### Asking for Permissions
+
+We need to request runtime permissions for accessing the camera and microphone. We can do this in a simple way by using the `LaunchCallPermissions` composable just below `setContent`.
+
+```kotlin
+setContent {
+    LaunchCallPermissions(call = call)
+    //...
+}
+```
+
+This code will request permissions the first time you start a call. See more in the [Permission Requests](https://getstream.io/video/docs/android/ui-cookbook/permission-requests/) video docs page.
+
+### Displaying the call UI
+
+To display the call UI, we are using the built-in `RingingCall` component. This component uses the call ringing state (_outgoing_ or _incoming_) to render a calling UI for both the _caller_ and the _receivers_. It shows a list of participants, with their avatars and names. See more [here](https://getstream.io/video/docs/android/ui-components/call/ringing-call/).
+
+When the call is accepted, we use the built-in `CallContent` component. It shows a full call screen with multiple UI elements, such as an app bar, a participants grid, and call control buttons. See more [here](https://getstream.io/video/docs/android/ui-components/call/call-content/).
+
+When the call is rejected, we call the `rejectCall()` method, which rejects the call by using `call.reject()` and finishes the `VideoCallActivity` activity. See more [here](https://getstream.io/video/docs/android/advanced/ringing/).
+
+```kotlin
+setContent {
+    // ... Request runtime permissions. See above.
+
+    VideoTheme {
+        RingingCallContent(
+            call = call,
+            onAcceptedContent = {
+                CallContent(
+                    call = call,
+                    modifier = Modifier.fillMaxSize()
+                )
+            },
+            onRejectedContent = {
+                rejectCall(call)
+            },
+            onNoAnswerContent = {
+                finish()
+            },
+        )
+    }
+}
+```
+
+```kotlin
+private fun rejectCall(call: Call) {
+    lifecycleScope.launch {
+        call.reject()
+        withContext(Dispatchers.Main) { finish() }
+    }
+}
+```
