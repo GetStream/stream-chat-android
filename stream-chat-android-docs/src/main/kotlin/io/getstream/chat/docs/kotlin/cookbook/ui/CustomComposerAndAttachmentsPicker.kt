@@ -261,7 +261,7 @@ private fun CustomAttachmentsPicker(
                                 onAttachmentPickerAction = { pickerAction ->
                                     when (pickerAction) {
                                         AttachmentPickerBack -> onDismiss.invoke()
-                                        AttachmentPickerPollCreation -> Unit
+                                        is AttachmentPickerPollCreation -> Unit
                                     }
                                 },
                                 attachments = attachmentsPickerViewModel.attachments,
