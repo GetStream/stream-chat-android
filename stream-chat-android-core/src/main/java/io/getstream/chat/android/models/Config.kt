@@ -87,6 +87,11 @@ public data class Config(
     val pushNotificationsEnabled: Boolean = true,
 
     /**
+     * Determines if polls are enabled. Disabled by default.
+     */
+    val pollsEnabled: Boolean = false,
+
+    /**
      * A number of days or infinite. "Infinite" by default.
      */
     val messageRetention: String = "infinite",
