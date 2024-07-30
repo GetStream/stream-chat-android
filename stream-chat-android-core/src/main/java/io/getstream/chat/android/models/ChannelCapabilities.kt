@@ -122,4 +122,10 @@ public object ChannelCapabilities {
 
     /** "Ability to create a call. */
     public const val CREATE_CALL: String = "create-call"
+
+    /** Ability to cast a vote in a poll. */
+    public const val CAST_POLL_VOTE: String = "cast-poll-vote"
+
+    /** Ability to send a poll. */
+    public const val SEND_POLL: String = "send-poll"
 }
