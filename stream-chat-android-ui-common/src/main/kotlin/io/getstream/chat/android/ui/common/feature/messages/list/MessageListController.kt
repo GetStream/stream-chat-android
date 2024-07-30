@@ -61,7 +61,6 @@ import io.getstream.chat.android.state.extensions.loadMessagesAroundId
 import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
 import io.getstream.chat.android.ui.common.state.messages.BlockUser
@@ -152,6 +151,7 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param chatClient The client used to communicate with the API.
  * @param clientState The current state of the SDK.
+ * @param channelState The state of the channel.
  * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
@@ -174,6 +174,7 @@ public class MessageListController(
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    public val channelState: StateFlow<ChannelState?>,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -198,11 +199,6 @@ public class MessageListController(
      * dispatching events.
      */
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
-
-    /**
-     * Holds information about the current channel and is actively updated.
-     */
-    public val channelState: StateFlow<ChannelState?> = observeChannelState()
 
     /**
      * Gives us information about the online state of the device.
@@ -428,15 +424,6 @@ public class MessageListController(
         logger.i { "<init> cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
         observeMessagesListState()
         processMessageId()
-    }
-
-    private fun observeChannelState(): StateFlow<ChannelState?> {
-        logger.d { "[observeChannelState] cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
-        return chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = messageLimit,
-            coroutineScope = scope,
-        )
     }
 
     /**

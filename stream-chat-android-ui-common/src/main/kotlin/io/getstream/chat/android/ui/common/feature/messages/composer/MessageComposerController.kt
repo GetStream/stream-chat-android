@@ -23,13 +23,11 @@ import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggestionOptions
@@ -91,9 +89,13 @@ import java.util.regex.Pattern
  *
  * @param channelCid The CID of the channel we're chatting in.
  * @param chatClient The client used to communicate to the API.
+ * @param channelState The current state of the channel.
+ * @param mediaRecorder The media recorder used to record audio messages.
+ * @param userLookupHandler The handler used to lookup users for mentions.
+ * @param fileToUri The function used to convert a file to a URI.
  * @param maxAttachmentCount The maximum number of attachments that can be sent in a single message.
- * @param messageId The id of a message we wish to scroll to in messages list. Used to control the number of channel
- * queries executed on screen initialization.
+ * @param isLinkPreviewEnabled If the link preview is enabled in the channel.
+ *
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @InternalStreamChatApi
@@ -101,12 +103,11 @@ import java.util.regex.Pattern
 public class MessageComposerController(
     private val channelCid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
-    private val mediaRecorder: StreamMediaRecorder,
+    public val channelState: StateFlow<ChannelState?>,
+    mediaRecorder: StreamMediaRecorder,
     private val userLookupHandler: UserLookupHandler,
-    private val fileToUri: (File) -> String,
-    private val messageLimit: Int,
+    fileToUri: (File) -> String,
     maxAttachmentCount: Int = AttachmentConstants.MAX_ATTACHMENTS_COUNT,
-    private val messageId: String? = null,
     private val isLinkPreviewEnabled: Boolean = false,
 ) {
 
@@ -150,13 +151,6 @@ public class MessageComposerController(
         coroutineScope = scope,
     )
 
-    private val _channelState: StateFlow<ChannelState?> = observeChannelState()
-
-    /**
-     * Holds information about the current state of the [Channel].
-     */
-    public val channelState: Flow<ChannelState> = _channelState.filterNotNull()
-
     /**
      * Holds information about the abilities the current user
      * is able to exercise in the given channel.
@@ -164,7 +158,9 @@ public class MessageComposerController(
      * e.g. send messages, delete messages, etc...
      * For a full list @see [ChannelCapabilities].
      */
-    public val ownCapabilities: StateFlow<Set<String>> = channelState.flatMapLatest { it.channelData }
+    public val ownCapabilities: StateFlow<Set<String>> = channelState
+        .filterNotNull()
+        .flatMapLatest { it.channelData }
         .map {
             messageValidator.canSendLinks = it.ownCapabilities.contains(ChannelCapabilities.SEND_LINKS)
             it.ownCapabilities
@@ -356,32 +352,30 @@ public class MessageComposerController(
      * Sets up the data loading operations such as observing the maximum allowed message length.
      */
     init {
-        channelState.flatMapLatest { it.channelConfig }.onEach {
-            messageValidator.maxMessageLength = it.maxMessageLength
-            commands = it.commands
-            state.value = state.value.copy(hasCommands = commands.isNotEmpty())
-        }.launchIn(scope)
+        channelState
+            .filterNotNull()
+            .flatMapLatest { it.channelConfig }
+            .onEach {
+                messageValidator.maxMessageLength = it.maxMessageLength
+                commands = it.commands
+                state.value = state.value.copy(hasCommands = commands.isNotEmpty())
+            }.launchIn(scope)
 
-        channelState.flatMapLatest { it.members }.onEach { members ->
-            users = members.map { it.user }
-        }.launchIn(scope)
+        channelState
+            .filterNotNull()
+            .flatMapLatest { it.members }.onEach { members ->
+                users = members.map { it.user }
+            }.launchIn(scope)
 
-        channelState.flatMapLatest { combine(it.channelData, it.lastSentMessageDate, ::Pair) }
+        channelState
+            .filterNotNull()
+            .flatMapLatest { combine(it.channelData, it.lastSentMessageDate, ::Pair) }
             .distinctUntilChangedBy { (_, lastSentMessageDate) -> lastSentMessageDate }
             .onEach { (channelData, lastSentMessageDate) ->
                 handleLastSentMessageDate(channelData.cooldown, lastSentMessageDate)
             }.launchIn(scope)
 
         setupComposerState()
-    }
-
-    private fun observeChannelState(): StateFlow<ChannelState?> {
-        logger.d { "[observeChannelState] cid: $channelCid, messageId: $messageId, messageLimit: $messageLimit" }
-        return chatClient.watchChannelAsState(
-            cid = channelCid,
-            messageLimit = messageLimit,
-            coroutineScope = scope,
-        )
     }
 
     /**

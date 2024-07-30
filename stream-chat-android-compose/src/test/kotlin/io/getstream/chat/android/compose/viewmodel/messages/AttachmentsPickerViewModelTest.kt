@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.viewmodel.messages
 
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
@@ -23,6 +24,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -37,12 +39,14 @@ import org.mockito.kotlin.whenever
 @ExtendWith(TestCoroutineExtension::class)
 internal class AttachmentsPickerViewModelTest {
 
+    private val channelState = MutableStateFlow(mock<ChannelState>())
+
     @Test
     fun `Given images on the file system When showing attachments picker Should show available images`() {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper)
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
         viewModel.loadData()
@@ -61,7 +65,7 @@ internal class AttachmentsPickerViewModelTest {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper)
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
         viewModel.changeAttachmentPickerMode(Files)
@@ -81,7 +85,7 @@ internal class AttachmentsPickerViewModelTest {
             whenever(it.getMedia()) doReturn listOf(imageAttachment1, imageAttachment2)
             whenever(it.getAttachmentsForUpload(any())) doReturn listOf(Attachment(type = "image"))
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper)
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
         viewModel.loadData()
@@ -101,7 +105,7 @@ internal class AttachmentsPickerViewModelTest {
         val storageHelper: StorageHelperWrapper = mock {
             whenever(it.getFiles()) doReturn listOf(fileAttachment1, fileAttachment2)
         }
-        val viewModel = AttachmentsPickerViewModel(storageHelper)
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.changeAttachmentState(true)
         viewModel.changeAttachmentPickerMode(Files)
@@ -119,7 +123,7 @@ internal class AttachmentsPickerViewModelTest {
     @Test
     fun `Given hidden attachment picker When create the view model Should not load any files from the file system`() {
         val storageHelper: StorageHelperWrapper = mock()
-        val viewModel = AttachmentsPickerViewModel(storageHelper)
+        val viewModel = AttachmentsPickerViewModel(storageHelper, channelState)
 
         viewModel.isShowingAttachments `should be equal to` false
         verify(storageHelper, never()).getFiles()

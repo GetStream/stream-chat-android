@@ -497,6 +497,7 @@ internal class MessageListControllerTests {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
+        private val channelState: ChannelState = mock()
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -541,32 +542,30 @@ internal class MessageListControllerTests {
             watchersCountState: StateFlow<Int> = MutableStateFlow(0),
             typingUsers: List<User> = listOf(),
         ) = apply {
-            val channelState: ChannelState = mock { channelState ->
-                whenever(channelState.cid) doReturn CID
-                whenever(channelState.channelData) doReturn channelDataState
-                whenever(channelState.channelConfig) doReturn MutableStateFlow(Config())
-                whenever(channelState.members) doReturn membersState
-                whenever(channelState.membersCount) doReturn membersCountState
-                whenever(channelState.watchers) doReturn watchersState
-                whenever(channelState.watcherCount) doReturn watchersCountState
-                whenever(channelState.messages) doReturn messagesState
-                whenever(channelState.pinnedMessages) doReturn pinnedMessagesState
-                whenever(channelState.messagesState) doReturn messagesState.map { messages ->
-                    MessagesState.Result(messages)
-                }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
-                whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
-                whenever(channelState.reads) doReturn MutableStateFlow(listOf())
-                whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
-                whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
-                whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
-                whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
-                whenever(channelState.insideSearch) doReturn MutableStateFlow(false)
-                whenever(channelState.loadingNewerMessages) doReturn MutableStateFlow(false)
-                whenever(channelState.loadingOlderMessages) doReturn MutableStateFlow(false)
-                whenever(channelState.hidden) doReturn MutableStateFlow(false)
-                whenever(channelState.toChannel()) doAnswer {
-                    channelState.convertToChannel()
-                }
+            whenever(channelState.cid) doReturn CID
+            whenever(channelState.channelData) doReturn channelDataState
+            whenever(channelState.channelConfig) doReturn MutableStateFlow(Config())
+            whenever(channelState.members) doReturn membersState
+            whenever(channelState.membersCount) doReturn membersCountState
+            whenever(channelState.watchers) doReturn watchersState
+            whenever(channelState.watcherCount) doReturn watchersCountState
+            whenever(channelState.messages) doReturn messagesState
+            whenever(channelState.pinnedMessages) doReturn pinnedMessagesState
+            whenever(channelState.messagesState) doReturn messagesState.map { messages ->
+                MessagesState.Result(messages)
+            }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
+            whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
+            whenever(channelState.reads) doReturn MutableStateFlow(listOf())
+            whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
+            whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
+            whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
+            whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
+            whenever(channelState.insideSearch) doReturn MutableStateFlow(false)
+            whenever(channelState.loadingNewerMessages) doReturn MutableStateFlow(false)
+            whenever(channelState.loadingOlderMessages) doReturn MutableStateFlow(false)
+            whenever(channelState.hidden) doReturn MutableStateFlow(false)
+            whenever(channelState.toChannel()) doAnswer {
+                channelState.convertToChannel()
             }
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
@@ -582,6 +581,7 @@ internal class MessageListControllerTests {
                 dateSeparatorHandler = dateSeparatorHandler,
                 deletedMessageVisibility = deletedMessageVisibility,
                 threadLoadOrderOlderToNewer = false,
+                channelState = MutableStateFlow(channelState),
             )
         }
     }
