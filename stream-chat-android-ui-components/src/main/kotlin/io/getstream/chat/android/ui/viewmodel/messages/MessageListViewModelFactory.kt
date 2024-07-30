@@ -21,8 +21,10 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
@@ -36,6 +38,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisi
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
@@ -92,6 +96,14 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val threadLoadOlderToNewer: Boolean = false,
 ) : ViewModelProvider.Factory {
 
+    private val channelStateFlow: StateFlow<ChannelState?> by lazy {
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = messageLimit,
+            coroutineScope = chatClient.inheritScope { SupervisorJob(it) },
+        )
+    }
+
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
         MessageListViewModel::class.java to {
@@ -105,6 +117,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     parentMessageId = parentMessageId,
                     chatClient = chatClient,
                     clientState = clientState,
+                    channelState = channelStateFlow,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
                     deletedMessageVisibility = deletedMessageVisibility,
@@ -127,8 +140,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     userLookupHandler = userLookupHandler,
                     maxAttachmentCount = maxAttachmentCount,
                     fileToUri = fileToUri,
-                    messageId = messageId,
-                    messageLimit = messageLimit,
+                    channelState = channelStateFlow,
                 ),
             )
         },
