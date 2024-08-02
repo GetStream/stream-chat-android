@@ -1232,7 +1232,7 @@ public class MessageListView : ConstraintLayout {
                 logger.v {
                     "[handleNewWrapper] isOldListEmpty: $isOldListEmpty, filteredList.size: ${filteredList.size}"
                 }
-                adapter.submitList(filteredList) {
+                adapter.submitListOnAnimationsFinished(filteredList) {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
@@ -1241,6 +1241,20 @@ public class MessageListView : ConstraintLayout {
                     )
                 }
             }
+        }
+    }
+
+    private fun MessageListItemAdapter.submitListOnAnimationsFinished(
+        filteredList: List<MessageListItem>,
+        commitCallback: () -> Unit,
+    ) {
+        val animator = binding.chatMessagesRV.itemAnimator
+        if (animator?.isRunning == true) {
+            animator.isRunning {
+                submitList(filteredList, commitCallback)
+            }
+        } else {
+            submitList(filteredList, commitCallback)
         }
     }
 

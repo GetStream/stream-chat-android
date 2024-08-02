@@ -1767,17 +1767,20 @@ public class MessageListController(
      *
      * @param pollConfig Configuration for creating a poll.
      */
-    public fun createPoll(pollConfig: PollConfig) {
+    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
         cid.cidToTypeAndId().let { (channelType, channelId) ->
             chatClient.sendPoll(
                 channelType = channelType,
                 channelId = channelId,
                 pollConfig = pollConfig,
-            ).enqueue(onError = { error ->
-                onActionResult(error) {
-                    ErrorEvent.PollCreationError(it)
+            ).enqueue { response ->
+                onResult(response)
+                if (response is Result.Failure) {
+                    onActionResult(response.value) {
+                        ErrorEvent.PollCreationError(it)
+                    }
                 }
-            })
+            }
         }
     }
 
