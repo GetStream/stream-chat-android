@@ -66,6 +66,7 @@ import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsP
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -79,9 +80,11 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -296,6 +299,7 @@ public fun MessagesScreen(
             skipEnrichUrl = skipEnrichUrl,
         )
         AttachmentsPickerMenu(
+            listViewModel = listViewModel,
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             composerViewModel = composerViewModel,
         )
@@ -563,6 +567,7 @@ private fun BoxScope.MessagesScreenReactionsPicker(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.AttachmentsPickerMenu(
+    listViewModel: MessageListViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
@@ -605,6 +610,29 @@ private fun BoxScope.AttachmentsPickerMenu(
                         attachments ->
                     attachmentsPickerViewModel.changeAttachmentState(false)
                     composerViewModel.addSelectedAttachments(attachments)
+                }
+            },
+            onAttachmentPickerAction = { action ->
+                if (action is AttachmentPickerPollCreation) {
+                    listViewModel.createPoll(
+                        pollConfig = PollConfig(
+                            name = action.question,
+                            options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
+                            description = action.question,
+                            allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
+                            votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
+                                VotingVisibility.ANONYMOUS
+                            } else {
+                                VotingVisibility.PUBLIC
+                            },
+                            maxVotesAllowed = if (action.switches.any { it.key == "maxVotesAllowed" && it.enabled }) {
+                                action.switches.first { it.key == "maxVotesAllowed" }.pollSwitchInput?.value.toString()
+                                    .toInt()
+                            } else {
+                                1
+                            },
+                        ),
+                    )
                 }
             },
             onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },

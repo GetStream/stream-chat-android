@@ -306,6 +306,7 @@ public class MessageListView : ConstraintLayout {
             is MessageListController.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
             is MessageListController.ErrorEvent.MarkUnreadError ->
                 R.string.stream_ui_message_list_error_mark_as_unread_message
+            is MessageListController.ErrorEvent.PollCreationError -> R.string.stream_ui_message_list_error_create_poll
         }.let(::showToast)
     }
 

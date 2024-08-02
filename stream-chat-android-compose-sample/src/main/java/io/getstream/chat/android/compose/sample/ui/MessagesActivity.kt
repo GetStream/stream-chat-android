@@ -67,6 +67,7 @@ import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedM
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
 import io.getstream.chat.android.compose.ui.theme.AttachmentPickerTheme
@@ -81,8 +82,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -246,6 +249,29 @@ class MessagesActivity : BaseConnectedActivity() {
                         composerViewModel.addSelectedAttachments(attachments)
                     },
                     onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
+                    onAttachmentPickerAction = { action ->
+                        if (action is AttachmentPickerPollCreation) {
+                            listViewModel.createPoll(
+                                pollConfig = PollConfig(
+                                    name = action.question,
+                                    options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
+                                    description = action.question,
+                                    allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
+                                    votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
+                                        VotingVisibility.ANONYMOUS
+                                    } else {
+                                        VotingVisibility.PUBLIC
+                                    },
+                                    maxVotesAllowed = if (action.switches.any { it.key == "maxVotesAllowed" && it.enabled }) {
+                                        action.switches.first { it.key == "maxVotesAllowed" }.pollSwitchInput?.value.toString()
+                                            .toInt()
+                                    } else {
+                                        1
+                                    },
+                                ),
+                            )
+                        }
+                    },
                     onDismiss = {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         attachmentsPickerViewModel.dismissAttachments()

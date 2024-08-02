@@ -45,6 +45,7 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
@@ -465,6 +466,7 @@ public class MessageListController(
                     is MessagesState.Loading,
                     is MessagesState.NoQueryActive,
                     -> _messageListState.value.copy(isLoading = true)
+
                     is MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
@@ -942,6 +944,7 @@ public class MessageListController(
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.isDeleted() && it.user.id != currentUser?.id)
                 }
+
                 DeletedMessageVisibility.ALWAYS_HIDDEN -> !it.isDeleted()
             }
             val isSystemMessage = it.isSystem() || it.isError()
@@ -968,6 +971,7 @@ public class MessageListController(
                 (lastMessage.isGiphy() || lastLoadedMessage.id != lastMessage.id) -> {
                 getNewMessageStateForMessage(lastMessage)
             }
+
             else -> getNewMessageStateForMessage(lastMessage)
         }
     }
@@ -1085,6 +1089,7 @@ public class MessageListController(
                     if (channelState.value?.endOfOlderMessages?.value == true) return
                     chatClient.loadOlderMessages(cid, messageLimit).enqueue()
                 }
+
                 is MessageMode.MessageThread -> threadLoadMore(this)
             }
         }
@@ -1184,6 +1189,7 @@ public class MessageListController(
             is Result.Success -> {
                 enterThreadSequential(result.value)
             }
+
             is Result.Failure ->
                 logger.e {
                     "[enterThreadSequential] -> Could not get message: ${result.value.message}."
@@ -1431,9 +1437,11 @@ public class MessageListController(
             is ThreadReply -> {
                 enterThreadMode(messageAction.message)
             }
+
             is Delete, is FlagMessage -> {
                 _messageActions.value = _messageActions.value + messageAction
             }
+
             is BlockUser -> blockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
@@ -1717,6 +1725,28 @@ public class MessageListController(
     }
 
     /**
+     * Creates a poll with the given [pollConfig].
+     *
+     * @param pollConfig Configuration for creating a poll.
+     */
+    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
+        cid.cidToTypeAndId().let { (channelType, channelId) ->
+            chatClient.sendPoll(
+                channelType = channelType,
+                channelId = channelId,
+                pollConfig = pollConfig,
+            ).enqueue { response ->
+                onResult(response)
+                if (response is Result.Failure) {
+                    onActionResult(response.value) {
+                        ErrorEvent.PollCreationError(it)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Triggered when the user selects a reaction for the currently selected message. If the message already has that
      * reaction, from the current user, we remove it. Otherwise we add a new reaction.
      *
@@ -1949,10 +1979,12 @@ public class MessageListController(
                                     attachment.assetUrl?.substringBefore("?") ==
                                         assetUrl.substringBefore("?")
                                 }
+
                                 imageUrl != null -> {
                                     attachment.imageUrl?.substringBefore("?") ==
                                         imageUrl.substringBefore("?")
                                 }
+
                                 else -> false
                             }
                         },
@@ -1978,6 +2010,7 @@ public class MessageListController(
                         )
                     }
                 }
+
                 is Result.Failure -> logger.e { "Could not load message: ${result.value}" }
             }
         }
@@ -2097,6 +2130,13 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class MarkUnreadError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while creating a poll.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollCreationError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.
