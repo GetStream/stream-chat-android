@@ -41,6 +41,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomEnd
@@ -56,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.client.utils.message.isPinned
+import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
@@ -68,6 +70,7 @@ import io.getstream.chat.android.compose.ui.components.messages.MessageHeaderLab
 import io.getstream.chat.android.compose.ui.components.messages.MessageReactions
 import io.getstream.chat.android.compose.ui.components.messages.MessageText
 import io.getstream.chat.android.compose.ui.components.messages.OwnedMessageVisibilityContent
+import io.getstream.chat.android.compose.ui.components.messages.PollMessageContent
 import io.getstream.chat.android.compose.ui.components.messages.QuotedMessage
 import io.getstream.chat.android.compose.ui.components.messages.UploadingFooter
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -75,13 +78,17 @@ import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.compose.ui.util.isUploading
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFocused
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
  * The default message container for all messages in the Conversation/Messages screen.
@@ -100,6 +107,9 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
  * @param modifier Modifier for styling.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler for thread clicks, if this message has a thread going.
+ * @param onCastVote Handler for casting a vote on an option.
+ * @param onMoreOption Handler for seeing more options.
+ * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
@@ -125,6 +135,11 @@ public fun MessageItem(
     modifier: Modifier = Modifier,
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: (() -> Unit)? = null,
@@ -149,6 +164,11 @@ public fun MessageItem(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onPollUpdated = onPollUpdated,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onClosePoll = onClosePoll,
         )
     },
     footerContent: @Composable ColumnScope.(MessageItemState) -> Unit = {
@@ -242,11 +262,10 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
         .size(24.dp)
         .align(Alignment.Bottom)
 
-    if (!messageItem.isMine &&
-        (
-            messageItem.showMessageFooter ||
-                messageItem.groupPosition.contains(MessagePosition.BOTTOM) ||
-                messageItem.groupPosition.contains(MessagePosition.NONE)
+    if (!messageItem.isMine && (
+            messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(
+                MessagePosition.NONE,
+            )
             )
     ) {
         UserAvatar(
@@ -316,20 +335,15 @@ internal fun DefaultMessageItemHeaderContent(
         val ownReactions = message.ownReactions
         val reactionGroups = message.reactionGroups.ifEmpty { return }
         val iconFactory = ChatTheme.reactionIconFactory
-        reactionGroups
-            .filter { iconFactory.isReactionSupported(it.key) }
-            .takeIf { it.isNotEmpty() }
-            ?.toList()
-            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }
-            ?.map { (type, _) ->
+        reactionGroups.filter { iconFactory.isReactionSupported(it.key) }.takeIf { it.isNotEmpty() }?.toList()
+            ?.sortedWith { o1, o2 -> reactionSorting.compare(o1.second, o2.second) }?.map { (type, _) ->
                 val isSelected = ownReactions.any { it.type == type }
                 val reactionIcon = iconFactory.createReactionIcon(type)
                 ReactionOptionItemState(
                     painter = reactionIcon.getPainter(isSelected),
                     type = type,
                 )
-            }
-            ?.let { options ->
+            }?.let { options ->
                 MessageReactions(
                     modifier = Modifier
                         .clickable(
@@ -367,10 +381,11 @@ internal fun ColumnScope.DefaultMessageItemFooterContent(
                 message = message,
             )
         }
-        message.isDeleted() &&
-            messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
+
+        message.isDeleted() && messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
             OwnedMessageVisibilityContent(message = message)
         }
+
         else -> {
             MessageFooter(messageItem = messageItem)
         }
@@ -409,6 +424,9 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
+ * @param onCastVote Handler when a user cast a vote on an option.
+ * @param onRemoveVote Handler when a user cast a remove on an option.
+ * @param onClosePoll Handler when a user close a poll.
  */
 @Composable
 internal fun DefaultMessageItemCenterContent(
@@ -417,9 +435,32 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit,
+    onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onClosePoll: (String) -> Unit,
+
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
-    if (messageItem.message.isEmojiOnlyWithoutBubble()) {
+    if (messageItem.message.isPoll()) {
+        val poll = messageItem.message.poll
+        LaunchedEffect(key1 = poll) {
+            if (poll != null) {
+                onPollUpdated.invoke(messageItem.message, poll)
+            }
+        }
+
+        PollMessageContent(
+            modifier = modifier,
+            messageItem = messageItem,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onClosePoll = onClosePoll,
+            onLongItemClick = onLongItemClick,
+        )
+    } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
             modifier = modifier,
             messageItem = messageItem,

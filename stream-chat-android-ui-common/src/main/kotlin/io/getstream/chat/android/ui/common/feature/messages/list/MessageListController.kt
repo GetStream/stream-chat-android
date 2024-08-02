@@ -45,9 +45,12 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
 import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.state.extensions.getMessageUsingCache
@@ -102,6 +105,9 @@ import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.PollState
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -287,6 +293,13 @@ public class MessageListController(
     private val _messageListState: MutableStateFlow<MessageListState> =
         MutableStateFlow(MessageListState(isLoading = true))
     public val messageListState: StateFlow<MessageListState> = _messageListState
+
+    /**
+     * Current state of the poll.
+     */
+    private val _pollState: MutableStateFlow<PollState> =
+        MutableStateFlow(PollState())
+    public val pollState: StateFlow<PollState> = _pollState
 
     /**
      * Current state of the thread message list.
@@ -1421,6 +1434,31 @@ public class MessageListController(
     }
 
     /**
+     * Triggered when the user taps the show more options button on the poll message.
+     *
+     * @param selectedPoll The poll that holds the details to be drawn on the more options screen.
+     */
+    public fun displayPollMoreOptions(selectedPoll: SelectedPoll?) {
+        _pollState.value = _pollState.value.copy(selectedPoll = selectedPoll)
+    }
+
+    /**
+     * Triggered when the poll information has been changed and need to sync on the poll states.
+     *
+     * @param poll The poll that holds the details to be drawn on the more options screen.
+     * @param message The message that contains the poll information.
+     */
+    public fun updatePollState(poll: Poll, message: Message, pollSelectionType: PollSelectionType) {
+        _pollState.value = _pollState.value.copy(
+            selectedPoll = SelectedPoll(
+                poll = poll,
+                message = message,
+                pollSelectionType = pollSelectionType,
+            ),
+        )
+    }
+
+    /**
      * Triggered when the user selects a new message action, in the message overlay.
      *
      * We first remove the overlay, after which we consume the event and based on the type of the event,
@@ -1744,6 +1782,66 @@ public class MessageListController(
                 }
             }
         }
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     */
+    public fun castVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ) {
+        chatClient.castPollVote(
+            messageId = messageId,
+            pollId = pollId,
+            option = option,
+        ).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.PollCastingVoteError(it)
+            }
+        })
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote that should be removed.
+     */
+    public fun removeVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ) {
+        chatClient.removePollVote(
+            messageId = messageId,
+            pollId = pollId,
+            vote = vote,
+        ).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.PollCastingVoteError(it)
+            }
+        })
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     */
+    public fun closePoll(pollId: String) {
+        chatClient.closePoll(pollId = pollId)
+            .enqueue(onError = { error ->
+                onActionResult(error) {
+                    ErrorEvent.PollCastingVoteError(it)
+                }
+            })
     }
 
     /**
@@ -2137,6 +2235,27 @@ public class MessageListController(
          * @param streamError Contains the original [Throwable] along with a message.
          */
         public data class PollCreationError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while casting a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollCastingVoteError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while removing a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollRemovingVoteError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while closing a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollClosingError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
          * When an error occurs while blocking a user.
