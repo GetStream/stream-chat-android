@@ -136,7 +136,8 @@ public final class io/getstream/chat/android/ui/common/feature/messages/list/Mes
 	public final fun castVote (Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Option;)V
 	public final fun clearNewMessageState ()V
 	public final fun closePoll (Ljava/lang/String;)V
-	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
+	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun createPoll$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/PollConfig;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)V
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;Z)V
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/ui/common/feature/messages/list/MessageListController;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V
 	public final fun disableUnreadLabelButton ()V
