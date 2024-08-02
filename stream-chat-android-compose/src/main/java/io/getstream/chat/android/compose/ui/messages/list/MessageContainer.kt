@@ -36,8 +36,11 @@ import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryP
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.state.messages.list.DateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.EmptyThreadPlaceholderItemState
@@ -49,6 +52,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 
 /**
  * Represents the message item container that allows us to customize each type of item in the MessageList.
@@ -59,6 +63,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorIt
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
+ * @param onCastVote Handler for casting a vote on an option.
+ * @param onClosePoll Handler for closing a poll.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
@@ -78,6 +84,11 @@ public fun MessageContainer(
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
@@ -101,6 +112,11 @@ public fun MessageContainer(
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
             onThreadClick = onThreadClick,
+            onPollUpdated = onPollUpdated,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onClosePoll = onClosePoll,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
@@ -239,6 +255,10 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onThreadClick Handler when the user clicks on the message thread.
+ * @param onCastVote Handler for casting a vote on an option.
+ * @param onRemoveVote Handler for removing a vote on an option.
+ * @param onMoreOption Handler for seeing more options.
+ * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
@@ -252,6 +272,11 @@ internal fun DefaultMessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onClosePoll: (String) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: () -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
@@ -262,6 +287,11 @@ internal fun DefaultMessageItem(
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
+        onPollUpdated = onPollUpdated,
+        onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
+        selectPoll = selectPoll,
+        onClosePoll = onClosePoll,
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,

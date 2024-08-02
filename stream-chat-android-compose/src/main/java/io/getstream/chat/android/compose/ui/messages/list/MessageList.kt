@@ -35,12 +35,17 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.ReactionSorting
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
  * Default MessageList component, that relies on [MessageListViewModel] to connect all the data
@@ -95,6 +100,34 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
+    onPollUpdated: (Message, Poll) -> Unit = { message, poll ->
+        val selectedPoll = viewModel.pollState.selectedPoll
+        if (viewModel.isShowingPollOptionDetails &&
+            selectedPoll != null && selectedPoll.poll.id == poll.id
+        ) {
+            viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
+        }
+    },
+    onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
+        viewModel.castVote(
+            message = message,
+            poll = poll,
+            option = option,
+        )
+    },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { message, poll, vote ->
+        viewModel.removeVote(
+            message = message,
+            poll = poll,
+            vote = vote,
+        )
+    },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { message, poll, selectionType ->
+        viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message, selectionType))
+    },
+    onClosePoll: (String) -> Unit = { pollId ->
+        viewModel.closePoll(pollId = pollId)
+    },
     onQuotedMessageClick: (Message) -> Unit = { message ->
         viewModel.scrollToMessage(
             messageId = message.id,
@@ -127,6 +160,11 @@ public fun MessageList(
             messageListItemState = messageListItem,
             reactionSorting = reactionSorting,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onPollUpdated = onPollUpdated,
+            onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
@@ -171,6 +209,8 @@ public fun MessageList(
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onCastVote Handler for casting a vote on an option.
+ * @param onClosePoll Handler for closing a poll.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -182,6 +222,11 @@ internal fun DefaultMessageContainer(
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onPollUpdated: (Message, Poll) -> Unit,
+    onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: ((User) -> Unit)? = null,
 ) {
@@ -192,6 +237,11 @@ internal fun DefaultMessageContainer(
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
+        onPollUpdated = onPollUpdated,
+        onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
+        selectPoll = selectPoll,
+        onClosePoll = onClosePoll,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,
@@ -273,6 +323,11 @@ public fun MessageList(
     onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
@@ -299,6 +354,11 @@ public fun MessageList(
         DefaultMessageContainer(
             messageListItemState = it,
             reactionSorting = reactionSorting,
+            onPollUpdated = onPollUpdated,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
@@ -330,6 +390,7 @@ public fun MessageList(
             onMessagesEndReached = onMessagesPageEndReached,
             onScrollToBottom = onScrollToBottom,
         )
+
         else -> emptyContent()
     }
 }
