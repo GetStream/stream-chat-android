@@ -393,3 +393,34 @@ By combining all the components mentioned above, you will see the resulting poll
 | ![Poll Creation Light](../assets/polls_creation_light.png) | ![Poll Creation Dark](../assets/polls_creation_dark.png) |
 
 This setup includes a customizable header, input fields for the poll question, a list of options with unique validation, configurable switches, and a back navigation confirmation dialog.
+
+## PollMessageContent
+
+![Poll Message Content](../assets/polls_message_content.png)
+
+The [PollMessageContent](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/components/messages/PollMessageContent.kt) displays the poll question and answer options, distinguishing between the poll owner and other users. It allows user interaction, showing real-time vote counts and participants, along with the question title, answer items, and additional option buttons.
+
+It is implemented inside the [MessageItem](https://github.com/GetStream/stream-chat-android/blob/b4edd566fce3a009fe326f508f025692e09acc5f/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/messages/list/MessageItem.kt#L414), so you can customize the poll content message by implementing your own `MessageItem` composable.
+
+```kotlin
+if (messageItem.message.isPoll()) {
+    val poll = messageItem.message.poll
+    LaunchedEffect(key1 = poll) {
+        if (poll != null) {
+            onPollUpdated.invoke(messageItem.message, poll)
+        }
+    }
+
+    PollMessageContent(
+        modifier = modifier,
+        messageItem = messageItem,
+        onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
+        selectPoll = selectPoll,
+        onClosePoll = onClosePoll,
+        onLongItemClick = onLongItemClick,
+    )
+}
+
+..
+```
