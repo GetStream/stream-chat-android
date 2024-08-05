@@ -15,6 +15,7 @@ include (
 		':stream-chat-android-core',
 		':stream-chat-android-test',
 		':stream-chat-android-docs',
+		':stream-chat-android-previewdata',
 		':stream-chat-android-compose',
 		':stream-chat-android-compose-sample',
 		':stream-chat-android-markdown-transformer',
