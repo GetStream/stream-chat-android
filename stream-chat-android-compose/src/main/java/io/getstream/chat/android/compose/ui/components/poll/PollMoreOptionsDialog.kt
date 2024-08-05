@@ -54,13 +54,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Popup
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewPollData
 import io.getstream.chat.android.compose.ui.components.messages.PollItemCheckBox
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
@@ -260,7 +260,7 @@ internal fun PollMoreOptionItem(
 @Preview
 @Composable
 private fun PollMoreOptionsDialogPreview() {
-    val poll = PreviewPollData.poll1
+    val poll = io.getstream.chat.android.previewdata.PreviewPollData.poll1
 
     ChatTheme {
         LazyColumn(

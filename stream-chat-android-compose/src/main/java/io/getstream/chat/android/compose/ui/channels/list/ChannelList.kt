@@ -37,8 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewChannelData
-import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.EmptyContent
@@ -50,6 +48,8 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
  * Default ChannelList component, that relies on the [ChannelListViewModel] to load the data and

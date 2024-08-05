@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.previewdata
+package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Reaction
 
 /**
  * Provides sample reactions that will be used to render component previews.
  */
-internal object PreviewReactionData {
+public object PreviewReactionData {
 
     private val reaction1: Reaction = Reaction(
         type = "like",
@@ -43,7 +43,7 @@ internal object PreviewReactionData {
         user = PreviewUserData.user4,
     )
 
-    val oneReaction: List<Reaction> = listOf(reaction1)
+    public val oneReaction: List<Reaction> = listOf(reaction1)
 
-    val manyReaction: List<Reaction> = listOf(reaction1, reaction2, reaction3, reaction4)
+    public val manyReaction: List<Reaction> = listOf(reaction1, reaction2, reaction3, reaction4)
 }

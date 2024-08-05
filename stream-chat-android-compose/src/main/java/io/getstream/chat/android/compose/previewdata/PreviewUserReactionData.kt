@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
  * Provides sample user reactions that will be used to render component previews.
