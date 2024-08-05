@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
@@ -59,6 +58,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
@@ -418,7 +418,7 @@ private fun PollMessageContentPreview() {
                 selectPoll = { _, _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
-                    message = PreviewMessageData.messageWithPoll,
+                    message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithPoll,
                     isMine = true,
                 ),
             )
@@ -432,7 +432,7 @@ private fun PollMessageContentPreview() {
                 selectPoll = { _, _, _ -> },
                 onClosePoll = {},
                 messageItem = MessageItemState(
-                    message = PreviewMessageData.messageWithError,
+                    message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
                     isMine = true,
                 ),
             )

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.previewdata
+package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
@@ -23,9 +23,9 @@ import java.util.Date
 /**
  * Provides sample channels that will be used to render previews.
  */
-internal object PreviewChannelData {
+public object PreviewChannelData {
 
-    val channelWithImage: Channel = Channel(
+    public val channelWithImage: Channel = Channel(
         type = "channelType",
         id = "channelId1",
         image = "https://picsum.photos/id/237/128/128",
@@ -35,7 +35,7 @@ internal object PreviewChannelData {
         ),
     )
 
-    val channelWithOneUser: Channel = Channel(
+    public val channelWithOneUser: Channel = Channel(
         type = "channelType",
         id = "channelId2",
         members = listOf(
@@ -43,7 +43,7 @@ internal object PreviewChannelData {
         ),
     )
 
-    val channelWithOnlineUser: Channel = Channel(
+    public val channelWithOnlineUser: Channel = Channel(
         type = "channelType",
         id = "channelId2",
         members = listOf(
@@ -52,7 +52,7 @@ internal object PreviewChannelData {
         ),
     )
 
-    val channelWithFewMembers: Channel = Channel(
+    public val channelWithFewMembers: Channel = Channel(
         type = "channelType",
         id = "channelId3",
         members = listOf(
@@ -62,7 +62,7 @@ internal object PreviewChannelData {
         ),
     )
 
-    val channelWithManyMembers: Channel = Channel(
+    public val channelWithManyMembers: Channel = Channel(
         type = "channelType",
         id = "channelId4",
         members = listOf(
@@ -74,7 +74,7 @@ internal object PreviewChannelData {
         ),
     )
 
-    val channelWithMessages: Channel = Channel(
+    public val channelWithMessages: Channel = Channel(
         type = "channelType",
         id = "channelId5",
         members = listOf(

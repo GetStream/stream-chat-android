@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.previewdata
+package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
@@ -26,24 +26,24 @@ import java.util.UUID
 /**
  * Provides sample poll that will be used to render previews.
  */
-internal object PreviewPollData {
+public object PreviewPollData {
 
-    private val option1 = Option(
+    public val option1: Option = Option(
         id = UUID.randomUUID().toString(),
         text = "option1",
     )
 
-    private val option2 = Option(
+    public val option2: Option = Option(
         id = UUID.randomUUID().toString(),
         text = "option2",
     )
 
-    private val option3 = Option(
+    public val option3: Option = Option(
         id = UUID.randomUUID().toString(),
         text = "option3",
     )
 
-    val poll1 = Poll(
+    public val poll1: Poll = Poll(
         id = UUID.randomUUID().toString(),
         name = "Vote an option!",
         description = "This is a poll",

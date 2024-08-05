@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import app.cash.paparazzi.DeviceConfig
 import app.cash.paparazzi.Paparazzi
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewPollData
 import io.getstream.chat.android.compose.ui.BaseComposeTest
 import io.getstream.chat.android.compose.ui.components.poll.PollDialogHeader
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsTitle
@@ -48,6 +47,7 @@ import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitch
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchItem
 import io.getstream.chat.android.compose.ui.messages.attachments.poll.PollSwitchList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.previewdata.PreviewPollData
 import org.junit.Rule
 import org.junit.Test
 

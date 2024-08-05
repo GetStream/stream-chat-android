@@ -1,8 +1,10 @@
 import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Dependencies
 
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 rootProject.extra.apply {
@@ -16,8 +18,27 @@ apply(from = "$rootDir/scripts/android.gradle")
 
 android {
     namespace = "io.getstream.chat.android.previewdata"
+    resourcePrefix = "stream_compose_previewdata"
+
+    buildFeatures {
+        compose = true
+    }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    compilerOptions.freeCompilerArgs.addAll(
+        listOf(
+            "-Xexplicit-api=strict",
+        ),
+    )
 }
 
 dependencies {
+    implementation(project(":stream-chat-android-state"))
     implementation(project(":stream-chat-android-client"))
+
+    // Compose
+    implementation(Dependencies.composeUi)
+
+    detektPlugins(Dependencies.detektFormatting)
 }

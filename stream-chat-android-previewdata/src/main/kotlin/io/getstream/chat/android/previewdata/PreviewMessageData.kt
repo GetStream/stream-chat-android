@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.compose.previewdata
+package io.getstream.chat.android.previewdata
 
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageType
@@ -24,23 +24,23 @@ import java.util.Date
 /**
  * Provides sample messages that will be used to render previews.
  */
-internal object PreviewMessageData {
+public object PreviewMessageData {
 
-    val message1: Message = Message(
+    public val message1: Message = Message(
         id = "message-id-1",
         text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
         createdAt = Date(),
         type = MessageType.REGULAR,
     )
 
-    val message2: Message = Message(
+    public val message2: Message = Message(
         id = "message-id-2",
         text = "Aenean commodo ligula eget dolor.",
         createdAt = Date(),
         type = MessageType.REGULAR,
     )
 
-    val messageWithOwnReaction: Message = Message(
+    public val messageWithOwnReaction: Message = Message(
         id = "message-id-3",
         text = "Pellentesque leo dui, finibus et nibh et, congue aliquam lectus",
         createdAt = Date(),
@@ -48,14 +48,14 @@ internal object PreviewMessageData {
         ownReactions = mutableListOf(Reaction(messageId = "message-id-3", type = "haha")),
     )
 
-    val messageWithError: Message = Message(
+    public val messageWithError: Message = Message(
         id = "message-id-4",
-        text = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit.",
+        text = "Lorem ipsum dolor sqit amet, consectetuer adipiscing elit.",
         createdAt = Date(),
         type = MessageType.ERROR,
     )
 
-    val messageWithPoll: Message = Message(
+    public val messageWithPoll: Message = Message(
         id = "message-id-5",
         createdAt = Date(),
         type = MessageType.REGULAR,
