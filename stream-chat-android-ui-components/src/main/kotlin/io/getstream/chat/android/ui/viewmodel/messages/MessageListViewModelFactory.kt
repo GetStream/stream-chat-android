@@ -21,8 +21,10 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
@@ -36,6 +38,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisi
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
@@ -61,6 +65,7 @@ import java.io.File
  * Adds the separator item when the value is `true`.
  * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
+ * @param threadLoadOlderToNewer Configures if the thread should be loaded from older to newer messages.
  *
  * @see MessageListHeaderViewModel
  * @see MessageListViewModel
@@ -88,7 +93,16 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
+    private val threadLoadOlderToNewer: Boolean = false,
 ) : ViewModelProvider.Factory {
+
+    private val channelStateFlow: StateFlow<ChannelState?> by lazy {
+        chatClient.watchChannelAsState(
+            cid = cid,
+            messageLimit = messageLimit,
+            coroutineScope = chatClient.inheritScope { SupervisorJob(it) },
+        )
+    }
 
     private val factories: Map<Class<*>, () -> ViewModel> = mapOf(
         MessageListHeaderViewModel::class.java to { MessageListHeaderViewModel(cid, messageId = messageId) },
@@ -97,11 +111,13 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 messageListController = MessageListController(
                     cid = cid,
                     clipboardHandler = {},
+                    threadLoadOrderOlderToNewer = threadLoadOlderToNewer,
                     messageLimit = messageLimit,
                     messageId = messageId,
                     parentMessageId = parentMessageId,
                     chatClient = chatClient,
                     clientState = clientState,
+                    channelState = channelStateFlow,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
                     deletedMessageVisibility = deletedMessageVisibility,
@@ -124,8 +140,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                     userLookupHandler = userLookupHandler,
                     maxAttachmentCount = maxAttachmentCount,
                     fileToUri = fileToUri,
-                    messageId = messageId,
-                    messageLimit = messageLimit,
+                    channelState = channelStateFlow,
                 ),
             )
         },
@@ -160,6 +175,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
         private var mediaRecorder: StreamMediaRecorder = DefaultStreamMediaRecorder(context.applicationContext)
         private var userLookupHandler: UserLookupHandler? = null
         private var userLookupHandlerCompat: CompatUserLookupHandler? = null
+        private var threadLoadOlderToNewer: Boolean = false
 
         /**
          * Sets the channel id in the format messaging:123.
@@ -219,6 +235,10 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
             this.threadDateSeparatorHandler = threadDateSeparatorHandler
         }
 
+        public fun threadLoadOlderToNewer(threadLoadOlderToNewer: Boolean): Builder = apply {
+            this.threadLoadOlderToNewer = threadLoadOlderToNewer
+        }
+
         /**
          * Builds [MessageListViewModelFactory] instance.
          */
@@ -241,6 +261,7 @@ public class MessageListViewModelFactory @JvmOverloads constructor(
                 dateSeparatorHandler = dateSeparatorHandler,
                 threadDateSeparatorHandler = threadDateSeparatorHandler,
                 messagePositionHandler = messagePositionHandler,
+                threadLoadOlderToNewer = threadLoadOlderToNewer,
             )
         }
     }

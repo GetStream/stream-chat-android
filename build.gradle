@@ -20,17 +20,44 @@ apply plugin: MinorBumpPlugin
 apply plugin: VersionPrintPlugin
 apply plugin: ChangelogAddModelSectionPlugin
 
-
 buildscript {
     repositories {
-        maven { url "https://plugins.gradle.org/m2/" }
-        google()
+        // fetch plugins from google maven (https://maven.google.com)
+        google() {
+            content {
+                includeGroupByRegex("androidx\\..*")
+                includeGroupByRegex("com\\.android(\\..*|)")
+                includeGroupByRegex("com\\.google\\.android\\..*")
+                includeGroupByRegex("com\\.google\\.firebase(\\..*|)")
+                includeGroupByRegex("com\\.google\\.gms(\\..*|)")
+                includeGroupByRegex("com\\.google\\.mlkit")
+                includeGroupByRegex("com\\.google\\.oboe")
+                includeGroupByRegex("com\\.google\\.prefab")
+                includeGroupByRegex("com\\.google\\.testing\\.platform")
+            }
+            mavenContent {
+                releasesOnly()
+            }
+        }
+
+        maven {
+            url "https://jitpack.io"
+            content {
+                includeModule("com.github.passsy", "gradle-gitVersioner-plugin")
+            }
+        }
+
+        // fetch plugins from gradle plugin portal (https://plugins.gradle.org)
+        gradlePluginPortal()
+
+        // Fallback for the rest of the dependencies
         mavenCentral()
     }
 
     dependencies {
         classpath Dependencies.androidGradlePlugin
         classpath Dependencies.kotlinGradlePlugin
+        classpath Dependencies.composeCompilerPlugin
         classpath Dependencies.googleServicesPlugin
         classpath Dependencies.androidJunit5GradlePlugin
         classpath Dependencies.gitversionerPlugin
@@ -38,6 +65,7 @@ buildscript {
         classpath Dependencies.gradleVersionsPlugin
         classpath Dependencies.navigationSafeArgsGradlePlugin
         classpath Dependencies.gradleNexusPublishPlugin
+        classpath Dependencies.paparazziPlugin
         classpath Dependencies.baselineProfilePlugin
         classpath Dependencies.dokka
         classpath Dependencies.kotlinBinaryValidator
@@ -58,7 +86,25 @@ subprojects {
 
 allprojects {
     repositories {
-        google()
+        // fetch plugins from google maven (https://maven.google.com)
+        google() {
+            content {
+                includeGroupByRegex("androidx\\..*")
+                includeGroupByRegex("com\\.android(\\..*|)")
+                includeGroupByRegex("com\\.google\\.android\\..*")
+                includeGroupByRegex("com\\.google\\.firebase(\\..*|)")
+                includeGroupByRegex("com\\.google\\.gms(\\..*|)")
+                includeGroupByRegex("com\\.google\\.mlkit")
+                includeGroupByRegex("com\\.google\\.oboe")
+                includeGroupByRegex("com\\.google\\.prefab")
+                includeGroupByRegex("com\\.google\\.testing\\.platform")
+            }
+            mavenContent {
+                releasesOnly()
+            }
+        }
+
+        // Fallback for the rest of the dependencies
         mavenCentral()
     }
 }

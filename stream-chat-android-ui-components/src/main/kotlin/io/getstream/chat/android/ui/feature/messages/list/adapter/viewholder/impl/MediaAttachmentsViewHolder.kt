@@ -65,6 +65,8 @@ public class MediaAttachmentsViewHolder internal constructor(
 
     private val logger by taggedLogger("Chat:MediaAttachmentsVH")
 
+    private val baPosition get() = bindingAdapterPosition
+
     /**
      * Initializes the ViewHolder class.
      */
@@ -76,13 +78,15 @@ public class MediaAttachmentsViewHolder internal constructor(
     override fun messageContainerView(): View = binding.messageContainer
 
     override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
-        logger.d { "[bindData] data: $data, diff: $diff" }
+        logger.d {
+            "[bindData] #$baPosition; data: Data(text=${data.message.text}, " +
+                "attachments.size=${data.message.attachments.size}), diff: $diff"
+        }
         super.bindData(data, diff)
 
         bindMessageText()
         bindHorizontalBias()
         if (diff?.attachments != false) {
-            logger.v { "[bindData] has attachments" }
             bindMediaAttachments()
             bindAudioRecordAttachments()
         }
@@ -112,15 +116,19 @@ public class MediaAttachmentsViewHolder internal constructor(
      * Updates the media attachments section of the message.
      */
     private fun bindMediaAttachments() {
-        logger.d { "[bindMediaAttachments] no args" }
+        logger.v {
+            "[bindMediaAttachments] #$baPosition; " +
+                "data.message.attachments.type: ${data.message.attachments.map { it.type }}"
+        }
         binding.mediaAttachmentView.setPadding(1.dpToPx())
         binding.mediaAttachmentView.setupBackground(data)
-        binding.mediaAttachmentView.showAttachments(data.message.attachments)
+        binding.mediaAttachmentView.showAttachments(baPosition, data.message.attachments)
     }
 
     private fun bindAudioRecordAttachments() {
-        logger.d { "[bindAudioRecordAttachments] no args" }
-        if (data.message.attachments.any { attachment -> attachment.isAudioRecording() }) {
+        val hasRecordingAttachment = data.message.attachments.any { attachment -> attachment.isAudioRecording() }
+        logger.v { "[bindAudioRecordAttachments] #$baPosition; hasRecordingAttachment: $hasRecordingAttachment" }
+        if (hasRecordingAttachment) {
             binding.audioRecordsView.isVisible = true
             binding.audioRecordsView.showAudioAttachments(data.message.attachments)
         } else {

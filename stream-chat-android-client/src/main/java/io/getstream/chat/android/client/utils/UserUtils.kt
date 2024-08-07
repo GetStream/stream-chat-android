@@ -31,5 +31,6 @@ public fun User.mergePartially(that: User): User = this.copy(
     banned = that.banned,
     name = that.name,
     image = that.image,
+    privacySettings = that.privacySettings,
     extraData = that.extraData,
 )

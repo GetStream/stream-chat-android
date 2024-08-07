@@ -8,7 +8,6 @@ import java.io.File;
 
 import io.getstream.result.Error;
 import io.getstream.chat.android.models.UploadedFile;
-import io.getstream.chat.android.models.UploadedImage;
 import io.getstream.chat.android.client.uploader.FileUploader;
 import io.getstream.chat.android.client.utils.ProgressCallback;
 import io.getstream.result.Result;
@@ -37,9 +36,9 @@ public class MyFileUploader implements FileUploader {
 
     @Nullable
     @Override
-    public Result<UploadedImage> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file, @NotNull ProgressCallback callback) {
+    public Result<UploadedFile> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file, @NotNull ProgressCallback callback) {
         try {
-            return new Result.Success<>(new UploadedImage("url", null));
+            return new Result.Success<>(new UploadedFile("url", null));
         } catch (Exception e) {
             return new Result.Failure(new Error.ThrowableError("Could not send image.", e));
         }
@@ -47,9 +46,9 @@ public class MyFileUploader implements FileUploader {
 
     @Nullable
     @Override
-    public Result<UploadedImage> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file) {
+    public Result<UploadedFile> sendImage(@NotNull String channelType, @NotNull String channelId, @NotNull String userId, @NotNull File file) {
         try {
-            return new Result.Success<>(new UploadedImage("url", null));
+            return new Result.Success<>(new UploadedFile("url", null));
         } catch (Exception e) {
             return new Result.Failure(new Error.ThrowableError("Could not send image.", e));
         }

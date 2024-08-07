@@ -40,7 +40,7 @@ internal class TypingEventPruner(
     private val channelId: String,
     private val coroutineScope: CoroutineScope,
     private val delayTimeMs: Long = DEFAULT_DELAY_TIME_MS,
-    private inline val onUpdated: (
+    private val onUpdated: (
         rawTypingEvents: Map<String, TypingStartEvent>,
         typingEvent: TypingEvent,
     ) -> Unit,
@@ -180,7 +180,7 @@ internal data class TimedTypingStartEvent(
     internal val typingStartEvent: TypingStartEvent,
     private val userId: String,
     private val delayTimeMs: Long,
-    private inline val removeTypingEvent: (userId: String) -> Unit,
+    private val removeTypingEvent: (userId: String) -> Unit,
 ) {
 
     /**

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+@file:Suppress("TooManyFunctions")
 @file:JvmName("MessageUtils")
 
 package io.getstream.chat.android.client.utils.message
@@ -25,6 +26,8 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessageModerationAction
 import io.getstream.chat.android.models.MessageType
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import java.util.UUID
 
 private const val ITEM_COUNT_OF_TWO: Int = 2
 
@@ -73,6 +76,31 @@ public fun Message.isErrorOrFailed(): Boolean = isError() || isFailed()
 public fun Message.isDeleted(): Boolean = deletedAt != null
 
 /**
+ * @return If the message is pinned and not deleted.
+ */
+@Deprecated(
+    message = "This function is deprecated, please use isPinned() instead",
+    replaceWith = ReplaceWith("isPinned()"),
+)
+public fun Message.isPinnedAndNotDeleted(): Boolean = pinned && !isDeleted()
+
+/**
+ * @return If the message is a valid pinned message.
+ *
+ * @param now A function that provides the current time in milliseconds.
+ */
+@InternalStreamChatApi
+public inline fun Message.isPinned(
+    now: () -> Long = { System.currentTimeMillis() },
+): Boolean = pinned && !isDeleted() && !isPinExpired(now)
+
+/**
+ * @return If the message is a valid pinned message.
+ */
+@InternalStreamChatApi
+public inline fun Message.isPinExpired(now: () -> Long): Boolean = pinExpires?.let { it.time < now() } ?: false
+
+/**
  * @return If the message type is regular.
  */
 public fun Message.isRegular(): Boolean = type == MessageType.REGULAR
@@ -96,6 +124,16 @@ public fun Message.isError(): Boolean = type == MessageType.ERROR
  * @return If the message is related to a Giphy slash command.
  */
 public fun Message.isGiphy(): Boolean = command == AttachmentType.GIPHY
+
+/**
+ * @return If the message is related to the poll.
+ */
+public fun Message.isPoll(): Boolean = poll != null
+
+/**
+ * @return If the message is related to the poll.
+ */
+public fun Message.isPollClosed(): Boolean = poll?.closed == true
 
 /**
  * @return If the message is a temporary message to select a gif.
@@ -146,3 +184,18 @@ public fun Message.isModerationFlag(): Boolean = moderationDetails?.action == Me
  */
 public fun Message.isModerationError(currentUserId: String?): Boolean = isMine(currentUserId) &&
     (isError() && isModerationBounce())
+
+/**
+ * Ensures the message has an id.
+ * If the message doesn't have an id, a unique message id is generated.
+ * @return the message with an id.
+ */
+internal fun Message.ensureId(currentUser: User?): Message =
+    copy(id = id.takeIf { it.isNotBlank() } ?: generateMessageId(currentUser))
+
+/**
+ * Returns a unique message id prefixed with user id.
+ */
+private fun generateMessageId(user: User?): String {
+    return "${user?.id}-${UUID.randomUUID()}"
+}

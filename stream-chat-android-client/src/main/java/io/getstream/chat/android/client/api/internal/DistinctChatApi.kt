@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
+import io.getstream.chat.android.client.api2.optimisation.hash.GetNewerRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesHash
@@ -75,6 +76,16 @@ internal class DistinctChatApi(
         StreamLog.d(TAG) { "[getReplies] messageId: $messageId, limit: $limit, uniqueKey: $uniqueKey" }
         return getOrCreate(uniqueKey) {
             delegate.getReplies(messageId, limit)
+        }
+    }
+
+    override fun getNewerReplies(parentId: String, limit: Int, lastId: String?): Call<List<Message>> {
+        val uniqueKey = GetNewerRepliesHash(parentId, limit, lastId).hashCode()
+        StreamLog.d(TAG) {
+            "[getNewerReplies] parentId: $parentId, limit: $limit, lastId: $lastId, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.getNewerReplies(parentId, limit, lastId)
         }
     }
 

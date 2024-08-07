@@ -473,7 +473,7 @@ internal class EventHandlerSequential(
                         continue
                     }
                     val updatedChannel = channel.copy(
-                        hidden = false,
+                        hidden = channel.hidden.takeIf { enrichedMessage.shadowed } ?: false,
                         messages = channel.messages + listOf(enrichedMessage),
                     )
                     batch.addChannel(updatedChannel)
@@ -686,10 +686,21 @@ internal class EventHandlerSequential(
                     repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
                     repos.setChannelDeletedAt(event.cid, event.createdAt)
                 }
+                is ChannelHiddenEvent -> {
+                    repos.evictChannel(event.cid)
+                    if (event.clearHistory) {
+                        repos.deleteChannelMessagesBefore(event.cid, event.createdAt)
+                    }
+                }
                 is MessageDeletedEvent -> {
                     if (event.hardDelete) {
                         repos.deleteChannelMessage(event.message)
+                    } else {
+                        repos.markMessageAsDeleted(event.message)
                     }
+                }
+                is MessageUpdatedEvent -> {
+                    repos.updateChannelMessage(event.message)
                 }
                 is MemberRemovedEvent -> {
                     repos.evictChannel(event.cid)
@@ -705,16 +716,7 @@ internal class EventHandlerSequential(
     }
 
     private fun List<ChatEvent>.extractMessageIds() = mapNotNull { event ->
-        when (event) {
-            is ReactionNewEvent -> event.reaction.messageId
-            is ReactionDeletedEvent -> event.reaction.messageId
-            is MessageDeletedEvent -> event.message.id
-            is MessageUpdatedEvent -> event.message.id
-            is NewMessageEvent -> event.message.id
-            is NotificationMessageNewEvent -> event.message.id
-            is ReactionUpdateEvent -> event.message.id
-            else -> null
-        }
+        (event as? HasMessage)?.message?.id
     }
 
     private fun StateFlow<List<Member>>.containsWithUserId(userId: String): Boolean {

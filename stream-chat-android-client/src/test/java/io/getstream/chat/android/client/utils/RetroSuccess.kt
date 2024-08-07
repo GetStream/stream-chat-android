@@ -31,7 +31,7 @@ internal class RetroSuccess<T : Any>(val result: T) : Call<T> {
     fun toRetrofitCall(): RetrofitCall<T> {
         return RetrofitCall(
             call = this,
-            parser = MoshiChatParser(),
+            parser = MoshiChatParser { "" },
             CoroutineScope(DispatcherProvider.IO),
         )
     }

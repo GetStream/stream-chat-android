@@ -42,6 +42,8 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.state.messages.attachments.Images
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -52,6 +54,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.docs.R
 
 @Composable
@@ -78,6 +81,7 @@ fun CustomComposerAndAttachmentsPicker(cid: String?, onBackClick: () -> Unit = {
                     attachmentsPickerViewModel.isShowingAttachments -> {
                         attachmentsPickerViewModel.changeAttachmentState(false)
                     }
+
                     else -> onBackClick()
                 }
             }
@@ -203,7 +207,8 @@ private fun CustomAttachmentsPicker(
     var shouldShowMenu by remember { mutableStateOf(true) }
     var selectedOptionIndex by remember { mutableStateOf(-1) }
 
-    Box( // Gray overlay
+    Box(
+        // Gray overlay
         modifier = Modifier
             .fillMaxSize()
             .background(ChatTheme.colors.overlay)
@@ -230,6 +235,7 @@ private fun CustomAttachmentsPicker(
                 if (shouldShowMenu) {
                     // Show the menu with Images, Files, Camera options
                     AttachmentsTypeMenu(
+                        attachmentsPickerViewModel.channel,
                         tabFactories = tabFactories,
                         onClick = {
                             selectedOptionIndex = it
@@ -254,6 +260,12 @@ private fun CustomAttachmentsPicker(
 
                         tabFactories.getOrNull(selectedOptionIndex)
                             ?.PickerTabContent(
+                                onAttachmentPickerAction = { pickerAction ->
+                                    when (pickerAction) {
+                                        AttachmentPickerBack -> onDismiss.invoke()
+                                        is AttachmentPickerPollCreation -> Unit
+                                    }
+                                },
                                 attachments = attachmentsPickerViewModel.attachments,
                                 onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
                                 onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
@@ -270,6 +282,7 @@ private fun CustomAttachmentsPicker(
 
 @Composable
 private fun AttachmentsTypeMenu(
+    channel: Channel,
     tabFactories: List<AttachmentsPickerTabFactory>,
     onClick: (Int) -> Unit,
 ) {
@@ -281,7 +294,7 @@ private fun AttachmentsTypeMenu(
         tabFactories.forEachIndexed { index, tabFactory ->
             AttachmentsTypeMenuItem(
                 tabFactory = tabFactory,
-                isEnabled = tabFactory.isPickerTabEnabled(),
+                isEnabled = tabFactory.isPickerTabEnabled(channel),
                 index = index,
                 onClick = onClick,
             )
@@ -308,14 +321,17 @@ private fun AttachmentsTypeMenuItem(
                 backgroundColor = Color(0xFFCCCCFF)
                 label = "Images"
             }
+
             is Files -> {
                 backgroundColor = Color(0xFFFFCCCC)
                 label = "Files"
             }
+
             is MediaCapture -> {
                 backgroundColor = Color(0xFFFFCC99)
                 label = "Camera"
             }
+
             else -> {
                 backgroundColor = Color.LightGray
                 label = "Other"
@@ -375,6 +391,7 @@ private fun AttachmentsPickerToolbar(
 fun PreviewCustomAttachmentPickerOptions() {
     ChatTheme {
         AttachmentsTypeMenu(
+            Channel(),
             tabFactories = ChatTheme.attachmentsPickerTabFactories,
         ) {}
     }

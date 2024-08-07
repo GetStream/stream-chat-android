@@ -47,7 +47,7 @@ public class UrlAttachmentPreviewHandler(private val context: Context) : Attachm
                         else -> imageUrl
                     }
                 }
-                else -> url
+                else -> assetUrl
             }
         }
     }

@@ -69,13 +69,17 @@ public fun Channel.updateLastMessage(
                 unreadMessages = read.let {
                     val hasNewUnreadMessage = receivedEventDate.after(it.lastReceivedEventDate) &&
                         newMessages.size > messages.size &&
-                        newMessages.last().id == message.id
+                        newMessages.last().id == message.id &&
+                        !message.shadowed
                     if (hasNewUnreadMessage) it.unreadMessages.inc() else it.unreadMessages
                 },
             )
     }
     return this.copy(
-        lastMessageAt = newMessages.last().let { it.createdAt ?: it.createdLocallyAt },
+        lastMessageAt = newMessages
+            .filterNot { it.parentId != null && !it.showInChannel }
+            .last()
+            .let { it.createdAt ?: it.createdLocallyAt },
         messages = newMessages,
         read = newReads,
     ).syncUnreadCountWithReads()

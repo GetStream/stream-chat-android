@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -34,6 +35,7 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,19 +47,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerAction
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerBack
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
  * tabs based on the [tabFactories] parameter. Out of the box we provide factories for images,
  * files and media capture tabs.
  *
+ * @param channel The channel where the attachments picker is being used.
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
+ * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
  * @param onAttachmentsSelected Handler when attachments are selected and confirmed by the user.
  * @param onDismiss Handler when the user dismisses the UI.
  * @param modifier Modifier for styling.
@@ -68,18 +76,24 @@ import io.getstream.chat.android.models.Attachment
 public fun AttachmentsPicker(
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     onAttachmentsSelected: (List<Attachment>) -> Unit,
+    onTabClick: (Int, AttachmentsPickerMode) -> Unit,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {},
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    val defaultTabIndex = tabFactories.indexOfFirst { it.isPickerTabEnabled() }.takeIf { it >= 0 } ?: 0
+    val defaultTabIndex = tabFactories
+        .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
+        .takeIf { it >= 0 }
+        ?: 0
     var selectedTabIndex by remember { mutableIntStateOf(defaultTabIndex) }
+    var selectedAttachmentsPickerMode: AttachmentsPickerMode? by remember { mutableStateOf(null) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.overlay)
+            .background(ChatTheme.attachmentPickerTheme.backgroundOverlay)
             .clickable(
                 onClick = onDismiss,
                 indication = null,
@@ -93,37 +107,58 @@ public fun AttachmentsPicker(
                 interactionSource = remember { MutableInteractionSource() },
             ),
             elevation = 4.dp,
-            shape = shape,
-            backgroundColor = ChatTheme.colors.inputBackground,
+            shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
+                RoundedCornerShape(0.dp)
+            } else {
+                shape
+            },
+            backgroundColor = ChatTheme.attachmentPickerTheme.backgroundSecondary,
         ) {
             Column {
-                AttachmentPickerOptions(
-                    hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
-                    tabFactories = tabFactories,
-                    tabIndex = selectedTabIndex,
-                    onTabClick = { index, attachmentPickerMode ->
-                        selectedTabIndex = index
-                        attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
-                    },
-                    onSendAttachmentsClick = {
-                        onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
-                    },
-                )
+                if (selectedAttachmentsPickerMode == null || selectedAttachmentsPickerMode?.isFullContent == false) {
+                    AttachmentPickerOptions(
+                        hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
+                        tabFactories = tabFactories,
+                        tabIndex = selectedTabIndex,
+                        channel = attachmentsPickerViewModel.channel,
+                        onTabClick = { index, attachmentPickerMode ->
+                            onTabClick.invoke(index, attachmentPickerMode)
+                            selectedTabIndex = index
+                            selectedAttachmentsPickerMode = attachmentPickerMode
+                            attachmentsPickerViewModel.changeAttachmentPickerMode(attachmentPickerMode) { false }
+                        },
+                        onSendAttachmentsClick = {
+                            onAttachmentsSelected(attachmentsPickerViewModel.getSelectedAttachments())
+                        },
+                    )
+                }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-                    color = ChatTheme.colors.barsBackground,
+                    shape = if (selectedAttachmentsPickerMode?.isFullContent == true) {
+                        RoundedCornerShape(0.dp)
+                    } else {
+                        shape
+                    },
+                    color = ChatTheme.attachmentPickerTheme.backgroundPrimary,
                 ) {
-                    tabFactories.getOrNull(selectedTabIndex)
-                        ?.PickerTabContent(
-                            attachments = attachmentsPickerViewModel.attachments,
-                            onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
-                            onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
-                            onAttachmentsSubmitted = {
-                                onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
-                            },
-                        )
+                    AnimatedContent(targetState = selectedTabIndex, label = "") {
+                        tabFactories.getOrNull(it)
+                            ?.PickerTabContent(
+                                onAttachmentPickerAction = { pickerAction ->
+                                    when (pickerAction) {
+                                        AttachmentPickerBack -> onDismiss.invoke()
+                                        is AttachmentPickerPollCreation -> onAttachmentPickerAction.invoke(pickerAction)
+                                    }
+                                },
+                                attachments = attachmentsPickerViewModel.attachments,
+                                onAttachmentItemSelected = attachmentsPickerViewModel::changeSelectedAttachments,
+                                onAttachmentsChanged = { attachmentsPickerViewModel.attachments = it },
+                                onAttachmentsSubmitted = {
+                                    onAttachmentsSelected(attachmentsPickerViewModel.getAttachmentsFromMetaData(it))
+                                },
+                            )
+                    }
                 }
             }
         }
@@ -137,14 +172,17 @@ public fun AttachmentsPicker(
  * @param hasPickedAttachments If we selected any attachments in the currently selected tab.
  * @param tabFactories The list of factories to build tab icons.
  * @param tabIndex The index of the tab that we selected.
+ * @param channel The channel where the attachments picker is being used.
  * @param onTabClick Handler for clicking on any of the tabs, to change the shown attachments.
  * @param onSendAttachmentsClick Handler when confirming the picked attachments.
  */
+@Suppress("LongParameterList")
 @Composable
 private fun AttachmentPickerOptions(
     hasPickedAttachments: Boolean,
     tabFactories: List<AttachmentsPickerTabFactory>,
     tabIndex: Int,
+    channel: Channel,
     onTabClick: (Int, AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
@@ -156,7 +194,7 @@ private fun AttachmentPickerOptions(
             tabFactories.forEachIndexed { index, tabFactory ->
 
                 val isSelected = index == tabIndex
-                val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled())
+                val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled(channel))
 
                 IconButton(
                     enabled = isEnabled,
@@ -183,7 +221,7 @@ private fun AttachmentPickerOptions(
                     modifier = Modifier
                         .weight(1f)
                         .mirrorRtl(layoutDirection = layoutDirection),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_circle_left),
+                    painter = painterResource(id = R.drawable.stream_compose_ic_left),
                     contentDescription = stringResource(id = R.string.stream_compose_send_attachment),
                     tint = if (hasPickedAttachments) {
                         ChatTheme.colors.primaryAccent

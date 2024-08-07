@@ -16,7 +16,8 @@ class ImplementingOwnCapabilities {
             ChannelCapabilities.SEND_MESSAGE,
             ChannelCapabilities.SEND_LINKS,
             ChannelCapabilities.UPLOAD_FILE,
-            ChannelCapabilities.SEND_TYPING_EVENTS
+            ChannelCapabilities.SEND_TYPING_EVENTS,
+            ChannelCapabilities.TYPING_EVENTS,
         )
 
         val messageComposerState = MessageComposerState(

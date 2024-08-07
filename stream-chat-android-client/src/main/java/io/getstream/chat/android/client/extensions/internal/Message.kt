@@ -28,6 +28,12 @@ import java.util.Date
 @InternalStreamChatApi
 public fun Collection<Message>.updateUsers(users: Map<String, User>): List<Message> = map { it.updateUsers(users) }
 
+/** Updates collection of messages with more recent data of [users]. */
+@InternalStreamChatApi
+public fun Map<String, Message>.updateUsers(users: Map<String, User>): Map<String, Message> = mapValues { (_, value) ->
+    value.updateUsers(users)
+}
+
 /**
  * Updates a message with more recent data of [users]. It updates author user, latestReactions, replyTo message,
  * mentionedUsers, threadParticipants and pinnedBy user of this instance.
@@ -106,7 +112,8 @@ public fun Message.users(): List<User> {
         mentionedUsers +
         ownReactions.mapNotNull(Reaction::user) +
         threadParticipants +
-        (pinnedBy?.let { listOf(it) } ?: emptyList())
+        (pinnedBy?.let { listOf(it) } ?: emptyList()) +
+        (poll?.votes?.mapNotNull { it.user } ?: emptyList())
 }
 
 /**

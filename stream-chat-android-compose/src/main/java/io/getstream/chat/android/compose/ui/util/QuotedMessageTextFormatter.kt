@@ -128,7 +128,7 @@ public fun interface QuotedMessageTextFormatter {
         private fun defaultTextStyle(ownTheme: MessageTheme, otherTheme: MessageTheme): (Boolean) -> TextStyle {
             return { isMine ->
                 when (isMine) {
-                    isMine -> ownTheme.textStyle
+                    true -> ownTheme.textStyle
                     else -> otherTheme.textStyle
                 }
             }

@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.parser2
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import io.getstream.chat.android.client.api2.FlagRequestAdapterFactory
 import io.getstream.chat.android.client.api2.MoshiUrlQueryPayloadFactory
 import io.getstream.chat.android.client.api2.mapping.toDomain
 import io.getstream.chat.android.client.api2.mapping.toDto
@@ -43,10 +44,13 @@ import io.getstream.chat.android.client.parser2.adapters.UpstreamReactionDtoAdap
 import io.getstream.chat.android.client.parser2.adapters.UpstreamUserDtoAdapter
 import io.getstream.chat.android.client.socket.ErrorResponse
 import io.getstream.chat.android.client.socket.SocketErrorMessage
+import io.getstream.chat.android.models.UserId
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
-internal class MoshiChatParser : ChatParser {
+internal class MoshiChatParser(
+    val currentUserIdProvider: () -> UserId?,
+) : ChatParser {
 
     private val moshi: Moshi by lazy {
         Moshi.Builder()
@@ -63,6 +67,7 @@ internal class MoshiChatParser : ChatParser {
             .add(UpstreamReactionDtoAdapter)
             .add(DownstreamUserDtoAdapter)
             .add(UpstreamUserDtoAdapter)
+            .add(FlagRequestAdapterFactory)
             .build()
     }
 
@@ -123,7 +128,7 @@ internal class MoshiChatParser : ChatParser {
 
     @Suppress("UNCHECKED_CAST")
     private fun parseAndProcessEvent(raw: String): ChatEvent {
-        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain()
+        val event = chatEventDtoAdapter.fromJson(raw)!!.toDomain(currentUserIdProvider())
         return event.enrichIfNeeded()
     }
 }

@@ -56,6 +56,7 @@ import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.dateAttachmentFactory
 import io.getstream.chat.android.guides.catalog.compose.customattachments.factory.quotedDateAttachmentFactory
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
@@ -90,6 +91,7 @@ class MessagesActivity : AppCompatActivity() {
                 CustomMessagesScreen(
                     channelId = channelId,
                     onBackPressed = { finish() },
+                    threadLoadOlderToNewer = false,
                 )
             }
         }
@@ -99,16 +101,19 @@ class MessagesActivity : AppCompatActivity() {
      * A custom [MessagesScreen] with the support for date attachments.
      *
      * @param channelId The ID of the opened channel.
+     * @param threadLoadOlderToNewer Flag to load older messages to newer messages in the thread.
      * @param onBackPressed Handler for the back action.
      */
     @Composable
     fun CustomMessagesScreen(
         channelId: String,
+        threadLoadOlderToNewer: Boolean,
         onBackPressed: () -> Unit = {},
     ) {
         val factory = MessagesViewModelFactory(
             context = LocalContext.current,
             channelId = channelId,
+            threadLoadOlderToNewer = threadLoadOlderToNewer,
         )
 
         val messageListViewModel = viewModel(MessageListViewModel::class.java, factory = factory)
@@ -157,6 +162,7 @@ class MessagesActivity : AppCompatActivity() {
                         .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = messageListViewModel,
+                    reactionSorting = ReactionSortingByFirstReactionAt,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
                         messageListViewModel.openMessageThread(message)

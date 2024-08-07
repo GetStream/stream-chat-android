@@ -47,6 +47,7 @@ import io.getstream.chat.android.ui.utils.extensions.use
  * @property giphyViewHolderStyle Style for [GiphyViewHolder].
  * @property audioRecordPlayerViewStyle Style for [AudioRecordPlayerViewStyle].
  * @property replyMessageStyle Styles messages that are replies.
+ * @property UnreadLabelButtonStyle Styles for Unread Label Button.
  * @property reactionsEnabled Enables/disables reactions feature. Enabled by default.
  * @property backgroundColor [MessageListView] background color. Default value is [R.color.stream_ui_white_snow].
  * @property replyIcon Icon for reply option. Default value is [R.drawable.stream_ui_ic_arrow_curve_left_grey].
@@ -104,6 +105,7 @@ public data class MessageListViewStyle(
     public val giphyViewHolderStyle: GiphyViewHolderStyle,
     public val audioRecordPlayerViewStyle: MessageViewStyle<AudioRecordPlayerViewStyle>,
     public val replyMessageStyle: MessageReplyStyle,
+    public val unreadLabelButtonStyle: UnreadLabelButtonStyle,
     public val reactionsEnabled: Boolean,
     @ColorInt public val backgroundColor: Int,
     val replyIcon: Int,
@@ -122,6 +124,8 @@ public data class MessageListViewStyle(
     val pinMessageEnabled: Boolean,
     val deleteIcon: Int,
     val deleteMessageEnabled: Boolean,
+    val blockUserIcon: Int,
+    val blockUserEnabled: Boolean,
     val copyTextEnabled: Boolean,
     val markAsUnreadEnabled: Boolean,
     val retryMessageEnabled: Boolean,
@@ -233,6 +237,22 @@ public data class MessageListViewStyle(
                     ).scrollButtonBadgeInternalMargin(
                         scrollButtonInternalMargin = R.styleable.MessageListView_streamUIScrollButtonInternalMargin,
                         defaultMargin = DEFAULT_SCROLL_BUTTON_INTERNAL_MARGIN,
+                    ).build()
+
+                val unreadLabelButtonStyle = UnreadLabelButtonStyle.Builder(context, attributes)
+                    .unreadLabelButtonEnabled(
+                        unreadLabelButtonEnabledStyleableId =
+                        R.styleable.MessageListView_streamUiUnreadLabelButtonEnabled,
+                        defaultValue = true,
+                    )
+                    .unreadLabelButtonColor(
+                        unreadLabelButtonColorStyleableId = R.styleable.MessageListView_streamUiUnreadLabelButtonColor,
+                        defaultValue = context.getColorCompat(R.color.stream_ui_overlay_dark),
+                    )
+                    .unreadLabelButtonRippleColor(
+                        unreadLabelButtonRippleColorStyleableId =
+                        R.styleable.MessageListView_streamUiUnreadLabelButtonRippleColor,
+                        defaultColor = context.getColorCompat(R.color.stream_ui_white_smoke),
                     ).build()
 
                 val scrollButtonBehaviour = MessageListView.NewMessagesBehaviour.parseValue(
@@ -570,11 +590,24 @@ public data class MessageListViewStyle(
                     true,
                 )
 
+                val userBlockEnabled = attributes.getBoolean(
+                    R.styleable.MessageListView_streamUiBlockUserOptionEnabled,
+                    true,
+                )
+
+                val userBlockIcon = attributes.getResourceId(
+                    R.styleable.MessageListView_streamUiBlockUserOptionIcon,
+                    R.drawable.stream_ui_ic_clear,
+                )
+
                 return MessageListViewStyle(
+                    blockUserEnabled = userBlockEnabled,
+                    blockUserIcon = userBlockIcon,
                     scrollButtonViewStyle = scrollButtonViewStyle,
                     scrollButtonBehaviour = scrollButtonBehaviour,
                     scrollButtonBottomMargin = scrollButtonMarginBottom,
                     scrollButtonEndMargin = scrollButtonMarginEnd,
+                    unreadLabelButtonStyle = unreadLabelButtonStyle,
                     reactionsEnabled = reactionsEnabled,
                     itemStyle = itemStyle,
                     giphyViewHolderStyle = giphyViewHolderStyle,

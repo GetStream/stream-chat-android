@@ -41,7 +41,6 @@ public data class AttachmentGalleryResultItem(
     val text: String? = null,
     val type: String? = null,
     val image: String? = null,
-    val url: String? = null,
     val name: String? = null,
 ) : Parcelable
 
@@ -54,7 +53,6 @@ public fun AttachmentGalleryResultItem.toAttachment(): Attachment {
         authorLink = authorLink,
         imageUrl = imageUrl,
         assetUrl = assetUrl,
-        url = url,
         name = name,
         image = image,
         type = type,

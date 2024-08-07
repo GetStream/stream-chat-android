@@ -21,20 +21,27 @@ import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.errors.isPermanent
+import io.getstream.chat.android.client.events.HasChannel
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.utils.message.isDeleted
+import io.getstream.chat.android.client.utils.message.isPinExpired
+import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isReply
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.mergeFromEvent
+import io.getstream.chat.android.models.toChannelData
 import io.getstream.chat.android.state.message.attachments.internal.AttachmentUrlValidator
 import io.getstream.chat.android.state.plugin.state.channel.internal.ChannelMutableState
 import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
@@ -60,8 +67,12 @@ internal class ChannelStateLogic(
     private val globalMutableState: MutableGlobalState,
     private val searchLogic: SearchLogic,
     private val attachmentUrlValidator: AttachmentUrlValidator = AttachmentUrlValidator(),
+    private val now: () -> Long = { System.currentTimeMillis() },
     coroutineScope: CoroutineScope,
 ) : ChannelMessagesUpdateLogic {
+
+    private val polls = mutableMapOf<String, Poll>()
+    private val messageIdsWithPoll = mutableMapOf<String, Set<String>>()
 
     private val logger by taggedLogger(TAG)
     private val processedMessageIds = LruCache<String, Boolean>(CACHE_SIZE)
@@ -95,9 +106,60 @@ internal class ChannelStateLogic(
      *
      * @param channel the data of [Channel] to be updated.
      */
+    @Deprecated(
+        message = "This method will become private in the future. " +
+            "Use updateChannelData((ChannelData?) -> ChannelData?) instead.",
+        replaceWith = ReplaceWith("updateChannelData((ChannelData?) -> ChannelData?)"),
+    )
     fun updateChannelData(channel: Channel) {
-        val currentOwnCapabilities = mutableState.channelData.value.ownCapabilities
-        mutableState.setChannelData(ChannelData(channel, currentOwnCapabilities))
+        val newChannelData = channel.toChannelData().let {
+            when (it.ownCapabilities.isEmpty()) {
+                true -> it.copy(ownCapabilities = mutableState.channelData.value.ownCapabilities)
+                else -> it
+            }
+        }
+        mutableState.setChannelData(newChannelData)
+    }
+
+    /**
+     * Updates the channel data of the state of the SDK.
+     *
+     * @param update The update function to update the channel data.
+     */
+    fun updateChannelData(update: (ChannelData?) -> ChannelData?) {
+        mutableState.updateChannelData(update)
+    }
+
+    /**
+     * Updates the membership of the channel.
+     *
+     * @param membership The membership to be updated.
+     */
+    fun updateMembership(membership: Member) {
+        mutableState.updateChannelData { curData ->
+            curData?.copy(
+                membership = membership.takeIf { membership.getUserId() == curData.membership?.getUserId() }
+                    ?: curData.membership.also {
+                        logger.w {
+                            "[updateMembership] rejected; newMembershipUserId(${membership.getUserId()}) != " +
+                                "curMembershipUserId(${it?.getUserId()})"
+                        }
+                    },
+            )
+        }
+    }
+
+    /**
+     * Updates the channel data of the state of the SDK.
+     *
+     * @param event The event containing the channel data.
+     */
+    fun updateChannelData(event: HasChannel) {
+        mutableState.updateChannelData { curData ->
+            event.channel.toChannelData().let { newData ->
+                curData?.mergeFromEvent(newData) ?: newData
+            }
+        }
     }
 
     /**
@@ -168,55 +230,87 @@ internal class ChannelStateLogic(
      *
      * @param message The message to be added or updated.
      */
-    override fun upsertMessage(message: Message, updateCount: Boolean) {
-        logger.d {
-            "[upsertMessage] message.id: ${message.id}, " +
-                "message.text: ${message.text}, updateCount: $updateCount"
-        }
+    override fun upsertMessage(message: Message) {
+        logger.d { "[upsertMessage] message.id: ${message.id}, message.text: ${message.text}" }
         if (mutableState.visibleMessages.value.containsKey(message.id) || !mutableState.insideSearch.value) {
-            upsertMessages(listOf(message), updateCount = updateCount)
+            upsertMessages(listOf(message))
         } else {
             mutableState.updateCachedLatestMessages(parseCachedMessages(listOf(message)))
         }
     }
 
+    override fun delsertPinnedMessage(message: Message) {
+        logger.d {
+            "[delsertPinnedMessage] pinned: ${message.pinned}, pinExpired: ${message.isPinExpired(now)}" +
+                ", deleted: ${message.isDeleted()}" +
+                ", message.id: ${message.id}, message.text: ${message.text}"
+        }
+        if (message.isPinned(now)) {
+            upsertPinnedMessages(listOf(message), false)
+        } else {
+            mutableState.deletePinnedMessage(message)
+        }
+    }
+
     /**
-     * Upsert members in the channel.
+     * Upsert messages in the channel.
      *
      * @param messages the list of [Message] to be upserted
      * @param shouldRefreshMessages if the current messages should be removed or not and only
      * new messages should be kept.
      */
-    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean, updateCount: Boolean) {
+    override fun upsertMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
         val first = messages.firstOrNull()
         val last = messages.lastOrNull()
         logger.d {
             "[upsertMessages] messages.size: ${messages.size}, first: ${first?.text?.take(TEXT_LIMIT)}, " +
-                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages, " +
-                "updateCount: $updateCount"
+                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages"
         }
+        messages.filter { it.isReply() }.forEach(::addQuotedMessage)
         when (shouldRefreshMessages) {
-            true -> {
-                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
-                mutableState.setMessages(messages)
-
-                if (updateCount) {
-                    mutableState.clearCountedMessages()
-                    mutableState.insertCountedMessages(messages.map { it.id })
-                }
-            }
-            false -> {
+            true -> mutableState.setMessages(messages)
+            else -> {
                 val oldMessages = mutableState.messageList.value.associateBy(Message::id)
-                val newMessages = attachmentUrlValidator.updateValidAttachmentsUrl(messages, oldMessages)
-                    .filter { newMessage -> isMessageNewerThanCurrent(oldMessages[newMessage.id], newMessage) }
 
-                messages.filter { message -> message.isReply() }.forEach(::addQuotedMessage)
+                val newMessages = messages.filter { isMessageNewerThanCurrent(oldMessages[it.id], it) }
+                    .let { attachmentUrlValidator.updateValidAttachmentsUrl(it, oldMessages) }
 
-                val normalizedMessages =
-                    newMessages.flatMap { message -> normalizeReplyMessages(message) ?: emptyList() }
-                mutableState.upsertMessages(newMessages + normalizedMessages, updateCount)
+                val normalizedReplies = newMessages.flatMap { normalizeReplyMessages(it) ?: emptyList() }
+                mutableState.upsertMessages(newMessages + normalizedReplies)
             }
         }
+        messages.forEach { it.storePoll() }
+    }
+
+    /**
+     * Upsert pinned messages in the channel.
+     *
+     * @param messages the list of pinned [Message]s to be upserted
+     * @param shouldRefreshMessages if the current messages should be removed or not and only
+     * new messages should be kept.
+     */
+    override fun upsertPinnedMessages(messages: List<Message>, shouldRefreshMessages: Boolean) {
+        val first = messages.firstOrNull()
+        val last = messages.lastOrNull()
+        logger.d {
+            "[upsertPinnedMessages] messages.size: ${messages.size}, first: ${first?.text?.take(TEXT_LIMIT)}, " +
+                "last: ${last?.text?.take(TEXT_LIMIT)}, shouldRefreshMessages: $shouldRefreshMessages"
+        }
+        messages.filter { it.isReply() }.forEach(::addQuotedMessage)
+        when (shouldRefreshMessages) {
+            true -> mutableState.setPinnedMessages(messages)
+            else -> {
+                val oldMessages = mutableState.rawPinnedMessages
+
+                val newMessages = messages.filter { isMessageNewerThanCurrent(oldMessages[it.id], it) }
+                    .filter { it.isPinned(now) }
+                    .let { attachmentUrlValidator.updateValidAttachmentsUrl(it, oldMessages) }
+
+                val normalizedReplies = newMessages.flatMap { normalizeReplyMessages(it) ?: emptyList() }
+                mutableState.upsertPinnedMessages(newMessages + normalizedReplies)
+            }
+        }
+        messages.forEach { it.storePoll() }
     }
 
     /**
@@ -447,8 +541,10 @@ internal class ChannelStateLogic(
                 )
             ) {
                 upsertMessages(channel.messages, shouldRefreshMessages)
+                upsertPinnedMessages(channel.pinnedMessages, shouldRefreshMessages)
             } else {
-                upsertCachedMessages(channel.messages)
+                // will leave only unique messages in the list
+                upsertCachedMessages(channel.pinnedMessages + channel.messages)
             }
         }
 
@@ -626,8 +722,8 @@ internal class ChannelStateLogic(
     }
 
     private fun addQuotedMessage(message: Message) {
-        (message.replyTo?.id ?: message.replyMessageId)?.let { replyId ->
-            mutableState.addQuotedMessage(replyId, message.id)
+        (message.replyTo?.id ?: message.replyMessageId)?.let { quotedMessageId ->
+            mutableState.addQuotedMessage(quotedMessageId, message.id)
         }
     }
 
@@ -660,6 +756,7 @@ internal class ChannelStateLogic(
                 message.user.id == clientState.user.value?.id ||
                     message.parentId?.takeUnless { message.showInChannel } != null
             }
+            ?.takeUnless { message.shadowed }
             ?.let {
                 updateRead(
                     it.copy(
@@ -670,6 +767,24 @@ internal class ChannelStateLogic(
             }
         processedMessageIds.put(message.id, true)
     }
+
+    private fun Message.storePoll() {
+        poll?.let {
+            upsertPoll(it)
+            messageIdsWithPoll[it.id] = messageIdsWithPoll[it.id].orEmpty() + id
+        }
+    }
+
+    fun upsertPoll(poll: Poll) {
+        polls[poll.id] = poll
+        messageIdsWithPoll[poll.id]?.forEach {
+            mutableState.getMessageById(it)?.let { message ->
+                mutableState.upsertMessage(message.copy(poll = poll))
+            }
+        }
+    }
+
+    fun getPoll(pollId: String): Poll? = polls[pollId]
 
     private companion object {
         private const val TAG = "Chat:ChannelStateLogic"

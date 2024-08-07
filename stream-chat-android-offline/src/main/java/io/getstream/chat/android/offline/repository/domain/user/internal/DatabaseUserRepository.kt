@@ -126,6 +126,7 @@ internal class DatabaseUserRepository(
             updatedAt = updatedAt,
             lastActive = lastActive,
             invisible = isInvisible,
+            privacySettings = privacySettings?.toEntity(),
             banned = isBanned,
             extraData = extraData,
             mutes = mutes.map { mute -> mute.target.id },
@@ -141,6 +142,7 @@ internal class DatabaseUserRepository(
             updatedAt = updatedAt,
             lastActive = lastActive,
             invisible = invisible,
+            privacySettings = privacySettings?.toModel(),
             extraData = extraData.toMutableMap(),
             banned = banned,
         )

@@ -17,9 +17,11 @@
 package io.getstream.chat.android.client.api
 
 import androidx.annotation.CheckResult
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SearchMessagesRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
@@ -37,13 +39,17 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.call.Call
 import okhttp3.ResponseBody
@@ -71,7 +77,7 @@ internal interface ChatApi {
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<UploadedImage>
+    ): Call<UploadedFile>
 
     @CheckResult
     fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit>
@@ -110,6 +116,13 @@ internal interface ChatApi {
 
     @CheckResult
     fun getReplies(messageId: String, limit: Int): Call<List<Message>>
+
+    @CheckResult
+    fun getNewerReplies(
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ): Call<List<Message>>
 
     @CheckResult
     fun getReactions(
@@ -202,6 +215,15 @@ internal interface ChatApi {
 
     @CheckResult
     fun updateUsers(users: List<User>): Call<List<User>>
+
+    @CheckResult
+    fun blockUser(userId: String): Call<UserBlock>
+
+    @CheckResult
+    fun unblockUser(userId: String): Call<UserBlock>
+
+    @CheckResult
+    fun queryBlockedUsers(): Call<List<UserBlock>>
 
     @CheckResult
     fun partialUpdateUser(
@@ -355,13 +377,21 @@ internal interface ChatApi {
     ): Call<Unit>
 
     @CheckResult
-    fun flagUser(userId: String): Call<Flag>
+    fun flagUser(
+        userId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag>
 
     @CheckResult
     fun unflagUser(userId: String): Call<Flag>
 
     @CheckResult
-    fun flagMessage(messageId: String): Call<Flag>
+    fun flagMessage(
+        messageId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag>
 
     @CheckResult
     fun unflagMessage(messageId: String): Call<Flag>
@@ -421,6 +451,42 @@ internal interface ChatApi {
 
     @CheckResult
     fun downloadFile(fileUrl: String): Call<ResponseBody>
+
+    /**
+     * Query threads matching [query] request.
+     *
+     * @param query [QueryThreadsRequest] with query parameters to get matching users.
+     */
+    @CheckResult
+    fun queryThreads(query: QueryThreadsRequest): Call<List<Thread>>
+
+    /**
+     * Get a thread by [messageId].
+     *
+     * @param messageId The message id of the thread.
+     * @param options The options for the request.
+     */
+    @CheckResult
+    fun getThread(messageId: String, options: GetThreadOptions): Call<Thread>
+
+    @CheckResult
+    fun partialUpdateThread(
+        messageId: String,
+        set: Map<String, Any>,
+        unset: List<String>,
+    ): Call<Thread>
+
+    @CheckResult
+    fun createPoll(pollConfig: PollConfig): Call<Poll>
+
+    @CheckResult
+    fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>
+
+    @CheckResult
+    fun removePollVote(messageId: String, pollId: String, voteId: String): Call<Vote>
+
+    @CheckResult
+    fun closePoll(pollId: String): Call<Poll>
 
     fun warmUp()
 

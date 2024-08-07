@@ -73,11 +73,12 @@ public final class io/getstream/chat/android/state/extensions/ChatClientExtensio
 	public static final fun downloadAttachment (Lio/getstream/chat/android/client/ChatClient;Landroid/content/Context;Lio/getstream/chat/android/models/Attachment;)Lio/getstream/result/call/Call;
 	public static final fun getGlobalState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/state/global/GlobalState;
 	public static final fun getMessageUsingCache (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;)Lio/getstream/result/call/Call;
-	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;ILkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun getRepliesAsState (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IZLkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun getRepliesAsState$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IZLkotlinx/coroutines/CoroutineScope;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun getState (Lio/getstream/chat/android/client/ChatClient;)Lio/getstream/chat/android/state/plugin/state/StateRegistry;
 	public static final fun loadMessageById (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
+	public static final fun loadMessagesAroundId (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/call/Call;
 	public static final fun loadNewerMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;Ljava/lang/String;I)Lio/getstream/result/call/Call;
 	public static final fun loadNewestMessages (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IZ)Lio/getstream/result/call/Call;
 	public static synthetic fun loadNewestMessages$default (Lio/getstream/chat/android/client/ChatClient;Ljava/lang/String;IZILjava/lang/Object;)Lio/getstream/result/call/Call;
@@ -97,14 +98,17 @@ public final class io/getstream/chat/android/state/plugin/config/StatePluginConf
 	public fun <init> (Z)V
 	public fun <init> (ZZ)V
 	public fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;)V
-	public synthetic fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Z
 	public final fun component2 ()Z
 	public final fun component3 ()Lio/getstream/chat/android/models/TimeDuration;
-	public final fun copy (ZZLio/getstream/chat/android/models/TimeDuration;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;ZZLio/getstream/chat/android/models/TimeDuration;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
+	public final fun component4 ()Lkotlin/jvm/functions/Function0;
+	public final fun copy (ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;ZZLio/getstream/chat/android/models/TimeDuration;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/state/plugin/config/StatePluginConfig;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundSyncEnabled ()Z
+	public final fun getNow ()Lkotlin/jvm/functions/Function0;
 	public final fun getSyncMaxThreshold ()Lio/getstream/chat/android/models/TimeDuration;
 	public final fun getUserPresence ()Z
 	public fun hashCode ()I
@@ -117,7 +121,7 @@ public final class io/getstream/chat/android/state/plugin/factory/StreamStatePlu
 }
 
 public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
-	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlinx/coroutines/CoroutineScope;)V
+	public fun <init> (Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/flow/StateFlow;Lkotlinx/coroutines/Job;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;)V
 	public final fun channel (Ljava/lang/String;Ljava/lang/String;)Lio/getstream/chat/android/client/channel/state/ChannelState;
 	public final fun clear ()V
 	public final fun queryChannels (Lio/getstream/chat/android/models/FilterObject;Lio/getstream/chat/android/models/querysort/QuerySorter;)Lio/getstream/chat/android/state/plugin/state/querychannels/QueryChannelsState;
@@ -125,10 +129,11 @@ public final class io/getstream/chat/android/state/plugin/state/StateRegistry {
 }
 
 public abstract interface class io/getstream/chat/android/state/plugin/state/channel/thread/ThreadState {
+	public abstract fun getEndOfNewerMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getEndOfOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getLoading ()Lkotlinx/coroutines/flow/StateFlow;
-	public abstract fun getLoadingOlderMessages ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getMessages ()Lkotlinx/coroutines/flow/StateFlow;
+	public abstract fun getNewestInThread ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getOldestInThread ()Lkotlinx/coroutines/flow/StateFlow;
 	public abstract fun getParentId ()Ljava/lang/String;
 }

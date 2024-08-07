@@ -15,6 +15,8 @@ import androidx.fragment.app.viewModels
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByCount
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
@@ -159,6 +161,14 @@ class MessageListViewSnippets : Fragment() {
                 ),
             )
         }
+
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+            defaultViewStyle.copy(
+                reactionsViewStyle = defaultViewStyle.reactionsViewStyle.copy(
+                    reactionSorting = ReactionSortingByCount,
+                ),
+            )
+        }
     }
 
     fun channelFeatureFlags() {
@@ -232,6 +242,13 @@ class MessageListViewSnippets : Fragment() {
                 } else {
                     super.getItemViewType(item)
                 }
+            }
+
+            override fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
+                if (viewHolder is TodayViewHolder) {
+                    return TODAY_VIEW_HOLDER_TYPE
+                }
+                return super.getItemViewType(viewHolder)
             }
 
             private fun Date?.isLessThenDayAgo(): Boolean {

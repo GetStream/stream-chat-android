@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.PrivacySettings
 import io.getstream.chat.android.models.querysort.ComparableFieldProvider
 import java.util.Date
 
@@ -29,6 +30,7 @@ import java.util.Date
  * @param image User's image.
  * @param invisible Determines if the user should share its online status. Can only be changed while connecting
  * the user.
+ * @param privacySettings The privacy settings for the user.
  * @param banned Whether a user is banned or not.
  * @param devices The list of devices for the current user.
  * @param online Whether a is user online or not.
@@ -50,6 +52,7 @@ public data class User(
     val name: String = "",
     val image: String = "",
     val invisible: Boolean? = null,
+    val privacySettings: PrivacySettings? = null,
     val language: String = "",
     val banned: Boolean? = null,
     val devices: List<Device> = listOf(),
@@ -75,6 +78,16 @@ public data class User(
      * Determines if the user should share its online status.
      */
     val isInvisible: Boolean get() = invisible == true
+
+    /**
+     * Determines if the user has typing indicators enabled.
+     */
+    val isTypingIndicatorsEnabled: Boolean get() = privacySettings?.typingIndicators?.enabled ?: true
+
+    /**
+     * Determines if the user has read receipts enabled.
+     */
+    val isReadReceiptsEnabled: Boolean get() = privacySettings?.readReceipts?.enabled ?: true
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
         return when (fieldName) {
@@ -106,6 +119,7 @@ public data class User(
         private var name: String = ""
         private var image: String = ""
         private var invisible: Boolean? = null
+        private var privacySettings: PrivacySettings? = null
         private var language: String = ""
         private var banned: Boolean? = null
         private var devices: List<Device> = listOf()
@@ -127,6 +141,7 @@ public data class User(
             name = user.name
             image = user.image
             invisible = user.invisible
+            privacySettings = user.privacySettings
             language = user.language
             banned = user.banned
             devices = user.devices
@@ -147,6 +162,8 @@ public data class User(
         public fun withName(name: String): Builder = apply { this.name = name }
         public fun withImage(image: String): Builder = apply { this.image = image }
         public fun withInvisible(invisible: Boolean?): Builder = apply { this.invisible = invisible }
+        public fun withPrivacySettings(privacySettings: PrivacySettings?): Builder =
+            apply { this.privacySettings = privacySettings }
         public fun withLanguage(language: String): Builder = apply { this.language = language }
         public fun withBanned(banned: Boolean?): Builder = apply { this.banned = banned }
         public fun withDevices(devices: List<Device>): Builder = apply { this.devices = devices }
@@ -173,6 +190,7 @@ public data class User(
                 name = name,
                 image = image,
                 invisible = invisible,
+                privacySettings = privacySettings,
                 language = language,
                 banned = banned,
                 devices = devices,

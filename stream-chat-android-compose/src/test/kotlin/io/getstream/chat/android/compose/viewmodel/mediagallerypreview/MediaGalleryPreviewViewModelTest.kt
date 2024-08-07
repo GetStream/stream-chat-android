@@ -128,8 +128,15 @@ internal class MediaGalleryPreviewViewModelTest {
          * [MediaGalleryPreviewViewModel.deleteCurrentMediaAttachment] uses the URL field to compare attachments.
          */
         private val attachment1 =
-            Attachment(type = "image", imageUrl = "http://example.com/img1.png", url = "http://example.com/img1.png")
+            Attachment(
+                type = "image",
+                imageUrl = "http://example.com/img1.png",
+                assetUrl = "http://example.com/img1.png",
+            )
         private val attachment2 =
-            Attachment(type = "video", url = "http://example.com/img2.png")
+            Attachment(
+                type = "video",
+                assetUrl = "http://example.com/img2.png",
+            )
     }
 }

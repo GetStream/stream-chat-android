@@ -128,6 +128,12 @@ public class RepositoryFacade private constructor(
         channelsRepository.deleteChannelMessage(message)
     }
 
+    @InternalStreamChatApi
+    public suspend fun markMessageAsDeleted(message: Message) {
+        messageRepository.evictMessage(message.id)
+        channelsRepository.updateChannelMessage(message)
+    }
+
     override suspend fun insertReaction(reaction: Reaction) {
         val messageId = reaction.messageId
         if (messageId.isEmpty()) {
@@ -166,6 +172,16 @@ public class RepositoryFacade private constructor(
     override suspend fun deleteChannel(cid: String) {
         channelsRepository.deleteChannel(cid)
         messageRepository.deleteChannelMessages(cid)
+    }
+
+    override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
+        channelsRepository.setHiddenForChannel(cid, hidden, hideMessagesBefore)
+        messageRepository.evictMessages()
+    }
+
+    override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
+        channelsRepository.setHiddenForChannel(cid, hidden)
+        messageRepository.evictMessages()
     }
 
     public suspend fun storeStateForChannel(channel: Channel) {

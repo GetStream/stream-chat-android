@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.randomChannelUserRead
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
 import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.state.plugin.internal.StatePlugin
@@ -157,17 +158,32 @@ internal class MessageListViewModelTest {
         val messages = listOf(messageToFlag, message2)
         val messageState = MessagesState.Result(messages)
         val chatClient = MockChatClientBuilder().build()
+        val reason = randomString()
+        val customData = mapOf(randomString() to randomString())
 
         val viewModel = Fixture(chatClient = chatClient)
             .givenCurrentUser()
             .givenChannelQuery()
             .givenChannelState(messageState = messageState, messages = messages)
-            .givenFlagMessage(message = messageToFlag)
-            .get()
+            .givenFlagMessage(
+                message = messageToFlag,
+                reason = reason,
+                customData = customData,
+            ).get()
 
-        viewModel.onEvent(MessageListViewModel.Event.FlagMessage(messageToFlag))
+        viewModel.onEvent(
+            MessageListViewModel.Event.FlagMessage(
+                message = messageToFlag,
+                reason = reason,
+                customData = customData,
+            ),
+        )
 
-        verify(chatClient).flagMessage(messageId = messageToFlag.id)
+        verify(chatClient).flagMessage(
+            messageId = messageToFlag.id,
+            reason = reason,
+            customData = customData,
+        )
     }
 
     @Test
@@ -230,6 +246,7 @@ internal class MessageListViewModelTest {
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
         private val globalState: GlobalState = mock()
+        private var channelState: ChannelState? = null
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -251,8 +268,14 @@ internal class MessageListViewModelTest {
             whenever(chatClient.queryChannel(any(), any(), any(), any())) doReturn channel.asCall()
         }
 
-        fun givenFlagMessage(message: Message) = apply {
-            whenever(chatClient.flagMessage(message.id)) doReturn mock()
+        fun givenFlagMessage(message: Message, reason: String, customData: Map<String, String>) = apply {
+            whenever(
+                chatClient.flagMessage(
+                    messageId = message.id,
+                    reason = reason,
+                    customData = customData,
+                ),
+            ) doReturn mock()
         }
 
         fun givenDeleteMessage() = apply {
@@ -276,12 +299,14 @@ internal class MessageListViewModelTest {
                 messages = emptyList(),
             ),
             messages: List<Message> = listOf(),
+            pinnedMessages: List<Message> = listOf(),
         ) = apply {
-            val channelState: ChannelState = mock {
+            channelState = mock() {
                 whenever(it.cid) doReturn CID
                 whenever(it.channelId) doReturn CHANNEL_ID
                 whenever(it.channelType) doReturn CHANNEL_TYPE
                 whenever(it.messages) doReturn MutableStateFlow(messages)
+                whenever(it.pinnedMessages) doReturn MutableStateFlow(pinnedMessages)
                 whenever(it.channelData) doReturn MutableStateFlow(channelData)
                 whenever(it.channelConfig) doReturn MutableStateFlow(Config())
                 whenever(it.members) doReturn MutableStateFlow(listOf())
@@ -290,7 +315,7 @@ internal class MessageListViewModelTest {
                 whenever(it.messagesState) doReturn MutableStateFlow(messageState)
                 whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
                 whenever(it.reads) doReturn MutableStateFlow(listOf())
-                whenever(it.read) doReturn MutableStateFlow(randomChannelUserRead())
+                whenever(it.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
                 whenever(it.insideSearch) doReturn MutableStateFlow(false)
                 whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
                 whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
@@ -299,8 +324,8 @@ internal class MessageListViewModelTest {
                 whenever(it.loading) doReturn MutableStateFlow(true)
                 whenever(it.unreadCount) doReturn MutableStateFlow(0)
                 whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
+                whenever(stateRegistry.channel(any(), any())) doReturn it
             }
-            whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
 
         fun get(): MessageListViewModel {
@@ -309,6 +334,8 @@ internal class MessageListViewModelTest {
                     chatClient = chatClient,
                     cid = channelId,
                     clipboardHandler = mock(),
+                    threadLoadOrderOlderToNewer = false,
+                    channelState = MutableStateFlow(channelState),
                 ),
 
             )

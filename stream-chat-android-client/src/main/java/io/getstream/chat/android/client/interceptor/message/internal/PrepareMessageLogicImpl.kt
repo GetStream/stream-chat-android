@@ -24,6 +24,7 @@ import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.client.utils.internal.getMessageType
+import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
@@ -61,8 +62,7 @@ internal class PrepareMessageLogicImpl(
                 )
             }
         }
-        return message.copy(
-            id = message.id.takeIf { it.isNotBlank() } ?: generateMessageId(user.id),
+        return message.ensureId(user).copy(
             user = user,
             attachments = attachments,
             type = getMessageType(message),
@@ -90,13 +90,6 @@ internal class PrepareMessageLogicImpl(
                     channel?.replyMessage(null)
                 }
             }
-    }
-
-    /**
-     * Returns a unique message id prefixed with user id.
-     */
-    private fun generateMessageId(userId: String): String {
-        return "$userId-${UUID.randomUUID()}"
     }
 
     private fun generateUploadId(): String {

@@ -23,12 +23,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOL
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.THUMBS_UP
 import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.ui.sample.databinding.FragmentComponentBrowserViewReactionsViewBinding
 import io.getstream.chat.ui.sample.feature.componentbrowser.utils.randomMessage
+import java.util.Date
 
 const val CUSTOM_REACTIONS = "CUSTOM_REACTIONS"
 
@@ -59,8 +61,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
         binding.apply {
             viewReactionsView1.setMessage(
                 message = randomMessage().copy(
-                    reactionCounts = mutableMapOf(
-                        LOVE to 1,
+                    reactionGroups = mutableMapOf(
+                        LOVE to ReactionGroup(
+                            type = LOVE,
+                            count = 1,
+                            sumScore = 1,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
                     ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
@@ -70,8 +78,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             )
             viewReactionsView2.setMessage(
                 message = randomMessage().copy(
-                    reactionCounts = mutableMapOf(
-                        LOVE to 1,
+                    reactionGroups = mutableMapOf(
+                        LOVE to ReactionGroup(
+                            type = LOVE,
+                            count = 1,
+                            sumScore = 1,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
                     ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
@@ -81,8 +95,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             )
             viewReactionsView3.setMessage(
                 message = randomMessage().copy(
-                    reactionCounts = mutableMapOf(
-                        LOVE to 1,
+                    reactionGroups = mutableMapOf(
+                        LOVE to ReactionGroup(
+                            type = LOVE,
+                            count = 1,
+                            sumScore = 1,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
                     ),
                     ownReactions = mutableListOf(),
                 ),
@@ -90,8 +110,14 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             )
             viewReactionsView4.setMessage(
                 message = randomMessage().copy(
-                    reactionCounts = mutableMapOf(
-                        LOVE to 1,
+                    reactionGroups = mutableMapOf(
+                        LOVE to ReactionGroup(
+                            type = LOVE,
+                            count = 1,
+                            sumScore = 1,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
                     ),
                     ownReactions = mutableListOf(),
                 ),
@@ -99,11 +125,35 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             )
             viewReactionsView5.setMessage(
                 message = randomMessage().copy(
-                    reactionCounts = mutableMapOf(
-                        LOVE to 10,
-                        WUT to 20,
-                        LOL to 20,
-                        THUMBS_UP to 20,
+                    reactionGroups = mutableMapOf(
+                        LOVE to ReactionGroup(
+                            type = LOVE,
+                            count = 10,
+                            sumScore = 10,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
+                        WUT to ReactionGroup(
+                            type = WUT,
+                            count = 20,
+                            sumScore = 20,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
+                        LOL to ReactionGroup(
+                            type = LOL,
+                            count = 20,
+                            sumScore = 20,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
+                        THUMBS_UP to ReactionGroup(
+                            type = THUMBS_UP,
+                            count = 20,
+                            sumScore = 20,
+                            firstReactionAt = Date(),
+                            lastReactionAt = Date(),
+                        ),
                     ),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
@@ -114,19 +164,43 @@ class ComponentBrowserViewReactionsFragment : Fragment() {
             )
 
             val customReactions = if (reactions != null) {
-                reactions as Map<String, Int>
+                reactions as Map<String, ReactionGroup>
             } else {
                 mutableMapOf(
-                    LOVE to 10,
-                    WUT to 20,
-                    LOL to 20,
-                    THUMBS_UP to 20,
+                    LOVE to ReactionGroup(
+                        type = LOVE,
+                        count = 10,
+                        sumScore = 10,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
+                    WUT to ReactionGroup(
+                        type = WUT,
+                        count = 20,
+                        sumScore = 20,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
+                    LOL to ReactionGroup(
+                        type = LOL,
+                        count = 20,
+                        sumScore = 20,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
+                    THUMBS_UP to ReactionGroup(
+                        type = THUMBS_UP,
+                        count = 20,
+                        sumScore = 20,
+                        firstReactionAt = Date(),
+                        lastReactionAt = Date(),
+                    ),
                 )
             }
 
             viewReactionsView6.setMessage(
                 message = randomMessage().copy(
-                    reactionCounts = customReactions.toMutableMap(),
+                    reactionGroups = customReactions.toMutableMap(),
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
                         Reaction(type = WUT),

@@ -58,6 +58,9 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -69,6 +72,9 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.client.extensions.internal.NEVER
@@ -361,12 +367,17 @@ internal class ChannelLogic(
     }
 
     internal fun deleteMessage(message: Message) {
+        logger.d { "[deleteMessage] message.id: ${message.id}, message.text: ${message.text}" }
         channelStateLogic.deleteMessage(message)
     }
 
-    internal fun upsertMessage(message: Message) = channelStateLogic.upsertMessage(message)
+    internal fun upsertMessage(message: Message) {
+        logger.d { "[upsertMessage] message.id: ${message.id}, message.text: ${message.text}" }
+        channelStateLogic.upsertMessage(message)
+    }
 
     internal fun upsertMessages(messages: List<Message>) {
+        logger.d { "[upsertMessages] messages.size: ${messages.size}" }
         channelStateLogic.upsertMessages(messages)
     }
 
@@ -465,10 +476,9 @@ internal class ChannelLogic(
     }
 
     private fun upsertEventMessage(message: Message) {
-        channelStateLogic.upsertMessage(
-            message.copy(ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions),
-            updateCount = false,
-        )
+        val ownReactions = getMessage(message.id)?.ownReactions ?: message.ownReactions
+        channelStateLogic.upsertMessage(message.copy(ownReactions = ownReactions))
+        channelStateLogic.delsertPinnedMessage(message.copy(ownReactions = ownReactions))
     }
 
     /**
@@ -511,7 +521,7 @@ internal class ChannelLogic(
             is NewMessageEvent -> {
                 upsertEventMessage(event.message)
                 channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
-                channelStateLogic.toggleHidden(false)
+                channelStateLogic.takeUnless { event.message.shadowed }?.toggleHidden(false)
             }
             is MessageUpdatedEvent -> {
                 event.message.copy(
@@ -562,6 +572,7 @@ internal class ChannelLogic(
             }
             is MemberUpdatedEvent -> {
                 channelStateLogic.upsertMember(event.member)
+                channelStateLogic.updateMembership(event.member)
             }
             is NotificationAddedToChannelEvent -> {
                 channelStateLogic.upsertMembers(event.channel.members)
@@ -579,13 +590,16 @@ internal class ChannelLogic(
                 channelStateLogic.deleteWatcher(event)
             }
             is ChannelUpdatedEvent -> {
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is ChannelUpdatedByUserEvent -> {
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is ChannelHiddenEvent -> {
                 channelStateLogic.toggleHidden(true)
+                if (event.clearHistory) {
+                    removeMessagesBefore(event.createdAt)
+                }
             }
             is ChannelVisibleEvent -> {
                 channelStateLogic.toggleHidden(false)
@@ -620,11 +634,11 @@ internal class ChannelLogic(
             }
             is NotificationInviteAcceptedEvent -> {
                 channelStateLogic.addMember(event.member)
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is NotificationInviteRejectedEvent -> {
                 channelStateLogic.deleteMember(event.member)
-                channelStateLogic.updateChannelData(event.channel)
+                channelStateLogic.updateChannelData(event)
             }
             is NotificationChannelMutesUpdatedEvent -> {
                 event.me.channelMutes.any { mute ->
@@ -659,6 +673,43 @@ internal class ChannelLogic(
             is UnknownEvent,
             is UserDeletedEvent,
             -> Unit // Ignore these events
+            is PollClosedEvent -> channelStateLogic.upsertPoll(event.poll)
+            is PollDeletedEvent -> channelStateLogic.upsertPoll(event.poll)
+            is PollUpdatedEvent -> channelStateLogic.upsertPoll(event.poll)
+            is VoteCastedEvent -> {
+                val ownVotes =
+                    (
+                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) +
+                        listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        ownVotes = ownVotes.values.toList(),
+                    ),
+                )
+            }
+            is VoteChangedEvent -> {
+                val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
+                    ?: channelStateLogic.getPoll(event.poll.id)?.ownVotes
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        ownVotes = ownVotes ?: emptyList(),
+                    ),
+                )
+            }
+            is VoteRemovedEvent -> {
+                val ownVotes =
+                    (
+                        channelStateLogic.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) - event.removedVote.id
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        ownVotes = ownVotes.values.toList(),
+                    ),
+                )
+            }
         }
     }
 

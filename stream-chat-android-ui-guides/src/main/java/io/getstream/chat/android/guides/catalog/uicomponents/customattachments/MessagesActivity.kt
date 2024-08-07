@@ -53,7 +53,11 @@ class MessagesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMessagesBinding
 
     private val factory: MessageListViewModelFactory by lazy {
-        MessageListViewModelFactory(this, requireNotNull(intent.getStringExtra(EXTRA_CID)))
+        MessageListViewModelFactory(
+            context = this,
+            threadLoadOlderToNewer = true,
+            cid = requireNotNull(intent.getStringExtra(EXTRA_CID)),
+        )
     }
     private val messageListHeaderViewModel: MessageListHeaderViewModel by viewModels { factory }
     private val messageListViewModel: MessageListViewModel by viewModels { factory }

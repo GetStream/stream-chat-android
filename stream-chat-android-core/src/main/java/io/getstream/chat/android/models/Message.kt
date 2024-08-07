@@ -89,6 +89,11 @@ public data class Message(
     val reactionScores: Map<String, Int> = mapOf(),
 
     /**
+     * A mapping between reaction type and the [ReactionGroup].
+     */
+    val reactionGroups: Map<String, ReactionGroup> = mapOf(),
+
+    /**
      * If the message has been synced to the servers, default is synced
      */
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
@@ -227,6 +232,11 @@ public data class Message(
      * Date when the message text was updated
      */
     val messageTextUpdatedAt: Date? = null,
+
+    /**
+     * Contains poll configuration
+     */
+    val poll: Poll? = null,
 ) : CustomObject, ComparableFieldProvider {
     public companion object {
         public const val TYPE_REGULAR: String = "regular"
@@ -323,6 +333,7 @@ public data class Message(
         append(", skipPushNotification=").append(skipPushNotification)
         append(", skipEnrichUrl=").append(skipEnrichUrl)
         if (moderationDetails != null) append(", moderationDetails=").append(moderationDetails)
+        if (poll != null) append(", poll=").append(poll)
         if (extraData.isNotEmpty()) append(", extraData=").append(extraData)
         append(")")
     }.toString()
@@ -346,6 +357,7 @@ public data class Message(
         private var deletedReplyCount: Int = 0
         private var reactionCounts: Map<String, Int> = mapOf()
         private var reactionScores: Map<String, Int> = mapOf()
+        private var reactionGroups: Map<String, ReactionGroup> = mapOf()
         private var syncStatus: SyncStatus = SyncStatus.COMPLETED
         private var type: String = ""
         private var latestReactions: List<Reaction> = listOf()
@@ -373,6 +385,7 @@ public data class Message(
         private var skipEnrichUrl: Boolean = false
         private var moderationDetails: MessageModerationDetails? = null
         private var messageTextUpdatedAt: Date? = null
+        private var poll: Poll? = null
 
         public constructor(message: Message) : this() {
             id = message.id
@@ -388,6 +401,7 @@ public data class Message(
             deletedReplyCount = message.deletedReplyCount
             reactionCounts = message.reactionCounts
             reactionScores = message.reactionScores
+            reactionGroups = message.reactionGroups
             syncStatus = message.syncStatus
             type = message.type
             latestReactions = message.latestReactions
@@ -415,6 +429,7 @@ public data class Message(
             skipEnrichUrl = message.skipEnrichUrl
             moderationDetails = message.moderationDetails
             messageTextUpdatedAt = message.messageTextUpdatedAt
+            poll = message.poll
         }
 
         public fun withId(id: String): Builder = apply { this.id = id }
@@ -439,6 +454,11 @@ public data class Message(
         public fun withReactionScores(reactionScores: Map<String, Int>): Builder = apply {
             this.reactionScores = reactionScores
         }
+
+        public fun withReactionGroups(reactionGroups: Map<String, ReactionGroup>): Builder = apply {
+            this.reactionGroups = reactionGroups
+        }
+
         public fun withSyncStatus(syncStatus: SyncStatus): Builder = apply { this.syncStatus = syncStatus }
         public fun withType(type: String): Builder = apply { this.type = type }
         public fun withLatestReactions(latestReactions: List<Reaction>): Builder = apply {
@@ -481,6 +501,8 @@ public data class Message(
             this.messageTextUpdatedAt = messageTextUpdatedAt
         }
 
+        public fun withPoll(poll: Poll?): Builder = apply { this.poll = poll }
+
         public fun build(): Message {
             return Message(
                 id = id,
@@ -496,6 +518,7 @@ public data class Message(
                 deletedReplyCount = deletedReplyCount,
                 reactionCounts = reactionCounts,
                 reactionScores = reactionScores,
+                reactionGroups = reactionGroups,
                 syncStatus = syncStatus,
                 type = type,
                 latestReactions = latestReactions,
@@ -523,6 +546,7 @@ public data class Message(
                 skipEnrichUrl = skipEnrichUrl,
                 moderationDetails = moderationDetails,
                 messageTextUpdatedAt = messageTextUpdatedAt,
+                poll = poll,
             )
         }
     }

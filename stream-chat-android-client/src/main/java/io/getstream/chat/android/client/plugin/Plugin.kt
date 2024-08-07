@@ -78,7 +78,7 @@ public interface Plugin :
     GetMessageListener,
     FetchCurrentUserListener {
 
-    public val errorHandler: ErrorHandler?
+    public fun getErrorHandler(): ErrorHandler? = null
 
     override suspend fun onQueryMembersResult(
         result: Result<List<Member>>,
@@ -138,13 +138,8 @@ public interface Plugin :
         reaction: Reaction,
     ): Result<Unit> = Result.Success(Unit)
 
-    override suspend fun onGetRepliesPrecondition(
-        messageId: String,
-        limit: Int,
-    ): Result<Unit> = Result.Success(Unit)
-
     override suspend fun onGetRepliesRequest(
-        messageId: String,
+        parentId: String,
         limit: Int,
     ) {
         /* No-Op */
@@ -152,20 +147,22 @@ public interface Plugin :
 
     override suspend fun onGetRepliesResult(
         result: Result<List<Message>>,
-        messageId: String,
+        parentId: String,
         limit: Int,
     ) {
         /* No-Op */
     }
 
-    override suspend fun onGetRepliesMorePrecondition(
-        messageId: String,
-        firstId: String,
+    override suspend fun onGetNewerRepliesRequest(
+        parentId: String,
         limit: Int,
-    ): Result<Unit> = Result.Success(Unit)
+        lastId: String?,
+    ) {
+        /* No-Op */
+    }
 
     override suspend fun onGetRepliesMoreRequest(
-        messageId: String,
+        parentId: String,
         firstId: String,
         limit: Int,
     ) {
@@ -174,9 +171,18 @@ public interface Plugin :
 
     override suspend fun onGetRepliesMoreResult(
         result: Result<List<Message>>,
-        messageId: String,
+        parentId: String,
         firstId: String,
         limit: Int,
+    ) {
+        /* No-Op */
+    }
+
+    override suspend fun onGetNewerRepliesResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        limit: Int,
+        lastId: String?,
     ) {
         /* No-Op */
     }

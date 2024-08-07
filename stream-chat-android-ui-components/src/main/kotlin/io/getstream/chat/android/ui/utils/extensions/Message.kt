@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.ReactionGroup
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
@@ -56,11 +57,11 @@ public fun Message.getCreatedAtOrThrow(): Date = checkNotNull(getCreatedAtOrNull
 }
 
 public fun Message.hasSingleReaction(): Boolean {
-    return supportedReactionCounts.size == 1
+    return supportedReactionGroups.size == 1
 }
 
 public fun Message.hasReactions(): Boolean {
-    return supportedReactionCounts.isNotEmpty()
+    return supportedReactionGroups.isNotEmpty()
 }
 
 public val Message.supportedLatestReactions: List<Reaction>
@@ -71,6 +72,9 @@ public val Message.supportedLatestReactions: List<Reaction>
             latestReactions.filter { ChatUI.supportedReactions.isReactionTypeSupported(it.type) }
         }
     }
+
+public val Message.supportedReactionGroups: Map<String, ReactionGroup>
+    get() = reactionGroups.filterKeys { ChatUI.supportedReactions.isReactionTypeSupported(it) }
 
 public val Message.supportedReactionCounts: Map<String, Int>
     get() {

@@ -16,6 +16,10 @@
 -->
 <resources>
     <declare-styleable name="MessageListView">
+        <attr name="streamUiUnreadLabelButtonEnabled" format="boolean" />
+        <attr name="streamUiUnreadLabelButtonColor" format="color|reference" />
+        <attr name="streamUiUnreadLabelButtonRippleColor" format="color|reference" />
+
         <!-- Scroll button-->
         <attr name="streamUiScrollButtonEnabled" format="boolean" />
         <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
@@ -83,6 +87,17 @@
             <flag name="start" value="0x00800003" />
             <!-- Push object to the end of its container, not changing its size. -->
             <flag name="end" value="0x00800005" />
+        </attr>
+
+
+        <attr name="streamUiUnreadLabelButtonTextSize" format="dimension|reference" />
+        <attr name="streamUiUnreadLabelButtonTextColor" format="color|reference" />
+        <attr name="streamUiUnreadLabelButtonTextFont" format="reference" />
+        <attr name="streamUiUnreadLabelButtonFontAssets" format="string" />
+        <attr name="streamUiUnreadLabelButtonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
         </attr>
 
         <attr name="streamUiLoadMoreThreshold" format="integer" />
@@ -411,6 +426,8 @@
         <attr name="streamUiThreadsEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiMessageOptionBackgroundColor" format="color" />
+        <attr name="streamUiBlockUserOptionEnabled" format="boolean" />
+        <attr name="streamUiBlockUserOptionIcon" format="boolean" />
 
         <attr name="streamUiMessageOptionsTextSize" format="dimension|reference" />
         <attr name="streamUiMessageOptionsTextColor" format="color|reference" />
@@ -437,6 +454,13 @@
             <enum name="end" value="1" />
             <enum name="by_user" value="2" />
             <enum name="by_user_inverted" value="3" />
+        </attr>
+
+        <attr name="streamUiMessageOptionsReactionSorting" format="enum">
+            <enum name="by_first_reaction_at" value="0" />
+            <enum name="by_last_reaction_at" value="1" />
+            <enum name="by_sum_score" value="2" />
+            <enum name="by_count" value="3" />
         </attr>
 
         <!-- User reactions card -->

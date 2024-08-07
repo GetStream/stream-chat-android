@@ -87,6 +87,25 @@ This is a very simple way to customize the behavior and connect the `AttachmentP
 
 ## Customization
 
+### Theming
+
+The `AttachmentsPicker` component can be themed using the `AttachmentPickerTheme` class.
+The theme allows you to customize the appearance of the attachment picker.
+```kotlin
+val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+ChatTheme(
+    // ...
+    attachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors).copy(
+        backgroundOverlay = colors.overlayDark,
+        backgroundPrimary = colors.barsBackground,
+        backgroundSecondary = colors.inputBackground,
+    ),
+    // ...
+) {
+    // Rest of the UI
+}
+```
+
 ### Customizing the existing UI
 
 You can customize the `AttachmentsPicker` using the following parameters:
@@ -161,6 +180,7 @@ class AttachmentsPickerCustomTabFactory: AttachmentsPickerTabFactory {
 
     @Composable
     override fun PickerTabContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

@@ -121,6 +121,7 @@ internal class MessageListViewModelTest {
         private val clientState: ClientState = mock()
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
+        private val channelState: ChannelState = mock()
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -155,25 +156,24 @@ internal class MessageListViewModelTest {
                 messages = emptyList(),
             ),
         ) = apply {
-            val channelState: ChannelState = mock {
-                whenever(it.cid) doReturn CID
-                whenever(it.channelData) doReturn MutableStateFlow(channelData)
-                whenever(it.channelConfig) doReturn MutableStateFlow(Config())
-                whenever(it.members) doReturn MutableStateFlow(listOf())
-                whenever(it.membersCount) doReturn MutableStateFlow(randomInt())
-                whenever(it.watcherCount) doReturn MutableStateFlow(randomInt())
-                whenever(it.messagesState) doReturn MutableStateFlow(messageState)
-                whenever(it.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
-                whenever(it.reads) doReturn MutableStateFlow(listOf())
-                whenever(it.read) doReturn MutableStateFlow(randomChannelUserRead())
-                whenever(it.endOfOlderMessages) doReturn MutableStateFlow(false)
-                whenever(it.endOfNewerMessages) doReturn MutableStateFlow(true)
-                whenever(it.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
-                whenever(it.unreadCount) doReturn MutableStateFlow(0)
-                whenever(it.insideSearch) doReturn MutableStateFlow(false)
-                whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
-                whenever(it.loadingOlderMessages) doReturn MutableStateFlow(false)
-            }
+            whenever(channelState.cid) doReturn CID
+            whenever(channelState.channelData) doReturn MutableStateFlow(channelData)
+            whenever(channelState.channelConfig) doReturn MutableStateFlow(Config())
+            whenever(channelState.members) doReturn MutableStateFlow(listOf())
+            whenever(channelState.membersCount) doReturn MutableStateFlow(randomInt())
+            whenever(channelState.watcherCount) doReturn MutableStateFlow(randomInt())
+            whenever(channelState.messagesState) doReturn MutableStateFlow(messageState)
+            whenever(channelState.pinnedMessages) doReturn MutableStateFlow(emptyList())
+            whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, emptyList()))
+            whenever(channelState.reads) doReturn MutableStateFlow(listOf())
+            whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
+            whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
+            whenever(channelState.endOfNewerMessages) doReturn MutableStateFlow(true)
+            whenever(channelState.toChannel()) doReturn Channel(type = CHANNEL_TYPE, id = CHANNEL_ID)
+            whenever(channelState.unreadCount) doReturn MutableStateFlow(0)
+            whenever(channelState.insideSearch) doReturn MutableStateFlow(false)
+            whenever(channelState.loadingNewerMessages) doReturn MutableStateFlow(false)
+            whenever(channelState.loadingOlderMessages) doReturn MutableStateFlow(false)
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
 
@@ -183,6 +183,8 @@ internal class MessageListViewModelTest {
                     chatClient = chatClient,
                     cid = channelId,
                     clipboardHandler = mock(),
+                    threadLoadOrderOlderToNewer = false,
+                    channelState = MutableStateFlow(channelState),
                 ),
 
             )

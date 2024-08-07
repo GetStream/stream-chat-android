@@ -81,6 +81,7 @@ internal data class MessageInnerEntity(
     val reactionCounts: Map<String, Int> = emptyMap(),
     /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */
     val reactionScores: Map<String, Int> = emptyMap(),
+    val reactionGroups: Map<String, ReactionGroupEntity> = emptyMap(),
     /** parent id, used for threads */
     val parentId: String? = null,
     /** slash command like /giphy etc */

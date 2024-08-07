@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui.feature.messages.list
 import android.animation.LayoutTransition
 import android.app.AlertDialog
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
@@ -31,6 +32,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator
+import com.google.android.material.button.MaterialButton
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
@@ -50,6 +52,7 @@ import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.CustomAction
 import io.getstream.chat.android.ui.common.state.messages.Delete
@@ -156,6 +159,7 @@ public class MessageListView : ConstraintLayout {
     private lateinit var emptyStateView: View
     private lateinit var emptyStateViewContainer: ViewGroup
     private lateinit var scrollHelper: MessageListScrollHelper
+    private var unreadLabelButton: MaterialButton? = null
 
     /**
      * Used to enable or disable parts of the UI depending
@@ -194,6 +198,9 @@ public class MessageListView : ConstraintLayout {
         false
     }
     private var messageFlagHandler = MessageFlagHandler {
+        throw IllegalStateException("onMessageFlagHandler must be set.")
+    }
+    private var messageUserBlockHandler = MessageUserBlockHandler {
         throw IllegalStateException("onMessageFlagHandler must be set.")
     }
     private var flagMessageResultHandler = FlagMessageResultHandler {
@@ -299,6 +306,10 @@ public class MessageListView : ConstraintLayout {
             is MessageListController.ErrorEvent.UnpinMessageError -> R.string.stream_ui_message_list_error_unpin_message
             is MessageListController.ErrorEvent.MarkUnreadError ->
                 R.string.stream_ui_message_list_error_mark_as_unread_message
+            is MessageListController.ErrorEvent.PollCreationError -> R.string.stream_ui_message_list_error_create_poll
+            is MessageListController.ErrorEvent.PollCastingVoteError -> R.string.stream_ui_message_list_error_cast_vote
+            is MessageListController.ErrorEvent.PollRemovingVoteError -> R.string.stream_ui_message_list_error_cast_vote
+            is MessageListController.ErrorEvent.PollClosingError -> R.string.stream_ui_message_list_error_close_poll
         }.let(::showToast)
     }
 
@@ -335,6 +346,7 @@ public class MessageListView : ConstraintLayout {
                     replyMessageClickListener.onReplyClick(replyTo)
                     true
                 }
+
                 else -> false
             }
         }
@@ -508,6 +520,7 @@ public class MessageListView : ConstraintLayout {
                         attachmentGalleryDestination.setData(attachmentGalleryItems, attachmentIndex)
                         attachmentGalleryDestination
                     }
+
                     else -> AttachmentDestination(message, attachment, context)
                 }
 
@@ -617,12 +630,26 @@ public class MessageListView : ConstraintLayout {
         initScrollHelper()
         initLoadingView()
         initEmptyStateView()
+        messageListViewStyle?.unreadLabelButtonStyle?.let { initUnreadLabelButton(it) }
 
         configureAttributes(attr)
 
         binding.defaultEmptyStateView.setTextStyle(requireStyle().emptyViewTextStyle)
 
         layoutTransition = LayoutTransition()
+    }
+
+    private fun initUnreadLabelButton(unreadLabelButtonStyle: UnreadLabelButtonStyle) {
+        if (unreadLabelButtonStyle.unreadLabelButtonEnabled) {
+            unreadLabelButton = binding.unreadLabelButton
+            unreadLabelButton?.apply {
+                setTextStyle(unreadLabelButtonStyle.unreadLabelButtonTextStyle)
+                backgroundTintList = ColorStateList.valueOf(unreadLabelButtonStyle.unreadLabelButtonColor)
+                rippleColor = ColorStateList.valueOf(unreadLabelButtonStyle.unreadLabelButtonRippleColor)
+            }
+        } else {
+            binding.unreadLabelButton.isVisible = false
+        }
     }
 
     private fun initLoadingView() {
@@ -1202,16 +1229,32 @@ public class MessageListView : ConstraintLayout {
                     messageListViewStyle?.messagesStart?.let(::chatMessageStart)
                 }
 
-                logger.v { "[handleNewWrapper] filteredList.size: ${filteredList.size}" }
-                adapter.submitList(filteredList) {
+                logger.v {
+                    "[handleNewWrapper] isOldListEmpty: $isOldListEmpty, filteredList.size: ${filteredList.size}"
+                }
+                adapter.submitListOnAnimationsFinished(filteredList) {
                     scrollHelper.onMessageListChanged(
                         isThreadStart = isThreadStart,
                         hasNewMessages = listItem.hasNewMessages,
                         isInitialList = isOldListEmpty && filteredList.isNotEmpty(),
-                        areNewestMessagesLoaded = listItem.areNewestMessagesLoaded,
+                        endOfNewMessagesReached = listItem.areNewestMessagesLoaded,
                     )
                 }
             }
+        }
+    }
+
+    private fun MessageListItemAdapter.submitListOnAnimationsFinished(
+        filteredList: List<MessageListItem>,
+        commitCallback: () -> Unit,
+    ) {
+        val animator = binding.chatMessagesRV.itemAnimator
+        if (animator?.isRunning == true) {
+            animator.isRunning {
+                submitList(filteredList, commitCallback)
+            }
+        } else {
+            submitList(filteredList, commitCallback)
         }
     }
 
@@ -1780,6 +1823,15 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Set a handler used to handle when a user is blocked.
+     *
+     * @param messageUserBlockHandler the handler
+     */
+    public fun setMessageUserBlockHandler(messageUserBlockHandler: MessageUserBlockHandler) {
+        this.messageUserBlockHandler = messageUserBlockHandler
+    }
+
+    /**
      * Sets the handler used to handle when the message is going to be unpinned.
      *
      * @param messageUnpinHandler The handler to use.
@@ -1939,6 +1991,24 @@ public class MessageListView : ConstraintLayout {
     }
 
     /**
+     * Sets the handler used when the user interacts with the unread label.
+     *
+     * @param listener The listener to use.
+     */
+    public fun setOnUnreadLabelClickListener(listener: OnUnreadLabelClickListener) {
+        unreadLabelButton?.setOnClickListener { listener.onUnreadLabelClick() }
+    }
+
+    /**
+     * Sets the handler used when the unread label is reached.
+     *
+     * @param listener The listener to use.
+     */
+    public fun setOnUnreadLabelReachedListener(listener: OnUnreadLabelReachedListener) {
+        listenerContainer.unreadLabelReachedListener = listener
+    }
+
+    /**
      * Used to display the moderated message dialog when you long click on a message that has failed the moderation
      * check.
      *
@@ -1979,6 +2049,7 @@ public class MessageListView : ConstraintLayout {
                 val displayedText = message.getTranslatedText()
                 context.copyToClipboard(displayedText)
             }
+
             is Edit -> messageEditHandler.onMessageEdit(message)
             is Pin -> {
                 if (message.pinned) {
@@ -1987,6 +2058,7 @@ public class MessageListView : ConstraintLayout {
                     messagePinHandler.onMessagePin(message)
                 }
             }
+
             is MarkAsUnread -> messageMarkAsUnreadHandler.onMessageMarkAsUnread(message)
             is Delete -> {
                 if (style.deleteConfirmationEnabled) {
@@ -1997,6 +2069,7 @@ public class MessageListView : ConstraintLayout {
                     messageDeleteHandler.onMessageDelete(message)
                 }
             }
+
             is FlagAction -> {
                 if (style.flagMessageConfirmationEnabled) {
                     confirmFlagMessageHandler.onConfirmFlagMessage(message) {
@@ -2006,11 +2079,32 @@ public class MessageListView : ConstraintLayout {
                     messageFlagHandler.onMessageFlag(message)
                 }
             }
+
             is CustomAction -> customActionHandler.onCustomAction(message, messageAction.extraProperties)
             is React -> {
                 // Handled by a separate handler.
             }
+
+            is BlockUser -> {
+                messageUserBlockHandler.onUserBlocked(message)
+            }
         }
+    }
+
+    /**
+     * Hide the unread label button.
+     */
+    public fun hideUnreadLabelButton() {
+        unreadLabelButton?.isVisible = false
+    }
+
+    /**
+     * Show the unread label button.
+     *
+     * @param unreadCount The number of unread messages.
+     */
+    public fun showUnreadLabelButton(unreadCount: Int) {
+        unreadLabelButton?.isVisible = true
     }
     //endregion
 
@@ -2147,6 +2241,14 @@ public class MessageListView : ConstraintLayout {
         public fun onLinkClick(url: String): Boolean
     }
 
+    public fun interface OnUnreadLabelClickListener {
+        public fun onUnreadLabelClick()
+    }
+
+    public fun interface OnUnreadLabelReachedListener {
+        public fun onUnreadLabelReached()
+    }
+
     @Deprecated(
         message = "Use OnUserClickListener instead",
         replaceWith = ReplaceWith("OnUserClickListener"),
@@ -2232,6 +2334,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface MessageFlagHandler {
         public fun onMessageFlag(message: Message)
+    }
+
+    public fun interface MessageUserBlockHandler {
+        public fun onUserBlocked(message: Message)
     }
 
     public fun interface MessagePinHandler {

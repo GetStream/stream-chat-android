@@ -4,8 +4,10 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'kotlin-parcelize'
 apply plugin: "de.mannodermaus.android-junit5"
+apply plugin: 'app.cash.paparazzi'
 apply plugin: 'androidx.baselineprofile'
 
 ext {
@@ -37,10 +39,12 @@ android {
     buildFeatures {
         compose true
     }
+}
 
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
-    }
+composeCompiler {
+    enableStrongSkippingMode = true
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+    stabilityConfigurationFile = rootProject.layout.projectDirectory.file("compose_compiler_config.conf")
 }
 
 baselineProfile {
@@ -59,32 +63,23 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
                 '-opt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
                 '-opt-in=kotlin.RequiresOptIn',
         ]
-        freeCompilerArgs += [
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
-        ]
-        freeCompilerArgs += [
-                "-P",
-                "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
-                        project.buildDir.absolutePath + "/compose_metrics"
-        ]
     }
 }
 
 dependencies {
     api project(':stream-chat-android-ui-common')
+    compileOnly(project(":stream-chat-android-previewdata"))
     implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.streamLog
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeMaterial
+    implementation Dependencies.composeMaterial3
 
     implementation Dependencies.composeActivity
     implementation Dependencies.composeViewModel
@@ -94,12 +89,19 @@ dependencies {
 
     // Coil
     implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
+    implementation Dependencies.composeLandscapistPlaceholder
+    implementation Dependencies.composeLandscapistAnimation
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
+
+    // UI
+    implementation Dependencies.reorderable
 
     // Tests
     testImplementation project(':stream-chat-android-test')
     testImplementation testFixtures(project(":stream-chat-android-core"))
+    testImplementation(project(":stream-chat-android-previewdata"))
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine

@@ -21,6 +21,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added optional `banExpires` field to `Member` entity. [#5340](https://github.com/GetStream/stream-chat-android/pull/5340)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
@@ -56,6 +68,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed crash in `MessageListView` when posting a message to an empty channel. [#5332](https://github.com/GetStream/stream-chat-android/pull/5332)
 
 ### ⬆️ Improved
 
@@ -86,6 +99,209 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# July 23th, 2024 - 6.4.3
+## stream-chat-android-client
+### 🐞 Fixed
+- Fixed pinned message expire date validation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
+
+### ⚠️ Changed
+- `Attachment` class doesn't use `url` property anymore. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
+
+### ❌ Removed
+- Removed `url` property of `Attachment` class. Use `assetUrl` instead. [#5325](https://github.com/GetStream/stream-chat-android/pull/5325)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed channel cache not being updated on message unpin operation. [#5329](https://github.com/GetStream/stream-chat-android/pull/5329)
+
+## stream-chat-android-compose
+### ✅ Added
+- Exposed user avatar click listener in MessagesScreen.kt
+- Added ability to create multiple instance of ChannelListViewModel with differing parameters
+
+# July 17th, 2024 - 6.4.2
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed channel cache not being updated when a message is soft deleted. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+- Expired/deleted pinned messages are filtered out. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+- Clear channels' cache on `channel.hidden` event. [#5324](https://github.com/GetStream/stream-chat-android/pull/5324)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Added `TimeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed quoted message styling. [#5316](https://github.com/GetStream/stream-chat-android/pull/5316)
+- Fixed checkbox visibility in `MessageComposer`'s footer when dark theme is used. [#5318](https://github.com/GetStream/stream-chat-android/pull/5318)
+
+### ⬆️ Improved
+- Sent messages from the MessageComposer are marked as read. [#5322](https://github.com/GetStream/stream-chat-android/pull/5322)
+
+### ✅ Added
+- Added `ChatTheme.timeProvider` to provide the current time. [#5321](https://github.com/GetStream/stream-chat-android/pull/5321)
+
+# July 05th, 2024 - 6.4.1
+## stream-chat-android-client
+### ✅ Added
+- Added `ChatClient.getNewerReplies` to fetch newer replies for a message in a thread. [#5256](https://github.com/GetStream/stream-chat-android/pull/5256)
+- Added `ChatClient.getThreads` to fetch threads for the current users. [#5264](https://github.com/GetStream/stream-chat-android/pull/5264)
+- Added `ChatClient.sendPoll`, `ChatClient.castVotePoll`, `ChatClient.closePoll` and `ChatClient.removePollVote` methods to interact with Polls. [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
+- Added new `ChatEvents` related with Polls.  [#5273](https://github.com/GetStream/stream-chat-android/pull/5273)
+- Added pinned messages parsing. [#5306](https://github.com/GetStream/stream-chat-android/pull/5306)
+
+## stream-chat-android-offline
+### 🐞 Fixed
+- Fixed messages from hidden channels being shown up. [#5281](https://github.com/GetStream/stream-chat-android/pull/5281)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed member.role being missing when updating other members' roles in a channel. [#5290](https://github.com/GetStream/stream-chat-android/pull/5290)
+
+### ✅ Added
+- Added `ChannelState.pinnedMessage` to obtain the pinned message in a channel. [#5306](https://github.com/GetStream/stream-chat-android/pull/5306)
+
+### ⚠️ Changed
+- Delete a pinned message from the pinned list if it was deleted. [#5315](https://github.com/GetStream/stream-chat-android/pull/5315)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed the message list to scroll to the bottom when a message reaction is added. [#5280](https://github.com/GetStream/stream-chat-android/pull/5280)
+
+### ✅ Added
+- Added pinned messages support to `MessageListController`. [#5306](https://github.com/GetStream/stream-chat-android/pull/5306)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed crash on `AttachmentGalleryActivity`. [#5284](https://github.com/GetStream/stream-chat-android/pull/5284)
+- Fixed quoted message styling to be consistent with `isMine` property. [#5287](https://github.com/GetStream/stream-chat-android/pull/5287)
+  * 🚨If you are overriding `TransformStyle.messageReplyStyleTransformer`, please ensure you validate your UI after this change.
+- Fixed video being displayed in voice recording attachment. [#5296](https://github.com/GetStream/stream-chat-android/pull/5296)
+
+### ⬆️ Improved
+- Extended search result list styling. [#5286](https://github.com/GetStream/stream-chat-android/pull/5286)
+
+### ✅ Added
+- Added additional message option for user blocking. [#5289](https://github.com/GetStream/stream-chat-android/pull/5289)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed deleted pinned messages being highlighted as pinned. [#5315](https://github.com/GetStream/stream-chat-android/pull/5315)
+- Fixed the url used when click on the link. [#5314](https://github.com/GetStream/stream-chat-android/pull/5314)
+
+### ⬆️ Improved
+- Enabled Strong Skipping Mode for Compose compiler and improved Compose performance. [#5303](https://github.com/GetStream/stream-chat-android/pull/5303)
+
+### ✅ Added
+- Added `MessageOptionItemVisibility` class that controls menu item visibility in the selected message options menu. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Added new `ChatTheme.messageOptionItemVisibility` property of type `MessageOptionItemVisibility`. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Added docs sections that describe these changes. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Added `StreamImage` Composable functions to load internal images, such as profile images, attachments, and other media files. [#5299](https://github.com/GetStream/stream-chat-android/pull/5299)
+- Added `AttachmentPickerTheme` to customize the `AttachmentsPicker` component. [#5297](https://github.com/GetStream/stream-chat-android/pull/5297)
+
+### ⚠️ Changed
+- Used the new `ChatTheme.messageOptionItemVisibility` property in `defaultMessageOptionsState()` in combination with own capabilities to control menu option item visibility. [#5226](https://github.com/GetStream/stream-chat-android/pull/5226)
+- Now, Compose components use `StreamImage`, which delegates [Landscapist-Coil](https://github.com/skydoves/landscapist) for loading internal images. [#5299](https://github.com/GetStream/stream-chat-android/pull/5299)
+- Migrated to Kotlin 2.0 and Compose compiler plugin [#5303](https://github.com/GetStream/stream-chat-android/pull/5303)
+
+# May 24th, 2024 - 6.4.0
+## stream-chat-android-client
+### 🐞 Fixed
+- Fix crash when parsing users from query user endpoint. [#5257](https://github.com/GetStream/stream-chat-android/pull/5257)
+- Fix `ChatClient.sendMessage()` method to be able to send multiple message in parallel. [#5266](https://github.com/GetStream/stream-chat-android/pull/5266)
+
+### ✅ Added
+- Added `ChatClient.getNewerReplies` to fetch newer replies for a message in a thread. [#5256](https://github.com/GetStream/stream-chat-android/pull/5256)
+
+## stream-chat-android-state
+### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
+
+## stream-chat-android-ui-common
+### ✅ Added
+- Created `VideoHeadersProvider` interface to provide headers for video requests. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
+
+### ⚠️ Changed
+- The `ImageHeadersProvider.getImageRequestHeaders()` method use the url as a parameter. [#5265](https://github.com/GetStream/stream-chat-android/pull/5265)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed infinite progress bar on channel list screen. [#5259](https://github.com/GetStream/stream-chat-android/pull/5259)
+- Fixed thread replies are being scrolled to bottom. [#5261](https://github.com/GetStream/stream-chat-android/pull/5261)
+### ✅ Added
+- Added an option to fetch thread from older to newer messages. [#5258](https://github.com/GetStream/stream-chat-android/pull/5258)
+
+# May 01th, 2024 - 6.3.2
+## Common changes for all artifacts
+### 🐞 Fixed
+- Shadowed messages are filtered. [#5234](https://github.com/GetStream/stream-chat-android/pull/5234)
+
+### ⬆️ Improved
+- `Channel.lastMessageAt` is not updated when there is a new message within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+
+### ✅ Added
+- Added `reason` and `custom` fields to flag message endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reason` and `custom` fields to flag user endpoint.[#5242](https://github.com/GetStream/stream-chat-android/pull/5242)
+- Added `reactionGroups` field to `Message` entity. [#5247](https://github.com/GetStream/stream-chat-android/pull/5247)
+- Added `ReactionSorting` interface to allow custom sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
+- Added `privacySettings` field to `User` entity. [#5249](https://github.com/GetStream/stream-chat-android/pull/5249)
+
+## stream-chat-android-ui-components
+### ⬆️ Improved
+- Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+
+### ✅ Added
+- Added a Button to jump to the first unread message in the channel. [#5236](https://github.com/GetStream/stream-chat-android/pull/5236)
+- Added `ViewReactionsViewStyle.reactionSorting` field to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed `ChannelsState.isLoadingMore` being stuck. [#5239](https://github.com/GetStream/stream-chat-android/pull/5239)
+
+### ⬆️ Improved
+- Channel List is not updated with new messages within a thread. [#5245](https://github.com/GetStream/stream-chat-android/pull/5245)
+- MessageList accept `reactionSorting` parameter to customize the sorting of reactions. [#5248](https://github.com/GetStream/stream-chat-android/pull/5248)
+
+# April 19th, 2024 - 6.3.1
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix issue with the keyboard gets stuck when typing a message. [#5235](https://github.com/GetStream/stream-chat-android/pull/5235)
+
+# April 05th, 2024 - 6.3.0
+## Common changes for all artifacts
+### 🐞 Fixed
+- Shadowed messages are not increasing the unread count. [#5229](https://github.com/GetStream/stream-chat-android/pull/5229)
+
+## stream-chat-android-client
+### ✅ Added
+- Added `ChatClient.getChannel` to fetch a channel with no side effects. [#5227](https://github.com/GetStream/stream-chat-android/pull/5227)
+  * Added `ChannelClient.get` to fetch a channel with no side effects.
+- Added `UploadedFile.extraData` map field to include custom data to updated file attachments. [#5230](https://github.com/GetStream/stream-chat-android/pull/5230)
+
+### ❌ Removed
+- Removed `UploadedImage` class, replace with `UploadedFile` class. [#5230](https://github.com/GetStream/stream-chat-android/pull/5230)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed crash when providing a custom message view holder. [#5232](https://github.com/GetStream/stream-chat-android/pull/5232)
+
+### ⚠️ Changed
+- 🚨Breaking change: Exposed `MessageListItemViewHolderFactory.getItemViewType` which returns the view type for the given view holder. [#5232](https://github.com/GetStream/stream-chat-android/pull/5232)
+  * You have to implement this method in your custom `MessageListItemViewHolderFactory` implementation along with another `getItemViewType` method, which returns the view type for the given message item.
+
+# March 26th, 2024 - 6.2.3
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed `TextStyle` mismatch in `MessageTextFormmater` and `QuotedMessageTextFormatter`. [#5221](https://github.com/GetStream/stream-chat-android/pull/5221)
 
 # March 22th, 2024 - 6.2.2
 ## stream-chat-android-core

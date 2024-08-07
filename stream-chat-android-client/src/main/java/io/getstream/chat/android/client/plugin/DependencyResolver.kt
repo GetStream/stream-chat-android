@@ -31,5 +31,5 @@ public interface DependencyResolver {
      * @see [KClass] to look for.
      */
     @InternalStreamChatApi
-    public fun <T : Any> resolveDependency(klass: KClass<T>): T?
+    public fun <T : Any> resolveDependency(klass: KClass<T>): T? = null
 }

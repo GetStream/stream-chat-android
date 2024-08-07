@@ -20,12 +20,21 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListIte
 
 /**
  * MessageListItemWrapper wraps a list of [MessageListItem] with a few extra fields.
+ *
+ * @param items The list of [MessageListItem]s to be shown in the list.
+ * @param hasNewMessages Whether the user has new messages or not.
+ * @param isTyping Whether the user is typing or not.
+ * @param isThread Whether the user is in a thread or not.
+ * @param areNewestMessagesLoaded Whether the newest messages are loaded or not.
  */
 public data class MessageListItemWrapper(
     val items: List<MessageListItem> = listOf(),
     val hasNewMessages: Boolean = false,
     val isTyping: Boolean = false,
     val isThread: Boolean = false,
+    @Deprecated(
+        "The name of this field will to be aligned with `MessageListState.endOfNewMessagesReached` field.",
+    )
     val areNewestMessagesLoaded: Boolean = true,
 ) {
 
@@ -34,8 +43,13 @@ public data class MessageListItemWrapper(
     }
 
     private fun stringify(): String {
-        return "MessageListItemWrapper(items=${items.size}, first: ${items.firstOrNull()?.stringify()}" +
-            ", hasNewMessages=$hasNewMessages, isTyping=$isTyping, isThread=$isThread" +
-            ", areNewestMessagesLoaded=$areNewestMessagesLoaded)"
+        return "MessageListItemWrapper(" +
+            "endOfNewMessagesReached=$areNewestMessagesLoaded" +
+            ", hasNewMessages=$hasNewMessages" +
+            ", items=${items.size}" +
+            ", first: ${items.firstOrNull()?.stringify()}" +
+            ", isTyping=$isTyping" +
+            ", isThread=$isThread" +
+            ")"
     }
 }

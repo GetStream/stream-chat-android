@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.client.plugin
 
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.log.StreamLog
 import io.getstream.result.Error
@@ -23,7 +24,6 @@ import io.getstream.result.Result
 import kotlin.reflect.KClass
 
 internal class ThrottlingPlugin : Plugin {
-    override val errorHandler = null
     private val lastMarkReadMap: MutableMap<String, Long> = mutableMapOf()
 
     override suspend fun onChannelMarkReadPrecondition(channelType: String, channelId: String): Result<Unit> {
@@ -39,6 +39,13 @@ internal class ThrottlingPlugin : Plugin {
     }
 
     override fun <T : Any> resolveDependency(klass: KClass<T>): T? = null
+    override suspend fun onGetNewerRepliesResult(
+        result: Result<List<Message>>,
+        parentId: String,
+        limit: Int,
+        lastId: String?,
+    ) { /* No-op */ }
+
     override fun onUserSet(user: User) { /* No-op */ }
     override fun onUserDisconnected() {
         lastMarkReadMap.clear()

@@ -3,6 +3,7 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'androidx.baselineprofile'
@@ -79,10 +80,6 @@ android {
         buildConfig true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.ANDROIDX_COMPOSE_COMPILER
-    }
-
     lintOptions {
         disable 'MissingTranslation'
     }
@@ -106,7 +103,6 @@ dependencies {
     implementation Dependencies.streamPushFirebase
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
@@ -118,7 +114,7 @@ dependencies {
     implementation Dependencies.composeAccompanistPager
 
     // Coil
-    implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
 
     // Firebase
     implementation Dependencies.firebaseAnalytics

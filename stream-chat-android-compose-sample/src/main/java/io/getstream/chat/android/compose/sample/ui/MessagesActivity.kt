@@ -19,8 +19,10 @@ package io.getstream.chat.android.compose.sample.ui
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -36,6 +38,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -43,9 +46,13 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.sample.ChatApp
@@ -53,16 +60,21 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
+import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
+import io.getstream.chat.android.compose.ui.theme.AttachmentPickerTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
+import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
+import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
@@ -70,6 +82,10 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.Reply
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
@@ -124,11 +140,24 @@ class MessagesActivity : BaseConnectedActivity() {
                         ),
                     )
                 },
+                attachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors).copy(
+                    backgroundOverlay = colors.overlayDark,
+                    backgroundSecondary = colors.inputBackground,
+                    backgroundPrimary = colors.barsBackground,
+                ),
+                reactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
+                messageOptionsTheme = MessageOptionsTheme.defaultTheme(
+                    optionVisibility = MessageOptionItemVisibility(),
+                ),
             ) {
                 MessagesScreen(
                     viewModelFactory = factory,
+                    reactionSorting = ReactionSortingByLastReactionAt,
                     onBackPressed = { finish() },
                     onHeaderTitleClick = {},
+                    onUserAvatarClick = { user ->
+                        Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
+                    },
                     // TODO
                     // statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )
@@ -172,6 +201,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         .background(ChatTheme.colors.appBackground)
                         .fillMaxSize(),
                     viewModel = listViewModel,
+                    reactionSorting = ReactionSortingByFirstReactionAt,
                     messagesLazyListState = if (listViewModel.isInThread) rememberMessageListState() else lazyListState,
                     onThreadClick = { message ->
                         composerViewModel.setMessageMode(MessageMode.MessageThread(message))
@@ -197,14 +227,50 @@ class MessagesActivity : BaseConnectedActivity() {
             }
 
             if (isShowingAttachments) {
+                var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
+                val screenHeight = LocalConfiguration.current.screenHeightDp
+                val pickerHeight by animateDpAsState(
+                    targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
+                    label = "full sized picker animation",
+                )
+
                 AttachmentsPicker(
                     attachmentsPickerViewModel = attachmentsPickerViewModel,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .height(350.dp),
+                        .height(pickerHeight),
+                    shape = if (isFullScreenContent) {
+                        RoundedCornerShape(0.dp)
+                    } else {
+                        ChatTheme.shapes.bottomSheet
+                    },
                     onAttachmentsSelected = { attachments ->
                         attachmentsPickerViewModel.changeAttachmentState(false)
                         composerViewModel.addSelectedAttachments(attachments)
+                    },
+                    onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
+                    onAttachmentPickerAction = { action ->
+                        if (action is AttachmentPickerPollCreation) {
+                            listViewModel.createPoll(
+                                pollConfig = PollConfig(
+                                    name = action.question,
+                                    options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
+                                    description = action.question,
+                                    allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
+                                    votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
+                                        VotingVisibility.ANONYMOUS
+                                    } else {
+                                        VotingVisibility.PUBLIC
+                                    },
+                                    maxVotesAllowed = if (action.switches.any { it.key == "maxVotesAllowed" && it.enabled }) {
+                                        action.switches.first { it.key == "maxVotesAllowed" }.pollSwitchInput?.value.toString()
+                                            .toInt()
+                                    } else {
+                                        1
+                                    },
+                                ),
+                            )
+                        }
                     },
                     onDismiss = {
                         attachmentsPickerViewModel.changeAttachmentState(false)

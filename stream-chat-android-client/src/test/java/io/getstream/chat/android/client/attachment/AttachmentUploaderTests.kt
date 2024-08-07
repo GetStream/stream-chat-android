@@ -22,21 +22,17 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.randomFile
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
-import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.shouldBeEqualTo
 import org.amshove.kluent.shouldBeInstanceOf
-import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldNotBeNull
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.any
@@ -60,30 +56,6 @@ internal class AttachmentUploaderTests {
     fun setup() {
         Shadows.shadowOf(MimeTypeMap.getSingleton())
             .addExtensionMimeTypMapping("jpg", "image/jpeg")
-    }
-
-    @Test
-    @Ignore("Current logic doesn't work so. Need to rewrite test")
-    fun `Should return attachment with properly filled data when sending file has failed`(): Unit = runTest {
-        val error = Error.GenericError(message = "")
-        val attachment = randomAttachments(size = 1).first()
-
-        val sut = Fixture()
-            .givenMockedFileUploads(channelType, channelId, Result.Failure(error))
-            .get()
-
-        val result = sut.uploadAttachment(channelType, channelId, attachment) as Result.Success
-
-        with(result.value) {
-            name shouldBeEqualTo attachment.upload!!.name
-            fileSize.shouldNotBeNull()
-            type.shouldNotBeNull()
-            mimeType.shouldNotBeNull()
-            uploadState shouldBeEqualTo Attachment.UploadState.Failed(error)
-            url.shouldBeNull()
-            imageUrl.shouldBeNull()
-            assetUrl.shouldBeNull()
-        }
     }
 
     @Test
@@ -148,7 +120,6 @@ internal class AttachmentUploaderTests {
             val url = attachment.upload!!.absolutePath
             val expectedAttachment = attachment.copy(
                 assetUrl = url,
-                url = url,
                 type = "file",
                 mimeType = "",
                 name = attachment.upload!!.name,
@@ -174,7 +145,6 @@ internal class AttachmentUploaderTests {
             val url = attachment.upload!!.absolutePath
             val expectedAttachment = attachment.copy(
                 assetUrl = url,
-                url = url,
                 type = "file",
                 mimeType = "",
                 name = attachment.upload!!.name,
@@ -214,20 +184,8 @@ internal class AttachmentUploaderTests {
             ) doReturn TestCall(result)
         }
 
-        fun givenMockedImageUploads(channelType: String, channelId: String, result: Result<UploadedImage>) {
-            whenever(
-                clientMock.sendImage(
-                    eq(channelType),
-                    eq(channelId),
-                    any(),
-                    anyOrNull(),
-                ),
-            ) doReturn TestCall(result)
-        }
-
         fun givenMockedFileUploads(channelType: String, channelId: String, files: List<File>) = apply {
             for (file in files) {
-                val imageResult = Result.Success(UploadedImage(file.absolutePath))
                 val fileResult = Result.Success(UploadedFile(file = file.absolutePath))
 
                 whenever(
@@ -245,7 +203,7 @@ internal class AttachmentUploaderTests {
                         same(file),
                         anyOrNull(),
                     ),
-                ) doReturn TestCall(imageResult)
+                ) doReturn TestCall(fileResult)
             }
         }
 

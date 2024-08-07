@@ -88,6 +88,9 @@ public object ChannelCapabilities {
     public const val SET_CHANNEL_COOLDOWN: String = "set-channel-cooldown"
 
     /** Ability to send and receive typing events. */
+    @Deprecated(
+        "Use TYPING_EVENTS instead.",
+    )
     public const val SEND_TYPING_EVENTS: String = "send-typing-events"
 
     /** Ability to update any message in the channel. */
@@ -119,4 +122,10 @@ public object ChannelCapabilities {
 
     /** "Ability to create a call. */
     public const val CREATE_CALL: String = "create-call"
+
+    /** Ability to cast a vote in a poll. */
+    public const val CAST_POLL_VOTE: String = "cast-poll-vote"
+
+    /** Ability to send a poll. */
+    public const val SEND_POLL: String = "send-poll"
 }

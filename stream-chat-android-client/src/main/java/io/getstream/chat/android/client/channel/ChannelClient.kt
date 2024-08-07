@@ -61,6 +61,9 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -72,6 +75,9 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -88,7 +94,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.result.Error
@@ -105,6 +110,26 @@ public class ChannelClient internal constructor(
 ) {
 
     public val cid: String = "$channelType:$channelId"
+
+    /**
+     * Gets the channel.
+     *
+     * @param messageLimit The number of messages to retrieve.
+     * @param memberLimit The number of members to retrieve.
+     * @param state Whether to retrieve the channel state or not.
+     */
+    public fun get(
+        messageLimit: Int = 0,
+        memberLimit: Int = 0,
+        state: Boolean = false,
+    ): Call<Channel> {
+        return client.getChannel(
+            cid = cid,
+            messageLimit = messageLimit,
+            memberLimit = memberLimit,
+            state = state,
+        )
+    }
 
     /**
      * Creates the id-based channel.
@@ -226,6 +251,12 @@ public class ChannelClient internal constructor(
             is UserStartWatchingEvent -> event.cid == cid
             is UserStopWatchingEvent -> event.cid == cid
             is ChannelUserUnbannedEvent -> event.cid == cid
+            is PollClosedEvent -> event.cid == cid
+            is PollDeletedEvent -> event.cid == cid
+            is PollUpdatedEvent -> event.cid == cid
+            is VoteCastedEvent -> event.cid == cid
+            is VoteChangedEvent -> event.cid == cid
+            is VoteRemovedEvent -> event.cid == cid
             is UnknownEvent -> event.rawData["cid"] == cid
             is HealthEvent,
             is NotificationChannelMutesUpdatedEvent,
@@ -450,7 +481,7 @@ public class ChannelClient internal constructor(
      * @param file The image file that needs to be uploaded.
      * @param callback The callback to track progress.
      *
-     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedImage]
+     * @return Executable async [Call] which completes with [Result] containing an instance of [UploadedFile]
      * if the image was successfully uploaded.
      *
      * @see FileUploader
@@ -459,7 +490,7 @@ public class ChannelClient internal constructor(
      */
     @CheckResult
     @JvmOverloads
-    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedImage> {
+    public fun sendImage(file: File, callback: ProgressCallback? = null): Call<UploadedFile> {
         return client.sendImage(channelType, channelId, file, callback)
     }
 

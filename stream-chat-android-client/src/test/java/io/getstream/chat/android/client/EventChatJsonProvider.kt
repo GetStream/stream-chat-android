@@ -644,6 +644,7 @@ private fun createConfigJsonString() =
           "push_notifications":true,
           "message_retention": "infinite",
           "max_message_length": 5000,
+          "polls": false,
           "automod": "disabled",
           "automod_behavior":"flag",
           "blocklist_behavior":"flag",

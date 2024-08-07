@@ -19,6 +19,9 @@ package io.getstream.chat.android.client.parser2.testdata
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
+import io.getstream.chat.android.client.api2.model.dto.PrivacySettingsDto
+import io.getstream.chat.android.client.api2.model.dto.ReadReceiptsDto
+import io.getstream.chat.android.client.api2.model.dto.TypingIndicatorsDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
 import org.intellij.lang.annotations.Language
 import java.util.Date
@@ -56,6 +59,7 @@ internal object UserDtoTestData {
             name = "username",
             image = "image",
             invisible = false,
+            privacy_settings = null,
             language = "language",
             role = "",
             devices = emptyList(),
@@ -103,6 +107,7 @@ internal object UserDtoTestData {
             name = null,
             image = null,
             invisible = false,
+            privacy_settings = null,
             language = null,
             role = "",
             devices = emptyList(),
@@ -126,6 +131,14 @@ internal object UserDtoTestData {
             "id": "userId",
             "role": "owner",
             "invisible": false,
+            "privacy_settings": {
+              "typing_indicators": {
+                "enabled": false
+              },
+              "read_receipts": {
+                "enabled": false
+              }
+            },
             "language": "language",
             "banned": false,
             "devices": [
@@ -163,6 +176,14 @@ internal object UserDtoTestData {
             name = "username",
             image = "image",
             invisible = false,
+            privacy_settings = PrivacySettingsDto(
+                typing_indicators = TypingIndicatorsDto(
+                    enabled = false,
+                ),
+                read_receipts = ReadReceiptsDto(
+                    enabled = false,
+                ),
+            ),
             language = "language",
             role = "owner",
             devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
@@ -209,6 +230,7 @@ internal object UserDtoTestData {
         image = "image",
         language = "language",
         invisible = false,
+        privacy_settings = null,
         banned = true,
         devices = emptyList(),
         teams = emptyList(),
@@ -223,6 +245,14 @@ internal object UserDtoTestData {
             "name": "username",
             "image": "image",
             "invisible": false,
+            "privacy_settings": {
+              "typing_indicators": {
+                "enabled": false
+              },
+              "read_receipts": {
+                "enabled": false
+              }
+            },
             "language": "language",
             "role": "owner",
             "devices": [
@@ -239,6 +269,14 @@ internal object UserDtoTestData {
         id = "userId",
         role = "owner",
         invisible = false,
+        privacy_settings = PrivacySettingsDto(
+            typing_indicators = TypingIndicatorsDto(
+                enabled = false,
+            ),
+            read_receipts = ReadReceiptsDto(
+                enabled = false,
+            ),
+        ),
         banned = false,
         devices = listOf(DeviceDto(id = "deviceId", push_provider = "provider", provider_name = "provider_name")),
         teams = listOf("team1", "team2"),

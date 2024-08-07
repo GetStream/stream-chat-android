@@ -365,6 +365,7 @@ internal class MessageComposerViewModelTest {
         private val stateRegistry: StateRegistry = mock()
         private val globalState: GlobalState = mock()
         private val clientState: ClientState = mock()
+        private val channelState: ChannelState = mock()
         private val appSettings: AppSettings = AppSettings(
             app = App(
                 name = randomString(),
@@ -415,18 +416,18 @@ internal class MessageComposerViewModelTest {
             config: Config = Config(),
             members: List<Member> = emptyList(),
         ) = apply {
-            val channelState: ChannelState = mock {
-                whenever(it.channelData) doReturn MutableStateFlow(channelData)
-                whenever(it.lastSentMessageDate) doReturn MutableStateFlow(null)
-                whenever(it.channelConfig) doReturn MutableStateFlow(config)
-                whenever(it.members) doReturn MutableStateFlow(members)
-                whenever(it.membersCount) doReturn MutableStateFlow(members.size)
-            }
+            whenever(channelState.channelData) doReturn MutableStateFlow(channelData)
+            whenever(channelState.lastSentMessageDate) doReturn MutableStateFlow(null)
+            whenever(channelState.channelConfig) doReturn MutableStateFlow(config)
+            whenever(channelState.members) doReturn MutableStateFlow(members)
+            whenever(channelState.membersCount) doReturn MutableStateFlow(members.size)
+
             whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
 
         fun givenSendMessage(message: Message = Message()) = apply {
             whenever(chatClient.sendMessage(any(), any(), any(), any())) doReturn message.asCall()
+            whenever(chatClient.markMessageRead(any(), any(), any())) doReturn Unit.asCall()
         }
 
         fun get(): MessageComposerViewModel {
@@ -438,7 +439,7 @@ internal class MessageComposerViewModelTest {
                     userLookupHandler = DefaultUserLookupHandler(chatClient, channelId),
                     fileToUri = { it.path },
                     maxAttachmentCount = maxAttachmentCount,
-                    messageLimit = 30,
+                    channelState = MutableStateFlow(channelState),
                 ),
             )
         }

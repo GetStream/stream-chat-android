@@ -22,9 +22,12 @@ import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
@@ -40,6 +43,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisi
 import io.getstream.chat.android.ui.common.utils.AttachmentConstants
 import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
 /**
@@ -67,6 +72,7 @@ import java.io.File
  * Adds the separator item when the value is `true`.
  * @param showThreadSeparatorInEmptyThread Configures if we show a thread separator when threads are empty.
  * Adds the separator item when the value is `true`.
+ * @param threadLoadOlderToNewer Configures if the thread should load older messages to newer messages.
  */
 public class MessagesViewModelFactory(
     private val context: Context,
@@ -96,8 +102,17 @@ public class MessagesViewModelFactory(
     private val messagePositionHandler: MessagePositionHandler = MessagePositionHandler.defaultHandler(),
     private val showDateSeparatorInEmptyThread: Boolean = false,
     private val showThreadSeparatorInEmptyThread: Boolean = false,
+    private val threadLoadOlderToNewer: Boolean = false,
     private val isComposerLinkPreviewEnabled: Boolean = false,
 ) : ViewModelProvider.Factory {
+
+    private val channelStateFlow: StateFlow<ChannelState?> by lazy {
+        chatClient.watchChannelAsState(
+            cid = channelId,
+            messageLimit = messageLimit,
+            coroutineScope = chatClient.inheritScope { SupervisorJob(it) + DispatcherProvider.Immediate },
+        )
+    }
 
     /**
      * The list of factories that can build [ViewModel]s that our Messages feature components use.
@@ -107,13 +122,12 @@ public class MessagesViewModelFactory(
             MessageComposerViewModel(
                 MessageComposerController(
                     chatClient = chatClient,
+                    channelState = channelStateFlow,
                     mediaRecorder = mediaRecorder,
                     userLookupHandler = userLookupHandler,
                     fileToUri = fileToUriConverter,
                     channelCid = channelId,
-                    messageLimit = messageLimit,
                     maxAttachmentCount = maxAttachmentCount,
-                    messageId = messageId,
                     isLinkPreviewEnabled = isComposerLinkPreviewEnabled,
                 ),
             )
@@ -123,11 +137,13 @@ public class MessagesViewModelFactory(
                 MessageListController(
                     cid = channelId,
                     clipboardHandler = clipboardHandler,
+                    threadLoadOrderOlderToNewer = threadLoadOlderToNewer,
                     messageId = messageId,
                     parentMessageId = parentMessageId,
                     messageLimit = messageLimit,
                     chatClient = chatClient,
                     clientState = clientState,
+                    channelState = channelStateFlow,
                     enforceUniqueReactions = enforceUniqueReactions,
                     showSystemMessages = showSystemMessages,
                     deletedMessageVisibility = deletedMessageVisibility,
@@ -143,6 +159,8 @@ public class MessagesViewModelFactory(
         AttachmentsPickerViewModel::class.java to {
             AttachmentsPickerViewModel(
                 StorageHelperWrapper(context, StorageHelper(), AttachmentFilter()),
+                channelStateFlow,
+
             )
         },
     )

@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.UploadedFile
 import io.getstream.log.taggedLogger
 import io.getstream.result.Result
 import java.io.File
@@ -119,8 +120,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                     file = file,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
-                    url = result.value.file,
-                    thumbUrl = result.value.thumbUrl,
+                    uploadedFile = result.value,
                 )
 
                 onSuccessfulUpload(
@@ -176,8 +176,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                     file = file,
                     mimeType = mimeType,
                     attachmentType = attachmentType,
-                    url = result.value.file,
-                    thumbUrl = result.value.thumbUrl,
+                    uploadedFile = result.value,
                 )
 
                 onSuccessfulUpload(
@@ -212,7 +211,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
         progressCallback: ProgressCallback?,
     ): Result<Attachment> {
         logger.d { "[onSuccessfulUpload] #uploader; attachment ${augmentedAttachment.uploadId} uploaded successfully" }
-        progressCallback?.onSuccess(augmentedAttachment.url)
+        progressCallback?.onSuccess(augmentedAttachment.assetUrl)
         return Result.Success(augmentedAttachment.copy(uploadState = Attachment.UploadState.Success))
     }
 
@@ -244,35 +243,30 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
      * @param file A file that has been uploaded.
      * @param mimeType MimeType of uploaded attachment.
      * @param attachmentType File, video or picture enum instance.
-     * @param url URL obtained from BE.
-     * @param thumbUrl The thumbnail obtained from the BE.
+     * @param uploadedFile Uploaded file data obtained from BE.
      * Usually returned for uploaded videos, can be null otherwise.
      */
     private fun Attachment.augmentAttachmentOnSuccess(
         file: File,
         mimeType: String,
         attachmentType: AttachmentType,
-        url: String,
-        thumbUrl: String? = null,
+        uploadedFile: UploadedFile,
     ): Attachment {
         return copy(
             name = file.name,
             fileSize = file.length().toInt(),
             mimeType = mimeType,
-            url = url,
             uploadState = Attachment.UploadState.Success,
             title = title.takeUnless { it.isNullOrBlank() } ?: file.name,
-            thumbUrl = thumbUrl,
+            thumbUrl = uploadedFile.thumbUrl,
             type = type ?: attachmentType.toString(),
             imageUrl = when (attachmentType) {
-                AttachmentType.IMAGE -> url
-                AttachmentType.VIDEO -> thumbUrl
+                AttachmentType.IMAGE -> uploadedFile.file
+                AttachmentType.VIDEO -> uploadedFile.thumbUrl
                 else -> imageUrl
             },
-            assetUrl = when (attachmentType) {
-                AttachmentType.IMAGE -> assetUrl
-                else -> url
-            },
+            assetUrl = uploadedFile.file,
+            extraData = extraData + uploadedFile.extraData,
         )
     }
 

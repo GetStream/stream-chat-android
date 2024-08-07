@@ -16,6 +16,8 @@
 
 package io.getstream.chat.ui.sample.data.user
 
+import io.getstream.chat.android.PrivacySettings
+
 data class SampleUser(
     val apiKey: String,
     val id: String,
@@ -23,6 +25,7 @@ data class SampleUser(
     val token: String,
     val image: String,
     val language: String = "",
+    val privacySettings: PrivacySettings? = null,
 ) {
 
     companion object {

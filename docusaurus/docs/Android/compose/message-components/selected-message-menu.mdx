@@ -1,4 +1,8 @@
-# Selecting Messages
+---
+toc_max_heading_level: 4
+---
+
+# Selected Message Menu
 
 The `SelectedMessageMenu` component allows you to show different message options to the user when they select a message in the `MessageList`. This is usually done by long tapping on a message item.
 
@@ -99,7 +103,7 @@ Next, let's see how to customize the menu.
 
 ## Customization
 
-You can customize the reactions you show, as well as the message options in this component:
+You can customize the `SelectedMessageMenu` component by using the following parameters:
 
 ```kotlin
 @Composable
@@ -114,15 +118,44 @@ fun SelectedMessageMenu(
 )
 ```
 
-* `messageOptions`: Allows you to customize which message options are shown in the overlay. You can use `defaultMessageOptionsState()` to get the default actions that we expose in our SDK.
+* `messageOptions`: Allows you to customize which message options are shown in the overlay. See [below](#customizing-the-menu-option-list).
 * `modifier`: Modifier for the dialog component.
 * `overlayColor`: Allows you to customize the color of the overlay.
 * `shape`: Allows you to customize the shape of the dialog.
-* `reactionTypes`: Allows you to customize which reactions show in the overlay. By default it uses `ChatTheme.reactionIconFactory` which is exposed by the [`ChatTheme`](../general-customization/chat-theme.mdx) component.
+* `reactionTypes`: Allows you to customize which reactions show in the overlay. See [below](#customizing-reactions).
+
+#### Customizing the Menu Option List
+
+You can pass `defaultMessageOptionsState()` to the `messageOptions` parameter to get the default actions that we expose in our SDK. This function uses the [`ChatTheme.messageOptionsTheme.optionVisibility`](../general-customization/chat-theme.mdx#messageoptionstheme) property and [own capabilities](../guides/implementing-own-capabilities.mdx) under the hood to control which action is visible to the user.
+
+The values that `defaultMessageOptionsState()` gets from `ChatTheme.messageOptionsTheme.optionVisibility` take precedence over own capabilities, so you can pass your own implementation of [`MessageOptionTheme`](https://github.com/GetStream/stream-chat-android/blob/e01d636f66fb0986ab71288f4ddee92afe550fd0/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/MessageOptionsTheme.kt) to `ChatTheme.messageOptionsTheme` to control which options to show. This is useful when you are using `MessagesScreen`, for example, which sets up `SelectedMessageMenu` automatically.
+
+```kotlin
+ChatTheme(
+    // ...
+    messageOptionsTheme = MessageOptionsTheme.defaultTheme(
+        optionVisibility = MessageOptionItemVisibility(
+            isMarkAsUnreadVisible = false,
+            isCopyTextVisible = false,
+        ),
+    ),
+    // ...
+) {
+    // Rest of the UI
+}
+```
+
+#### Customizing Reactions
+
+By default, the `reactionTypes` parameter uses [`ChatTheme.reactionIconFactory`](../general-customization/chat-theme.mdx#reactioniconfactory) as a value which is exposed by the [`ChatTheme`](../general-customization/chat-theme.mdx) component.
 
 The best way to customize reactions is by overriding `ChatTheme.reactionIconFactory` with your own implementation of `ReactionIconFactory` so that all of your components wrapped inside of `ChatTheme` draw from the same source.
 
-By default `SelectedMessageMenu` looks like a bottom sheet, however you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
+You can also control the reaction list visibility by using your own implementation of `ReactionOptionsTheme` for the [`ChatTheme.reactionOptionsTheme`](../general-customization/chat-theme.mdx#reactionoptionstheme) parameter.
+
+#### Customizing the Appearance
+
+By default `SelectedMessageMenu` looks like a bottom sheet. However you can customize it to look like a completely different component, such as a dialog, a drawer or whatever helps you retain the look and feel of your app.
 
 ```kotlin
 if (selectedMessageState is SelectedMessageOptionsState) {
@@ -154,7 +187,9 @@ The code above will produce the following UI:
 |---|---|
 | ![Stylised SelectedMessageMenu component](../../assets/compose_custom_selected_message_menu_shape_and_alignment.png) | ![Stylised SelectedMessageMenu component dark](../../assets/compose_custom_selected_message_menu_shape_and_alignment_dark.png) |
 
-`SelectedMessageMenu` provides you with `Composable` slots that are ready for more extensive customizations.
+#### Customizing by Using Slots
+
+`SelectedMessageMenu` provides you with `Composable` slots that are ready for more extensive customizations:
 
 ```kotlin
 @Composable

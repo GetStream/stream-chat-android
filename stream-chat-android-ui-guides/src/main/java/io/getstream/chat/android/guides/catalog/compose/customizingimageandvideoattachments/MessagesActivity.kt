@@ -42,6 +42,7 @@ class MessagesActivity : ComponentActivity() {
         MessagesViewModelFactory(
             context = this,
             requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+            threadLoadOlderToNewer = true,
         )
     }
 

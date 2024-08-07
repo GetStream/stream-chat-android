@@ -626,6 +626,13 @@ class CustomMessageViewHolderFactory : MessageListItemViewHolderFactory() {
         }
     }
 
+    override fun getItemViewType(viewHolder: BaseMessageItemViewHolder<out MessageListItem>): Int {
+        if (viewHolder is TodayViewHolder) {
+            return TODAY_VIEW_HOLDER_TYPE
+        }
+        return super.getItemViewType(viewHolder)
+    }
+
     private fun Date?.isLessThenDayAgo(): Boolean {
         if (this == null) {
             return false
@@ -669,9 +676,16 @@ class CustomMessageViewHolderFactory extends MessageListItemViewHolderFactory {
                 return TODAY_VIEW_HOLDER_TYPE;
             }
         }
-
         return super.getItemViewType(item);
 
+    }
+
+    @Override
+    public int getItemViewType(@NonNull BaseMessageItemViewHolder<? extends MessageListItem> viewHolder) {
+        if (viewHolder instanceof TodayViewHolder) {
+            return TODAY_VIEW_HOLDER_TYPE;
+        }
+        return super.getItemViewType(viewHolder);
     }
 
     private boolean isLessThanDayAgo(Date date) {

@@ -56,6 +56,16 @@ internal class MessageListItemAdapter(
 
     override fun onBindViewHolder(holder: BaseMessageItemViewHolder<out MessageListItem>, position: Int) {
         val item = getItem(position)
+        val itemViewType = viewHolderFactory.getItemViewType(item)
+        val holderViewType = viewHolderFactory.getItemViewType(holder)
+        if (itemViewType != holderViewType) {
+            logger.w {
+                "[onBindViewHolder] #regular; viewType mismatch; " +
+                    "item: ${MessageListItemViewType.toString(itemViewType)}, " +
+                    "viewHolder: ${MessageListItemViewType.toString(holderViewType)}"
+            }
+            return
+        }
         holder.bindListItem(item, FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
     }
 
@@ -78,8 +88,9 @@ internal class MessageListItemAdapter(
         val holderViewType = viewHolderFactory.getItemViewType(holder)
         if (itemViewType != holderViewType) {
             logger.w {
-                "[onBindViewHolder] viewType mismatch; item: ${MessageListItemViewType.toString(itemViewType)}" +
-                    ", viewHolder: ${MessageListItemViewType.toString(holderViewType)}"
+                "[onBindViewHolder] #payloads; viewType mismatch; " +
+                    "item: ${MessageListItemViewType.toString(itemViewType)}, " +
+                    "viewHolder: ${MessageListItemViewType.toString(holderViewType)}"
             }
             return
         }

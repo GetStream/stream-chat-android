@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
@@ -46,6 +47,7 @@ internal class ChannelMutableState(
     override val channelId: String,
     private val userFlow: StateFlow<User?>,
     latestUsers: StateFlow<Map<String, User>>,
+    private val now: () -> Long,
 ) : ChannelState {
 
     override val cid: String = "%s:%s".format(channelType, channelId)
@@ -54,7 +56,7 @@ internal class ChannelMutableState(
     private val logger by taggedLogger("Chat:ChannelState-$seq")
 
     private var _messages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
-    private var _countedMessage: MutableSet<String>? = mutableSetOf()
+    private var _pinnedMessages: MutableStateFlow<Map<String, Message>>? = MutableStateFlow(emptyMap())
     private var _typing: MutableStateFlow<TypingEvent>? = MutableStateFlow(TypingEvent(channelId, emptyList()))
     private var _typingChatEvents: MutableStateFlow<Map<String, TypingStartEvent>>? = MutableStateFlow(emptyMap())
     private var _rawReads: MutableStateFlow<Map<String, ChannelUserRead>>? = MutableStateFlow(emptyMap())
@@ -102,9 +104,20 @@ internal class ChannelMutableState(
     val messageList: StateFlow<List<Message>> =
         combineStates(_messages!!, latestUsers) { messageMap, userMap -> messageMap.values.updateUsers(userMap) }
 
+    val pinnedMessagesList: StateFlow<List<Message>> =
+        combineStates(_pinnedMessages!!, latestUsers) { pinnedMessagesMap, userMap ->
+            pinnedMessagesMap.values.updateUsers(userMap)
+        }
+
+    val rawPinnedMessages get() = _pinnedMessages?.value.orEmpty()
+
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =
         messagesTransformation(messageList)
+
+    /** a list of pinned messages sorted by message.createdAt */
+    private val sortedVisiblePinnedMessages: StateFlow<List<Message>> =
+        messagesTransformation(pinnedMessagesList) { it.isPinned(now) }
 
     override val messagesState: StateFlow<MessagesState> =
         combineStates(loading, sortedVisibleMessages) { loading: Boolean, messages: List<Message> ->
@@ -115,12 +128,16 @@ internal class ChannelMutableState(
             }
         }
 
-    private fun messagesTransformation(messages: StateFlow<Collection<Message>>): StateFlow<List<Message>> {
+    private fun messagesTransformation(
+        messages: StateFlow<Collection<Message>>,
+        extraPredicate: (Message) -> Boolean = { true },
+    ): StateFlow<List<Message>> {
         return combineStates(messages, userFlow) { messageCollection, user ->
             messageCollection.asSequence()
                 .filter { it.parentId == null || it.showInChannel }
                 .filter { it.user.id == user?.id || !it.shadowed }
                 .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .filter(extraPredicate)
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
         }
@@ -135,8 +152,18 @@ internal class ChannelMutableState(
             .associateBy(Message::id)
     }
 
+    internal val visiblePinnedMessages: StateFlow<Map<String, Message>> = pinnedMessagesList.mapState { messages ->
+        messages.filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+            .associateBy(Message::id)
+    }
+
     /** Sorted version of messages. */
     val sortedMessages: StateFlow<List<Message>> = visibleMessages.mapState { messagesMap ->
+        messagesMap.values.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
+    }
+
+    /** Sorted version of messages. */
+    val sortedPinnedMessages: StateFlow<List<Message>> = visiblePinnedMessages.mapState { messagesMap ->
         messagesMap.values.sortedBy { message -> message.createdAt ?: message.createdLocallyAt }
     }
 
@@ -148,6 +175,8 @@ internal class ChannelMutableState(
     override val channelConfig: StateFlow<Config> = _channelConfig!!
 
     override val messages: StateFlow<List<Message>> = sortedVisibleMessages
+
+    override val pinnedMessages: StateFlow<List<Message>> = sortedVisiblePinnedMessages
 
     override val oldMessages: StateFlow<List<Message>> = messagesTransformation(_oldMessages!!.mapState { it.values })
     override val watcherCount: StateFlow<Int> = _watcherCount!!
@@ -203,6 +232,7 @@ internal class ChannelMutableState(
         val channelData = channelData.value
 
         val messages = sortedMessages.value
+        val pinnedMessages = sortedPinnedMessages.value
         val cachedMessages = cachedLatestMessages.value.values.toList()
         val members = members.value
         val watchers = watchers.value
@@ -217,6 +247,7 @@ internal class ChannelMutableState(
             hidden = hidden.value,
             isInsideSearch = insideSearch,
             cachedLatestMessages = cachedLatestMessages.value.values.toList(),
+            pinnedMessages = pinnedMessages,
         ).syncUnreadCountWithReads()
     }
 
@@ -282,6 +313,10 @@ internal class ChannelMutableState(
     /** Sets [ChannelData]. */
     fun setChannelData(channelData: ChannelData) {
         _channelData?.value = channelData
+    }
+
+    fun updateChannelData(update: (ChannelData?) -> ChannelData?) {
+        _channelData?.value = update(_channelData?.value)
     }
 
     /**
@@ -417,12 +452,15 @@ internal class ChannelMutableState(
         _watchers?.let { upsertWatchers((it.value - user.id).values.toList(), watchersCount) }
     }
 
-    fun deleteMessage(message: Message, updateCount: Boolean = true) {
+    fun deleteMessage(message: Message) {
+        logger.v { "[deleteMessage] message.id: ${message.id}" }
         _messages?.apply { value = value - message.id }
+        setPinned { pinned -> pinned - message.id }
+    }
 
-        if (updateCount) {
-            _countedMessage?.remove(message.id)
-        }
+    fun deletePinnedMessage(message: Message) {
+        logger.v { "[deletePinnedMessage] message.id=${message.id}, message.text=${message.text}" }
+        setPinned { pinned -> pinned - message.id }
     }
 
     fun upsertWatchers(watchers: List<User>, watchersCount: Int) {
@@ -444,12 +482,8 @@ internal class ChannelMutableState(
      *
      * @param message message to be upserted.
      */
-    fun upsertMessage(message: Message, updateCount: Boolean = true) {
-        _messages?.apply { value = value + (message.id to message) }
-
-        if (updateCount) {
-            _countedMessage?.add(message.id)
-        }
+    fun upsertMessage(message: Message) {
+        upsertMessages(listOf(message))
     }
 
     fun upsertUserPresence(user: User) {
@@ -460,6 +494,7 @@ internal class ChannelMutableState(
         _channelData?.value?.takeIf { it.createdBy.id == user.id }
             ?.let { setChannelData(it.copy(createdBy = user)) }
         _messages?.apply { value = value.values.updateUsers(mapOf(user.id to user)).associateBy { it.id } }
+        _pinnedMessages?.apply { value = value.updateUsers(mapOf(user.id to user)) }
     }
 
     fun upsertReads(reads: List<ChannelUserRead>) {
@@ -494,19 +529,42 @@ internal class ChannelMutableState(
         } ?: false
 
     fun removeMessagesBefore(date: Date) {
+        logger.d { "[removeMessagesBefore] date: $date" }
         _messages?.apply { value = value.filter { it.value.wasCreatedAfter(date) } }
+        setPinned { pinned -> pinned.filter { it.value.wasCreatedAfter(date) } }
     }
 
-    fun upsertMessages(updatedMessages: Collection<Message>, updateCount: Boolean = true) {
+    fun upsertMessages(updatedMessages: Collection<Message>) {
         _messages?.apply { value += updatedMessages.associateBy(Message::id) }
-
-        if (updateCount) {
-            _countedMessage?.addAll(updatedMessages.map { it.id })
-        }
+        _pinnedMessages?.value
+            ?.let { pinnedMessages ->
+                val pinnedMessageIds = pinnedMessages.keys
+                updatedMessages
+                    .filter { pinnedMessageIds.contains(it.id) }
+                    .let { upsertPinnedMessages(it) }
+            }
     }
 
     fun setMessages(messages: List<Message>) {
         _messages?.value = messages.associateBy(Message::id)
+    }
+
+    fun setPinnedMessages(messages: List<Message>) {
+        logger.d { "[setPinnedMessages] messages.size: ${messages.size}" }
+        setPinned { messages.associateBy(Message::id) }
+    }
+
+    fun upsertPinnedMessages(messages: Collection<Message>) {
+        logger.d { "[upsertPinnedMessages] messages.size: ${messages.size}" }
+        setPinned { pinned -> pinned + messages.associateBy(Message::id) }
+    }
+
+    private inline fun setPinned(producer: (Map<String, Message>) -> Map<String, Message>) {
+        val curPinnedMessages = _pinnedMessages?.value
+        curPinnedMessages ?: return
+        val newPinnedMessages = producer(curPinnedMessages)
+        logger.v { "[setPinned] pinned.size: ${curPinnedMessages.size} => ${newPinnedMessages.size}" }
+        _pinnedMessages?.value = newPinnedMessages
     }
 
     private fun cacheLatestMessages() {
@@ -520,19 +578,11 @@ internal class ChannelMutableState(
         cachedLatestMessages.value = messages
     }
 
-    fun clearCountedMessages() {
-        _countedMessage?.clear()
-    }
-
-    fun insertCountedMessages(ids: List<String>) {
-        _countedMessage?.addAll(ids)
-    }
-
-    override fun getMessageById(id: String): Message? = _messages?.value?.get(id)
+    override fun getMessageById(id: String): Message? = _messages?.value?.get(id) ?: _pinnedMessages?.value?.get(id)
 
     internal fun destroy() {
         _messages = null
-        _countedMessage = null
+        _pinnedMessages = null
         _typing = null
         _typingChatEvents = null
         _rawReads = null

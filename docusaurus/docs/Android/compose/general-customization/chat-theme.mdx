@@ -12,12 +12,15 @@ The `ChatTheme` component is a wrapper that **you should use as the root** of al
 * `attachmentPreviewHandlers`: Used to provide previews for all supported attachment types. If you do not wish to use the default previews, you can customize this.
 * `quotedAttachmentFactories`: Used to process messages and show different types of attachment UI, when quoting a message that contains an attachment.
 * `reactionIconFactory`: Used to create a reaction icon for the given reaction type. You can use the default factory that supports a predefined set of reactions, or provide a custom one.
+* `reactionOptionsTheme`: Used to define the appearance of the reaction option list in the selected message menu. For theming the message option list in the same menu, see `messageOptionsTheme` below.
 * `dateFormatter`: Used to define the timestamp formatting in the app. You can use the default formatting, or customize it to your needs.
 * `channelNameFormatter`: Used to define the channel name formatting in the app. You can use the default implementation, or customize it according to your needs.
 * `messagePreviewFormatter`: Used to define the message preview formatting in the app. You can use the default implementation, or customize the display of message previews according to your needs.
 * `imageLoaderFactory`: Used to create Coil image loader instances. You can use the default image loader factory, or provide a custom one.
 * `messageAlignmentProvider`: Used to provide an alignment for a particular message. You can use the default implementation which aligns the messages of the current user to end, or customize it according to your needs.
+* `messageOptionsTheme`: Used to define the appearance of the message option list in the selected message menu. For theming the reaction option list in the same menu, see `reactionOptionsTheme` above.
 * `messageOptionsUserReactionAlignment`: Used to define how message reactions are aligned when browsing all reactions for a given message.
+* `attachmentPickerTheme`: Used to define the appearance of the attachment picker dialog. You can use the default implementation, or customize it according to your needs.
 * `permissionHandlers`: Used to handle permissions inside the app. Default implementation of the download permission handler automatically downloads files after the permission has been granted.
 * `attachmentsPickerTabFactories`: Used to display different tabs in the attachments picker dialog.
 * `videoThumbnailsEnabled`: Dictates whether video thumbnails will be displayed inside video previews. They are a paid feature and enabled by default and the pricing can be found [here](https://getstream.io/chat/pricing/).
@@ -170,6 +173,12 @@ You can find their definitions in the [class documentation](https://github.com/G
 
 Reactions are easily customizable by passing in your own `ReactionIconFactory` which contains reactions and overriding `ChatTheme.reactionIconFactory` with it.
 
+### ReactionOptionsTheme
+
+Defines the appearance of the reaction option list in the selected message menu. Allows you to show/hide options through the `areReactionOptionsVisible` parameter.
+
+See the [class documentation](https://github.com/GetStream/stream-chat-android/blob/0817af6b82cd72d541ed5e816fef8a3a27441e69/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/ReactionOptionsTheme.kt) for more details.
+
 ### DateFormatter
 
 Used for formatting various times and dates such as the timestamp you see when a message is displayed. The default date formatter in `ChatTheme` is Stream's `DefaultDateFormatter`.
@@ -208,6 +217,31 @@ ChatTheme(
 ) {
     // Your UI content
 }
+```
+
+### TimeProvider
+
+Used for providing the current time. The default time provider is `TimeProvider.DEFAULT`.
+
+You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/helper/TimeProvider.kt).
+
+The time provider can be customized by overriding `ChatTheme.timeProvider` with your own implementation of `TimeProvider`.
+
+```kotlin
+ChatTheme(
+    timeProvider = object : TimeProvider {
+        override fun invoke(): Long {
+            // Return the current time in milliseconds
+            // System.currentTimeMillis() is the default implementation
+            // You can use your own implementation here which can be synchronized with a server
+            // to avoid local clock tampering
+            return System.currentTimeMillis()
+        }
+    }
+) {
+    // Your UI content
+}
+
 ```
 
 ### ChannelNameFormatter
@@ -303,6 +337,12 @@ You can find out more about it by reading the [class documentation](https://gith
 
 As with all of the other `ChatTheme` properties, you can easily customize how the messages are aligned by overriding `ChatTheme.messageAlignmentProvider` with your own implementation of `MessageAlignmentProvider`.
 
+### MessageOptionsTheme
+
+Defines the appearance of the message option list in the selected message menu. Allows you to show/hide options through the `optionVisibility` parameter.
+
+See the [class documentation](https://github.com/GetStream/stream-chat-android/blob/e01d636f66fb0986ab71288f4ddee92afe550fd0/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/MessageOptionsTheme.kt) for more details.
+
 ### MessageOptionsUserReactionAlignment
 
 Determines the alignment of the reaction icon inside user reactions. By default, they are aligned to the end.
@@ -310,6 +350,12 @@ Determines the alignment of the reaction icon inside user reactions. By default,
 You can find out more about it by reading the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/src/main/kotlin/io/getstream/chat/android/ui/common/state/messages/list/MessageOptionsUserReactionAlignment.kt).
 
 You can also align the reactions to the start of the user avatar or align them depending on the user who left them.
+
+### AttachmentPickerTheme
+
+Defines the appearance of the attachment picker dialog. The default attachment picker theme is `AttachmentPickerTheme.defaultTheme()`.
+
+See the [class documentation](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-compose/src/main/java/io/getstream/chat/android/compose/ui/theme/AttachmentPickerTheme.kt)
 
 ### PermissionHandlers
 

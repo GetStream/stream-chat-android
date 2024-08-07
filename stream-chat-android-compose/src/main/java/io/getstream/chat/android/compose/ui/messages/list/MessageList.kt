@@ -35,9 +35,17 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
 /**
  * Default MessageList component, that relies on [MessageListViewModel] to connect all the data
@@ -47,6 +55,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
  * @param viewModel The ViewModel that stores all the data and business logic required to show a
  * list of messages. The user has to provide one in this case, as we require the channelId to start
  * the operations.
+ * @param reactionSorting The sorting of the reactions. Default: [ReactionSortingByFirstReactionAt].
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -62,6 +71,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
  * @param onScrollToBottom Handler when the user reaches the bottom.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
@@ -77,6 +87,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 @Composable
 public fun MessageList(
     viewModel: MessageListViewModel,
+    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
@@ -89,12 +100,41 @@ public fun MessageList(
     onLastVisibleMessageChanged: (Message) -> Unit = { viewModel.updateLastSeenMessage(it) },
     onScrollToBottom: () -> Unit = { viewModel.clearNewMessageState() },
     onGiphyActionClick: (GiphyAction) -> Unit = { viewModel.performGiphyAction(it) },
+    onPollUpdated: (Message, Poll) -> Unit = { message, poll ->
+        val selectedPoll = viewModel.pollState.selectedPoll
+        if (viewModel.isShowingPollOptionDetails &&
+            selectedPoll != null && selectedPoll.poll.id == poll.id
+        ) {
+            viewModel.updatePollState(poll, message, selectedPoll.pollSelectionType)
+        }
+    },
+    onCastVote: (Message, Poll, Option) -> Unit = { message, poll, option ->
+        viewModel.castVote(
+            message = message,
+            poll = poll,
+            option = option,
+        )
+    },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { message, poll, vote ->
+        viewModel.removeVote(
+            message = message,
+            poll = poll,
+            vote = vote,
+        )
+    },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { message, poll, selectionType ->
+        viewModel.displayPollMoreOptions(selectedPoll = SelectedPoll(poll, message, selectionType))
+    },
+    onClosePoll: (String) -> Unit = { pollId ->
+        viewModel.closePoll(pollId = pollId)
+    },
     onQuotedMessageClick: (Message) -> Unit = { message ->
         viewModel.scrollToMessage(
             messageId = message.id,
             parentMessageId = message.parentId,
         )
     },
+    onUserAvatarClick: ((User) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -118,16 +158,24 @@ public fun MessageList(
     itemContent: @Composable (MessageListItemState) -> Unit = { messageListItem ->
         DefaultMessageContainer(
             messageListItemState = messageListItem,
+            reactionSorting = reactionSorting,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onPollUpdated = onPollUpdated,
+            onClosePoll = onClosePoll,
             onThreadClick = onThreadClick,
             onLongItemClick = onLongItemClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = onUserAvatarClick,
         )
     },
 ) {
     MessageList(
+        reactionSorting = reactionSorting,
         modifier = modifier,
         contentPadding = contentPadding,
         currentState = viewModel.currentMessagesState,
@@ -154,31 +202,49 @@ public fun MessageList(
  * The default message container item.
  *
  * @param messageListItemState The state of the message list item.
+ * @param reactionSorting The sorting of the reactions.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param onThreadClick Handler when the user taps on a thread within a message item.
  * @param onLongItemClick Handler when the user long taps on an item.
  * @param onReactionsClick Handler when the user taps on message reactions.
  * @param onGiphyActionClick Handler when the user taps on Giphy message actions.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onCastVote Handler for casting a vote on an option.
+ * @param onClosePoll Handler for closing a poll.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun DefaultMessageContainer(
     messageListItemState: MessageListItemState,
+    reactionSorting: ReactionSorting,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onLongItemClick: (Message) -> Unit,
     onReactionsClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onPollUpdated: (Message, Poll) -> Unit,
+    onCastVote: (Message, Poll, Option) -> Unit,
+    onRemoveVote: (Message, Poll, Vote) -> Unit,
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
+    onUserAvatarClick: ((User) -> Unit)? = null,
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
+        reactionSorting = reactionSorting,
         onLongItemClick = onLongItemClick,
         onReactionsClick = onReactionsClick,
         onThreadClick = onThreadClick,
         onGiphyActionClick = onGiphyActionClick,
+        onPollUpdated = onPollUpdated,
+        onCastVote = onCastVote,
+        onRemoveVote = onRemoveVote,
+        selectPoll = selectPoll,
+        onClosePoll = onClosePoll,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
+        onUserAvatarClick = onUserAvatarClick,
     )
 }
 
@@ -219,6 +285,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param currentState The state of the component, represented by [MessageListState].
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
  * Default: [ThreadMessagesStart.BOTTOM].
+ * @param reactionSorting The sorting of the reactions.
  * @param modifier Modifier for styling.
  * @param contentPadding Padding values to be applied to the message list surrounding the content inside.
  * @param messagesLazyListState State of the lazy list that represents the list of messages. Useful for controlling the
@@ -248,6 +315,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
 public fun MessageList(
     currentState: MessageListState,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
+    reactionSorting: ReactionSorting,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     messagesLazyListState: MessagesLazyListState =
@@ -255,6 +323,11 @@ public fun MessageList(
     onMessagesPageStartReached: () -> Unit = {},
     onLastVisibleMessageChanged: (Message) -> Unit = {},
     onScrolledToBottom: () -> Unit = {},
+    onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
+    onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
+    onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
+    selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onClosePoll: (String) -> Unit = { _ -> },
     onThreadClick: (Message) -> Unit = {},
     onLongItemClick: (Message) -> Unit = {},
     onReactionsClick: (Message) -> Unit = {},
@@ -263,6 +336,7 @@ public fun MessageList(
     onQuotedMessageClick: (Message) -> Unit = {},
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
+    onUserAvatarClick: ((User) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -279,12 +353,19 @@ public fun MessageList(
     itemContent: @Composable (MessageListItemState) -> Unit = {
         DefaultMessageContainer(
             messageListItemState = it,
+            reactionSorting = reactionSorting,
+            onPollUpdated = onPollUpdated,
+            onCastVote = onCastVote,
+            onRemoveVote = onRemoveVote,
+            selectPoll = selectPoll,
+            onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
             onThreadClick = onThreadClick,
             onReactionsClick = onReactionsClick,
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onUserAvatarClick = onUserAvatarClick,
         )
     },
 ) {
@@ -309,6 +390,7 @@ public fun MessageList(
             onMessagesEndReached = onMessagesPageEndReached,
             onScrollToBottom = onScrollToBottom,
         )
+
         else -> emptyContent()
     }
 }

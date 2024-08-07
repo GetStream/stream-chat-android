@@ -45,20 +45,25 @@ import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.extensions.awaitRepliesAsState
 import io.getstream.chat.android.state.extensions.cancelEphemeralMessage
 import io.getstream.chat.android.state.extensions.getMessageUsingCache
 import io.getstream.chat.android.state.extensions.getRepliesAsState
 import io.getstream.chat.android.state.extensions.globalState
 import io.getstream.chat.android.state.extensions.loadMessageById
+import io.getstream.chat.android.state.extensions.loadMessagesAroundId
 import io.getstream.chat.android.state.extensions.loadNewerMessages
 import io.getstream.chat.android.state.extensions.loadNewestMessages
 import io.getstream.chat.android.state.extensions.loadOlderMessages
-import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.helper.ClipboardHandler
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.MarkAsUnread
@@ -97,7 +102,11 @@ import io.getstream.chat.android.ui.common.state.messages.list.SystemMessageItem
 import io.getstream.chat.android.ui.common.state.messages.list.ThreadDateSeparatorItemState
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import io.getstream.chat.android.ui.common.state.messages.list.UnreadSeparatorItemState
+import io.getstream.chat.android.ui.common.state.messages.list.lastItemOrNull
 import io.getstream.chat.android.ui.common.state.messages.list.stringify
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.PollState
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.chat.android.ui.common.utils.extensions.onFirst
 import io.getstream.chat.android.ui.common.utils.extensions.shouldShowMessageFooter
 import io.getstream.log.TaggedLogger
@@ -135,12 +144,14 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
  *
  * @param cid The channel id in the format messaging:123.
  * @param clipboardHandler [ClipboardHandler] used to copy messages.
+ * @param threadLoadOrderOlderToNewer Determines the order in which the thread messages are loaded.
  * @param messageId The message id to which we want to scroll to when opening the message list.
  * @param parentMessageId The ID of the parent [Message] if the message we want to scroll to is in a thread. If the
  * message we want to scroll to is not in a thread, you can pass in a null value.
  * @param messageLimit The limit of messages being fetched with each page od data.
  * @param chatClient The client used to communicate with the API.
  * @param clientState The current state of the SDK.
+ * @param channelState The state of the channel.
  * @param deletedMessageVisibility The [DeletedMessageVisibility] to be applied to the list.
  * @param showSystemMessages Determines if the system messages should be shown or not.
  * @param messageFooterVisibility Determines if and when the message footer is visible or not.
@@ -157,11 +168,13 @@ import io.getstream.chat.android.ui.common.state.messages.Flag as FlagMessage
 public class MessageListController(
     private val cid: String,
     private val clipboardHandler: ClipboardHandler,
+    public val threadLoadOrderOlderToNewer: Boolean,
     private val messageId: String? = null,
     private val parentMessageId: String? = null,
     public val messageLimit: Int = DEFAULT_MESSAGES_LIMIT,
     private val chatClient: ChatClient = ChatClient.instance(),
     private val clientState: ClientState = chatClient.clientState,
+    public val channelState: StateFlow<ChannelState?>,
     private val deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
     private val showSystemMessages: Boolean = true,
     private val messageFooterVisibility: MessageFooterVisibility = MessageFooterVisibility.WithTimeDifference(),
@@ -188,11 +201,6 @@ public class MessageListController(
     private val scope = CoroutineScope(DispatcherProvider.Immediate)
 
     /**
-     * Holds information about the current channel and is actively updated.
-     */
-    public val channelState: StateFlow<ChannelState?> = observeChannelState()
-
-    /**
      * Gives us information about the online state of the device.
      */
     public val connectionState: StateFlow<ConnectionState> = clientState.connectionState
@@ -202,7 +210,10 @@ public class MessageListController(
      */
     public val user: StateFlow<User?> = clientState.user
 
-    private val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
+    /**
+     * Holds information about the unread label state.
+     */
+    public val unreadLabelState: MutableStateFlow<UnreadLabel?> = MutableStateFlow(null)
 
     /**
      * Holds information about the abilities the current user is able to exercise in the given channel.
@@ -226,7 +237,8 @@ public class MessageListController(
                 state.channelData,
                 state.membersCount,
                 state.watcherCount,
-            ) { _, _, _ ->
+                state.pinnedMessages,
+            ) { _, _, _, _ ->
                 state.toChannel()
             }
         }
@@ -277,6 +289,13 @@ public class MessageListController(
     private val _messageListState: MutableStateFlow<MessageListState> =
         MutableStateFlow(MessageListState(isLoading = true))
     public val messageListState: StateFlow<MessageListState> = _messageListState
+
+    /**
+     * Current state of the poll.
+     */
+    private val _pollState: MutableStateFlow<PollState> =
+        MutableStateFlow(PollState())
+    public val pollState: StateFlow<PollState> = _pollState
 
     /**
      * Current state of the thread message list.
@@ -402,17 +421,9 @@ public class MessageListController(
      * load the message if it is not in the list and scroll to it.
      */
     init {
+        logger.i { "<init> cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
         observeMessagesListState()
         processMessageId()
-    }
-
-    private fun observeChannelState(): StateFlow<ChannelState?> {
-        logger.d { "[observeChannelState] cid: $cid, messageId: $messageId, messageLimit: $messageLimit" }
-        return chatClient.watchChannelAsState(
-            cid = cid,
-            messageLimit = messageLimit,
-            coroutineScope = scope,
-        )
     }
 
     /**
@@ -455,6 +466,7 @@ public class MessageListController(
                     is MessagesState.Loading,
                     is MessagesState.NoQueryActive,
                     -> _messageListState.value.copy(isLoading = true)
+
                     is MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
@@ -512,10 +524,10 @@ public class MessageListController(
         channelState.filterNotNull().flatMapLatest { it.loadingNewerMessages }.onEach {
             updateIsLoadingNewerMessages(it)
         }.launchIn(scope)
-        refreshUnreadLabel()
+        refreshUnreadLabel(true)
     }
 
-    private fun refreshUnreadLabel() {
+    private fun refreshUnreadLabel(shouldShowButton: Boolean) {
         val previousUnreadMessageId = unreadLabelState.value?.lastReadMessageId
         channelState.filterNotNull()
             .flatMapLatest {
@@ -530,37 +542,71 @@ public class MessageListController(
                 unreadLabelState.value = channelUserRead.lastReadMessageId
                     ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
                     ?.let {
-                        UnreadLabel(channelUserRead.unreadMessages, it)
+                        UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton)
                     }
             }.launchIn(scope)
     }
 
-    private fun processMessageId() {
-        messageId?.takeUnless { it.isBlank() }?.let { messageId ->
-            logger.i { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
-            scope.launch {
-                if (parentMessageId != null) {
-                    enterThreadSequential(parentMessageId)
-                }
+    /**
+     * Disable the unread label button.
+     */
+    public fun disableUnreadLabelButton() {
+        unreadLabelState.value = unreadLabelState.value?.copy(buttonVisibility = false)
+    }
 
-                listState
-                    .onCompletion {
-                        logger.v { "[processMessageId] mode: ${_mode.value}" }
-                        when {
-                            _mode.value is MessageMode.Normal -> {
-                                focusChannelMessage(messageId)
-                            }
-                            _mode.value is MessageMode.MessageThread && parentMessageId != null -> {
-                                focusThreadMessage(
-                                    threadMessageId = messageId,
-                                    parentMessageId = parentMessageId,
-                                )
+    /**
+     * Scrolls to the first unread message in the channel.
+     */
+    public fun scrollToFirstUnreadMessage() {
+        unreadLabelState.value?.let { unreadLabel ->
+            val messages = messagesState.messageItems
+                .filterIsInstance<MessageItemState>()
+                .map { it.message }
+
+            messages.firstOrNull { it.id == unreadLabel.lastReadMessageId }
+                ?.let { messages.focusUnreadMessage(it.id) }
+                ?: {
+                    scope.launch {
+                        chatClient.loadMessagesAroundId(cid, unreadLabel.lastReadMessageId)
+                            .await()
+                            .onSuccess { channel -> channel.messages.focusUnreadMessage(unreadLabel.lastReadMessageId) }
+                    }
+                }
+        }
+        disableUnreadLabelButton()
+    }
+
+    private fun processMessageId() {
+        messageId
+            ?.takeUnless { it.isBlank() }
+            ?.let { messageId ->
+                logger.d { "[processMessageId] messageId: $messageId, parentMessageId: $parentMessageId" }
+                scope.launch {
+                    if (parentMessageId != null) {
+                        enterThreadSequential(parentMessageId)
+                    }
+                    listState
+                        .onCompletion {
+                            logger.v { "[processMessageId] mode: ${_mode.value}" }
+                            when {
+                                _mode.value is MessageMode.Normal -> focusChannelMessage(messageId)
+                                _mode.value is MessageMode.MessageThread && parentMessageId != null ->
+                                    focusThreadMessage(
+                                        threadMessageId = messageId,
+                                        parentMessageId = parentMessageId,
+                                    )
                             }
                         }
-                    }
-                    .first { it.messageItems.isNotEmpty() }
+                        .first { it.messageItems.isNotEmpty() }
+                }
             }
-        }
+    }
+
+    private fun List<Message>.focusUnreadMessage(lastReadMessageId: String) {
+        indexOfFirst { it.id == lastReadMessageId }
+            .takeIf { it != -1 }
+            ?.takeUnless { it >= size - 1 }
+            ?.let { focusChannelMessage(get(it + 1).id) }
     }
 
     private fun updateMessageList(newState: MessageListState) {
@@ -575,16 +621,13 @@ public class MessageListController(
         val last = newState.messageItems.filterIsInstance<MessageItemState>().lastOrNull()?.stringify()
         logger.d { "[updateMessageList] #messageList; first: $first, last: $last" }
 
-        val newLastMessage =
-            newState.messageItems.lastOrNull { it is MessageItemState || it is SystemMessageItemState }?.let {
-                when (it) {
-                    is MessageItemState -> it.message
-                    is SystemMessageItemState -> it.message
-                    else -> null
-                }
-            }
+        val oldLastMessage = _messageListState.value.lastItemOrNull<HasMessageListItemState>()?.message
+        val newLastMessage = newState.lastItemOrNull<HasMessageListItemState>()?.message
 
-        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+        val newMessageState = when (oldLastMessage?.id != newLastMessage?.id) {
+            true -> getNewMessageState(newLastMessage, lastLoadedMessage)
+            else -> null
+        }
         setMessageListState(newState.copy(newMessageState = newMessageState))
         if (newMessageState != null) lastLoadedMessage = newLastMessage
     }
@@ -910,6 +953,7 @@ public class MessageListController(
                 DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER -> {
                     !(it.isDeleted() && it.user.id != currentUser?.id)
                 }
+
                 DeletedMessageVisibility.ALWAYS_HIDDEN -> !it.isDeleted()
             }
             val isSystemMessage = it.isSystem() || it.isError()
@@ -936,6 +980,7 @@ public class MessageListController(
                 (lastMessage.isGiphy() || lastLoadedMessage.id != lastMessage.id) -> {
                 getNewMessageStateForMessage(lastMessage)
             }
+
             else -> getNewMessageStateForMessage(lastMessage)
         }
     }
@@ -986,19 +1031,56 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadNewerMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
-        logger.i { "[loadNewerMessages] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
-        if (isInThread ||
-            clientState.isOffline ||
-            channelState.value?.endOfNewerMessages?.value == true
-        ) {
-            logger.w {
-                "[loadNewerMessages] rejected; isInThread: $isInThread, isOffline: ${clientState.isOffline}, " +
-                    "endOfNewerMessages: ${channelState.value?.endOfNewerMessages?.value}"
+        logger.d { "[loadNewerMessages] baseMessageId: $baseMessageId, messageLimit: $messageLimit" }
+        if (clientState.isOffline) return
+        _mode.value.run {
+            when (this) {
+                is MessageMode.Normal -> loadNewerChannelMessages(baseMessageId, messageLimit)
+                is MessageMode.MessageThread -> loadNewerMessagesInThread(this)
+            }
+        }
+    }
+
+    private fun loadNewerChannelMessages(baseMessageId: String, messageLimit: Int = this.messageLimit) {
+        if (channelState.value?.endOfNewerMessages?.value == true) {
+            logger.d {
+                "[loadNewerChannelMessages] rejected; endOfNewerMessages: " +
+                    "${channelState.value?.endOfNewerMessages?.value}"
             }
             return
         }
-
         chatClient.loadNewerMessages(cid, baseMessageId, messageLimit).enqueue()
+    }
+
+    private fun loadNewerMessagesInThread(
+        threadMode: MessageMode.MessageThread,
+    ) {
+        logger.d {
+            "[loadNewerMessagesInThread] endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}"
+        }
+        if (threadMode.threadState?.endOfNewerMessages?.value == true ||
+            threadMode.threadState?.loading?.value == true ||
+            !threadLoadOrderOlderToNewer
+        ) {
+            logger.d {
+                "[loadNewerMessagesInThread] rejected; " +
+                    "endOfNewerMessages: ${threadMode.threadState?.endOfNewerMessages?.value}, " +
+                    "loading: ${threadMode.threadState?.loading?.value}, " +
+                    "threadLoadOrderOlderToNewer: $threadLoadOrderOlderToNewer"
+            }
+            return
+        }
+        logger.d {
+            "[loadNewerMessagesInThread] loading newer messages:" +
+                "parentId: ${threadMode.parentMessage.id}, " +
+                "messageLimit: $messageLimit, " +
+                "lastId = ${threadMode.threadState?.newestInThread?.value?.id}"
+        }
+        chatClient.getNewerReplies(
+            parentId = threadMode.parentMessage.id,
+            limit = messageLimit,
+            lastId = threadMode.threadState?.newestInThread?.value?.id,
+        ).enqueue()
     }
 
     /**
@@ -1007,7 +1089,7 @@ public class MessageListController(
      * @param messageLimit The size of the message list page to load.
      */
     public fun loadOlderMessages(messageLimit: Int = this.messageLimit) {
-        logger.i { "[loadOlderMessages] messageLimit: $messageLimit" }
+        logger.d { "[loadOlderMessages] messageLimit: $messageLimit" }
         if (clientState.isOffline) return
 
         _mode.value.run {
@@ -1016,6 +1098,7 @@ public class MessageListController(
                     if (channelState.value?.endOfOlderMessages?.value == true) return
                     chatClient.loadOlderMessages(cid, messageLimit).enqueue()
                 }
+
                 is MessageMode.MessageThread -> threadLoadMore(this)
             }
         }
@@ -1027,9 +1110,11 @@ public class MessageListController(
      * @param threadMode Current thread mode containing information about the thread.
      * @param messageLimit The size of the message list page to load.
      */
+    @Suppress("ComplexCondition")
     private fun threadLoadMore(threadMode: MessageMode.MessageThread, messageLimit: Int = this.messageLimit) {
         if (_threadListState.value.endOfOldMessagesReached ||
             _threadListState.value.isLoadingOlderMessages ||
+            threadLoadOrderOlderToNewer ||
             threadMode.threadState?.oldestInThread?.value == null
         ) {
             return
@@ -1055,7 +1140,8 @@ public class MessageListController(
     public suspend fun enterThreadMode(parentMessage: Message, messageLimit: Int = this.messageLimit) {
         val channelState = channelState.value ?: return
         _messageActions.value = _messageActions.value + Reply(parentMessage)
-        val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit)
+
+        val state = chatClient.getRepliesAsState(parentMessage.id, messageLimit, threadLoadOrderOlderToNewer)
 
         _mode.value = MessageMode.MessageThread(parentMessage, state)
         observeThreadMessagesState(
@@ -1080,7 +1166,11 @@ public class MessageListController(
      */
     private suspend fun enterThreadSequential(parentMessage: Message) {
         logger.v { "[enterThreadSequential] parentMessage(id: ${parentMessage.id}, text: ${parentMessage.text})" }
-        val threadState = chatClient.awaitRepliesAsState(parentMessage.id, DEFAULT_MESSAGES_LIMIT)
+        val threadState = chatClient.awaitRepliesAsState(
+            parentMessage.id,
+            DEFAULT_MESSAGES_LIMIT,
+            threadLoadOrderOlderToNewer,
+        )
         val channelState = channelState.value ?: return
 
         _messageActions.value = _messageActions.value + Reply(parentMessage)
@@ -1108,6 +1198,7 @@ public class MessageListController(
             is Result.Success -> {
                 enterThreadSequential(result.value)
             }
+
             is Result.Failure ->
                 logger.e {
                     "[enterThreadSequential] -> Could not get message: ${result.value.message}."
@@ -1132,7 +1223,7 @@ public class MessageListController(
      * @param onResult Handler that notifies the result of the load action.
      */
     public fun loadMessageById(messageId: String, onResult: (Result<Message>) -> Unit = {}) {
-        logger.i { "[loadMessageById] messageId: $messageId" }
+        logger.d { "[loadMessageById] messageId: $messageId" }
         chatClient.loadMessageById(cid, messageId).enqueue { result ->
             onResult(result)
             if (result is Result.Failure) {
@@ -1339,6 +1430,31 @@ public class MessageListController(
     }
 
     /**
+     * Triggered when the user taps the show more options button on the poll message.
+     *
+     * @param selectedPoll The poll that holds the details to be drawn on the more options screen.
+     */
+    public fun displayPollMoreOptions(selectedPoll: SelectedPoll?) {
+        _pollState.value = _pollState.value.copy(selectedPoll = selectedPoll)
+    }
+
+    /**
+     * Triggered when the poll information has been changed and need to sync on the poll states.
+     *
+     * @param poll The poll that holds the details to be drawn on the more options screen.
+     * @param message The message that contains the poll information.
+     */
+    public fun updatePollState(poll: Poll, message: Message, pollSelectionType: PollSelectionType) {
+        _pollState.value = _pollState.value.copy(
+            selectedPoll = SelectedPoll(
+                poll = poll,
+                message = message,
+                pollSelectionType = pollSelectionType,
+            ),
+        )
+    }
+
+    /**
      * Triggered when the user selects a new message action, in the message overlay.
      *
      * We first remove the overlay, after which we consume the event and based on the type of the event,
@@ -1355,9 +1471,12 @@ public class MessageListController(
             is ThreadReply -> {
                 enterThreadMode(messageAction.message)
             }
+
             is Delete, is FlagMessage -> {
                 _messageActions.value = _messageActions.value + messageAction
             }
+
+            is BlockUser -> blockUser(messageAction.message.user.id)
             is Copy -> copyMessage(messageAction.message)
             is React -> reactToMessage(messageAction.reaction, messageAction.message)
             is Pin -> updateMessagePin(messageAction.message)
@@ -1398,6 +1517,7 @@ public class MessageListController(
      * Resets the [MessagesState]s, to remove the message overlay, by setting 'selectedMessageState' to null.
      */
     public fun removeOverlay() {
+        logger.v { "[removeOverlay] no args" }
         _threadListState.value = _threadListState.value.copy(selectedMessageState = null)
         setMessageListState(_messageListState.value.copy(selectedMessageState = null))
     }
@@ -1465,7 +1585,7 @@ public class MessageListController(
 
         val lastSeenMessageId = this.lastSeenMessageId
         if (lastSeenMessageId == messageId) {
-            logger.w { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
+            logger.v { "[markLastMessageRead] cid: $cid; rejected[$isInThread] (already seen msgId): $messageId" }
             return
         }
         this.lastSeenMessageId = messageId
@@ -1491,11 +1611,23 @@ public class MessageListController(
     /**
      * Flags the selected message.
      *
-     * @param message Message to delete.
+     * @param message Message to be flagged.
+     * @param reason The reason for flagging the message.
+     * @param customData Additional data to send with the flag.
+     * @param onResult Handler that notifies the result of the flag action.
      */
-    public fun flagMessage(message: Message, onResult: (Result<Flag>) -> Unit = {}) {
+    public fun flagMessage(
+        message: Message,
+        reason: String?,
+        customData: Map<String, String>,
+        onResult: (Result<Flag>) -> Unit = {},
+    ) {
         _messageActions.value = _messageActions.value - _messageActions.value.filterIsInstance<FlagMessage>().toSet()
-        chatClient.flagMessage(message.id).enqueue { response ->
+        chatClient.flagMessage(
+            message.id,
+            reason,
+            customData,
+        ).enqueue { response ->
             onResult(response)
             if (response is Result.Failure) {
                 val error = response.value
@@ -1521,7 +1653,7 @@ public class MessageListController(
                         ErrorEvent.MarkUnreadError(it)
                     }
                 } else {
-                    refreshUnreadLabel()
+                    refreshUnreadLabel(false)
                 }
             }
         }
@@ -1545,8 +1677,10 @@ public class MessageListController(
      *
      * @param message The message to pin.
      */
-    public fun pinMessage(message: Message) {
-        chatClient.pinMessage(message).enqueue(onError = { error ->
+    @JvmOverloads
+    public fun pinMessage(message: Message, expiresAt: Date? = null) {
+        logger.d { "[pinMessage] message.id: ${message.id}, message.text: ${message.text}, expiresAt: $expiresAt" }
+        chatClient.pinMessage(message, expiresAt).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.PinMessageError(it)
             }
@@ -1559,6 +1693,7 @@ public class MessageListController(
      * @param message The message to unpin.
      */
     public fun unpinMessage(message: Message) {
+        logger.d { "[unpinMessage] message.id: ${message.id}, message.text: ${message.text}" }
         chatClient.unpinMessage(message).enqueue(onError = { error ->
             onActionResult(error) {
                 ErrorEvent.UnpinMessageError(it)
@@ -1621,6 +1756,88 @@ public class MessageListController(
                 ErrorEvent.UnmuteUserError(it)
             }
         })
+    }
+
+    /**
+     * Creates a poll with the given [pollConfig].
+     *
+     * @param pollConfig Configuration for creating a poll.
+     */
+    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
+        cid.cidToTypeAndId().let { (channelType, channelId) ->
+            chatClient.sendPoll(
+                channelType = channelType,
+                channelId = channelId,
+                pollConfig = pollConfig,
+            ).enqueue { response ->
+                onResult(response)
+                if (response is Result.Failure) {
+                    onActionResult(response.value) {
+                        ErrorEvent.PollCreationError(it)
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     */
+    public fun castVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ) {
+        chatClient.castPollVote(
+            messageId = messageId,
+            pollId = pollId,
+            option = option,
+        ).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.PollCastingVoteError(it)
+            }
+        })
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote that should be removed.
+     */
+    public fun removeVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ) {
+        chatClient.removePollVote(
+            messageId = messageId,
+            pollId = pollId,
+            vote = vote,
+        ).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.PollCastingVoteError(it)
+            }
+        })
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     */
+    public fun closePoll(pollId: String) {
+        chatClient.closePoll(pollId = pollId)
+            .enqueue(onError = { error ->
+                onActionResult(error) {
+                    ErrorEvent.PollCastingVoteError(it)
+                }
+            })
     }
 
     /**
@@ -1789,6 +2006,32 @@ public class MessageListController(
     }
 
     /**
+     * Block a user. Unlike ban the block is not channel related but rather directly to the user.
+     *
+     * @param userId the id of the user that will be blocked.
+     */
+    public fun blockUser(userId: String) {
+        chatClient.blockUser(userId).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
+    }
+
+    /**
+     * Unblock a user.
+     *
+     * @param userId the id of the user that will be unblocked.
+     */
+    public fun unblockUser(userId: String) {
+        chatClient.unblockUser(userId).enqueue(onError = { error ->
+            onActionResult(error) {
+                ErrorEvent.BlockUserError(it)
+            }
+        })
+    }
+
+    /**
      * Executes one of the actions for the given ephemeral giphy message.
      *
      * @param action The action to be executed.
@@ -1830,10 +2073,12 @@ public class MessageListController(
                                     attachment.assetUrl?.substringBefore("?") ==
                                         assetUrl.substringBefore("?")
                                 }
+
                                 imageUrl != null -> {
                                     attachment.imageUrl?.substringBefore("?") ==
                                         imageUrl.substringBefore("?")
                                 }
+
                                 else -> false
                             }
                         },
@@ -1859,6 +2104,7 @@ public class MessageListController(
                         )
                     }
                 }
+
                 is Result.Failure -> logger.e { "Could not load message: ${result.value}" }
             }
         }
@@ -1980,6 +2226,34 @@ public class MessageListController(
         public data class MarkUnreadError(override val streamError: Error) : ErrorEvent(streamError)
 
         /**
+         * When an error occurs while creating a poll.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollCreationError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while casting a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollCastingVoteError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while removing a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollRemovingVoteError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
+         * When an error occurs while closing a vote.
+         *
+         * @param streamError Contains the original [Throwable] along with a message.
+         */
+        public data class PollClosingError(override val streamError: Error) : ErrorEvent(streamError)
+
+        /**
          * When an error occurs while blocking a user.
          *
          * @param streamError Contains the original [Throwable] along with a message.
@@ -2001,9 +2275,10 @@ public class MessageListController(
         public data class UnpinMessageError(override val streamError: Error) : ErrorEvent(streamError)
     }
 
-    private data class UnreadLabel(
+    public data class UnreadLabel(
         val unreadCount: Int,
         val lastReadMessageId: String,
+        val buttonVisibility: Boolean,
     )
 
     public companion object {

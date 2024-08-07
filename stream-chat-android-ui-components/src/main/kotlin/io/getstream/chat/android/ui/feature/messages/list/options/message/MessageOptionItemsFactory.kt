@@ -24,6 +24,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.R
+import io.getstream.chat.android.ui.common.state.messages.BlockUser
 import io.getstream.chat.android.ui.common.state.messages.Copy
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -227,6 +228,15 @@ public open class DefaultMessageOptionItemsFactory(
                     optionText = context.getString(pinText),
                     optionIcon = context.getDrawableCompat(pinIcon)!!,
                     messageAction = Pin(selectedMessage),
+                )
+            } else {
+                null
+            },
+            if (style.blockUserEnabled && !isOwnMessage) {
+                MessageOptionItem(
+                    optionText = context.getString(R.string.stream_ui_message_list_block_user),
+                    optionIcon = context.getDrawableCompat(style.blockUserIcon)!!,
+                    messageAction = BlockUser(selectedMessage),
                 )
             } else {
                 null

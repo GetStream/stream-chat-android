@@ -17,6 +17,7 @@
 package io.getstream.chat.android.models
 
 import androidx.compose.runtime.Immutable
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import java.util.Date
 
 /**
@@ -76,6 +77,10 @@ public data class ChannelData(
      * @param channel The [Channel] object to convert.
      * @param currentOwnCapabilities Set of existing own capabilities stored for the Channel.
      */
+    @Deprecated(
+        message = "Use Channel.toChannelData instead",
+        replaceWith = ReplaceWith("Channel.toChannelData()"),
+    )
     public constructor(channel: Channel, currentOwnCapabilities: Set<String>) : this(
         type = channel.type,
         id = channel.id,
@@ -128,7 +133,11 @@ public data class ChannelData(
             deletedAt = deletedAt,
             extraData = extraData,
             cooldown = cooldown,
-            lastMessageAt = messagesList.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt },
+            lastMessageAt = messagesList
+                .filterNot { it.shadowed }
+                .filterNot { it.parentId != null && !it.showInChannel }
+                .lastOrNull()
+                ?.let { it.createdAt ?: it.createdLocallyAt },
             createdBy = createdBy,
             messages = messages,
             members = members,
@@ -154,4 +163,25 @@ public data class ChannelData(
     public fun isUserAbleTo(channelCapability: String): Boolean {
         return ownCapabilities.contains(channelCapability)
     }
+}
+
+@InternalStreamChatApi
+public fun ChannelData.mergeFromEvent(that: ChannelData): ChannelData {
+    return copy(
+        name = that.name,
+        image = that.image,
+        frozen = that.frozen,
+        cooldown = that.cooldown,
+        team = that.team,
+        extraData = that.extraData,
+        memberCount = that.memberCount,
+        createdAt = that.createdAt,
+        updatedAt = that.updatedAt,
+        deletedAt = that.deletedAt,
+        createdBy = that.createdBy,
+        /* Do not merge (ownCapabilities, membership) fields.
+        ownCapabilities = that.ownCapabilities,
+        membership = that.membership,
+         */
+    )
 }

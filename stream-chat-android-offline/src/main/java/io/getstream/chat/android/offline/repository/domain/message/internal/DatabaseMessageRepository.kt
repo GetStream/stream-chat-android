@@ -185,6 +185,16 @@ internal class DatabaseMessageRepository(
         return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage) }
     }
 
+    override suspend fun evictMessage(messageId: String) {
+        messageCache.remove(messageId)
+        replyMessageCache.remove(messageId)
+    }
+
+    override suspend fun evictMessages() {
+        messageCache.evictAll()
+        replyMessageCache.evictAll()
+    }
+
     override suspend fun clear() {
         messageCache.evictAll()
         replyMessageCache.evictAll()

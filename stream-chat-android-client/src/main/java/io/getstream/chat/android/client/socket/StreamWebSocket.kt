@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.parser.ChatParser
+import io.getstream.log.StreamLog
 import io.getstream.result.Error
 import io.getstream.result.Result
 import io.getstream.result.recover
@@ -43,6 +44,7 @@ internal class StreamWebSocket(
 
     private val webSocket = socketCreator(object : WebSocketListener() {
         override fun onMessage(webSocket: WebSocket, text: String) {
+            StreamLog.v("Chat:Events") { "[handleEvent] event: `$text`" }
             eventFlow.tryEmit(parseMessage(text))
         }
 

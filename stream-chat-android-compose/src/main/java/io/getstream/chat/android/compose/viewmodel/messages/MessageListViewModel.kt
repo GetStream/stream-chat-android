@@ -23,7 +23,11 @@ import io.getstream.chat.android.compose.util.extensions.asState
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.ui.common.feature.messages.list.DateSeparatorHandler
 import io.getstream.chat.android.ui.common.feature.messages.list.MessageListController
@@ -35,7 +39,11 @@ import io.getstream.chat.android.ui.common.state.messages.list.GiphyAction
 import io.getstream.chat.android.ui.common.state.messages.list.MessageFooterVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
+import io.getstream.chat.android.ui.common.state.messages.poll.PollState
+import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.log.taggedLogger
+import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -81,6 +89,11 @@ public class MessageListViewModel(
     public val messageMode: MessageMode by messageListController.mode.asState(viewModelScope)
 
     /**
+     * Holds the current [PollState] that's used for the messages list.
+     */
+    public val pollState: PollState by messageListController.pollState.asState(viewModelScope)
+
+    /**
      * The information for the current [Channel].
      */
     public val channel: Channel by messageListController.channel.asState(viewModelScope)
@@ -106,6 +119,12 @@ public class MessageListViewModel(
      */
     public val isShowingOverlay: Boolean
         get() = currentMessagesState.selectedMessageState != null
+
+    /**
+     * Whether is the poll option details should be shown or not.
+     */
+    public val isShowingPollOptionDetails: Boolean
+        get() = pollState.selectedPoll != null
 
     /**
      * Gives us information about the online state of the device.
@@ -188,6 +207,25 @@ public class MessageListViewModel(
     }
 
     /**
+     * Triggered when the user taps the show more options button on the poll message.
+     *
+     * @param selectedPoll The poll that holds the details to be drawn on the more options screen.
+     */
+    public fun displayPollMoreOptions(selectedPoll: SelectedPoll?) {
+        messageListController.displayPollMoreOptions(selectedPoll)
+    }
+
+    /**
+     * Triggered when the poll information has been changed and need to sync on the poll states.
+     *
+     * @param poll The poll that holds the details to be drawn on the more options screen.
+     * @param message The message that contains the poll information.
+     */
+    public fun updatePollState(poll: Poll, message: Message, pollSelectionType: PollSelectionType) {
+        messageListController.updatePollState(poll, message, pollSelectionType)
+    }
+
+    /**
      * Triggered when the user taps on and selects message reactions.
      *
      * @param message The message that contains the reactions.
@@ -267,8 +305,16 @@ public class MessageListViewModel(
      * @param message Message to delete.
      */
     @Suppress("ConvertArgumentToSet")
-    public fun flagMessage(message: Message) {
-        messageListController.flagMessage(message)
+    public fun flagMessage(
+        message: Message,
+        reason: String?,
+        customData: Map<String, String>,
+    ) {
+        messageListController.flagMessage(
+            message,
+            reason,
+            customData,
+        )
     }
 
     /**
@@ -385,6 +431,56 @@ public class MessageListViewModel(
      */
     public fun performGiphyAction(action: GiphyAction) {
         messageListController.performGiphyAction(action)
+    }
+
+    /**
+     * Creates a poll with the given [pollConfig].
+     *
+     * @param pollConfig Configuration for creating a poll.
+     */
+    public fun createPoll(pollConfig: PollConfig) {
+        messageListController.createPoll(pollConfig = pollConfig)
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param message The message where the poll is.
+     * @param poll The poll that want to be casted a vote.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    public fun castVote(message: Message, poll: Poll, option: Option) {
+        messageListController.castVote(
+            messageId = message.id,
+            pollId = poll.id,
+            option = option,
+        )
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param message The message where the poll is.
+     * @param poll The poll that want to be casted a vote.
+     * @param vote The vote that should be removed.
+     */
+    public fun removeVote(message: Message, poll: Poll, vote: Vote) {
+        messageListController.removeVote(
+            messageId = message.id,
+            pollId = poll.id,
+            vote = vote,
+        )
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     */
+    public fun closePoll(pollId: String) {
+        messageListController.closePoll(pollId = pollId)
     }
 
     /**

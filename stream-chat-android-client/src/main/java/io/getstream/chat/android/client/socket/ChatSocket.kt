@@ -32,7 +32,6 @@ import io.getstream.chat.android.client.socket.ChatSocketStateService.State
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.models.User
-import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import kotlinx.coroutines.Job
@@ -191,7 +190,6 @@ internal open class ChatSocket(
     }
 
     private suspend fun handleEvent(chatEvent: ChatEvent) {
-        StreamLog.v("Chat:Events") { "[handleEvent] Received $chatEvent" }
         when (chatEvent) {
             is ConnectedEvent -> chatSocketStateService.onConnectionEstablished(chatEvent)
             is HealthEvent -> healthMonitor.ack()

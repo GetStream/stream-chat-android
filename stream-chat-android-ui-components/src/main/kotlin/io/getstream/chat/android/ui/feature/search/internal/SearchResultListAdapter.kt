@@ -17,6 +17,7 @@
 package io.getstream.chat.android.ui.feature.search.internal
 
 import android.view.ViewGroup
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -24,25 +25,22 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.common.extensions.internal.context
 import io.getstream.chat.android.ui.databinding.StreamUiItemMentionListBinding
-import io.getstream.chat.android.ui.feature.messages.preview.MessagePreviewStyle
 import io.getstream.chat.android.ui.feature.search.internal.SearchResultListAdapter.MessagePreviewViewHolder
 import io.getstream.chat.android.ui.feature.search.list.SearchResultListView.SearchResultSelectedListener
+import io.getstream.chat.android.ui.feature.search.list.SearchResultListViewStyle
 import io.getstream.chat.android.ui.utils.extensions.asMention
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 
-internal class SearchResultListAdapter : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
+internal class SearchResultListAdapter(
+    private val style: SearchResultListViewStyle,
+) : ListAdapter<Message, MessagePreviewViewHolder>(MessageDiffCallback) {
 
     private var searchResultSelectedListener: SearchResultSelectedListener? = null
-
-    var messagePreviewStyle: MessagePreviewStyle? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessagePreviewViewHolder {
         return StreamUiItemMentionListBinding
             .inflate(parent.streamThemeInflater, parent, false)
-            .let { binding ->
-                messagePreviewStyle?.let(binding.root::styleView)
-                MessagePreviewViewHolder(binding)
-            }
+            .let { MessagePreviewViewHolder(it, style) }
     }
 
     override fun onBindViewHolder(holder: MessagePreviewViewHolder, position: Int) {
@@ -55,6 +53,7 @@ internal class SearchResultListAdapter : ListAdapter<Message, MessagePreviewView
 
     inner class MessagePreviewViewHolder(
         private val binding: StreamUiItemMentionListBinding,
+        private val style: SearchResultListViewStyle,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         private lateinit var message: Message
@@ -62,6 +61,26 @@ internal class SearchResultListAdapter : ListAdapter<Message, MessagePreviewView
         init {
             binding.root.setOnClickListener {
                 searchResultSelectedListener?.onSearchResultSelected(message)
+            }
+            binding.root.styleView(style.messagePreviewStyle)
+            binding.root.binding.apply {
+                contentRoot.updateLayoutParams {
+                    height = style.itemHeight
+                }
+                userAvatarView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    marginStart = style.itemMarginStart
+                }
+                senderNameLabel.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    marginStart = style.itemTitleMarginStart
+                    marginEnd = style.itemMarginEnd
+                }
+                messageTimeLabel.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                    marginEnd = style.itemMarginEnd
+                }
+                spacer.updateLayoutParams {
+                    height = style.itemVerticalSpacerHeight
+                }
+                guideline.setGuidelinePercent(style.itemVerticalSpacerPosition)
             }
         }
 

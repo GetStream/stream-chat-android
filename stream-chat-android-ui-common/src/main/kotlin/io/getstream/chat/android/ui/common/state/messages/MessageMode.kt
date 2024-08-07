@@ -27,7 +27,7 @@ public sealed class MessageMode {
     /**
      * Regular mode, conversation with other users.
      */
-    public object Normal : MessageMode() { override fun toString(): String = "Normal" }
+    public data object Normal : MessageMode()
 
     /**
      * Thread mode, where there's a parent message to respond to.

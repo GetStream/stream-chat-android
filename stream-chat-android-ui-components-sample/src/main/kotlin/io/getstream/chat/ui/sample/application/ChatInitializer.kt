@@ -17,6 +17,7 @@
 package io.getstream.chat.ui.sample.application
 
 import android.content.Context
+import android.graphics.Color
 import com.google.firebase.FirebaseApp
 import io.getstream.android.push.firebase.FirebasePushDeviceGenerator
 import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator
@@ -25,8 +26,10 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory
+import io.getstream.chat.android.markdown.MarkdownTextTransformer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 import io.getstream.chat.android.state.plugin.config.StatePluginConfig
@@ -34,6 +37,8 @@ import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProviderFactory
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.plus
+import io.getstream.chat.android.ui.helper.StyleTransformer
+import io.getstream.chat.android.ui.helper.TransformStyle
 import io.getstream.chat.ui.sample.BuildConfig
 import io.getstream.chat.ui.sample.debugger.CustomChatClientDebugger
 import io.getstream.chat.ui.sample.feature.HostActivity
@@ -109,15 +114,15 @@ class ChatInitializer(
 
         // Using markdown as text transformer
         ChatUI.autoTranslationEnabled = autoTranslationEnabled
-        // ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
-        //     if (autoTranslationEnabled) {
-        //         client.getCurrentUser()?.language?.let { language ->
-        //             item.message.getTranslation(language).ifEmpty { item.message.text }
-        //         } ?: item.message.text
-        //     } else {
-        //         item.message.text
-        //     }
-        // }
+        ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
+            if (autoTranslationEnabled) {
+                client.getCurrentUser()?.language?.let { language ->
+                    item.message.getTranslation(language).ifEmpty { item.message.text }
+                } ?: item.message.text
+            } else {
+                item.message.text
+            }
+        }
 
         // ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView, messageItem ->
         //     textView.text = messageItem.message.text
@@ -138,6 +143,51 @@ class ChatInitializer(
         //         audioRecordingSlideToCancelText = "Wash to cancel",
         //     )
         // }
+
+        // TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
+        //     defaultStyle.copy(
+        //         reactionsViewStyle = defaultStyle.reactionsViewStyle.copy(
+        //             bubbleBorderColorMine = Color.CYAN,
+        //             reactionSorting = ReactionSortingByLastReactionAtDesc
+        //             // reactionSorting = ReactionSortingByLastReactionAt
+        //             // reactionSorting = ReactionSortingByFirstReactionAt
+        //         )
+        //     )
+        // }
+        //
+        TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                bubbleBorderColorMine = Color.YELLOW,
+                reactionSorting = ReactionSortingByLastReactionAt,
+            )
+        }
+
+        /*val lightGray = ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
+        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                messageBackgroundColorMine = Color.BLACK,
+                messageBackgroundColorTheirs = lightGray,
+                textStyleMine = defaultStyle.textStyleMine.copy(
+                    color = Color.WHITE,
+                ),
+                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
+                    color = Color.BLACK,
+                ),
+            )
+        }
+
+        TransformStyle.messageReplyStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                messageBackgroundColorMine = lightGray,
+                messageBackgroundColorTheirs = Color.BLACK,
+                textStyleMine = defaultStyle.textStyleMine.copy(
+                    color = Color.BLACK,
+                ),
+                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
+                    color = Color.WHITE,
+                ),
+            )
+        }*/
 
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }

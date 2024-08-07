@@ -23,15 +23,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.components.OnlineIndicator
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
@@ -58,6 +59,7 @@ public fun UserAvatar(
     textStyle: TextStyle = ChatTheme.typography.title3Bold,
     contentDescription: String? = null,
     showOnlineIndicator: Boolean = true,
+    placeholderPainter: Painter? = null,
     onlineIndicatorAlignment: OnlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
     initialsAvatarOffset: DpOffset = DpOffset(0.dp, 0.dp),
     onlineIndicator: @Composable BoxScope.() -> Unit = {
@@ -74,6 +76,7 @@ public fun UserAvatar(
             shape = shape,
             contentDescription = contentDescription,
             onClick = onClick,
+            placeholderPainter = placeholderPainter,
             initialsAvatarOffset = initialsAvatarOffset,
         )
 

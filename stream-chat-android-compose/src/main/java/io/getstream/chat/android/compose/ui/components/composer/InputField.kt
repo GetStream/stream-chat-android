@@ -20,10 +20,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +38,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -71,38 +76,47 @@ public fun InputField(
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
     decorationBox: @Composable (innerTextField: @Composable () -> Unit) -> Unit,
 ) {
-    var textFieldValueState by remember { mutableStateOf(TextFieldValue(text = value)) }
+    var textState by remember { mutableStateOf(TextFieldValue(text = value)) }
 
-    // Workaround to move cursor to the end after selecting a suggestion
-    val selection = if (textFieldValueState.isCursorAtTheEnd()) {
-        TextRange(value.length)
-    } else {
-        textFieldValueState.selection
+    if (textState.text != value) {
+        // Workaround to move cursor to the end after selecting a suggestion
+        LaunchedEffect(value) {
+            if (textState.text != value) {
+                textState = textState.copy(
+                    text = value,
+                    selection = TextRange(value.length),
+                )
+            }
+        }
     }
 
     val theme = ChatTheme.messageComposerTheme.inputField
-    val styledText = buildAnnotatedMessageText(value, theme.textStyle.color)
-
-    val textFieldValue = textFieldValueState.copy(
-        annotatedString = styledText,
-        selection = selection,
-    )
-
+    val typography = ChatTheme.typography
+    val colors = ChatTheme.colors
     val description = stringResource(id = R.string.stream_compose_cd_message_input)
 
     BasicTextField(
         modifier = modifier
             .border(border = border, shape = theme.borderShape)
-            .clip(theme.borderShape)
+            .clip(shape = ChatTheme.shapes.pollOptionInput)
             .background(theme.backgroundColor)
             .padding(innerPadding)
             .semantics { contentDescription = description },
-        value = textFieldValue,
+        value = textState,
         onValueChange = {
-            textFieldValueState = it
+            textState = it
             if (value != it.text) {
                 onValueChange(it.text)
             }
+        },
+        visualTransformation = {
+            val styledText = buildAnnotatedMessageText(
+                text = it.text,
+                textColor = theme.textStyle.color,
+                textFontStyle = typography.body.fontStyle,
+                linkColor = colors.primaryAccent,
+            )
+            TransformedText(styledText, OffsetMapping.Identity)
         },
         textStyle = theme.textStyle,
         cursorBrush = SolidColor(theme.cursorBrushColor),
@@ -114,15 +128,15 @@ public fun InputField(
     )
 }
 
-/**
- * Check if the [TextFieldValue] state represents a UI with the cursor at the end of the input.
- *
- * @return True if the cursor is at the end of the input.
- */
-private fun TextFieldValue.isCursorAtTheEnd(): Boolean {
-    val textLength = text.length
-    val selectionStart = selection.start
-    val selectionEnd = selection.end
-
-    return textLength == selectionStart && textLength == selectionEnd
+@Preview
+@Composable
+private fun InputFieldPreview() {
+    ChatTheme {
+        InputField(
+            modifier = Modifier.fillMaxWidth(),
+            value = "InputFieldPreview",
+            onValueChange = { _ -> },
+            decorationBox = { innerTextField -> innerTextField.invoke() },
+        )
+    }
 }

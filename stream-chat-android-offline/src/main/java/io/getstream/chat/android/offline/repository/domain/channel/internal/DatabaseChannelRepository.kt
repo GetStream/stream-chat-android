@@ -19,6 +19,7 @@ package io.getstream.chat.android.offline.repository.domain.channel.internal
 import android.util.LruCache
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
+import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.core.utils.date.maxOf
 import io.getstream.chat.android.core.utils.date.minOf
 import io.getstream.chat.android.models.Channel
@@ -41,6 +42,7 @@ internal class DatabaseChannelRepository(
     private val channelDao: ChannelDao,
     private val getUser: suspend (userId: String) -> User,
     private val getMessage: suspend (messageId: String) -> Message?,
+    private val now: () -> Long = { System.currentTimeMillis() },
     cacheSize: Int = 1000,
 ) : ChannelRepository {
 
@@ -91,13 +93,33 @@ internal class DatabaseChannelRepository(
      */
     override suspend fun deleteChannel(cid: String) {
         logger.v { "[deleteChannel] cid: $cid" }
-        channelCache.remove(cid)
+        removeFromCache(cid)
         scope.launchWithMutex(dbMutex) { channelDao.delete(cid) }
     }
 
     override suspend fun deleteChannelMessage(message: Message) {
+        logger.v { "[deleteChannelMessage] message.id: ${message.id}, message.text: ${message.text}" }
         channelCache[message.cid]?.let { cachedChannel ->
-            val updatedChannel = cachedChannel.copy(messages = cachedChannel.messages.filter { it.id != message.id })
+            val updatedChannel = cachedChannel.copy(
+                messages = cachedChannel.messages.filter { it.id != message.id },
+                pinnedMessages = cachedChannel.pinnedMessages.filter { it.id != message.id },
+            )
+            cacheChannel(updatedChannel)
+        }
+    }
+
+    override suspend fun updateChannelMessage(message: Message) {
+        logger.v { "[updateChannelMessage] message.id: ${message.id}, message.text: ${message.text}" }
+        channelCache[message.cid]?.let { cachedChannel ->
+            val updatedChannel = cachedChannel.copy(
+                messages = cachedChannel.messages.map { if (it.id == message.id) message else it },
+                pinnedMessages = cachedChannel.pinnedMessages.mapNotNull { existing ->
+                    when (existing.id == message.id) {
+                        true -> message.takeIf { it.isPinned(now) }
+                        else -> existing
+                    }
+                },
+            )
             cacheChannel(updatedChannel)
         }
     }
@@ -153,9 +175,7 @@ internal class DatabaseChannelRepository(
      * @param deletedAt Date.
      */
     override suspend fun setChannelDeletedAt(cid: String, deletedAt: Date) {
-        channelCache[cid]?.let { cachedChannel ->
-            cacheChannel(listOf(cachedChannel.copy(deletedAt = deletedAt)))
-        }
+        removeFromCache(cid)
         scope.launchWithMutex(dbMutex) { channelDao.setDeletedAt(cid, deletedAt) }
     }
 
@@ -167,14 +187,7 @@ internal class DatabaseChannelRepository(
      * @param hideMessagesBefore Date.
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
-        channelCache[cid]?.let { cachedChannel ->
-            cacheChannel(
-                cachedChannel.copy(
-                    hidden = hidden,
-                    hiddenMessagesBefore = hideMessagesBefore,
-                ),
-            )
-        }
+        removeFromCache(cid)
         scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden, hideMessagesBefore) }
     }
 
@@ -185,9 +198,7 @@ internal class DatabaseChannelRepository(
      * @param hidden Date.
      */
     override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
-        channelCache[cid]?.let { cachedChannel ->
-            cacheChannel(listOf(cachedChannel.copy(hidden = hidden)))
-        }
+        removeFromCache(cid)
         scope.launchWithMutex(dbMutex) { channelDao.setHidden(cid, hidden) }
     }
 
@@ -222,7 +233,11 @@ internal class DatabaseChannelRepository(
             insertChannel(
                 it.copy(
                     messages = listOf(lastMessage),
-                    lastMessageAt = lastMessage.createdAt ?: lastMessage.createdLocallyAt ?: Date(0),
+                    lastMessageAt = it.lastMessageAt
+                        .takeIf { lastMessage.parentId != null && !lastMessage.showInChannel }
+                        ?: lastMessage.createdAt
+                        ?: lastMessage.createdLocallyAt
+                        ?: Date(0),
                 ),
             )
         }
@@ -242,7 +257,10 @@ internal class DatabaseChannelRepository(
             lastMessageAt = maxOf(
                 lastMessageAt,
                 cachedChannel.lastMessageAt,
-                messages.lastOrNull()?.let { it.createdAt ?: it.createdLocallyAt ?: Date(0) },
+                messages
+                    .filterNot { it.parentId != null && !it.showInChannel }
+                    .lastOrNull()
+                    ?.let { it.createdAt ?: it.createdLocallyAt ?: Date(0) },
             ),
             hiddenMessagesBefore = hideMessagesBefore,
             members = members,
@@ -254,6 +272,11 @@ internal class DatabaseChannelRepository(
 
     override suspend fun evictChannel(cid: String) {
         logger.v { "[evictChannel] cid: $cid" }
+        removeFromCache(cid)
+    }
+
+    private fun removeFromCache(cid: String) {
+        logger.v { "[removeFromCache] cid: $cid" }
         channelCache.remove(cid)
     }
 

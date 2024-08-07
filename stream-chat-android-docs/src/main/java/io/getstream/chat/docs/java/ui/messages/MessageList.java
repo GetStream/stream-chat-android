@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import io.getstream.chat.android.models.ReactionSortingByCount;
 import io.getstream.chat.android.ui.common.helper.DateFormatter;
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder;
@@ -131,6 +132,16 @@ public class MessageList extends Fragment {
             // Customize the theme
             return source;
         });
+
+        /* Java requires all the fields to be provided
+        TransformStyle.setMessageListItemStyleTransformer(source -> {
+            return source.getReactionsViewStyle().copy(
+                    source.getReactionsViewStyle().copy(
+                            ReactionSortingByCount.INSTANCE
+                    )
+            );
+        });
+        */
     }
 
     public void channelFeatureFlags() {
@@ -218,6 +229,14 @@ public class MessageList extends Fragment {
 
                 return super.getItemViewType(item);
 
+            }
+
+            @Override
+            public int getItemViewType(@NonNull BaseMessageItemViewHolder<? extends MessageListItem> viewHolder) {
+                if (viewHolder instanceof TodayViewHolder) {
+                    return TODAY_VIEW_HOLDER_TYPE;
+                }
+                return super.getItemViewType(viewHolder);
             }
 
             private boolean isLessThanDayAgo(Date date) {

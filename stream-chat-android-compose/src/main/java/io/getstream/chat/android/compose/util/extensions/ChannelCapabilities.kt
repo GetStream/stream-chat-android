@@ -48,6 +48,7 @@ public fun ChannelCapabilities.toSet(): Set<String> = setOf(
     SEND_REPLY,
     SET_CHANNEL_COOLDOWN,
     SEND_TYPING_EVENTS,
+    TYPING_EVENTS,
     UPDATE_ANY_MESSAGE,
     UPDATE_CHANNEL,
     UPDATE_CHANNEL_MEMBERS,

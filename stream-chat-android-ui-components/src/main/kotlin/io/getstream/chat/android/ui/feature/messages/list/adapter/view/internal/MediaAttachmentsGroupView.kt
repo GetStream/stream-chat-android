@@ -75,14 +75,14 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
     )
 
     @Suppress("MagicNumber")
-    fun showAttachments(attachments: List<Attachment>) {
+    fun showAttachments(position: Int, attachments: List<Attachment>) {
         val media = attachments.filter { attachment ->
             !attachment.hasLink() &&
                 (attachment.isImage() || attachment.isVideo())
         }
-        logger.d { "[showAttachments] attachments.size: ${media.size}" }
+        logger.d { "[showAttachments] #$position; attachments.size: ${media.size}" }
         when (media.size) {
-            0 -> Unit
+            0 -> showZero()
             1 -> showOne(media.first())
             2 -> showTwo(media.first(), media[1])
             3 -> showThree(media.first(), media[1], media[2])
@@ -95,6 +95,11 @@ internal class MediaAttachmentsGroupView : ConstraintLayout {
             )
         }
         (background as? MaterialShapeDrawable)?.shapeAppearanceModel?.let(::applyToMediaPreviews)
+    }
+
+    private fun showZero() {
+        removeAllViews()
+        state = State.Empty
     }
 
     private fun showOne(first: Attachment) {

@@ -96,7 +96,16 @@ public fun MessageFooter(
                     )
                 }
 
-                val date = message.updatedAt ?: message.createdAt ?: message.createdLocallyAt
+                val updatedAt = message.updatedAt
+                val createdAt = message.createdAt ?: message.createdLocallyAt
+                val date = when {
+                    createdAt == null -> updatedAt
+                    updatedAt == null -> createdAt
+                    else -> when (updatedAt.after(createdAt)) {
+                        true -> updatedAt
+                        else -> createdAt
+                    }
+                }
                 if (date != null) {
                     Timestamp(date = date, formatType = DateFormatType.TIME)
                 }

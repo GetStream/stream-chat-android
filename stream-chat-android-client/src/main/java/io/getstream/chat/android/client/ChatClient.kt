@@ -29,9 +29,11 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api.ErrorCall
+import io.getstream.chat.android.client.api.models.GetThreadOptions
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
@@ -54,6 +56,7 @@ import io.getstream.chat.android.client.api.models.identifier.SendMessageIdentif
 import io.getstream.chat.android.client.api.models.identifier.SendReactionIdentifier
 import io.getstream.chat.android.client.api.models.identifier.ShuffleGiphyIdentifier
 import io.getstream.chat.android.client.api.models.identifier.UpdateMessageIdentifier
+import io.getstream.chat.android.client.api.models.identifier.getNewerRepliesIdentifier
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
@@ -77,6 +80,7 @@ import io.getstream.chat.android.client.errorhandler.onCreateChannelError
 import io.getstream.chat.android.client.errorhandler.onMessageError
 import io.getstream.chat.android.client.errorhandler.onQueryMembersError
 import io.getstream.chat.android.client.errorhandler.onReactionError
+import io.getstream.chat.android.client.errors.cause.StreamChannelNotFoundException
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.ConnectingEvent
@@ -134,6 +138,7 @@ import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.client.utils.TokenUtils
 import io.getstream.chat.android.client.utils.internal.toggle.ToggleService
 import io.getstream.chat.android.client.utils.mergePartially
+import io.getstream.chat.android.client.utils.message.ensureId
 import io.getstream.chat.android.client.utils.observable.ChatEventsObservable
 import io.getstream.chat.android.client.utils.observable.Disposable
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
@@ -156,15 +161,20 @@ import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Option
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
+import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.models.UploadAttachmentsNetworkType
 import io.getstream.chat.android.models.UploadedFile
-import io.getstream.chat.android.models.UploadedImage
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
 import io.getstream.chat.android.models.VideoCallInfo
 import io.getstream.chat.android.models.VideoCallToken
+import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.log.CompositeStreamLogger
@@ -177,6 +187,7 @@ import io.getstream.result.call.Call
 import io.getstream.result.call.CoroutineCall
 import io.getstream.result.call.doOnResult
 import io.getstream.result.call.doOnStart
+import io.getstream.result.call.flatMap
 import io.getstream.result.call.map
 import io.getstream.result.call.retry
 import io.getstream.result.call.retry.RetryPolicy
@@ -360,7 +371,7 @@ internal constructor(
      * Error handlers for API calls.
      */
     private val errorHandlers: List<ErrorHandler>
-        get() = plugins.mapNotNull { it.errorHandler }.sorted()
+        get() = plugins.mapNotNull { it.getErrorHandler() }.sorted()
 
     public var logicRegistry: ChannelStateLogicProvider? = null
 
@@ -928,7 +939,7 @@ internal constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback? = null,
-    ): Call<UploadedImage> {
+    ): Call<UploadedFile> {
         return api.sendImage(channelType, channelId, file, callback)
     }
 
@@ -1470,6 +1481,79 @@ internal constructor(
         )
     }
 
+    /**
+     * Send a message with a poll to the given channel.
+     *
+     * @param channelType The channel type. ie messaging.
+     * @param channelId The channel id. ie 123.
+     * @param pollConfig The poll configuration.
+     *
+     * @return Executable async [Call] responsible for sending a poll.
+     */
+    @CheckResult
+    public fun sendPoll(
+        channelType: String,
+        channelId: String,
+        pollConfig: PollConfig,
+    ): Call<Message> {
+        return api.createPoll(pollConfig)
+            .flatMap { poll ->
+                sendMessage(
+                    channelType = channelType,
+                    channelId = channelId,
+                    Message(extraData = mapOf("poll_id" to poll.id)),
+                )
+            }
+    }
+
+    /**
+     * Cast a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param option The option to vote for.
+     *
+     * @return Executable async [Call] responsible for casting a vote.
+     */
+    @CheckResult
+    public fun castPollVote(
+        messageId: String,
+        pollId: String,
+        option: Option,
+    ): Call<Vote> {
+        return api.castPollVote(messageId, pollId, option.id)
+    }
+
+    /**
+     * Remove a vote for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param vote The vote to remove.
+     *
+     * @return Executable async [Call] responsible for removing a vote.
+     */
+    @CheckResult
+    public fun removePollVote(
+        messageId: String,
+        pollId: String,
+        vote: Vote,
+    ): Call<Vote> {
+        return api.removePollVote(messageId, pollId, vote.id)
+    }
+
+    /**
+     * Close a poll in a message.
+     *
+     * @param pollId The poll id.
+     *
+     * @return Executable async [Call] responsible for closing a poll.
+     */
+    @CheckResult
+    public fun closePoll(pollId: String): Call<Poll> {
+        return api.closePoll(pollId)
+    }
+
     @CheckResult
     public fun getFileAttachments(
         channelType: String,
@@ -1545,8 +1629,43 @@ internal constructor(
                     plugin.onGetRepliesResult(result, messageId, limit)
                 }
             }
-            .precondition(plugins) { onGetRepliesPrecondition(messageId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesIdentifier(messageId, limit) }
+    }
+
+    /**
+     * Fetch replies to the specified message with id [parentId] that are newer than the message with [lastId].
+     * If [lastId] is null, the oldest replies are returned.
+     *
+     * @param parentId The id of the parent message.
+     * @param limit The number of replies to fetch.
+     * @param lastId The id of the last message to fetch from exclusively.
+     *
+     * @return Executable async [Call] responsible for fetching newer replies.
+     */
+    @CheckResult
+    public fun getNewerReplies(
+        parentId: String,
+        limit: Int,
+        lastId: String? = null,
+    ): Call<List<Message>> {
+        logger.d { "[getNewerReplies] parentId: $parentId, limit: $limit, lastId: $lastId" }
+
+        return api.getNewerReplies(parentId, limit, lastId)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    logger.v { "[getNewerReplies] #doOnStart; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetNewerRepliesRequest(parentId, limit, lastId)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    logger.v { "[getNewerReplies] #doOnResult; plugin: ${plugin::class.qualifiedName}" }
+                    plugin.onGetNewerRepliesResult(result, parentId, limit, lastId)
+                }
+            }
+            .precondition(plugins) { onGetRepliesPrecondition(parentId) }
+            .share(userScope) { getNewerRepliesIdentifier(parentId, limit, lastId) }
     }
 
     @CheckResult
@@ -1570,7 +1689,7 @@ internal constructor(
                     plugin.onGetRepliesMoreResult(result, messageId, firstId, limit)
                 }
             }
-            .precondition(plugins) { onGetRepliesMorePrecondition(messageId, firstId, limit) }
+            .precondition(plugins) { onGetRepliesPrecondition(messageId) }
             .share(userScope) { GetRepliesMoreIdentifier(messageId, firstId, limit) }
     }
 
@@ -1698,6 +1817,7 @@ internal constructor(
         isRetrying: Boolean = false,
     ): Call<Message> {
         return message.copy(createdLocallyAt = message.createdLocallyAt ?: Date())
+            .ensureId(getCurrentUser() ?: getStoredUser())
             .let { processedMessage ->
                 CoroutineCall(userScope) {
                     val debugger = clientDebugger.debugSendMessage(channelType, channelId, processedMessage, isRetrying)
@@ -1812,6 +1932,10 @@ internal constructor(
      */
     @CheckResult
     public fun pinMessage(message: Message, expirationDate: Date? = null): Call<Message> {
+        logger.d {
+            "[pinMessage] message: Message(id=${message.id}, text=${message.text})" +
+                ", expirationDate: $expirationDate"
+        }
         val set: MutableMap<String, Any> = LinkedHashMap()
         set["pinned"] = true
         expirationDate?.let { set["pin_expires"] = it }
@@ -1831,6 +1955,10 @@ internal constructor(
      */
     @CheckResult
     public fun pinMessage(message: Message, timeout: Int): Call<Message> {
+        logger.d {
+            "[pinMessage] message: Message(id=${message.id}, text=${message.text})" +
+                ", timeout: $timeout seconds"
+        }
         val calendar = Calendar.getInstance().apply {
             add(Calendar.SECOND, timeout)
         }
@@ -1852,6 +1980,7 @@ internal constructor(
      */
     @CheckResult
     public fun unpinMessage(message: Message): Call<Message> {
+        logger.d { "[unpinMessage] message: Message(text=${message.text}, id=${message.id})" }
         return partialUpdateMessage(
             messageId = message.id,
             set = mapOf("pinned" to false),
@@ -1871,6 +2000,65 @@ internal constructor(
     @InternalStreamChatApi
     public fun queryChannelsInternal(request: QueryChannelsRequest): Call<List<Channel>> {
         return api.queryChannels(request)
+    }
+
+    /**
+     * Gets the channel from the server based on [cid].
+     *
+     * @param cid The full channel id. ie messaging:123.
+     * @param messageLimit The number of messages to retrieve for the channel.
+     * @param memberLimit The number of members to retrieve for the channel.
+     * @param state if true returns the Channel state.
+     */
+    public fun getChannel(
+        cid: String,
+        messageLimit: Int = 0,
+        memberLimit: Int = 0,
+        state: Boolean = false,
+    ): Call<Channel> {
+        return CoroutineCall(userScope) {
+            val request = QueryChannelsRequest(
+                filter = Filters.eq("cid", cid),
+                limit = 1,
+                messageLimit = messageLimit,
+                memberLimit = memberLimit,
+            ).apply {
+                this.watch = false
+                this.state = state
+            }
+            when (val result = api.queryChannels(request).await()) {
+                is Result.Success -> {
+                    val channels = result.value
+                    if (channels.isEmpty()) {
+                        val cause = StreamChannelNotFoundException(cid)
+                        Result.Failure(Error.ThrowableError(cause.message, cause))
+                    } else {
+                        Result.Success(channels.first())
+                    }
+                }
+
+                is Result.Failure -> result
+            }
+        }
+    }
+
+    /**
+     * Gets the channel from the server based on [channelType] and [channelId].
+     *
+     * @param channelType The channel type.
+     * @param channelId The channel id.
+     * @param messageLimit The number of messages to retrieve for the channel.
+     * @param memberLimit The number of members to retrieve for the channel.
+     * @param state if true returns the Channel state.
+     */
+    public fun getChannel(
+        channelType: String,
+        channelId: String,
+        messageLimit: Int = 0,
+        memberLimit: Int = 0,
+        state: Boolean = false,
+    ): Call<Channel> {
+        return getChannel(cid = "$channelType:$channelId")
     }
 
     /**
@@ -2271,6 +2459,36 @@ internal constructor(
     }
 
     /**
+     * Block a user by ID.
+     *
+     * @param userId the ID of the user that will be blocked.
+     *
+     * @return a list of [UserBlock] which will contain the block that just occured.
+     */
+    @CheckResult
+    public fun blockUser(userId: String): Call<UserBlock> {
+        return api.blockUser(userId)
+    }
+
+    /**
+     * Unblock a user by ID.
+     *
+     * @param userId the user ID of the user that will be unblocked.
+     */
+    @CheckResult
+    public fun unblockUser(userId: String): Call<UserBlock> {
+        return api.unblockUser(userId)
+    }
+
+    /**
+     * Return na list of blocked users.
+     */
+    @CheckResult
+    public fun queryBlockedUsers(): Call<List<UserBlock>> {
+        return api.queryBlockedUsers()
+    }
+
+    /**
      * Updates specific user fields retaining the custom data fields which were set previously.
      *
      * @param id User ids.
@@ -2487,13 +2705,29 @@ internal constructor(
     public fun muteCurrentUser(): Call<Mute> = api.muteCurrentUser()
 
     @CheckResult
-    public fun flagUser(userId: String): Call<Flag> = api.flagUser(userId)
+    public fun flagUser(
+        userId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> = api.flagUser(
+        userId,
+        reason,
+        customData,
+    )
 
     @CheckResult
     public fun unflagUser(userId: String): Call<Flag> = api.unflagUser(userId)
 
     @CheckResult
-    public fun flagMessage(messageId: String): Call<Flag> = api.flagMessage(messageId)
+    public fun flagMessage(
+        messageId: String,
+        reason: String?,
+        customData: Map<String, String>,
+    ): Call<Flag> = api.flagMessage(
+        messageId,
+        reason,
+        customData,
+    )
 
     @CheckResult
     public fun unflagMessage(messageId: String): Call<Flag> = api.unflagMessage(messageId)
@@ -2818,6 +3052,14 @@ internal constructor(
      */
     @CheckResult
     public fun keystroke(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val currentUser = clientState.user.value
+        if (currentUser?.privacySettings?.typingIndicators?.enabled == false) {
+            logger.v { "[keystroke] rejected (typing indicators are disabled)" }
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Typing indicators are disabled for the current user."),
+            )
+        }
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
@@ -2859,6 +3101,14 @@ internal constructor(
      */
     @CheckResult
     public fun stopTyping(channelType: String, channelId: String, parentId: String? = null): Call<ChatEvent> {
+        val currentUser = clientState.user.value
+        if (currentUser?.privacySettings?.typingIndicators?.enabled == false) {
+            logger.v { "[stopTyping] rejected (typing indicators are disabled)" }
+            return ErrorCall(
+                userScope,
+                Error.GenericError("Typing indicators are disabled for the current user."),
+            )
+        }
         val extraData: Map<Any, Any> = parentId?.let {
             mapOf(ARG_TYPING_PARENT_ID to parentId)
         } ?: emptyMap()
@@ -2936,6 +3186,54 @@ internal constructor(
     @CheckResult
     public fun downloadFile(fileUrl: String): Call<ResponseBody> {
         return api.downloadFile(fileUrl)
+    }
+
+    /**
+     * Query threads matching [query] request.
+     *
+     * @param query [QueryThreadsRequest] with query parameters to get matching users.
+     */
+    @CheckResult
+    public fun queryThreads(
+        query: QueryThreadsRequest,
+    ): Call<List<Thread>> {
+        return api.queryThreads(query)
+    }
+
+    /**
+     * Get a thread by message id.
+     *
+     * @param messageId The message id.
+     * @param options The query options.
+     */
+    @CheckResult
+    public fun getThread(
+        messageId: String,
+        options: GetThreadOptions = GetThreadOptions(),
+    ): Call<Thread> {
+        return api.getThread(messageId, options)
+    }
+
+    /**
+     * Partially updates specific [Thread] fields retaining the fields which were set previously.
+     *
+     * @param messageId The message ID.
+     * @param set The key-value data which will be added to the existing message object.
+     * @param unset The list of fields which will be removed from the existing message object.
+     *
+     * @return Executable async [Call] responsible for partially updating the message.
+     */
+    @CheckResult
+    public fun partialUpdateThread(
+        messageId: String,
+        set: Map<String, Any> = emptyMap(),
+        unset: List<String> = emptyList(),
+    ): Call<Thread> {
+        return api.partialUpdateThread(
+            messageId = messageId,
+            set = set,
+            unset = unset,
+        )
     }
 
     private fun warmUp() {

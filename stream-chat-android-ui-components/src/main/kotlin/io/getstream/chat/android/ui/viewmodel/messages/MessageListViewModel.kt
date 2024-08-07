@@ -168,6 +168,21 @@ public class MessageListViewModel(
      */
     public val insideSearch: LiveData<Boolean> = messageListController.isInsideSearch.asLiveData()
 
+    public val shouldRequestMessagesAtBottom: LiveData<Boolean> = combine(
+        messageListController.isInsideSearch,
+        messageListController.mode,
+    ) { data ->
+        val isInsideSearch: Boolean = (data[0] as Boolean)
+        val isInThread: Boolean = (data[1] as MessageMode) is MessageMode.MessageThread
+        (isInsideSearch || (isInThread && messageListController.threadLoadOrderOlderToNewer))
+    }.asLiveData()
+
+    /**
+     * Emits the current unread label state.
+     */
+    public val unreadLabel: LiveData<MessageListController.UnreadLabel> =
+        messageListController.unreadLabelState.filterNotNull().asLiveData()
+
     /**
      * Initializes the full message list state conversion and collection.
      */
@@ -205,115 +220,73 @@ public class MessageListViewModel(
     public fun onEvent(event: Event) {
         logger.v { "[onEvent] event: $event" }
         when (event) {
-            is Event.EndRegionReached -> {
-                onEndRegionReached()
+            is Event.EndRegionReached -> onEndRegionReached()
+            is Event.BottomEndRegionReached -> onBottomEndRegionReached(event.messageId)
+            is Event.LastMessageRead -> messageListController.markLastMessageRead()
+            is Event.ThreadModeEntered -> onThreadModeEntered(event.parentMessage)
+            is Event.BackButtonPressed -> onBackButtonPressed()
+            is Event.MarkAsUnreadMessage -> messageListController.markUnread(event.message)
+            is Event.DeleteMessage -> messageListController.deleteMessage(event.message, event.hard)
+            is Event.PinMessage -> messageListController.pinMessage(event.message)
+            is Event.UnpinMessage -> messageListController.unpinMessage(event.message)
+            is Event.GiphyActionSelected -> onGiphyActionSelected(event)
+            is Event.RetryMessage -> messageListController.resendMessage(event.message)
+            is Event.MessageReaction -> onMessageReaction(event.message, event.reactionType)
+            is Event.MuteUser -> messageListController.muteUser(event.user)
+            is Event.UnmuteUser -> messageListController.unmuteUser(event.user)
+            is Event.UnbanUser -> messageListController.unbanUser(event.user.id)
+            is Event.ShadowBanUser -> messageListController.shadowBanUser(event.user.id)
+            is Event.RemoveShadowBanFromUser -> messageListController.removeShadowBanFromUser(event.user.id)
+            is Event.RemoveAttachment -> messageListController.removeAttachment(event.messageId, event.attachment)
+            is Event.FlagMessage -> messageListController.flagMessage(
+                event.message,
+                event.reason,
+                event.customData,
+            ) { result ->
+                event.resultHandler(result)
             }
-
-            is Event.BottomEndRegionReached -> {
-                onBottomEndRegionReached(event.messageId)
-            }
-
-            is Event.LastMessageRead -> {
-                messageListController.markLastMessageRead()
-            }
-            is Event.ThreadModeEntered -> {
-                onThreadModeEntered(event.parentMessage)
-            }
-            is Event.BackButtonPressed -> {
-                onBackButtonPressed()
-            }
-            is Event.MarkAsUnreadMessage -> {
-                messageListController.markUnread(event.message)
-            }
-            is Event.DeleteMessage -> {
-                messageListController.deleteMessage(event.message, event.hard)
-            }
-            is Event.FlagMessage -> {
-                messageListController.flagMessage(event.message) { result ->
-                    event.resultHandler(result)
-                }
-            }
-            is Event.PinMessage -> {
-                messageListController.pinMessage(event.message)
-            }
-            is Event.UnpinMessage -> {
-                messageListController.unpinMessage(event.message)
-            }
-            is Event.GiphyActionSelected -> {
-                onGiphyActionSelected(event)
-            }
-            is Event.RetryMessage -> {
-                messageListController.resendMessage(event.message)
-            }
-            is Event.MessageReaction -> {
-                onMessageReaction(event.message, event.reactionType)
-            }
-            is Event.MuteUser -> {
-                messageListController.muteUser(event.user)
-            }
-            is Event.UnmuteUser -> {
-                messageListController.unmuteUser(event.user)
-            }
-            is Event.BanUser -> {
-                messageListController.banUser(
-                    userId = event.user.id,
-                    reason = event.reason,
-                    timeout = event.timeout,
-                )
-            }
-            is Event.UnbanUser -> {
-                messageListController.unbanUser(event.user.id)
-            }
-            is Event.ShadowBanUser -> {
-                messageListController.shadowBanUser(event.user.id)
-            }
-            is Event.RemoveShadowBanFromUser -> {
-                messageListController.removeShadowBanFromUser(event.user.id)
-            }
-            is Event.ReplyMessage -> {
-                chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
-                    onError = { streamError ->
+            is Event.BanUser -> messageListController.banUser(
+                userId = event.user.id,
+                reason = event.reason,
+                timeout = event.timeout,
+            )
+            is Event.ReplyMessage -> chatClient.setMessageForReply(event.cid, event.repliedMessage).enqueue(
+                onError = { streamError ->
+                    logger.e {
+                        "Could not reply message: ${streamError.message}. " +
+                            "Cause: ${streamError.extractCause()}"
+                    }
+                },
+            )
+            is Event.DownloadAttachment -> event.downloadAttachmentCall().enqueue(
+                onError = { streamError ->
+                    logger.e {
+                        "Attachment download error: ${streamError.message}. " +
+                            "Cause: ${streamError.extractCause()}"
+                    }
+                },
+            )
+            is Event.ShowMessage -> messageListController.scrollToMessage(
+                messageId = event.messageId,
+                parentMessageId = event.parentMessageId,
+            )
+            is Event.ReplyAttachment -> messageListController.loadMessageById(event.repliedMessageId) { result ->
+                when (result) {
+                    is Result.Success -> onEvent(Event.ReplyMessage(event.cid, result.value))
+                    is Result.Failure -> {
+                        val error = result.value
                         logger.e {
-                            "Could not reply message: ${streamError.message}. " +
-                                "Cause: ${streamError.extractCause()}"
-                        }
-                    },
-                )
-            }
-            is Event.DownloadAttachment -> {
-                event.downloadAttachmentCall().enqueue(
-                    onError = { streamError ->
-                        logger.e {
-                            "Attachment download error: ${streamError.message}. " +
-                                "Cause: ${streamError.extractCause()}"
-                        }
-                    },
-                )
-            }
-            is Event.ShowMessage -> {
-                messageListController.scrollToMessage(
-                    messageId = event.messageId,
-                    parentMessageId = event.parentMessageId,
-                )
-            }
-            is Event.RemoveAttachment -> {
-                messageListController.removeAttachment(event.messageId, event.attachment)
-            }
-            is Event.ReplyAttachment -> {
-                val messageId = event.repliedMessageId
-                val cid = event.cid
-                messageListController.loadMessageById(messageId) { result ->
-                    when (result) {
-                        is Result.Success -> onEvent(Event.ReplyMessage(cid, result.value))
-                        is Result.Failure -> {
-                            val error = result.value
-                            logger.e {
-                                "Could not load message to reply: ${error.message}. Cause: ${error.extractCause()}"
-                            }
+                            "Could not load message to reply: ${error.message}. Cause: ${error.extractCause()}"
                         }
                     }
                 }
             }
+            is Event.HideUnreadLabel -> when (event.navigateToFirstUnreadMessage) {
+                true -> messageListController.scrollToFirstUnreadMessage()
+                false -> messageListController.disableUnreadLabelButton()
+            }
+
+            is Event.BlockUser -> messageListController.blockUser(event.userId)
         }
     }
 
@@ -523,16 +496,12 @@ public class MessageListViewModel(
         /**
          * When the back button is pressed.
          */
-        public object BackButtonPressed : Event() {
-            override fun toString(): String = "BackButtonPressed"
-        }
+        public data object BackButtonPressed : Event()
 
         /**
          * When the oldest loaded message in the list has been reached.
          */
-        public object EndRegionReached : Event() {
-            override fun toString(): String = "EndRegionReached"
-        }
+        public data object EndRegionReached : Event()
 
         /**
          * When the newest loaded message in the list has been reached and there's still newer messages to be loaded.
@@ -542,9 +511,7 @@ public class MessageListViewModel(
         /**
          * When the newest message in the channel has been read.
          */
-        public object LastMessageRead : Event() {
-            override fun toString(): String = "LastMessageRead"
-        }
+        public data object LastMessageRead : Event()
 
         /**
          * When the users enters thread mode.
@@ -572,7 +539,12 @@ public class MessageListViewModel(
          * @param resultHandler Lambda function that handles the result of the operation.
          * e.g. if the message was successfully flagged or not.
          */
-        public data class FlagMessage(val message: Message, val resultHandler: ((Result<Flag>) -> Unit) = { }) : Event()
+        public data class FlagMessage(
+            val message: Message,
+            val reason: String?,
+            val customData: Map<String, String>,
+            val resultHandler: ((Result<Flag>) -> Unit) = { },
+        ) : Event()
 
         /**
          * When the user pins a message.
@@ -723,5 +695,19 @@ public class MessageListViewModel(
          * @param attachment The attachment to be deleted.
          */
         public data class RemoveAttachment(val messageId: String, val attachment: Attachment) : Event()
+
+        /**
+         * When the Unread Label Button should be hidden.
+         *
+         * @param navigateToFirstUnreadMessage If true, the user will be navigated to the first unread message.
+         */
+        public data class HideUnreadLabel(val navigateToFirstUnreadMessage: Boolean) : Event()
+
+        /**
+         * Block a user.
+         *
+         * @param userId the id of the user that is blocked.
+         */
+        public data class BlockUser(val userId: String) : Event()
     }
 }

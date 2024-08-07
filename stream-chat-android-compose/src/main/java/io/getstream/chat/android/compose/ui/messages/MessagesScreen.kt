@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-@file:OptIn(ExperimentalComposeUiApi::class)
-
 package io.getstream.chat.android.compose.ui.messages
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -30,12 +29,15 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -43,10 +45,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -58,10 +62,13 @@ import io.getstream.chat.android.compose.state.messages.attachments.StatefulStre
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
+import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
+import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedMessageMenu
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.messages.attachments.AttachmentsPicker
+import io.getstream.chat.android.compose.ui.messages.attachments.factory.AttachmentPickerPollCreation
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
 import io.getstream.chat.android.compose.ui.messages.list.MessageList
@@ -75,6 +82,11 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.ReactionSorting
+import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.ui.common.state.messages.Delete
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.Flag
@@ -89,6 +101,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageRe
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageState
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
+import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.updateMessage
 
 /**
@@ -102,10 +115,12 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * You can customize the behavior of the list through its parameters. For default behavior,
  * simply create an instance and pass in just the channel ID and the context.
  * @param showHeader If we're showing the header or not.
+ * @param reactionSorting The sorting type for reactions. Default is [ReactionSortingByFirstReactionAt].
  * @param onBackPressed Handler for when the user taps on the Back button and/or the system
  * back button.
  * @param onHeaderTitleClick Handler for when the user taps on the header section.
  * @param onChannelAvatarClick Handler called when the user taps on the channel avatar.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param skipPushNotification If new messages should skip triggering a push notification when sent. False by default.
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
@@ -117,10 +132,12 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
 public fun MessagesScreen(
     viewModelFactory: MessagesViewModelFactory,
     showHeader: Boolean = true,
+    reactionSorting: ReactionSorting = ReactionSortingByFirstReactionAt,
     onBackPressed: () -> Unit = {},
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -137,12 +154,14 @@ public fun MessagesScreen(
         composerViewModel.setMessageMode(messageMode)
     }
 
+    val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
     val backAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
         {
             val isInThread = listViewModel.isInThread
             val isShowingOverlay = listViewModel.isShowingOverlay
 
             when {
+                isImeVisible -> Unit
                 attachmentsPickerViewModel.isShowingAttachments -> attachmentsPickerViewModel.changeAttachmentState(
                     false,
                 )
@@ -232,6 +251,7 @@ public fun MessagesScreen(
                     .background(ChatTheme.colors.appBackground)
                     .padding(it),
                 viewModel = listViewModel,
+                reactionSorting = reactionSorting,
                 messagesLazyListState = rememberMessageListState(parentMessageId = currentState.parentMessageId),
                 threadMessagesStart = threadMessagesStart,
                 onThreadClick = remember(composerViewModel, listViewModel) {
@@ -241,6 +261,7 @@ public fun MessagesScreen(
                         listViewModel.openMessageThread(message)
                     }
                 },
+                onUserAvatarClick = onUserAvatarClick,
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->
@@ -281,6 +302,7 @@ public fun MessagesScreen(
             skipEnrichUrl = skipEnrichUrl,
         )
         AttachmentsPickerMenu(
+            listViewModel = listViewModel,
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             composerViewModel = composerViewModel,
         )
@@ -291,6 +313,7 @@ public fun MessagesScreen(
             skipEnrichUrl = skipEnrichUrl,
         )
         MessageDialogs(listViewModel = listViewModel)
+        PollDialogs(listViewModel = listViewModel)
     }
 }
 
@@ -548,6 +571,7 @@ private fun BoxScope.MessagesScreenReactionsPicker(
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun BoxScope.AttachmentsPickerMenu(
+    listViewModel: MessageListViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
 ) {
@@ -558,11 +582,18 @@ private fun BoxScope.AttachmentsPickerMenu(
         enter = fadeIn(),
         exit = fadeOut(animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2)),
     ) {
+        var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
+        val screenHeight = LocalConfiguration.current.screenHeightDp
+        val pickerHeight by animateDpAsState(
+            targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
+            label = "full sized picker animation",
+        )
+
         AttachmentsPicker(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .height(350.dp)
+                .height(pickerHeight)
                 .animateEnterExit(
                     enter = slideInVertically(
                         initialOffsetY = { height -> height },
@@ -573,6 +604,11 @@ private fun BoxScope.AttachmentsPickerMenu(
                         animationSpec = tween(delayMillis = AnimationConstants.DefaultDurationMillis / 2),
                     ),
                 ),
+            shape = if (isFullScreenContent) {
+                RoundedCornerShape(0.dp)
+            } else {
+                ChatTheme.shapes.bottomSheet
+            },
             onAttachmentsSelected = remember(attachmentsPickerViewModel) {
                 {
                         attachments ->
@@ -580,6 +616,30 @@ private fun BoxScope.AttachmentsPickerMenu(
                     composerViewModel.addSelectedAttachments(attachments)
                 }
             },
+            onAttachmentPickerAction = { action ->
+                if (action is AttachmentPickerPollCreation) {
+                    listViewModel.createPoll(
+                        pollConfig = PollConfig(
+                            name = action.question,
+                            options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
+                            description = action.question,
+                            allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
+                            votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
+                                VotingVisibility.ANONYMOUS
+                            } else {
+                                VotingVisibility.PUBLIC
+                            },
+                            maxVotesAllowed = if (action.switches.any { it.key == "maxVotesAllowed" && it.enabled }) {
+                                action.switches.first { it.key == "maxVotesAllowed" }.pollSwitchInput?.value.toString()
+                                    .toInt()
+                            } else {
+                                1
+                            },
+                        ),
+                    )
+                }
+            },
+            onTabClick = { _, tab -> isFullScreenContent = tab.isFullContent },
             onDismiss = remember(attachmentsPickerViewModel) {
                 {
                     attachmentsPickerViewModel.changeAttachmentState(false)
@@ -672,8 +732,39 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
             modifier = Modifier.padding(16.dp),
             title = stringResource(id = R.string.stream_compose_flag_message_title),
             message = stringResource(id = R.string.stream_compose_flag_message_text),
-            onPositiveAction = remember(listViewModel) { { listViewModel.flagMessage(flagAction.message) } },
+            onPositiveAction = remember(listViewModel) {
+                {
+                    listViewModel.flagMessage(
+                        flagAction.message,
+                        reason = null,
+                        customData = emptyMap(),
+                    )
+                }
+            },
             onDismiss = remember(listViewModel) { { listViewModel.dismissMessageAction(flagAction) } },
+        )
+    }
+}
+
+@Composable
+private fun PollDialogs(listViewModel: MessageListViewModel) {
+    val dismiss = { listViewModel.displayPollMoreOptions(null) }
+    val selectedPoll = listViewModel.pollState.selectedPoll
+
+    if (selectedPoll?.pollSelectionType == PollSelectionType.MoreOption) {
+        PollMoreOptionsDialog(
+            selectedPoll = selectedPoll,
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
+            listViewModel = listViewModel,
+        )
+    }
+
+    if (selectedPoll?.pollSelectionType == PollSelectionType.ViewResult) {
+        PollViewResultDialog(
+            selectedPoll = selectedPoll,
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
         )
     }
 }

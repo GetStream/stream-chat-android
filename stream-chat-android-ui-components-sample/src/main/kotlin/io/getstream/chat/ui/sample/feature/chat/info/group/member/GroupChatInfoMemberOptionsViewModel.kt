@@ -37,6 +37,10 @@ class GroupChatInfoMemberOptionsViewModel(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
 
+    private companion object {
+        const val DEFAULT_BAN_TIMEOUT = 60 // 1 hour
+    }
+
     private val _events = MutableLiveData<Event<UiEvent>>()
     private val _state: MediatorLiveData<State> = MediatorLiveData()
     private val _errorEvents: MutableLiveData<Event<ErrorEvent>> = MutableLiveData()
@@ -71,8 +75,10 @@ class GroupChatInfoMemberOptionsViewModel(
 
     fun onAction(action: Action) {
         when (action) {
-            Action.MessageClicked -> handleMessageClicked()
+            is Action.MessageClicked -> handleMessageClicked()
             is Action.RemoveFromChannel -> removeFromChannel(action.username)
+            is Action.BanMember -> banMember(action.timeout)
+            is Action.UnbanMember -> unbanMember()
         }
     }
 
@@ -97,21 +103,43 @@ class GroupChatInfoMemberOptionsViewModel(
         }
     }
 
+    private fun banMember(timeout: Int? = null) {
+        viewModelScope.launch {
+            when (chatClient.channel(cid).banUser(memberId, reason = null, timeout = timeout).await()) {
+                is Result.Success -> _events.value = Event(UiEvent.Dismiss)
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.BanMemberError))
+            }
+        }
+    }
+
+    private fun unbanMember() {
+        viewModelScope.launch {
+            when (chatClient.channel(cid).unbanUser(memberId).await()) {
+                is Result.Success -> _events.value = Event(UiEvent.Dismiss)
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.UnbanMemberError))
+            }
+        }
+    }
+
     data class State(val directChannelCid: String?, val loading: Boolean)
 
     sealed class Action {
-        object MessageClicked : Action()
+        data object MessageClicked : Action()
         data class RemoveFromChannel(val username: String) : Action()
+        data class BanMember(val timeout: Int? = DEFAULT_BAN_TIMEOUT) : Action()
+        data object UnbanMember : Action()
     }
 
     sealed class UiEvent {
-        object Dismiss : UiEvent()
+        data object Dismiss : UiEvent()
         data class RedirectToChat(val cid: String) : UiEvent()
-        object RedirectToChatPreview : UiEvent()
+        data object RedirectToChatPreview : UiEvent()
     }
 
     sealed class ErrorEvent {
-        object RemoveMemberError : ErrorEvent()
+        data object RemoveMemberError : ErrorEvent()
+        data object BanMemberError : ErrorEvent()
+        data object UnbanMemberError : ErrorEvent()
     }
 }
 

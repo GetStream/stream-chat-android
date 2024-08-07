@@ -21,7 +21,10 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import io.getstream.chat.android.client.utils.message.isPoll
+import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.models.Attachment
@@ -116,6 +119,22 @@ private class DefaultMessagePreviewFormatter(
 
                 if (message.isSystem()) {
                     append(displayedText)
+                } else if (message.isPoll()) {
+                    if (message.isPollClosed()) {
+                        append(
+                            context.getString(
+                                R.string.stream_compose_poll_closed_preview,
+                                message.poll?.name.orEmpty(),
+                            ),
+                        )
+                    } else {
+                        append(
+                            context.getString(
+                                R.string.stream_compose_poll_created_preview,
+                                message.poll?.name.orEmpty(),
+                            ),
+                        )
+                    }
                 } else {
                     appendSenderName(
                         message = message,

@@ -1,4 +1,6 @@
-# Providing Custom Reactions
+# Reactions
+
+## Providing Custom Reactions
 
 By default, the Compose SDK provides the following reaction options and corresponding icons for them:
 
@@ -13,7 +15,7 @@ By default, the Compose SDK provides the following reaction options and correspo
 
 If you want to override the supported set of reactions, you need to create your custom implementation of `ReactionIconFactory` and provide it via `ChatTheme`.
 
-## Creating a Custom Reaction Icon Factory
+### Creating a Custom Reaction Icon Factory
 
 Let's have a closer look at the `ReactionIconFactory` interface:
 
@@ -100,7 +102,7 @@ Here's what you're doing here, step-by-step:
 
 Next, you need to make use of the factory you've created above.
 
-## Providing the Factory via ChatTheme
+### Providing the Factory via ChatTheme
 
 Finally, you just need to provide your newly created factory via `ChatTheme`:
 
@@ -138,10 +140,48 @@ class MessagesActivity : AppCompatActivity() {
 }
 ```
 
-## The Resulting UI
+### The Resulting UI
 
 The code above will produce the following UI:
 
 | Selected Message Menu | Message List |
 | --- | --- |
 |![Selected Message Menu](../../assets/compose_custom_reactions_factory_selected_message_menu.png)|![Message List](../../assets/compose_custom_reactions_factory_message_list.png)|
+
+
+## Custom Reactions Sorting
+
+By default, the reactions are sorted by the time they were added (`ReactionSortingByFirstReactionAt`).
+If you want to change the sorting behavior, you can provide a custom `ReactionSorting` implementation or use one of the provided ones.
+
+You can sort the reactions by the following fields in `ReactionGroup`:
+- `count` - The number of times the reaction was added.
+- `sumScore` - The score value of the reaction. By default it is the same value as `count`.
+- `firstReactionAt` - The date of the first reaction from this type of reaction.
+- `lastReactionAt` - The date of the last reaction from this type of reaction.
+
+In the example below, we are using the predefined `ReactionSortingByCount` implementation to sort the reactions by the number of times they were added.
+```kotlin
+override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+    super.onCreate(savedInstanceState, persistentState)
+
+    // ...
+    setContent {
+        ChatTheme {
+            MessagesScreen(
+                viewModelFactory = messageListViewModelFactory,
+                reactionSorting = ReactionSortingByCount,
+            )
+        }
+    }
+}
+```
+
+You can also pass a custom `ReactionSorting` implementation directly to the `MessageList` in case have a custom message screen:
+
+```kotlin
+MessageList(
+    reactionSorting = ReactionSortingByCount,
+    // ... other properties
+)
+```
