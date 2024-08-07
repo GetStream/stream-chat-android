@@ -29,6 +29,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
@@ -221,7 +222,7 @@ private object AttachmentsPickerCustomizationSnippet {
             override val attachmentsPickerMode: AttachmentsPickerMode
                 get() = CustomPickerMode()
 
-            override fun isPickerTabEnabled(): Boolean {
+            override fun isPickerTabEnabled(channel: Channel): Boolean {
                 // Return true if the tab should be enabled
                 return true
             }

@@ -55,12 +55,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 
 /**
  * Represents the bottom bar UI that allows users to pick attachments. The picker renders its
  * tabs based on the [tabFactories] parameter. Out of the box we provide factories for images,
  * files and media capture tabs.
  *
+ * @param channel The channel where the attachments picker is being used.
  * @param attachmentsPickerViewModel ViewModel that loads the images or files and persists which
  * items have been selected.
  * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
@@ -81,7 +83,10 @@ public fun AttachmentsPicker(
     tabFactories: List<AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories,
     shape: Shape = ChatTheme.shapes.bottomSheet,
 ) {
-    val defaultTabIndex = tabFactories.indexOfFirst { it.isPickerTabEnabled() }.takeIf { it >= 0 } ?: 0
+    val defaultTabIndex = tabFactories
+        .indexOfFirst { it.isPickerTabEnabled(attachmentsPickerViewModel.channel) }
+        .takeIf { it >= 0 }
+        ?: 0
     var selectedTabIndex by remember { mutableIntStateOf(defaultTabIndex) }
     var selectedAttachmentsPickerMode: AttachmentsPickerMode? by remember { mutableStateOf(null) }
 
@@ -115,6 +120,7 @@ public fun AttachmentsPicker(
                         hasPickedAttachments = attachmentsPickerViewModel.hasPickedAttachments,
                         tabFactories = tabFactories,
                         tabIndex = selectedTabIndex,
+                        channel = attachmentsPickerViewModel.channel,
                         onTabClick = { index, attachmentPickerMode ->
                             onTabClick.invoke(index, attachmentPickerMode)
                             selectedTabIndex = index
@@ -166,14 +172,17 @@ public fun AttachmentsPicker(
  * @param hasPickedAttachments If we selected any attachments in the currently selected tab.
  * @param tabFactories The list of factories to build tab icons.
  * @param tabIndex The index of the tab that we selected.
+ * @param channel The channel where the attachments picker is being used.
  * @param onTabClick Handler for clicking on any of the tabs, to change the shown attachments.
  * @param onSendAttachmentsClick Handler when confirming the picked attachments.
  */
+@Suppress("LongParameterList")
 @Composable
 private fun AttachmentPickerOptions(
     hasPickedAttachments: Boolean,
     tabFactories: List<AttachmentsPickerTabFactory>,
     tabIndex: Int,
+    channel: Channel,
     onTabClick: (Int, AttachmentsPickerMode) -> Unit,
     onSendAttachmentsClick: () -> Unit,
 ) {
@@ -185,7 +194,7 @@ private fun AttachmentPickerOptions(
             tabFactories.forEachIndexed { index, tabFactory ->
 
                 val isSelected = index == tabIndex
-                val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled())
+                val isEnabled = isSelected || (!hasPickedAttachments && tabFactory.isPickerTabEnabled(channel))
 
                 IconButton(
                     enabled = isEnabled,

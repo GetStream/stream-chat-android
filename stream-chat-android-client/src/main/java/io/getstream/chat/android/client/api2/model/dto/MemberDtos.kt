@@ -32,6 +32,7 @@ internal data class UpstreamMemberDto(
     val channel_role: String?,
     val notifications_muted: Boolean?,
     val status: String?,
+    val ban_expires: Date?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -47,4 +48,5 @@ internal data class DownstreamMemberDto(
     val channel_role: String?,
     val notifications_muted: Boolean?,
     val status: String?,
+    val ban_expires: Date?,
 )

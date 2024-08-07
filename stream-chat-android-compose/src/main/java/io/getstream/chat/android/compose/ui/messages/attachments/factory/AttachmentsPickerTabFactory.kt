@@ -19,6 +19,7 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
@@ -37,7 +38,7 @@ public interface AttachmentsPickerTabFactory {
      *
      * @return True if the tab is enabled, false otherwise.
      */
-    public fun isPickerTabEnabled(): Boolean = true
+    public fun isPickerTabEnabled(channel: Channel): Boolean = true
 
     /**
      * Emits an icon for the tab.

@@ -54,6 +54,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.docs.R
 
 @Composable
@@ -234,6 +235,7 @@ private fun CustomAttachmentsPicker(
                 if (shouldShowMenu) {
                     // Show the menu with Images, Files, Camera options
                     AttachmentsTypeMenu(
+                        attachmentsPickerViewModel.channel,
                         tabFactories = tabFactories,
                         onClick = {
                             selectedOptionIndex = it
@@ -280,6 +282,7 @@ private fun CustomAttachmentsPicker(
 
 @Composable
 private fun AttachmentsTypeMenu(
+    channel: Channel,
     tabFactories: List<AttachmentsPickerTabFactory>,
     onClick: (Int) -> Unit,
 ) {
@@ -291,7 +294,7 @@ private fun AttachmentsTypeMenu(
         tabFactories.forEachIndexed { index, tabFactory ->
             AttachmentsTypeMenuItem(
                 tabFactory = tabFactory,
-                isEnabled = tabFactory.isPickerTabEnabled(),
+                isEnabled = tabFactory.isPickerTabEnabled(channel),
                 index = index,
                 onClick = onClick,
             )
@@ -388,6 +391,7 @@ private fun AttachmentsPickerToolbar(
 fun PreviewCustomAttachmentPickerOptions() {
     ChatTheme {
         AttachmentsTypeMenu(
+            Channel(),
             tabFactories = ChatTheme.attachmentsPickerTabFactories,
         ) {}
     }

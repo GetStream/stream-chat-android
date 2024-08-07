@@ -56,4 +56,7 @@ internal data class MemberEntity(
 
     /** The user's status. */
     val status: String? = null,
+
+    /** The date the ban expires. */
+    var banExpires: Date? = null,
 )
