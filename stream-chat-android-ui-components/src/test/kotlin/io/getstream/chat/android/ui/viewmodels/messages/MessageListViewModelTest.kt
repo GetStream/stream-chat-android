@@ -246,6 +246,7 @@ internal class MessageListViewModelTest {
         private val stateRegistry: StateRegistry = mock()
         private val clientState: ClientState = mock()
         private val globalState: GlobalState = mock()
+        private var channelState: ChannelState? = null
 
         init {
             val statePlugin: StatePlugin = mock()
@@ -300,7 +301,7 @@ internal class MessageListViewModelTest {
             messages: List<Message> = listOf(),
             pinnedMessages: List<Message> = listOf(),
         ) = apply {
-            val channelState: ChannelState = mock {
+            channelState = mock() {
                 whenever(it.cid) doReturn CID
                 whenever(it.channelId) doReturn CHANNEL_ID
                 whenever(it.channelType) doReturn CHANNEL_TYPE
@@ -323,8 +324,8 @@ internal class MessageListViewModelTest {
                 whenever(it.loading) doReturn MutableStateFlow(true)
                 whenever(it.unreadCount) doReturn MutableStateFlow(0)
                 whenever(it.loadingNewerMessages) doReturn MutableStateFlow(false)
+                whenever(stateRegistry.channel(any(), any())) doReturn it
             }
-            whenever(stateRegistry.channel(any(), any())) doReturn channelState
         }
 
         fun get(): MessageListViewModel {
@@ -334,6 +335,7 @@ internal class MessageListViewModelTest {
                     cid = channelId,
                     clipboardHandler = mock(),
                     threadLoadOrderOlderToNewer = false,
+                    channelState = MutableStateFlow(channelState),
                 ),
 
             )
