@@ -80,6 +80,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed `Edited` label not being displayed right after editing a message. [#5342](https://github.com/GetStream/stream-chat-android/pull/5342)
 
 ### ⬆️ Improved
 
