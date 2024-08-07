@@ -52,6 +52,21 @@
         tools:text="Last seen a year ago"
         />
 
+    <TextView
+        android:id="@+id/banExpiresTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+        android:textColor="@color/stream_ui_accent_red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/lastSeenTextView"
+        tools:text="Ban expires in 1 day"
+        />
+
     <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/userAvatarView"
         android:layout_width="64dp"
@@ -59,7 +74,7 @@
         android:layout_marginTop="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/lastSeenTextView"
+        app:layout_constraintTop_toBottomOf="@id/banExpiresTextView"
         app:streamUiAvatarBorderWidth="0dp"
         tools:src="@tools:sample/avatars"
         />
@@ -92,12 +107,25 @@
         />
 
     <io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionView
-        android:id="@+id/optionRemove"
+        android:id="@+id/optionBan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/optionMessage"
+        app:optionIcon="@drawable/ic_block"
+        app:optionIconTint="@color/red"
+        app:optionText="@string/chat_group_info_user_option_ban"
+        app:optionTextColor="@color/red"
+        />
+
+    <io.getstream.chat.ui.sample.feature.chat.info.group.member.GroupChatInfoMemberOptionView
+        android:id="@+id/optionRemove"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/optionBan"
         app:optionIcon="@drawable/ic_leave_group"
         app:optionIconTint="@color/red"
         app:optionText="@string/chat_group_info_user_option_remove"

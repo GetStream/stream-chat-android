@@ -34,6 +34,7 @@ internal fun DownstreamMemberDto.toDomain(currentUserId: UserId?): Member =
         channelRole = channel_role,
         notificationsMuted = notifications_muted,
         status = status,
+        banExpires = ban_expires,
     )
 
 internal fun Member.toDto(): UpstreamMemberDto =
@@ -49,4 +50,5 @@ internal fun Member.toDto(): UpstreamMemberDto =
         channel_role = channelRole,
         notifications_muted = notificationsMuted,
         status = status,
+        ban_expires = banExpires,
     )

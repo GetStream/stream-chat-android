@@ -77,6 +77,10 @@ public data class Member(
      * The status of the user in the channel.
      */
     val status: String? = null,
+    /**
+     * The date the ban expires.
+     */
+    val banExpires: Date? = null,
 ) : UserEntity, ComparableFieldProvider {
 
     override fun getComparableField(fieldName: String): Comparable<*>? {
@@ -89,6 +93,7 @@ public data class Member(
             "invite_rejected_at", "inviteRejectedAt" -> inviteRejectedAt
             "shadow_banned", "shadowBanned" -> shadowBanned
             "banned" -> banned
+            "ban_expires", "banExpires" -> banExpires
             "channel_role", "channelRole" -> channelRole
             "notifications_muted", "notificationsMuted" -> notificationsMuted
             "status" -> status
