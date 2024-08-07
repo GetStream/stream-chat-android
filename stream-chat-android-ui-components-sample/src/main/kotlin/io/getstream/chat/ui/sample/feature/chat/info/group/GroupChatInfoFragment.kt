@@ -117,10 +117,10 @@ class GroupChatInfoFragment : Fragment() {
                         GroupChatInfoMemberOptionsDialogFragment.newInstance(
                             args.cid,
                             it.channelName,
-                            it.member.user,
+                            it.member,
                             viewModel.state.value!!.ownCapabilities,
-                        )
-                            .show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
+                        ).show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
+
                     GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(
                         R.id.homeFragment,
                         false,

@@ -121,7 +121,8 @@ internal object ChannelDtoTestData {
             "banned": false,
             "channel_role": "member",
             "notifications_muted": false,
-            "status": "member"
+            "status": "member",
+            "ban_expires" : "2021-03-08T15:42:31.355Z"
            }
           ],
           "watchers": [${UserDtoTestData.downstreamJson}],
@@ -182,6 +183,7 @@ internal object ChannelDtoTestData {
                 channel_role = "member",
                 notifications_muted = false,
                 status = "member",
+                ban_expires = Date(1615218151355),
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -211,6 +213,7 @@ internal object ChannelDtoTestData {
             channel_role = "member",
             notifications_muted = false,
             status = "member",
+            ban_expires = null,
         ),
         extraData = mapOf("draft" to true),
     )
@@ -318,7 +321,8 @@ internal object ChannelDtoTestData {
             "banned": false,
             "channel_role": "member",
             "notifications_muted": false,
-            "status": "member"
+            "status": "member",
+            "ban_expires" : "2021-03-08T15:42:31.355Z"
            }
           ],
           "watchers": [${UserDtoTestData.upstreamJson}],
@@ -364,6 +368,7 @@ internal object ChannelDtoTestData {
                 channel_role = "member",
                 notifications_muted = false,
                 status = "member",
+                ban_expires = Date(1615218151355),
             ),
         ),
         watchers = listOf(UserDtoTestData.upstreamUser),

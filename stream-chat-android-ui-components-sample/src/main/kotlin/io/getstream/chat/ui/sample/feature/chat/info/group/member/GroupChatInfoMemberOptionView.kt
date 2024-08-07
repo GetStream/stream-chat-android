@@ -49,6 +49,10 @@ class GroupChatInfoMemberOptionView : FrameLayout {
         }
     }
 
+    fun setOnOptionText(text: CharSequence) {
+        binding.titleTextView.text = text
+    }
+
     private fun init(attrs: AttributeSet?) {
         attrs ?: return
         context.obtainStyledAttributes(attrs, R.styleable.GroupChatInfoMemberOptionView).use { typedArray ->
