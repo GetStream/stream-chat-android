@@ -8,6 +8,7 @@
     <ID>LongMethod:ChatInitializer.kt$ChatInitializer$@Suppress("UNUSED_VARIABLE") fun init(apiKey: String)</ID>
     <ID>LongMethod:ComponentBrowserAvatarViewFragment.kt$ComponentBrowserAvatarViewFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:ComponentBrowserViewReactionsFragment.kt$ComponentBrowserViewReactionsFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
+    <ID>LongMethod:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$override fun onViewCreated(view: View, savedInstanceState: Bundle?)</ID>
     <ID>LongMethod:OnlyMediaAttachmentsMessagesComponentBrowserFragment.kt$OnlyMediaAttachmentsMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:PlainTextMessagesComponentBrowserFragment.kt$PlainTextMessagesComponentBrowserFragment$override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
     <ID>LongMethod:PlainTextWithFileAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithFileAttachmentsMessagesComponentBrowserFragment$@OptIn(InternalStreamChatApi::class) override fun getItems(): List&lt;MessageListItem.MessageItem></ID>
@@ -44,7 +45,9 @@
     <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$is GroupChatInfoViewModel.ErrorEvent.ChangeGroupNameError -> R.string.chat_group_info_error_change_name</ID>
     <ID>MaxLineLength:GroupChatInfoFragment.kt$GroupChatInfoFragment$is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel</ID>
     <ID>MaxLineLength:GroupChatInfoMemberOptionView.kt$GroupChatInfoMemberOptionView$typedArray.getResourceId(R.styleable.GroupChatInfoMemberOptionView_optionIcon, R.drawable.ic_cancel)</ID>
+    <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.BanMemberError -> R.string.chat_group_info_error_ban_member</ID>
     <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.RemoveMemberError -> R.string.chat_group_info_error_remove_member</ID>
+    <ID>MaxLineLength:GroupChatInfoMemberOptionsDialogFragment.kt$GroupChatInfoMemberOptionsDialogFragment$is GroupChatInfoMemberOptionsViewModel.ErrorEvent.UnbanMemberError -> R.string.chat_group_info_error_unban_member</ID>
     <ID>MaxLineLength:GroupChatInfoMemberOptionsViewModel.kt$GroupChatInfoMemberOptionsViewModelFactory$"GroupChatInfoMemberOptionsViewModelFactory can only create instances of GroupChatInfoMemberOptionsViewModel"</ID>
     <ID>MaxLineLength:GroupChatInfoViewModel.kt$GroupChatInfoViewModel$shouldExpandMembers = currentState.shouldExpandMembers ?: false || members.size &lt;= COLLAPSED_MEMBERS_COUNT</ID>
     <ID>MaxLineLength:MessageListComponentBrowserFragment.kt$MessageListComponentBrowserFragment$findNavController().navigateSafely(R.id.action_componentBrowserMessageList_to_componentBrowserDateDividerFragment)</ID>
@@ -60,6 +63,7 @@
     <ID>MaxLineLength:PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment.kt$PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:RepliedMessagesComponentBrowserFragment.kt$RepliedMessagesComponentBrowserFragment$text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."</ID>
     <ID>MaxLineLength:SharedAttachment.kt$SharedAttachment$AttachmentItem : SharedAttachment</ID>
+    <ID>SerialVersionUIDInSerializableClass:UserData.kt$MemberData : Serializable</ID>
     <ID>SerialVersionUIDInSerializableClass:UserData.kt$UserData : Serializable</ID>
     <ID>VariableNaming:ComponentBrowserSearchViewFragment.kt$ComponentBrowserSearchViewFragment$private val TAG = ComponentBrowserSearchViewFragment::class.simpleName</ID>
   </CurrentIssues>
