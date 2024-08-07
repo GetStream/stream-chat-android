@@ -69,7 +69,7 @@ public fun MessageFooter(
     Column(horizontalAlignment = alignment.contentAlignment) {
         MessageTranslatedLabel(messageItem)
         if (messageItem.showMessageFooter) {
-            var showEditLabel by remember { mutableStateOf(message.messageTextUpdatedAt != null) }
+            val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }
             Row(
                 modifier = Modifier
@@ -109,7 +109,7 @@ public fun MessageFooter(
                 if (date != null) {
                     Timestamp(date = date, formatType = DateFormatType.TIME)
                 }
-                if (showEditLabel) {
+                if (showEditLabel && !showEditInfo) {
                     Text(
                         modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                         text = "·",
@@ -117,11 +117,7 @@ public fun MessageFooter(
                         color = ChatTheme.colors.textLowEmphasis,
                     )
                     Text(
-                        modifier = Modifier
-                            .clickable {
-                                showEditLabel = !showEditLabel
-                                showEditInfo = !showEditInfo
-                            },
+                        modifier = Modifier.clickable { showEditInfo = !showEditInfo },
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
                         style = ChatTheme.typography.footnote,
                         color = ChatTheme.colors.textLowEmphasis,
@@ -132,10 +128,7 @@ public fun MessageFooter(
                 Row(
                     modifier = Modifier
                         .padding(bottom = 4.dp)
-                        .clickable {
-                            showEditLabel = !showEditLabel
-                            showEditInfo = !showEditInfo
-                        },
+                        .clickable { showEditInfo = !showEditInfo },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
