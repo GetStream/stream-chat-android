@@ -21,6 +21,18 @@
 
 ### ❌ Removed
 
+## stream-chat-android-core
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+- Added optional `banExpires` field to `Member` entity. [#5340](https://github.com/GetStream/stream-chat-android/pull/5340)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 ## stream-chat-android-offline
 ### 🐞 Fixed
 
