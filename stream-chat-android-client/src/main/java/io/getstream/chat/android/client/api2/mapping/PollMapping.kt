@@ -45,7 +45,7 @@ internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
         options = options.map { it.toDomain() },
         votingVisibility = voting_visibility.toVotingVisibility(),
         enforceUniqueVote = enforce_unique_vote,
-        maxVotesAllowed = max_votes_allowed,
+        maxVotesAllowed = max_votes_allowed ?: 1,
         allowUserSuggestedOptions = allow_user_suggested_options,
         allowAnswers = allow_answers,
         voteCountsByOption = vote_counts_by_option ?: emptyMap(),
@@ -86,8 +86,10 @@ internal fun DownstreamVoteDto.toDomain(currentUserId: UserId?): Vote = Vote(
  *
  * @return VotingVisibility
  */
-private fun String.toVotingVisibility(): VotingVisibility = when (this) {
-    "public" -> VotingVisibility.PUBLIC
+private fun String?.toVotingVisibility(): VotingVisibility = when (this) {
+    null,
+    "public",
+    -> VotingVisibility.PUBLIC
     "anonymous" -> VotingVisibility.ANONYMOUS
     else -> throw IllegalArgumentException("Unknown voting visibility: $this")
 }
