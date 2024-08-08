@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.state.plugin.state.channel.internal
 
 import io.getstream.chat.android.models.User
@@ -23,7 +39,6 @@ internal class ChannelMutableStateTests {
 
     private lateinit var channelState: ChannelMutableState
 
-
     @BeforeEach
     fun setUp() {
         channelState = ChannelMutableState(
@@ -33,7 +48,7 @@ internal class ChannelMutableStateTests {
             MutableStateFlow(
                 mapOf(currentUser.id to currentUser),
             ),
-            ChannelMutableStateTests::currentTime
+            ChannelMutableStateTests::currentTime,
         )
     }
 
@@ -51,11 +66,11 @@ internal class ChannelMutableStateTests {
             deletedAt = null,
             pinned = true,
             pinnedAt = Date(now),
-            pinExpires = Date(now + 1.minutes.inWholeMilliseconds)
+            pinExpires = Date(now + 1.minutes.inWholeMilliseconds),
         )
         val expiresIn1h = alreadyExpired.copy(
             id = randomString(),
-            pinExpires = Date(now + 1.hours.inWholeMilliseconds)
+            pinExpires = Date(now + 1.hours.inWholeMilliseconds),
         )
         val pinnedMessages = listOf(alreadyExpired, expiresIn1h)
 
