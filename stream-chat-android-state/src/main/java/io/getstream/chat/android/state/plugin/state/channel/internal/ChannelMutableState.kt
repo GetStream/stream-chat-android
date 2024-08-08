@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.utils.internal.combineStates
+import io.getstream.chat.android.state.utils.internal.filter
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -106,10 +107,10 @@ internal class ChannelMutableState(
 
     val pinnedMessagesList: StateFlow<List<Message>> =
         combineStates(_pinnedMessages!!, latestUsers) { pinnedMessagesMap, userMap ->
-            pinnedMessagesMap.values.updateUsers(userMap)
+            pinnedMessagesMap.values.filter { it.isPinned(now) }.updateUsers(userMap)
         }
 
-    val rawPinnedMessages get() = _pinnedMessages?.value.orEmpty()
+    val rawPinnedMessages get() = _pinnedMessages?.value?.filterValues { it.isPinned(now) }.orEmpty()
 
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =
@@ -136,7 +137,7 @@ internal class ChannelMutableState(
             messageCollection.asSequence()
                 .filter { it.parentId == null || it.showInChannel }
                 .filter { it.user.id == user?.id || !it.shadowed }
-                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .filter(this::isMessageVisible)
                 .filter(extraPredicate)
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
@@ -148,12 +149,12 @@ internal class ChannelMutableState(
     internal var keystrokeParentMessageId: String? = null
 
     internal val visibleMessages: StateFlow<Map<String, Message>> = messageList.mapState { messages ->
-        messages.filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+        messages.filter(this::isMessageVisible)
             .associateBy(Message::id)
     }
 
     internal val visiblePinnedMessages: StateFlow<Map<String, Message>> = pinnedMessagesList.mapState { messages ->
-        messages.filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+        messages.filter(this::isMessageVisible)
             .associateBy(Message::id)
     }
 
@@ -562,9 +563,22 @@ internal class ChannelMutableState(
     private inline fun setPinned(producer: (Map<String, Message>) -> Map<String, Message>) {
         val curPinnedMessages = _pinnedMessages?.value
         curPinnedMessages ?: return
-        val newPinnedMessages = producer(curPinnedMessages)
+        val newPinnedMessages = producer(curPinnedMessages).filterValues { it.isPinned(now) }
         logger.v { "[setPinned] pinned.size: ${curPinnedMessages.size} => ${newPinnedMessages.size}" }
         _pinnedMessages?.value = newPinnedMessages
+    }
+
+    /**
+     * Checks if the given message is visible based on the `hideMessagesBefore` timestamp.
+     *
+     * This function returns `true` if `hideMessagesBefore` is `null` or if the message was created
+     * after the `hideMessagesBefore` timestamp.
+     *
+     * @param message The message to check for visibility.
+     * @return `true` if the message is visible, `false` otherwise.
+     */
+    private fun isMessageVisible(message: Message): Boolean {
+        return hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore)
     }
 
     private fun cacheLatestMessages() {
