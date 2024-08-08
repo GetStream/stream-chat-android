@@ -263,7 +263,6 @@ internal class DatabaseMessageRepository(
 
     private suspend fun MessageEntity.toMessage(): Message =
         this.toModel(getUser, ::selectRepliedMessage, ::getPoll).filterReactions()
-            .also { if (this.messageInnerEntity.pollId != null) println("JcLog: Poll within message: ${it.poll}") }
 
     private suspend fun getPoll(pollId: String): Poll? =
         pollDao.getPoll(pollId)?.toModel(getUser)
