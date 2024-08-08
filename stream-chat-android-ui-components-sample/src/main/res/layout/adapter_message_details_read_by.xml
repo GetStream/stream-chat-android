@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="@color/stream_ui_white_snow"
+    >
+
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
+        style="@style/StreamUiChannelListAvatarStyle"
+        android:layout_marginStart="8dp"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:singleLine="true"
+        android:textColor="@color/stream_ui_text_color_primary"
+        android:textSize="@dimen/stream_ui_text_medium"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/readAtTextView"
+        app:layout_constraintEnd_toStartOf="@id/ownerTextView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="An Amazing Guy"
+        />
+
+    <TextView
+        android:id="@+id/readAtTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:singleLine="true"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        android:textSize="@dimen/stream_ui_text_small"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintEnd_toStartOf="@id/ownerTextView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
+        app:layout_constraintTop_toBottomOf="@id/nameTextView"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="March 21 at 12:00 PM"
+        />
+
+    <TextView
+        android:id="@+id/ownerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="@string/chat_group_info_owner"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        android:textSize="@dimen/stream_ui_text_small"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/separator"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Some owner here"
+        />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/stream_ui_divider_height"
+        android:background="@drawable/stream_ui_divider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
