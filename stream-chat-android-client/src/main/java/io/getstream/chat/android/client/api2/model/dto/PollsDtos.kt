@@ -50,7 +50,7 @@ internal data class DownstreamVoteDto(
     val created_at: Date,
     val updated_at: Date,
     val user: DownstreamUserDto?,
-    val user_id: String,
+    val user_id: String?,
 )
 
 /**
@@ -80,9 +80,9 @@ internal data class DownstreamPollDto(
     val id: String,
     val name: String,
     val description: String,
-    val voting_visibility: String,
+    val voting_visibility: String?,
     val enforce_unique_vote: Boolean,
-    val max_votes_allowed: Int,
+    val max_votes_allowed: Int?,
     val allow_user_suggested_options: Boolean,
     val allow_answers: Boolean,
     val options: List<DownstreamOptionDto>,
