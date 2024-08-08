@@ -223,6 +223,9 @@ internal interface MessageDao {
     )
     suspend fun selectIdsBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<String>
 
+    @Query("SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME WHERE pollId = :pollId")
+    suspend fun selectMessagesWithPoll(pollId: String): List<MessageEntity>
+
     @Query("DELETE FROM $MESSAGE_ENTITY_TABLE_NAME")
     suspend fun deleteAll()
 

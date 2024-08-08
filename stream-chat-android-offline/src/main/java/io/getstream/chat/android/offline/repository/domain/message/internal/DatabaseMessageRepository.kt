@@ -189,8 +189,11 @@ internal class DatabaseMessageRepository(
      * @param syncStatus [SyncStatus]
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage, ::getPoll) }
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toMessage() }
     }
+
+    override suspend fun selectMessagesWithPoll(pollId: String): List<Message> =
+        messageDao.selectMessagesWithPoll(pollId).map { it.toMessage() }
 
     override suspend fun evictMessage(messageId: String) {
         messageCache.remove(messageId)

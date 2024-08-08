@@ -2417,6 +2417,7 @@ public abstract interface class io/getstream/chat/android/client/persistance/rep
 	public abstract fun selectMessages (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMessagesForChannel (Ljava/lang/String;Lio/getstream/chat/android/client/query/pagination/AnyChannelPaginationRequest;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public abstract fun selectMessagesForThread (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public abstract fun selectMessagesWithPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public abstract interface class io/getstream/chat/android/client/persistance/repository/QueryChannelsRepository {
