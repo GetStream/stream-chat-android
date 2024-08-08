@@ -35,6 +35,7 @@ import io.getstream.chat.android.offline.repository.domain.reaction.internal.toM
 internal suspend fun MessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
     getReply: suspend (messageId: String) -> Message?,
+    getPoll: suspend (pollId: String) -> Poll?,
 ): Message = with(messageInnerEntity) {
     Message(
         id = id,
@@ -77,6 +78,7 @@ internal suspend fun MessageEntity.toModel(
         skipPushNotification = skipPushNotification,
         moderationDetails = moderationDetails?.toModel(),
         messageTextUpdatedAt = messageTextUpdatedAt,
+        poll = pollId?.let { getPoll(it) },
     )
 }
 
@@ -118,6 +120,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
         skipEnrichUrl = skipEnrichUrl,
         moderationDetails = moderationDetails?.toEntity(),
         messageTextUpdatedAt = messageTextUpdatedAt,
+        pollId = poll?.id,
     ),
     attachments = attachments.mapIndexed { index, attachment -> attachment.toEntity(id, index) },
     latestReactions = latestReactions.map(Reaction::toEntity),
@@ -126,6 +129,7 @@ internal fun Message.toEntity(): MessageEntity = MessageEntity(
 
 internal suspend fun ReplyMessageEntity.toModel(
     getUser: suspend (userId: String) -> User,
+    getPoll: suspend (pollId: String) -> Poll?,
 ): Message {
     val entity = this
     return this.replyMessageInnerEntity.run {
@@ -164,6 +168,7 @@ internal suspend fun ReplyMessageEntity.toModel(
             pinnedBy = pinnedByUserId?.let { getUser(it) },
             moderationDetails = moderationDetails?.toModel(),
             messageTextUpdatedAt = messageTextUpdatedAt,
+            poll = pollId?.let { getPoll(it) },
         )
     }
 }
@@ -199,6 +204,7 @@ internal fun Message.toReplyEntity(): ReplyMessageEntity =
             pinExpires = pinExpires,
             pinnedByUserId = pinnedBy?.id,
             moderationDetails = moderationDetails?.toEntity(),
+            pollId = poll?.id,
         ),
         attachments = attachments.mapIndexed { index, attachment -> attachment.toReplyEntity(id, index) },
     )
@@ -240,7 +246,7 @@ private fun VotingVisibility.toEntity(): String = when (this) {
     VotingVisibility.PUBLIC -> "public"
 }
 
-private suspend fun PollEntity.toModel(
+internal suspend fun PollEntity.toModel(
     getUser: suspend (userId: String) -> User,
 ): Poll = Poll(
     id = id,

@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.extensions.launchWithMutex
@@ -33,6 +34,7 @@ internal class DatabaseMessageRepository(
     private val scope: CoroutineScope,
     private val messageDao: MessageDao,
     private val replyMessageDao: ReplyMessageDao,
+    private val pollDao: PollDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User,
     cacheSize: Int = 1000,
@@ -68,7 +70,7 @@ internal class DatabaseMessageRepository(
             .map { it.toMessage() }
 
     private suspend fun selectRepliedMessage(messageId: String): Message? =
-        replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser)
+        replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)
 
     /**
      * Selects messages by IDs.
@@ -118,6 +120,11 @@ internal class DatabaseMessageRepository(
         val replyMessagesToInsert = replyMessages
             .filter { replyMessageCache.get(it.id) != it }
             .map(Message::toReplyEntity)
+
+        (replyMessages + messages)
+            .mapNotNull { it.poll?.toEntity() }
+            .takeUnless { it.isEmpty() }
+            ?.let { pollDao.insertPolls(it) }
 
         replyMessages.forEach { replyMessageCache.put(it.id, it) }
         validMessages.forEach { messageCache.put(it.id, it) }
@@ -182,7 +189,7 @@ internal class DatabaseMessageRepository(
      * @param syncStatus [SyncStatus]
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage) }
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage, ::getPoll) }
     }
 
     override suspend fun evictMessage(messageId: String) {
@@ -252,7 +259,11 @@ internal class DatabaseMessageRepository(
     }
 
     private suspend fun MessageEntity.toMessage(): Message =
-        this.toModel(getUser, ::selectRepliedMessage).filterReactions()
+        this.toModel(getUser, ::selectRepliedMessage, ::getPoll).filterReactions()
+            .also { if (this.messageInnerEntity.pollId != null) println("JcLog: Poll within message: ${it.poll}") }
+
+    private suspend fun getPoll(pollId: String): Poll? =
+        pollDao.getPoll(pollId)?.toModel(getUser)
 
     /**
      * Workaround to remove reactions which should not be displayed in the UI. This filtering

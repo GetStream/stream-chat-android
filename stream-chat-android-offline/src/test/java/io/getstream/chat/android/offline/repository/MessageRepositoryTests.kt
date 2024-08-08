@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationReq
 import io.getstream.chat.android.offline.randomMessageEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao
+import io.getstream.chat.android.offline.repository.domain.message.internal.PollDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageDao
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -41,11 +42,20 @@ internal class MessageRepositoryTests {
 
     private val messageDao: MessageDao = mock()
     private val replyMessageDao: ReplyMessageDao = mock()
+    private val pollDao: PollDao = mock()
     private lateinit var sut: MessageRepository
 
     @Test
     fun `when selecting messages for channel, correct messages should be requested to DAO`() = runTest {
-        val sut = DatabaseMessageRepository(this, messageDao, replyMessageDao, ::randomUser, randomUser(id = "currentUserId"), 100)
+        val sut = DatabaseMessageRepository(
+            this,
+            messageDao,
+            replyMessageDao,
+            pollDao,
+            ::randomUser,
+            randomUser(id = "currentUserId"),
+            100,
+        )
         val createdAt = Date()
         val cid = randomString()
         val messageEntity = randomMessageEntity(createdAt = createdAt)

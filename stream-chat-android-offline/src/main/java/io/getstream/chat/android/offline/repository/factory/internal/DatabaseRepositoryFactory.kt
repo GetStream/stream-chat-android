@@ -103,6 +103,7 @@ internal class DatabaseRepositoryFactory(
                 scope,
                 database.messageDao(),
                 database.replyMessageDao(),
+                database.pollDao(),
                 getUser,
                 currentUser,
                 DEFAULT_CACHE_SIZE,
