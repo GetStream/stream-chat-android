@@ -46,6 +46,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed expired pinned messages being exposed in the pinned message list. [#5343](https://github.com/GetStream/stream-chat-android/pull/5343)
 
 ### ⬆️ Improved
 
