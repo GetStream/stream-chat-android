@@ -1,0 +1,108 @@
+package io.getstream.chat.android.state.plugin.state.channel.internal
+
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.test.TestCoroutineExtension
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
+import java.util.Date
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+
+@ExperimentalCoroutinesApi
+internal class ChannelMutableStateTests {
+
+    private val userFlow = MutableStateFlow(currentUser)
+
+    private lateinit var channelState: ChannelMutableState
+
+
+    @BeforeEach
+    fun setUp() {
+        channelState = ChannelMutableState(
+            CHANNEL_TYPE,
+            CHANNEL_ID,
+            userFlow,
+            MutableStateFlow(
+                mapOf(currentUser.id to currentUser),
+            ),
+            ChannelMutableStateTests::currentTime
+        )
+    }
+
+    @Test
+    fun `Test expired pinned messages`() = runTest {
+        // given
+        val now = currentTime()
+        val alreadyExpired = randomMessage(
+            cid = CID,
+            parentId = null,
+            createdLocallyAt = null,
+            updatedLocallyAt = null,
+            createdAt = Date(now),
+            updatedAt = null,
+            deletedAt = null,
+            pinned = true,
+            pinnedAt = Date(now),
+            pinExpires = Date(now + 1.minutes.inWholeMilliseconds)
+        )
+        val expiresIn1h = alreadyExpired.copy(
+            id = randomString(),
+            pinExpires = Date(now + 1.hours.inWholeMilliseconds)
+        )
+        val pinnedMessages = listOf(alreadyExpired, expiresIn1h)
+
+        // when
+        advanceTimeBy(10.minutes)
+        channelState.setPinnedMessages(pinnedMessages)
+        advanceTimeBy(10.seconds)
+
+        // then
+        channelState.assertPinnedMessagesSizeEqualsTo(size = 1)
+
+        // when
+        advanceTimeBy(2.hours)
+
+        // then
+        channelState.assertPinnedMessagesSizeEqualsTo(size = 0)
+    }
+
+    private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
+        require(pinnedMessages.value.size == size) {
+            "pinnedMessages should have $size items, but was ${pinnedMessages.value.size}"
+        }
+        require(visiblePinnedMessages.value.size == size) {
+            "visiblePinnedMessages should have $size items, but was ${visiblePinnedMessages.value.size}"
+        }
+        require(sortedPinnedMessages.value.size == size) {
+            "sortedPinnedMessages should have $size items, but was ${sortedPinnedMessages.value.size}"
+        }
+        require(pinnedMessagesList.value.size == size) {
+            "pinnedMessagesList should have $size items, but was ${pinnedMessagesList.value.size}"
+        }
+        require(rawPinnedMessages.size == size) {
+            "rawPinnedMessages should have $size items, but was ${rawPinnedMessages.size}"
+        }
+    }
+
+    companion object {
+        @JvmField
+        @RegisterExtension
+        val testCoroutines = TestCoroutineExtension()
+
+        private const val CHANNEL_TYPE = "messaging"
+        private const val CHANNEL_ID = "123"
+        private const val CID = "messaging:123"
+
+        private val currentUser = User(id = "tom", name = "Tom")
+
+        private fun currentTime() = testCoroutines.dispatcher.scheduler.currentTime
+    }
+}
