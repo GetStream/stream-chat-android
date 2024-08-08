@@ -21,6 +21,7 @@ public final class io/getstream/chat/android/offline/repository/database/interna
 	public fun getAutoMigrations (Ljava/util/Map;)Ljava/util/List;
 	public fun getRequiredAutoMigrationSpecs ()Ljava/util/Set;
 	public fun messageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageDao;
+	public fun pollDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/PollDao;
 	public fun queryChannelsDao ()Lio/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao;
 	public fun replyMessageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao;
@@ -96,6 +97,13 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun updateMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;)V
 	public fun upsertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/offline/repository/domain/message/internal/PollDao_Impl : io/getstream/chat/android/offline/repository/domain/message/internal/PollDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun getPoll (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insertPolls (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao_Impl : io/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao {

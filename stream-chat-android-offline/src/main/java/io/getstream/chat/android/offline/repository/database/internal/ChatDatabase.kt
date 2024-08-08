@@ -29,12 +29,13 @@ import io.getstream.chat.android.offline.repository.database.converter.internal.
 import io.getstream.chat.android.offline.repository.database.converter.internal.MapConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.MemberConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.ModerationDetailsConverter
-import io.getstream.chat.android.offline.repository.database.converter.internal.PollConverter
+import io.getstream.chat.android.offline.repository.database.converter.internal.OptionConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.PrivacySettingsConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.QuerySortConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.ReactionGroupConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.SetConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.SyncStatusConverter
+import io.getstream.chat.android.offline.repository.database.converter.internal.VoteConverter
 import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelDao
 import io.getstream.chat.android.offline.repository.domain.channel.internal.ChannelEntity
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.ChannelConfigDao
@@ -45,6 +46,8 @@ import io.getstream.chat.android.offline.repository.domain.message.attachment.in
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.ReplyAttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
+import io.getstream.chat.android.offline.repository.domain.message.internal.PollDao
+import io.getstream.chat.android.offline.repository.domain.message.internal.PollEntity
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageDao
 import io.getstream.chat.android.offline.repository.domain.message.internal.ReplyMessageInnerEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
@@ -69,8 +72,9 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         ChannelConfigInnerEntity::class,
         CommandInnerEntity::class,
         SyncStateEntity::class,
+        PollEntity::class,
     ],
-    version = 76,
+    version = 77,
     exportSchema = false,
 )
 @TypeConverters(
@@ -86,7 +90,8 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
     ModerationDetailsConverter::class,
     ReactionGroupConverter::class,
     PrivacySettingsConverter::class,
-    PollConverter::class,
+    OptionConverter::class,
+    VoteConverter::class,
 )
 internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun queryChannelsDao(): QueryChannelsDao
@@ -98,6 +103,7 @@ internal abstract class ChatDatabase : RoomDatabase() {
     abstract fun channelConfigDao(): ChannelConfigDao
     abstract fun syncStateDao(): SyncStateDao
     abstract fun attachmentDao(): AttachmentDao
+    abstract fun pollDao(): PollDao
 
     companion object {
         @Volatile

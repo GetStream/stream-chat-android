@@ -16,12 +16,15 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.internal
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
-@JsonClass(generateAdapter = true)
 @Suppress("LongParameterList")
+@Entity(tableName = POLL_ENTITY_TABLE_NAME)
 internal class PollEntity(
+    @PrimaryKey
     val id: String,
     val name: String,
     val description: String,
@@ -54,3 +57,5 @@ internal class VoteEntity(
     val updatedAt: Date,
     val userId: String?,
 )
+
+internal const val POLL_ENTITY_TABLE_NAME = "stream_chat_poll"
