@@ -56,47 +56,6 @@ public fun QuotedMessageText(
         }
     }
 
-    // val displayedText = when (ChatTheme.autoTranslationEnabled) {
-    //     true -> currentUser?.language?.let { userLanguage ->
-    //         message.getTranslation(userLanguage).ifEmpty { message.text }
-    //     } ?: message.text
-    //     else -> message.text
-    // }
-    //
-    // val attachment = message.attachments.firstOrNull()
-    // val quotedMessageText = when {
-    //     displayedText.isNotBlank() -> displayedText
-    //
-    //     attachment != null -> when {
-    //         attachment.name != null -> attachment.name
-    //
-    //         attachment.text != null -> attachment.text
-    //
-    //         attachment.isImage() -> {
-    //             stringResource(R.string.stream_compose_quoted_message_image_tag)
-    //         }
-    //         attachment.isGiphy() -> {
-    //             stringResource(R.string.stream_compose_quoted_message_giphy_tag)
-    //         }
-    //         attachment.isAnyFileType() -> {
-    //             stringResource(R.string.stream_compose_quoted_message_file_tag)
-    //         }
-    //         else -> displayedText
-    //     }
-    //
-    //     else -> displayedText
-    // }
-    //
-    // checkNotNull(quotedMessageText) {
-    //     "quotedMessageText is null. Cannot display invalid message title."
-    // }
-    //
-    // val textColor = if (replyMessage?.isMine(currentUser) != false) {
-    //     ChatTheme.ownMessageTheme.textStyle.color
-    // } else {
-    //     ChatTheme.otherMessageTheme.textStyle.color
-    // }
-    // val styledText = buildAnnotatedMessageText(quotedMessageText, textColor)
     val styledText = ChatTheme.quotedMessageTextFormatter.format(message, replyMessage, currentUser)
 
     val horizontalPadding = ChatTheme.dimens.quotedMessageTextHorizontalPadding
