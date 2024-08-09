@@ -58,7 +58,7 @@ public fun MessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
         DefaultMessageGiphyContent(
@@ -143,7 +143,7 @@ internal fun DefaultMessageContent(
     onLongItemClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     Column {
         MessageAttachmentsContent(

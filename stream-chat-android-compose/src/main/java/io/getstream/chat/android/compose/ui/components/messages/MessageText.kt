@@ -66,7 +66,7 @@ public fun MessageText(
     currentUser: User?,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     val context = LocalContext.current
 
@@ -103,7 +103,7 @@ public fun MessageText(
             }?.item
 
             if (!targetUrl.isNullOrEmpty()) {
-                onLinkClick?.invoke(targetUrl) ?: run {
+                onLinkClick?.invoke(message, targetUrl) ?: run {
                     context.startActivity(
                         Intent(
                             Intent.ACTION_VIEW,

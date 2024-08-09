@@ -144,7 +144,7 @@ public fun MessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: (() -> Unit)? = null,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
@@ -438,7 +438,7 @@ internal fun DefaultMessageItemCenterContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
@@ -506,7 +506,7 @@ internal fun EmojiMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -561,7 +561,7 @@ internal fun RegularMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -651,7 +651,7 @@ internal fun DefaultMessageTextContent(
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     val quotedMessage = message.replyTo
 

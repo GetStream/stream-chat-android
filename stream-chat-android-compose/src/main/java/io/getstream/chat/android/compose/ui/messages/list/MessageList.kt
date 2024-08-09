@@ -136,7 +136,7 @@ public fun MessageList(
         )
     },
     onUserAvatarClick: ((User) -> Unit)? = null,
-    onMessageLinkClick: ((url: String) -> Unit)? = null,
+    onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -238,7 +238,7 @@ internal fun DefaultMessageContainer(
     onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: ((User) -> Unit)? = null,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -349,7 +349,7 @@ public fun MessageList(
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
-    onMessageLinkClick: ((url: String) -> Unit)? = null,
+    onMessageLinkClick: ((Message, String) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {

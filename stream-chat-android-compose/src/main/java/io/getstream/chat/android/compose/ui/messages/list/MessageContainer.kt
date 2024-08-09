@@ -93,7 +93,7 @@ public fun MessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
@@ -277,7 +277,7 @@ internal fun DefaultMessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
-    onLinkClick: ((url: String) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,

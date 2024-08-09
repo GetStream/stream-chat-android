@@ -137,7 +137,7 @@ public fun MessagesScreen(
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
-    onMessageLinkClick: ((url: String) -> Unit)? = null,
+    onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
