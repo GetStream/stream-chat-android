@@ -113,6 +113,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
+ * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param leadingContent The content shown at the start of a message list item. By default, we provide
  * [DefaultMessageItemLeadingContent], which shows a user avatar if the message doesn't belong to the
@@ -143,6 +144,7 @@ public fun MessageItem(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: (() -> Unit)? = null,
+    onLinkClick: ((url: String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
@@ -164,6 +166,7 @@ public fun MessageItem(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -423,6 +426,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onCastVote Handler when a user cast a vote on an option.
  * @param onRemoveVote Handler when a user cast a remove on an option.
@@ -434,6 +438,7 @@ internal fun DefaultMessageItemCenterContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onLinkClick: ((url: String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
@@ -468,6 +473,7 @@ internal fun DefaultMessageItemCenterContent(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
         )
     } else {
         RegularMessageContent(
@@ -477,6 +483,7 @@ internal fun DefaultMessageItemCenterContent(
             onGiphyActionClick = onGiphyActionClick,
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
+            onLinkClick = onLinkClick,
         )
     }
 }
@@ -489,6 +496,7 @@ internal fun DefaultMessageItemCenterContent(
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler used when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
@@ -498,6 +506,7 @@ internal fun EmojiMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onLinkClick: ((url: String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -542,6 +551,7 @@ internal fun EmojiMessageContent(
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  * @param onGiphyActionClick Handler when the user taps on an action button in a giphy message item.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
@@ -551,6 +561,7 @@ internal fun RegularMessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
+    onLinkClick: ((url: String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -591,6 +602,7 @@ internal fun RegularMessageContent(
                     onGiphyActionClick = onGiphyActionClick,
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onQuotedMessageClick = onQuotedMessageClick,
+                    onLinkClick = onLinkClick,
                 )
             },
         )
@@ -608,6 +620,7 @@ internal fun RegularMessageContent(
                         onGiphyActionClick = onGiphyActionClick,
                         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                         onQuotedMessageClick = onQuotedMessageClick,
+                        onLinkClick = onLinkClick,
                     )
                 },
             )
@@ -630,6 +643,7 @@ internal fun RegularMessageContent(
  * @param message The message to show.
  * @param onLongItemClick Handler when the item is long clicked.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onLinkClick Handler for link clicks.
  */
 @Composable
 internal fun DefaultMessageTextContent(
@@ -637,6 +651,7 @@ internal fun DefaultMessageTextContent(
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onLinkClick: ((url: String) -> Unit)? = null,
 ) {
     val quotedMessage = message.replyTo
 
@@ -655,6 +670,7 @@ internal fun DefaultMessageTextContent(
             message = message,
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
+            onLinkClick = onLinkClick,
         )
     }
 }

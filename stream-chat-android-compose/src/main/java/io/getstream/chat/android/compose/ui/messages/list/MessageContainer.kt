@@ -67,6 +67,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onClosePoll Handler for closing a poll.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
+ * @param onLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  * @param dateSeparatorContent Composable that represents date separators.
  * @param threadSeparatorContent Composable that represents thread separators.
@@ -92,6 +93,7 @@ public fun MessageContainer(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
+    onLinkClick: ((url: String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
@@ -123,6 +125,7 @@ public fun MessageContainer(
             onUserAvatarClick = {
                 onUserAvatarClick?.invoke(it.message.user)
             },
+            onLinkClick = onLinkClick,
         )
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
@@ -261,6 +264,8 @@ internal fun DefaultSystemMessageContent(systemMessageState: SystemMessageItemSt
  * @param onClosePoll Handler for closing a poll.
  * @param onGiphyActionClick Handler when the user selects a Giphy action.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onLinkClick Handler for clicking on a link in the message.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
  * @param onMediaGalleryPreviewResult Handler when the user receives a result from the Media Gallery Preview.
  */
 @Suppress("LongParameterList")
@@ -272,6 +277,7 @@ internal fun DefaultMessageItem(
     onReactionsClick: (Message) -> Unit = {},
     onThreadClick: (Message) -> Unit,
     onGiphyActionClick: (GiphyAction) -> Unit,
+    onLinkClick: ((url: String) -> Unit)? = null,
     onPollUpdated: (Message, Poll) -> Unit = { _, _ -> },
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
@@ -295,6 +301,7 @@ internal fun DefaultMessageItem(
         onGiphyActionClick = onGiphyActionClick,
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,
+        onLinkClick = onLinkClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
     )
 }
