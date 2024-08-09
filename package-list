@@ -83,6 +83,7 @@ io.getstream.chat.android.compose.ui.components.composer
 io.getstream.chat.android.compose.ui.components.messageoptions
 io.getstream.chat.android.compose.ui.components.messages
 io.getstream.chat.android.compose.ui.components.moderatedmessage
+io.getstream.chat.android.compose.ui.components.poll
 io.getstream.chat.android.compose.ui.components.reactionoptions
 io.getstream.chat.android.compose.ui.components.reactionpicker
 io.getstream.chat.android.compose.ui.components.selectedmessage
@@ -94,6 +95,7 @@ io.getstream.chat.android.compose.ui.composables
 io.getstream.chat.android.compose.ui.messages
 io.getstream.chat.android.compose.ui.messages.attachments
 io.getstream.chat.android.compose.ui.messages.attachments.factory
+io.getstream.chat.android.compose.ui.messages.attachments.poll
 io.getstream.chat.android.compose.ui.messages.composer
 io.getstream.chat.android.compose.ui.messages.header
 io.getstream.chat.android.compose.ui.messages.list
@@ -127,6 +129,8 @@ io.getstream.chat.android.markdown
 module:stream-chat-android-offline
 io.getstream.chat.android.offline.plugin.factory
 io.getstream.chat.android.offline.repository.database.converter.internal
+module:stream-chat-android-previewdata
+io.getstream.chat.android.previewdata
 module:stream-chat-android-state
 io.getstream.chat.android.state.event.handler.chat
 io.getstream.chat.android.state.event.handler.chat.factory
@@ -160,6 +164,7 @@ io.getstream.chat.android.ui.common.state.channels.actions
 io.getstream.chat.android.ui.common.state.messages
 io.getstream.chat.android.ui.common.state.messages.composer
 io.getstream.chat.android.ui.common.state.messages.list
+io.getstream.chat.android.ui.common.state.messages.poll
 io.getstream.chat.android.ui.common.utils
 io.getstream.chat.android.ui.common.utils.extensions
 io.getstream.chat.android.ui.common.utils.typing
