@@ -1,107 +1,22 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# August 09th, 2024 - 6.4.4
 ## stream-chat-android-core
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Added optional `banExpires` field to `Member` entity. [#5340](https://github.com/GetStream/stream-chat-android/pull/5340)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
 - Fixed expired pinned messages being exposed in the pinned message list. [#5343](https://github.com/GetStream/stream-chat-android/pull/5343)
 
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-ui-common
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
 - Fixed crash in `MessageListView` when posting a message to an empty channel. [#5332](https://github.com/GetStream/stream-chat-android/pull/5332)
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fixed `Edited` label not being displayed right after editing a message. [#5342](https://github.com/GetStream/stream-chat-android/pull/5342)
 
-### ⬆️ Improved
-
 ### ✅ Added
 - Added `onMessageLinkClick` to `MessagesScreen` to handle message link clicks. [#5346](https://github.com/GetStream/stream-chat-android/pull/5346)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # July 23th, 2024 - 6.4.3
 ## stream-chat-android-client
