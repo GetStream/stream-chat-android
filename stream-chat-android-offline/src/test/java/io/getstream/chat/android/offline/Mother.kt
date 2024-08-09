@@ -91,6 +91,7 @@ internal fun randomMessageEntity(
     pinExpires: Date? = randomDate(),
     pinnedByUserId: String? = randomString(),
     threadParticipantsIds: List<String> = emptyList(),
+    pollId: String? = null,
 ) = MessageEntity(
     messageInnerEntity = MessageInnerEntity(
         id = id,
@@ -119,6 +120,7 @@ internal fun randomMessageEntity(
         pinExpires = pinExpires,
         pinnedByUserId = pinnedByUserId,
         threadParticipantsIds = threadParticipantsIds,
+        pollId = pollId,
     ),
     attachments = attachments,
     latestReactions = latestReactions,

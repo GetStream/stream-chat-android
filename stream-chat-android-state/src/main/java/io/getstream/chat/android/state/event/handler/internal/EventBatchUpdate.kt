@@ -23,6 +23,7 @@ import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.utils.message.latestOrNull
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.log.StreamLog
@@ -105,6 +106,18 @@ internal class EventBatchUpdate private constructor(
         userMap += (newUser.id to newUser)
     }
 
+    fun getPoll(pollId: String): Poll? =
+        messageMap.values
+            .asSequence()
+            .mapNotNull { it.poll }
+            .firstOrNull { it.id == pollId }
+
+    fun addPoll(poll: Poll) {
+        messageMap.values
+            .filter { it.poll?.id == poll.id }
+            .forEach { addMessage(it.copy(poll = poll)) }
+    }
+
     suspend fun execute() {
         // actually insert the data
         currentUserId?.let { userMap -= it }
@@ -147,6 +160,7 @@ internal class EventBatchUpdate private constructor(
         private val channelsToRemove = mutableSetOf<String>()
         private val messagesToFetch = mutableSetOf<String>()
         private val users = mutableSetOf<User>()
+        private val pollsToFetch = mutableSetOf<String>()
 
         fun addToFetchChannels(cIds: List<String>) {
             channelsToFetch += cIds
@@ -172,6 +186,10 @@ internal class EventBatchUpdate private constructor(
             users += usersToAdd
         }
 
+        fun addPollToFetch(pollId: String) {
+            pollsToFetch += pollId
+        }
+
         suspend fun build(
             globalState: GlobalState,
             repos: RepositoryFacade,
@@ -181,13 +199,18 @@ internal class EventBatchUpdate private constructor(
             // Update users in DB in order to fetch channels and messages with sync data.
             repos.insertUsers(users)
             val messageMap: Map<String, Message> =
-                repos.selectMessages(messagesToFetch.toList()).associateBy(Message::id)
+                (
+                    repos.selectMessages(messagesToFetch.toList()) +
+                        pollsToFetch.flatMap { repos.selectMessagesWithPoll(it) }
+                    ).associateBy(Message::id)
+
             val channelMap: Map<String, Channel> =
                 repos.selectChannels(channelsToFetch.toList()).associateBy(Channel::cid)
             StreamLog.v(TAG) {
                 "[builder.build] id: $id, messageMap.size: ${messageMap.size}" +
                     ", channelMap.size: ${channelMap.size}"
             }
+
             return EventBatchUpdate(
                 id,
                 currentUserId,

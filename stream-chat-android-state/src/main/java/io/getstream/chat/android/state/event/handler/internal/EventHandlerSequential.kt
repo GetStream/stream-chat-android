@@ -33,6 +33,7 @@ import io.getstream.chat.android.client.events.GlobalUserBannedEvent
 import io.getstream.chat.android.client.events.GlobalUserUnbannedEvent
 import io.getstream.chat.android.client.events.HasMessage
 import io.getstream.chat.android.client.events.HasOwnUser
+import io.getstream.chat.android.client.events.HasPoll
 import io.getstream.chat.android.client.events.HasUnreadCounts
 import io.getstream.chat.android.client.events.MarkAllReadEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
@@ -54,6 +55,9 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.PollClosedEvent
+import io.getstream.chat.android.client.events.PollDeletedEvent
+import io.getstream.chat.android.client.events.PollUpdatedEvent
 import io.getstream.chat.android.client.events.ReactionDeletedEvent
 import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.ReactionUpdateEvent
@@ -62,6 +66,9 @@ import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserStopWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
+import io.getstream.chat.android.client.events.VoteCastedEvent
+import io.getstream.chat.android.client.events.VoteChangedEvent
+import io.getstream.chat.android.client.events.VoteRemovedEvent
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.extensions.internal.addMember
 import io.getstream.chat.android.client.extensions.internal.addMembership
@@ -121,7 +128,7 @@ private const val TAG_SOCKET = "Chat:SocketEvent"
  * Processes events sequentially. That means a new event will not be processed
  * until the previous event processing is not completed.
  */
-@Suppress("LongParameterList", "TooManyFunctions")
+@Suppress("LongParameterList", "TooManyFunctions", "LargeClass")
 internal class EventHandlerSequential(
     private val currentUserId: UserId,
     private val subscribeForEvents: (ChatEventListener<ChatEvent>) -> Disposable,
@@ -428,6 +435,7 @@ internal class EventHandlerSequential(
         val events = batchEvent.sortedEvents.map { it.enrichIfNeeded() }
         val batchBuilder = EventBatchUpdate.Builder(batchEvent.id)
         val cidEvents = events.filterIsInstance<CidEvent>()
+        val pollEvents = events.filterIsInstance<HasPoll>()
         batchBuilder.addToFetchChannels(
             cidEvents
                 .filterNot { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
@@ -439,6 +447,7 @@ internal class EventHandlerSequential(
                 .filter { it is ChannelDeletedEvent || it is NotificationChannelDeletedEvent }
                 .map { it.cid },
         )
+        pollEvents.forEach { batchBuilder.addPollToFetch(it.poll.id) }
 
         val users: List<User> = events.filterIsInstance<UserEvent>().map { it.user } +
             events.filterIsInstance<HasOwnUser>().map { it.me }
@@ -665,6 +674,43 @@ internal class EventHandlerSequential(
                 }
                 is UserUpdatedEvent -> if (event.user.id == currentUserId) {
                     repos.insertCurrentUser(event.user)
+                }
+                is PollClosedEvent -> batch.addPoll(event.poll)
+                is PollDeletedEvent -> batch.addPoll(event.poll)
+                is PollUpdatedEvent -> batch.addPoll(event.poll)
+                is VoteCastedEvent -> {
+                    val ownVotes =
+                        (
+                            batch.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
+                                ?: emptyMap()
+                            ) +
+                            listOfNotNull(event.newVote.takeIf { it.user?.id == currentUserId }).associateBy { it.id }
+                    batch.addPoll(
+                        event.poll.copy(
+                            ownVotes = ownVotes.values.toList(),
+                        ),
+                    )
+                }
+                is VoteChangedEvent -> {
+                    val ownVotes = event.newVote.takeIf { it.user?.id == currentUserId }?.let { listOf(it) }
+                        ?: batch.getPoll(event.poll.id)?.ownVotes
+                    batch.addPoll(
+                        event.poll.copy(
+                            ownVotes = ownVotes ?: emptyList(),
+                        ),
+                    )
+                }
+                is VoteRemovedEvent -> {
+                    val ownVotes =
+                        (
+                            batch.getPoll(event.poll.id)?.ownVotes?.associateBy { it.id }
+                                ?: emptyMap()
+                            ) - event.removedVote.id
+                    batch.addPoll(
+                        event.poll.copy(
+                            ownVotes = ownVotes.values.toList(),
+                        ),
+                    )
                 }
                 else -> Unit
             }
