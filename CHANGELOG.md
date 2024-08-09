@@ -86,6 +86,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `onMessageLinkClick` to `MessagesScreen` to handle message link clicks. [#5346](https://github.com/GetStream/stream-chat-android/pull/5346)
 
 ### ⚠️ Changed
 
