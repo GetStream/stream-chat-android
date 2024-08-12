@@ -32,6 +32,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -39,11 +40,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.utils.DurationFormatter
@@ -56,24 +60,23 @@ import io.getstream.chat.android.ui.common.utils.DurationFormatter
 @Composable
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
+    audioPlayer: AudioPlayer = ChatClient.instance().audioPlayer,
     audioTrack: Attachment,
     onPlayPress: (Attachment) -> Unit,
 ) {
-    val audioPlayer = ChatClient.instance().audioPlayer
-
     val duration = (audioTrack.duration ?: 0f)
         .let(DurationFormatter::formatDurationInSeconds)
 
-    var trackProgress by remember { mutableStateOf(0F) }
+    var trackProgress by remember { mutableFloatStateOf(0F) }
     var durationText by remember { mutableStateOf(duration) }
     var playing by remember { mutableStateOf(false) }
-    var speedState by remember { mutableStateOf(1F) }
+    var speedState by remember { mutableFloatStateOf(1F) }
 
     audioPlayer.run {
         val audioHash = audioTrack.hashCode()
 
         registerOnProgressStateChange(audioHash) { progressData ->
-            trackProgress = progressData.progress.toFloat()
+            trackProgress = progressData.progress
             durationText = DurationFormatter.formatDurationInMillis(progressData.currentPosition)
         }
 
@@ -146,17 +149,17 @@ public fun AudioRecordAttachmentContent(
     }
 }
 
-// @Preview(showSystemUi = true, showBackground = true)
-// @Composable
-// internal fun DefaultPreview() {
-//     val attachment = Attachment(type = "audio_recording")
-//
-//     val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
-//
-//     AudioRecordAttachmentContent(
-//         Modifier
-//             .width(200.dp)
-//             .height(60.dp),
-//         attachmentState,
-//     )
-// }
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+internal fun DefaultPreview() {
+    val attachment = Attachment(type = "audio_recording")
+
+    ChatPreviewTheme {
+        AudioRecordAttachmentContent(
+            modifier = Modifier
+                .width(200.dp)
+                .height(60.dp),
+            audioTrack = attachment,
+        ) {}
+    }
+}
