@@ -87,7 +87,7 @@ You can see all the SDK changes in the [releases page](https://github.com/GetStr
 We also maintain a separate document, [DEPRECATIONS](https://github.com/GetStream/stream-chat-android/blob/main/DEPRECATIONS.md), which lists deprecated constructs in the SDK, with their expected time of further deprecations and eventual removal.
 
 :::info
-You can get notified of new releases by using the _Watch_ button in the [getstream/stream-chat-android](https://github.com/GetStream/stream-chat-android) repository. You can tweak your watch preferences to subscribe only to release events.
+You can get notified of new releases by using the _Watch_ buttoasn in the [getstream/stream-chat-android](https://github.com/GetStream/stream-chat-android) repository. You can tweak your watch preferences to subscribe only to release events.
 :::
 
 ### How Should I Specify My Dependency Version?
@@ -97,26 +97,5 @@ You should use a fixed version in order to avoid any conflicts or unpredicted be
 For example:
 
 ```groovy
-implementation "io.getstream:stream-chat-android-compose:6.0.0"
+implementation "io.getstream:stream-chat-android-compose:6.4.4"
 ```
-
-### Snapshot Builds
-
-We publish SNAPSHOT versions of our SDK, which contain the code as of the latest commit on [the `develop` branch](https://github.com/GetStream/stream-chat-android/tree/develop).
-
-These builds may contain bugs or breaking changes that will be fixed before the next proper release. However, you can use these builds temporarily to include the latest changes from our SDK in your project before the next release happens.
-
-:::warning
-Snapshot builds are not stable. Never use them in production.
-:::
-
-To use snapshot builds, you need to add the Sonatype snapshot repository in your Gradle build configuration (see at the top of this page for where to add this):
-
-```groovy
-maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-```
-
-Then you can add a snapshot dependency on any of our artifacts, replacing the normal version number with a version that has a `-SNAPSHOT` postfix.
-Our snapshot version is always one patch version ahead of the latest release we've published. If the last stable release was `X.Y.Z`, the snapshot version would be `X.Y.(Z+1)-SNAPSHOT`.
-
-You can browse our available snapshot builds in the [Sonatype snapshot repository](https://oss.sonatype.org/content/repositories/snapshots/io/getstream/), which you can also check for what the latest available snapshot version is.
