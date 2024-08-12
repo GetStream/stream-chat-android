@@ -21,8 +21,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -78,8 +78,8 @@ public fun RunningWaveForm(
         mutableStateListOf<Int>()
     }
 
-    var canvasWidth by remember { mutableStateOf(0f) }
-    var canvasHeight by remember { mutableStateOf(0f) }
+    var canvasWidth by remember { mutableFloatStateOf(0f) }
+    var canvasHeight by remember { mutableFloatStateOf(0f) }
 
     val maxBars by remember(canvasWidth) {
         derivedStateOf { (canvasWidth / (barWidth.value + barGap.value)).toInt() }

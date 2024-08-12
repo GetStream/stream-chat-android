@@ -393,7 +393,7 @@ public final class io/getstream/chat/android/compose/ui/attachments/audio/AudioR
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/AudioRecordAttachmentContentKt {
-	public static final fun AudioRecordAttachmentContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Attachment;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun AudioRecordAttachmentContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/client/audio/AudioPlayer;Lio/getstream/chat/android/models/Attachment;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/content/AudioRecordGroupContentKt {
