@@ -106,6 +106,8 @@
 
 ### ✅ Added
 - Added `onMessageLinkClick` to `MessagesScreen` to handle message link clicks. [#5346](https://github.com/GetStream/stream-chat-android/pull/5346)
+- Added new "attachment option" to create polls in the message composer. [#5305](https://github.com/GetStream/stream-chat-android/pull/5305)
+- Added new attachment type for polls in the message list. [#5308](https://github.com/GetStream/stream-chat-android/pull/5308)
 
 # July 23th, 2024 - 6.4.3
 ## stream-chat-android-client
