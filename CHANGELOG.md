@@ -27,6 +27,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Store poll info on local data base. [#5283](https://github.com/GetStream/stream-chat-android/pull/5283)
 
 ### ⚠️ Changed
 
