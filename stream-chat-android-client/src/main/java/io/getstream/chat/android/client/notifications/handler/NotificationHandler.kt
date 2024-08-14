@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.client.notifications.handler
 
+import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.PushMessage
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushMessage
 
 /**
  * Handler responsible for showing and dismissing notification.

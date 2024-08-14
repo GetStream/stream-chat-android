@@ -32,7 +32,7 @@ public class InstantTaskExecutorExtension : BeforeAllCallback, AfterAllCallback 
                     override fun executeOnDiskIO(runnable: Runnable) = runnable.run()
                     override fun postToMainThread(runnable: Runnable) = runnable.run()
                     override fun isMainThread(): Boolean = true
-                }
+                },
             )
     }
 

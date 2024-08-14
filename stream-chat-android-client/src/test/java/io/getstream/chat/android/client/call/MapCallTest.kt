@@ -17,9 +17,11 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.positiveRandomInt
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.map
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -36,8 +38,8 @@ import org.mockito.kotlin.spy
 internal class MapCallTest {
 
     private val resultValue = positiveRandomInt()
-    private val validResult: Result<Int> = Result.success(resultValue)
-    private val expectedResult: Result<String> = Result.success("$resultValue")
+    private val validResult: Result<Int> = Result.Success(resultValue)
+    private val expectedResult: Result<String> = Result.Success("$resultValue")
     private val mapper: SpyMapper<Int, String> = SpyMapper { "$it" }
 
     @Test
@@ -82,7 +84,7 @@ internal class MapCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedResult
-            }
+            },
         )
         mapper `should be invoked with` resultValue
         blockedCall.isStarted() `should be equal to` true

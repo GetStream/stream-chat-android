@@ -23,9 +23,19 @@
 
     <style name="StreamTheme" parent="@style/StreamUiTheme">
         <item name="streamUiChannelActionsDialogStyle">@style/ChannelActionsDialogTheme</item>
+        <item name="streamUiMessageComposerViewStyle">@style/MessageComposerViewTheme</item>
+        <item name="streamUiAudioRecordPlayerViewStyle">@style/AudioRecordPlayerViewTheme</item>
     </style>
 
     <style name="ChannelActionsDialogTheme" parent="StreamUi.ChannelList.ActionsDialog" >
         <item name="streamUiChannelActionsViewInfoEnabled">true</item>
+    </style>
+
+    <style name="MessageComposerViewTheme" parent="StreamUi.MessageComposerView">
+        <item name="streamUiMessageComposerAudioRecordingButtonVisible">true</item>
+    </style>
+
+    <style name="AudioRecordPlayerViewTheme" parent="StreamUi.AudioRecordPlayerView">
+        <item name="streamUiAudioRecordPlayerFileIconContainerVisible">false</item>
     </style>
 </resources>

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package io.getstream.chat.android.compose.sample.ui.login
 
 import android.content.Context
@@ -44,13 +46,16 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.BuildConfig.STREAM_CHAT_VERSION
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatHelper
@@ -60,6 +65,7 @@ import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import kotlinx.coroutines.launch
 
 /**
  * An Activity that allows users to log in using one of our predefined sample users.
@@ -70,18 +76,20 @@ class UserLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme {
+            ChatTheme(allowUIAutomationTest = true) {
                 UserLoginScreen(
                     onUserItemClick = { userCredentials ->
-                        if (ChatClient.instance().config.apiKey != userCredentials.apiKey) {
-                            // If the user attempted to login with custom credentials on the custom
-                            // login screen then we need to reinitialize the SDK with our API key.
-                            ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
+                        lifecycleScope.launch {
+                            if (ChatClient.instance().config.apiKey != userCredentials.apiKey) {
+                                // If the user attempted to login with custom credentials on the custom
+                                // login screen then we need to reinitialize the SDK with our API key.
+                                ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
+                            }
+                            ChatHelper.connectUser(userCredentials = userCredentials)
+                            openChannels()
                         }
-                        ChatHelper.connectUser(userCredentials = userCredentials)
-                        openChannels()
                     },
-                    onCustomLoginClick = ::openCustomLogin
+                    onCustomLoginClick = ::openCustomLogin,
                 )
             }
         }
@@ -94,7 +102,7 @@ class UserLoginActivity : AppCompatActivity() {
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
@@ -112,7 +120,7 @@ class UserLoginActivity : AppCompatActivity() {
                 text = stringResource(R.string.user_login_screen_title),
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -121,20 +129,22 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.padding(horizontal = 16.dp),
                 text = stringResource(R.string.user_login_screen_subtitle),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
 
             Spacer(modifier = Modifier.height(28.dp))
 
             LazyColumn(
                 modifier = Modifier
+                    .testTag("Stream_UserLogin")
                     .fillMaxWidth()
                     .weight(1f),
             ) {
                 items(items = PredefinedUserCredentials.availableUsers) { userCredentials ->
                     UserLoginItem(
+                        modifier = Modifier.testTag("Stream_UserLoginItem"),
                         userCredentials = userCredentials,
-                        onItemClick = onUserItemClick
+                        onItemClick = onUserItemClick,
                     )
 
                     DividerItem()
@@ -149,7 +159,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.padding(16.dp),
                 text = stringResource(R.string.sdk_version_template, STREAM_CHAT_VERSION),
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textLowEmphasis
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
     }
@@ -159,17 +169,18 @@ class UserLoginActivity : AppCompatActivity() {
      */
     @Composable
     fun UserLoginItem(
+        modifier: Modifier,
         userCredentials: UserCredentials,
         onItemClick: (UserCredentials) -> Unit,
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .height(64.dp)
                 .clickable(
                     onClick = { onItemClick(userCredentials) },
                     indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -189,13 +200,13 @@ class UserLoginActivity : AppCompatActivity() {
                     text = userCredentials.user.name,
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
 
                 Text(
                     text = stringResource(id = R.string.user_login_user_subtitle),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
 
@@ -203,7 +214,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
     }
@@ -220,7 +231,7 @@ class UserLoginActivity : AppCompatActivity() {
                 .clickable(
                     onClick = { onItemClick() },
                     indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 )
                 .padding(horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -240,19 +251,19 @@ class UserLoginActivity : AppCompatActivity() {
                     .wrapContentHeight()
                     .weight(1f)
                     .padding(horizontal = 16.dp),
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     text = stringResource(id = R.string.user_login_advanced_options),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
 
                 Text(
                     text = stringResource(id = R.string.user_login_custom_settings),
                     fontSize = 12.sp,
-                    color = ChatTheme.colors.textLowEmphasis
+                    color = ChatTheme.colors.textLowEmphasis,
                 )
             }
 
@@ -260,7 +271,7 @@ class UserLoginActivity : AppCompatActivity() {
                 modifier = Modifier.wrapContentSize(),
                 painter = painterResource(id = R.drawable.ic_arrow_right),
                 contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent
+                tint = ChatTheme.colors.primaryAccent,
             )
         }
     }
@@ -271,7 +282,7 @@ class UserLoginActivity : AppCompatActivity() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(0.5.dp)
-                .background(color = ChatTheme.colors.borders)
+                .background(color = ChatTheme.colors.borders),
         )
     }
 
@@ -286,7 +297,9 @@ class UserLoginActivity : AppCompatActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent {
-            return Intent(context, UserLoginActivity::class.java)
+            return Intent(context, UserLoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
         }
     }
 }

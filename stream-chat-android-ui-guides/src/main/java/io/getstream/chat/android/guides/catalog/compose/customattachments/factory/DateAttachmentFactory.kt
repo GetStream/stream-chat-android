@@ -34,12 +34,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
+import io.getstream.chat.android.models.Attachment
 
 /**
  * A custom [AttachmentFactory] that adds support for date attachments.
@@ -49,17 +49,19 @@ val dateAttachmentFactory: AttachmentFactory = AttachmentFactory(
     content = @Composable { modifier, attachmentState ->
         DateAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState
+            attachmentState = attachmentState,
         )
     },
     previewContent = { modifier, attachments, onAttachmentRemoved ->
         DateAttachmentPreviewContent(
             modifier = modifier,
             attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved
+            onAttachmentRemoved = onAttachmentRemoved,
         )
     },
-    textFormatter = { attachment -> attachment.extraData["payload"].toString() },
+    textFormatter = { attachment ->
+        attachment.extraData["payload"].toString()
+    },
 )
 
 /**
@@ -82,7 +84,7 @@ fun DateAttachmentPreviewContent(
         modifier = modifier
             .wrapContentHeight()
             .clip(RoundedCornerShape(16.dp))
-            .background(color = ChatTheme.colors.barsBackground)
+            .background(color = ChatTheme.colors.barsBackground),
     ) {
         Text(
             modifier = Modifier
@@ -92,14 +94,14 @@ fun DateAttachmentPreviewContent(
             text = formattedDate,
             style = ChatTheme.typography.body,
             maxLines = 1,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         CancelIcon(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(4.dp),
-            onClick = { onAttachmentRemoved(attachment) }
+            onClick = { onAttachmentRemoved(attachment) },
         )
     }
 }
@@ -124,11 +126,11 @@ fun DateAttachmentContent(
             .padding(4.dp)
             .clip(ChatTheme.shapes.attachment)
             .background(ChatTheme.colors.infoAccent)
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
                 modifier = Modifier.size(16.dp),
@@ -141,7 +143,7 @@ fun DateAttachmentContent(
                 text = formattedDate,
                 style = ChatTheme.typography.body,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
     }

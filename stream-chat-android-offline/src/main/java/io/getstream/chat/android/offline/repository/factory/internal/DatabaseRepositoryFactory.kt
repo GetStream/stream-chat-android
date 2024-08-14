@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.offline.repository.factory.internal
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -27,21 +24,25 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.domain.channel.internal.DatabaseChannelRepository
 import io.getstream.chat.android.offline.repository.domain.channelconfig.internal.DatabaseChannelConfigRepository
-import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.DatabaseAttachmentRepository
 import io.getstream.chat.android.offline.repository.domain.message.internal.DatabaseMessageRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.syncState.internal.DatabaseSyncStateRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
+import kotlinx.coroutines.CoroutineScope
 
-private const val DEFAULT_CACHE_SIZE = 100
+private const val DEFAULT_CACHE_SIZE = 1000
 
 internal class DatabaseRepositoryFactory(
     private val database: ChatDatabase,
     private val currentUser: User,
+    private val scope: CoroutineScope,
+    private val now: () -> Long = { System.currentTimeMillis() },
 ) : RepositoryFactory {
 
     private var repositoriesCache: MutableMap<Class<out Any>, Any> = mutableMapOf()
@@ -50,7 +51,7 @@ internal class DatabaseRepositoryFactory(
         val databaseUserRepository = repositoriesCache[UserRepository::class.java] as? DatabaseUserRepository?
 
         return databaseUserRepository ?: run {
-            DatabaseUserRepository(database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
+            DatabaseUserRepository(scope, database.userDao(), DEFAULT_CACHE_SIZE).also { repository ->
                 repositoriesCache[UserRepository::class.java] = repository
             }
         }
@@ -74,7 +75,7 @@ internal class DatabaseRepositoryFactory(
         val databaseChannelRepository = repositoriesCache[ChannelRepository::class.java] as? DatabaseChannelRepository?
 
         return databaseChannelRepository ?: run {
-            DatabaseChannelRepository(database.channelStateDao(), getUser, getMessage, DEFAULT_CACHE_SIZE)
+            DatabaseChannelRepository(scope, database.channelStateDao(), getUser, getMessage, now)
                 .also { repository ->
                     repositoriesCache[ChannelRepository::class.java] = repository
                 }
@@ -99,10 +100,12 @@ internal class DatabaseRepositoryFactory(
 
         return databaseMessageRepository ?: run {
             DatabaseMessageRepository(
+                scope,
                 database.messageDao(),
+                database.replyMessageDao(),
                 getUser,
                 currentUser,
-                DEFAULT_CACHE_SIZE
+                DEFAULT_CACHE_SIZE,
             ).also { repository ->
                 repositoriesCache[MessageRepository::class.java] = repository
             }
@@ -127,17 +130,6 @@ internal class DatabaseRepositoryFactory(
         return databaseSyncStateRepository ?: run {
             DatabaseSyncStateRepository(database.syncStateDao()).also { repository ->
                 repositoriesCache[SyncStateRepository::class.java] = repository
-            }
-        }
-    }
-
-    override fun createAttachmentRepository(): AttachmentRepository {
-        val databaseAttachmentRepository =
-            repositoriesCache[AttachmentRepository::class.java] as? DatabaseAttachmentRepository?
-
-        return databaseAttachmentRepository ?: run {
-            DatabaseAttachmentRepository(database.attachmentDao()).also { repository ->
-                repositoriesCache[AttachmentRepository::class.java] = repository
             }
         }
     }

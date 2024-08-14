@@ -18,10 +18,10 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.compose.state.imagepreview.ImagePreviewResult
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
 
 /**
  * Represents the content that's shown in a quoted message if the attachments are not empty.
@@ -29,14 +29,14 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param message The message that contains the attachments.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler for long item taps.
- * @param onImagePreviewResult Handler when the user selects a message option in the Image Preview screen.
+ * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  */
 @Composable
 public fun QuotedMessageAttachmentContent(
     message: Message,
     onLongItemClick: (Message) -> Unit,
     modifier: Modifier = Modifier,
-    onImagePreviewResult: (ImagePreviewResult?) -> Unit = {},
+    onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val attachments = message.attachments
 
@@ -56,11 +56,11 @@ public fun QuotedMessageAttachmentContent(
     val attachmentState = AttachmentState(
         message = message,
         onLongItemClick = onLongItemClick,
-        onImagePreviewResult = onImagePreviewResult
+        onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
     )
 
     quoteAttachmentFactory?.content?.invoke(
-        modifier = modifier,
-        attachmentState = attachmentState
+        modifier,
+        attachmentState,
     )
 }

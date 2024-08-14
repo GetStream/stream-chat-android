@@ -29,24 +29,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import com.getstream.sdk.chat.utils.extensions.onPermissionRequested
-import com.getstream.sdk.chat.utils.extensions.wasPermissionRequested
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.offline.extensions.downloadAttachment
-import io.getstream.chat.android.uiutils.extension.openSystemSettings
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.state.extensions.downloadAttachment
+import io.getstream.chat.android.ui.common.utils.extensions.onPermissionRequested
+import io.getstream.chat.android.ui.common.utils.extensions.wasPermissionRequested
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun attachmentDownloadState(): Pair<PermissionState, MutableState<Attachment?>> {
     var writePermissionRequested by rememberSaveable { mutableStateOf(false) }
     val writePermissionState = rememberPermissionState(
-        Manifest.permission.WRITE_EXTERNAL_STORAGE
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
     ) {
         writePermissionRequested = true
     }

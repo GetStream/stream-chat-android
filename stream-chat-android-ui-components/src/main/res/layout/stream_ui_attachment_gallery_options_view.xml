@@ -49,9 +49,9 @@
             />
 
         <TextView
-            android:id="@+id/saveImage"
+            android:id="@+id/saveMedia"
             style="@style/StreamUiMessageOptionItem"
-            android:text="@string/stream_ui_attachment_gallery_save_image"
+            android:text="@string/stream_ui_attachment_gallery_save_media"
             android:textDirection="locale"
             tools:drawableStart="@drawable/stream_ui_ic_download"
             />

@@ -20,13 +20,13 @@ import android.content.Context
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.databinding.AddChannelSeparatorItemBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelUserItemBinding
 
 abstract class BaseViewHolder<T : UserListItem>(
-    itemView: View
+    itemView: View,
 ) : RecyclerView.ViewHolder(itemView) {
 
     /**
@@ -52,7 +52,7 @@ class SeparatorViewHolder(private val binding: AddChannelSeparatorItemBinding) :
 
 class UserItemViewHolder(
     private val binding: AddChannelUserItemBinding,
-    private val userClickListener: AddChannelUsersAdapter.UserClickListener
+    private val userClickListener: AddChannelUsersAdapter.UserClickListener,
 ) : BaseViewHolder<UserListItem.UserItem>(binding.root) {
 
     private val context: Context
@@ -61,7 +61,7 @@ class UserItemViewHolder(
     override fun bind(item: UserListItem.UserItem) {
         binding.userContainer.setOnClickListener { userClickListener.onUserClick(item.userInfo) }
         with(item.userInfo) {
-            binding.userAvatar.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
             binding.onlineTextView.text = user.getLastSeenText(context)
             binding.checkboxImageView.isVisible = isSelected

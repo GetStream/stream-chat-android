@@ -111,7 +111,7 @@
         android:orientation="vertical"
         android:paddingBottom="16dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/messageInputView"
+        app:layout_constraintBottom_toTopOf="@id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usersTitle"
@@ -127,32 +127,31 @@
         android:textSize="@dimen/stream_ui_text_medium"
         android:visibility="visible"
         app:drawableTopCompat="@drawable/empty_user_search"
-        app:layout_constraintBottom_toTopOf="@id/messageInputView"
+        app:layout_constraintBottom_toTopOf="@id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usersTitle"
         />
 
-    <io.getstream.chat.android.ui.message.list.MessageListView
+    <io.getstream.chat.android.ui.feature.messages.list.MessageListView
         android:id="@+id/messageListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/messageInputView"
+        app:layout_constraintBottom_toTopOf="@id/messageComposerView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:streamUiMuteUserEnabled="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/usersTitle"
         />
 
-    <io.getstream.chat.android.ui.message.input.MessageInputView
-        android:id="@+id/messageInputView"
-        android:layout_width="match_parent"
+    <io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+        android:id="@+id/messageComposerView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:streamUiSendButtonEnabled="false"
         tools:layout_height="56dp"
         />
 

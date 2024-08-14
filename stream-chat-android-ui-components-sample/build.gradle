@@ -6,12 +6,12 @@ apply plugin: 'kotlin-android'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
-apply plugin: 'com.huawei.agconnect'
 apply plugin: 'shot'
 
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.ui.sample"
     defaultConfig {
         targetSdk Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.ui.sample"
@@ -65,6 +65,11 @@ android {
             shrinkResources false
             signingConfig signingConfigs.debug
         }
+        benchmark {
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+            debuggable false
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -109,13 +114,14 @@ android {
 
     buildFeatures {
         viewBinding true
+        buildConfig true
     }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
-                '-Xopt-in=kotlin.RequiresOptIn',
+                '-opt-in=kotlin.RequiresOptIn',
         ]
     }
 }
@@ -140,11 +146,10 @@ repositories {
 dependencies {
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-markdown-transformer")
-    implementation project(":stream-chat-android-pushprovider-firebase")
-    implementation project(":stream-chat-android-pushprovider-huawei")
-    implementation project(":stream-chat-android-pushprovider-xiaomi")
-    implementation files('../libraries/external/MiPush_SDK_Client_5_0_6-G_3rd.aar')
+    implementation project(":stream-chat-android-offline")
+    implementation files('../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar')
 
+    implementation Dependencies.streamLog
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.androidxCoreKtx
@@ -153,6 +158,9 @@ dependencies {
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.materialComponents
+    implementation Dependencies.streamPushFirebase
+    implementation Dependencies.streamPushHuawei
+    implementation Dependencies.streamPushXiaomi
 
     implementation Dependencies.navigationRuntimeKTX
     implementation Dependencies.navigationFragmentKTX

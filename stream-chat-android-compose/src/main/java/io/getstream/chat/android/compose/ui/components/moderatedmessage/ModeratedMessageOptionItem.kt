@@ -23,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.common.model.ModeratedMessageOption
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 
 /**
  * Composable that represents a single option inside the [ModeratedMessageDialog].
@@ -41,12 +41,12 @@ public fun ModeratedMessageOptionItem(
     Divider(color = ChatTheme.colors.borders)
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(id = option.text),
             style = ChatTheme.typography.body,
-            color = ChatTheme.colors.primaryAccent
+            color = ChatTheme.colors.primaryAccent,
         )
     }
 }

@@ -17,18 +17,20 @@
 package io.getstream.chat.android.client.persistance.repository
 
 import androidx.annotation.VisibleForTesting
+import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
 import io.getstream.chat.android.client.query.pagination.isRequestingMoreThanLastMessage
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -44,7 +46,6 @@ public class RepositoryFacade private constructor(
     private val messageRepository: MessageRepository,
     private val reactionsRepository: ReactionRepository,
     private val syncStateRepository: SyncStateRepository,
-    private val attachmentRepository: AttachmentRepository,
     private val scope: CoroutineScope,
     private val defaultConfig: Config,
 ) : UserRepository by userRepository,
@@ -53,19 +54,19 @@ public class RepositoryFacade private constructor(
     MessageRepository by messageRepository,
     ChannelConfigRepository by configsRepository,
     QueryChannelsRepository by queryChannelsRepository,
-    SyncStateRepository by syncStateRepository,
-    AttachmentRepository by attachmentRepository {
+    SyncStateRepository by syncStateRepository {
 
-    override suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean): List<Channel> =
-        selectChannels(channelCIDs, null, forceCache)
+    private val logger by taggedLogger("Chat:RepositoryFacade")
+
+    override suspend fun selectChannels(channelCIDs: List<String>): List<Channel> =
+        selectChannels(channelCIDs, null)
 
     public suspend fun selectChannels(
         channelIds: List<String>,
         pagination: AnyChannelPaginationRequest?,
-        forceCache: Boolean = false,
     ): List<Channel> {
         // fetch the channel entities from room
-        val channels = channelsRepository.selectChannels(channelIds, forceCache)
+        val channels = channelsRepository.selectChannels(channelIds)
         // TODO why it is not compared this way?
         //  pagination?.isRequestingMoreThanLastMessage() == true
         val messagesMap = if (pagination?.isRequestingMoreThanLastMessage() != false) {
@@ -79,21 +80,21 @@ public class RepositoryFacade private constructor(
             emptyMap()
         }
 
-        return channels.onEach { channel ->
+        return channels.map { channel ->
             channel.enrichChannel(messagesMap, defaultConfig)
         }
     }
 
     @VisibleForTesting
-    public fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config) {
-        config = selectChannelConfig(type)?.config ?: defaultConfig
+    public fun Channel.enrichChannel(messageMap: Map<String, List<Message>>, defaultConfig: Config): Channel = copy(
+        config = selectChannelConfig(type)?.config ?: defaultConfig,
         messages = if (messageMap.containsKey(cid)) {
             val fullList = (messageMap[cid] ?: error("Messages must be in the map")) + messages
             fullList.distinctBy(Message::id)
         } else {
             messages
-        }
-    }
+        },
+    )
 
     override suspend fun insertChannel(channel: Channel) {
         insertUsers(channel.let(Channel::users))
@@ -105,29 +106,52 @@ public class RepositoryFacade private constructor(
         channelsRepository.insertChannels(channels)
     }
 
-    override suspend fun insertMessage(message: Message, cache: Boolean) {
+    override suspend fun insertMessage(message: Message) {
         insertUsers(message.users())
-        messageRepository.insertMessage(message, cache)
+        messageRepository.insertMessage(message)
     }
 
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+    override suspend fun insertMessages(messages: List<Message>) {
         insertUsers(messages.flatMap(Message::users))
-        messageRepository.insertMessages(messages, cache)
+        messageRepository.insertMessages(messages)
     }
 
     /**
      * Deletes channel messages before [hideMessagesBefore] and removes channel from the cache.
      */
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
-        evictChannel(cid)
         messageRepository.deleteChannelMessagesBefore(cid, hideMessagesBefore)
     }
 
+    override suspend fun deleteChannelMessage(message: Message) {
+        messageRepository.deleteChannelMessage(message)
+        channelsRepository.deleteChannelMessage(message)
+    }
+
+    @InternalStreamChatApi
+    public suspend fun markMessageAsDeleted(message: Message) {
+        messageRepository.evictMessage(message.id)
+        channelsRepository.updateChannelMessage(message)
+    }
+
     override suspend fun insertReaction(reaction: Reaction) {
-        reaction.user?.let {
-            insertUser(it)
-            reactionsRepository.insertReaction(reaction)
+        val messageId = reaction.messageId
+        if (messageId.isEmpty()) {
+            logger.w { "[insertReaction] rejected (message id cannot be empty)" }
+            return
         }
+        val user = reaction.user
+        if (user == null) {
+            logger.w { "[insertReaction] rejected (user cannot be null)" }
+            return
+        }
+        if (messageRepository.selectMessage(messageId) == null) {
+            logger.w { "[insertReaction] rejected (message cannot be found in local DB)" }
+            return
+        }
+        logger.d { "[insertReaction] reaction: ${reaction.type}, messageId: $messageId" }
+        insertUser(user)
+        reactionsRepository.insertReaction(reaction)
     }
 
     override suspend fun updateMembersForChannel(cid: String, members: List<Member>) {
@@ -135,17 +159,33 @@ public class RepositoryFacade private constructor(
         channelsRepository.updateMembersForChannel(cid, members)
     }
 
-    public suspend fun storeStateForChannels(
-        configs: Collection<ChannelConfig>? = null,
-        users: List<User>,
-        channels: Collection<Channel>,
-        messages: List<Message>,
-        cacheForMessages: Boolean = false,
-    ) {
-        configs?.let { insertChannelConfigs(it) }
-        insertUsers(users)
+    public suspend fun storeStateForChannels(channels: Collection<Channel>) {
+        insertChannelConfigs(channels.map { ChannelConfig(it.type, it.config) })
         insertChannels(channels)
-        insertMessages(messages, cacheForMessages)
+        insertMessages(
+            channels.flatMap { channel ->
+                channel.messages.map { it.enrichWithCid(channel.cid) }
+            },
+        )
+    }
+
+    override suspend fun deleteChannel(cid: String) {
+        channelsRepository.deleteChannel(cid)
+        messageRepository.deleteChannelMessages(cid)
+    }
+
+    override suspend fun setHiddenForChannel(cid: String, hidden: Boolean, hideMessagesBefore: Date) {
+        channelsRepository.setHiddenForChannel(cid, hidden, hideMessagesBefore)
+        messageRepository.evictMessages()
+    }
+
+    override suspend fun setHiddenForChannel(cid: String, hidden: Boolean) {
+        channelsRepository.setHiddenForChannel(cid, hidden)
+        messageRepository.evictMessages()
+    }
+
+    public suspend fun storeStateForChannel(channel: Channel) {
+        storeStateForChannels(listOf(channel))
     }
 
     override suspend fun clear() {
@@ -156,7 +196,6 @@ public class RepositoryFacade private constructor(
         configsRepository.clear()
         queryChannelsRepository.clear()
         syncStateRepository.clear()
-        attachmentRepository.clear()
     }
 
     @InternalStreamChatApi
@@ -194,7 +233,6 @@ public class RepositoryFacade private constructor(
                 messageRepository = messageRepository,
                 reactionsRepository = factory.createReactionRepository(getUser),
                 syncStateRepository = factory.createSyncStateRepository(),
-                attachmentRepository = factory.createAttachmentRepository(),
                 scope = scope,
                 defaultConfig = defaultConfig,
             )

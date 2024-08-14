@@ -51,14 +51,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.lifecycleScope
 import io.getstream.chat.android.client.BuildConfig
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.data.UserCredentials
 import io.getstream.chat.android.compose.sample.ui.ChannelsActivity
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import kotlinx.coroutines.launch
 
 /**
  * An Activity that allows users to manually log in to an environment with an API key,
@@ -70,18 +72,20 @@ class CustomLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ChatTheme {
+            ChatTheme(allowUIAutomationTest = true) {
                 CustomLoginScreen(
                     onBackButtonClick = ::finish,
                     onLoginButtonClick = { userCredentials ->
                         ChatHelper.initializeSdk(applicationContext, userCredentials.apiKey)
 
-                        ChatHelper.connectUser(
-                            userCredentials = userCredentials,
-                            onSuccess = ::openChannels,
-                            onError = ::showError
-                        )
-                    }
+                        lifecycleScope.launch {
+                            ChatHelper.connectUser(
+                                userCredentials = userCredentials,
+                                onSuccess = ::openChannels,
+                                onError = ::showError,
+                            )
+                        }
+                    },
                 )
             }
         }
@@ -98,9 +102,10 @@ class CustomLoginActivity : AppCompatActivity() {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .padding(it)
                         .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     var apiKeyText by remember { mutableStateOf("") }
                     var userIdText by remember { mutableStateOf("") }
@@ -143,24 +148,24 @@ class CustomLoginActivity : AppCompatActivity() {
                             onLoginButtonClick(
                                 UserCredentials(
                                     apiKey = apiKeyText,
-                                    user = User().apply {
-                                        id = userIdText
-                                        name = userNameText
-                                    },
+                                    user = User(
+                                        id = userIdText,
+                                        name = userNameText,
+                                    ),
                                     token = userTokenText,
-                                )
+                                ),
                             )
-                        }
+                        },
                     )
 
                     Text(
                         modifier = Modifier.padding(16.dp),
                         text = stringResource(R.string.sdk_version_template, BuildConfig.STREAM_CHAT_VERSION),
                         fontSize = 14.sp,
-                        color = ChatTheme.colors.textLowEmphasis
+                        color = ChatTheme.colors.textLowEmphasis,
                     )
                 }
-            }
+            },
         )
     }
 
@@ -172,7 +177,7 @@ class CustomLoginActivity : AppCompatActivity() {
             },
             navigationIcon = {
                 IconButton(
-                    onClick = onClick
+                    onClick = onClick,
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
@@ -182,7 +187,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 }
             },
             backgroundColor = Color.White,
-            elevation = 0.dp
+            elevation = 0.dp,
         )
     }
 
@@ -208,7 +213,7 @@ class CustomLoginActivity : AppCompatActivity() {
                 focusedIndicatorColor = ChatTheme.colors.primaryAccent,
                 focusedLabelColor = ChatTheme.colors.primaryAccent,
                 unfocusedLabelColor = ChatTheme.colors.textLowEmphasis,
-            )
+            ),
         )
     }
 
@@ -227,12 +232,12 @@ class CustomLoginActivity : AppCompatActivity() {
                 backgroundColor = ChatTheme.colors.primaryAccent,
                 disabledBackgroundColor = ChatTheme.colors.disabled,
             ),
-            onClick = onClick
+            onClick = onClick,
         ) {
             Text(
                 text = stringResource(id = R.string.custom_login_button_text),
                 fontSize = 16.sp,
-                color = Color.White
+                color = Color.White,
             )
         }
     }
@@ -242,8 +247,8 @@ class CustomLoginActivity : AppCompatActivity() {
         finish()
     }
 
-    private fun showError(chatError: ChatError) {
-        Toast.makeText(this, "Login failed ${chatError.message}", Toast.LENGTH_SHORT).show()
+    private fun showError(error: Error) {
+        Toast.makeText(this, "Login failed ${error.message}", Toast.LENGTH_SHORT).show()
     }
 
     companion object {

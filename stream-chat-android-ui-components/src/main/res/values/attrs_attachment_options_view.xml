@@ -41,10 +41,10 @@
         <attr name="streamUiShowInChatEnabled" format="boolean" />
         <!-- "Show in chat" icon drawable -->
         <attr name="streamUiShowInChatIcon" format="reference" />
-        <!-- "Save image" enabled/disabled -->
-        <attr name="streamUiSaveImageEnabled" format="boolean" />
+        <!-- "Save media" enabled/disabled -->
+        <attr name="streamUiSaveMediaEnabled" format="boolean" />
         <!-- "Save" icon drawable -->
-        <attr name="streamUiSaveImageIcon" format="reference" />
+        <attr name="streamUiSaveMediaIcon" format="reference" />
         <!-- "Delete" enabled/disabled -->
         <attr name="streamUiDeleteEnabled" format="boolean" />
         <!-- "Delete" icon drawable -->

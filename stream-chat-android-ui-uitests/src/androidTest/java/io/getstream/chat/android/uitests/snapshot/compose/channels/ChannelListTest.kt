@@ -18,8 +18,8 @@ package io.getstream.chat.android.uitests.snapshot.compose.channels
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ItemState.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
@@ -36,56 +36,56 @@ class ChannelListTest : ComposeScreenshotTest() {
                 isLoadingMore = false,
                 channelItems = listOf(
                     ChannelItemState(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message1()
-                            )
-                            lastMessageAt = TestData.date1()
-                        }
+                                TestData.message1(),
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message2()
-                            )
-                            lastMessageAt = TestData.date2()
-                        }
+                                TestData.message2(),
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message3()
-                            )
-                            lastMessageAt = TestData.date3()
-                        }
+                                TestData.message3(),
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message4()
-                            )
-                            lastMessageAt = TestData.date4()
-                        }
+                                TestData.message4(),
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
                     ),
-                )
+                ),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 
@@ -96,9 +96,9 @@ class ChannelListTest : ComposeScreenshotTest() {
             channelsState = ChannelsState(
                 isLoading = false,
                 isLoadingMore = false,
-                channelItems = emptyList()
+                channelItems = emptyList(),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 
@@ -111,56 +111,56 @@ class ChannelListTest : ComposeScreenshotTest() {
                 isLoadingMore = true,
                 channelItems = listOf(
                     ChannelItemState(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message1()
-                            )
-                            lastMessageAt = TestData.date1()
-                        }
+                                TestData.message1(),
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message2()
-                            )
-                            lastMessageAt = TestData.date2()
-                        }
+                                TestData.message2(),
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message3()
-                            )
-                            lastMessageAt = TestData.date3()
-                        }
+                                TestData.message3(),
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
                     ),
                     ChannelItemState(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message4()
-                            )
-                            lastMessageAt = TestData.date4()
-                        }
+                                TestData.message4(),
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
                     ),
-                )
+                ),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 
@@ -170,9 +170,9 @@ class ChannelListTest : ComposeScreenshotTest() {
             modifier = Modifier.fillMaxSize(),
             channelsState = ChannelsState(
                 isLoading = true,
-                channelItems = emptyList()
+                channelItems = emptyList(),
             ),
-            currentUser = TestData.user1()
+            currentUser = TestData.user1(),
         )
     }
 }

@@ -2,8 +2,8 @@ package io.getstream.chat.docs.kotlin.client.cms
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Filters
+import io.getstream.result.Result
 
 class UserPermissions(val client: ChatClient) {
 
@@ -20,10 +20,13 @@ class UserPermissions(val client: ChatClient) {
                 memberIds = emptyList(),
                 extraData = mapOf("team" to "red")
             ).enqueue { result ->
-                if (result.isSuccess) {
-                    val channel = result.data()
-                } else {
-                    // Handle result.error()
+                when (result) {
+                    is Result.Success -> {
+                        val channel = result.value
+                    }
+                    is Result.Failure -> {
+                        // Handler error
+                    }
                 }
             }
         }
@@ -39,10 +42,13 @@ class UserPermissions(val client: ChatClient) {
             )
 
             client.queryUsers(QueryUsersRequest(filter, offset = 0, limit = 1)).enqueue { result ->
-                if (result.isSuccess) {
-                    val users: List<User> = result.data()
-                } else {
-                    // Handle result.error()
+                when (result) {
+                    is Result.Success -> {
+                        val users = result.value
+                    }
+                    is Result.Failure -> {
+                        // Handler error
+                    }
                 }
             }
         }

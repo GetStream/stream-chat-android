@@ -75,7 +75,7 @@
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
         android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@+id/subtitleContainer"
-        app:layout_constraintEnd_toStartOf="@+id/avatarView"
+        app:layout_constraintEnd_toStartOf="@+id/channelAvatarView"
         app:layout_constraintStart_toEndOf="@+id/backButtonContainer"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
@@ -89,7 +89,7 @@
         android:layout_marginStart="@dimen/stream_ui_spacing_small"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/avatarView"
+        app:layout_constraintEnd_toStartOf="@id/channelAvatarView"
         app:layout_constraintStart_toEndOf="@+id/backButtonContainer"
         app:layout_constraintTop_toBottomOf="@+id/titleTextView"
         app:layout_constraintVertical_chainStyle="packed"
@@ -158,7 +158,7 @@
         </LinearLayout>
 
 
-        <io.getstream.chat.android.ui.typing.TypingIndicatorView
+        <io.getstream.chat.android.ui.widgets.typing.TypingIndicatorView
             android:id="@+id/typingIndicatorView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -178,8 +178,8 @@
 
     </FrameLayout>
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
+        android:id="@+id/channelAvatarView"
         style="?attr/streamUiMessageListHeaderAvatarStyle"
         android:layout_marginEnd="@dimen/stream_ui_spacing_small"
         app:layout_constraintBottom_toBottomOf="parent"

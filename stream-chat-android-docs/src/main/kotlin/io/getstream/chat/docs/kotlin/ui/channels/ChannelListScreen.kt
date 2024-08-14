@@ -3,16 +3,16 @@ package io.getstream.chat.docs.kotlin.ui.channels
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.ui.channel.ChannelListActivity
-import io.getstream.chat.android.ui.channel.ChannelListFragment
-import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
-import io.getstream.chat.android.ui.search.SearchInputView
-import io.getstream.chat.android.ui.search.list.SearchResultListView
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.feature.channels.ChannelListActivity
+import io.getstream.chat.android.ui.feature.channels.ChannelListFragment
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+import io.getstream.chat.android.ui.feature.search.SearchInputView
+import io.getstream.chat.android.ui.feature.search.list.SearchResultListView
 import io.getstream.chat.docs.R
 
 /**
@@ -20,13 +20,19 @@ import io.getstream.chat.docs.R
  */
 class ChannelListScreen {
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-screen/#usage)
+     */
     fun usage() {
-        class MyChannelListActivity : AppCompatActivity() {
+
+        fun startingActivity(context: Context) {
+            context.startActivity(ChannelListActivity.createIntent(context))
+        }
+
+        class MyChannelListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
-
                 if (savedInstanceState == null) {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.container, ChannelListFragment.newInstance())
@@ -36,12 +42,12 @@ class ChannelListScreen {
         }
     }
 
-    fun startingActivity(context: Context) {
-        context.startActivity(ChannelListActivity.createIntent(context))
-    }
-
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-screen/#handling-actions)
+     */
     fun handlingActions() {
-        class MyChannelListActivity : AppCompatActivity(),
+
+        class MyChannelListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container),
             ChannelListFragment.HeaderActionButtonClickListener,
             ChannelListFragment.HeaderUserAvatarClickListener,
             ChannelListFragment.ChannelListItemClickListener,
@@ -49,7 +55,11 @@ class ChannelListScreen {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                // Add ChannelListFragment to the layout
+                if (savedInstanceState == null) {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.container, ChannelListFragment.newInstance())
+                        .commit()
+                }
             }
 
             override fun onUserAvatarClick() {
@@ -70,12 +80,18 @@ class ChannelListScreen {
         }
     }
 
-    fun customizations() {
+    /**
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/channel-components/channel-list-screen/#customization)
+     */
+    fun customization() {
+
         class CustomChannelListFragment : ChannelListFragment() {
 
             override fun setupChannelListHeader(channelListHeaderView: ChannelListHeaderView) {
                 super.setupChannelListHeader(channelListHeaderView)
-                // Customize channel list header view. For example, set a custom avatar click listener:
+                // Customize channel list header view
+
+                // For example, set a custom listener for the avatar
                 channelListHeaderView.setOnUserAvatarClickListener {
                     // Handle avatar click
                 }
@@ -118,6 +134,15 @@ class ChannelListScreen {
                     headerTitle("Title")
                 }
             }
+        }
+
+        fun startActivity(context: Context) {
+            context.startActivity(
+                ChannelListActivity.createIntent(
+                    context = context,
+                    activityClass = CustomChannelListActivity::class.java
+                )
+            )
         }
     }
 }

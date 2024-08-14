@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.ui.utils
 
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.internal.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -33,7 +33,6 @@ internal class MessageEllipsizeTest {
         assertEquals(expected, result)
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
     @Test
     fun tallMessagesShouldBeEllipsized() {
         val maxLineBreaks = 2

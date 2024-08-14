@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.offline.repository.database.converter
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.offline.repository.database.converter.internal.FilterObjectConverter
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomInt
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -61,7 +61,7 @@ internal class FilterObjectConverterTest {
                 randomString().let { value ->
                     Arguments.of(
                         Filters.autocomplete(fieldName, value),
-                        "{\"$fieldName\":{\"\$autocomplete\":\"$value\"}}"
+                        "{\"$fieldName\":{\"\$autocomplete\":\"$value\"}}",
                     )
                 }
             },
@@ -129,7 +129,7 @@ internal class FilterObjectConverterTest {
                 randomString().let { value ->
                     Arguments.of(
                         Filters.greaterThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$gte\":\"$value\"}}"
+                        "{\"$fieldName\":{\"\$gte\":\"$value\"}}",
                     )
                 }
             },
@@ -137,7 +137,7 @@ internal class FilterObjectConverterTest {
                 randomInt().let { value ->
                     Arguments.of(
                         Filters.greaterThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$gte\":$value}}"
+                        "{\"$fieldName\":{\"\$gte\":$value}}",
                     )
                 }
             },
@@ -145,7 +145,7 @@ internal class FilterObjectConverterTest {
                 randomBoolean().let { value ->
                     Arguments.of(
                         Filters.greaterThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$gte\":$value}}"
+                        "{\"$fieldName\":{\"\$gte\":$value}}",
                     )
                 }
             },
@@ -168,7 +168,7 @@ internal class FilterObjectConverterTest {
                 randomString().let { value ->
                     Arguments.of(
                         Filters.lessThanEquals(fieldName, value),
-                        "{\"$fieldName\":{\"\$lte\":\"$value\"}}"
+                        "{\"$fieldName\":{\"\$lte\":\"$value\"}}",
                     )
                 }
             },
@@ -186,7 +186,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomString() }.distinct().let { values ->
                     Arguments.of(
                         Filters.`in`(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[\"${values.joinToString(separator = "\",\"")}\"]}}"
+                        "{\"$fieldName\":{\"\$in\":[\"${values.joinToString(separator = "\",\"")}\"]}}",
                     )
                 }
             },
@@ -194,7 +194,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomInt() }.distinct().let { values ->
                     Arguments.of(
                         Filters.`in`(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -202,7 +202,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomBoolean() }.distinct().let { values ->
                     Arguments.of(
                         Filters.`in`(fieldName, values),
-                        "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -210,7 +210,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomString() }.distinct().let { values ->
                     Arguments.of(
                         Filters.`nin`(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}"
+                        "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}",
                     )
                 }
             },
@@ -218,7 +218,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomInt() }.distinct().let { values ->
                     Arguments.of(
                         Filters.`nin`(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -226,7 +226,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomBoolean() }.distinct().let { values ->
                     Arguments.of(
                         Filters.`nin`(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}"
+                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
                     )
                 }
             },
@@ -235,9 +235,9 @@ internal class FilterObjectConverterTest {
                     Arguments.of(
                         Filters.and(
                             Filters.`in`(fieldName, values),
-                            Filters.eq(fieldName, values.first())
+                            Filters.eq(fieldName, values.first()),
                         ),
-                        "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"
+                        "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}",
                     )
                 }
             },
@@ -246,9 +246,9 @@ internal class FilterObjectConverterTest {
                     Arguments.of(
                         Filters.or(
                             Filters.`in`(fieldName, values),
-                            Filters.eq(fieldName, values.first())
+                            Filters.eq(fieldName, values.first()),
                         ),
-                        "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"
+                        "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}",
                     )
                 }
             },
@@ -257,18 +257,18 @@ internal class FilterObjectConverterTest {
                     Arguments.of(
                         Filters.nor(
                             Filters.`in`(fieldName, values),
-                            Filters.eq(fieldName, values.first())
+                            Filters.eq(fieldName, values.first()),
                         ),
-                        "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}"
+                        "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}",
                     )
                 }
             },
             List(positiveRandomInt(20)) { randomString() }.distinct().let { memberIds ->
                 Arguments.of(
                     Filters.distinct(memberIds),
-                    "{\"distinct\":true,\"members\":[\"${memberIds.joinToString(separator = "\",\"")}\"]}"
+                    "{\"distinct\":true,\"members\":[\"${memberIds.joinToString(separator = "\",\"")}\"]}",
                 )
-            }
+            },
         )
 
         @JvmStatic
@@ -280,7 +280,7 @@ internal class FilterObjectConverterTest {
                 randomString().let { value ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$autocomplete\":\"$value\"}}",
-                        Filters.autocomplete(fieldName, value)
+                        Filters.autocomplete(fieldName, value),
                     )
                 }
             },
@@ -348,7 +348,7 @@ internal class FilterObjectConverterTest {
                 randomString().let { value ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$gte\":\"$value\"}}",
-                        Filters.greaterThanEquals(fieldName, value)
+                        Filters.greaterThanEquals(fieldName, value),
                     )
                 }
             },
@@ -356,7 +356,7 @@ internal class FilterObjectConverterTest {
                 randomInt().toDouble().let { value ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$gte\":$value}}",
-                        Filters.greaterThanEquals(fieldName, value)
+                        Filters.greaterThanEquals(fieldName, value),
                     )
                 }
             },
@@ -364,7 +364,7 @@ internal class FilterObjectConverterTest {
                 randomBoolean().let { value ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$gte\":$value}}",
-                        Filters.greaterThanEquals(fieldName, value)
+                        Filters.greaterThanEquals(fieldName, value),
                     )
                 }
             },
@@ -387,7 +387,7 @@ internal class FilterObjectConverterTest {
                 randomString().let { value ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$lte\":\"$value\"}}",
-                        Filters.lessThanEquals(fieldName, value)
+                        Filters.lessThanEquals(fieldName, value),
                     )
                 }
             },
@@ -405,7 +405,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomString() }.distinct().let { values ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$in\":[\"${values.joinToString(separator = "\",\"")}\"]}}",
-                        Filters.`in`(fieldName, values)
+                        Filters.`in`(fieldName, values),
                     )
                 }
             },
@@ -413,7 +413,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomInt().toDouble() }.distinct().let { values ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}",
-                        Filters.`in`(fieldName, values)
+                        Filters.`in`(fieldName, values),
                     )
                 }
             },
@@ -421,7 +421,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomBoolean() }.distinct().let { values ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}",
-                        Filters.`in`(fieldName, values)
+                        Filters.`in`(fieldName, values),
                     )
                 }
             },
@@ -429,7 +429,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomString() }.distinct().let { values ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}",
-                        Filters.`nin`(fieldName, values)
+                        Filters.`nin`(fieldName, values),
                     )
                 }
             },
@@ -437,7 +437,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomInt().toDouble() }.distinct().let { values ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
-                        Filters.`nin`(fieldName, values)
+                        Filters.`nin`(fieldName, values),
                     )
                 }
             },
@@ -445,7 +445,7 @@ internal class FilterObjectConverterTest {
                 List(positiveRandomInt(20)) { randomBoolean() }.distinct().let { values ->
                     Arguments.of(
                         "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
-                        Filters.`nin`(fieldName, values)
+                        Filters.`nin`(fieldName, values),
                     )
                 }
             },
@@ -455,9 +455,9 @@ internal class FilterObjectConverterTest {
                         "{\"\$and\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}",
                         Filters.and(
                             Filters.`in`(fieldName, values),
-                            Filters.eq(fieldName, values.first())
+                            Filters.eq(fieldName, values.first()),
 
-                        )
+                        ),
                     )
                 }
             },
@@ -467,8 +467,8 @@ internal class FilterObjectConverterTest {
                         "{\"\$or\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}",
                         Filters.or(
                             Filters.`in`(fieldName, values),
-                            Filters.eq(fieldName, values.first())
-                        )
+                            Filters.eq(fieldName, values.first()),
+                        ),
                     )
                 }
             },
@@ -478,17 +478,17 @@ internal class FilterObjectConverterTest {
                         "{\"\$nor\":[{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}},{\"$fieldName\":{\"\$eq\":${values.first()}}}]}",
                         Filters.nor(
                             Filters.`in`(fieldName, values),
-                            Filters.eq(fieldName, values.first())
-                        )
+                            Filters.eq(fieldName, values.first()),
+                        ),
                     )
                 }
             },
             List(positiveRandomInt(20)) { randomString() }.distinct().let { memberIds ->
                 Arguments.of(
                     "{\"distinct\":true,\"members\":[\"${memberIds.joinToString(separator = "\",\"")}\"]}",
-                    Filters.distinct(memberIds)
+                    Filters.distinct(memberIds),
                 )
-            }
+            },
         )
     }
 }

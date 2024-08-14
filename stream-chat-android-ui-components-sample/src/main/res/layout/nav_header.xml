@@ -21,8 +21,8 @@
     android:fitsSystemWindows="true"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="@style/StreamUiUserAvatarStyle"
         android:layout_marginStart="14dp"
         android:layout_marginTop="@dimen/stream_ui_spacing_small"
@@ -39,10 +39,10 @@
         android:paddingEnd="@dimen/spacing_medium"
         android:singleLine="true"
         android:textAppearance="@style/StreamUiTextAppearance.HeadlineBold"
-        app:layout_constraintBottom_toBottomOf="@id/avatarView"
+        app:layout_constraintBottom_toBottomOf="@id/userAvatarView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
-        app:layout_constraintTop_toTopOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
+        app:layout_constraintTop_toTopOf="@id/userAvatarView"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

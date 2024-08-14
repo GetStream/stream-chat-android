@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.common.state.MessageMode
 import io.getstream.chat.android.compose.ui.messages.header.MessageListHeader
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test
@@ -28,48 +28,48 @@ class MessageListHeaderTest : ComposeScreenshotTest() {
     @Test
     fun messageListHeaderForConnectedState() = runScreenshotTest {
         MessageListHeader(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-                memberCount = 3
-            },
+                ),
+                memberCount = 3,
+            ),
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTED,
+            connectionState = ConnectionState.Connected,
         )
     }
 
     @Test
     fun messageListHeaderForThreadMode() = runScreenshotTest {
         MessageListHeader(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.CONNECTED,
-            messageMode = MessageMode.MessageThread(TestData.message1(), null)
+            connectionState = ConnectionState.Connected,
+            messageMode = MessageMode.MessageThread(TestData.message1(), null),
         )
     }
 
     @Test
     fun messageListHeaderForOfflineState() = runScreenshotTest {
         MessageListHeader(
-            channel = TestData.channel1().apply {
+            channel = TestData.channel1().copy(
                 members = listOf(
                     TestData.member1(),
                     TestData.member2(),
                     TestData.member3(),
-                )
-            },
+                ),
+            ),
             currentUser = TestData.user1(),
-            connectionState = ConnectionState.OFFLINE,
-            messageMode = MessageMode.Normal
+            connectionState = ConnectionState.Offline,
+            messageMode = MessageMode.Normal,
         )
     }
 }

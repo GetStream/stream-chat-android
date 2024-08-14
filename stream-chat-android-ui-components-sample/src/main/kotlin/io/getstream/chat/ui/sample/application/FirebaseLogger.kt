@@ -18,11 +18,11 @@ package io.getstream.chat.ui.sample.application
 
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.logging.StreamLog
+import io.getstream.log.taggedLogger
 
 object FirebaseLogger : ChatLoggerHandler {
     private const val INTERNAL_LOG_PREFIX = "Chat"
-    private val logger = StreamLog.getLogger("Chat:FirebaseLogger")
+    private val logger by taggedLogger("Chat:FirebaseLogger")
     private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
     var userId: String? = null

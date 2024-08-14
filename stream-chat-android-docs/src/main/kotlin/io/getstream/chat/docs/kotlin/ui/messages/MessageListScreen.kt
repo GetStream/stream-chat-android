@@ -3,11 +3,11 @@ package io.getstream.chat.docs.kotlin.ui.messages
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.chat.android.ui.message.MessageListActivity
-import io.getstream.chat.android.ui.message.MessageListFragment
-import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.list.MessageListView
-import io.getstream.chat.android.ui.message.list.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.MessageListActivity
+import io.getstream.chat.android.ui.feature.messages.MessageListFragment
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.header.MessageListHeaderView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.docs.R
 
 /**
@@ -15,28 +15,37 @@ import io.getstream.chat.docs.R
  */
 class MessageListScreen {
 
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/#usage)
+     */
     fun usage() {
-        class MyMessageListActivity : AppCompatActivity() {
+
+        fun startActivity(context: Context) {
+            context.startActivity(MessageListActivity.createIntent(context, cid = "messaging:123"))
+        }
+
+        class MyMessageListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container) {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
-                setContentView(R.layout.stream_ui_fragment_container)
-
                 if (savedInstanceState == null) {
+                    val fragment = MessageListFragment.newInstance(cid = "messaging:123") {
+                        showHeader(true)
+                    }
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.container, MessageListFragment.newInstance(cid = "channelType:channelId"))
+                        .replace(R.id.container, fragment)
                         .commit()
                 }
             }
         }
     }
 
-    fun startActivity(context: Context) {
-        context.startActivity(MessageListActivity.createIntent(context, cid = "channelType:channelId"))
-    }
-
+    /**
+     * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/#handling-actions)
+     */
     fun handlingActions() {
-        class MainActivity : AppCompatActivity(), MessageListFragment.BackPressListener {
+
+        class MyMessageListActivity : AppCompatActivity(R.layout.stream_ui_fragment_container), MessageListFragment.BackPressListener {
 
             override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)
@@ -49,12 +58,18 @@ class MessageListScreen {
         }
     }
 
+    /**
+     * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-list-screen/#customization)
+     */
     fun customization() {
+
         class CustomMessageListFragment : MessageListFragment() {
 
             override fun setupMessageListHeader(messageListHeaderView: MessageListHeaderView) {
                 super.setupMessageListHeader(messageListHeaderView)
-                // Customize message list header view. For example, set a custom back button click listener:
+                // Customize message list header view
+
+                // For example, set a custom listener for the back button
                 messageListHeaderView.setBackButtonClickListener {
                     // Handle back press
                 }
@@ -65,9 +80,9 @@ class MessageListScreen {
                 // Customize message list view
             }
 
-            override fun setupMessageInput(messageInputView: MessageInputView) {
-                super.setupMessageInput(messageInputView)
-                // Customize message input view
+            override fun setupMessageComposer(messageComposerView: MessageComposerView) {
+                super.setupMessageComposer(messageComposerView)
+                // Customize message composer view
             }
         }
 
@@ -81,6 +96,16 @@ class MessageListScreen {
                     messageId(messageId)
                 }
             }
+        }
+
+        fun startActivity(context: Context) {
+            context.startActivity(
+                MessageListActivity.createIntent(
+                    context = context,
+                    cid = "messaging:123",
+                    activityClass = CustomMessageListActivity::class.java
+                )
+            )
         }
     }
 }

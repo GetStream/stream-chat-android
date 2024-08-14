@@ -22,7 +22,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
 import java.util.Date
@@ -85,11 +85,11 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt > :dateFilter || createdLocallyAt > :dateFilter) " +
+            "AND (createdAt > :dateFilter OR createdLocallyAt > :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
-            "END ASC LIMIT :limit"
+            "END ASC LIMIT :limit",
     )
     @Transaction
     suspend fun messagesForChannelNewerThan(
@@ -101,11 +101,11 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt >= :dateFilter || createdLocallyAt >= :dateFilter) " +
+            "AND (createdAt >= :dateFilter OR createdLocallyAt >= :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
-            "END ASC LIMIT :limit"
+            "END ASC LIMIT :limit",
     )
     @Transaction
     suspend fun messagesForChannelEqualOrNewerThan(
@@ -117,11 +117,11 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt < :dateFilter || createdLocallyAt < :dateFilter) " +
+            "AND (createdAt < :dateFilter OR createdLocallyAt < :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
-            "END DESC LIMIT :limit"
+            "END DESC LIMIT :limit",
     )
     @Transaction
     suspend fun messagesForChannelOlderThan(
@@ -133,11 +133,11 @@ internal interface MessageDao {
     @Query(
         "SELECT * from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND (createdAt <= :dateFilter || createdLocallyAt <= :dateFilter) " +
+            "AND (createdAt <= :dateFilter OR createdLocallyAt <= :dateFilter) " +
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
-            "END DESC LIMIT :limit"
+            "END DESC LIMIT :limit",
     )
     @Transaction
     suspend fun messagesForChannelEqualOrOlderThan(
@@ -152,7 +152,7 @@ internal interface MessageDao {
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
-            "END DESC LIMIT :limit"
+            "END DESC LIMIT :limit",
     )
     @Transaction
     suspend fun messagesForChannel(cid: String, limit: Int = 100): List<MessageEntity>
@@ -163,7 +163,7 @@ internal interface MessageDao {
             "ORDER BY CASE WHEN createdAt " +
             "IS NULL THEN createdLocallyAt " +
             "ELSE createdAt " +
-            "END DESC LIMIT :limit"
+            "END DESC LIMIT :limit",
     )
     @Transaction
     suspend fun messagesForThread(messageId: String, limit: Int = 100): List<MessageEntity>
@@ -171,16 +171,22 @@ internal interface MessageDao {
     @Query(
         "DELETE from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND createdAt < :deleteMessagesBefore"
+            "AND createdAt < :deleteMessagesBefore",
     )
     suspend fun deleteChannelMessagesBefore(cid: String, deleteMessagesBefore: Date)
 
     @Query(
         "DELETE from $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE cid = :cid " +
-            "AND id = :messageId"
+            "AND id = :messageId",
     )
     suspend fun deleteMessage(cid: String, messageId: String)
+
+    @Query(
+        "DELETE from $MESSAGE_ENTITY_TABLE_NAME " +
+            "WHERE cid = :cid",
+    )
+    suspend fun deleteMessages(cid: String)
 
     @Transaction
     suspend fun select(ids: List<String>): List<MessageEntity> {
@@ -204,7 +210,7 @@ internal interface MessageDao {
         "SELECT * FROM $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE syncStatus = :syncStatus " +
             "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC " +
-            "LIMIT :limit"
+            "LIMIT :limit",
     )
     @Transaction
     suspend fun selectBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<MessageEntity>
@@ -213,7 +219,7 @@ internal interface MessageDao {
         "SELECT id FROM $MESSAGE_ENTITY_TABLE_NAME " +
             "WHERE syncStatus = :syncStatus " +
             "ORDER BY CASE WHEN createdAt IS NULL THEN createdLocallyAt ELSE createdAt END ASC " +
-            "LIMIT :limit"
+            "LIMIT :limit",
     )
     suspend fun selectIdsBySyncStatus(syncStatus: SyncStatus, limit: Int = NO_LIMIT): List<String>
 

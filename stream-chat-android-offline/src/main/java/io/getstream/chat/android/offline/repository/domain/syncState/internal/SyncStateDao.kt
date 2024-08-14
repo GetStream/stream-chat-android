@@ -28,7 +28,7 @@ internal interface SyncStateDao {
 
     @Query(
         "SELECT * FROM $SYNC_STATE_ENTITY_TABLE_NAME " +
-            "WHERE stream_sync_state.userId = :userId"
+            "WHERE stream_sync_state.userId = :userId",
     )
     suspend fun select(userId: String): SyncStateEntity?
 

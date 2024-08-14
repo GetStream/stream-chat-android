@@ -25,7 +25,7 @@ import io.getstream.chat.android.core.internal.StreamHandsOff
  */
 @StreamHandsOff(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map"
+        "content of [extraData] map",
 )
 @JsonClass(generateAdapter = true)
 internal data class AttachmentDto(
@@ -44,7 +44,6 @@ internal data class AttachmentDto(
     val title: String?,
     val title_link: String?,
     val type: String?,
-    val url: String?,
     val original_height: Int?,
     val original_width: Int?,
 

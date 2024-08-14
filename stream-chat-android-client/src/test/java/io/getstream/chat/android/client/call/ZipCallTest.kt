@@ -17,11 +17,13 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.positiveRandomInt
-import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.zipWith
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
@@ -37,16 +39,18 @@ import org.mockito.kotlin.only
 internal class ZipCallTest {
 
     private val resultValueA = positiveRandomInt()
-    private val validResultA: Result<Int> = Result.success(resultValueA)
+    private val validResultA: Result<Int> = Result.Success(resultValueA)
     private val resultValueB = randomString()
-    private val validResultB: Result<String> = Result.success(resultValueB)
-    private val expectedResult: Result<Pair<Int, String>> = Result.success(Pair(resultValueA, resultValueB))
-    private val errorA = ChatError(randomString(), Exception())
-    private val errorB = ChatError(randomString(), Exception())
-    private val errorResultA = Result.error<Int>(errorA)
-    private val errorResultB = Result.error<String>(errorB)
-    private val expectedErrorResultA = Result.error<Pair<Int, String>>(errorA)
-    private val expectedErrorResultB = Result.error<Pair<Int, String>>(errorB)
+    private val validResultB: Result<String> = Result.Success(resultValueB)
+    private val expectedResult: Result<Pair<Int, String>> = Result.Success(Pair(resultValueA, resultValueB))
+    private val errorA = Error.ThrowableError(message = randomString(), cause = Exception())
+    private val errorB = Error.ThrowableError(message = randomString(), cause = Exception())
+    private val errorResultA = Result.Failure(errorA)
+    private val errorResultB = Result.Failure(errorB)
+    private val expectedErrorResultA =
+        Result.Failure(errorA)
+    private val expectedErrorResultB =
+        Result.Failure(errorB)
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {
@@ -94,9 +98,6 @@ internal class ZipCallTest {
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true
         blockedCallA.isCanceled() `should be equal to` false
-        blockedCallB.isStarted() `should be equal to` true
-        blockedCallB.isCompleted() `should be equal to` true
-        blockedCallB.isCanceled() `should be equal to` false
     }
 
     @Test
@@ -122,7 +123,7 @@ internal class ZipCallTest {
 
     @Test
     fun `Call should be enqueued and return an error result from callA by the callback`() = runTest {
-        val callback: Call.Callback<Pair<Int, String>> = mock()
+        val callback: Call.Callback<Pair<Nothing, String>> = mock()
         val blockedCallA = BlockedCall(errorResultA).apply { unblock() }
         val blockedCallB = BlockedCall(validResultB).apply { unblock() }
         val call = blockedCallA.zipWith(blockedCallB)
@@ -132,7 +133,7 @@ internal class ZipCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedErrorResultA
-            }
+            },
         )
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true
@@ -144,7 +145,7 @@ internal class ZipCallTest {
 
     @Test
     fun `Call should be enqueued and return an error result from callB by the callback`() = runTest {
-        val callback: Call.Callback<Pair<Int, String>> = mock()
+        val callback: Call.Callback<Pair<Int, Nothing>> = mock()
         val blockedCallA = BlockedCall(validResultA).apply { unblock() }
         val blockedCallB = BlockedCall(errorResultB).apply { unblock() }
         val call = blockedCallA.zipWith(blockedCallB)
@@ -154,7 +155,7 @@ internal class ZipCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedErrorResultB
-            }
+            },
         )
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true
@@ -176,7 +177,7 @@ internal class ZipCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` expectedResult
-            }
+            },
         )
         blockedCallA.isStarted() `should be equal to` true
         blockedCallA.isCompleted() `should be equal to` true

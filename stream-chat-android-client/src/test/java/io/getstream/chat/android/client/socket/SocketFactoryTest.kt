@@ -17,12 +17,12 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.Mother.randomUser
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser.ChatParser
 import io.getstream.chat.android.client.parser2.MoshiChatParser
 import io.getstream.chat.android.client.token.FakeTokenManager
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import okhttp3.OkHttpClient
 import okhttp3.WebSocketListener
 import org.amshove.kluent.`should be equal to`
@@ -31,7 +31,6 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.only
 import org.mockito.kotlin.verify
@@ -42,25 +41,10 @@ import java.util.Locale
 
 internal class SocketFactoryTest {
 
-    private val eventsParser: EventsParser = mock()
     private val httpClient: OkHttpClient = mock<OkHttpClient>().apply {
         whenever(this.newWebSocket(any(), any())) doReturn mock()
     }
-    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token), httpClient)
-
-    /** [arguments] */
-    @ParameterizedTest
-    @MethodSource("arguments")
-    internal fun test(connectionConf: SocketFactory.ConnectionConf, expectedUrl: String) {
-        socketFactory.createSocket(eventsParser, connectionConf)
-
-        verify(httpClient, only()).newWebSocket(
-            org.mockito.kotlin.check {
-                it.url.toString() `should be equal to` expectedUrl
-            },
-            eq(eventsParser)
-        )
-    }
+    private val socketFactory = SocketFactory(chatParser, FakeTokenManager(token, loadSyncToken), httpClient)
 
     /** [arguments] */
     @ParameterizedTest
@@ -72,47 +56,48 @@ internal class SocketFactoryTest {
             org.mockito.kotlin.check {
                 it.url.toString() `should be equal to` expectedUrl
             },
-            any<WebSocketListener>()
+            any<WebSocketListener>(),
         )
     }
 
     companion object {
-        private val chatParser: ChatParser = MoshiChatParser()
+        private val chatParser: ChatParser = MoshiChatParser { "" }
         private val endpoint = "https://${randomString().lowercase(Locale.getDefault())}/"
         private val apiKey = randomString()
         private val token = randomString()
+        private val loadSyncToken = randomString()
 
         @JvmStatic
         @Suppress("MaxLineLength")
         fun arguments() = listOf(
-            randomUser().let {
+            randomUser(image = randomString(), name = randomString(), language = randomString()).let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it),
-                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
+                    "${endpoint}connect?json=${buildFullUserJson(it, it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt",
                 )
             },
             randomUser().let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.UserConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$token&stream-auth-type=jwt"
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&authorization=$loadSyncToken&stream-auth-type=jwt",
                 )
             },
             User("anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&stream-auth-type=anonymous"
+                    "${endpoint}connect?json=${buildMinimumUserJson(it.id)}&api_key=$apiKey&stream-auth-type=anonymous",
                 )
             },
             User("!anon").let {
                 Arguments.of(
                     SocketFactory.ConnectionConf.AnonymousConnectionConf(endpoint, apiKey, it).asReconnectionConf(),
-                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&stream-auth-type=anonymous"
+                    "${endpoint}connect?json=${buildMinimumUserJson("anon")}&api_key=$apiKey&stream-auth-type=anonymous",
                 )
-            }
+            },
         )
 
         private fun buildMinimumUserJson(userId: String): String = encode(
-            defaultMap(userId, mapOf("id" to userId))
+            defaultMap(userId, mapOf("id" to userId)),
         )
 
         private fun buildFullUserJson(user: User, userId: String): String = encode(
@@ -121,13 +106,13 @@ internal class SocketFactoryTest {
                 mapOf(
                     "id" to userId,
                     "role" to user.role,
-                    "banned" to user.banned,
-                    "invisible" to user.invisible,
-                    "teams" to user.teams,
+                    "banned" to user.isBanned,
+                    "invisible" to user.isInvisible,
+                    "language" to user.language,
                     "image" to user.image,
                     "name" to user.name,
                 ) + user.extraData,
-            )
+            ),
         )
 
         private fun defaultMap(userId: String, userDetails: Map<String, Any>): Map<String, Any> =
@@ -135,13 +120,13 @@ internal class SocketFactoryTest {
                 "user_details" to userDetails,
                 "user_id" to userId,
                 "server_determines_connection_id" to true,
-                "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders()
+                "X-Stream-Client" to ChatClient.buildSdkTrackingHeaders(),
             )
 
         private fun encode(map: Map<String, Any>): String =
             URLEncoder.encode(
                 chatParser.toJson(map),
-                StandardCharsets.UTF_8.name()
+                StandardCharsets.UTF_8.name(),
             )
     }
 }

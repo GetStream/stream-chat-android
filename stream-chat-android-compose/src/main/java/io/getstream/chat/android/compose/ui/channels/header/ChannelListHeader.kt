@@ -40,13 +40,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.ui.components.NetworkLoadingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
  * A clean, decoupled UI element that doesn't rely on ViewModels or our custom architecture setup.
@@ -74,7 +74,7 @@ public fun ChannelListHeader(
     modifier: Modifier = Modifier,
     title: String = "",
     currentUser: User? = null,
-    connectionState: ConnectionState = ConnectionState.CONNECTED,
+    connectionState: ConnectionState,
     color: Color = ChatTheme.colors.barsBackground,
     shape: Shape = ChatTheme.shapes.header,
     elevation: Dp = ChatTheme.dimens.headerElevation,
@@ -83,18 +83,18 @@ public fun ChannelListHeader(
     leadingContent: @Composable RowScope.() -> Unit = {
         DefaultChannelHeaderLeadingContent(
             currentUser = currentUser,
-            onAvatarClick = onAvatarClick
+            onAvatarClick = onAvatarClick,
         )
     },
     centerContent: @Composable RowScope.() -> Unit = {
         DefaultChannelListHeaderCenterContent(
             connectionState = connectionState,
-            title = title
+            title = title,
         )
     },
     trailingContent: @Composable RowScope.() -> Unit = {
         DefaultChannelListHeaderTrailingContent(
-            onHeaderActionClick = onHeaderActionClick
+            onHeaderActionClick = onHeaderActionClick,
         )
     },
 ) {
@@ -103,7 +103,7 @@ public fun ChannelListHeader(
             .fillMaxWidth(),
         elevation = elevation,
         color = color,
-        shape = shape
+        shape = shape,
     ) {
         Row(
             Modifier
@@ -138,7 +138,7 @@ internal fun DefaultChannelHeaderLeadingContent(
             user = currentUser,
             contentDescription = currentUser.name,
             showOnlineIndicator = false,
-            onClick = { onAvatarClick(currentUser) }
+            onClick = { onAvatarClick(currentUser) },
         )
     } else {
         Spacer(modifier = size)
@@ -158,7 +158,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
     title: String,
 ) {
     when (connectionState) {
-        ConnectionState.CONNECTED -> {
+        is ConnectionState.Connected -> {
             Text(
                 modifier = Modifier
                     .weight(1f)
@@ -167,11 +167,11 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 text = title,
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
-        ConnectionState.CONNECTING -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
-        ConnectionState.OFFLINE -> {
+        is ConnectionState.Connecting -> NetworkLoadingIndicator(modifier = Modifier.weight(1f))
+        is ConnectionState.Offline -> {
             Text(
                 modifier = Modifier
                     .weight(1f)
@@ -180,7 +180,7 @@ internal fun RowScope.DefaultChannelListHeaderCenterContent(
                 text = stringResource(R.string.stream_compose_disconnected),
                 style = ChatTheme.typography.title3Bold,
                 maxLines = 1,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
         }
     }
@@ -202,7 +202,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
         interactionSource = remember { MutableInteractionSource() },
         color = ChatTheme.colors.primaryAccent,
         shape = ChatTheme.shapes.avatar,
-        elevation = 4.dp
+        elevation = 4.dp,
     ) {
         Icon(
             modifier = Modifier.wrapContentSize(),
@@ -221,7 +221,7 @@ internal fun DefaultChannelListHeaderTrailingContent(
 @Preview(name = "ChannelListHeader Preview (Connected state)")
 @Composable
 private fun ChannelListHeaderForConnectedStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTED)
+    ChannelListHeaderPreview(connectionState = ConnectionState.Connected)
 }
 
 /**
@@ -232,7 +232,7 @@ private fun ChannelListHeaderForConnectedStatePreview() {
 @Preview(name = "ChannelListHeader Preview (Connecting state)")
 @Composable
 private fun ChannelListHeaderForConnectingStatePreview() {
-    ChannelListHeaderPreview(connectionState = ConnectionState.CONNECTING)
+    ChannelListHeaderPreview(connectionState = ConnectionState.Connecting)
 }
 
 /**
@@ -246,13 +246,13 @@ private fun ChannelListHeaderForConnectingStatePreview() {
 private fun ChannelListHeaderPreview(
     title: String = "Stream Chat",
     currentUser: User? = PreviewUserData.user1,
-    connectionState: ConnectionState = ConnectionState.CONNECTED,
+    connectionState: ConnectionState = ConnectionState.Connected,
 ) {
     ChatTheme {
         ChannelListHeader(
             title = title,
             currentUser = currentUser,
-            connectionState = connectionState
+            connectionState = connectionState,
         )
     }
 }

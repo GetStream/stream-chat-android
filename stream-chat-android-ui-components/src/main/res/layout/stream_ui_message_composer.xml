@@ -16,6 +16,8 @@
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
     >
 
     <View
@@ -32,50 +34,74 @@
         android:id="@+id/headerContent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/centerContent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@id/centerContainer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
         />
 
     <FrameLayout
         android:id="@+id/leadingContent"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/centerContent"
-        app:layout_constraintEnd_toStartOf="@id/centerContent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/centerContainer"
+        app:layout_constraintEnd_toStartOf="@id/centerContainer"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/centerContent"
+        app:layout_constraintTop_toTopOf="@id/centerContainer"
         />
 
     <FrameLayout
-        android:id="@+id/centerContent"
+        android:id="@+id/centerContainer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@id/footerContent"
         app:layout_constraintEnd_toStartOf="@id/trailingContent"
         app:layout_constraintStart_toEndOf="@id/leadingContent"
         app:layout_constraintTop_toBottomOf="@id/headerContent"
-        />
+        >
+
+        <FrameLayout
+            android:id="@+id/centerContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            />
+
+        <FrameLayout
+            android:id="@+id/centerOverlapContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            />
+    </FrameLayout>
+
 
     <FrameLayout
         android:id="@+id/trailingContent"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/centerContent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/centerContainer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/centerContent"
-        app:layout_constraintTop_toTopOf="@id/centerContent"
+        app:layout_constraintStart_toEndOf="@id/centerContainer"
+        app:layout_constraintTop_toTopOf="@id/centerContainer"
         />
 
     <FrameLayout
         android:id="@+id/footerContent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/centerContent"
+        app:layout_constraintTop_toBottomOf="@id/centerContainer"
+        app:layout_constraintVertical_bias="1"
         />
 
 </merge>

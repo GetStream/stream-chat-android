@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.plugin.listeners
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Message
+import io.getstream.result.Error
+import io.getstream.result.Result
 
 /**
  * Listener used when fetching a single new message from the backend.
@@ -32,7 +32,7 @@ public interface GetMessageListener {
      *
      * @param messageId The ID of the message we are fetching.
      * @param result The result of the API call. Will contain an instance of [Message] wrapped inside [Result] if
-     * the request was successful, or an instance of [ChatError] if the request had failed.
+     * the request was successful, or an instance of [Error] if the request had failed.
      */
     public suspend fun onGetMessageResult(
         messageId: String,

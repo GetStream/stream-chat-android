@@ -22,8 +22,8 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/memberAvatar"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="@style/StreamUiChatInfoAvatarStyle"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/spacing_medium"
@@ -45,7 +45,7 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/memberAvatar"
+        app:layout_constraintTop_toBottomOf="@id/userAvatarView"
         tools:text="User"
         />
 

@@ -16,14 +16,15 @@
 
 package io.getstream.chat.android.client.helpers
 
-import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.scope.UserTestScope
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomChannel
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
-import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be`
@@ -54,11 +55,11 @@ internal class CallPostponeHelperTests {
     @Test
     fun `Given connected state When query channels Should return channels from api`() = runTest {
         val sut = buildCallPostponeHelper(timeout = 5000L, delayTime = 0L)
-        val expectedResult = List(positiveRandomInt(10)) { Mother.randomChannel() }
+        val expectedResult = List(positiveRandomInt(10)) { randomChannel() }
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
         whenever(queryChannelsCallMock.invoke()) doReturn expectedResult.asCall()
 
-        val result = sut.postponeCall(queryChannelsCallMock).await().data()
+        val result = (sut.postponeCall(queryChannelsCallMock).await() as Result.Success).value
 
         verify(queryChannelsCallMock).invoke()
         result shouldBeEqualTo expectedResult
@@ -71,18 +72,18 @@ internal class CallPostponeHelperTests {
             "Failed to perform call. Waiting for WS connection was too long."
 
         val queryChannelsCallMock = mock<() -> Call<List<Channel>>>()
-        val result = sut.postponeCall(queryChannelsCallMock).await().error()
+        val result = (sut.postponeCall(queryChannelsCallMock).await() as Result.Failure).value
         result.message `should be` expectedErrorResult
     }
 
     @Test
     fun `Given short connection process When query channel Should return channel from api`() = runTest {
         val sut = buildCallPostponeHelper(timeout = 5_000L, delayTime = 800L)
-        val expectedResult = Mother.randomChannel()
+        val expectedResult = randomChannel()
         val queryChannelCallMock = mock<() -> Call<Channel>>()
         whenever(queryChannelCallMock.invoke()) doReturn expectedResult.asCall()
 
-        val result = sut.postponeCall(queryChannelCallMock).await().data()
+        val result = (sut.postponeCall(queryChannelCallMock).await() as Result.Success).value
 
         verify(queryChannelCallMock).invoke()
         result shouldBeEqualTo expectedResult
@@ -95,7 +96,7 @@ internal class CallPostponeHelperTests {
             "Failed to perform call. Waiting for WS connection was too long."
 
         val queryChannelCallMock = mock<() -> Call<Channel>>()
-        val result = sut.postponeCall(queryChannelCallMock).await().error()
+        val result = (sut.postponeCall(queryChannelCallMock).await() as Result.Failure).value
         result.message `should be` expectedErrorResult
     }
 

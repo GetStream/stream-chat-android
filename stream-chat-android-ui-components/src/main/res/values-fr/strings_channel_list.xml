@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@
   <string name="stream_ui_channel_list_error_hide_channel">"Echec du masquage du canal"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Échec de sortie du canal"</string>
   <string name="stream_ui_channel_list_leave_channel">"Quitter le Groupe"</string>
-  <string name="stream_ui_channel_list_untitled_channel">"Canal sans nom"</string>
   <string name="stream_ui_channel_list_view_info">"Voir les informations"</string>
   <string name="stream_ui_channel_list_you">"Vous"</string>
 </resources>

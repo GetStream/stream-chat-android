@@ -26,5 +26,5 @@ public interface ChatLoggerConfig {
 
 internal data class ChatLoggerConfigImpl(
     override val level: ChatLogLevel,
-    override val handler: ChatLoggerHandler?
+    override val handler: ChatLoggerHandler?,
 ) : ChatLoggerConfig

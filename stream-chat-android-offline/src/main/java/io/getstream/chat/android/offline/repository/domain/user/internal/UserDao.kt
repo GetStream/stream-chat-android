@@ -45,7 +45,7 @@ internal interface UserDao {
             "LIKE :searchString " +
             "ORDER BY name " +
             "ASC LIMIT :limit " +
-            "OFFSET :offset"
+            "OFFSET :offset",
     )
     fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<UserEntity>
 

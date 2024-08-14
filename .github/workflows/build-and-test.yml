@@ -5,7 +5,6 @@ on:
     branches:
       - develop
       - main
-      - v4
 
 concurrency:
   group: ${{ github.ref }}
@@ -18,13 +17,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: Build
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug :stream-chat-android-ui-uitests:assembleDebugAndroidTest
 
   release_build:
     name: Release build
@@ -32,11 +31,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: Build
         run: ./gradlew assembleRelease
 
@@ -46,11 +45,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt 
-          java-version: 11
+          java-version: 17
       - name: Unit tests
         run: ./scripts/ci-unit-tests.sh
       - name: Upload testDebugUnitTest results
@@ -66,11 +65,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: build demo debug
         run: ./gradlew stream-chat-android-ui-components-sample:assembleDemoDebug
       - name: Upload artifact to Emerge
@@ -86,11 +85,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: build debug
         run: ./gradlew stream-chat-android-compose-sample:assembleDebug
       - name: Upload artifact to Emerge

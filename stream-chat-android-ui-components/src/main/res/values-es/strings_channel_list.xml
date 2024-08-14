@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@
   <string name="stream_ui_channel_list_error_hide_channel">"Fallo al ocultar el canal"</string>
   <string name="stream_ui_channel_list_error_leave_channel">"Fallo al salir del canal"</string>
   <string name="stream_ui_channel_list_leave_channel">"Salir del grupo"</string>
-  <string name="stream_ui_channel_list_untitled_channel">"Canal sin nombre"</string>
   <string name="stream_ui_channel_list_view_info">"Ver información"</string>
   <string name="stream_ui_channel_list_you">"Tú"</string>
 </resources>

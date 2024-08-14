@@ -36,7 +36,7 @@ open class ChatInfoAdapter : ListAdapter<ChatInfoItem, BaseViewHolder<*>>(
         override fun areContentsTheSame(oldItem: ChatInfoItem, newItem: ChatInfoItem): Boolean {
             return oldItem == newItem
         }
-    }
+    },
 ) {
 
     private var chatInfoOptionClickListener: ChatInfoOptionClickListener? = null

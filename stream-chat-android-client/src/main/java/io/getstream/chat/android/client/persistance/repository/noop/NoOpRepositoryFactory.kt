@@ -16,9 +16,6 @@
 
 package io.getstream.chat.android.client.persistance.repository.noop
 
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.persistance.repository.AttachmentRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelConfigRepository
 import io.getstream.chat.android.client.persistance.repository.ChannelRepository
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
@@ -27,6 +24,8 @@ import io.getstream.chat.android.client.persistance.repository.ReactionRepositor
 import io.getstream.chat.android.client.persistance.repository.SyncStateRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.persistance.repository.factory.RepositoryFactory
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 /**
  * No-Op RepositoryFactory.
@@ -36,10 +35,8 @@ internal object NoOpRepositoryFactory : RepositoryFactory {
     override fun createChannelConfigRepository(): ChannelConfigRepository = NoOpChannelConfigRepository
     override fun createQueryChannelsRepository(): QueryChannelsRepository = NoOpQueryChannelsRepository
     override fun createSyncStateRepository(): SyncStateRepository = NoOpSyncStateRepository
-    override fun createAttachmentRepository(): AttachmentRepository = NoOpAttachmentRepository
-
     override fun createReactionRepository(
-        getUser: suspend (userId: String) -> User
+        getUser: suspend (userId: String) -> User,
     ): ReactionRepository = NoOpReactionRepository
 
     override fun createMessageRepository(

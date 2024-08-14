@@ -21,7 +21,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.internal.MessageInnerEntity
 import java.util.Date
 
@@ -42,8 +42,8 @@ import java.util.Date
     indices = [
         Index(
             value = ["messageId", "userId", "type"],
-            unique = true
-        ), Index(value = ["syncStatus"])
+            unique = true,
+        ), Index(value = ["syncStatus"]),
     ],
     foreignKeys = [
         ForeignKey(
@@ -51,9 +51,9 @@ import java.util.Date
             parentColumns = ["id"],
             childColumns = ["messageId"],
             onDelete = ForeignKey.CASCADE,
-            deferred = true
-        )
-    ]
+            deferred = true,
+        ),
+    ],
 )
 internal data class ReactionEntity(
     @ColumnInfo(index = true)
@@ -64,6 +64,8 @@ internal data class ReactionEntity(
     val score: Int = 1,
     /** when the reaction was created */
     val createdAt: Date? = null,
+    /** when the reaction was created locally */
+    val createdLocallyAt: Date? = null,
     /** when the reaction was updated */
     val updatedAt: Date? = null,
     /** when the reaction was deleted, this field is only stored in the local db */

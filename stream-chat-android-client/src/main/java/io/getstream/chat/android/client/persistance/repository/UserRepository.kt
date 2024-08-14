@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -56,23 +56,6 @@ public interface UserRepository {
      * @return The list of users stored in the cache.
      */
     public suspend fun selectUsers(ids: List<String>): List<User>
-
-    /**
-     * Select all users respecting a limit and a offset.
-     *
-     * @param limit Int.
-     * @param offset Int.
-     */
-    public suspend fun selectAllUsers(limit: Int, offset: Int): List<User>
-
-    /**
-     * Selects users with a name that looks like the of wanted.
-     *
-     * @param searchString - The name of the user.
-     * @param limit Int
-     * @param offset Int
-     */
-    public suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User>
 
     /**
      * Returns flow of latest updated users.

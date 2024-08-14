@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.client.errorhandler
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.ReturnOnErrorCall
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.ReturnOnErrorCall
 
 /**
  * Error handler for [io.getstream.chat.android.client.ChatClient.sendReaction] calls.
  */
 @InternalStreamChatApi
-public interface SendReactionErrorHandler : ErrorHandler {
+public interface SendReactionErrorHandler {
 
     /**
      * Returns a [Result] from this side effect when original request is failed.

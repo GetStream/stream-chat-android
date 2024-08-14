@@ -1,29 +1,33 @@
 package io.getstream.chat.docs.java.ui;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
-
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.viewmodel.MessageListViewModelBinding;
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 
 /**
  * [Overview](https://getstream.io/chat/docs/sdk/android/ui/overview/)
  */
-public class Overview extends AppCompatActivity {
+public class Overview extends Fragment {
 
-    public void viewModelsInitialization(MessageListView messageListView, LifecycleOwner viewLifecycleOwner) {
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory // 1
-                .Builder()
-                .cid("channelType:channelId")
+    private MessageListView messageListView;
+
+    /**
+     * [ViewModels](https://getstream.io/chat/docs/sdk/android/ui/overview/#viewmodels)
+     */
+    public void viewModels() {
+        // 1
+        ViewModelProvider.Factory factory = new MessageListViewModelFactory
+                .Builder(requireContext())
+                .cid("messaging:123")
                 .build();
         ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class); // 2
-
-        boolean enforceUniqueReactions = true;
-        MessageListViewModelBinding.bind(messageListViewModel, messageListView, viewLifecycleOwner, enforceUniqueReactions); // 3
+        // 2
+        MessageListViewModel viewModel = provider.get(MessageListViewModel.class);
+        // 3
+        MessageListViewModelBinding.bind(viewModel, messageListView, getViewLifecycleOwner());
     }
 }

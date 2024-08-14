@@ -26,8 +26,8 @@
     android:paddingBottom="@dimen/stream_ui_spacing_small"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiSearchResultAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,7 @@
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         android:textDirection="locale"
         app:layout_constraintBottom_toTopOf="@id/mentionNameTextView"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Rebel Titan"
         />
@@ -55,7 +55,7 @@
         android:textAppearance="@style/StreamUiTextAppearance.Footnote"
         android:textDirection="locale"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toBottomOf="@id/usernameTextView"
         tools:text="\@rebel"
         />

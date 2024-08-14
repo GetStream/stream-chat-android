@@ -1,39 +1,14 @@
-public final class io/getstream/chat/android/livedata/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
-}
-
-public final class io/getstream/chat/android/offline/plugin/configuration/Config {
-	public fun <init> ()V
-	public fun <init> (Z)V
-	public fun <init> (ZZ)V
-	public fun <init> (ZZZ)V
-	public fun <init> (ZZZLio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;)V
-	public fun <init> (ZZZLio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;Z)V
-	public synthetic fun <init> (ZZZLio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Z
-	public final fun component2 ()Z
-	public final fun component3 ()Z
-	public final fun component4 ()Lio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;
-	public final fun component5 ()Z
-	public final fun copy (ZZZLio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;Z)Lio/getstream/chat/android/offline/plugin/configuration/Config;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/offline/plugin/configuration/Config;ZZZLio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;ZILjava/lang/Object;)Lio/getstream/chat/android/offline/plugin/configuration/Config;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getBackgroundSyncEnabled ()Z
-	public final fun getPersistenceEnabled ()Z
-	public final fun getUploadAttachmentsNetworkType ()Lio/getstream/chat/android/offline/model/message/attachments/UploadAttachmentsNetworkType;
-	public final fun getUseSequentialEventHandler ()Z
-	public final fun getUserPresence ()Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/getstream/chat/android/offline/plugin/factory/StreamOfflinePluginFactory : io/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory$Provider, io/getstream/chat/android/client/plugin/factory/PluginFactory {
-	public fun <init> (Lio/getstream/chat/android/offline/plugin/configuration/Config;Landroid/content/Context;)V
-	public fun createRepositoryFactory (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
-	public fun get (Lio/getstream/chat/android/client/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
+	public fun <init> (Landroid/content/Context;)V
+	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function0;)V
+	public synthetic fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun createRepositoryFactory (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/persistance/repository/factory/RepositoryFactory;
+	public fun get (Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/client/plugin/Plugin;
+}
+
+public final class io/getstream/chat/android/offline/repository/database/converter/internal/QuerySortParser {
+	public fun <init> ()V
+	public final fun fromSpecifications (Ljava/util/List;)Lio/getstream/chat/android/models/querysort/QuerySorter;
 }
 
 public final class io/getstream/chat/android/offline/repository/database/internal/ChatDatabase_Impl {
@@ -48,6 +23,7 @@ public final class io/getstream/chat/android/offline/repository/database/interna
 	public fun messageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageDao;
 	public fun queryChannelsDao ()Lio/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao;
 	public fun reactionDao ()Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao;
+	public fun replyMessageDao ()Lio/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao;
 	public fun syncStateDao ()Lio/getstream/chat/android/offline/repository/domain/syncState/internal/SyncStateDao;
 	public fun userDao ()Lio/getstream/chat/android/offline/repository/domain/user/internal/UserDao;
 }
@@ -62,8 +38,8 @@ public final class io/getstream/chat/android/offline/repository/domain/channel/i
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectAllCids (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectCidsBySyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectSyncNeeded (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectCidsBySyncNeeded (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectSyncNeeded (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setDeletedAt (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setHidden (Ljava/lang/String;ZLjava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setHidden (Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -97,6 +73,7 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun deleteAttachmentsChunked (Ljava/util/List;)V
 	public fun deleteChannelMessagesBefore (Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteMessages (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun getRequiredConverters ()Ljava/util/List;
 	public fun insert (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -112,13 +89,24 @@ public final class io/getstream/chat/android/offline/repository/domain/message/i
 	public fun messagesForThread (Ljava/lang/String;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun select (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectBySyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectChunked (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectIdsBySyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectIdsBySyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectWaitForAttachments (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun updateMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;)V
 	public fun upsertMessageInnerEntities (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun upsertMessageInnerEntity (Lio/getstream/chat/android/offline/repository/domain/message/internal/MessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+
+public final class io/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao_Impl : io/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageDao {
+	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun delete (Lio/getstream/chat/android/offline/repository/domain/message/internal/ReplyMessageInnerEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static fun getRequiredConverters ()Ljava/util/List;
+	public fun insert (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertAttachments (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun insertInnerEntity (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectById (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class io/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao_Impl : io/getstream/chat/android/offline/repository/domain/queryChannels/internal/QueryChannelsDao {
@@ -131,13 +119,14 @@ public final class io/getstream/chat/android/offline/repository/domain/queryChan
 
 public final class io/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao_Impl : io/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionDao {
 	public fun <init> (Landroidx/room/RoomDatabase;)V
+	public fun delete (Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun deleteAll (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static fun getRequiredConverters ()Ljava/util/List;
 	public fun insert (Lio/getstream/chat/android/offline/repository/domain/reaction/internal/ReactionEntity;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectIdsSyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectIdsSyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectReactionById (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectReactionsByIds (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public fun selectSyncStatus (Lio/getstream/chat/android/client/utils/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public fun selectSyncStatus (Lio/getstream/chat/android/models/SyncStatus;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectUserReactionToMessage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun selectUserReactionsToMessage (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public fun setDeleteAt (Ljava/lang/String;Ljava/lang/String;Ljava/util/Date;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;

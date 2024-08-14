@@ -22,11 +22,11 @@ import androidx.test.platform.app.InstrumentationRegistry.getInstrumentation
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.HealthEvent
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.subscribeForSingle
 import io.getstream.chat.android.client.utils.EventsConsumer
 import io.getstream.chat.android.client.utils.TestInitCallback
 import io.getstream.chat.android.client.utils.Utils.Companion.runOnUi
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
@@ -112,7 +112,8 @@ internal class ClientInstrumentationTests {
         runOnUi {
             val client = ChatClient.Builder(apiKey, context).build()
             client.getGuestToken("test-user-id", "Test name").enqueue {
-                client.connectUser(it.data().user, it.data().token).enqueue(initCallback)
+                val data = it.getOrThrow()
+                client.connectUser(data.user, data.token).enqueue(initCallback)
             }
             client.subscribe(connectedEventConsumer::onEvent)
         }.andThen {

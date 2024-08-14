@@ -25,8 +25,8 @@ import io.getstream.chat.ui.sample.data.user.UserRepository
 class App : Application() {
 
     // done for simplicity, a DI framework should be used in the real app
-    val chatInitializer = ChatInitializer(this)
-    val userRepository = UserRepository(this)
+    val chatInitializer = ChatInitializer(context = this, autoTranslationEnabled = true)
+    val userRepository = UserRepository(context = this)
 
     override fun onCreate() {
         super.onCreate()
@@ -50,10 +50,7 @@ class App : Application() {
     private fun initializeToggleService() {
         ToggleService.init(
             applicationContext,
-            mapOf(
-                ToggleService.TOGGLE_KEY_MESSAGE_COMPOSER to true,
-                ToggleService.TOGGLE_KEY_SOCKET_REFACTOR to true,
-            ),
+            emptyMap(),
         )
     }
 

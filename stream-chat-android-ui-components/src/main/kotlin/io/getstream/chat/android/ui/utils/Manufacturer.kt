@@ -35,5 +35,5 @@ private const val MANUFACTURER_XIAOMI = "xiaomi"
  * List of manufacturers which need to consume the long tap action.
  */
 private val MANUFACTURERS_TO_CONSUME_LONG_TAP = listOf(
-    MANUFACTURER_XIAOMI
+    MANUFACTURER_XIAOMI,
 )

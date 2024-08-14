@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.test.randomCID
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomMessage
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.BeforeEach
@@ -41,7 +41,7 @@ internal class ShuffleGiphyListenerDatabaseTest {
 
     private val shuffleGiphyListenerDatabase = ShuffleGiphyListenerDatabase(
         userRepository = userRepository,
-        messageRepository = messageRepository
+        messageRepository = messageRepository,
     )
 
     @BeforeEach
@@ -53,15 +53,15 @@ internal class ShuffleGiphyListenerDatabaseTest {
     fun `when shuffling giphys and request succeeds, it should be insert in database`() = runTest {
         val testMessage = randomMessage()
 
-        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.success(testMessage))
+        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Success(testMessage))
 
-        verify(messageRepository).insertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED), false)
+        verify(messageRepository).insertMessage(testMessage.copy(syncStatus = SyncStatus.COMPLETED))
     }
 
     @Test
     fun `when shuffling giphys and request fails, it should NOT be insert in database`() = runTest {
-        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.error(ChatError()))
+        shuffleGiphyListenerDatabase.onShuffleGiphyResult(randomCID(), Result.Failure(Error.GenericError("")))
 
-        verify(messageRepository, never()).insertMessage(any(), any())
+        verify(messageRepository, never()).insertMessage(any())
     }
 }

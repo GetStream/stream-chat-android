@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
   <plurals name="stream_ui_message_list_thread_separator">
     <item quantity="other">"%dスレッド返信"</item>
   </plurals>
+  <string name="stream_ui_message_audio_reply_info">"ボイスメッセージ"</string>
   <string name="stream_ui_message_list_attachment_display_error">"エラー。 ファイルを表示できません"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"何かがうまくいかなかったです。 添付ファイルを開くことができません：%s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"URLが無効なため、読み込みに失敗しました"</string>

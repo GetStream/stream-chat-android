@@ -27,8 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.common.model.ModeratedMessageOption
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.state.messages.list.ModeratedMessageOption
 
 /**
  * Composable that represents the dialog options a user can select to act upon a moderated message.
@@ -82,10 +82,10 @@ internal fun DefaultModeratedMessageOptionItem(
             .height(50.dp)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple()
+                indication = rememberRipple(),
             ) {
                 onDialogOptionInteraction(message, option)
                 onDismissRequest()
-            }
+            },
     )
 }

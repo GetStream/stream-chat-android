@@ -29,22 +29,22 @@
         android:paddingVertical="@dimen/stream_ui_spacing_medium"
         >
 
-        <io.getstream.chat.android.ui.message.list.reactions.edit.internal.EditReactionsView
+        <io.getstream.chat.android.ui.feature.messages.list.reactions.edit.internal.EditReactionsView
             android:id="@+id/editReactionsView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
+            android:layout_marginStart="@dimen/stream_ui_spacing_small"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
             />
 
-        <io.getstream.chat.android.ui.common.internal.TouchInterceptingFrameLayout
+        <io.getstream.chat.android.ui.widgets.internal.TouchInterceptingFrameLayout
             android:id="@+id/messageContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
             />
 
-        <io.getstream.chat.android.ui.message.list.options.message.internal.MessageOptionsView
+        <io.getstream.chat.android.ui.feature.messages.list.options.message.internal.MessageOptionsView
             android:id="@+id/messageOptionsView"
             android:layout_width="264dp"
             android:layout_height="wrap_content"
@@ -55,12 +55,13 @@
             android:visibility="gone"
             />
 
-        <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
+        <io.getstream.chat.android.ui.feature.messages.list.reactions.user.internal.UserReactionsView
             android:id="@+id/userReactionsView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/stream_ui_spacing_small"
+            android:layout_marginStart="@dimen/stream_ui_spacing_small"
             android:layout_marginTop="@dimen/stream_ui_spacing_small"
+            android:layout_marginEnd="@dimen/stream_ui_spacing_small"
             android:visibility="gone"
             />
 

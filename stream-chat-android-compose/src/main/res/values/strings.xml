@@ -48,7 +48,6 @@
     <string name="stream_compose_ok">OK</string>
     <string name="stream_compose_cancel">Cancel</string>
     <string name="stream_compose_waiting_for_network">Waiting for network</string>
-    <string name="stream_compose_untitled_channel">Channel without name</string>
     <string name="stream_compose_user_status_online">Online</string>
     <string name="stream_compose_user_status_last_seen">Last seen %1$s</string>
     <string name="stream_compose_user_status_last_seen_just_now">Last seen just now</string>
@@ -65,6 +64,7 @@
     <string name="stream_compose_message_list_giphy_send">Send</string>
     <string name="stream_compose_message_list_giphy_cancel">Cancel</string>
     <string name="stream_compose_message_list_giphy_shuffle">Shuffle</string>
+    <string name="stream_compose_message_list_footnote_edited">Edited</string>
     <plurals name="stream_compose_message_list_thread_footnote">
         <item quantity="one">Thread Reply</item>
         <item quantity="other">%d Thread Replies</item>
@@ -73,8 +73,11 @@
         <item quantity="one">%d Reply</item>
         <item quantity="other">%d Replies</item>
     </plurals>
+    <string name="stream_compose_message_list_unread_separator">Unread Messages</string>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
     <string name="stream_compose_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
+    <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
+    <string name="stream_compose_message_list_translated">Translated to %s</string>
 
     <!--  Quoted Message  -->
     <string name="stream_compose_quoted_message_image_tag">Picture</string>
@@ -82,9 +85,11 @@
     <string name="stream_compose_quoted_message_file_tag">File</string>
 
     <!-- Selected Message Menu -->
+    <string name="stream_compose_block_user">Block user</string>
     <string name="stream_compose_resend_message">Resend</string>
     <string name="stream_compose_reply">Reply</string>
     <string name="stream_compose_thread_reply">Thread reply</string>
+    <string name="stream_compose_mark_as_unread">Mark as Unread</string>
     <string name="stream_compose_copy_message">Copy Message</string>
     <string name="stream_compose_edit_message">Edit Message</string>
     <string name="stream_compose_delete_message">Delete Message</string>
@@ -120,9 +125,11 @@
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>
+    <string name="stream_compose_record_audio_message">Record audio message</string>
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
+    <string name="stream_compose_poll_option">Poll</string>
     <string name="stream_compose_capture_option">Media capture</string>
     <string name="stream_compose_send_attachment">Send attachment</string>
     <string name="stream_compose_recent_files">Recent Files</string>
@@ -140,6 +147,7 @@
     <string name="stream_compose_storage_permission_title">Read storage permission missing!</string>
     <string name="stream_compose_grant_permission">Give permission</string>
     <string name="stream_compose_remaining_images_count">+%1$d</string>
+    <string name="stream_compose_remaining_media_attachments_count">+%1$d</string>
     <string name="stream_compose_attachment_gallery_share">Share Image</string>
     <string name="stream_compose_giphy_label">GIPHY</string>
     <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
@@ -158,9 +166,49 @@
     <string name="stream_compose_image_preview_share">Share</string>
     <string name="stream_compose_image_preview_photos">Photos</string>
 
+    <!--  Media Gallery Preview  -->
+    <string name="stream_compose_media_gallery_preview_options">Media options</string>
+    <string name="stream_compose_media_gallery_preview_reply">Reply</string>
+    <string name="stream_compose_media_gallery_preview_show_in_chat">Show in chat</string>
+    <string name="stream_compose_media_gallery_preview_save_image">Save media</string>
+    <string name="stream_compose_media_gallery_preview_delete">Delete</string>
+    <string name="stream_compose_media_gallery_preview_share">Share</string>
+    <string name="stream_compose_media_gallery_preview_photos">Photos</string>
+    <string name="stream_compose_media_gallery_preview_preparing">Preparing...</string>
+    <string name="stream_compose_media_gallery_preview_could_not_share_attachment">Could not share attachment</string>
+    <string name="stream_compose_media_gallery_share_large_file_prompt_title">Large file</string>
+    <string name="stream_compose_media_gallery_share_large_file_prompt_message">In order to share it %.2f MB needs to be downloaded.</string>
+
     <!-- Content Description -->
     <string name="stream_compose_cd_channel_item" translatable="false">Channel item</string>
     <string name="stream_compose_cd_message_item" translatable="false">Message item</string>
     <string name="stream_compose_cd_message_input" translatable="false">Message input</string>
     <string name="stream_compose_cd_send_button" translatable="false">Send button</string>
+    <string name="stream_compose_cd_play_button" translatable="false">Play button</string>
+    <string name="stream_compose_cd_record_audio_message" translatable="false">Record audio message</string>
+
+    <!--  Poll  -->
+    <string name="stream_compose_poll_title" translatable="false">Create Poll</string>
+    <string name="stream_compose_poll_questions_title" translatable="false">Questions</string>
+    <string name="stream_compose_poll_questions_description" translatable="false">Ask a question</string>
+    <string name="stream_compose_poll_option_title" translatable="false">Options</string>
+    <string name="stream_compose_poll_option_description" translatable="false">Add an option</string>
+    <string name="stream_compose_poll_option_error_duplicated" translatable="false">This is already an option</string>
+    <string name="stream_compose_poll_option_error_exceed" translatable="false">Type a number under the %d</string>
+    <string name="stream_compose_poll_option_discard_dialog_title" translatable="false">Discard poll</string>
+    <string name="stream_compose_poll_option_discard_dialog_description" translatable="false">Are you sure want to discard your poll?</string>
+    <string name="stream_compose_poll_option_discard_dialog_cancel" translatable="false">Keep Editing</string>
+    <string name="stream_compose_poll_option_discard_dialog_confirm" translatable="false">Discard</string>
+    <string name="stream_compose_poll_option_switch_multiple_answers" translatable="false">Multiple answers</string>
+    <string name="stream_compose_poll_option_switch_anonymous_poll" translatable="false">Anonymous poll</string>
+    <string name="stream_compose_poll_option_switch_suggest_option" translatable="false">Suggest an option</string>
+    <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
+    <string name="stream_compose_poll_view_result" translatable="false">View Results</string>
+    <string name="stream_compose_poll_end_vote" translatable="false">End Vote</string>
+    <string name="stream_compose_poll_see_more_options" translatable="false">See All %d Options</string>
+    <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
+    <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
+    <string name="stream_compose_poll_vote_counts" translatable="false">%d votes</string>
+    <string name="stream_compose_poll_created_preview" translatable="false">📊 Poll created: %s</string>
+    <string name="stream_compose_poll_closed_preview" translatable="false">📊 Poll closed: %s</string>
 </resources>

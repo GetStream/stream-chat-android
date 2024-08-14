@@ -24,13 +24,13 @@ import org.amshove.kluent.shouldThrow
 import org.junit.jupiter.api.Test
 
 internal class DownstreamChannelDtoAdapterTest {
-    private val parser = MoshiChatParser()
+    private val parser = MoshiChatParser { "" }
 
     @Test
     fun `Deserialize JSON channel with custom fields`() {
         val channel = parser.fromJson(
             ChannelDtoTestData.downstreamJson,
-            DownstreamChannelDto::class.java
+            DownstreamChannelDto::class.java,
         )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannel
     }
@@ -39,7 +39,7 @@ internal class DownstreamChannelDtoAdapterTest {
     fun `Deserialize JSON channel without custom fields`() {
         val channel = parser.fromJson(
             ChannelDtoTestData.downstreamJsonWithoutExtraData,
-            DownstreamChannelDto::class.java
+            DownstreamChannelDto::class.java,
         )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutExtraData
     }
@@ -48,7 +48,7 @@ internal class DownstreamChannelDtoAdapterTest {
     fun `Deserialize JSON channel without name and image fields`() {
         val channel = parser.fromJson(
             ChannelDtoTestData.downstreamJsonWithoutNameAndImage,
-            DownstreamChannelDto::class.java
+            DownstreamChannelDto::class.java,
         )
         channel shouldBeEqualTo ChannelDtoTestData.downstreamChannelWithoutNameAndImage
     }

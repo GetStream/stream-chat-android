@@ -46,7 +46,7 @@ public fun MessageHeaderLabel(
 ) {
     Row(
         modifier = modifier.padding(contentPadding),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             modifier = Modifier
@@ -54,14 +54,14 @@ public fun MessageHeaderLabel(
                 .size(14.dp),
             painter = painter,
             contentDescription = null,
-            tint = ChatTheme.colors.textLowEmphasis
+            tint = ChatTheme.colors.textLowEmphasis,
         )
 
         if (text != null) {
             Text(
                 text = text,
                 style = ChatTheme.typography.footnote,
-                color = ChatTheme.colors.textLowEmphasis
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
     }

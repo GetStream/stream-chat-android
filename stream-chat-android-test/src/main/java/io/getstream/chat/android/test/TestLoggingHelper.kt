@@ -16,15 +16,15 @@
 
 package io.getstream.chat.android.test
 
-import io.getstream.logging.StreamLog
-import io.getstream.logging.kotlin.KotlinStreamLogger
+import io.getstream.log.StreamLog
+import io.getstream.log.kotlin.KotlinStreamLogger
 
 public object TestLoggingHelper {
 
     public fun initialize(now: () -> Long = { System.currentTimeMillis() }) {
         StreamLog.setValidator { _, _ -> true }
-        StreamLog.setLogger(
-            KotlinStreamLogger(now = now)
+        StreamLog.install(
+            KotlinStreamLogger(now = now),
         )
     }
 }

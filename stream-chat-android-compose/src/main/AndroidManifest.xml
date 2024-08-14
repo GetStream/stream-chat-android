@@ -19,14 +19,15 @@
     >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application>
         <activity
-            android:name=".ui.attachments.preview.ImagePreviewActivity"
+            android:name=".ui.attachments.preview.MediaPreviewActivity"
             android:exported="false"
             />
         <activity
-            android:name=".ui.attachments.preview.MediaPreviewActivity"
+            android:name=".ui.attachments.preview.MediaGalleryPreviewActivity"
             android:exported="false"
             />
     </application>

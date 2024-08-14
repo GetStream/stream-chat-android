@@ -17,43 +17,56 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.DeviceDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamChannelMuteDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamMuteDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamUserBlockDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamUserDto
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserBlock
+import io.getstream.chat.android.models.UserId
 
 internal fun User.toDto(): UpstreamUserDto =
     UpstreamUserDto(
-        banned = banned,
+        banned = isBanned,
         id = id,
         name = name,
         image = image,
-        invisible = invisible,
+        invisible = isInvisible,
+        privacy_settings = privacySettings?.toDto(),
+        language = language,
         role = role,
         devices = devices.map(Device::toDto),
         teams = teams,
         extraData = extraData,
     )
 
-internal fun DownstreamUserDto.toDomain(): User =
+internal fun DownstreamUserDto.toDomain(currentUserId: UserId?): User =
     User(
         id = id,
         name = name ?: "",
         image = image ?: "",
         role = role,
         invisible = invisible,
+        language = language ?: "",
         banned = banned,
         devices = devices.orEmpty().map(DeviceDto::toDomain),
         online = online,
         createdAt = created_at,
+        deactivatedAt = deactivated_at,
         updatedAt = updated_at,
         lastActive = last_active,
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
-        mutes = mutes.orEmpty().map(DownstreamMuteDto::toDomain),
+        mutes = mutes.orEmpty().map { it.toDomain(currentUserId) },
         teams = teams,
-        channelMutes = channel_mutes.orEmpty().map(DownstreamChannelMuteDto::toDomain),
+        channelMutes = channel_mutes.orEmpty().map { it.toDomain(currentUserId) },
         extraData = extraData.toMutableMap(),
     )
+
+internal fun DownstreamUserBlockDto.toDomain(): UserBlock = UserBlock(
+    blockedBy = blocked_by_user_id,
+    userId = blocked_user_id,
+    blockedAt = created_at,
+)
+
+internal fun List<DownstreamUserBlockDto>.toDomain(): List<UserBlock> = map { it.toDomain() }

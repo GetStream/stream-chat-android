@@ -125,6 +125,16 @@ Here are some of the features that the SDK supports out-of-the-box:
 
 For more, see the [SDK's website](https://getstream.io/chat/sdk/android/).
 
+## 🛠️ R8 / ProGuard
+
+When utilizing **R8**, the rules for shrinking and obfuscation are applied automatically.
+
+If you are using **ProGuard**, you will need to add the following rules from
+[client](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-client/consumer-proguard-rules.pro)
+and [ui-common](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-common/consumer-proguard-rules.pro) modules to your application.
+
+You might also need apply rules for [Coroutines](https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/resources/META-INF/proguard/coroutines.pro), [Retrofit](https://github.com/square/retrofit/blob/master/retrofit/src/main/resources/META-INF/proguard/retrofit2.pro) and [OkHttp](https://github.com/square/okhttp/blob/master/okhttp/src/jvmMain/resources/META-INF/proguard/okhttp3.pro) which are dependencies of the SDK.
+
 ## 💼 We are hiring!
 
 We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.

@@ -16,32 +16,17 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.result.Result
 
 /**
  * Converts [Result] into human-readable string.
  */
+@JvmSynthetic
 @InternalStreamChatApi
 public inline fun <T : Any> Result<T>.stringify(toString: (data: T) -> String): String {
-    return when {
-        isSuccess -> toString(data())
-        isError -> error().stringify()
-        else -> "Result(Empty)"
-    }
-}
-
-/**
- * Converts [ChatError] into human-readable string.
- */
-@InternalStreamChatApi
-public fun ChatError.stringify(): String {
-    return when {
-        this is ChatNetworkError -> toString()
-        message != null && cause != null -> "ChatError(message=$message, cause=$cause)"
-        message != null -> "ChatError(message=$message)"
-        cause != null -> "ChatError(cause=$cause)"
-        else -> "ChatError(Empty)"
+    return when (this) {
+        is Result.Success -> toString(value)
+        is Result.Failure -> value.toString()
     }
 }

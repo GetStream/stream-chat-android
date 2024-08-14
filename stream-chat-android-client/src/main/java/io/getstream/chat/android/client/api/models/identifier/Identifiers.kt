@@ -17,14 +17,15 @@
 package io.getstream.chat.android.client.api.models.identifier
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.querysort.QuerySorter
 
 /**
  * Identifier for a [ChatClient.queryChannel] call.
@@ -121,6 +122,22 @@ internal fun GetRepliesIdentifier(
     var result = "GetReplies".hashCode()
     result = 31 * result + messageId.hashCode()
     result = 31 * result + limit.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.getNewerReplies] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun getNewerRepliesIdentifier(
+    parentId: String,
+    limit: Int,
+    lastId: String? = null,
+): Int {
+    var result = "GetOlderReplies".hashCode()
+    result = 31 * result + parentId.hashCode()
+    result = 31 * result + limit.hashCode()
+    result = 31 * result + (lastId?.hashCode() ?: 0)
     return result
 }
 
@@ -243,4 +260,66 @@ internal fun GetMessageIdentifier(
 @Suppress("FunctionName", "FunctionOnlyReturningConstant")
 internal fun MarkAllReadIdentifier(): Int {
     return "MarkAllRead".hashCode()
+}
+
+/**
+ * Identifier for a [ChatClient.hideChannel] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun MarkReadIdentifier(
+    channelType: String,
+    channelId: String,
+): Int {
+    var result = "MarkRead".hashCode()
+    result = 31 * result + channelType.hashCode()
+    result = 31 * result + channelId.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.sendMessage] call.
+ */
+@Suppress("FunctionName", "MagicNumber")
+internal fun SendMessageIdentifier(
+    channelType: String,
+    channelId: String,
+    messageId: String,
+): Int {
+    var result = "SendMessage".hashCode()
+    result = 31 * result + channelType.hashCode()
+    result = 31 * result + channelId.hashCode()
+    result = 31 * result + messageId.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.getDevices] call.
+ */
+@Suppress("FunctionName", "FunctionOnlyReturningConstant")
+internal fun GetDevicesIdentifier(): Int {
+    return "GetDevices".hashCode()
+}
+
+/**
+ * Identifier for a [ChatClient.addDevice] call.
+ */
+@Suppress("FunctionName", "FunctionOnlyReturningConstant")
+internal fun AddDeviceIdentifier(
+    device: Device,
+): Int {
+    var result = "AddDevice".hashCode()
+    result = 31 * result + device.hashCode()
+    return result
+}
+
+/**
+ * Identifier for a [ChatClient.deleteDevice] call.
+ */
+@Suppress("FunctionName", "FunctionOnlyReturningConstant")
+internal fun DeleteDeviceIdentifier(
+    device: Device,
+): Int {
+    var result = "DeleteDevice".hashCode()
+    result = 31 * result + device.hashCode()
+    return result
 }

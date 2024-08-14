@@ -24,8 +24,8 @@
     tools:layout_height="@dimen/stream_ui_default_header_height"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/userAvatar"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiChannelListHeaderAvatarStyle"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@id/separator"
@@ -45,7 +45,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/actionButton"
-        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         />
 
@@ -59,7 +59,7 @@
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/actionButton"
-        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible"
         >

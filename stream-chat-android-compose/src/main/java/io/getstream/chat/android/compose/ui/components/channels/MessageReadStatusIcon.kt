@@ -16,20 +16,25 @@
 
 package io.getstream.chat.android.compose.ui.components.channels
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.getstream.sdk.chat.utils.extensions.getCreatedAtOrThrow
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.SyncStatus
+import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getReadStatuses
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewMessageData
 
 /**
  * Shows a delivery status indicator for a particular message.
@@ -54,6 +59,7 @@ public fun MessageReadStatusIcon(
         message = message,
         isMessageRead = isMessageRead,
         modifier = modifier,
+        readCount = readCount,
     )
 }
 
@@ -69,17 +75,28 @@ public fun MessageReadStatusIcon(
     message: Message,
     isMessageRead: Boolean,
     modifier: Modifier = Modifier,
+    readCount: Int = 0,
 ) {
     val syncStatus = message.syncStatus
 
     when {
         isMessageRead -> {
-            Icon(
-                modifier = modifier,
-                painter = painterResource(id = R.drawable.stream_compose_message_seen),
-                contentDescription = null,
-                tint = ChatTheme.colors.primaryAccent,
-            )
+            Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
+                if (readCount > 1 && ChatTheme.readCountEnabled) {
+                    Text(
+                        text = readCount.toString(),
+                        modifier = Modifier.padding(horizontal = 2.dp),
+                        style = ChatTheme.typography.footnote,
+                        color = ChatTheme.colors.textLowEmphasis,
+                    )
+                }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_message_seen),
+                    contentDescription = null,
+                    tint = ChatTheme.colors.primaryAccent,
+                )
+            }
         }
         syncStatus == SyncStatus.SYNC_NEEDED || syncStatus == SyncStatus.AWAITING_ATTACHMENTS -> {
             Icon(
@@ -112,6 +129,7 @@ private fun SeenMessageReadStatusIcon() {
         MessageReadStatusIcon(
             message = PreviewMessageData.message2,
             isMessageRead = true,
+            readCount = 3,
         )
     }
 }

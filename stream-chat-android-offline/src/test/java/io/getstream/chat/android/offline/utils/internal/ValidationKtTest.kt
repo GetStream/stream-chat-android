@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.offline.utils.internal
 
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.internal.validateCid
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
-import io.getstream.chat.android.client.utils.toResult
+import io.getstream.result.Error
+import io.getstream.result.Result
 import org.amshove.kluent.invoking
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should throw`
@@ -27,7 +27,6 @@ import org.amshove.kluent.`with message`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.lang.IllegalArgumentException
 import kotlin.reflect.KClass
 
 internal class ValidationKtTest {
@@ -59,10 +58,18 @@ internal class ValidationKtTest {
         @JvmStatic
         fun argumentsValidCidResult() =
             validCids().map {
-                Arguments.of(it, it.toResult())
+                Arguments.of(it, Result.Success(it))
             } +
                 invalidCids().map {
-                    Arguments.of(it.first, Result.error<String>(it.second))
+                    Arguments.of(
+                        it.first,
+                        Result.Failure(
+                            Error.ThrowableError(
+                                message = "Cid is invalid: ${it.first}",
+                                cause = it.second,
+                            ),
+                        ),
+                    )
                 }
 
         @JvmStatic
@@ -75,7 +82,7 @@ internal class ValidationKtTest {
             Arguments.of(
                 it.first,
                 it.second::class,
-                it.second.message
+                it.second.message,
             )
         }
 

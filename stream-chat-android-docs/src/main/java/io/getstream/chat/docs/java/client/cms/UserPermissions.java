@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.User;
 
 public class UserPermissions {
     private ChatClient client;
@@ -26,9 +26,9 @@ public class UserPermissions {
             extraData.put("team", "red");
             client.createChannel("messaging", "red-general", memberIds, extraData).enqueue(result -> {
                 if (result.isSuccess()) {
-                    Channel channel = result.data();
+                    Channel channel = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -47,9 +47,9 @@ public class UserPermissions {
             int limit = 1;
             client.queryUsers(new QueryUsersRequest(filter, offset, limit)).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<User> users = result.data();
+                    List<User> users = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }

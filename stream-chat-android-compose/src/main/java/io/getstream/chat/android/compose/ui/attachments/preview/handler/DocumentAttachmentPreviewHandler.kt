@@ -17,9 +17,9 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
-import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.feature.documents.AttachmentDocumentActivity
+import io.getstream.chat.android.uiutils.model.MimeType
 
 /**
  * Shows a preview for the document in the attachment using Google Docs.
@@ -33,15 +33,15 @@ public class DocumentAttachmentPreviewHandler(private val context: Context) : At
         if (assetUrl.isNullOrEmpty() || mimeType.isNullOrEmpty()) return false
 
         val supportedMimeTypes = listOf(
-            ModelType.attach_mime_doc,
-            ModelType.attach_mime_txt,
-            ModelType.attach_mime_pdf,
-            ModelType.attach_mime_html,
+            MimeType.MIME_TYPE_DOC,
+            MimeType.MIME_TYPE_TXT,
+            MimeType.MIME_TYPE_PDF,
+            MimeType.MIME_TYPE_HTML,
         )
 
         return mimeType in supportedMimeTypes ||
             // For compatibility with other client SDKs
-            mimeType.contains(ModelType.attach_mime_vnd)
+            mimeType.contains(MimeType.MIME_TYPE_VND)
     }
 
     override fun handleAttachmentPreview(attachment: Attachment) {

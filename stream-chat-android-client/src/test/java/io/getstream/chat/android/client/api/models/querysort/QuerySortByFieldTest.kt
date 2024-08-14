@@ -16,10 +16,12 @@
 
 package io.getstream.chat.android.client.api.models.querysort
 
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.ascByName
-import io.getstream.chat.android.client.models.BannedUsersSort
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.querysort.ComparableFieldProvider
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.ascByName
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
@@ -60,25 +62,25 @@ internal class QuerySortByFieldTest {
             randomString().let {
                 Arguments.of(
                     QuerySortByField.ascByName<Channel>(it),
-                    QuerySortByField.ascByName<Channel>(it)
+                    QuerySortByField.ascByName<Channel>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
                     QuerySortByField.ascByName<BannedUsersSort>(it),
-                    QuerySortByField.ascByName<BannedUsersSort>(it)
+                    QuerySortByField.ascByName<BannedUsersSort>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
                     QuerySortByField.descByName<Channel>(it),
-                    QuerySortByField.descByName<Channel>(it)
+                    QuerySortByField.descByName<Channel>(it),
                 )
             },
             randomString().let {
                 Arguments.of(
                     QuerySortByField.descByName<BannedUsersSort>(it),
-                    QuerySortByField.descByName<BannedUsersSort>(it)
+                    QuerySortByField.descByName<BannedUsersSort>(it),
                 )
             },
         )

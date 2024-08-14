@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
   <string name="stream_ui_attachment_gallery_delete">"Hapus"</string>
   <string name="stream_ui_attachment_gallery_overview_title">"Foto"</string>
   <string name="stream_ui_attachment_gallery_reply">"Balas"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"Simpan Gambar"</string>
   <string name="stream_ui_attachment_gallery_share">"Bagikan Gambar"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"Tampilkan di chat"</string>
 </resources>

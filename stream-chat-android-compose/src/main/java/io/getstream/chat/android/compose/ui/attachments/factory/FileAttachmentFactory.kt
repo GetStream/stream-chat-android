@@ -22,23 +22,33 @@ import androidx.compose.runtime.Composable
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentPreviewContent
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.uiutils.extension.isFile
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.uiutils.extension.isAnyFileType
 
 /**
  * An [AttachmentFactory] that validates attachments as files and uses [FileAttachmentContent] to
  * build the UI for the message.
+ *
+ * @param onContentItemClick Lambda called when an item gets clicked.
  */
 @Suppress("FunctionName")
-public fun FileAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+public fun FileAttachmentFactory(
+    onContentItemClick: (
+        previewHandlers: List<AttachmentPreviewHandler>,
+        attachment: Attachment,
+    ) -> Unit = ::onFileAttachmentContentItemClick,
+): AttachmentFactory = AttachmentFactory(
     canHandle = { attachments ->
-        attachments.any { it.isFile() }
+        attachments.any { it.isAnyFileType() }
     },
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->
         FileAttachmentPreviewContent(
             modifier = modifier,
             attachments = attachments,
-            onAttachmentRemoved = onAttachmentRemoved
+            onAttachmentRemoved = onAttachmentRemoved,
         )
     },
     content = @Composable { modifier, state ->
@@ -46,7 +56,8 @@ public fun FileAttachmentFactory(): AttachmentFactory = AttachmentFactory(
             modifier = modifier
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileWidth),
-            attachmentState = state
+            attachmentState = state,
+            onItemClick = onContentItemClick,
         )
     },
 )

@@ -33,10 +33,6 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 /**
  * A custom [AttachmentFactory] that adds support for quoted date attachments.
@@ -46,9 +42,9 @@ val quotedDateAttachmentFactory: AttachmentFactory = AttachmentFactory(
     content = @Composable { modifier, attachmentState ->
         QuotedDateAttachmentContent(
             modifier = modifier,
-            attachmentState = attachmentState
+            attachmentState = attachmentState,
         )
-    }
+    },
 )
 
 /**
@@ -62,37 +58,22 @@ fun QuotedDateAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
 ) {
-    val attachment = attachmentState.message.attachments.first { it.type == "date" }
-    val date = attachment.extraData["payload"].toString()
-    val formattedDate = StringBuilder().apply {
-        try {
-            val dateTime = SimpleDateFormat("MMMMM dd, yyyy", Locale.getDefault()).parse(date)
-            val year = if (dateTime != null) {
-                Calendar.getInstance().apply {
-                    timeInMillis = dateTime.time
-                }.get(Calendar.YEAR)
-            } else {
-                append(date)
-                return@apply
-            }
-            if (Calendar.getInstance().get(Calendar.YEAR) != year) {
-                append(year).append("\n")
-            }
-            append(date.replace(", $year", ""))
-        } catch (exception: ParseException) {
-            append(date)
-        }
-    }.toString()
+    val attachment = attachmentState.message
+        .attachments
+        .first { it.type == "date" }
+    val formattedDate = attachment.extraData["payload"]
+        .toString()
+        .replace(",", "\n")
 
     Column(
         modifier = modifier
             .padding(4.dp)
             .clip(ChatTheme.shapes.attachment)
             .background(ChatTheme.colors.infoAccent)
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
                 modifier = Modifier.size(16.dp),
@@ -105,7 +86,7 @@ fun QuotedDateAttachmentContent(
                 text = formattedDate,
                 style = ChatTheme.typography.body,
                 color = ChatTheme.colors.textHighEmphasis,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
         }
     }

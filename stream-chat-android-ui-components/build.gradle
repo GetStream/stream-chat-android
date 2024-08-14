@@ -5,6 +5,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'androidx.baselineprofile'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -16,6 +17,7 @@ apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.ui"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
     }
@@ -46,14 +48,21 @@ android {
     }
 }
 
+baselineProfile {
+    baselineProfileOutputDir = "."
+    filter {
+        include("io.getstream.chat.android.ui.**")
+    }
+}
+
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=kotlin.contracts.ExperimentalContracts',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
-                '-Xopt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
+                '-opt-in=kotlin.contracts.ExperimentalContracts',
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+                '-opt-in=io.getstream.chat.android.core.ExperimentalStreamChatApi',
         ]
     }
 }
@@ -62,6 +71,7 @@ dependencies {
     api project(":stream-chat-android-ui-common")
     implementation project(":stream-chat-android-ui-utils")
 
+    implementation Dependencies.streamLog
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAppCompat
@@ -71,19 +81,18 @@ dependencies {
     implementation Dependencies.androidxFragmentKtx
     implementation Dependencies.androidxViewPager2
     implementation Dependencies.androidxCoreKtx
-    implementation Dependencies.photoview
+    implementation Dependencies.photoviewDialog
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
     implementation Dependencies.androidxStartup
-    implementation Dependencies.stfalconImageViewer
     implementation Dependencies.androidxLifecycleLiveDataKtx
     implementation Dependencies.keyboardVisibilityEvent
-    implementation Dependencies.dexter
+    implementation Dependencies.permissionx
 
     // Tests
     testImplementation project(":stream-chat-android-test")
-
+    testImplementation testFixtures(project(":stream-chat-android-core"))
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
     testRuntimeOnly Dependencies.junitJupiterEngine
@@ -93,4 +102,6 @@ dependencies {
     testImplementation Dependencies.androidxArchCoreTest
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

@@ -17,15 +17,17 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import androidx.compose.runtime.Composable
+import io.getstream.chat.android.client.utils.attachment.isFile
+import io.getstream.chat.android.client.utils.attachment.isGiphy
+import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentQuotedContent
-import io.getstream.chat.android.compose.ui.attachments.content.ImageAttachmentQuotedContent
-import io.getstream.chat.android.compose.ui.util.isMedia
+import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent
 import io.getstream.chat.android.uiutils.extension.hasLink
-import io.getstream.chat.android.uiutils.extension.isFile
 
 /**
- * An [AttachmentFactory] that validates attachments as files and uses [ImageAttachmentQuotedContent] in case the
+ * An [AttachmentFactory] that validates attachments as files and uses [MediaAttachmentQuotedContent] in case the
  * attachment is a media attachment or [FileAttachmentQuotedContent] in case the attachment is a file to build the UI
  * for the quoted message.
  */
@@ -34,18 +36,17 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
     canHandle = {
         if (it.isEmpty()) return@AttachmentFactory false
         val attachment = it.first()
-        attachment.isFile() || attachment.isMedia() || attachment.hasLink()
+        attachment.isFile() || attachment.isImage() || attachment.isVideo() || attachment.isGiphy() ||
+            attachment.hasLink()
     },
     content = @Composable { modifier, attachmentState ->
         val attachment = attachmentState.message.attachments.first()
 
-        val isFile = attachment.isFile()
-        val isImage = attachment.isMedia()
-        val isLink = attachment.hasLink()
-
         when {
-            isImage || isLink -> ImageAttachmentQuotedContent(modifier = modifier, attachment = attachment)
-            isFile -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)
+            attachment.isImage() || attachment.isVideo() || attachment.isGiphy() || attachment.hasLink() -> {
+                MediaAttachmentQuotedContent(modifier = modifier, attachment = attachment)
+            }
+            attachment.isFile() -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)
         }
-    }
+    },
 )

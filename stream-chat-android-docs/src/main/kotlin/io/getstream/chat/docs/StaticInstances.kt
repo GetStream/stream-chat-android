@@ -1,7 +1,7 @@
 package io.getstream.chat.docs
 
 import android.app.Activity
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 object StaticInstances {
     const val TAG = "Stream"

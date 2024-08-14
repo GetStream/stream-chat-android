@@ -38,7 +38,7 @@
         android:id="@+id/emptyPlaceholderTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/stream_ui_message_input_no_files"
+        android:text="@string/stream_ui_message_composer_no_files"
         android:textAppearance="@style/StreamUiTextAppearance.Headline"
         android:visibility="gone"
         android:textDirection="locale"

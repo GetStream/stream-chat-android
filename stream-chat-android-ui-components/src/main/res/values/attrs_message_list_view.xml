@@ -16,6 +16,10 @@
 -->
 <resources>
     <declare-styleable name="MessageListView">
+        <attr name="streamUiUnreadLabelButtonEnabled" format="boolean" />
+        <attr name="streamUiUnreadLabelButtonColor" format="color|reference" />
+        <attr name="streamUiUnreadLabelButtonRippleColor" format="color|reference" />
+
         <!-- Scroll button-->
         <attr name="streamUiScrollButtonEnabled" format="boolean" />
         <attr name="streamUiScrollButtonUnreadEnabled" format="boolean" />
@@ -85,6 +89,17 @@
             <flag name="end" value="0x00800005" />
         </attr>
 
+
+        <attr name="streamUiUnreadLabelButtonTextSize" format="dimension|reference" />
+        <attr name="streamUiUnreadLabelButtonTextColor" format="color|reference" />
+        <attr name="streamUiUnreadLabelButtonTextFont" format="reference" />
+        <attr name="streamUiUnreadLabelButtonFontAssets" format="string" />
+        <attr name="streamUiUnreadLabelButtonTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <attr name="streamUiLoadMoreThreshold" format="integer" />
         <attr name="streamUiNewMessagesBehaviour" format="enum">
             <enum name="scroll_to_bottom" value="0" />
@@ -152,12 +167,34 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message text style language in footer -->
+        <attr name="streamUiMessageTextSizeLanguage" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorLanguage" format="color" />
+        <attr name="streamUiMessageTextFontLanguage" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsLanguage" format="string" />
+        <attr name="streamUiMessageTextStyleLanguage">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Message text style thread counter in footer -->
         <attr name="streamUiMessageTextSizeThreadCounter" format="dimension|reference" />
         <attr name="streamUiMessageTextColorThreadCounter" format="color" />
         <attr name="streamUiMessageTextFontThreadCounter" format="reference" />
         <attr name="streamUiMessageTextFontAssetsThreadCounter" format="string" />
         <attr name="streamUiMessageTextStyleThreadCounter">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message text style read counter in footer -->
+        <attr name="streamUiMessageTextSizeReadCounter" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorReadCounter" format="color" />
+        <attr name="streamUiMessageTextFontReadCounter" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsReadCounter" format="string" />
+        <attr name="streamUiMessageTextStyleReadCounter">
             <flag name="normal" value="0" />
             <flag name="bold" value="1" />
             <flag name="italic" value="2" />
@@ -290,6 +327,30 @@
             <flag name="italic" value="2" />
         </attr>
 
+        <!-- Message deleted style mine -->
+        <attr name="streamUiDeletedMessageBackgroundColorMine" format="color" />
+        <attr name="streamUiMessageTextSizeMessageDeletedMine" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMessageDeletedMine" format="color" />
+        <attr name="streamUiMessageTextFontMessageDeletedMine" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMessageDeletedMine" format="string" />
+        <attr name="streamUiMessageTextStyleMessageDeletedMine">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
+        <!-- Message deleted style theirs -->
+        <attr name="streamUiDeletedMessageBackgroundColorTheirs" format="color" />
+        <attr name="streamUiMessageTextSizeMessageDeletedTheirs" format="dimension|reference" />
+        <attr name="streamUiMessageTextColorMessageDeletedTheirs" format="color" />
+        <attr name="streamUiMessageTextFontMessageDeletedTheirs" format="reference" />
+        <attr name="streamUiMessageTextFontAssetsMessageDeletedTheirs" format="string" />
+        <attr name="streamUiMessageTextStyleMessageDeletedTheirs">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- System message style -->
         <attr name="streamUiSystemMessageTextSize" format="dimension|reference" />
         <attr name="streamUiSystemMessageTextColor" format="color" />
@@ -315,6 +376,18 @@
         </attr>
 
 
+        <!-- Unread Separator text style -->
+        <attr name="streamUiUnreadSeparatorBackgroundColor" format="color" />
+        <attr name="streamUiUnreadSeparatorTextSize" format="dimension|reference" />
+        <attr name="streamUiUnreadSeparatorTextColor" format="color" />
+        <attr name="streamUiUnreadSeparatorTextFont" format="reference" />
+        <attr name="streamUiUnreadSeparatorTextFontAssets" format="string" />
+        <attr name="streamUiUnreadSeparatorTextStyle">
+            <flag name="normal" value="0" />
+            <flag name="bold" value="1" />
+            <flag name="italic" value="2" />
+        </attr>
+
         <!-- Error message text style -->
         <attr name="streamUiErrorMessageTextSize" format="dimension|reference" />
         <attr name="streamUiErrorMessageTextColor" format="color" />
@@ -335,8 +408,10 @@
         <attr name="streamUiReplyOptionIcon" format="reference" />
         <attr name="streamUiReplyEnabled" format="boolean" />
         <attr name="streamUiCopyMessageActionEnabled" format="boolean" />
+        <attr name="streamUiMarkAsUnreadEnabled" format="boolean" />
         <attr name="streamUiRetryMessageEnabled" format="boolean" />
         <attr name="streamUiCopyOptionIcon" format="reference" />
+        <attr name="streamUiMarkAsUnreadOptionIcon" format="reference" />
         <attr name="streamUiEditOptionIcon" format="reference" />
         <attr name="streamUiEditMessageEnabled" format="boolean" />
         <attr name="streamUiFlagOptionIcon" format="reference" />
@@ -345,27 +420,14 @@
         <attr name="streamUiPinOptionIcon" format="reference" />
         <attr name="streamUiUnpinOptionIcon" format="reference" />
         <attr name="streamUiPinMessageEnabled" format="boolean" />
-        <!-- {@deprecated This attribute is deprecated and planned for removal.
-        The option to mute the user will be removed from MessageListView. } -->
-        <attr name="streamUiMuteOptionIcon" format="reference" />
-        <!-- {@deprecated This attribute is deprecated and planned for removal.
-        The option to mute the user will be removed from MessageListView. } -->
-        <attr name="streamUiUnmuteOptionIcon" format="reference" />
-        <!-- {@deprecated This attribute is deprecated and planned for removal.
-        The option to mute the user will be removed from MessageListView. } -->
-        <attr name="streamUiMuteUserEnabled" format="boolean" />
-        <!-- {@deprecated This attribute is deprecated and planned for removal.
-        The option to block the user will be removed from MessageListView. } -->
-        <attr name="streamUiBlockOptionIcon" format="reference" />
-        <!-- {@deprecated This attribute is deprecated and planned for removal.
-        The option to block the user will be removed from MessageListView. } -->
-        <attr name="streamUiBlockUserEnabled" format="boolean" />
         <attr name="streamUiDeleteOptionIcon" format="reference" />
         <attr name="streamUiDeleteConfirmationEnabled" format="boolean" />
         <attr name="streamUiDeleteMessageEnabled" format="boolean" />
         <attr name="streamUiThreadsEnabled" format="boolean" />
         <attr name="streamUiThreadReplyOptionIcon" format="reference" />
         <attr name="streamUiMessageOptionBackgroundColor" format="color" />
+        <attr name="streamUiBlockUserOptionEnabled" format="boolean" />
+        <attr name="streamUiBlockUserOptionIcon" format="boolean" />
 
         <attr name="streamUiMessageOptionsTextSize" format="dimension|reference" />
         <attr name="streamUiMessageOptionsTextColor" format="color|reference" />
@@ -394,6 +456,13 @@
             <enum name="by_user_inverted" value="3" />
         </attr>
 
+        <attr name="streamUiMessageOptionsReactionSorting" format="enum">
+            <enum name="by_first_reaction_at" value="0" />
+            <enum name="by_last_reaction_at" value="1" />
+            <enum name="by_sum_score" value="2" />
+            <enum name="by_count" value="3" />
+        </attr>
+
         <!-- User reactions card -->
         <attr name="streamUiUserReactionsBackgroundColor" format="color" />
 
@@ -407,7 +476,7 @@
             <flag name="italic" value="2" />
         </attr>
 
-        <!-- Options overly dialog -->
+        <!-- Options overlay dialog -->
         <attr name="streamUiOptionsOverlayDimColor" format="color" />
 
         <!-- Giphy view holder -->
@@ -466,6 +535,7 @@
             <flag name="italic" value="2" />
         </attr>
         <attr name="streamUiMessageListLoadingView" format="reference" />
+        <attr name="streamUiMessageListLoadingMoreView" format="reference" />
         <attr name="streamUiEmptyStateTextSize" format="dimension|reference" />
         <attr name="streamUiEmptyStateTextColor" format="color|reference" />
         <attr name="streamUiEmptyStateTextFont" format="reference" />
@@ -513,13 +583,34 @@
         <attr name="streamUiDisableScrollWhenShowingDialog" format="boolean" />
 
         <!-- The margin between the selected message and the edit reactions bubble on the options overlay. -->
-        <attr name="streamUiOptionsOverlayEditReactionsMargin" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayEditReactionsMarginBottom" format="dimension|reference" />
+        <!-- The margin between the edit reactions bubble on the options overlay and the parent. -->
+        <attr name="streamUiOptionsOverlayEditReactionsMarginTop" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayEditReactionsMarginStart" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayEditReactionsMarginEnd" format="dimension|reference" />
+
         <!-- The margin between the selected message and the user reaction list on the options overlay. -->
-        <attr name="streamUiOptionsOverlayUserReactionsMargin" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayUserReactionsMarginTop" format="dimension|reference" />
+        <!-- The margin between the message option list and the user reaction list on the options overlay. -->
+        <attr name="streamUiOptionsOverlayUserReactionsMarginBottom" format="dimension|reference" />
+        <!-- The margin between the user reaction list on the options overlay and the parent. -->
+        <attr name="streamUiOptionsOverlayUserReactionsMarginStart" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayUserReactionsMarginEnd" format="dimension|reference" />
+
         <!-- The margin between the selected message and the message option list on the options overlay. -->
-        <attr name="streamUiOptionsOverlayMessageOptionsMargin" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginTop" format="dimension|reference" />
+        <!-- The margin between the message option list on the options overlay and the parent. -->
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginBottom" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginStart" format="dimension|reference" />
+        <attr name="streamUiOptionsOverlayMessageOptionsMarginEnd" format="dimension|reference" />
 
         <!-- Show the edit reactions bubble for unsent messages on the options overlay. -->
         <attr name="streamUiShowReactionsForUnsentMessages" format="boolean" />
+        <!-- Shows a counter next to the read status of a message. -->
+        <attr name="streamUiReadCount" format="boolean" />
+
+        <!-- Audio record player view style -->
+        <attr name="streamUiMessageListAudioRecordPlayerViewStyleOwn" format="reference" />
+        <attr name="streamUiMessageListAudioRecordPlayerViewStyleTheirs" format="reference" />
     </declare-styleable>
 </resources>

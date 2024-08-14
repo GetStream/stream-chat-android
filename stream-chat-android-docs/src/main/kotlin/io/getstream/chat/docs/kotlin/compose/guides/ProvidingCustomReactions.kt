@@ -9,11 +9,15 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.docs.R
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 
 /**
  * [Providing Custom Reactions](https://getstream.io/chat/docs/sdk/android/compose/guides/providing-custom-reactions/)
@@ -21,6 +25,10 @@ import io.getstream.chat.docs.R
 private object ProvidingCustomReactionsSnippet {
 
     class MessagesActivity : AppCompatActivity() {
+
+        //TODO add this and related entries to docs when documentation effort occurs
+        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -30,9 +38,14 @@ private object ProvidingCustomReactionsSnippet {
                 // Provide a factory with custom reactions
                 ChatTheme(reactionIconFactory = CustomReactionIconFactory()) {
                     MessagesScreen(
-                        channelId = channelId,
+                        viewModelFactory = MessagesViewModelFactory(
+                            context = this,
+                            channelId = channelId,
+                        ),
                         onBackPressed = { finish() },
-                        onHeaderActionClick = {}
+                        onHeaderTitleClick = {},
+                        //TODO add this and related entries to docs when documentation effort occurs
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -56,11 +69,6 @@ private object ProvidingCustomReactionsSnippet {
         }
 
         @Composable
-        override fun createReactionIcons(): Map<String, ReactionIcon> {
-            return supportedReactions.associateWith { createReactionIcon(it) }
-        }
-
-        @Composable
         override fun createReactionIcon(type: String): ReactionIcon {
             return when (type) {
                 THUMBS_UP -> ReactionIcon(
@@ -79,8 +87,13 @@ private object ProvidingCustomReactionsSnippet {
                     painter = painterResource(R.drawable.ic_mood_bad),
                     selectedPainter = painterResource(R.drawable.ic_mood_bad_selected)
                 )
-                else -> throw IllegalArgumentException()
+                else -> throw IllegalArgumentException("Unsupported reaction type")
             }
+        }
+
+        @Composable
+        override fun createReactionIcons(): Map<String, ReactionIcon> {
+            return supportedReactions.associateWith { createReactionIcon(it) }
         }
 
         companion object {

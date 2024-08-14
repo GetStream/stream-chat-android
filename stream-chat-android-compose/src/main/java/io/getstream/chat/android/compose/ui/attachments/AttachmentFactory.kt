@@ -18,9 +18,8 @@ package io.getstream.chat.android.compose.ui.attachments
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.util.previewText
+import io.getstream.chat.android.models.Attachment
 
 /**
  * Holds the information required to build an attachment message.
@@ -45,5 +44,7 @@ public open class AttachmentFactory constructor(
         modifier: Modifier,
         attachmentState: AttachmentState,
     ) -> Unit,
-    public val textFormatter: (attachments: Attachment) -> String = Attachment::previewText,
+    public val textFormatter: (attachments: Attachment) -> String = {
+        it.title ?: it.name ?: it.fallback ?: ""
+    },
 )

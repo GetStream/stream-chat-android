@@ -22,9 +22,9 @@ import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
-import com.getstream.sdk.chat.utils.Utils
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.common.Debouncer
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.Utils
+import io.getstream.chat.android.ui.utils.Debouncer
 import io.getstream.chat.ui.sample.databinding.AddChannelHeaderViewBinding
 import io.getstream.chat.ui.sample.databinding.AddChannelMemberItemBinding
 
@@ -50,7 +50,7 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }
@@ -70,7 +70,7 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
                 addView(
                     MemberItemView(context).apply {
                         render(member)
-                    }
+                    },
                 )
             }
             isVisible = members.isNotEmpty()
@@ -129,13 +129,13 @@ class AddChannelHeaderView : FrameLayout, AddChannelHeader {
         constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
             context,
             attrs,
-            defStyleAttr
+            defStyleAttr,
         )
 
         fun render(member: User) {
             binding.memberContainer.setOnClickListener { memberClickListener?.onMemberClicked(member) }
             binding.memberNameTextView.text = member.name
-            binding.memberAvatar.setUserData(member)
+            binding.userAvatarView.setUser(member)
         }
     }
 }

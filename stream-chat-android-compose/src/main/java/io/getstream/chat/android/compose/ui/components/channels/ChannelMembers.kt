@@ -27,9 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.compose.previewdata.PreviewMembersData
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.previewdata.PreviewMembersData
 
 /**
  * Represents a list of members in the channel.
@@ -47,7 +47,7 @@ public fun ChannelMembers(
             .fillMaxWidth()
             .padding(vertical = 24.dp),
         horizontalArrangement = Arrangement.Center,
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp),
     ) {
         items(members) { member ->
             ChannelMembersItem(

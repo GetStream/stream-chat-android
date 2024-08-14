@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.addMyReaction
 import io.getstream.chat.android.client.extensions.internal.enrichWithDataBeforeSending
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 /**
@@ -43,7 +43,7 @@ internal class SendReactionListenerDatabase(
     private val clientState: ClientState,
     private val reactionsRepository: ReactionRepository,
     private val messageRepository: MessageRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
 ) : SendReactionListener {
 
     /**
@@ -81,8 +81,9 @@ internal class SendReactionListenerDatabase(
         reactionsRepository.insertReaction(reaction = reactionToSend)
 
         messageRepository.selectMessage(messageId = reactionToSend.messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique)
-            messageRepository.insertMessage(cachedMessage)
+            messageRepository.insertMessage(
+                cachedMessage.addMyReaction(reaction = reactionToSend, enforceUnique = enforceUnique),
+            )
         }
     }
 
@@ -118,16 +119,19 @@ internal class SendReactionListenerDatabase(
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      */
-    override fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
+    override suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit> {
         return when {
             currentUser == null -> {
-                Result.error(ChatError(message = "Current user is null!"))
+                Result.Failure(Error.GenericError(message = "Current user is null!"))
             }
             reaction.messageId.isBlank() || reaction.type.isBlank() -> {
-                Result.error(ChatError(message = "Reaction::messageId and Reaction::type cannot be empty!"))
+                Result.Failure(Error.GenericError("Reaction::messageId and Reaction::type cannot be empty!"))
+            }
+            messageRepository.selectMessage(reaction.messageId) == null -> {
+                Result.Failure(Error.GenericError("Reaction::messageId cannot be found in DB!"))
             }
             else -> {
-                Result.success(Unit)
+                Result.Success(Unit)
             }
         }
     }

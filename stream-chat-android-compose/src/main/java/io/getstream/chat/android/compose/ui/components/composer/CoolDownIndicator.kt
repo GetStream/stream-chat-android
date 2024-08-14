@@ -46,13 +46,13 @@ public fun CoolDownIndicator(
             .size(48.dp)
             .padding(12.dp)
             .background(shape = RoundedCornerShape(24.dp), color = ChatTheme.colors.disabled),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = coolDownTime.toString(),
             color = Color.White,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.bodyBold
+            style = ChatTheme.typography.bodyBold,
         )
     }
 }

@@ -21,7 +21,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.databinding.AddGroupChannelHeaderViewBinding
 import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeader
 import io.getstream.chat.ui.sample.feature.channel.add.header.AddMemberButtonClickListener
@@ -47,7 +47,7 @@ class AddGroupChannelHeaderView : FrameLayout, AddChannelHeader {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init()
     }

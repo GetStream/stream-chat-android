@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.client.plugins.requests.ApiRequestsAnalyser
 import io.getstream.chat.android.core.internal.StreamHandsOff
+import io.getstream.chat.android.models.Constants
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.Buffer
@@ -47,7 +47,7 @@ internal class ApiRequestAnalyserInterceptor(private val requestsAnalyser: ApiRe
     @StreamHandsOff(
         reason = "Request body shouldn't be written entirely as it might produce OutOfMemory " +
             "exceptions when sending big files." +
-            " The output will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes."
+            " The output will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes.",
     )
     private fun writeRequestBody(stringOutputStream: StringOutputStream, buffer: Buffer) {
         buffer.writeTo(stringOutputStream, minOf(buffer.size, Constants.MAX_REQUEST_BODY_LENGTH))

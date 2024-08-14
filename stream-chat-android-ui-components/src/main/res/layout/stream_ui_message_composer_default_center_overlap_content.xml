@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2023 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="112dp"
+    tools:parentTag="androidx.constraintlayout.widget.ConstraintLayout"
+    >
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontalGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/verticalGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toEndOf="@id/recordingPlayback"
+
+        />
+
+    <ImageView
+        android:id="@+id/recordingPlayback"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/stream_ui_spacing_tiny"
+        android:scaleType="center"
+        android:src="@drawable/stream_ui_ic_mic"
+        app:layout_constraintBottom_toTopOf="@id/horizontalGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/stream_ui_accent_red"
+        />
+
+    <TextView
+        android:id="@+id/recordingTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/recordingPlayback"
+        app:layout_constraintStart_toEndOf="@id/recordingPlayback"
+        app:layout_constraintTop_toTopOf="@id/recordingPlayback"
+        />
+
+    <TextView
+        android:id="@+id/recordingSlider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="96dp"
+        android:gravity="center"
+        android:text="@string/stream_ui_message_composer_slide_to_cancel"
+        android:textColor="@color/stream_ui_text_color_secondary"
+        app:drawableStartCompat="@drawable/stream_ui_arrow_left"
+        app:layout_constraintBottom_toBottomOf="@id/recordingPlayback"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/recordingPlayback"
+        />
+
+
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.WaveformView
+        android:id="@+id/recordingWaveform"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+
+        android:paddingVertical="8dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="@id/horizontalGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/recordingTimer"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/stream_ui_accent_blue"
+        />
+
+
+    <ImageView
+        android:id="@+id/recordingDelete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/stream_ui_spacing_tiny"
+        android:src="@drawable/stream_ui_ic_delete"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
+        app:tint="@color/stream_ui_accent_blue"
+        tools:ignore="ContentDescription"
+        />
+
+    <ImageView
+        android:id="@+id/recordingStop"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/stream_ui_spacing_tiny"
+        android:src="@drawable/stream_ui_ic_stop_circle"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/recordingComplete"
+        app:layout_constraintStart_toEndOf="@id/recordingDelete"
+        app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
+        tools:ignore="ContentDescription"
+        />
+
+    <ImageView
+        android:id="@+id/recordingComplete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="end"
+        android:background="?selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/stream_ui_spacing_tiny"
+        android:src="@drawable/stream_ui_ic_check_circle"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horizontalGuideline"
+        tools:ignore="ContentDescription"
+        />
+
+</merge>

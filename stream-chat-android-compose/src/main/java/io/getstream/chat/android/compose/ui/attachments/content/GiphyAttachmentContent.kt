@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -42,15 +43,20 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.model.ModelType
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.components.rememberImageComponent
+import com.skydoves.landscapist.placeholder.shimmer.Shimmer
+import com.skydoves.landscapist.placeholder.shimmer.ShimmerPlugin
+import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
-import io.getstream.chat.android.compose.ui.util.rememberStreamImagePainter
-import io.getstream.chat.android.ui.utils.GiphyInfoType
-import io.getstream.chat.android.ui.utils.GiphySizingMode
-import io.getstream.chat.android.ui.utils.giphyInfo
+import io.getstream.chat.android.compose.ui.util.StreamImage
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.ui.common.utils.GiphyInfoType
+import io.getstream.chat.android.ui.common.utils.GiphySizingMode
+import io.getstream.chat.android.ui.common.utils.giphyInfo
 
 /**
  * Builds a Giphy attachment message.
@@ -66,9 +72,9 @@ import io.getstream.chat.android.ui.utils.giphyInfo
  * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
  * dimensions, however you can still clip maximum dimensions using [StreamDimens.attachmentsContentGiphyMaxWidth]
  * and [StreamDimens.attachmentsContentGiphyMaxHeight].
- *
  * Setting it to fixed size mode will make it respect all given dimensions.
  * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
+ * @param onItemClick Lambda called when an item gets clicked.
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("LongMethod")
@@ -79,10 +85,11 @@ public fun GiphyAttachmentContent(
     giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
+    onItemClick: (context: Context, previewUrl: String) -> Unit = ::onGiphyAttachmentContentClick,
 ) {
     val context = LocalContext.current
     val (message, onLongItemClick) = attachmentState
-    val attachment = message.attachments.firstOrNull { it.type == ModelType.attach_giphy }
+    val attachment = message.attachments.firstOrNull(Attachment::isGiphy)
 
     checkNotNull(attachment) {
         "Missing Giphy attachment."
@@ -97,8 +104,6 @@ public fun GiphyAttachmentContent(
     val density = LocalDensity.current
 
     val giphyInfo = attachment.giphyInfo(giphyInfoType)
-
-    val painter = rememberStreamImagePainter(giphyInfo?.url)
 
     val maxWidth = ChatTheme.dimens.attachmentsContentGiphyMaxWidth
     val maxHeight = ChatTheme.dimens.attachmentsContentGiphyMaxHeight
@@ -118,19 +123,20 @@ public fun GiphyAttachmentContent(
                             DpSize(
                                 width = width.coerceIn(
                                     minimumValue = null,
-                                    maximumValue = maxWidth
+                                    maximumValue = maxWidth,
                                 ),
                                 height = height.coerceIn(
                                     minimumValue = null,
-                                    maximumValue = maxHeight
-                                )
+                                    maximumValue = maxHeight,
+                                ),
                             )
                         }
+
                         else -> calculateResultingDimensions(
                             maxWidth = maxWidth,
                             maxHeight = maxHeight,
                             giphyWidth = giphyWidth,
-                            giphyHeight = giphyHeight
+                            giphyHeight = giphyHeight,
                         )
                     }
                 }
@@ -148,21 +154,23 @@ public fun GiphyAttachmentContent(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(previewUrl)
-                        )
-                    )
+                    onItemClick(context, previewUrl)
                 },
-                onLongClick = { onLongItemClick(message) }
-            )
+                onLongClick = { onLongItemClick(message) },
+            ),
     ) {
-        Image(
+        StreamImage(
             modifier = Modifier.fillMaxSize(),
-            painter = painter,
-            contentDescription = null,
-            contentScale = contentScale,
+            data = { giphyInfo?.url },
+            component = rememberImageComponent {
+                +ShimmerPlugin(
+                    Shimmer.Resonate(
+                        baseColor = ChatTheme.colors.mediaShimmerBase,
+                        highlightColor = ChatTheme.colors.mediaShimmerHighlights,
+                    ),
+                )
+            },
+            imageOptions = ImageOptions(contentScale = contentScale),
         )
 
         Image(
@@ -173,7 +181,7 @@ public fun GiphyAttachmentContent(
                 .wrapContentHeight(),
             painter = painterResource(R.drawable.stream_compose_giphy_label),
             contentDescription = null,
-            contentScale = ContentScale.Inside
+            contentScale = ContentScale.Inside,
         )
     }
 }
@@ -209,4 +217,19 @@ private fun calculateResultingDimensions(
     } else {
         DpSize((giphyWidth.value * resultingRatio).dp, maxHeight)
     }
+}
+
+/**
+ * Handles clicks on Giphy attachment content.
+ *
+ * @param context Context needed to start the Activity.
+ * @param previewUrl The url of the Giphy attachment being clicked.
+ */
+internal fun onGiphyAttachmentContentClick(context: Context, previewUrl: String) {
+    context.startActivity(
+        Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse(previewUrl),
+        ),
+    )
 }

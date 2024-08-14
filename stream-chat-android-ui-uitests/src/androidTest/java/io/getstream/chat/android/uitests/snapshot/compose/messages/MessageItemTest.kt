@@ -16,8 +16,9 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
-import io.getstream.chat.android.compose.state.messages.list.MessageItemState
 import io.getstream.chat.android.compose.ui.messages.list.MessageItem
+import io.getstream.chat.android.models.ReactionSortingByCount
+import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test
@@ -30,9 +31,10 @@ class MessageItemTest : ComposeScreenshotTest() {
             messageItem = MessageItemState(
                 message = TestData.message1(),
                 isMine = false,
-                shouldShowFooter = true,
+                showMessageFooter = true,
             ),
-            onLongItemClick = {}
+            onLongItemClick = {},
+            reactionSorting = ReactionSortingByCount,
         )
     }
 
@@ -42,9 +44,10 @@ class MessageItemTest : ComposeScreenshotTest() {
             messageItem = MessageItemState(
                 message = TestData.message1(),
                 isMine = true,
-                shouldShowFooter = true,
+                showMessageFooter = true,
             ),
-            onLongItemClick = {}
+            onLongItemClick = {},
+            reactionSorting = ReactionSortingByCount,
         )
     }
 
@@ -55,9 +58,10 @@ class MessageItemTest : ComposeScreenshotTest() {
                 message = TestData.message1(),
                 isMine = true,
                 isMessageRead = true,
-                shouldShowFooter = true
+                showMessageFooter = true,
             ),
             onLongItemClick = {},
+            reactionSorting = ReactionSortingByCount,
         )
     }
 }

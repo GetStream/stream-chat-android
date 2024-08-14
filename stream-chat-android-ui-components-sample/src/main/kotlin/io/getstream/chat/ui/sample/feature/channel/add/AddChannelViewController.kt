@@ -21,9 +21,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.ui.message.input.MessageInputView
-import io.getstream.chat.android.ui.message.list.MessageListView
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.feature.channel.add.header.AddChannelHeader
 import io.getstream.chat.ui.sample.feature.channel.add.header.MembersInputChangedListener
@@ -34,7 +34,7 @@ class AddChannelViewController(
     private val usersRecyclerView: RecyclerView,
     private val createGroupContainer: ViewGroup,
     private val messageListView: MessageListView,
-    private val messageInputView: MessageInputView,
+    private val messageComposerView: MessageComposerView,
     private val emptyStateView: View,
     private val loadingView: View,
     private val isAddGroupChannel: Boolean,
@@ -94,7 +94,7 @@ class AddChannelViewController(
         showUsers(userInfoList.map { UserInfo(it.user, members.contains(it.user)) })
     }
 
-    fun messageInputViewClicked() {
+    fun messageComposerViewClicked() {
         if (members.isNotEmpty()) {
             showMessageListView()
         }
@@ -154,14 +154,14 @@ class AddChannelViewController(
         }
         if (members.isEmpty()) {
             if (!isAddGroupChannel) {
-                messageInputView.disableSendButton()
+                messageComposerView.isVisible = false
                 createGroupContainer.isVisible = true
             }
             showUsersView()
             showInput()
         } else {
             if (!isAddGroupChannel) {
-                messageInputView.enableSendButton()
+                messageComposerView.isVisible = true
                 createGroupContainer.isVisible = false
             }
             hideInput()

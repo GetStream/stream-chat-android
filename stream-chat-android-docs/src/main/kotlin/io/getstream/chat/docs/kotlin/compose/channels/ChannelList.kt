@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,22 +25,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.models.Channel
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/channel-components/channel-list/#usage)
  */
 private object ChannelListUsageSnippet {
 
-    class MyActivity : AppCompatActivity() {
+    class ChannelsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -60,7 +57,7 @@ private object ChannelListUsageSnippet {
  */
 private object ChannelListHandlingActionsSnippet1 {
 
-    class MyActivity : AppCompatActivity() {
+    class ChannelsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -96,19 +93,8 @@ private object ChannelListHandlingActionsSnippet1 {
  */
 private object ChannelListHandlingActionsSnippet2 {
 
-    class MyActivity : AppCompatActivity() {
-        val factory by lazy {
-            ChannelViewModelFactory(
-                ChatClient.instance(),
-                QuerySortByField.descByName("last_updated"),
-                Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-                )
-            )
-        }
-
-        val listViewModel: ChannelListViewModel by viewModels { factory }
+    class ChannelsActivity : AppCompatActivity() {
+        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -139,17 +125,18 @@ private object ChannelListHandlingActionsSnippet2 {
  */
 private object ChannelListControllingScrollStateSnippet {
 
-    class MyActivity : AppCompatActivity() {
+    class ChannelsActivity : AppCompatActivity() {
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
             setContent {
                 ChatTheme {
-                    val myListState = rememberLazyListState()
+                    val lazyListState = rememberLazyListState()
+
                     ChannelList(
                         // State
-                        lazyListState = myListState
+                        lazyListState = lazyListState
                         // Actions & Content Slots
                     )
                 }
@@ -163,19 +150,8 @@ private object ChannelListControllingScrollStateSnippet {
  */
 private object ChannelListCustomizationSnippet {
 
-    class MyActivity : AppCompatActivity() {
-        val factory by lazy {
-            ChannelViewModelFactory(
-                ChatClient.instance(),
-                QuerySortByField.descByName("last_updated"),
-                Filters.and(
-                    Filters.eq("type", "messaging"),
-                    Filters.`in`("members", listOf(ChatClient.instance().getCurrentUser()?.id ?: ""))
-                )
-            )
-        }
-
-        val listViewModel: ChannelListViewModel by viewModels { factory }
+    class ChannelsActivity : AppCompatActivity() {
+        val listViewModel: ChannelListViewModel by viewModels { ChannelViewModelFactory() }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -193,32 +169,26 @@ private object ChannelListCustomizationSnippet {
 
             ChannelList(
                 // Set up state
-                itemContent = { // Customize the channel items
-                    Card(
+                channelContent = {
+                    Row(
                         modifier = Modifier
-                            .padding(2.dp)
-                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            ChannelAvatar(
-                                modifier = Modifier.size(40.dp),
-                                channel = it.channel,
-                                currentUser = user
-                            )
+                        ChannelAvatar(
+                            modifier = Modifier.size(40.dp),
+                            channel = it.channel,
+                            currentUser = user
+                        )
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
 
-                            Text(
-                                text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
-                                style = ChatTheme.typography.bodyBold,
-                                maxLines = 1,
-                            )
-                        }
+                        Text(
+                            text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
+                            style = ChatTheme.typography.bodyBold,
+                            maxLines = 1,
+                        )
                     }
                 }
             )

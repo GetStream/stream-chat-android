@@ -16,10 +16,18 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
+import android.content.ContextWrapper
 import android.content.res.ColorStateList
 import android.graphics.drawable.RippleDrawable
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.ColorInt
+import androidx.annotation.Px
+import androidx.annotation.StringRes
+import androidx.core.view.ViewCompat
+import androidx.fragment.app.FragmentActivity
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.ui.helper.ViewPadding
 
 /**
  * Helper method for adding ripple effect to views
@@ -33,4 +41,45 @@ internal fun View.setBorderlessRipple(@ColorInt color: Int?) {
     } else {
         null
     }
+}
+
+/**
+ * Ensures the context being accessed in a View can be cast to Activity.
+ */
+@InternalStreamChatApi
+public val View.activity: FragmentActivity?
+    get() {
+        var context = context
+        while (context is ContextWrapper) {
+            if (context is FragmentActivity) {
+                return context
+            }
+            context = context.baseContext
+        }
+        return null
+    }
+
+@InternalStreamChatApi
+public fun View.showToast(@StringRes resId: Int) {
+    Toast.makeText(context, context.getString(resId), Toast.LENGTH_SHORT).show()
+}
+
+internal fun View.setPaddingStart(@Px start: Int) {
+    val isRtl = context.isRtlLayout
+
+    if (isRtl) {
+        setPadding(paddingLeft, paddingTop, start, paddingBottom)
+    } else {
+        setPadding(start, paddingTop, paddingRight, paddingBottom)
+    }
+}
+
+internal fun View.setPaddingCompat(padding: ViewPadding) {
+    ViewCompat.setPaddingRelative(
+        this,
+        padding.start,
+        padding.top,
+        padding.end,
+        padding.bottom,
+    )
 }

@@ -18,6 +18,7 @@
     <!-- Greys -->
     <color name="stream_ui_black">#FFFFFF</color>
     <color name="stream_ui_black_50">#80FFFFFF</color>
+    <color name="stream_ui_black_85">#D9FFFFFF</color>
     <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_grey_gainsboro">#2D2F2F</color>
     <color name="stream_ui_grey_whisper">#1C1E22</color>
@@ -31,6 +32,10 @@
     <color name="stream_ui_overlay_dark">#99FFFFFF</color>
     <color name="stream_ui_background_gradient_start">#101214</color>
     <color name="stream_ui_background_gradient_end">#070A0D</color>
+    <color name="stream_ui_message_list_image_attachment_background">#1C1E22</color>
+    <color name="stream_ui_message_list_video_attachment_background">#1C1E22</color>
+    <color name="stream_ui_unread_label_background_color">#1C1E22</color>
+    <color name="stream_ui_unread_label_text_color">#747881</color>
 
     <!-- Other -->
     <color name="stream_ui_button_background_color">#FFFFFF</color>
@@ -40,4 +45,7 @@
 
     <!-- Message replies -->
     <color name="stream_ui_bars_background">#121416</color>
+
+    <!-- Make status bar icons light -->
+    <bool name="stream_ui_light_status_bar">false</bool>
 </resources>

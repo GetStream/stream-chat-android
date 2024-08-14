@@ -23,7 +23,7 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
  */
 @InternalStreamChatApi
 public class SynchronizedReference<T : Any>(
-    @Volatile private var value: T? = null
+    @Volatile private var value: T? = null,
 ) {
 
     /**

@@ -25,10 +25,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel
-import io.getstream.chat.android.ui.channel.list.viewmodel.bindView
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.channels.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -46,7 +46,7 @@ class ChatInfoSharedGroupsFragment : Fragment() {
                     "members",
                     listOf(args.memberId).let { members ->
                         ChatClient.instance().clientState.user.value?.id?.let(members::plus) ?: members
-                    }
+                    },
                 ),
                 Filters.or(Filters.notExists("draft"), Filters.eq("draft", false)),
                 Filters.greaterThan("member_count", 2),

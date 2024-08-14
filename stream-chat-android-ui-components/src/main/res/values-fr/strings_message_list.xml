@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
     <item quantity="one">"%d Réponse"</item>
     <item quantity="other">"%d Réponses"</item>
   </plurals>
+  <string name="stream_ui_message_audio_reply_info">"Message vocal"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Erreur. Le fichier ne peut pas être affiché"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Un problème est survenu. Impossible d\'ouvrir la pièce jointe: %1$s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Le chargement a échoué en raison d\'une URL non valide."</string>
@@ -60,6 +61,7 @@
   <string name="stream_ui_message_list_giphy_cancel">"Annuler"</string>
   <string name="stream_ui_message_list_giphy_send">"Envoyer"</string>
   <string name="stream_ui_message_list_giphy_shuffle">"Mélanger"</string>
+  <string name="stream_ui_message_list_giphy_title">"Giphy"</string>
   <string name="stream_ui_message_list_mute_user">"Mettre en sourdine l\'utilisateur"</string>
   <string name="stream_ui_message_list_pin_message">"Épingler à la conversation"</string>
   <string name="stream_ui_message_list_pinned_message">"Épinglé par %s"</string>

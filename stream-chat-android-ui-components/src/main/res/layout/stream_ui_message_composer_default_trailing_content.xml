@@ -15,24 +15,38 @@
     limitations under the License.
 -->
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
 
-    <FrameLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:orientation="horizontal"
         android:paddingHorizontal="@dimen/stream_ui_message_composer_trailing_content_horizontal_padding"
         android:paddingVertical="@dimen/stream_ui_message_composer_trailing_content_vertical_padding"
         >
 
         <ImageView
             android:id="@+id/sendMessageButton"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="@dimen/stream_ui_message_composer_trailing_content_button_send_message_width"
+            android:layout_height="@dimen/stream_ui_message_composer_trailing_content_button_send_message_height"
             android:layout_gravity="bottom"
             android:background="?selectableItemBackgroundBorderless"
-            android:padding="@dimen/stream_ui_spacing_tiny"
+            android:padding="@dimen/stream_ui_message_composer_trailing_content_button_send_message_padding"
             android:src="@drawable/stream_ui_ic_send_message"
+            tools:ignore="ContentDescription"
+            />
+
+        <ImageView
+            android:id="@+id/recordAudioButton"
+            android:layout_width="@dimen/stream_ui_message_composer_trailing_content_button_record_audio_width"
+            android:layout_height="@dimen/stream_ui_message_composer_trailing_content_button_record_audio_height"
+            android:layout_gravity="bottom"
+            android:background="?selectableItemBackgroundBorderless"
+            android:padding="@dimen/stream_ui_message_composer_trailing_content_button_record_audio_padding"
+            android:src="@drawable/stream_ui_ic_mic"
+            android:tag="record_audio"
             tools:ignore="ContentDescription"
             />
 
@@ -47,6 +61,6 @@
             tools:text="99"
             />
 
-    </FrameLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </merge>

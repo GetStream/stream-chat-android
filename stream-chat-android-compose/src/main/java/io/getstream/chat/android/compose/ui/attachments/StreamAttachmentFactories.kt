@@ -16,17 +16,32 @@
 
 package io.getstream.chat.android.compose.ui.attachments
 
+import android.content.Context
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
+import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
+import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.content.onGiphyAttachmentContentClick
+import io.getstream.chat.android.compose.ui.attachments.content.onLinkAttachmentContentClick
+import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
+import io.getstream.chat.android.compose.ui.attachments.factory.AudioRecordAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.FileAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.GiphyAttachmentFactory
-import io.getstream.chat.android.compose.ui.attachments.factory.ImageAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.LinkAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.MediaAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.QuotedAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.factory.UnsupportedAttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
-import io.getstream.chat.android.ui.utils.GiphyInfoType
-import io.getstream.chat.android.ui.utils.GiphySizingMode
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
+import io.getstream.chat.android.ui.common.utils.GiphyInfoType
+import io.getstream.chat.android.ui.common.utils.GiphySizingMode
 
 /**
  * Provides different attachment factories that build custom message content based on a given attachment.
@@ -50,11 +65,16 @@ public object StreamAttachmentFactories {
      * [StreamDimens.attachmentsContentGiphyWidth] and [StreamDimens.attachmentsContentGiphyHeight]
      * dimensions, however you can still clip maximum dimensions using
      * [StreamDimens.attachmentsContentGiphyMaxWidth] and [StreamDimens.attachmentsContentGiphyMaxHeight].
-     *
      * Setting it to fixed size mode will make it respect all given dimensions.
      * @param contentScale Used to determine the way Giphys are scaled inside the [Image] composable.
-     * @param skipEnrichUrl Used by the image gallery. If set to true will skip enriching URLs when you update the
+     * @param skipEnrichUrl Used by the media gallery. If set to true will skip enriching URLs when you update the
      * message by deleting an attachment contained within it. Set to false by default.
+     * @param onUploadContentItemClick Lambda called when a uploading attachment content item gets clicked.
+     * @param onLinkContentItemClick Lambda called when a link attachment content item gets clicked.
+     * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
+     * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
+     * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
+
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
@@ -64,18 +84,48 @@ public object StreamAttachmentFactories {
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
         contentScale: ContentScale = ContentScale.Crop,
         skipEnrichUrl: Boolean = false,
+        onUploadContentItemClick: (
+            Attachment,
+            List<AttachmentPreviewHandler>,
+        ) -> Unit = ::onFileUploadContentItemClick,
+        onLinkContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
+        onGiphyContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
+        onMediaContentItemClick: (
+            mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+            message: Message,
+            attachmentPosition: Int,
+            videoThumbnailsEnabled: Boolean,
+            streamCdnImageResizing: StreamCdnImageResizing,
+            skipEnrichUrl: Boolean,
+        ) -> Unit = ::onMediaAttachmentContentItemClick,
+        onFileContentItemClick: (
+            previewHandlers: List<AttachmentPreviewHandler>,
+            attachment: Attachment,
+        ) -> Unit = ::onFileAttachmentContentItemClick,
     ): List<AttachmentFactory> = listOf(
-        UploadAttachmentFactory(),
-        LinkAttachmentFactory(linkDescriptionMaxLines),
+        UploadAttachmentFactory(
+            onContentItemClick = onUploadContentItemClick,
+        ),
+        LinkAttachmentFactory(
+            linkDescriptionMaxLines = linkDescriptionMaxLines,
+            onContentItemClick = onLinkContentItemClick,
+        ),
         GiphyAttachmentFactory(
             giphyInfoType = giphyInfoType,
             giphySizingMode = giphySizingMode,
             contentScale = contentScale,
+            onContentItemClick = onGiphyContentItemClick,
         ),
-        ImageAttachmentFactory(
-            skipEnrichUrl = skipEnrichUrl
+        MediaAttachmentFactory(
+            skipEnrichUrl = skipEnrichUrl,
+            onContentItemClick = onMediaContentItemClick,
+        ),
+        FileAttachmentFactory(
+            onContentItemClick = onFileContentItemClick,
         ),
         FileAttachmentFactory(),
+        AudioRecordAttachmentFactory(),
+        UnsupportedAttachmentFactory(),
     )
 
     /**
@@ -84,6 +134,6 @@ public object StreamAttachmentFactories {
      * @return a [List] of various [AttachmentFactory] instances that provide different quoted attachments support.
      */
     public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
-        QuotedAttachmentFactory()
+        QuotedAttachmentFactory(),
     )
 }

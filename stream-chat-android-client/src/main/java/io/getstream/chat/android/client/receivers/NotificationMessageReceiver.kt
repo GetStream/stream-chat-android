@@ -26,16 +26,16 @@ import androidx.core.app.RemoteInput
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.extensions.internal.toCid
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.log.taggedLogger
 
 internal class NotificationMessageReceiver : BroadcastReceiver() {
 
     companion object {
-        private const val ACTION_READ = "com.getstream.sdk.chat.READ"
-        private const val ACTION_REPLY = "com.getstream.sdk.chat.REPLY"
-        private const val ACTION_DISMISS = "com.getstream.sdk.chat.DISMISS"
+        private const val ACTION_READ = "io.getstream.chat.android.READ"
+        private const val ACTION_REPLY = "io.getstream.chat.android.REPLY"
+        private const val ACTION_DISMISS = "io.getstream.chat.android.DISMISS"
         private const val KEY_MESSAGE_ID = "message_id"
         private const val KEY_CHANNEL_ID = "id"
         private const val KEY_CHANNEL_TYPE = "type"
@@ -117,7 +117,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             return NotificationCompat.Action.Builder(
                 android.R.drawable.ic_menu_send,
                 context.getString(R.string.stream_chat_notification_reply),
-                createReplyPendingIntent(context, notificationId, channel)
+                createReplyPendingIntent(context, notificationId, channel),
             )
                 .addRemoteInput(remoteInput)
                 .setAllowGeneratedReplies(true)
@@ -132,7 +132,7 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
             }
     }
 
-    private val logger = StreamLog.getLogger("NotificationMessageReceiver")
+    private val logger by taggedLogger("NotificationMessageReceiver")
 
     override fun onReceive(context: Context, intent: Intent) {
         val channelType = intent.getStringExtra(KEY_CHANNEL_TYPE) ?: return
@@ -184,14 +184,20 @@ internal class NotificationMessageReceiver : BroadcastReceiver() {
         ChatClient.instance().sendMessage(
             channelType = type,
             channelId = channelId,
-            message = Message().apply {
-                text = messageChars.toString()
-                cid = (type to channelId).toCid()
-            }
+            message = Message(
+                text = messageChars.toString(),
+                cid = (type to channelId).toCid(),
+            ),
         ).enqueue()
     }
 
     private fun cancelNotification(channelType: String, channelId: String) {
-        ChatClient.dismissChannelNotifications(channelType, channelId)
+        if (!ChatClient.isInitialized) {
+            logger.d {
+                "[cancelNotification] ChatClient is not initialized, returning."
+            }
+            return
+        }
+        ChatClient.instance().dismissChannelNotifications(channelType, channelId)
     }
 }

@@ -4,12 +4,14 @@ import io.getstream.chat.android.Versions
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
 }
 
 apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
+    namespace "io.getstream.chat.android.guides"
     defaultConfig {
         applicationId "io.getstream.chat.android.guides"
         versionCode sampleAppVersionCode
@@ -32,10 +34,6 @@ android {
         compose true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
-    }
-
     lintOptions {
         disable 'MissingTranslation'
     }
@@ -44,12 +42,14 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
-                '-Xopt-in=kotlin.RequiresOptIn',
+                '-opt-in=kotlin.RequiresOptIn',
         ]
     }
 }
 
 dependencies {
+    implementation project(":stream-chat-android-state")
+    implementation project(":stream-chat-android-offline")
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-compose")
 
@@ -58,7 +58,6 @@ dependencies {
     implementation Dependencies.materialComponents
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation

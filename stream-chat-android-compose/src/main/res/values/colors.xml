@@ -17,6 +17,7 @@
 <resources>
     <!-- Default colors -->
     <color name="stream_compose_text_high_emphasis">#000000</color>
+    <color name="stream_compose_text_high_emphasis_inverse">#FFFFFF</color>
     <color name="stream_compose_text_low_emphasis">#72767E</color>
     <color name="stream_compose_disabled">#B4B7BB</color>
     <color name="stream_compose_borders">#DBDDE1</color>
@@ -30,9 +31,12 @@
     <color name="stream_compose_error_accent">#FF3742</color>
     <color name="stream_compose_info_accent">#20E070</color>
     <color name="stream_compose_highlight">#FBF4DD</color>
+    <color name="stream_compose_show_more_overlay">#99000000</color>
+    <color name="stream_compose_show_more_text">#FFFFFF</color>
 
     <!-- Default Dark colors -->
     <color name="stream_compose_text_high_emphasis_dark">#FFFFFF</color>
+    <color name="stream_compose_text_high_emphasis_inverse_dark">#000000</color>
     <color name="stream_compose_text_low_emphasis_dark">#72767E</color>
     <color name="stream_compose_disabled_dark">#4C525C</color>
     <color name="stream_compose_borders_dark">#272A30</color>
@@ -46,6 +50,8 @@
     <color name="stream_compose_error_accent_dark">#FF3742</color>
     <color name="stream_compose_info_accent_dark">#20E070</color>
     <color name="stream_compose_highlight_dark">#302D22</color>
+    <color name="stream_compose_show_more_overlay_dark">#99000000</color>
+    <color name="stream_compose_show_more_text_dark">#FFFFFF</color>
 
     <!-- Avatar gradient colors -->
     <color name="stream_compose_avatar_gradient_orange">#FF8A65</color>

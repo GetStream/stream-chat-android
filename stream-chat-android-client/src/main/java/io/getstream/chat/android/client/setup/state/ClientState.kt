@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.setup.state
 
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.InitializationState
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -28,24 +28,14 @@ import kotlinx.coroutines.flow.StateFlow
 public interface ClientState {
 
     /**
-     * The current user in the OfflinePlugin state.
-     */
-    public val user: StateFlow<User?>
-
-    /**
-     * The state of the initialization process of the SDK.
-     */
-    @Deprecated(
-        message = "Use ClientState.initializationState instead",
-        replaceWith = ReplaceWith("initializationState"),
-        level = DeprecationLevel.ERROR,
-    )
-    public val initialized: StateFlow<Boolean>
-
-    /**
      * The state of the initialization process of the SDK.
      */
     public val initializationState: StateFlow<InitializationState>
+
+    /**
+     * The current user if connected.
+     */
+    public val user: StateFlow<User?>
 
     /**
      * StateFlow<ConnectionState> that indicates if we are currently online, connecting of offline.
@@ -74,20 +64,8 @@ public interface ClientState {
     public val isConnecting: Boolean
 
     /**
-     * If domain state is initialized or not.
-     *
-     * @return True if initialized otherwise False.
-     */
-    public val isInitialized: Boolean
-
-    /**
      * If internet is available or not. This is not related to the connection of the SDK, it returns
      * if internet is available in the device.
      */
     public val isNetworkAvailable: Boolean
-
-    /**
-     * Clears the state of [ClientState].
-     */
-    public fun clearState()
 }

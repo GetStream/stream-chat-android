@@ -16,9 +16,9 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
 import java.util.Date
 
 /**
@@ -59,7 +59,7 @@ public interface MessageRepository {
      *
      * @return A list of messages found in repository.
      */
-    public suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean = false): List<Message>
+    public suspend fun selectMessages(messageIds: List<String>): List<Message>
 
     /**
      * Reads the message with passed ID.
@@ -74,7 +74,7 @@ public interface MessageRepository {
      * @param messages list of [Message]
      * @param cache Boolean.
      */
-    public suspend fun insertMessages(messages: List<Message>, cache: Boolean = false)
+    public suspend fun insertMessages(messages: List<Message>)
 
     /**
      * Inserts a messages.
@@ -82,7 +82,7 @@ public interface MessageRepository {
      * @param message [Message]
      * @param cache Boolean.
      */
-    public suspend fun insertMessage(message: Message, cache: Boolean = false)
+    public suspend fun insertMessage(message: Message)
 
     /**
      * Deletes all messages before a message with passed ID.
@@ -91,6 +91,13 @@ public interface MessageRepository {
      * @param hideMessagesBefore Boolean.
      */
     public suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date)
+
+    /**
+     * Deletes all messages from a channel.
+     *
+     * @param cid of message - String.
+     */
+    public suspend fun deleteChannelMessages(cid: String)
 
     /**
      * Deletes message.
@@ -112,6 +119,18 @@ public interface MessageRepository {
      * @param syncStatus [SyncStatus]
      */
     public suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message>
+
+    /**
+     * Evict messages from the repository.
+     */
+    public suspend fun evictMessages()
+
+    /**
+     * Evicts a message from the repository.
+     *
+     * @param messageId String.
+     */
+    public suspend fun evictMessage(messageId: String)
 
     /**
      * Clear messages of this repository.

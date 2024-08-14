@@ -16,16 +16,14 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.test.randomCID
-import kotlinx.coroutines.flow.MutableStateFlow
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomMessage
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -37,9 +35,7 @@ import org.mockito.kotlin.whenever
 
 internal class DeleteMessageListenerDatabaseTest {
 
-    private val clientState: ClientState = mock {
-        on(it.user) doReturn MutableStateFlow(randomUser())
-    }
+    private val clientState: ClientState = mock()
 
     private val messageRepository: MessageRepository = mock()
     private val userRepository: UserRepository = mock()
@@ -51,7 +47,7 @@ internal class DeleteMessageListenerDatabaseTest {
     fun `when internet is available, the message should be updated as in progress before the request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn true
@@ -64,7 +60,6 @@ internal class DeleteMessageListenerDatabaseTest {
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
-            argThat { _ -> true }
         )
     }
 
@@ -72,7 +67,7 @@ internal class DeleteMessageListenerDatabaseTest {
     fun `when internet is not available, the message should be updated as sync needed before the request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.IN_PROGRESS
+            syncStatus = SyncStatus.IN_PROGRESS,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn false
@@ -85,7 +80,6 @@ internal class DeleteMessageListenerDatabaseTest {
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            argThat { _ -> true }
         )
     }
 
@@ -93,20 +87,19 @@ internal class DeleteMessageListenerDatabaseTest {
     fun `when request is successful, the message should be updated as completed after request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.success(testMessage))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Success(testMessage))
 
         verify(messageRepository).insertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            argThat { _ -> true }
         )
     }
 
@@ -114,20 +107,19 @@ internal class DeleteMessageListenerDatabaseTest {
     fun `when request fails, the message should be updated as sync needed after request`() = runTest {
         val testMessage = randomMessage(
             cid = randomCID(),
-            syncStatus = SyncStatus.IN_PROGRESS
+            syncStatus = SyncStatus.IN_PROGRESS,
         )
 
         whenever(clientState.isNetworkAvailable) doReturn false
         whenever(messageRepository.selectMessage(any())) doReturn testMessage
 
-        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.error(ChatError()))
+        deleteMessageListenerState.onMessageDeleteResult(randomCID(), Result.Failure(Error.GenericError("")))
 
         verify(messageRepository).insertMessage(
             argThat { message ->
                 // The same ID, but not the status was correctly updated
                 message.id == testMessage.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            argThat { _ -> true }
         )
     }
 }

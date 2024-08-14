@@ -51,28 +51,28 @@
             android:padding="@dimen/stream_ui_spacing_medium"
             >
 
-            <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.user.internal.UserReactionsView
                 android:id="@+id/userReactionsView1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.user.internal.UserReactionsView
                 android:id="@+id/userReactionsView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.user.internal.UserReactionsView
                 android:id="@+id/userReactionsView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 />
 
-            <io.getstream.chat.android.ui.message.list.reactions.user.internal.UserReactionsView
+            <io.getstream.chat.android.ui.feature.messages.list.reactions.user.internal.UserReactionsView
                 android:id="@+id/userReactionsView4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

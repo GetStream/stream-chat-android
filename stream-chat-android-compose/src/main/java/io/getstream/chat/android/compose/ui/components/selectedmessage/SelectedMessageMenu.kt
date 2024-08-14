@@ -26,12 +26,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.React
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
@@ -41,6 +35,12 @@ import io.getstream.chat.android.compose.ui.components.reactionoptions.ReactionO
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
 import io.getstream.chat.android.compose.util.extensions.toSet
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * Represents the options user can take after selecting a message.
@@ -48,7 +48,7 @@ import io.getstream.chat.android.compose.util.extensions.toSet
  * @param message The selected message.
  * @param messageOptions The available message options within the menu.
  * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
+ * For a full list @see [ChannelCapabilities].
  * @param onMessageAction Handler that propagates click events on each item.
  * @param onShowMoreReactionsSelected Handler that propagates clicks on the show more reactions button.
  * @param modifier Modifier for styling.
@@ -77,20 +77,20 @@ public fun SelectedMessageMenu(
     headerContent: @Composable ColumnScope.() -> Unit = {
         val canLeaveReaction = ownCapabilities.contains(ChannelCapabilities.SEND_REACTION)
 
-        if (canLeaveReaction) {
+        if (ChatTheme.reactionOptionsTheme.areReactionOptionsVisible && canLeaveReaction) {
             DefaultSelectedMessageReactionOptions(
                 message = message,
                 reactionTypes = reactionTypes,
                 showMoreReactionsDrawableRes = showMoreReactionsIcon,
                 onMessageAction = onMessageAction,
-                showMoreReactionsIcon = onShowMoreReactionsSelected
+                showMoreReactionsIcon = onShowMoreReactionsSelected,
             )
         }
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedMessageOptions(
             messageOptions = messageOptions,
-            onMessageAction = onMessageAction
+            onMessageAction = onMessageAction,
         )
     },
 ) {
@@ -100,7 +100,7 @@ public fun SelectedMessageMenu(
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        centerContent = centerContent
+        centerContent = centerContent,
     )
 }
 
@@ -131,8 +131,8 @@ internal fun DefaultSelectedMessageReactionOptions(
             onMessageAction(
                 React(
                     reaction = Reaction(messageId = message.id, type = it.type),
-                    message = message
-                )
+                    message = message,
+                ),
             )
         },
         onShowMoreReactionsSelected = showMoreReactionsIcon,
@@ -155,7 +155,7 @@ internal fun DefaultSelectedMessageOptions(
         options = messageOptions,
         onMessageOptionSelected = {
             onMessageAction(it.action)
-        }
+        },
     )
 }
 
@@ -170,7 +170,7 @@ private fun SelectedMessageMenuPreview() {
             selectedMessage = Message(),
             currentUser = User(),
             isInThread = false,
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
 
         SelectedMessageMenu(
@@ -178,7 +178,7 @@ private fun SelectedMessageMenuPreview() {
             messageOptions = messageOptionsStateList,
             onMessageAction = {},
             onShowMoreReactionsSelected = {},
-            ownCapabilities = ChannelCapabilities.toSet()
+            ownCapabilities = ChannelCapabilities.toSet(),
         )
     }
 }

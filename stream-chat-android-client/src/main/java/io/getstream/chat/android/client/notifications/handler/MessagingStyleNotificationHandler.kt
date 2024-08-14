@@ -26,16 +26,17 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
+import io.getstream.android.push.permissions.NotificationPermissionHandler
+import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionHandler
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.log.taggedLogger
 import java.util.Date
 
 /**
@@ -46,13 +47,14 @@ import java.util.Date
 @Suppress("TooManyFunctions")
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
-    private val newMessageIntent: (messageId: String, channelType: String, channelId: String) -> Intent,
+    private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
     private val userIconBuilder: UserIconBuilder,
-    private val permissionHandler: NotificationPermissionHandler?
+    private val permissionHandler: NotificationPermissionHandler?,
+    private val autoTranslationEnabled: Boolean = false,
 ) : NotificationHandler {
 
-    private val logger = StreamLog.getLogger("Chat:MsnHandler")
+    private val logger by taggedLogger("Chat:MsnHandler")
 
     private val sharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
@@ -83,14 +85,15 @@ internal class MessagingStyleNotificationHandler(
         val contentPendingIntent = PendingIntent.getActivity(
             context,
             notificationId,
-            newMessageIntent(message.id, channel.type, channel.id),
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            newMessageIntent(message, channel),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
         ChatClient.instance().launch {
             val initialMessagingStyle = restoreMessagingStyle(channel) ?: createMessagingStyle(currentUser, channel)
             val notification = NotificationCompat.Builder(context, getNotificationChannelId())
                 .setSmallIcon(R.drawable.stream_ic_notification)
-                .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context)))
+                .setColor(ContextCompat.getColor(context, R.color.stream_ic_notification))
+                .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context, currentUser)))
                 .setContentIntent(contentPendingIntent)
                 .addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
                 .addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
@@ -153,8 +156,18 @@ internal class MessagingStyleNotificationHandler(
         private const val SHARED_PREFERENCES_NAME = "stream_notifications.sp"
         private const val KEY_NOTIFICATIONS_SHOWN = "KEY_NOTIFICATIONS_SHOWN"
     }
-    private suspend fun Message.toMessagingStyleMessage(context: Context): NotificationCompat.MessagingStyle.Message =
-        NotificationCompat.MessagingStyle.Message(text, timestamp, person(context))
+    private suspend fun Message.toMessagingStyleMessage(
+        context: Context,
+        currentUser: User?,
+    ): NotificationCompat.MessagingStyle.Message {
+        val displayedText = when (autoTranslationEnabled) {
+            true -> currentUser?.language?.let { userLanguage ->
+                getTranslation(userLanguage).ifEmpty { text }
+            } ?: text
+            else -> text
+        }
+        return NotificationCompat.MessagingStyle.Message(displayedText, timestamp, person(context))
+    }
 
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)
 

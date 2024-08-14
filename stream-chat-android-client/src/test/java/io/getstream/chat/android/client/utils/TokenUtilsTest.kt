@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,11 +43,11 @@ internal class TokenUtilsTest(
         fun data(): Collection<Array<Any?>> = listOf(
             arrayOf(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken",
-                "jc"
+                "jc",
             ),
             arrayOf(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoidmlzaGFsIn0=.devtoken",
-                "vishal"
+                "vishal",
             ),
             arrayOf(
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pbiJ9.devtoken",

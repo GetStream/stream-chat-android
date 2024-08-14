@@ -3,16 +3,16 @@
 package io.getstream.chat.docs.kotlin.client.docusaurus
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.events.ChatEventHandler
 import io.getstream.chat.android.client.events.CidEvent
-import io.getstream.chat.android.client.events.EventHandlingResult
 import io.getstream.chat.android.client.events.HasChannel
-import io.getstream.chat.android.client.models.Channel
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler
-import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory
 import kotlinx.coroutines.flow.StateFlow
 
 /**
@@ -53,7 +53,8 @@ class ChannelListUpdates {
 
         class PublicChatEventHandlerFactory : ChatEventHandlerFactory() {
             override fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler {
-                return PublicChatEventHandler(channels, ChatClient.instance().clientState)
+                val chatClient = ChatClient.instance()
+                return PublicChatEventHandler(channels, chatClient.clientState)
             }
         }
     }
@@ -91,7 +92,8 @@ class ChannelListUpdates {
 
         class PrivateChatEventHandlerFactory : ChatEventHandlerFactory() {
             override fun chatEventHandler(channels: StateFlow<Map<String, Channel>?>): ChatEventHandler {
-                return PrivateChatEventHandler(channels, ChatClient.instance().clientState)
+                val chatClient = ChatClient.instance()
+                return PrivateChatEventHandler(channels, chatClient.clientState)
             }
         }
     }

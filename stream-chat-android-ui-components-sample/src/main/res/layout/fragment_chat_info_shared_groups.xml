@@ -51,7 +51,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         />
 
-    <io.getstream.chat.android.ui.channel.list.ChannelListView
+    <io.getstream.chat.android.ui.feature.channels.list.ChannelListView
         android:id="@+id/channelsView"
         android:layout_width="0dp"
         android:layout_height="0dp"

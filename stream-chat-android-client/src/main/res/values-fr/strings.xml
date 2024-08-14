@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@
   <string name="stream_chat_notification_empty_username">"Utilisateur sans nom"</string>
   <string name="stream_chat_notification_group_summary_content_text">"Vous avez reçu de nouveaux messages"</string>
   <string name="stream_chat_notification_read">"Marquer comme lu"</string>
-  <string name="stream_chat_notification_reply">"Répondre"</string>
+  <string name="stream_chat_notification_reply">"Réponse"</string>
   <string name="stream_chat_notification_title">"Message de discussion"</string>
   <string name="stream_chat_notification_type_hint">"Tapez votre message"</string>
   <string name="stream_chat_other_notifications_channel_name">"Autres notifications"</string>

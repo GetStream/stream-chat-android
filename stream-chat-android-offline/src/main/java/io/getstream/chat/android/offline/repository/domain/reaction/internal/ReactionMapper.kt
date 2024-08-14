@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.reaction.internal
 
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 
 internal fun Reaction.toEntity(): ReactionEntity = ReactionEntity(
     messageId = messageId,
@@ -25,6 +25,7 @@ internal fun Reaction.toEntity(): ReactionEntity = ReactionEntity(
     type = type,
     score = score,
     createdAt = createdAt,
+    createdLocallyAt = createdLocallyAt,
     updatedAt = updatedAt,
     deletedAt = deletedAt,
     extraData = extraData,
@@ -39,9 +40,10 @@ internal suspend fun ReactionEntity.toModel(getUser: suspend (userId: String) ->
     user = getUser(userId),
     extraData = extraData.toMutableMap(),
     createdAt = createdAt,
+    createdLocallyAt = createdLocallyAt,
     updatedAt = updatedAt,
     deletedAt = deletedAt,
     syncStatus = syncStatus,
     userId = userId,
-    enforceUnique = enforceUnique
+    enforceUnique = enforceUnique,
 )

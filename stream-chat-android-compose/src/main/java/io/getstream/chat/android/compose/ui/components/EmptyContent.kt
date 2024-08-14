@@ -47,7 +47,7 @@ public fun EmptyContent(
     Column(
         modifier = modifier.background(color = ChatTheme.colors.appBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Icon(
             painter = painter,
@@ -62,7 +62,7 @@ public fun EmptyContent(
             text = text,
             style = ChatTheme.typography.title3,
             color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

@@ -22,28 +22,31 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 private object OverviewViewModelsSnippet {
 
     class MyActivity : AppCompatActivity() {
+        // 1
         val factory by lazy {
             MessagesViewModelFactory(
                 context = this,
                 chatClient = ChatClient.instance(),
                 channelId = "messaging:123",
                 enforceUniqueReactions = true,
-                messageLimit = 30
+                messageLimit = 30,
+                threadLoadOlderToNewer = false,
             )
         }
 
+        // 2
         val listViewModel: MessageListViewModel by viewModels { factory }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-
+            // 3
             setContent {
                 ChatTheme {
                     MessageList(
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxSize(),
-                        viewModel = listViewModel
+                        viewModel = listViewModel // 4
                     )
                 }
             }

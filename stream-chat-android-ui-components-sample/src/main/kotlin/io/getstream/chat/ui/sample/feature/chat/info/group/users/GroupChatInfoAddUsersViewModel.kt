@@ -24,13 +24,14 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.state.utils.Event
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -45,7 +46,7 @@ class GroupChatInfoAddUsersViewModel(
      * Holds information about the current channel and is actively updated.
      */
     private val channelState: Flow<ChannelState> =
-        chatClient.watchChannelAsState(cid, MESSAGE_LIMIT, viewModelScope).filterNotNull()
+        chatClient.watchChannelAsState(cid, 0, viewModelScope).filterNotNull()
 
     private val channelClient = chatClient.channel(cid)
     private var members: List<Member> = emptyList()
@@ -84,11 +85,9 @@ class GroupChatInfoAddUsersViewModel(
     private fun addMember(user: User) {
         viewModelScope.launch {
             val message = Message(text = "${user.name} was added to this channel")
-            val response = channelClient.addMembers(listOf(user.id), message).await()
-            if (response.isSuccess) {
-                _userAddedState.value = true
-            } else {
-                _errorEvents.postValue(Event(ErrorEvent.AddMemberError))
+            when (channelClient.addMembers(listOf(user.id), message).await()) {
+                is Result.Success -> _userAddedState.value = true
+                is Result.Failure -> _errorEvents.postValue(Event(ErrorEvent.AddMemberError))
             }
         }
     }
@@ -129,7 +128,7 @@ class GroupChatInfoAddUsersViewModel(
         } else {
             Filters.and(
                 Filters.autocomplete("name", currentState.query),
-                Filters.nin("id", currentMembers.map { it.getUserId() })
+                Filters.nin("id", currentMembers.map { it.getUserId() }),
             )
         }
 
@@ -138,17 +137,16 @@ class GroupChatInfoAddUsersViewModel(
                 filter = filter,
                 offset = currentState.results.size,
                 limit = QUERY_LIMIT,
-            )
+            ),
         ).await()
 
-        if (result.isSuccess) {
-            _state.value = currentState.copy(
-                results = currentState.results + result.data(),
+        when (result) {
+            is Result.Success -> _state.value = currentState.copy(
+                results = currentState.results + result.value,
                 isLoading = false,
-                canLoadMore = result.data().size == QUERY_LIMIT
+                canLoadMore = result.value.size == QUERY_LIMIT,
             )
-        } else {
-            _state.value = currentState.copy(
+            is Result.Failure -> _state.value = currentState.copy(
                 isLoading = false,
                 canLoadMore = true,
             )
@@ -174,7 +172,6 @@ class GroupChatInfoAddUsersViewModel(
 
     companion object {
         private const val QUERY_LIMIT = 20
-        private const val MESSAGE_LIMIT = 30
         private val INITIAL_STATE = State(query = "", canLoadMore = true, results = emptyList(), isLoading = true)
     }
 }

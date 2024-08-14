@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.userread.internal
 
-import io.getstream.chat.android.client.models.ChannelUserRead
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.ChannelUserRead
+import io.getstream.chat.android.models.User
 
 internal fun ChannelUserRead.toEntity(): ChannelUserReadEntity =
-    ChannelUserReadEntity(getUserId(), lastRead, unreadMessages, lastMessageSeenDate)
+    ChannelUserReadEntity(getUserId(), lastReceivedEventDate, unreadMessages, lastRead, lastReadMessageId)
 
 internal suspend fun ChannelUserReadEntity.toModel(getUser: suspend (userId: String) -> User): ChannelUserRead =
-    ChannelUserRead(getUser(userId), lastRead, unreadMessages)
+    ChannelUserRead(getUser(userId), lastReceivedEventDate, unreadMessages, lastRead, lastReadMessageId)

@@ -17,18 +17,18 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedRetrofit2Call
-import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should be instance of`
-import org.amshove.kluent.`should be true`
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.Mockito
@@ -46,8 +46,8 @@ internal class RetrofitCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    val resultValue = Mother.randomString()
-    val validResult: Result<String> = Result.success(resultValue)
+    val resultValue = randomString()
+    val validResult: Result<String> = Result.Success(resultValue)
     val parser: ChatParser = mock()
 
     @Test
@@ -64,20 +64,22 @@ internal class RetrofitCallTest {
 
     @Test
     fun `Call should be executed and return a failure result`() = runTest {
-        val blockedRetrofit2Call = BlockedRetrofit2Call<String>(testCoroutines.scope, error = IOException(randomString())).apply { unblock() }
+        val blockedRetrofit2Call =
+            BlockedRetrofit2Call<String>(testCoroutines.scope, error = IOException(randomString())).apply { unblock() }
         val call = RetrofitCall(blockedRetrofit2Call, parser, testCoroutines.scope)
 
         val result = call.execute()
 
-        result.isError.`should be true`()
-        result.error() `should be instance of` ChatError::class
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value `should be instance of` Error::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` true
     }
 
     @Test
     fun `Canceled Call should be executed and return a cancel error`() = runTest {
-        val blockedRetrofit2Call = BlockedRetrofit2Call<String>(testCoroutines.scope, error = IOException(randomString()))
+        val blockedRetrofit2Call =
+            BlockedRetrofit2Call<String>(testCoroutines.scope, error = IOException(randomString()))
         val call = RetrofitCall(blockedRetrofit2Call, parser, testCoroutines.scope)
 
         val deferedResult = async { call.execute() }
@@ -85,8 +87,8 @@ internal class RetrofitCallTest {
         blockedRetrofit2Call.unblock()
         val result = deferedResult.await()
 
-        result.isError.`should be true`()
-        result.error() `should be instance of` ChatError::class
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value `should be instance of` Error::class
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` false
         blockedRetrofit2Call.isCanceled() `should be equal to` true
@@ -103,7 +105,7 @@ internal class RetrofitCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         blockedRetrofit2Call.isStarted() `should be equal to` true
         blockedRetrofit2Call.isCompleted() `should be equal to` true

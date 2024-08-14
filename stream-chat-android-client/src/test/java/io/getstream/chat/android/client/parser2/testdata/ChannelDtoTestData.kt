@@ -24,7 +24,7 @@ import io.getstream.chat.android.client.api2.model.dto.DownstreamMemberDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamChannelUserRead
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMemberDto
-import io.getstream.chat.android.client.models.ChannelCapabilities
+import io.getstream.chat.android.models.ChannelCapabilities
 import org.intellij.lang.annotations.Language
 import java.util.Date
 
@@ -47,6 +47,7 @@ internal object ChannelDtoTestData {
           "url_enrichment": false,
           "custom_events": false,
           "push_notifications": true,
+          "polls": true,
           "message_retention": "retention",
           "max_message_length": 500,
           "automod": "none",
@@ -78,6 +79,7 @@ internal object ChannelDtoTestData {
         url_enrichment = false,
         custom_events = false,
         push_notifications = true,
+        polls = true,
         message_retention = "retention",
         max_message_length = 500,
         automod = "none",
@@ -89,7 +91,7 @@ internal object ChannelDtoTestData {
                 description = "gif",
                 args = "empty",
                 set = "none",
-            )
+            ),
         ),
     )
 
@@ -119,7 +121,10 @@ internal object ChannelDtoTestData {
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
             "shadow_banned": false,
             "banned": false,
-            "channel_role": "member"
+            "channel_role": "member",
+            "notifications_muted": false,
+            "status": "member",
+            "ban_expires" : "2021-03-08T15:42:31.355Z"
            }
           ],
           "watchers": [${UserDtoTestData.downstreamJson}],
@@ -127,7 +132,8 @@ internal object ChannelDtoTestData {
            {
             "user": ${UserDtoTestData.downstreamJson},
             "last_read": "2020-06-10T11:04:31.0Z",
-            "unread_messages": 1
+            "unread_messages": 1,
+            "last_read_message_id": "messageId"
            }
           ],
           "config": $configJson,
@@ -146,7 +152,9 @@ internal object ChannelDtoTestData {
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
             "shadow_banned": false,
             "banned": false,
-            "channel_role": "member"
+            "channel_role": "member",
+            "notifications_muted": false,
+            "status": "member"
            }
         }
         """.withoutWhitespace()
@@ -175,6 +183,9 @@ internal object ChannelDtoTestData {
                 shadow_banned = false,
                 banned = false,
                 channel_role = "member",
+                notifications_muted = false,
+                status = "member",
+                ban_expires = Date(1615218151355),
             ),
         ),
         watchers = listOf(UserDtoTestData.downstreamUser),
@@ -183,6 +194,7 @@ internal object ChannelDtoTestData {
                 user = UserDtoTestData.downstreamUser,
                 last_read = Date(1591787071000),
                 unread_messages = 1,
+                last_read_message_id = "messageId",
             ),
         ),
         config = configDto,
@@ -201,6 +213,9 @@ internal object ChannelDtoTestData {
             shadow_banned = false,
             banned = false,
             channel_role = "member",
+            notifications_muted = false,
+            status = "member",
+            ban_expires = null,
         ),
         extraData = mapOf("draft" to true),
     )
@@ -306,7 +321,10 @@ internal object ChannelDtoTestData {
             "invite_accepted_at": "2020-06-10T11:04:31.588Z",
             "shadow_banned": false,
             "banned": false,
-            "channel_role": "member"
+            "channel_role": "member",
+            "notifications_muted": false,
+            "status": "member",
+            "ban_expires" : "2021-03-08T15:42:31.355Z"
            }
           ],
           "watchers": [${UserDtoTestData.upstreamJson}],
@@ -350,6 +368,9 @@ internal object ChannelDtoTestData {
                 shadow_banned = false,
                 banned = false,
                 channel_role = "member",
+                notifications_muted = false,
+                status = "member",
+                ban_expires = Date(1615218151355),
             ),
         ),
         watchers = listOf(UserDtoTestData.upstreamUser),

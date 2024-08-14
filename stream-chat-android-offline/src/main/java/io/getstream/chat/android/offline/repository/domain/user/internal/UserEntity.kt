@@ -54,9 +54,10 @@ internal data class UserEntity(
     val updatedAt: Date? = null,
     val lastActive: Date? = null,
     val invisible: Boolean = false,
+    val privacySettings: PrivacySettingsEntity?,
     val banned: Boolean = false,
     val mutes: List<String> = emptyList(),
-    val extraData: Map<String, Any> = emptyMap()
+    val extraData: Map<String, Any> = emptyMap(),
 )
 
 internal const val USER_ENTITY_TABLE_NAME = "stream_chat_user"

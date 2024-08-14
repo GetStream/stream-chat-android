@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
-import io.getstream.chat.android.client.models.ChannelConfig
+import io.getstream.chat.android.models.ChannelConfig
 
 /**
  * Repository to read and write data of [ChannelConfig]

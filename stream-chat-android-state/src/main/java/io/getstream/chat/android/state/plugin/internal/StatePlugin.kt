@@ -16,92 +16,126 @@
 
 package io.getstream.chat.android.state.plugin.internal
 
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.plugin.DependencyResolver
+import io.getstream.chat.android.client.errorhandler.ErrorHandler
+import io.getstream.chat.android.client.errorhandler.factory.ErrorHandlerFactory
+import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.Plugin
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
+import io.getstream.chat.android.client.plugin.listeners.DeleteChannelListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteMessageListener
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
+import io.getstream.chat.android.client.plugin.listeners.FetchCurrentUserListener
 import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
 import io.getstream.chat.android.client.plugin.listeners.SendReactionListener
 import io.getstream.chat.android.client.plugin.listeners.ShuffleGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.ThreadQueryListener
 import io.getstream.chat.android.client.plugin.listeners.TypingEventListener
+import io.getstream.chat.android.client.setup.state.ClientState
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.event.handler.internal.EventHandler
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.plugin.listener.internal.ChannelMarkReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DeleteChannelListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DeleteMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.DeleteReactionListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.EditMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.FetchCurrentUserListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendAttachmentListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendGiphyListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendMessageListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.SendReactionListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.ShuffleGiphyListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.ThreadQueryListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.TypingEventListenerState
+import io.getstream.chat.android.state.plugin.logic.internal.LogicRegistry
+import io.getstream.chat.android.state.plugin.state.StateRegistry
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.plugin.state.global.internal.MutableGlobalState
+import io.getstream.chat.android.state.sync.internal.SyncHistoryManager
+import io.getstream.chat.android.state.sync.internal.SyncManager
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlin.reflect.KClass
 
 /**
  * Implementation of [Plugin] that brings support for the offline feature. This class work as a delegator of calls for one
  * of its dependencies, so avoid to add logic here.
  *
- * @param queryChannelsListener [QueryChannelsListener]
- * @param queryChannelListener [QueryChannelListener]
- * @param threadQueryListener [ThreadQueryListener]
- * @param channelMarkReadListener [ChannelMarkReadListener]
- * @param editMessageListener [EditMessageListener]
- * @param hideChannelListener [HideChannelListener]
- * @param markAllReadListener [MarkAllReadListener]
- * @param deleteReactionListener [DeleteReactionListener]
- * @param sendReactionListener [SendReactionListener]
- * @param deleteMessageListener [DeleteMessageListener]
- * @param sendGiphyListener [SendGiphyListener]
- * @param shuffleGiphyListener [ShuffleGiphyListener]
- * @param sendMessageListener [SendMessageListener]
- * @param typingEventListener [TypingEventListener]
- * @param activeUser User associated with [StatePlugin] instance.
+ * @param logic [LogicRegistry]
+ * @param repositoryFacade [RepositoryFacade]
+ * @param clientState [ClientState]
+ * @param stateRegistry [StateRegistry]
+ * @param syncManager [SyncManager]
+ * @param eventHandler [EventHandler]
+ * @param globalState [GlobalState]
  */
 @InternalStreamChatApi
 @Suppress("LongParameterList")
-public class StatePlugin(
-    internal val activeUser: User,
-    private val queryChannelsListener: QueryChannelsListener,
-    private val queryChannelListener: QueryChannelListener,
-    private val threadQueryListener: ThreadQueryListener,
-    private val channelMarkReadListener: ChannelMarkReadListener,
-    private val editMessageListener: EditMessageListener,
-    private val hideChannelListener: HideChannelListener,
-    private val markAllReadListener: MarkAllReadListener,
-    private val deleteReactionListener: DeleteReactionListener,
-    private val sendReactionListener: SendReactionListener,
-    private val deleteMessageListener: DeleteMessageListener,
-    private val sendGiphyListener: SendGiphyListener,
-    private val shuffleGiphyListener: ShuffleGiphyListener,
-    private val sendMessageListener: SendMessageListener,
-    private val typingEventListener: TypingEventListener,
-    private val provideDependency: (KClass<*>) -> Any? = { null },
-) : StateAwarePlugin,
-    DependencyResolver,
-    QueryChannelsListener by queryChannelsListener,
-    QueryChannelListener by queryChannelListener,
-    ThreadQueryListener by threadQueryListener,
-    ChannelMarkReadListener by channelMarkReadListener,
-    EditMessageListener by editMessageListener,
-    HideChannelListener by hideChannelListener,
-    MarkAllReadListener by markAllReadListener,
-    DeleteReactionListener by deleteReactionListener,
-    SendReactionListener by sendReactionListener,
-    DeleteMessageListener by deleteMessageListener,
-    SendGiphyListener by sendGiphyListener,
-    ShuffleGiphyListener by shuffleGiphyListener,
-    SendMessageListener by sendMessageListener,
-    TypingEventListener by typingEventListener {
+public class StatePlugin internal constructor(
+    private val errorHandlerFactory: ErrorHandlerFactory,
+    private val logic: LogicRegistry,
+    private val repositoryFacade: RepositoryFacade,
+    private val clientState: ClientState,
+    private val stateRegistry: StateRegistry,
+    private val syncManager: SyncManager,
+    private val eventHandler: EventHandler,
+    private val globalState: MutableGlobalState,
+    private val queryingChannelsFree: MutableStateFlow<Boolean>,
+    private val statePluginConfig: StatePluginConfig,
+) : Plugin,
+    QueryChannelsListener by QueryChannelsListenerState(logic, queryingChannelsFree),
+    QueryChannelListener by QueryChannelListenerState(logic),
+    ThreadQueryListener by ThreadQueryListenerState(logic, repositoryFacade),
+    ChannelMarkReadListener by ChannelMarkReadListenerState(stateRegistry),
+    EditMessageListener by EditMessageListenerState(logic, clientState),
+    HideChannelListener by HideChannelListenerState(logic),
+    MarkAllReadListener by MarkAllReadListenerState(logic, stateRegistry),
+    DeleteReactionListener by DeleteReactionListenerState(logic, clientState),
+    DeleteChannelListener by DeleteChannelListenerState(logic, clientState),
+    SendReactionListener by SendReactionListenerState(logic, clientState),
+    DeleteMessageListener by DeleteMessageListenerState(logic, clientState, globalState),
+    SendGiphyListener by SendGiphyListenerState(logic),
+    ShuffleGiphyListener by ShuffleGiphyListenerState(logic),
+    SendMessageListener by SendMessageListenerState(logic),
+    TypingEventListener by TypingEventListenerState(stateRegistry),
+    SendAttachmentListener by SendAttachmentListenerState(logic),
+    FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState) {
 
-    override val name: String = MODULE_NAME
+    private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }
+    override fun getErrorHandler(): ErrorHandler = lazyErrorHandler
+
+    override fun onUserSet(user: User) {
+        syncManager.start()
+        eventHandler.startListening()
+    }
+
+    override fun onUserDisconnected() {
+        stateRegistry.clear()
+        logic.clear()
+        syncManager.stop()
+        eventHandler.stopListening()
+    }
 
     @Suppress("UNCHECKED_CAST")
     @InternalStreamChatApi
-    public override fun <T : Any> resolveDependency(klass: KClass<T>): T? = provideDependency(klass) as? T
-
-    private companion object {
-        /**
-         * Name of this plugin module.
-         */
-        private const val MODULE_NAME: String = "State"
+    public override fun <T : Any> resolveDependency(klass: KClass<T>): T? = when (klass) {
+        SyncHistoryManager::class -> syncManager as T
+        EventHandler::class -> eventHandler as T
+        LogicRegistry::class -> logic as T
+        StateRegistry::class -> stateRegistry as T
+        GlobalState::class -> globalState as T
+        StatePluginConfig::class -> statePluginConfig as T
+        else -> null
     }
 }

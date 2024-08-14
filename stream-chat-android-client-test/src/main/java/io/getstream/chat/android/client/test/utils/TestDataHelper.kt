@@ -16,8 +16,6 @@
 
 package io.getstream.chat.android.client.test.utils
 
-import io.getstream.chat.android.client.api.models.FilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -45,20 +43,22 @@ import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
 import io.getstream.chat.android.client.events.UserUpdatedEvent
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.randomString
+import io.getstream.result.Result
 import java.util.Calendar
 import java.util.Date
 import java.util.UUID
@@ -73,13 +73,13 @@ public class TestDataHelper {
     public val user3: User = User("user-3")
     public val userEvil: User = User("user-evil")
     public val mute1: Mute = Mute(user1, userEvil, Date(), Date(), null)
-    public val me1: User = User("broad-lake-3").apply { mutes = listOf(mute1) }
+    public val me1: User = User("broad-lake-3", mutes = listOf(mute1))
 
     public val user1Token: String = randomString()
 
     public val user2: User = User("test-user-2")
     public val userMap: MutableMap<String, User> = mutableMapOf("broad-lake-3" to user1, "test-user-2" to user2)
-    public val user1updated: User = User("broad-lake-3").apply { extraData = mutableMapOf("color" to "green") }
+    public val user1updated: User = User("broad-lake-3", extraData = mapOf("color" to "green"))
 
     public val filter1: FilterObject =
         Filters.and(Filters.eq("type", "messaging"), Filters.`in`("members", listOf(user1.id)))
@@ -90,7 +90,7 @@ public class TestDataHelper {
     public val query1: QueryChannelsSpec = QueryChannelsSpec(filter1, QuerySortByField())
 
     public val attachment1: Attachment =
-        Attachment(type = "image").apply { extraData = mutableMapOf("color" to "green") }
+        Attachment(type = "image", extraData = mapOf("color" to "green"))
 
     public val watcher1: User = user1
     public val member1: Member = Member(user = user1, isInvited = false)
@@ -110,153 +110,160 @@ public class TestDataHelper {
     public val extraData1: MutableMap<String, Any> = mutableMapOf("color" to "green", "score" to 1.1)
 
     public val config1: Config = Config(typingEventsEnabled = true, readEventsEnabled = true)
-    public val channel1: Channel = Channel().copy(
+    public val channel1: Channel = Channel(
         type = "messaging",
         id = "123-testing",
-        cid = "messaging:123-testing",
         watcherCount = 100,
         createdBy = user1,
         watchers = listOf(watcher1),
         members = listOf(member1),
         memberCount = 100,
-        config = config1
+        config = config1,
     )
 
-    public val channel1WithNewMember: Channel = Channel().apply {
-        type = "messaging"
-        id = "123-testing"
-        cid = "messaging:123-testing"
-        watcherCount = 100
-        createdBy = user1
-        watchers = listOf(watcher1)
-        members = listOf(member1, member2)
-        config = config1
-    }
+    public val channel1WithNewMember: Channel = Channel(
+        type = "messaging",
+        id = "123-testing",
+        watcherCount = 100,
+        createdBy = user1,
+        watchers = listOf(watcher1),
+        members = listOf(member1, member2),
+        config = config1,
+    )
 
-    public val channel1Updated: Channel = Channel().apply {
-        type = "messaging"
-        id = "123-testing"
-        cid = "messaging:123-testing"
-        watcherCount = 100
-        createdBy = user1
-        watchers = listOf(watcher1)
-        members = listOf(member1)
-        extraData = mutableMapOf("color" to "green")
-        config = config1
-    }
+    public val channel1Updated: Channel = Channel(
+        type = "messaging",
+        id = "123-testing",
+        watcherCount = 100,
+        createdBy = user1,
+        watchers = listOf(watcher1),
+        members = listOf(member1),
+        extraData = mutableMapOf("color" to "green"),
+        config = config1,
+    )
 
-    public val channel2: Channel = Channel().apply {
-        type = "messaging"
-        id = "222-testing"
-        cid = "messaging:222-testing"
-        watcherCount = 22
-        createdBy = user1
-        watchers = listOf(watcher1)
-        members = listOf(member1)
-        config = config1
-    }
+    public val channel2: Channel = Channel(
+        type = "messaging",
+        id = "222-testing",
+        watcherCount = 22,
+        createdBy = user1,
+        watchers = listOf(watcher1),
+        members = listOf(member1),
+        config = config1,
+    )
 
-    public val channel3: Channel = Channel().apply {
-        type = "messaging"
-        id = "333-testing"
-        cid = "messaging:333-testing"
-        watcherCount = 232
-        watchers = listOf(watcher1)
-        members = listOf(member1)
-        config = config1
-        unreadCount = 0
-        hidden = false
-    }
+    public val channel3: Channel = Channel(
+        type = "messaging",
+        id = "333-testing",
+        watcherCount = 232,
+        watchers = listOf(watcher1),
+        members = listOf(member1),
+        config = config1,
+        hidden = false,
+    )
 
-    public val channel4: Channel = Channel().apply {
-        type = "messaging"
-        id = "444-testing"
-        cid = "messaging:444-testing"
-        watcherCount = 444
-        watchers = listOf(watcher1)
-        members = listOf(member1, member2)
-        config = config1
-    }
+    public val channel4: Channel = Channel(
+        type = "messaging",
+        id = "444-testing",
+        watcherCount = 444,
+        watchers = listOf(watcher1),
+        members = listOf(member1, member2),
+        config = config1,
+    )
 
-    public val channel5: Channel = Channel().apply {
-        type = "messaging"
-        id = "555-testing"
-        cid = "messaging:555-testing"
-        watcherCount = 444
-        watchers = listOf(watcher1)
-        members = listOf(member1, member2)
-        config = config1
-    }
+    public val channel5: Channel = Channel(
+        type = "messaging",
+        id = "555-testing",
+        watcherCount = 444,
+        watchers = listOf(watcher1),
+        members = listOf(member1, member2),
+        config = config1,
+    )
 
-    public val reaction1: Reaction = Reaction("message-1", "like", 1).apply {
-        user = user1; userId = user1.id; score = 10
-    }
-    public val reaction2: Reaction = Reaction("message-1", "like", 1).apply {
-        user = user2
-    }
+    public val reaction1: Reaction = Reaction(
+        messageId = "message-1",
+        type = "like",
+        user = user1,
+        userId = user1.id,
+        score = 10,
+    )
+    public val reaction2: Reaction = Reaction(
+        messageId = "message-1",
+        type = "like",
+        score = 1,
+        user = user2,
+    )
 
-    public val message1: Message = Message().apply {
-        cid = channel1.cid
-        text = "hi there"
-        id = "message-1"
-        user = user1
-        createdAt = calendar(2020, 1, 1)
-    }
+    public val message1: Message = Message(
+        cid = channel1.cid,
+        text = "hi there",
+        id = "message-1",
+        user = user1,
+        createdAt = calendar(2020, 1, 1),
+    )
 
-    public val message1WithoutChannelAndCid: Message = Message().apply {
-        text = "hi there"
-        id = "message -1"
-        user = user1
-        createdAt = calendar(2020, 1, 1)
-    }
+    public val message1WithoutChannelAndCid: Message = Message(
+        text = "hi there",
+        id = "message -1",
+        user = user1,
+        createdAt = calendar(2020, 1, 1),
+    )
 
     public fun createMessage(): Message {
         val messageId = UUID.randomUUID().toString()
         val text = "hi there $messageId"
-        return Message().apply {
-            cid = channel1.cid
-            this.text = text
-            id = messageId
-            user = user1
-            createdAt = Date()
-        }
+        return Message(
+            cid = channel1.cid,
+            text = text,
+            id = messageId,
+            user = user1,
+            createdAt = Date(),
+        )
     }
 
-    public val message1Updated: Message = Message().apply {
-        cid = channel1.cid
-        text = "im update now"
-        id = "message-1"
-        user = user1
-        createdAt = calendar(2020, 1, 1)
-    }
+    public val message1Updated: Message = Message(
+        cid = channel1.cid,
+        text = "im update now",
+        id = "message-1",
+        user = user1,
+        createdAt = calendar(2020, 1, 1),
+    )
 
     public val message1Deleted: Message = message1.copy(deletedAt = Date())
 
-    public val reactionMessage1: Message = Message().apply {
-        text = "im update now"
-        id = "message-1"
-        user = user1
-        cid = channel1.cid
-        reactionScores = mutableMapOf("like" to 10)
-        reactionCounts = mutableMapOf("like" to 1)
-        ownReactions = mutableListOf(reaction1)
-        latestReactions = mutableListOf(reaction1)
-    }
+    public val reactionMessage1: Message = Message(
+        text = "im update now",
+        id = "message-1",
+        user = user1,
+        cid = channel1.cid,
+        reactionScores = mutableMapOf("like" to 10),
+        reactionCounts = mutableMapOf("like" to 1),
+        ownReactions = mutableListOf(reaction1),
+        latestReactions = mutableListOf(reaction1),
+    )
 
-    public val reactionMessage2: Message = Message().apply {
-        text = "im update now"; id = "message-1"; user = user1
-        cid = channel1.cid
-        reactionScores = mutableMapOf("like" to 11)
-        reactionCounts = mutableMapOf("like" to 2)
-        ownReactions = mutableListOf(reaction2)
-        latestReactions = mutableListOf(reaction2, reaction1)
-    }
-    public val message2Older: Message = Message().apply {
-        text = "message2"; id = "message-2"; user = user1; createdAt = calendar(2019, 1, 1)
-    }
-    public val messageFromUser2: Message = Message().apply {
-        text = "messageFromUser2"; id = "message-2"; user = user2; createdAt = calendar(2020, 2, 1)
-    }
+    public val reactionMessage2: Message = Message(
+        text = "im update now",
+        id = "message-1",
+        user = user1,
+        cid = channel1.cid,
+        reactionScores = mutableMapOf("like" to 11),
+        reactionCounts = mutableMapOf("like" to 2),
+        ownReactions = mutableListOf(reaction2),
+        latestReactions = mutableListOf(reaction2, reaction1),
+    )
+    public val message2Older: Message = Message(
+        text = "message2",
+        id = "message-2",
+        user = user1,
+        createdAt = calendar(2019, 1, 1),
+    )
+    public val messageFromUser2: Message = Message(
+        text = "messageFromUser2",
+        id = "message-2",
+        user = user2,
+        createdAt = calendar(2020, 2, 1),
+    )
 
     public val connectedEvent: ConnectedEvent by lazy {
         val createdAt = Date()
@@ -270,7 +277,9 @@ public class TestDataHelper {
     }
 
     public val disconnectedEvent: DisconnectedEvent = DisconnectedEvent(
-        EventType.CONNECTION_DISCONNECTED, Date(), null
+        EventType.CONNECTION_DISCONNECTED,
+        Date(),
+        null,
     )
     public val newMessageEvent: NewMessageEvent by lazy {
         val createdAt = Date()
@@ -286,7 +295,7 @@ public class TestDataHelper {
             message1,
             1,
             0,
-            0
+            0,
         )
     }
 
@@ -304,7 +313,7 @@ public class TestDataHelper {
             message2Older,
             1,
             0,
-            0
+            0,
         )
     }
     public val newMessageFromUser2: NewMessageEvent by lazy {
@@ -321,7 +330,7 @@ public class TestDataHelper {
             messageFromUser2,
             1,
             0,
-            0
+            0,
         )
     }
 
@@ -338,7 +347,7 @@ public class TestDataHelper {
             channel1,
             message1WithoutChannelAndCid,
             0,
-            0
+            0,
         )
     }
 
@@ -353,7 +362,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            message1Updated
+            message1Updated,
         )
     }
 
@@ -369,7 +378,7 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             message = message1Deleted,
-            hardDelete = false
+            hardDelete = false,
         )
     }
 
@@ -385,7 +394,7 @@ public class TestDataHelper {
             channelType = channel1.type,
             channelId = channel1.id,
             message = message1Deleted,
-            hardDelete = true
+            hardDelete = true,
         )
     }
 
@@ -400,7 +409,7 @@ public class TestDataHelper {
             1,
             channel1.type,
             channel1.id,
-            user1
+            user1,
         )
     }
     public val reactionEvent: ReactionNewEvent by lazy {
@@ -415,7 +424,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             reactionMessage1,
-            reaction1
+            reaction1,
         )
     }
     public val reactionEvent2: ReactionNewEvent by lazy {
@@ -430,7 +439,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             reactionMessage2,
-            reaction2
+            reaction2,
         )
     }
 
@@ -445,7 +454,7 @@ public class TestDataHelper {
             channel1Updated.type,
             channel1Updated.id,
             null,
-            channel1Updated
+            channel1Updated,
         )
     }
     public val channelUpdatedEvent2: ChannelUpdatedEvent by lazy {
@@ -459,7 +468,7 @@ public class TestDataHelper {
             channel5.type,
             channel5.id,
             null,
-            channel5
+            channel5,
         )
     }
 
@@ -474,7 +483,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            parentMessageId
+            parentMessageId,
         )
     }
     public val user3TypingStartedOld: TypingStartEvent by lazy {
@@ -488,7 +497,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            parentMessageId
+            parentMessageId,
         )
     }
 
@@ -503,7 +512,7 @@ public class TestDataHelper {
             channel2.type,
             channel2.id,
             user1,
-            false
+            false,
         )
     }
     public val channelVisibleEvent: ChannelVisibleEvent by lazy {
@@ -516,7 +525,7 @@ public class TestDataHelper {
             channel2.cid,
             channel2.type,
             channel2.id,
-            user1
+            user1,
         )
     }
 
@@ -531,7 +540,7 @@ public class TestDataHelper {
             channel2.cid,
             channel2.type,
             channel2.id,
-            parentMessageId
+            parentMessageId,
         )
     }
     public val user1TypingStop: TypingStopEvent by lazy {
@@ -545,7 +554,7 @@ public class TestDataHelper {
             channel2.cid,
             channel2.type,
             channel2.id,
-            parentMessageId
+            parentMessageId,
         )
     }
     public val readEvent: MessageReadEvent by lazy {
@@ -558,7 +567,7 @@ public class TestDataHelper {
             user1,
             channel1.cid,
             channel1.type,
-            channel1.id
+            channel1.id,
         )
     }
 
@@ -566,7 +575,10 @@ public class TestDataHelper {
         val createdAt = Date()
 
         NotificationMutesUpdatedEvent(
-            EventType.NOTIFICATION_MUTES_UPDATED, Date(), streamFormatter.format(createdAt), me1
+            EventType.NOTIFICATION_MUTES_UPDATED,
+            Date(),
+            streamFormatter.format(createdAt),
+            me1,
         )
     }
 
@@ -581,7 +593,8 @@ public class TestDataHelper {
             channel2.type,
             channel2.id,
             user1,
-            null
+            null,
+            false,
         )
     }
     public val user1Unbanned: ChannelUserUnbannedEvent by lazy {
@@ -594,7 +607,7 @@ public class TestDataHelper {
             user1,
             channel2.cid,
             channel2.type,
-            channel2.id
+            channel2.id,
         )
     }
 
@@ -610,7 +623,7 @@ public class TestDataHelper {
             channel2.type,
             channel2.id,
             0,
-            0
+            0,
         )
     }
     public val user1Read: MessageReadEvent by lazy {
@@ -623,7 +636,7 @@ public class TestDataHelper {
             user1,
             channel2.cid,
             channel2.type,
-            channel2.id
+            channel2.id,
         )
     }
     public val memberAddedToChannelEvent: MemberAddedEvent by lazy {
@@ -637,7 +650,7 @@ public class TestDataHelper {
             channel1WithNewMember.cid,
             channel1WithNewMember.type,
             channel1WithNewMember.id,
-            member2
+            member2,
         )
     }
 
@@ -653,7 +666,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            member1
+            member1,
         )
     }
 
@@ -669,7 +682,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             channel1,
-            member1
+            member1,
         )
     }
 
@@ -687,7 +700,7 @@ public class TestDataHelper {
             channel1,
             member1,
             0,
-            0
+            0,
         )
     }
     public val notificationAddedToChannel2Event: NotificationAddedToChannelEvent by lazy {
@@ -703,7 +716,7 @@ public class TestDataHelper {
             channel2,
             member2,
             0,
-            0
+            0,
         )
     }
 
@@ -721,7 +734,7 @@ public class TestDataHelper {
             channel3,
             member3,
             0,
-            0
+            0,
         )
     }
     public val user1UpdatedEvent: UserUpdatedEvent by lazy {
@@ -730,7 +743,7 @@ public class TestDataHelper {
         UserUpdatedEvent(EventType.USER_UPDATED, createdAt, streamFormatter.format(createdAt), user1updated)
     }
     public val syncHistoryResult: Result<List<ChatEvent>> =
-        Result(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
+        Result.Success(listOf(notificationAddedToChannelEvent, newMessageEvent, newMessageEvent2))
 
     public val channelTruncatedEvent: ChannelTruncatedEvent by lazy {
         val createdAt = Date()
@@ -744,7 +757,7 @@ public class TestDataHelper {
             channel1.id,
             user1,
             null,
-            channel1
+            channel1,
         )
     }
     public val notificationChannelTruncated: NotificationChannelTruncatedEvent by lazy {
@@ -757,7 +770,7 @@ public class TestDataHelper {
             channel1.cid,
             channel1.type,
             channel1.id,
-            channel1
+            channel1,
         )
     }
     public val channelDeletedEvent: ChannelDeletedEvent by lazy {
@@ -771,7 +784,7 @@ public class TestDataHelper {
             channel1.type,
             channel1.id,
             channel1,
-            null
+            null,
         )
     }
 }

@@ -34,7 +34,7 @@ import org.junit.Test
 internal class TokenAuthInterceptorTests {
 
     val token = "token"
-    val parser = MoshiChatParser()
+    val parser = MoshiChatParser { "" }
 
     @Test
     fun undefinedToken() {
@@ -95,7 +95,7 @@ internal class TokenAuthInterceptorTests {
 
         val chain = FakeChain(
             FakeResponse(444, Body("""{ "code": 40 }""")),
-            FakeResponse(200, Body("""{}"""))
+            FakeResponse(200, Body("""{}""")),
         )
         interceptor.intercept(chain)
         chain.processChain()

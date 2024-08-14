@@ -3,13 +3,16 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: 'androidx.baselineprofile'
 
 apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-compose.gradle"
 
 android {
+    namespace "io.getstream.chat.android.compose.sample"
     defaultConfig {
         targetSdk io.getstream.chat.android.Configuration.sampleTargetSdk
         applicationId "io.getstream.chat.android.compose.sample"
@@ -55,20 +58,26 @@ android {
             minifyEnabled false
             shrinkResources false
             signingConfig signingConfigs.debug
+            buildConfigField "Boolean", "BENCHMARK", "false"
+        }
+        benchmark {
+            debuggable false
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['release']
+            proguardFiles 'benchmark-rules.pro'
+            buildConfigField "Boolean", "BENCHMARK", "true"
         }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
+            buildConfigField "Boolean", "BENCHMARK", "false"
         }
     }
 
     buildFeatures {
         compose true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
+        buildConfig true
     }
 
     lintOptions {
@@ -79,21 +88,21 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
-                '-Xopt-in=kotlin.RequiresOptIn',
+                '-opt-in=kotlin.RequiresOptIn',
         ]
     }
 }
 
 dependencies {
     implementation project(':stream-chat-android-compose')
-    implementation project(":stream-chat-android-pushprovider-firebase")
+    implementation project(":stream-chat-android-offline")
 
     implementation Dependencies.androidxCoreKtx
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.materialComponents
+    implementation Dependencies.streamPushFirebase
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
@@ -105,11 +114,13 @@ dependencies {
     implementation Dependencies.composeAccompanistPager
 
     // Coil
-    implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
 
     // Firebase
     implementation Dependencies.firebaseAnalytics
     implementation Dependencies.firebaseCrashlytics
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

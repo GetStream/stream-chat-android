@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.channels
 
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ItemState.ChannelItemState
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
@@ -28,22 +28,22 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemWithUnreadCount() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
+                    ),
                     messages = listOf(
                         TestData.message1(),
-                        TestData.message2()
-                    )
-                    unreadCount = 2
-                    lastMessageAt = TestData.date2()
-                }
+                        TestData.message2(),
+                    ),
+                    unreadCount = 2,
+                    lastMessageAt = TestData.date2(),
+                ),
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 
@@ -51,21 +51,21 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemWithoutCurrentUser() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
+                    ),
                     messages = listOf(
                         TestData.message1(),
-                        TestData.message2()
-                    )
-                    lastMessageAt = TestData.date2()
-                }
+                        TestData.message2(),
+                    ),
+                    lastMessageAt = TestData.date2(),
+                ),
             ),
             currentUser = null,
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 
@@ -73,22 +73,22 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemForMutedChannel() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
+                    ),
                     messages = listOf(
                         TestData.message1(),
-                        TestData.message2()
-                    )
-                    lastMessageAt = TestData.date2()
-                },
-                isMuted = true
+                        TestData.message2(),
+                    ),
+                    lastMessageAt = TestData.date2(),
+                ),
+                isMuted = true,
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 
@@ -96,16 +96,16 @@ class ChannelItemTest : ComposeScreenshotTest() {
     fun channelItemForChannelWithoutMessages() = runScreenshotTest {
         ChannelItem(
             channelItem = ChannelItemState(
-                channel = TestData.channel1().apply {
+                channel = TestData.channel1().copy(
                     members = listOf(
                         TestData.member1(),
                         TestData.member2(),
-                    )
-                },
+                    ),
+                ),
             ),
             currentUser = TestData.user1(),
             onChannelClick = {},
-            onChannelLongClick = {}
+            onChannelLongClick = {},
         )
     }
 }

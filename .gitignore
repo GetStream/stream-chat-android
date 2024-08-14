@@ -19,6 +19,9 @@ library/.env
 # Java class files
 *.class
 
+# Kotlin class files
+/.kotlin
+
 # Generated files
 bin/
 gen/
@@ -98,6 +101,7 @@ lint/tmp/
 docusaurus/docs/Android/Dokka
 # Ignore Algolia credentials
 docusaurus/.env
+docusaurus/shared
 
 .sign/keystore.properties
 .sign/release.keystore

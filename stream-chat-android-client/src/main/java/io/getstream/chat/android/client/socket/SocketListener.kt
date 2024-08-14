@@ -17,14 +17,22 @@
 package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
+import io.getstream.result.Error
 
 /**
  * Listener which is invoked for WebSocket events.
  */
 public open class SocketListener {
+
+    /**
+     * The callbacks are by default delivered on the main thread. Changing this property to false will deliver
+     * the callbacks on their originating threads.
+     *
+     * Set to false for faster callback delivery on the original thread (no unnecessary context switching).
+     */
+    public open val deliverOnMainThread: Boolean = true
 
     /**
      * Invoked when the connection begins to establish and socket state changes to Connecting.
@@ -53,9 +61,9 @@ public open class SocketListener {
     /**
      * Invoked when there is any error in this web socket connection.
      *
-     * @param error [ChatError] object with the error details.
+     * @param error [Error] object with the error details.
      */
-    public open fun onError(error: ChatError) {
+    public open fun onError(error: Error) {
     }
 
     /**

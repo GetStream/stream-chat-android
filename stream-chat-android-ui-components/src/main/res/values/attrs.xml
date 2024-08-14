@@ -26,8 +26,9 @@
         <attr name="streamUiMessageListViewReactionsStyle" format="reference" />
         <attr name="streamUiSingleReactionViewStyle" format="reference" />
         <attr name="streamUiMessageListGiphyAttachmentStyle" format="reference" />
-        <attr name="streamUiMessageListImageAttachmentStyle" format="reference" />
+        <attr name="streamUiMessageListMediaAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListFileAttachmentStyle" format="reference" />
+        <attr name="streamUiMessageListUnsupportedAttachmentStyle" format="reference" />
         <attr name="streamUiMessageListItemAvatarStyle" format="reference" />
         <attr name="streamUiMessageListHeaderAvatarStyle" format="reference" />
         <attr name="streamUiChannelListItemAvatarStyle" format="reference" />
@@ -52,9 +53,8 @@
         <attr name="streamUiSuggestionListViewStyle" format="reference" />
         <attr name="streamUiSuggestionListViewMentionAvatarStyle" format="reference" />
         <attr name="streamUiTypingIndicatorView" format="reference" />
-        <attr name="streamUiMessageInputViewStyle" format="reference" />
         <attr name="streamUiPinnedMessageListStyle" format="reference" />
         <attr name="streamUiMessageComposerViewStyle" format="reference" />
-        <attr name="streamUiAttachmentsPickerDialogStyle" format="reference" />
+        <attr name="streamUiAudioRecordPlayerViewStyle" format="reference" />
     </declare-styleable>
 </resources>

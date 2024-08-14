@@ -23,9 +23,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.components.suggestions.SuggestionList
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.User
 
 /**
  * Represents the mention suggestion list popup.
@@ -50,12 +50,12 @@ public fun MentionSuggestionList(
     SuggestionList(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
+            .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight),
     ) {
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             items(
                 items = users,
-                key = User::id
+                key = User::id,
             ) { user ->
                 itemContent(user)
             }

@@ -23,12 +23,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel
-import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.input.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -68,12 +67,17 @@ class AddChannelFragment : Fragment() {
     }
 
     private fun initializeChannel(cid: String) {
-        val factory = MessageListViewModelFactory(cid)
+        val factory = MessageListViewModelFactory(requireContext(), cid)
         val messageListViewModel = factory.create(MessageListViewModel::class.java)
-        val messageInputViewModel = factory.create(MessageInputViewModel::class.java)
+        val messageComposerViewModel = factory.create(MessageComposerViewModel::class.java)
         binding.addChannelView.apply {
             messageListViewModel.bindView(messageListView, viewLifecycleOwner)
-            messageInputViewModel.bindView(messageInputView, viewLifecycleOwner)
+            messageComposerViewModel.bindView(messageComposerView, viewLifecycleOwner)
+
+            messageComposerView.sendMessageButtonClickListener = {
+                messageComposerViewModel.sendMessage()
+                addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
+            }
         }
     }
 
@@ -85,11 +89,12 @@ class AddChannelFragment : Fragment() {
                 when (state) {
                     is AddChannelViewModel.State.InitializeChannel -> initializeChannel(state.cid)
                     is AddChannelViewModel.State.NavigateToChannel -> findNavController().navigateSafely(
-                        AddChannelFragmentDirections.actionOpenChat(state.cid, null)
+                        AddChannelFragmentDirections.actionOpenChat(state.cid, null),
                     )
                     AddChannelViewModel.State.Loading,
                     is AddChannelViewModel.State.Result,
-                    is AddChannelViewModel.State.ResultMoreUsers -> Unit
+                    is AddChannelViewModel.State.ResultMoreUsers,
+                    -> Unit
                 }
             }
             errorEvents.observe(
@@ -98,7 +103,7 @@ class AddChannelFragment : Fragment() {
                     when (it) {
                         is AddChannelViewModel.ErrorEvent.CreateChannelError -> R.string.add_channel_error_create_channel
                     }.let(::showToast)
-                }
+                },
             )
         }
         binding.addChannelView.apply {
@@ -107,9 +112,6 @@ class AddChannelFragment : Fragment() {
             }
             setOnCreateGroupButtonListener {
                 findNavController().navigateSafely(R.id.action_addChannelFragment_to_addGroupChannelFragment)
-            }
-            messageInputView.setOnSendButtonClickListener {
-                addChannelViewModel.onEvent(AddChannelViewModel.Event.MessageSent)
             }
         }
     }

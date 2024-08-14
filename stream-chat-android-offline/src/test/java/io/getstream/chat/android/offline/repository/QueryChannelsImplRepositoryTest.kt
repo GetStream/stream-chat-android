@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.offline.repository
 
-import io.getstream.chat.android.client.api.models.ContainsFilterObject
-import io.getstream.chat.android.client.api.models.NeutralFilterObject
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Filters
 import io.getstream.chat.android.client.test.randomQueryChannelsSpec
+import io.getstream.chat.android.models.ContainsFilterObject
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.NeutralFilterObject
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.offline.randomQueryChannelsEntity
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.DatabaseQueryChannelsRepository
 import io.getstream.chat.android.offline.repository.domain.queryChannels.internal.QueryChannelsDao
@@ -60,13 +60,13 @@ internal class QueryChannelsImplRepositoryTest {
         sut.insertQueryChannels(
             randomQueryChannelsSpec(
                 cids = setOf("cid1", "cid2"),
-            )
+            ),
         )
 
         verify(dao).insert(
             argThat {
                 this.cids == listOf("cid1", "cid2")
-            }
+            },
         )
     }
 
@@ -76,7 +76,7 @@ internal class QueryChannelsImplRepositoryTest {
             id = "id1",
             filter = Filters.contains("cid", "cid1"),
             querySort = QuerySortByField(),
-            cids = listOf("cid1")
+            cids = listOf("cid1"),
         )
 
         val result = sut.selectBy(Filters.contains("cid", "cid1"), QuerySortByField())

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.ui.utils.extensions
 
-import io.getstream.chat.android.ui.message.list.reactions.user.SingleReactionViewStyle
-import io.getstream.chat.android.ui.message.list.reactions.view.ViewReactionsViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.reactions.user.SingleReactionViewStyle
+import io.getstream.chat.android.ui.feature.messages.list.reactions.view.ViewReactionsViewStyle
 
 /**
  * Converts [ViewReactionsViewStyle] to [SingleReactionViewStyle].
@@ -41,6 +41,6 @@ internal fun ViewReactionsViewStyle.toSingleReactionViewStyle(): SingleReactionV
         smallTailBubbleCy = smallTailBubbleCy,
         smallTailBubbleRadius = smallTailBubbleRadius,
         smallTailBubbleOffset = smallTailBubbleOffset,
-        reactionOrientation = messageOptionsUserReactionOrientation
+        reactionOrientation = messageOptionsUserReactionOrientation,
     )
 }

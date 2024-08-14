@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
 import io.getstream.chat.android.client.api.ErrorCall
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.CustomObject
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.CustomObject
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 
 /**
@@ -58,7 +58,7 @@ internal class ExtraDataValidator(
 
     override fun updateMessage(message: Message): Call<Message> {
         return delegate.updateMessage(
-            message = message
+            message = message,
         ).withExtraDataValidation(message.extraData)
     }
 
@@ -72,7 +72,7 @@ internal class ExtraDataValidator(
             messageId = messageId,
             set = set,
             unset = unset,
-            skipEnrichUrl = skipEnrichUrl
+            skipEnrichUrl = skipEnrichUrl,
         ).withExtraDataValidation(set)
     }
 
@@ -94,9 +94,9 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                ChatError(
-                    message = obj.composeErrorMessage(reserved)
-                )
+                Error.GenericError(
+                    message = obj.composeErrorMessage(reserved),
+                ),
             )
         }
     }
@@ -107,9 +107,9 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                ChatError(
-                    message = obj.composeErrorMessage(reserved)
-                )
+                Error.GenericError(
+                    message = obj.composeErrorMessage(reserved),
+                ),
             )
         }
     }
@@ -122,9 +122,9 @@ internal class ExtraDataValidator(
             true -> this
             else -> ErrorCall(
                 scope,
-                ChatError(
-                    message = "'extraData' contains reserved keys: ${reserved.joinToString()}"
-                )
+                Error.GenericError(
+                    message = "'extraData' contains reserved keys: ${reserved.joinToString()}",
+                ),
             )
         }
     }

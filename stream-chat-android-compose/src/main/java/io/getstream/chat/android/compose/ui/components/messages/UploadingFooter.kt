@@ -23,10 +23,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
 
 /**
  * A footer indicating the current upload progress - how many items have been uploaded and what the total number of
@@ -45,16 +45,18 @@ public fun UploadingFooter(
 
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.End
+        horizontalAlignment = Alignment.End,
     ) {
         OwnedMessageVisibilityContent(message = message)
 
         Text(
             text = stringResource(
-                id = R.string.stream_compose_upload_file_count, uploadedCount + 1, totalCount
+                id = R.string.stream_compose_upload_file_count,
+                uploadedCount + 1,
+                totalCount,
             ),
             style = ChatTheme.typography.body,
-            textAlign = TextAlign.End
+            textAlign = TextAlign.End,
         )
     }
 }

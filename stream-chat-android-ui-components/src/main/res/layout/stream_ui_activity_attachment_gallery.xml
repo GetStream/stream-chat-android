@@ -44,13 +44,13 @@
 
         <TextView
             android:id="@+id/userTextView"
+            style="?attr/streamUiAttachmentGalleryTitleStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/stream_ui_spacing_medium"
             android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
             android:gravity="center"
             android:textDirection="locale"
-            style="?attr/streamUiAttachmentGalleryTitleStyle"
             app:layout_constraintBottom_toTopOf="@id/attachmentDateTextView"
             app:layout_constraintEnd_toStartOf="@id/attachmentActionsButton"
             app:layout_constraintStart_toEndOf="@id/closeButton"
@@ -61,11 +61,11 @@
 
         <TextView
             android:id="@+id/attachmentDateTextView"
+            style="?attr/streamUiAttachmentGalleryDateStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:textDirection="locale"
-            style="?attr/streamUiAttachmentGalleryDateStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/attachmentActionsButton"
             app:layout_constraintStart_toEndOf="@id/closeButton"
@@ -76,9 +76,9 @@
 
         <ImageView
             android:id="@+id/attachmentActionsButton"
+            style="?attr/streamUiAttachmentGalleryActionsMenuStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?attr/streamUiAttachmentGalleryActionsMenuStyle"
             android:background="?selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -128,41 +128,76 @@
             app:layout_constraintTop_toTopOf="parent"
             />
 
-        <TextView
-            android:id="@+id/imageCountTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="?attr/streamUiAttachmentGalleryBottomBarImageCountStyle"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="1 of 4"
-            />
 
         <ImageView
-            android:id="@+id/shareImageButton"
+            android:id="@+id/shareMediaButton"
+            style="?attr/streamUiAttachmentGalleryBottomBarLeftIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="?attr/streamUiAttachmentGalleryBottomBarLeftIconStyle"
             android:background="?selectableItemBackgroundBorderless"
             android:padding="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/centerContent"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription"
             />
 
-        <ImageView
-            android:id="@+id/galleryOverviewButton"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/centerContent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/galleryOverviewButton"
+            app:layout_constraintStart_toEndOf="@id/shareMediaButton"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/mediaInformationTextView"
+                app:layout_constraintBottom_toBottomOf="@id/mediaInformationTextView"
+                app:layout_constraintEnd_toStartOf="@id/mediaInformationTextView"
+                android:background="?selectableItemBackgroundBorderless"
+                android:indeterminateDrawable="@drawable/stream_ui_rotating_indeterminate_progress_gradient"
+                android:indeterminateDuration="1000"
+                android:visibility="gone"
+                tools:ignore="ContentDescription"
+                />
+
+            <TextView
+                android:id="@+id/mediaInformationTextView"
+                style="?attr/streamUiAttachmentGalleryBottomBarImageCountStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/progressBar"
+                tools:text="1 of 4"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <ImageView
+            android:id="@+id/galleryOverviewButton"
             style="?attr/streamUiAttachmentGalleryBottomBarRightIconStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:background="?selectableItemBackgroundBorderless"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/centerContent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription"
+            android:padding="6dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,13 +1,13 @@
 package io.getstream.chat.android
 
 object Configuration {
-    const val compileSdk = 33
-    const val targetSdk = 32
-    const val sampleTargetSdk = 33
+    const val compileSdk = 34
+    const val targetSdk = 34
+    const val sampleTargetSdk = 34
     const val minSdk = 21
-    const val majorVersion = 5
-    const val minorVersion = 15
-    const val patchVersion = 0
+    const val majorVersion = 6
+    const val minorVersion = 4
+    const val patchVersion = 4
     const val versionName = "$majorVersion.$minorVersion.$patchVersion"
     const val snapshotVersionName = "$majorVersion.$minorVersion.${patchVersion + 1}-SNAPSHOT"
     const val artifactGroup = "io.getstream"

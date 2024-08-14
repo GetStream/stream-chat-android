@@ -17,6 +17,7 @@
 <resources>
     <string name="stream_ui_message_list_empty">No messages</string>
     <string name="stream_ui_message_list_download_started">Download started</string>
+    <string name="stream_ui_message_audio_reply_info">Voice Message</string>
 
     <!-- Message List Item -->
     <string name="stream_ui_message_list_giphy_title">Giphy</string>
@@ -39,12 +40,15 @@
         <item quantity="one">%d Reply</item>
         <item quantity="other">%d Replies</item>
     </plurals>
+    <string name="stream_ui_message_list_unread_separator">Unread Messages</string>
+    <string name="stream_ui_message_list_translated">Translated to %s</string>
 
     <!-- Message Actions Dialog -->
     <string name="stream_ui_message_list_reply">Reply</string>
     <string name="stream_ui_message_list_thread_reply">Thread reply</string>
     <string name="stream_ui_message_list_resend_message">Resend</string>
     <string name="stream_ui_message_list_copy_message">Copy Message</string>
+    <string name="stream_ui_message_list_mark_as_unread">Mark as Unread</string>
     <string name="stream_ui_message_list_edit_message">Edit Message</string>
     <string name="stream_ui_message_list_flag_message">Flag Message</string>
     <string name="stream_ui_message_list_pin_message">Pin to Conversation</string>
@@ -68,6 +72,10 @@
     <string name="stream_ui_message_list_flag_confirmation_positive_button">Flag</string>
     <string name="stream_ui_message_list_flag_confirmation_negative_button">Cancel</string>
 
+    <string name="stream_ui_message_list_footntoe_edited_label"> · Edited</string>
+    <string name="stream_ui_message_list_footntoe_edited_at">Edited %s</string>
+
+
     <!-- Attachment Viewer -->
     <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
@@ -80,6 +88,11 @@
     <string name="stream_ui_message_list_error_block_user">Failed to block user</string>
     <string name="stream_ui_message_list_error_flag_message">Failed to flag message</string>
     <string name="stream_ui_message_list_error_pin_message">Failed to pin message</string>
+    <string name="stream_ui_message_list_error_mark_as_unread_message">Failed to mark as unread message</string>
     <string name="stream_ui_message_list_error_unpin_message">Failed to unpin message</string>
     <string name="stream_ui_message_list_error_delete_message">Failed to delete message</string>
+    <string name="stream_ui_message_list_error_create_poll">Failed to create a poll</string>
+    <string name="stream_ui_message_list_error_close_poll">Failed to close a poll</string>
+    <string name="stream_ui_message_list_error_cast_vote">Failed to cast a vote</string>
+    <string name="stream_ui_message_list_error_remove_vote">Failed to remove a vote</string>
 </resources>

@@ -23,13 +23,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryDestination
-import io.getstream.chat.android.ui.gallery.AttachmentGalleryItem
+import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryDestination
+import io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryItem
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.showToast
 import io.getstream.chat.ui.sample.databinding.FragmentChatInfoSharedMediaBinding
@@ -43,7 +44,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
     private val factory: ChatInfoSharedAttachmentsViewModelFactory by lazy {
         ChatInfoSharedAttachmentsViewModelFactory(
             args.cid!!,
-            ChatInfoSharedAttachmentsViewModel.AttachmentsType.MEDIA
+            ChatInfoSharedAttachmentsViewModel.AttachmentsType.MEDIA,
         )
     }
     private val viewModel: ChatInfoSharedAttachmentsViewModel by viewModels { factory }
@@ -108,8 +109,8 @@ class ChatInfoSharedMediaFragment : Fragment() {
     }
 
     private fun bindViewModel() {
-        Transformations.switchMap(viewModel.state) { state ->
-            Transformations.map(ChatClient.instance().clientState.user.asLiveData()) { user ->
+        viewModel.state.switchMap { state ->
+            ChatClient.instance().clientState.user.asLiveData().map { user ->
                 user to state
             }
         }.observe(viewLifecycleOwner) { (user, state) ->
@@ -125,7 +126,7 @@ class ChatInfoSharedMediaFragment : Fragment() {
                                 createdAt = it.createdAt,
                                 messageId = it.message.id,
                                 cid = it.message.cid,
-                                isMine = it.message.user.id == user?.id
+                                isMine = it.message.user.id == user?.id,
                             )
                         } else {
                             null

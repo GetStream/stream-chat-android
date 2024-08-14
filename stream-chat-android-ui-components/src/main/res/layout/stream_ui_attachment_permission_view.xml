@@ -48,7 +48,7 @@
         android:textColor="@color/stream_ui_accent_blue"
         android:textAppearance="@style/StreamUiTextAppearance.BodyBold"
         android:textDirection="locale"
-        tools:text="@string/stream_ui_message_input_camera_access"
+        tools:text="@string/stream_ui_message_composer_camera_access"
         />
 
 </LinearLayout>

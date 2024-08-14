@@ -73,6 +73,8 @@
         <item quantity="other">%d Replies</item>
     </plurals>
     <string name="stream_compose_message_list_empty_messages">No messages</string>
+    <string name="stream_compose_message_list_unsupported_attachment">Unsupported attachment</string>
+    <string name="stream_compose_message_list_translated">Translated to %s</string>
 
     <!-- Selected Message Menu -->
     <string name="stream_compose_resend_message">Resend</string>
@@ -112,6 +114,7 @@
     <string name="stream_compose_attachments">Attachments</string>
     <string name="stream_compose_images_option">Images</string>
     <string name="stream_compose_files_option">Files</string>
+    <string name="stream_compose_poll_option">Poll</string>
     <string name="stream_compose_capture_option">Media capture</string>
     <string name="stream_compose_send_attachment">Send attachment</string>
     <string name="stream_compose_recent_files">Recent Files</string>

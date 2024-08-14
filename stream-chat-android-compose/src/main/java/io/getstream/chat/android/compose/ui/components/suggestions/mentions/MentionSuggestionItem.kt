@@ -35,10 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.User
 
 /**
  * Represents the mention suggestion item in the mention suggestion list popup.
@@ -72,15 +72,14 @@ public fun MentionSuggestionItem(
             .clickable(
                 onClick = { onMentionSelected(user) },
                 indication = rememberRipple(),
-                interactionSource = remember { MutableInteractionSource() }
+                interactionSource = remember { MutableInteractionSource() },
             )
             .padding(
                 vertical = ChatTheme.dimens.mentionSuggestionItemVerticalPadding,
-                horizontal = ChatTheme.dimens.mentionSuggestionItemHorizontalPadding
+                horizontal = ChatTheme.dimens.mentionSuggestionItemHorizontalPadding,
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-
         leadingContent(user)
 
         centerContent(user)
@@ -115,21 +114,21 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
     Column(
         modifier = Modifier
             .weight(1f)
-            .wrapContentHeight()
+            .wrapContentHeight(),
     ) {
         Text(
             text = user.name,
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Text(
             text = "@${user.id}",
             style = ChatTheme.typography.footnote,
             color = ChatTheme.colors.textLowEmphasis,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }
@@ -145,6 +144,6 @@ internal fun DefaultMentionSuggestionItemTrailingContent() {
             .size(24.dp),
         painter = painterResource(id = R.drawable.stream_compose_ic_mention),
         contentDescription = null,
-        tint = ChatTheme.colors.primaryAccent
+        tint = ChatTheme.colors.primaryAccent,
     )
 }

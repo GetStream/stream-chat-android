@@ -1,12 +1,7 @@
-public final class io/getstream/chat/android/markdown/MarkdownTextTransformer : io/getstream/chat/android/ui/transformer/ChatMessageTextTransformer {
+public final class io/getstream/chat/android/markdown/MarkdownTextTransformer : io/getstream/chat/android/ui/helper/transformer/ChatMessageTextTransformer {
 	public fun <init> (Landroid/content/Context;)V
-	public fun transformAndApply (Landroid/widget/TextView;Lcom/getstream/sdk/chat/adapter/MessageListItem$MessageItem;)V
-}
-
-public final class io/getstream/chat/android/ui/markdown/BuildConfig {
-	public static final field BUILD_TYPE Ljava/lang/String;
-	public static final field DEBUG Z
-	public static final field LIBRARY_PACKAGE_NAME Ljava/lang/String;
-	public fun <init> ()V
+	public fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Landroid/content/Context;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun transformAndApply (Landroid/widget/TextView;Lio/getstream/chat/android/ui/feature/messages/list/adapter/MessageListItem$MessageItem;)V
 }
 

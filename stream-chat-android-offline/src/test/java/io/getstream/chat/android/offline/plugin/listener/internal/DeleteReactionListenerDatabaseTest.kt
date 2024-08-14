@@ -16,24 +16,23 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.test.randomReaction
-import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.test.randomCID
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomCID
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -46,7 +45,9 @@ internal class DeleteReactionListenerDatabaseTest {
     private val messageRepository = mock<MessageRepository>()
 
     private val deleteReactionListenerDatabase = DeleteReactionListenerDatabase(
-        clientState, reactionRepository, messageRepository
+        clientState,
+        reactionRepository,
+        messageRepository,
     )
 
     @Test
@@ -57,13 +58,13 @@ internal class DeleteReactionListenerDatabaseTest {
             randomCID(),
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         verify(reactionRepository).insertReaction(
             argThat { reaction ->
                 reaction.deletedAt != null && reaction.syncStatus == SyncStatus.IN_PROGRESS
-            }
+            },
         )
 
         whenever(clientState.isNetworkAvailable) doReturn false
@@ -72,13 +73,13 @@ internal class DeleteReactionListenerDatabaseTest {
             randomCID(),
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         verify(reactionRepository).insertReaction(
             argThat { reaction ->
                 reaction.deletedAt != null && reaction.syncStatus == SyncStatus.SYNC_NEEDED
-            }
+            },
         )
     }
 
@@ -87,7 +88,7 @@ internal class DeleteReactionListenerDatabaseTest {
         val testUser = randomUser()
         val testReaction = randomReaction(
             user = testUser,
-            userId = testUser.id
+            userId = testUser.id,
         )
         val testMessage = randomMessage(
             latestReactions = mutableListOf(testReaction),
@@ -102,7 +103,7 @@ internal class DeleteReactionListenerDatabaseTest {
             cid = randomCID(),
             messageId = testMessage.id,
             reactionType = testReaction.type,
-            currentUser = testUser
+            currentUser = testUser,
         )
 
         verify(messageRepository).insertMessage(
@@ -111,7 +112,6 @@ internal class DeleteReactionListenerDatabaseTest {
                     message.ownReactions.isEmpty() &&
                     message.latestReactions.isEmpty()
             },
-            eq(false)
         )
     }
 
@@ -122,7 +122,7 @@ internal class DeleteReactionListenerDatabaseTest {
             val testReaction = randomReaction(
                 user = testUser,
                 userId = testUser.id,
-                syncStatus = SyncStatus.SYNC_NEEDED
+                syncStatus = SyncStatus.SYNC_NEEDED,
             )
             val testMessage = randomMessage(
                 latestReactions = mutableListOf(testReaction),
@@ -137,7 +137,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.success(testMessage)
+                Result.Success(testMessage),
             )
 
             verify(reactionRepository).insertReaction(
@@ -145,7 +145,7 @@ internal class DeleteReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId &&
                         reaction.userId == testReaction.userId &&
                         reaction.syncStatus == SyncStatus.COMPLETED
-                }
+                },
             )
         }
 
@@ -156,7 +156,7 @@ internal class DeleteReactionListenerDatabaseTest {
             val testReaction = randomReaction(
                 user = testUser,
                 userId = testUser.id,
-                syncStatus = SyncStatus.IN_PROGRESS
+                syncStatus = SyncStatus.IN_PROGRESS,
             )
             val testMessage = randomMessage(
                 latestReactions = mutableListOf(testReaction),
@@ -171,7 +171,7 @@ internal class DeleteReactionListenerDatabaseTest {
                 messageId = testMessage.id,
                 reactionType = testReaction.type,
                 currentUser = testUser,
-                Result.error(ChatError())
+                Result.Failure(Error.GenericError("")),
             )
 
             verify(reactionRepository).insertReaction(
@@ -179,7 +179,7 @@ internal class DeleteReactionListenerDatabaseTest {
                     reaction.messageId == testReaction.messageId &&
                         reaction.userId == testReaction.userId &&
                         reaction.syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
             )
         }
 }

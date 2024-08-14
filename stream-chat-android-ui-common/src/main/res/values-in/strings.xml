@@ -19,15 +19,15 @@
     <string name="stream_ui_yesterday">Kemarin</string>
 
     <!-- Media capture -->
-    <string name="stream_ui_message_input_capture_media">Ambil Gambar atau Video</string>
+    <string name="stream_ui_message_composer_capture_media">Ambil Gambar atau Video</string>
 
     <!-- Permissions -->
-    <string name="stream_ui_message_input_permission_camera_title">Izin Akses Kamera dan Penyimpanan</string>
-    <string name="stream_ui_message_input_permission_camera_message">Izin akses kamera dan penyimpanan diperlukan agar dapat mengambil foto dan video</string>
-    <string name="stream_ui_message_input_permission_storage_title">Izin Akses Penyimpanan</string>
-    <string name="stream_ui_message_input_permission_storage_message">Izin akses penyimpanan diperlukan agar dapat mengirim dan menyimpan foto, video, musik, dan file lainnya</string>
-    <string name="stream_ui_message_input_permission_setting_message">Aktifkan izin di Pengaturan Aplikasi</string>
-    <string name="stream_ui_message_input_permissions_setting_button">Pengaturan</string>
+    <string name="stream_ui_message_composer_permission_camera_title">Izin Akses Kamera dan Penyimpanan</string>
+    <string name="stream_ui_message_composer_permission_camera_message">Izin akses kamera dan penyimpanan diperlukan agar dapat mengambil foto dan video</string>
+    <string name="stream_ui_message_composer_permission_storage_title">Izin Akses Penyimpanan</string>
+    <string name="stream_ui_message_composer_permission_storage_message">Izin akses penyimpanan diperlukan agar dapat mengirim dan menyimpan foto, video, musik, dan file lainnya</string>
+    <string name="stream_ui_message_composer_permission_setting_message">Aktifkan izin di Pengaturan Aplikasi</string>
+    <string name="stream_ui_message_composer_permissions_setting_button">Pengaturan</string>
 
     <!--Attachment View-->
     <string name="stream_ui_message_list_attachment_load_failed">Data gagal dimuat karena kesalahan yang tidak diketahui.</string>

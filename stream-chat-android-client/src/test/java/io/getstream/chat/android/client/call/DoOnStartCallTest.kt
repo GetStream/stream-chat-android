@@ -17,9 +17,11 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.doOnStart
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
@@ -40,8 +42,8 @@ internal class DoOnStartCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    private val resultValue = Mother.randomString()
-    private val validResult: Result<String> = Result.success(resultValue)
+    private val resultValue = randomString()
+    private val validResult: Result<String> = Result.Success(resultValue)
     private val sideEffect = SpySideEffect()
 
     @Test
@@ -69,7 +71,7 @@ internal class DoOnStartCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         sideEffect.`should be invoked`()
         blockedCall.isStarted() `should be equal to` true

@@ -69,74 +69,74 @@ public data class StreamTypography(
                 fontSize = 24.sp,
                 lineHeight = 34.sp,
                 fontWeight = FontWeight.W500,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             title3 = TextStyle(
                 fontSize = 18.sp,
                 lineHeight = 25.sp,
                 fontWeight = FontWeight.W400,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             title3Bold = TextStyle(
                 fontSize = 18.sp,
                 lineHeight = 25.sp,
                 fontWeight = FontWeight.W500,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             body = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W400,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             bodyItalic = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W400,
                 fontStyle = FontStyle.Italic,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             bodyBold = TextStyle(
                 fontSize = 14.sp,
                 fontWeight = FontWeight.W500,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             footnote = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W400,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             footnoteItalic = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W400,
                 fontStyle = FontStyle.Italic,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             footnoteBold = TextStyle(
                 fontSize = 12.sp,
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.W500,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             captionBold = TextStyle(
                 fontSize = 10.sp,
                 lineHeight = 16.sp,
                 fontWeight = FontWeight.W700,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             tabBar = TextStyle(
                 fontSize = 10.sp,
                 fontWeight = FontWeight.W400,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             singleEmoji = TextStyle(
                 fontSize = 50.sp,
-                fontFamily = fontFamily
+                fontFamily = fontFamily,
             ),
             emojiOnly = TextStyle(
                 fontSize = 50.sp,
-                fontFamily = fontFamily
-            )
+                fontFamily = fontFamily,
+            ),
         )
     }
 }

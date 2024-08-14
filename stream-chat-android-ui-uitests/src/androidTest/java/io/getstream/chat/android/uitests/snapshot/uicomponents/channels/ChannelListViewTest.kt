@@ -18,11 +18,11 @@ package io.getstream.chat.android.uitests.snapshot.uicomponents.channels
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
-import com.getstream.sdk.chat.coil.StreamCoil
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.channel.list.ChannelListView
-import io.getstream.chat.android.ui.channel.list.adapter.ChannelListItem
+import io.getstream.chat.android.ui.common.images.internal.StreamCoil
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView
+import io.getstream.chat.android.ui.feature.channels.list.adapter.ChannelListItem
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Before
@@ -44,55 +44,59 @@ class ChannelListViewTest : ScreenshotTest {
             setChannels(
                 listOf(
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message1()
-                            )
-                            lastMessageAt = TestData.date1()
-                        }
+                                TestData.message1(),
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message2()
-                            )
-                            lastMessageAt = TestData.date2()
-                        }
+                                TestData.message2(),
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message3()
-                            )
-                            lastMessageAt = TestData.date3()
-                        }
+                                TestData.message3(),
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message4()
-                            )
-                            lastMessageAt = TestData.date4()
-                        }
+                                TestData.message4(),
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.LoadingMoreItem,
-                )
+                ),
             )
         }
     }
@@ -110,58 +114,60 @@ class ChannelListViewTest : ScreenshotTest {
             setChannels(
                 listOf(
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel1().apply {
+                        channel = TestData.channel1().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member2(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message1()
-                            )
-                            lastMessageAt = TestData.date1()
-                        }
+                                TestData.message1(),
+                            ),
+                            lastMessageAt = TestData.date1(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel2().apply {
+                        channel = TestData.channel2().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member3(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message2()
-                            )
-                            lastMessageAt = TestData.date2()
-                        }
+                                TestData.message2(),
+                            ),
+                            lastMessageAt = TestData.date2(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel3().apply {
+                        channel = TestData.channel3().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member4(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message3()
-                            )
-                            lastMessageAt = TestData.date3()
-                        }
+                                TestData.message3(),
+                            ),
+                            lastMessageAt = TestData.date3(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.ChannelItem(
-                        channel = TestData.channel4().apply {
+                        channel = TestData.channel4().copy(
                             members = listOf(
                                 TestData.member1(),
                                 TestData.member5(),
-                            )
+                            ),
                             messages = listOf(
-                                TestData.message4()
-                            )
-                            lastMessageAt = TestData.date4()
-                        }
+                                TestData.message4(),
+                            ),
+                            lastMessageAt = TestData.date4(),
+                        ),
+                        emptyList(),
                     ),
                     ChannelListItem.LoadingMoreItem,
-                )
+                ),
             )
-            @Suppress("DEPRECATION_ERROR")
-            showLoadingMore()
         }
     }
 

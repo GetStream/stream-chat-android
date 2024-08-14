@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
 
 /** Updates a collection of users by more fresh value of [users]. */
 @InternalStreamChatApi

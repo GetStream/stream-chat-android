@@ -19,17 +19,17 @@ package io.getstream.chat.ui.sample.feature.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
+import androidx.lifecycle.distinctUntilChanged
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.globalState
-import io.getstream.chat.android.offline.plugin.state.global.GlobalState
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel.PaginationState
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.state.extensions.globalState
+import io.getstream.chat.android.state.plugin.state.global.GlobalState
+import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel.PaginationState
 import io.getstream.chat.ui.sample.application.App
 import kotlinx.coroutines.launch
 
@@ -60,7 +60,7 @@ class HomeViewModel(
     /**
      * The home screen state wrapped in LiveData.
      */
-    val state: LiveData<UiState> = Transformations.distinctUntilChanged(_state)
+    val state: LiveData<UiState> = _state.distinctUntilChanged()
 
     /**
      * Emits one-shot events that should be handled only once.

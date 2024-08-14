@@ -29,7 +29,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
 ): Disposable {
     return this.subscribeFor(
         T::class.java,
-        listener = { event -> listener.onEvent(event as T) }
+        listener = { event -> listener.onEvent(event as T) },
     )
 }
 
@@ -45,7 +45,7 @@ public inline fun <reified T : ChatEvent> ChatClient.subscribeFor(
     return this.subscribeFor(
         lifecycleOwner,
         T::class.java,
-        listener = { event -> listener.onEvent(event as T) }
+        listener = { event -> listener.onEvent(event as T) },
     )
 }
 

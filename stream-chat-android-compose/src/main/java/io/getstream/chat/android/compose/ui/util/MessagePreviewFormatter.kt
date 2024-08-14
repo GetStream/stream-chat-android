@@ -21,11 +21,15 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.utils.message.isPoll
+import io.getstream.chat.android.client.utils.message.isPollClosed
+import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 /**
  * An interface that allows to generate a preview text for the given message.
@@ -46,21 +50,26 @@ public fun interface MessagePreviewFormatter {
          * Builds the default message preview text formatter.
          *
          * @param context The context to load string resources.
+         * @param autoTranslationEnabled Whether the auto-translation is enabled.
+         * @param typography The typography to use for styling.
+         * @param attachmentFactories The list of [AttachmentFactory] to use for formatting attachments.
          * @return The default implementation of [MessagePreviewFormatter].
          *
          * @see [DefaultMessagePreviewFormatter]
          */
         public fun defaultFormatter(
             context: Context,
+            autoTranslationEnabled: Boolean,
             typography: StreamTypography,
             attachmentFactories: List<AttachmentFactory>,
         ): MessagePreviewFormatter {
             return DefaultMessagePreviewFormatter(
                 context = context,
+                autoTranslationEnabled = autoTranslationEnabled,
                 messageTextStyle = typography.bodyBold,
                 senderNameTextStyle = typography.bodyBold,
                 attachmentTextFontStyle = typography.bodyItalic,
-                attachmentFactories = attachmentFactories
+                attachmentFactories = attachmentFactories,
             )
         }
     }
@@ -74,6 +83,7 @@ public fun interface MessagePreviewFormatter {
  */
 private class DefaultMessagePreviewFormatter(
     private val context: Context,
+    private val autoTranslationEnabled: Boolean,
     private val messageTextStyle: TextStyle,
     private val senderNameTextStyle: TextStyle,
     private val attachmentTextFontStyle: TextStyle,
@@ -91,26 +101,54 @@ private class DefaultMessagePreviewFormatter(
         message: Message,
         currentUser: User?,
     ): AnnotatedString {
+        val getTranslatedText: (Message, User?) -> String = { message, currentUser ->
+            when (autoTranslationEnabled) {
+                true -> currentUser?.language?.let { message.getTranslation(it) } ?: message.text
+                else -> message.text
+            }
+        }
         return buildAnnotatedString {
             message.let { message ->
-                val messageText = message.text.trim()
+                val translatedText = getTranslatedText(message, currentUser)
+
+                val userLanguage = currentUser?.language.orEmpty()
+                val displayedText = when (autoTranslationEnabled) {
+                    true -> message.getTranslation(userLanguage).ifEmpty { message.text }
+                    else -> message.text
+                }.trim()
 
                 if (message.isSystem()) {
-                    append(messageText)
+                    append(displayedText)
+                } else if (message.isPoll()) {
+                    if (message.isPollClosed()) {
+                        append(
+                            context.getString(
+                                R.string.stream_compose_poll_closed_preview,
+                                message.poll?.name.orEmpty(),
+                            ),
+                        )
+                    } else {
+                        append(
+                            context.getString(
+                                R.string.stream_compose_poll_created_preview,
+                                message.poll?.name.orEmpty(),
+                            ),
+                        )
+                    }
                 } else {
                     appendSenderName(
                         message = message,
                         currentUser = currentUser,
-                        senderNameTextStyle = senderNameTextStyle
+                        senderNameTextStyle = senderNameTextStyle,
                     )
                     appendMessageText(
-                        messageText = messageText,
-                        messageTextStyle = messageTextStyle
+                        messageText = displayedText,
+                        messageTextStyle = messageTextStyle,
                     )
                     appendAttachmentText(
                         attachments = message.attachments,
                         attachmentFactories = attachmentFactories,
-                        attachmentTextStyle = attachmentTextFontStyle
+                        attachmentTextStyle = attachmentTextFontStyle,
                     )
                 }
             }
@@ -134,10 +172,10 @@ private class DefaultMessagePreviewFormatter(
                 SpanStyle(
                     fontStyle = senderNameTextStyle.fontStyle,
                     fontWeight = senderNameTextStyle.fontWeight,
-                    fontFamily = senderNameTextStyle.fontFamily
+                    fontFamily = senderNameTextStyle.fontFamily,
                 ),
                 start = 0,
-                end = sender.length
+                end = sender.length,
             )
         }
     }
@@ -156,10 +194,10 @@ private class DefaultMessagePreviewFormatter(
             addStyle(
                 SpanStyle(
                     fontStyle = messageTextStyle.fontStyle,
-                    fontFamily = messageTextStyle.fontFamily
+                    fontFamily = messageTextStyle.fontFamily,
                 ),
                 start = startIndex,
-                end = startIndex + messageText.length
+                end = startIndex + messageText.length,
             )
         }
     }
@@ -190,10 +228,10 @@ private class DefaultMessagePreviewFormatter(
                     addStyle(
                         SpanStyle(
                             fontStyle = attachmentTextStyle.fontStyle,
-                            fontFamily = attachmentTextStyle.fontFamily
+                            fontFamily = attachmentTextStyle.fontFamily,
                         ),
                         start = startIndex,
-                        end = startIndex + attachmentText.length
+                        end = startIndex + attachmentText.length,
                     )
                 }
         }

@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.client.utils
 
+import io.getstream.result.Result
+import io.getstream.result.onSuccessSuspend
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
@@ -29,7 +31,7 @@ internal class ResultTests {
         val action = mock<Action>()
         val suspendAction = mock<SuspendAction>()
 
-        Result.success("123")
+        Result.Success("123")
             .onSuccess { string -> action.doAction(string) }
             .onSuccessSuspend { string -> suspendAction.doAction(string) }
 

@@ -17,15 +17,15 @@
 package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import io.getstream.chat.android.test.asCall
+import io.getstream.result.Result
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -64,13 +64,12 @@ internal class ExtraDataValidatorTests {
             channelId = channelId,
             channelType = channelType,
             extraData = extraData,
-            updateMessage = updateMessage
+            updateMessage = updateMessage,
         ).await()
 
         /* Then */
-        println("[testUpdateChannel] error.message: \"${result.error().message}\"")
-        result.isSuccess.shouldBeFalse()
-        result.error().message?.contains("id") `should be equal to` true
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message?.contains("id") `should be equal to` true
     }
 
     @Test
@@ -89,13 +88,12 @@ internal class ExtraDataValidatorTests {
             channelId = channelId,
             channelType = channelType,
             set = set,
-            unset = unset
+            unset = unset,
         ).await()
 
         /* Then */
-        println("[testUpdateChannelPartial] error.message: \"${result.error().message}\"")
-        result.isSuccess.shouldBeFalse()
-        result.error().message?.contains("type") `should be equal to` true
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message?.contains("type") `should be equal to` true
     }
 
     @Test
@@ -111,9 +109,8 @@ internal class ExtraDataValidatorTests {
         val result: Result<Message> = validator.updateMessage(message).await()
 
         /* Then */
-        println("[testUpdateMessage] error.message: \"${result.error().message}\"")
-        result.isSuccess.shouldBeFalse()
-        result.error().message?.contains("cid") `should be equal to` true
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message?.contains("cid") `should be equal to` true
     }
 
     @Test
@@ -130,9 +127,8 @@ internal class ExtraDataValidatorTests {
         val result: Result<Message> = validator.partialUpdateMessage(messageId, set, unset).await()
 
         /* Then */
-        println("[testPartialUpdateMessage] error.message: \"${result.error().message}\"")
-        result.isSuccess.shouldBeFalse()
-        result.error().message?.contains("created_at") `should be equal to` true
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message?.contains("created_at") `should be equal to` true
     }
 
     @Test
@@ -142,7 +138,7 @@ internal class ExtraDataValidatorTests {
         val users = listOf(user)
         val extraData: MutableMap<String, Any> = mutableMapOf(
             "cid" to "another-cid",
-            "updated_at" to "another-date"
+            "updated_at" to "another-date",
         )
         whenever(user.extraData) doReturn extraData
         whenever(chatApi.updateUsers(users)) doReturn users.asCall()
@@ -151,10 +147,9 @@ internal class ExtraDataValidatorTests {
         val result: Result<List<User>> = validator.updateUsers(users).await()
 
         /* Then */
-        println("[testUpdateUsers] error.message: \"${result.error().message}\"")
-        result.isSuccess.shouldBeFalse()
-        result.error().message?.contains("cid") `should be equal to` true
-        result.error().message?.contains("updated_at") `should be equal to` true
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message?.contains("cid") `should be equal to` true
+        result.value.message?.contains("updated_at") `should be equal to` true
     }
 
     @Test
@@ -164,7 +159,7 @@ internal class ExtraDataValidatorTests {
         val user: User = mock()
         val set: MutableMap<String, Any> = mutableMapOf(
             "updated_at" to "another-date",
-            "created_at" to "another-date"
+            "created_at" to "another-date",
         )
         val unset = emptyList<String>()
         whenever(chatApi.partialUpdateUser(userId, set, unset)) doReturn user.asCall()
@@ -173,10 +168,9 @@ internal class ExtraDataValidatorTests {
         val result: Result<User> = validator.partialUpdateUser(userId, set, unset).await()
 
         /* Then */
-        println("[testPartialUpdateUser] error.message: \"${result.error().message}\"")
-        result.isSuccess.shouldBeFalse()
-        result.error().message?.contains("updated_at") `should be equal to` true
-        result.error().message?.contains("created_at") `should be equal to` true
-        println(result.error().message)
+        result.shouldBeInstanceOf(Result.Failure::class)
+        (result as Result.Failure).value.message?.contains("updated_at") `should be equal to` true
+        result.value.message?.contains("created_at") `should be equal to` true
+        println(result.value.message)
     }
 }

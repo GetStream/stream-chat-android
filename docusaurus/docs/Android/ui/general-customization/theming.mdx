@@ -1,0 +1,194 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Theming
+
+Many aspects of the UI components can be changed and customized. For example, it's possible to change:
+
+- Font family
+- Text color
+- Background of views
+- Item views in lists
+- Enable and disable features
+- Text style (italic, bold, normal)
+- Drawable of icons
+- Stroke widths
+- Divider color
+
+:::note
+It is not possible to change the tint of icons. Use colored drawables instead.
+:::
+
+These customizations can be applied in multiple ways. From simplest to most complex, these are:
+
+- Adding attributes to the View in the XML layout where it's created.
+- Using the `TransformStyle` object to apply transformations to all style objects of a given type.
+- Using themes to style all Views globally.
+
+:::caution
+Be careful when using multiple theming approaches. Themes are applied first, then XML attributes, then style transformations. Values applied later will override previously set values.
+:::
+
+## XML Attributes
+
+The simplest way to customize Views is by setting attributes on them in the XML layout. For example, here are some custom values you can set on `MessageListView`.
+
+```xml
+<io.getstream.chat.android.ui.feature.messages.list.MessageListView
+    android:id="@+id/messageListView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:streamUiMessageBackgroundColorMine="#0277BD"
+    app:streamUiMessageBackgroundColorTheirs="#2E7D32"
+    app:streamUiMessageTextColorMine="@android:color/white"
+    app:streamUiMessageTextColorTheirs="@android:color/white" />
+```
+
+This will have the following result:
+
+| ![Custom messages](../../assets/custom_messages.png) |
+|------------------------------------------------------|
+
+You can find the full list of available attributes for each view linked on their individual component pages, or in the `attrs_view_name` files [here](https://github.com/GetStream/stream-chat-android/tree/main/stream-chat-android-ui-components/src/main/res/values).
+
+## Style Transformations
+
+Styles can be configured programmatically by overriding the corresponding `StyleTransformer` from the `TransformStyle` object. These transformations will be applied to all UI Components of the given type.
+
+:::caution
+You have to set up any custom `StyleTransformer` instances *before* the View instances are initialized, otherwise they won't take effect.
+:::
+
+Here's an example using `TransformStyle` to change multiple appearance characteristics of all `MessageListView` instances:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultViewStyle ->
+    defaultViewStyle.copy(
+        messageBackgroundColorMine = Color.parseColor("#0277BD"),
+        messageBackgroundColorTheirs = Color.parseColor("#2E7D32"),
+        textStyleMine = defaultViewStyle.textStyleMine.copy(color = Color.WHITE),
+        textStyleTheirs = defaultViewStyle.textStyleTheirs.copy(color = Color.WHITE),
+    )
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+TransformStyle.setMessageListItemStyleTransformer(source -> {
+    // Customize the style
+    return source;
+});
+```
+</TabItem>
+</Tabs>
+
+This will have the following result:
+
+| ![Custom messages](../../assets/custom_messages.png) |
+|------------------------------------------------------|
+
+This is the same as the XML customization shown above, but applied to all `MessageListView` instances in the app, and configured programmatically.
+
+## Themes
+
+You can also use Android themes to set attributes for the UI Components. To do this, set a `streamUiTheme` attribute within your app's theme, in the `themes.xml` file:
+
+```xml
+<style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <!-- Other items... -->
+    <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
+</style>
+```
+The theme you pass in as the `streamUiTheme` can then define a style for each type of UI Component where you can set attribute values.
+
+For example, you can achieve the same styling like in the examples above by overriding the `streamUiMessageListStyle` attribute:
+
+```xml
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiMessageListStyle">@style/CustomMessageListStyle</item>
+</style>
+
+<style name="CustomMessageListStyle" parent="StreamUi.MessageList">
+    <item name="streamUiMessageBackgroundColorMine">#0277BD</item>
+    <item name="streamUiMessageBackgroundColorTheirs">#2E7D32</item>
+    <item name="streamUiMessageTextColorMine">@android:color/white</item>
+    <item name="streamUiMessageTextColorTheirs">@android:color/white</item>
+</style>
+```
+
+:::note
+The list of available styles you can define here is available here in our [`attrs` file](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-ui-components/src/main/res/values/attrs.xml).
+:::
+
+## Themes for Activities
+
+SDK contains the following activities: `AttachmentMediaActivity`, `AttachmentActivity` and `AttachmentGalleryActivity`. You can customize them by overriding the activity with a custom `theme` in your manifest.
+
+Let's see how to change the color of the title on the gallery screen:
+
+**AndroidManifest.xml**
+
+```xml
+<activity
+    android:name="io.getstream.chat.android.ui.feature.gallery.AttachmentGalleryActivity"
+    android:theme="@style/CustomAttachmentGalleryTheme"
+    tools:replace="android:theme" />
+```
+
+**themes.xml**
+
+```xml
+<style name="CustomAttachmentGalleryTheme" parent="StreamUi.AttachmentGallery">
+    <item name="streamUiTheme">@style/CustomStreamUiTheme</item>
+</style>
+
+<style name="CustomStreamUiTheme" parent="@style/StreamUiTheme">
+    <item name="streamUiAttachmentGalleryTitleStyle">@style/CustomAttachmentGalleryTitleStyle</item>
+</style>
+
+<style name="CustomAttachmentGalleryTitleStyle">
+    <item name="android:textAppearance">@style/CustomAttachmentGalleryTitleTextAppearance</item>
+</style>
+
+<style name="CustomAttachmentGalleryTitleTextAppearance" parent="StreamUiTextAppearance.HeadlineBold">
+    <item name="android:textColor">#FF0000</item>
+</style>
+```
+
+This will produce the UI below:
+
+| ![Custom activity theme](../../assets/custom_activity_theme.png) |
+|------------------------------------------------------------------|
+
+## Choose Light/Dark Theme
+
+Our SDK already provides a DayNight theme. If you want to force Dark or Light mode, you need to follow the default Android mechanism to use it:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// Force Dark theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+
+// Force Light theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Force Dark theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+
+// Force Light theme
+AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+```
+</TabItem>
+</Tabs>

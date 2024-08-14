@@ -16,20 +16,17 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.client.extensions.enrichWithCid
 import io.getstream.chat.android.client.extensions.internal.users
-import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.client.utils.internal.toMessageSyncDescription
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.log.StreamLog
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 private const val TAG = "Chat:SendMessageHandlerDB"
@@ -60,10 +57,9 @@ internal class SendMessageListenerDatabase(
         val cid = "$channelType:$channelId"
         if (messageRepository.selectMessage(message.id)?.syncStatus == SyncStatus.COMPLETED) return
 
-        if (result.isSuccess) {
-            handleSendMessageSuccess(cid, result.data())
-        } else {
-            handleSendMessageFail(message, result.error())
+        when (result) {
+            is Result.Success -> handleSendMessageSuccess(cid, result.value)
+            is Result.Failure -> handleSendMessageFailure(message, result.value)
         }
     }
 
@@ -72,28 +68,19 @@ internal class SendMessageListenerDatabase(
         processedMessage: Message,
     ) {
         processedMessage.enrichWithCid(cid)
-            .copy(
-                syncStatus = SyncStatus.COMPLETED,
-                syncDescription = null
-            )
+            .copy(syncStatus = SyncStatus.COMPLETED)
             .also { message ->
                 userRepository.insertUsers(message.users())
-                messageRepository.insertMessage(message, cache = false)
+                messageRepository.insertMessage(message)
             }
     }
 
-    private suspend fun handleSendMessageFail(
+    private suspend fun handleSendMessageFailure(
         message: Message,
-        error: ChatError,
+        error: Error,
     ) {
         val isPermanentError = error.isPermanent()
-        val isMessageModerationFailed = error is ChatNetworkError &&
-            error.streamCode == ChatErrorCode.MESSAGE_MODERATION_FAILED.code
-
-        StreamLog.w(TAG) {
-            "[handleSendMessageFail] isPermanentError: $isPermanentError" +
-                ", isMessageModerationFailed: $isMessageModerationFailed"
-        }
+        StreamLog.w(TAG) { "[handleSendMessageFailure] isPermanentError: $isPermanentError" }
 
         message.copy(
             syncStatus = if (isPermanentError) {
@@ -101,11 +88,10 @@ internal class SendMessageListenerDatabase(
             } else {
                 SyncStatus.SYNC_NEEDED
             },
-            syncDescription = error.toMessageSyncDescription(),
             updatedLocallyAt = Date(),
         ).also { parsedMessage ->
             userRepository.insertUsers(parsedMessage.users())
-            messageRepository.insertMessage(parsedMessage, cache = false)
+            messageRepository.insertMessage(parsedMessage)
         }
     }
 }

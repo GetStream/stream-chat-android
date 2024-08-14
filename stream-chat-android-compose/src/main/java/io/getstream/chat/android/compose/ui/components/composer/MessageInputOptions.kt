@@ -31,10 +31,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.Reply
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.Reply
 
 /**
  * Shows the options "header" for the message input component. This is based on the currently active
@@ -52,16 +52,20 @@ public fun MessageInputOptions(
 ) {
     val optionImage =
         painterResource(
-            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit
+            id = if (activeAction is Reply) R.drawable.stream_compose_ic_reply else R.drawable.stream_compose_ic_edit,
         )
     val title = stringResource(
-        id = if (activeAction is Reply) R.string.stream_compose_reply_to_message
-        else R.string.stream_compose_edit_message
+        id = if (activeAction is Reply) {
+            R.string.stream_compose_reply_to_message
+        } else {
+            R.string.stream_compose_edit_message
+        },
     )
 
     Row(
-        modifier, verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        modifier,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Icon(
             modifier = Modifier.padding(4.dp),
@@ -82,7 +86,7 @@ public fun MessageInputOptions(
                 .clickable(
                     onClick = onCancelAction,
                     indication = rememberRipple(bounded = false),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 ),
             painter = painterResource(id = R.drawable.stream_compose_ic_close),
             contentDescription = stringResource(id = R.string.stream_compose_cancel),

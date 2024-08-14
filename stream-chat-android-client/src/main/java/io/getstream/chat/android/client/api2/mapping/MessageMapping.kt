@@ -18,12 +18,12 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
-import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.UserId
+import java.util.Date
 
 internal fun Message.toDto(): UpstreamMessageDto =
     UpstreamMessageDto(
@@ -47,7 +47,7 @@ internal fun Message.toDto(): UpstreamMessageDto =
         extraData = extraData,
     )
 
-internal fun DownstreamMessageDto.toDomain(): Message =
+internal fun DownstreamMessageDto.toDomain(currentUserId: UserId?): Message =
     Message(
         attachments = attachments.mapTo(mutableListOf(), AttachmentDto::toDomain),
         channelInfo = channel?.toDomain(),
@@ -58,26 +58,36 @@ internal fun DownstreamMessageDto.toDomain(): Message =
         html = html,
         i18n = i18n,
         id = id,
-        latestReactions = latest_reactions.mapTo(mutableListOf(), DownstreamReactionDto::toDomain),
-        mentionedUsers = mentioned_users.mapTo(mutableListOf(), DownstreamUserDto::toDomain),
-        ownReactions = own_reactions.mapTo(mutableListOf(), DownstreamReactionDto::toDomain),
+        latestReactions = latest_reactions.mapTo(mutableListOf()) { it.toDomain(currentUserId) },
+        mentionedUsers = mentioned_users.mapTo(mutableListOf()) { it.toDomain(currentUserId) },
+        ownReactions = own_reactions.mapTo(mutableListOf()) { it.toDomain(currentUserId) },
         parentId = parent_id,
         pinExpires = pin_expires,
         pinned = pinned,
         pinnedAt = pinned_at,
-        pinnedBy = pinned_by?.toDomain(),
+        pinnedBy = pinned_by?.toDomain(currentUserId),
         reactionCounts = reaction_counts.orEmpty().toMutableMap(),
         reactionScores = reaction_scores.orEmpty().toMutableMap(),
+        reactionGroups = reaction_groups.orEmpty().mapValues { it.value.toDomain(it.key) },
         replyCount = reply_count,
+        deletedReplyCount = deleted_reply_count,
         replyMessageId = quoted_message_id,
-        replyTo = quoted_message?.toDomain(),
+        replyTo = quoted_message?.toDomain(currentUserId),
         shadowed = shadowed,
         showInChannel = show_in_channel,
         silent = silent,
         text = text,
-        threadParticipants = thread_participants.map(DownstreamUserDto::toDomain),
+        threadParticipants = thread_participants.map { it.toDomain(currentUserId) },
         type = type,
-        updatedAt = updated_at,
-        user = user.toDomain(),
+        updatedAt = lastUpdateTime(),
+        user = user.toDomain(currentUserId),
+        moderationDetails = moderation_details?.toDomain(),
+        messageTextUpdatedAt = message_text_updated_at,
+        poll = poll?.toDomain(currentUserId),
         extraData = extraData.toMutableMap(),
     )
+
+private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
+    updated_at,
+    poll?.updated_at,
+).maxBy { it.time }

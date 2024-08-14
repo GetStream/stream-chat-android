@@ -18,10 +18,10 @@ package io.getstream.chat.android.offline.repository.database.converter.internal
 
 import androidx.room.TypeConverter
 import com.squareup.moshi.adapter
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
-import io.getstream.chat.android.client.api.models.querysort.SortDirection
-import io.getstream.chat.android.client.models.Channel
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.models.querysort.SortDirection
 
 internal class QuerySortConverter {
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@
   <string name="stream_ui_attachment_gallery_date">"Envoyé %1$s à %2$s"</string>
   <string name="stream_ui_attachment_gallery_delete">"Supprimer"</string>
   <string name="stream_ui_attachment_gallery_reply">"Réponse"</string>
-  <string name="stream_ui_attachment_gallery_save_image">"Sauvegarder l\'image"</string>
   <string name="stream_ui_attachment_gallery_share">"Partager l\'image"</string>
   <string name="stream_ui_attachment_gallery_show_in_chat">"Montrer dans le Chat"</string>
 </resources>

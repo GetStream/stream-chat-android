@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.offline.repository.domain.channel.member.internal
 
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 
 internal fun Member.toEntity(): MemberEntity = MemberEntity(
     userId = getUserId(),
@@ -29,6 +29,9 @@ internal fun Member.toEntity(): MemberEntity = MemberEntity(
     shadowBanned = shadowBanned,
     banned = banned,
     channelRole = channelRole,
+    notificationsMuted = notificationsMuted,
+    status = status,
+    banExpires = banExpires,
 )
 
 internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> User): Member = Member(
@@ -41,4 +44,7 @@ internal suspend fun MemberEntity.toModel(getUser: suspend (userId: String) -> U
     shadowBanned = shadowBanned,
     banned = banned,
     channelRole = channelRole,
+    notificationsMuted = notificationsMuted,
+    status = status,
+    banExpires = banExpires,
 )

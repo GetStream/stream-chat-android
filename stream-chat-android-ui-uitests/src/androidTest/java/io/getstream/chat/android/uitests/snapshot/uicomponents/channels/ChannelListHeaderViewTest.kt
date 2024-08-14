@@ -18,10 +18,10 @@ package io.getstream.chat.android.uitests.snapshot.uicomponents.channels
 
 import android.content.Context
 import androidx.test.platform.app.InstrumentationRegistry
-import com.getstream.sdk.chat.coil.StreamCoil
 import com.karumi.shot.ScreenshotTest
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView
+import io.getstream.chat.android.ui.common.images.internal.StreamCoil
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView
 import io.getstream.chat.android.uitests.util.FakeImageLoader
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Before

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.components
 
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test
@@ -35,7 +35,7 @@ class MessageReadStatusIconTest : ComposeScreenshotTest() {
     @Test
     fun messageReadStatusIconForSentMessage() = runScreenshotTest {
         MessageReadStatusIcon(
-            message = TestData.message1().apply { syncStatus = SyncStatus.COMPLETED },
+            message = TestData.message1().copy(syncStatus = SyncStatus.COMPLETED),
             isMessageRead = false,
         )
     }
@@ -43,7 +43,7 @@ class MessageReadStatusIconTest : ComposeScreenshotTest() {
     @Test
     fun messageReadStatusIconForSyncNeededMessage() = runScreenshotTest {
         MessageReadStatusIcon(
-            message = TestData.message1().apply { syncStatus = SyncStatus.SYNC_NEEDED },
+            message = TestData.message1().copy(syncStatus = SyncStatus.SYNC_NEEDED),
             isMessageRead = false,
         )
     }

@@ -17,10 +17,10 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.events.ChatEvent
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.EventType
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 /**
@@ -38,7 +38,7 @@ public interface TypingEventListener {
      * @param extraData Any extra data such as parent id.
      * @param eventTime [Date] object as the time of this event.
      *
-     * @return [Result] having [Unit] if precondition passes otherwise [ChatError] describing what went wrong.
+     * @return [Result] having [Unit] if precondition passes otherwise [Error] describing what went wrong.
      */
     public fun onTypingEventPrecondition(
         eventType: String,

@@ -63,7 +63,7 @@ public fun SimpleDialog(
         confirmButton = {
             TextButton(
                 colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-                onClick = { onPositiveAction() }
+                onClick = { onPositiveAction() },
             ) {
                 Text(text = stringResource(id = R.string.stream_compose_ok))
             }
@@ -71,7 +71,7 @@ public fun SimpleDialog(
         dismissButton = {
             TextButton(
                 colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-                onClick = onDismiss
+                onClick = onDismiss,
             ) {
                 Text(text = stringResource(id = R.string.stream_compose_cancel))
             }

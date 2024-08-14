@@ -44,7 +44,6 @@ public fun UnreadCountIndicator(
     modifier: Modifier = Modifier,
     color: Color = ChatTheme.colors.errorAccent,
 ) {
-
     val displayText = if (unreadCount > LimitTooManyUnreadCount) UnreadCountMany else unreadCount.toString()
     val shape = RoundedCornerShape(9.dp)
 
@@ -53,13 +52,13 @@ public fun UnreadCountIndicator(
             .defaultMinSize(minWidth = 18.dp, minHeight = 18.dp)
             .background(shape = shape, color = color)
             .padding(horizontal = 4.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = displayText,
             color = Color.White,
             textAlign = TextAlign.Center,
-            style = ChatTheme.typography.captionBold
+            style = ChatTheme.typography.captionBold,
         )
     }
 }

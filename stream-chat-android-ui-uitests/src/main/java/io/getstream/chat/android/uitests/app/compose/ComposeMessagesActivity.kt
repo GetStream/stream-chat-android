@@ -21,14 +21,22 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
+import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 /**
  * An Activity that represents a message list screen. Relies on the components
  * taken from Compose SDK.
  */
 class ComposeMessagesActivity : AppCompatActivity() {
+
+    // TODO add this and related entries to docs when documentation effort occurs
+    private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
+    private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +45,13 @@ class ComposeMessagesActivity : AppCompatActivity() {
         setContent {
             ChatTheme {
                 MessagesScreen(
-                    channelId = channelId,
+                    viewModelFactory = MessagesViewModelFactory(
+                        context = this,
+                        channelId = channelId,
+                    ),
                     onBackPressed = ::finish,
+                    // TODO add this and related entries to docs when documentation effort occurs
+                    statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 )
             }
         }

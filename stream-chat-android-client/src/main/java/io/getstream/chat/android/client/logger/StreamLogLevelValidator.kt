@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.client.logger
 
-import io.getstream.logging.IsLoggableValidator
-import io.getstream.logging.Priority
+import io.getstream.log.IsLoggableValidator
+import io.getstream.log.Priority
 
 /**
  * Validates if a message can be logged in accordance with the provided [logLevel].
@@ -25,7 +25,7 @@ import io.getstream.logging.Priority
  * @see ChatLogLevel
  */
 internal class StreamLogLevelValidator(
-    private val logLevel: ChatLogLevel
+    private val logLevel: ChatLogLevel,
 ) : IsLoggableValidator {
 
     /**

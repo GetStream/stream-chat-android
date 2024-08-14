@@ -1,0 +1,138 @@
+---
+title: Firebase Cloud Messaging
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import FirebaseContent from '../../../../../../shared/_dashboard-firebase-config.md'
+import PayloadContent from '../../../../../../shared/_push-notification-payload.md'
+
+<FirebaseContent/>
+
+## Receiving Notifications in the Client
+
+We provide an artifact with all the implementation needed to work with **Firebase**. To use it follow the next steps:
+
+Start by [adding Firebase to your Android project](https://firebase.google.com/docs/cloud-messaging/android/client). You only need to set up the FCM dependencies and add a _google-services.json_ file to your project source directory.
+
+Next, add the Stream Firebase push provider artifact to your app's `build.gradle` file:
+
+```groovy
+dependencies {
+    implementation "io.getstream:stream-android-push-firebase:$stream_version"
+}
+```
+
+Finally, add the `FirebasePushDeviceGenerator` to your `NotificationConfig` and pass it into the `ChatClient.Builder` when you initialize the SDK:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin {2,5}
+val notificationConfig = NotificationConfig(
+    pushDeviceGenerators = listOf(FirebasePushDeviceGenerator(providerName = "providerName"))
+)
+ChatClient.Builder("apiKey", context)
+    .notifications(notificationConfig)
+    .build()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+boolean pushNotificationEnabled = true;
+    List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+            new FirebasePushDeviceGenerator(
+                    "providerName"
+            )
+    );
+    NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+    new ChatClient.Builder("apiKey", context)
+            .notifications(notificationConfig)
+            .build();
+```
+</TabItem>
+</Tabs>
+
+:::caution
+Make sure that _ChatClient_ is always initialized before handling push notifications. We highly recommend initializing it in the `Application` class.
+:::
+
+That's it. You can now receive push notifications from Stream via Firebase.
+
+### Using a Custom Firebase Messaging Service
+
+The Stream Firebase push provider artifact includes an implementation of `FirebaseMessagingService` that will send new Firebase tokens and incoming push messages to the Stream SDK.
+
+If you're also using Firebase notifications for other things in your app, you can use your own custom service instead. This should make the following calls to the `FirebaseMessagingDelegate` class:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin {6,14}
+class CustomFirebaseMessagingService : FirebaseMessagingService() {
+
+    override fun onNewToken(token: String) {
+        // Update device's token on Stream backend
+        try {
+            FirebaseMessagingDelegate.registerFirebaseToken(token, "providerName")
+        } catch (exception: IllegalStateException) {
+            // ChatClient was not initialized
+        }
+    }
+
+    override fun onMessageReceived(message: RemoteMessage) {
+        try {
+            if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
+                // RemoteMessage was from Stream and it is already processed
+            } else {
+                // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+            }
+        } catch (exception: IllegalStateException) {
+            // ChatClient was not initialized
+        }
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public final class CustomFirebaseMessagingService extends FirebaseMessagingService {
+
+    @Override
+    public void onNewToken(@NonNull String token) {
+        // Update device's token on Stream backend
+        try {
+            FirebaseMessagingDelegate.registerFirebaseToken(token, "providerName");
+        } catch (IllegalStateException exception) {
+            // ChatClient was not initialized
+        }
+    }
+
+    @Override
+    public void onMessageReceived(@NonNull RemoteMessage message) {
+        try {
+            if (FirebaseMessagingDelegate.handleRemoteMessage(message)) {
+                // RemoteMessage was from Stream and it is already processed
+            } else {
+                // RemoteMessage wasn't sent from Stream and it needs to be handled by you
+            }
+        } catch (IllegalStateException exception) {
+            // ChatClient was not initialized
+        }
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+:::note
+Make sure that your custom service has an [`<intent-filter>` priority](https://developer.android.com/guide/topics/manifest/intent-filter-element#priority) higher than `-1` to override our default service. (This priority is `0` by default.)
+:::
+
+### Push Notification Payload
+
+<PayloadContent />

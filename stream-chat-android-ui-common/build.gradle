@@ -1,9 +1,12 @@
 import io.getstream.chat.android.Dependencies
 import io.getstream.chat.android.Configuration
+import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 apply plugin: 'de.mannodermaus.android-junit5'
+apply plugin: 'androidx.baselineprofile'
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -15,6 +18,7 @@ apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.ui.common"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
         consumerProguardFiles 'consumer-proguard-rules.pro'
@@ -40,6 +44,17 @@ android {
             it.java.srcDir "src/$it.name/kotlin"
         }
     }
+
+    buildFeatures {
+        compose true
+    }
+}
+
+baselineProfile {
+    baselineProfileOutputDir = "."
+    filter {
+        include("io.getstream.chat.android.ui.common.**")
+    }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
@@ -47,14 +62,19 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
         ]
     }
 }
 
 dependencies {
-    api project(":stream-chat-android-offline")
+    api project(":stream-chat-android-state")
     implementation project(":stream-chat-android-ui-utils")
+
+    implementation Dependencies.streamLog
+    implementation Dependencies.streamPushPermissionsSnackbar
+    implementation Dependencies.streamResult
+    implementation Dependencies.composeRuntime
 
     implementation Dependencies.androidxActivityKtx
     implementation Dependencies.androidxAnnotations
@@ -65,13 +85,12 @@ dependencies {
     implementation Dependencies.materialComponents
     implementation Dependencies.androidxLifecycleLiveDataKtx
 
-    api Dependencies.threeTenAbp
-
     implementation Dependencies.coil
     implementation Dependencies.coilGif
     implementation Dependencies.coilVideo
 
     testImplementation project(":stream-chat-android-test")
+    testImplementation testFixtures(project(":stream-chat-android-core"))
     testImplementation Dependencies.kotlinReflect
     testImplementation Dependencies.junitJupiterApi
     testImplementation Dependencies.junitJupiterParams
@@ -88,4 +107,6 @@ dependencies {
     testImplementation Dependencies.coroutinesTest
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

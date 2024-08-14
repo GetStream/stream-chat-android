@@ -23,8 +23,8 @@
     android:background="@color/stream_ui_white_snow"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/userAvatar"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginStart="@dimen/spacing_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
@@ -43,7 +43,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/onlineTextView"
         app:layout_constraintEnd_toStartOf="@id/checkboxImageView"
-        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Some user"
@@ -59,7 +59,7 @@
         android:textSize="@dimen/stream_ui_text_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/checkboxImageView"
-        app:layout_constraintStart_toEndOf="@id/userAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="last seen one hours ago"
@@ -85,7 +85,7 @@
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userAvatar"
+        app:layout_constraintTop_toBottomOf="@id/userAvatarView"
         />
 
     <View

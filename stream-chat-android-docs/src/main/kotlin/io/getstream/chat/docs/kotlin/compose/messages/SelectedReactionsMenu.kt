@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,12 +17,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.messages.SelectedMessageReactionsState
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/selected-reactions-menu/#usage)
@@ -40,7 +39,6 @@ private object SelectedReactionsMenuUsageSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -97,7 +95,6 @@ private object SelectedReactionsMenuHandlingActionsSnippet {
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
         val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -152,7 +149,6 @@ private object SelectedReactionsMenuCustomizationSnippet {
 
         val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
-        @OptIn(ExperimentalFoundationApi::class)
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -194,7 +190,7 @@ private object SelectedReactionsMenuCustomizationSnippet {
                                 headerContent = {
                                     Text(
                                         modifier = Modifier
-                                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                                            .padding(16.dp)
                                             .background(
                                                 shape = ChatTheme.shapes.avatar,
                                                 color = ChatTheme.colors.infoAccent

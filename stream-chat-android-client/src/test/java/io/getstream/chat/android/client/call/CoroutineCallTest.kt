@@ -17,9 +17,11 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedTask
-import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.CoroutineCall
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -43,8 +45,8 @@ internal class CoroutineCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    val resultValue = Mother.randomString()
-    val validResult: Result<String> = Result.success(resultValue)
+    val resultValue = randomString()
+    val validResult: Result<String> = Result.Success(resultValue)
 
     @Test
     fun `Call should be executed and return a valid result`() = runTest {
@@ -69,7 +71,7 @@ internal class CoroutineCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         blockedTask.isStarted() `should be equal to` true
         blockedTask.isCompleted() `should be equal to` true

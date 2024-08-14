@@ -20,7 +20,7 @@
     <string name="stream_ui_attachment_gallery_reply">Reply</string>
     <string name="stream_ui_attachment_gallery_delete">Delete</string>
     <string name="stream_ui_attachment_gallery_show_in_chat">Show in chat</string>
-    <string name="stream_ui_attachment_gallery_save_image">Save Image</string>
+    <string name="stream_ui_attachment_gallery_save_media">Save Media</string>
     <string name="stream_ui_attachment_gallery_share">Share Image</string>
 
     <!-- Gallery Overview Dialog -->

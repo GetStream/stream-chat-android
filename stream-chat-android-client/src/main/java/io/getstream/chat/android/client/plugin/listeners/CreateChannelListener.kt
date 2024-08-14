@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
+import io.getstream.result.Result
 
 /**
  * Listener for [io.getstream.chat.android.client.ChatClient.createChannel] calls.
@@ -60,13 +60,13 @@ public interface CreateChannelListener {
 
     /**
      * Runs precondition check for [ChatClient.createChannel].
-     * The request will be run if the method returns [Result.success] and won't be made if it returns [Result.error].
+     * The request will be run if the method returns [Result.Success] and won't be made if it returns [Result.Failure].
      *
      * @param currentUser The currently logged in user.
      * @param channelId The channel id. ie 123.
      * @param memberIds The list of members' ids.
      *
-     * @return [Result.success] if the precondition is fulfilled, [Result.error] otherwise.
+     * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
     public fun onCreateChannelPrecondition(
         currentUser: User?,

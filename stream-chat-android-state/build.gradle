@@ -4,6 +4,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'de.mannodermaus.android-junit5'
+    id 'androidx.baselineprofile'
 }
 
 
@@ -17,6 +18,7 @@ apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.state"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
     }
@@ -43,13 +45,19 @@ android {
     }
 }
 
+baselineProfile {
+    baselineProfileOutputDir = "."
+    filter {
+        include("io.getstream.chat.android.state.**")
+    }
+}
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
         ]
     }
 }
@@ -57,6 +65,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 dependencies {
     api project(":stream-chat-android-client")
 
+    implementation Dependencies.streamLog
     // Kotlin
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
@@ -70,6 +79,7 @@ dependencies {
     // Tests
     testImplementation project(":stream-chat-android-test")
     testImplementation project(":stream-chat-android-client-test")
+    testImplementation testFixtures(project(":stream-chat-android-core"))
     testImplementation Dependencies.moshiKotlin
 
     testImplementation Dependencies.junitJupiterApi
@@ -88,7 +98,6 @@ dependencies {
 
     testImplementation Dependencies.robolectric
 
-    testImplementation Dependencies.kfixture
     testImplementation Dependencies.kluent
     testImplementation Dependencies.mockito
     testImplementation Dependencies.mockitoKotlin
@@ -103,4 +112,6 @@ dependencies {
     androidTestImplementation Dependencies.mockitoKotlin
 
     detektPlugins(Dependencies.detektFormatting)
+
+    baselineProfile(project(":stream-chat-android-benchmark"))
 }

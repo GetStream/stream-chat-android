@@ -17,6 +17,7 @@
 package io.getstream.chat.android.uitests.util
 
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import coil.ComponentRegistry
@@ -26,6 +27,7 @@ import coil.disk.DiskCache
 import coil.memory.MemoryCache
 import coil.request.DefaultRequestOptions
 import coil.request.Disposable
+import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.ImageResult
 import coil.request.SuccessResult
@@ -46,7 +48,6 @@ class FakeImageLoader(
         AVATAR_RAFAL to R.drawable.avatar_rafal,
         AVATAR_FILIP to R.drawable.avatar_filip,
         AVATAR_BELAL to R.drawable.avatar_belal,
-        AVATAR_USER to R.drawable.avatar_user,
     ),
 ) : ImageLoader {
 
@@ -59,7 +60,9 @@ class FakeImageLoader(
         // Always call onStart before onSuccess.
         request.target?.onStart(request.placeholder)
         val result = createDrawable(context, request)
-        request.target?.onSuccess(result)
+        if (result != null) {
+            request.target?.onSuccess(result)
+        }
         return object : Disposable {
             override val job = CompletableDeferred(newResult(request, result))
             override val isDisposed get() = true
@@ -71,26 +74,36 @@ class FakeImageLoader(
         return newResult(request, createDrawable(context, request))
     }
 
-    private fun newResult(request: ImageRequest, drawable: Drawable): SuccessResult {
-        return SuccessResult(
-            drawable = drawable,
-            request = request,
-            dataSource = DataSource.MEMORY_CACHE
-        )
+    private fun newResult(request: ImageRequest, drawable: Drawable?): ImageResult {
+        return if (drawable != null) {
+            SuccessResult(
+                drawable = drawable,
+                request = request,
+                dataSource = DataSource.MEMORY_CACHE,
+            )
+        } else {
+            ErrorResult(
+                drawable = null,
+                request = request,
+                throwable = Exception(),
+            )
+        }
     }
 
     override fun newBuilder() = throw UnsupportedOperationException()
 
     override fun shutdown() {}
 
-    private fun createDrawable(context: Context, request: ImageRequest): Drawable {
-        val data = request.data
-        val avatarUrl = if (data is String) data else AVATAR_USER
+    private fun createDrawable(context: Context, request: ImageRequest): Drawable? {
+        val avatarUrl = request.data as String
 
         return ContextCompat.getDrawable(
             context,
-            userAvatars[avatarUrl] ?: R.drawable.avatar_user
-        )!!
+            userAvatars[avatarUrl] ?: return null,
+        )!!.apply {
+            // Workaround for an issue with black background behind clipped images
+            (this as BitmapDrawable).bitmap.setHasAlpha(true)
+        }
     }
 
     companion object {
@@ -99,6 +112,5 @@ class FakeImageLoader(
         const val AVATAR_RAFAL: String = "https://example.com/rafal.jpeg"
         const val AVATAR_FILIP: String = "https://example.com/filip.jpeg"
         const val AVATAR_BELAL: String = "https://example.com/belal.jpeg"
-        const val AVATAR_USER: String = "https://example.com/user.jpeg"
     }
 }

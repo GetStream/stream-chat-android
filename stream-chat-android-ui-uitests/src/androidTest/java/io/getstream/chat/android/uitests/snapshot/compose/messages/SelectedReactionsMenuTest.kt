@@ -20,12 +20,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.ui.components.selectedmessage.SelectedReactionsMenu
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import io.getstream.chat.android.uitests.util.TestData
 import org.junit.Test
@@ -37,9 +37,9 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
     fun selectedReactionsMenuForOneReaction() {
         selectedReactionsMenu(
             currentUser = TestData.user1(),
-            selectedMessage = TestData.message1().apply {
-                latestReactions = mutableListOf(TestData.reaction1())
-            }
+            selectedMessage = TestData.message1().copy(
+                latestReactions = mutableListOf(TestData.reaction1()),
+            ),
         )
     }
 
@@ -47,14 +47,14 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
     fun selectedReactionsMenuForManyReactions() {
         selectedReactionsMenu(
             currentUser = TestData.user1(),
-            selectedMessage = TestData.message1().apply {
+            selectedMessage = TestData.message1().copy(
                 latestReactions = mutableListOf(
                     TestData.reaction1(),
                     TestData.reaction2(),
                     TestData.reaction3(),
                     TestData.reaction4(),
-                )
-            }
+                ),
+            ),
         )
     }
 
@@ -66,7 +66,7 @@ class SelectedReactionsMenuTest : ComposeScreenshotTest() {
                 currentUser = currentUser,
                 onMessageAction = {},
                 onShowMoreReactionsSelected = {},
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             )
         }
     }

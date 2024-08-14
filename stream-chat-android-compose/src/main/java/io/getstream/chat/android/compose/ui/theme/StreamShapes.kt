@@ -51,6 +51,7 @@ public data class StreamShapes(
     public val attachmentSiteLabel: Shape,
     public val header: Shape,
     public val quotedAttachment: Shape,
+    public val pollOptionInput: Shape,
 ) {
     public companion object {
         /**
@@ -69,7 +70,8 @@ public data class StreamShapes(
             suggestionList = RoundedCornerShape(16.dp),
             attachmentSiteLabel = RoundedCornerShape(topEnd = 14.dp),
             header = RectangleShape,
-            quotedAttachment = RoundedCornerShape(4.dp)
+            quotedAttachment = RoundedCornerShape(4.dp),
+            pollOptionInput = RoundedCornerShape(16.dp),
         )
     }
 }

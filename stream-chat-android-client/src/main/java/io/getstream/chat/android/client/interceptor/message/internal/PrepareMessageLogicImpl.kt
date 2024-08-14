@@ -16,20 +16,25 @@
 
 package io.getstream.chat.android.client.interceptor.message.internal
 
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.enrichWithCid
+import io.getstream.chat.android.client.extensions.internal.populateMentions
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.interceptor.message.PrepareMessageLogic
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.SyncStatus
 import io.getstream.chat.android.client.utils.internal.getMessageType
+import io.getstream.chat.android.client.utils.message.ensureId
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import java.util.Date
 import java.util.UUID
 
 internal class PrepareMessageLogicImpl(
     private val clientState: ClientState,
+    private val channelStateLogicProvider: ChannelStateLogicProvider?,
 ) : PrepareMessageLogic {
 
     /**
@@ -44,44 +49,47 @@ internal class PrepareMessageLogicImpl(
      *
      * Then this message is inserted in database (Optimistic UI update) and final message is returned.
      */
+    @Suppress("ComplexMethod")
     override fun prepareMessage(message: Message, channelId: String, channelType: String, user: User): Message {
-        return message.copy().apply {
-            if (id.isEmpty()) {
-                id = generateMessageId(user.id)
-            }
-            if (cid.isEmpty()) {
-                enrichWithCid("$channelType:$channelId")
-            }
+        val channel = channelStateLogicProvider?.channelStateLogic(channelType, channelId)
 
-            this.user = user
-
-            val (attachmentsToUpload, nonFileAttachments) = attachments.partition { it.upload != null }
-
-            attachmentsToUpload.forEach { attachment ->
-                if (attachment.uploadId == null) {
-                    attachment.uploadId = generateUploadId()
-                }
-                attachment.uploadState = Attachment.UploadState.Idle
-            }
-            nonFileAttachments.forEach { attachment ->
-                attachment.uploadState = Attachment.UploadState.Success
-            }
-
-            type = getMessageType(message)
-            createdLocallyAt = createdAt ?: createdLocallyAt ?: Date()
-            syncStatus = when {
-                attachmentsToUpload.isNotEmpty() -> SyncStatus.AWAITING_ATTACHMENTS
-                clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
-                else -> SyncStatus.SYNC_NEEDED
+        val attachments = message.attachments.map {
+            when (it.upload) {
+                null -> it.copy(uploadState = Attachment.UploadState.Success)
+                else -> it.copy(
+                    extraData = it.extraData + mapOf(EXTRA_UPLOAD_ID to (it.uploadId ?: generateUploadId())),
+                    uploadState = Attachment.UploadState.Idle,
+                )
             }
         }
-    }
-
-    /**
-     * Returns a unique message id prefixed with user id.
-     */
-    private fun generateMessageId(userId: String): String {
-        return "$userId-${UUID.randomUUID()}"
+        return message.ensureId(user).copy(
+            user = user,
+            attachments = attachments,
+            type = getMessageType(message),
+            createdLocallyAt = message.createdAt ?: message.createdLocallyAt ?: Date(),
+            syncStatus = when {
+                attachments.any { it.uploadState is Attachment.UploadState.Idle } -> SyncStatus.AWAITING_ATTACHMENTS
+                clientState.isNetworkAvailable -> SyncStatus.IN_PROGRESS
+                else -> SyncStatus.SYNC_NEEDED
+            },
+        )
+            .let { copiedMessage ->
+                copiedMessage.takeIf { it.cid.isBlank() }
+                    ?.enrichWithCid("$channelType:$channelId")
+                    ?: copiedMessage
+            }
+            .let { copiedMessage ->
+                channel
+                    ?.listenForChannelState()
+                    ?.toChannel()
+                    ?.let(copiedMessage::populateMentions)
+                    ?: copiedMessage
+            }
+            .also { preparedMessage ->
+                if (preparedMessage.replyMessageId != null) {
+                    channel?.replyMessage(null)
+                }
+            }
     }
 
     private fun generateUploadId(): String {

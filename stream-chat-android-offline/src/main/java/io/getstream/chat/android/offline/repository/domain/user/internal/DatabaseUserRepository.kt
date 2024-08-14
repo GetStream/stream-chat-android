@@ -17,24 +17,35 @@
 package io.getstream.chat.android.offline.repository.domain.user.internal
 
 import androidx.collection.LruCache
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.UserRepository
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.extensions.launchWithMutex
+import io.getstream.log.taggedLogger
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 internal class DatabaseUserRepository(
+    private val scope: CoroutineScope,
     private val userDao: UserDao,
-    cacheSize: Int = 100,
+    cacheSize: Int = 1000,
 ) : UserRepository {
+    private val logger by taggedLogger("Chat:UserRepository")
+
     // the user cache is simple, just keeps the last 100 users in memory
     private val userCache = LruCache<String, User>(cacheSize)
-
     private val latestUsersFlow: MutableStateFlow<Map<String, User>> = MutableStateFlow(emptyMap())
+    private val dbMutex = Mutex()
 
     override fun observeLatestUsers(): StateFlow<Map<String, User>> = latestUsersFlow
 
     override suspend fun clear() {
-        userDao.deleteAll()
+        dbMutex.withLock {
+            userDao.deleteAll()
+        }
     }
 
     /**
@@ -44,8 +55,16 @@ internal class DatabaseUserRepository(
      */
     override suspend fun insertUsers(users: Collection<User>) {
         if (users.isEmpty()) return
+        val usersToInsert = users
+            .filter { it != userCache[it.id] }
+            .map { it.toEntity() }
         cacheUsers(users)
-        userDao.insertMany(users.map(::toEntity))
+        scope.launchWithMutex(dbMutex) {
+            logger.v { "[insertUsers] inserting ${usersToInsert.size} entities on DB, updated ${users.size} on cache" }
+            usersToInsert
+                .takeUnless { it.isEmpty() }
+                ?.let { userDao.insertMany(it) }
+        }
     }
 
     /**
@@ -54,8 +73,7 @@ internal class DatabaseUserRepository(
      * @param user [User]
      */
     override suspend fun insertUser(user: User) {
-        cacheUsers(listOf(user))
-        userDao.insert(toEntity(user))
+        insertUsers(listOf(user))
     }
 
     /**
@@ -65,8 +83,10 @@ internal class DatabaseUserRepository(
      */
     override suspend fun insertCurrentUser(user: User) {
         insertUser(user)
-        val userEntity = toEntity(user).copy(id = ME_ID)
-        userDao.insert(userEntity)
+        scope.launchWithMutex(dbMutex) {
+            val userEntity = user.toEntity().copy(id = ME_ID)
+            userDao.insert(userEntity)
+        }
     }
 
     /**
@@ -83,40 +103,19 @@ internal class DatabaseUserRepository(
      */
     override suspend fun selectUsers(ids: List<String>): List<User> {
         val cachedUsers = ids.mapNotNullTo(mutableListOf(), userCache::get)
-        val missingUserIds = ids.minus(cachedUsers.map(User::id))
+        val missingUserIds = ids.minus(cachedUsers.map(User::id).toSet())
 
         return cachedUsers + userDao.select(missingUserIds).map(::toModel).also { cacheUsers(it) }
-    }
-
-    /**
-     * Select all users respecting a limit and a offset.
-     *
-     * @param limit Int.
-     * @param offset Int.
-     */
-    override suspend fun selectAllUsers(limit: Int, offset: Int): List<User> {
-        return userDao.selectAllUser(limit, offset).map(::toModel)
-    }
-
-    /**
-     * Selects users with a name that looks like the of wanted.
-     *
-     * @param searchString - The name of the user.
-     * @param limit Int
-     * @param offset Int
-     */
-    override suspend fun selectUsersLikeName(searchString: String, limit: Int, offset: Int): List<User> {
-        return userDao.selectUsersLikeName("$searchString%", limit, offset).map(::toModel)
     }
 
     private fun cacheUsers(users: Collection<User>) {
         for (userEntity in users) {
             userCache.put(userEntity.id, userEntity)
         }
-        latestUsersFlow.value = userCache.snapshot()
+        scope.launch { latestUsersFlow.value = userCache.snapshot() }
     }
 
-    private fun toEntity(user: User): UserEntity = with(user) {
+    private fun User.toEntity(): UserEntity =
         UserEntity(
             id = id,
             name = name,
@@ -126,25 +125,27 @@ internal class DatabaseUserRepository(
             createdAt = createdAt,
             updatedAt = updatedAt,
             lastActive = lastActive,
-            invisible = invisible,
-            banned = banned,
+            invisible = isInvisible,
+            privacySettings = privacySettings?.toEntity(),
+            banned = isBanned,
             extraData = extraData,
-            mutes = mutes.map { mute -> mute.target.id }
+            mutes = mutes.map { mute -> mute.target.id },
         )
-    }
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
-        User(id = this.originalId).also { user ->
-            user.name = name
-            user.image = image
-            user.role = role
-            user.createdAt = createdAt
-            user.updatedAt = updatedAt
-            user.lastActive = lastActive
-            user.invisible = invisible
-            user.extraData = extraData.toMutableMap()
-            user.banned = banned
-        }
+        User(
+            id = this.originalId,
+            name = name,
+            image = image,
+            role = role,
+            createdAt = createdAt,
+            updatedAt = updatedAt,
+            lastActive = lastActive,
+            invisible = invisible,
+            privacySettings = privacySettings?.toModel(),
+            extraData = extraData.toMutableMap(),
+            banned = banned,
+        )
     }
 
     companion object {

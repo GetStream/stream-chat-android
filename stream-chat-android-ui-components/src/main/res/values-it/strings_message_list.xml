@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
     <item quantity="one">"%d Risposta"</item>
     <item quantity="other">"%d Risposte"</item>
   </plurals>
+  <string name="stream_ui_message_audio_reply_info">"Messaggio vocale"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Errore. Impossibile visualizzare il file"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Qualcosa è andato storto. Impossibile aprire l\'allegato: %1$s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Caricamento non riuscito a causa di un URL non valido."</string>

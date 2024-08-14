@@ -16,10 +16,9 @@
 
 package io.getstream.chat.android.client.persistance.repository
 
-import androidx.annotation.VisibleForTesting
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import java.util.Date
 
 /**
@@ -31,7 +30,7 @@ public interface ChannelRepository {
     /**
      * Inserts a [Channel]
      *
-     * @param channel [Channel]
+     * @param channel [Channel] to insert.
      */
     public suspend fun insertChannel(channel: Channel)
 
@@ -50,11 +49,18 @@ public interface ChannelRepository {
     public suspend fun deleteChannel(cid: String)
 
     /**
-     * Select a channels, but without loading the messages.
+     * Deletes a [Message] from a [Channel.messages].
      *
-     * @param cid String
+     * @param message [Message] to delete.
      */
-    public suspend fun selectChannelWithoutMessages(cid: String): Channel?
+    public suspend fun deleteChannelMessage(message: Message)
+
+    /**
+     * Updates a [Message] from a [Channel.messages].
+     *
+     * @param message [Message] to update.
+     */
+    public suspend fun updateChannelMessage(message: Message)
 
     /**
      * Selects all channels' cids.
@@ -67,12 +73,10 @@ public interface ChannelRepository {
      * Select channels by full channel IDs [Channel.cid]
      *
      * @param channelCIDs A list of [Channel.cid] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of channels found in repository.
      */
-    public suspend fun selectChannels(channelCIDs: List<String>, forceCache: Boolean = false): List<Channel>
+    public suspend fun selectChannels(channelCIDs: List<String>): List<Channel>
 
     /**
      * Select channel by full channel ID [Channel.cid]
@@ -81,16 +85,7 @@ public interface ChannelRepository {
      *
      * @return A channel found in repository.
      */
-    public suspend fun selectChannelByCid(cid: String): Channel?
-
-    /**
-     * Select channels by full channel IDs [Channel.cid]
-     *
-     * @param cids A list of [Channel.cid] as query specification.
-     *
-     * @return A list of channels found in repository.
-     */
-    public suspend fun selectChannelsByCids(cids: List<String>): List<Channel>
+    public suspend fun selectChannel(cid: String): Channel?
 
     /**
      * Read which channel cids need sync.
@@ -142,8 +137,6 @@ public interface ChannelRepository {
      */
     public suspend fun updateMembersForChannel(cid: String, members: List<Member>)
 
-    public suspend fun evictChannel(cid: String)
-
     /**
      * Updates the last message for a [Channel]
      *
@@ -153,12 +146,16 @@ public interface ChannelRepository {
     public suspend fun updateLastMessageForChannel(cid: String, lastMessage: Message)
 
     /**
+     * Evict a [Channel] from the repository.
+     *
+     * @param cid String
+     */
+    public suspend fun evictChannel(cid: String)
+
+    /**
      * Clear Channels of this repository.
      */
     public suspend fun clear()
-
-    @VisibleForTesting
-    public fun clearChannelCache()
 
     private companion object {
         private const val NO_LIMIT: Int = -1

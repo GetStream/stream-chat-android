@@ -21,10 +21,12 @@ import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.uiutils.constant.MessageType
+import io.getstream.chat.android.client.utils.message.isRegular
+import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.utils.R
 
 /**
  * Returns channel's last regular or system message if exists.
@@ -33,12 +35,16 @@ import io.getstream.chat.android.uiutils.constant.MessageType
  * @return Last message from the channel or null if it doesn't exist.
  */
 public fun Channel.getPreviewMessage(currentUser: User?): Message? =
-    messages.asSequence()
+    if (isInsideSearch) {
+        cachedLatestMessages
+    } else {
+        messages
+    }.asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
         .filter { it.deletedAt == null }
         .filter { !it.silent }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
-        .filter { it.type == MessageType.REGULAR || it.type == MessageType.SYSTEM }
+        .filter { it.isRegular() || it.isSystem() }
         .maxByOrNull { requireNotNull(it.createdAt ?: it.createdLocallyAt) }
 
 /**
@@ -54,20 +60,39 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
  */
 public fun Channel.getDisplayName(
     context: Context,
-    currentUser: User? = ChatClient.instance().getCurrentUser(),
+    currentUser: User? = ChatClient.instance().clientState.user.value,
     @StringRes fallback: Int,
-    maxMembers: Int = 5,
+    maxMembers: Int = 2,
 ): String {
     return name.takeIf { it.isNotEmpty() }
-        ?: nameFromMembers(currentUser, maxMembers)
+        ?: nameFromMembers(context, currentUser, maxMembers)
         ?: context.getString(fallback)
 }
 
-private fun Channel.nameFromMembers(currentUser: User?, maxMembers: Int): String? {
+private fun Channel.nameFromMembers(
+    context: Context,
+    currentUser: User?,
+    maxMembers: Int,
+): String? {
     val users = getUsersExcludingCurrent(currentUser)
-
     return when {
-        users.isNotEmpty() -> users.joinToString(limit = maxMembers, transform = { it.name }).takeIf { it.isNotEmpty() }
+        users.isNotEmpty() -> {
+            val usersCount = users.size
+            val userNames = users
+                .sortedBy(User::name)
+                .take(maxMembers)
+                .joinToString { it.name }
+            when (usersCount <= maxMembers) {
+                true -> userNames
+                else -> {
+                    context.getString(
+                        R.string.stream_ui_channel_list_untitled_channel_plus_more,
+                        userNames,
+                        usersCount - maxMembers,
+                    )
+                }
+            }
+        }
 
         // This channel has only the current user or only one user
         members.size == 1 -> members.first().user.name
@@ -106,14 +131,14 @@ public fun Channel.getMembersStatusText(
             val memberCountString = context.resources.getQuantityString(
                 memberCountResId,
                 memberCount,
-                memberCount
+                memberCount,
             )
 
             return if (watcherCount > 0) {
                 context.getString(
                     memberCountWithOnlineResId,
                     memberCountString,
-                    watcherCount
+                    watcherCount,
                 )
             } else {
                 memberCountString

@@ -26,12 +26,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.events.ChannelHiddenEvent
+import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.subscribeFor
-import io.getstream.chat.android.livedata.utils.EventObserver
-import io.getstream.chat.android.ui.message.list.header.viewmodel.MessageListHeaderViewModel
-import io.getstream.chat.android.ui.message.list.header.viewmodel.bindView
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory
+import io.getstream.chat.android.state.utils.EventObserver
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory
+import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.common.showToast
@@ -43,12 +45,17 @@ import io.getstream.chat.ui.sample.feature.chat.info.group.users.GroupChatInfoAd
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
 import io.getstream.chat.ui.sample.util.extensions.autoScrollToTop
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
+import io.getstream.log.taggedLogger
 
 class GroupChatInfoFragment : Fragment() {
 
+    private val logger by taggedLogger("GroupChatInfo-View")
+
     private val args: GroupChatInfoFragmentArgs by navArgs()
     private val viewModel: GroupChatInfoViewModel by viewModels { ChatViewModelFactory(args.cid) }
-    private val headerViewModel: MessageListHeaderViewModel by viewModels { MessageListViewModelFactory(args.cid) }
+    private val headerViewModel: MessageListHeaderViewModel by viewModels {
+        MessageListViewModelFactory(requireContext(), args.cid)
+    }
     private val adapter: GroupChatInfoAdapter = GroupChatInfoAdapter()
 
     private var _binding: FragmentGroupChatInfoBinding? = null
@@ -99,6 +106,7 @@ class GroupChatInfoFragment : Fragment() {
 
     private fun bindGroupInfoViewModel() {
         subscribeForChannelMutesUpdatedEvents()
+        subscribeForChannelVisibilityEvents()
         setOnClickListeners()
 
         viewModel.events.observe(
@@ -109,16 +117,16 @@ class GroupChatInfoFragment : Fragment() {
                         GroupChatInfoMemberOptionsDialogFragment.newInstance(
                             args.cid,
                             it.channelName,
-                            it.member.user,
-                            viewModel.state.value!!.ownCapabilities
-                        )
-                            .show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
+                            it.member,
+                            viewModel.state.value!!.ownCapabilities,
+                        ).show(parentFragmentManager, GroupChatInfoMemberOptionsDialogFragment.TAG)
+
                     GroupChatInfoViewModel.UiEvent.RedirectToHome -> findNavController().popBackStack(
                         R.id.homeFragment,
                         false,
                     )
                 }
-            }
+            },
         )
         viewModel.state.observe(viewLifecycleOwner) { state ->
             val members = if (state.shouldExpandMembers != false) {
@@ -133,11 +141,12 @@ class GroupChatInfoFragment : Fragment() {
                         ChatInfoItem.Separator,
                         ChatInfoItem.ChannelName(state.channelName),
                         ChatInfoItem.Option.Stateful.MuteChannel(isChecked = state.channelMuted),
+                        ChatInfoItem.Option.HideChannel(isHidden = state.channelHidden),
                         ChatInfoItem.Option.PinnedMessages,
                         ChatInfoItem.Option.SharedMedia,
                         ChatInfoItem.Option.SharedFiles,
                         ChatInfoItem.Option.LeaveGroup,
-                    )
+                    ),
             )
         }
         viewModel.errorEvents.observe(
@@ -146,33 +155,34 @@ class GroupChatInfoFragment : Fragment() {
                 when (it) {
                     is GroupChatInfoViewModel.ErrorEvent.ChangeGroupNameError -> R.string.chat_group_info_error_change_name
                     is GroupChatInfoViewModel.ErrorEvent.MuteChannelError -> R.string.chat_group_info_error_mute_channel
+                    is GroupChatInfoViewModel.ErrorEvent.HideChannelError -> R.string.chat_group_info_error_hide_channel
                     is GroupChatInfoViewModel.ErrorEvent.LeaveChannelError -> R.string.chat_group_info_error_leave_channel
                 }.let(::showToast)
-            }
+            },
         )
     }
 
     private fun setOnClickListeners() {
         adapter.setChatInfoStatefulOptionChangedListener { option, isChecked ->
-            viewModel.onAction(
-                when (option) {
-                    is ChatInfoItem.Option.Stateful.MuteChannel -> GroupChatInfoViewModel.Action.MuteChannelClicked(
-                        isChecked
-                    )
-                    else -> throw IllegalStateException("Chat info option $option is not supported!")
-                }
-            )
+            logger.d { "[onStatefulOptionChanged] option: $option, isChecked: $isChecked" }
+
+            when (option) {
+                is ChatInfoItem.Option.Stateful.MuteChannel -> viewModel.onAction(
+                    GroupChatInfoViewModel.Action.MuteChannelClicked(isChecked),
+                )
+                else -> throw IllegalStateException("Chat info option $option is not supported!")
+            }
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
                 ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid)
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToPinnedMessageListFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
-                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
+                    GroupChatInfoFragmentDirections.actionGroupChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
                 )
                 ChatInfoItem.Option.LeaveGroup -> {
                     val channelName = viewModel.state.value!!.channelName
@@ -183,6 +193,9 @@ class GroupChatInfoFragment : Fragment() {
                             }
                         }
                         .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+                }
+                is ChatInfoItem.Option.HideChannel -> prepareHideChannelClickedAction {
+                    viewModel.onAction(it)
                 }
                 else -> throw IllegalStateException("Group chat info option $option is not supported!")
             }
@@ -195,6 +208,49 @@ class GroupChatInfoFragment : Fragment() {
     private fun subscribeForChannelMutesUpdatedEvents() {
         ChatClient.instance().subscribeFor<NotificationChannelMutesUpdatedEvent>(viewLifecycleOwner) {
             viewModel.onAction(GroupChatInfoViewModel.Action.ChannelMutesUpdated(it.me.channelMutes))
+        }
+    }
+
+    private fun subscribeForChannelVisibilityEvents() {
+        ChatClient.instance().subscribeFor<ChannelHiddenEvent>(viewLifecycleOwner) {
+            viewModel.onAction(
+                GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
+                    cid = it.cid,
+                    hidden = true,
+                    clearHistory = it.clearHistory,
+                ),
+            )
+        }
+        ChatClient.instance().subscribeFor<ChannelVisibleEvent>(viewLifecycleOwner) {
+            viewModel.onAction(
+                GroupChatInfoViewModel.Action.ChannelHiddenUpdated(
+                    cid = it.cid,
+                    hidden = false,
+                ),
+            )
+        }
+    }
+
+    private fun prepareHideChannelClickedAction(
+        onReady: (GroupChatInfoViewModel.Action.HideChannelClicked) -> Unit,
+    ) {
+        val curValue = viewModel.state.value!!.channelHidden
+        val newValue = curValue.not()
+        val action = GroupChatInfoViewModel.Action.HideChannelClicked(newValue)
+        if (newValue) {
+            val channelName = viewModel.state.value!!.channelName
+            ConfirmationDialogFragment.newHideChannelInstance(requireContext(), channelName)
+                .apply {
+                    confirmClickListener = ConfirmationDialogFragment.ConfirmClickListener {
+                        onReady(action.copy(clearHistory = true))
+                    }
+                    cancelClickListener = ConfirmationDialogFragment.CancelClickListener {
+                        onReady(action)
+                    }
+                }
+                .show(parentFragmentManager, ConfirmationDialogFragment.TAG)
+        } else {
+            onReady(action)
         }
     }
 }

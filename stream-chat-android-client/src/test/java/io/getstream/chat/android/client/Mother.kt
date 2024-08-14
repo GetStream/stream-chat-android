@@ -16,78 +16,43 @@
 
 package io.getstream.chat.android.client
 
-import com.flextrade.jfixture.JFixture
-import com.flextrade.kfixture.KFixture
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.UserPresenceChangedEvent
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerConfig
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.ConnectionState
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.InitializationState
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Mute
-import io.getstream.chat.android.client.models.PushProvider
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.network.NetworkStateProvider
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
-import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
+import io.getstream.chat.android.client.socket.ChatSocketStateService
 import io.getstream.chat.android.client.socket.SocketFactory
-import io.getstream.chat.android.test.randomBoolean
-import io.getstream.chat.android.test.randomDate
-import io.getstream.chat.android.test.randomInt
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import io.getstream.chat.android.models.ConnectionState
+import io.getstream.chat.android.models.InitializationState
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.randomBoolean
+import io.getstream.chat.android.randomDate
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.util.Date
-import java.util.UUID
-internal object Mother {
-    private val fixture: JFixture
-        get() = JFixture()
 
+internal object Mother {
     private val streamDateFormatter = StreamDateFormatter()
 
-    fun randomAttachment(attachmentBuilder: Attachment.() -> Unit = { }): Attachment {
-        return KFixture(fixture) {
-            sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        } <Attachment>().apply(attachmentBuilder)
-    }
-
-    fun randomChannel(channelBuilder: Channel.() -> Unit = { }): Channel {
-        return KFixture(fixture) {
-            sameInstance(Mute::class.java, mock())
-            sameInstance(Message::class.java, mock())
-            sameInstance(Attachment.UploadState::class.java, Attachment.UploadState.Success)
-        } <Channel>().apply(channelBuilder)
-    }
-
-    fun randomUser(userBuilder: User.() -> Unit = { }): User {
-        return KFixture(fixture) {
-            sameInstance(Mute::class.java, mock())
-        } <User>().apply(userBuilder)
-    }
-
-    fun randomString(): String = UUID.randomUUID().toString()
-
-    fun randomDevice(
-        token: String = randomString(),
-        pushProvider: PushProvider = PushProvider.values().random(),
-        providerName: String? = randomString().takeIf { randomBoolean() },
-    ): Device =
-        Device(
-            token = token,
-            pushProvider = pushProvider,
-            providerName = providerName,
+    fun randomUserPresenceChangedEvent(
+        type: String = randomString(),
+        createdAt: Date = randomDate(),
+        rawCreatedAt: String = randomString(),
+        user: User = randomUser(),
+    ): UserPresenceChangedEvent =
+        UserPresenceChangedEvent(
+            type = type,
+            createdAt = createdAt,
+            rawCreatedAt = rawCreatedAt,
+            user = user,
         )
-
-    fun randomUserPresenceChangedEvent(user: User = randomUser()): UserPresenceChangedEvent {
-        return KFixture(fixture) {
-            sameInstance(User::class.java, user)
-        }()
-    }
 
     fun randomUserConnectionConf(
         endpoint: String = randomString(),
@@ -110,32 +75,17 @@ internal object Mother {
         false -> randomUserConnectionConf(endpoint, apiKey, user)
     }
 
-    fun mockedClientState(): ClientState {
-        return object : ClientState {
-            override val user: StateFlow<User?> = MutableStateFlow(randomUser())
-
-            override val initialized: StateFlow<Boolean> = MutableStateFlow(true)
-
-            override val initializationState: StateFlow<InitializationState> =
-                MutableStateFlow(InitializationState.COMPLETE)
-
-            override val connectionState: StateFlow<ConnectionState> = MutableStateFlow(ConnectionState.CONNECTED)
-
-            override val isOnline: Boolean = true
-
-            override val isOffline: Boolean = false
-
-            override val isConnecting: Boolean = false
-
-            override val isInitialized: Boolean = true
-
-            override val isNetworkAvailable: Boolean = true
-
-            override fun clearState() {
-                // Nothing to do
-            }
+    fun mockedClientState(): MutableClientState {
+        val networkStatProvider: NetworkStateProvider = mock()
+        whenever(networkStatProvider.isConnected()) doReturn true
+        return MutableClientState(networkStatProvider).apply {
+            setConnectionState(ConnectionState.Connected)
+            setInitializationState(InitializationState.COMPLETE)
         }
     }
+
+    fun randomConnectionType(): ChatSocketStateService.ConnectionType =
+        ChatSocketStateService.ConnectionType.values().random()
 
     fun chatLoggerConfig(): ChatLoggerConfig = object : ChatLoggerConfig {
         override val level: ChatLogLevel = ChatLogLevel.NOTHING
@@ -150,11 +100,4 @@ internal object Mother {
     ): ConnectedEvent {
         return ConnectedEvent(type, createdAt, streamDateFormatter.format(createdAt), me, connectionId)
     }
-
-    fun randomChatNetworkError(
-        streamCode: Int = randomInt(),
-        description: String = randomString(),
-        statusCode: Int = randomInt(),
-        cause: Throwable? = null
-    ): ChatNetworkError = ChatNetworkError.create(streamCode, description, statusCode, cause)
 }

@@ -32,11 +32,13 @@ internal interface EventSubscription : Disposable {
 
 internal open class SubscriptionImpl(
     private val filter: (ChatEvent) -> Boolean,
-    listener: ChatEventListener<ChatEvent>
+    listener: ChatEventListener<ChatEvent>,
 ) : EventSubscription {
 
+    @Volatile
     private var listener: ChatEventListener<ChatEvent>? = listener
 
+    @Volatile
     override var isDisposed: Boolean = false
 
     var afterEventDelivered: () -> Unit = {}
@@ -64,8 +66,10 @@ internal class SuspendSubscription(
     private val filter: (ChatEvent) -> Boolean,
     listener: ChatEventsObservable.ChatEventSuspendListener<ChatEvent>,
 ) : EventSubscription {
+    @Volatile
     private var listener: ChatEventsObservable.ChatEventSuspendListener<ChatEvent>? = listener
 
+    @Volatile
     override var isDisposed: Boolean = false
 
     override fun dispose() {

@@ -16,8 +16,8 @@
 
 package io.getstream.chat.android.compose.util.extensions
 
-import io.getstream.chat.android.client.models.ChannelCapabilities
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChannelCapabilities
 
 /**
  * Creates a set of channel capabilities fully populated
@@ -48,9 +48,10 @@ public fun ChannelCapabilities.toSet(): Set<String> = setOf(
     SEND_REPLY,
     SET_CHANNEL_COOLDOWN,
     SEND_TYPING_EVENTS,
+    TYPING_EVENTS,
     UPDATE_ANY_MESSAGE,
     UPDATE_CHANNEL,
     UPDATE_CHANNEL_MEMBERS,
     UPDATE_OWN_MESSAGE,
-    UPLOAD_FILE
+    UPLOAD_FILE,
 )

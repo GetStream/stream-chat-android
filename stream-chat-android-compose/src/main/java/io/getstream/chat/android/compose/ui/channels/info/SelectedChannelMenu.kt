@@ -34,11 +34,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.compose.previewdata.PreviewChannelData
-import io.getstream.chat.android.compose.previewdata.PreviewUserData
-import io.getstream.chat.android.compose.state.channels.list.ChannelAction
 import io.getstream.chat.android.compose.state.channels.list.ChannelOptionState
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.channels.ChannelMembers
@@ -47,6 +42,11 @@ import io.getstream.chat.android.compose.ui.components.channels.buildDefaultChan
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.getMembersStatusText
 import io.getstream.chat.android.compose.ui.util.isOneToOne
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 
 /**
  * Shows special UI when an item is selected.
@@ -74,14 +74,14 @@ public fun SelectedChannelMenu(
     channelOptions: List<ChannelOptionState> = buildDefaultChannelOptionsState(
         selectedChannel = selectedChannel,
         isMuted = isMuted,
-        ownCapabilities = selectedChannel.ownCapabilities
+        ownCapabilities = selectedChannel.ownCapabilities,
     ),
     shape: Shape = ChatTheme.shapes.bottomSheet,
     overlayColor: Color = ChatTheme.colors.overlay,
     headerContent: @Composable ColumnScope.() -> Unit = {
         DefaultSelectedChannelMenuHeaderContent(
             selectedChannel = selectedChannel,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
     centerContent: @Composable ColumnScope.() -> Unit = {
@@ -97,7 +97,7 @@ public fun SelectedChannelMenu(
         overlayColor = overlayColor,
         onDismiss = onDismiss,
         headerContent = headerContent,
-        centerContent = centerContent
+        centerContent = centerContent,
     )
 }
 
@@ -128,7 +128,7 @@ internal fun DefaultSelectedChannelMenuHeaderContent(
         style = ChatTheme.typography.title3Bold,
         color = ChatTheme.colors.textHighEmphasis,
         maxLines = 1,
-        overflow = TextOverflow.Ellipsis
+        overflow = TextOverflow.Ellipsis,
     )
     Text(
         modifier = Modifier.fillMaxWidth(),
@@ -176,7 +176,7 @@ private fun SelectedChannelMenuCenteredDialogPreview() {
                 isMuted = false,
                 currentUser = PreviewUserData.user1,
                 onChannelOptionClick = {},
-                onDismiss = {}
+                onDismiss = {},
             )
         }
     }
@@ -202,7 +202,7 @@ private fun SelectedChannelMenuBottomSheetDialogPreview() {
                 isMuted = false,
                 currentUser = PreviewUserData.user1,
                 onChannelOptionClick = {},
-                onDismiss = {}
+                onDismiss = {},
             )
         }
     }

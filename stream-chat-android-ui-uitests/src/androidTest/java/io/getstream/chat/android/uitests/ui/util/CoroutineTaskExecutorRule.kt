@@ -46,7 +46,7 @@ internal class CoroutineTaskExecutorRule : TestWatcher() {
         super.starting(description)
         DispatcherProvider.set(
             mainDispatcher = Dispatchers.Main.immediate,
-            ioDispatcher = dispatcher
+            ioDispatcher = dispatcher,
         )
     }
 

@@ -22,7 +22,7 @@
 
     <fragment
         android:id="@+id/userLoginFragment"
-        android:name="io.getstream.chat.ui.sample.feature.user_login.UserLoginFragment"
+        android:name="io.getstream.chat.ui.sample.feature.userlogin.UserLoginFragment"
         android:label="UserLoginFragment"
         >
         <action
@@ -57,7 +57,7 @@
 
     <fragment
         android:id="@+id/customLoginFragment"
-        android:name="io.getstream.chat.ui.sample.feature.custom_login.CustomLoginFragment"
+        android:name="io.getstream.chat.ui.sample.feature.customlogin.CustomLoginFragment"
         android:label="CustomLoginFragment"
         >
         <action
@@ -162,7 +162,7 @@
 
     <fragment
         android:id="@+id/addGroupChannelSelectNameFragment"
-        android:name="io.getstream.chat.ui.sample.feature.channel.add.group.select_name.AddGroupChannelSelectNameFragment"
+        android:name="io.getstream.chat.ui.sample.feature.channel.add.group.selectname.AddGroupChannelSelectNameFragment"
         android:label="AddGroupChannelSelectNameFragment"
         >
         <action
@@ -190,8 +190,16 @@
             app:argType="string"
             app:nullable="false"
             />
+
         <argument
             android:name="messageId"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true"
+            />
+
+        <argument
+            android:name="parentMessageId"
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true"
@@ -420,7 +428,7 @@
 
     <fragment
         android:id="@+id/componentBrowserHomeFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.home.ComponentBrowserHomeFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.home.ComponentBrowserHomeFragment"
         android:label="ComponentBrowserHomeFragment"
         >
         <action
@@ -463,13 +471,13 @@
 
     <fragment
         android:id="@+id/componentBrowserAvatarViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.avatarview.ComponentBrowserAvatarViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.avatarview.ComponentBrowserAvatarViewFragment"
         android:label="ComponentBrowserAvatarViewFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserChannelsHeaderViewFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.channel.list.ComponentBrowserChannelListHeaderViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.channel.list.ComponentBrowserChannelListHeaderViewFragment"
         android:label="ComponentBrowserChannelsHeaderViewFragment"
         />
 
@@ -481,25 +489,25 @@
 
     <fragment
         android:id="@+id/componentBrowserMessagesHeaderFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.header.ComponentBrowserMessagesHeaderViewFragment"
         android:label="ComponentBrowserMessagesHeaderView"
         />
 
     <fragment
         android:id="@+id/componentBrowserViewReactionsFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserViewReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.reactions.ComponentBrowserViewReactionsFragment"
         android:label="ComponentBrowserViewReactionsViewFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserEditReactionsFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserEditReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.reactions.ComponentBrowserEditReactionsFragment"
         android:label="ComponentBrowserEditReactionsViewFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserMessageListBrowserFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.MessageListComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.MessageListComponentBrowserFragment"
         android:label="ComponentBrowserMessageList"
         >
 
@@ -552,67 +560,67 @@
 
     <fragment
         android:id="@+id/componentBrowserDeletedMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.DeletedMessagesComponentBrowserFragment"
         android:label="ComponentBrowserDeletedMessagesFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserDateDividerFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.DateDividerComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.DateDividerComponentBrowserFragment"
         android:label="ComponentBrowserDateDividerFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserPlainTextMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.PlainTextMessagesComponentBrowserFragment"
         android:label="ComponentBrowserPlainTextMessagesFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserTypingIndicatorFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.typing.ComponentBrowserTypingIndicatorFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.typing.ComponentBrowserTypingIndicatorFragment"
         android:label="ComponentBrowserTypingIndicatorFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserUserReactionsFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.reactions.ComponentBrowserUserReactionsFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.reactions.ComponentBrowserUserReactionsFragment"
         android:label="ComponentBrowserUserReactionsFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserOnlyMediaAttachmentsMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyMediaAttachmentsMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.OnlyMediaAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyMediaAttachmentsMessagesFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserPlainTextWithMediaAttachmentsMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.PlainTextWithMediaAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserPlainTextWithMediaAttachmentsFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserOnlyFileAttachmentsMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.OnlyFileAttachmentsMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.OnlyFileAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserOnlyFileAttachmentsMessagesFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserPlainTextWithFileAttachmentsMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.PlainTextWithFileAttachmentsMessagesComponentBrowserFragment"
         android:label="ComponentBrowserPlainTextWithFileAttachmentsFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserGiphyMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.GiphyMessageComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.GiphyMessageComponentBrowserFragment"
         android:label="ComponentBrowserGiphyFragment"
         />
 
     <fragment
         android:id="@+id/componentBrowserRepliedMessagesFragment"
-        android:name="io.getstream.chat.ui.sample.feature.component_browser.messages.viewholder.RepliedMessagesComponentBrowserFragment"
+        android:name="io.getstream.chat.ui.sample.feature.componentbrowser.messages.viewholder.RepliedMessagesComponentBrowserFragment"
         android:label="ComponentBrowserRepliedMessagesFragment"
         />
 

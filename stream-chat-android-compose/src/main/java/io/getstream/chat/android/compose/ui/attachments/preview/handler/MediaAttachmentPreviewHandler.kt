@@ -17,9 +17,9 @@
 package io.getstream.chat.android.compose.ui.attachments.preview.handler
 
 import android.content.Context
-import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaPreviewActivity
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
 
 /**
  * Shows a preview for the audio/video stream in the attachment using Exoplayer library.
@@ -34,10 +34,10 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         return when {
             assetUrl.isNullOrEmpty() -> false
             mimeType.isBlank() && type.isBlank() -> false
-            ModelType.attach_audio in mimeType -> true
-            ModelType.attach_video in mimeType -> true
-            ModelType.attach_audio in type -> true
-            ModelType.attach_video in type -> true
+            AttachmentType.AUDIO in mimeType -> true
+            AttachmentType.VIDEO in mimeType -> true
+            AttachmentType.AUDIO in type -> true
+            AttachmentType.VIDEO in type -> true
             buildMimeSubTypeList().any { subtype -> mimeType.contains(subtype) } -> true
             else -> false
         }
@@ -48,8 +48,8 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
             MediaPreviewActivity.getIntent(
                 context = context,
                 url = requireNotNull(attachment.assetUrl),
-                title = attachment.title ?: attachment.name
-            )
+                title = attachment.title ?: attachment.name,
+            ),
         )
     }
 
@@ -80,6 +80,6 @@ public class MediaAttachmentPreviewHandler(private val context: Context) : Attac
         // vorbis
         "vorbis",
         // quicktime
-        "quicktime"
+        "quicktime",
     )
 }

@@ -20,8 +20,8 @@ import android.view.View
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.ui.common.extensions.getLastSeenText
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.ui.utils.extensions.getLastSeenText
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.getColorFromRes
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupMemberItemBinding
@@ -52,10 +52,10 @@ class ChatInfoMemberViewHolder(private val binding: ChatInfoMemberItemBinding) :
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
             if (user.image.isNotEmpty()) {
-                binding.memberAvatar.isInvisible = false
-                binding.memberAvatar.setUserData(user)
+                binding.userAvatarView.isInvisible = false
+                binding.userAvatarView.setUser(user)
             } else {
-                binding.memberAvatar.isInvisible = true
+                binding.userAvatarView.isInvisible = true
             }
             binding.memberUsername.text = user.name
             binding.memberOnlineIndicator.isVisible = user.online
@@ -88,7 +88,9 @@ class ChatInfoOptionViewHolder(
         binding.optionTextView.setTextColor(itemView.context.getColorFromRes(item.textColorResId))
         binding.optionImageView.setImageResource(item.iconResId)
         binding.optionImageView.setColorFilter(itemView.context.getColorFromRes(item.tintResId))
-        binding.optionArrowRight.isInvisible = !item.showRightArrow
+        binding.optionArrowRight.isVisible = item.showRightArrow
+        binding.optionCompound.isVisible = item.checkedState != null
+        binding.optionCompound.isChecked = item.checkedState == true
     }
 }
 
@@ -130,12 +132,21 @@ class ChatInfoGroupMemberViewHolder(
     override fun bind(item: ChatInfoItem.MemberItem) {
         with(item.member) {
             member = this
-            binding.userAvatar.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.nameTextView.text = user.name
+            binding.mutedIcon.isVisible = notificationsMuted == true
             binding.onlineTextView.text = user.getLastSeenText(itemView.context)
 
+            val getString = { resId: Int -> itemView.context.getString(resId) }
             val isOwner = item.member.user.id == item.createdBy.id
-            binding.ownerTextView.isVisible = isOwner
+            binding.channelRoleView.text = when (isOwner) {
+                true -> getString(R.string.chat_group_info_owner)
+                else -> when (val role = item.member.channelRole) {
+                    "channel_member" -> getString(R.string.chat_group_info_member)
+                    "channel_moderator" -> getString(R.string.chat_group_info_moderator)
+                    else -> role
+                }
+            }
         }
     }
 }

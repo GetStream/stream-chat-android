@@ -24,13 +24,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.initials
-import io.getstream.chat.android.compose.previewdata.PreviewChannelData
-import io.getstream.chat.android.compose.previewdata.PreviewUserData
 import io.getstream.chat.android.compose.state.OnlineIndicatorAlignment
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewChannelData
+import io.getstream.chat.android.previewdata.PreviewUserData
+import io.getstream.chat.android.ui.common.utils.extensions.initials
 
 /**
  * Represents the [Channel] avatar that's shown when browsing channels or when you open the Messages screen.
@@ -80,7 +80,7 @@ public fun ChannelAvatar(
                 textStyle = textStyle,
                 shape = shape,
                 contentDescription = contentDescription,
-                onClick = onClick
+                onClick = onClick,
             )
         }
 
@@ -98,7 +98,7 @@ public fun ChannelAvatar(
                 showOnlineIndicator = showOnlineIndicator,
                 onlineIndicatorAlignment = onlineIndicatorAlignment,
                 onlineIndicator = onlineIndicator,
-                onClick = onClick
+                onClick = onClick,
             )
         }
         /**
@@ -116,7 +116,7 @@ public fun ChannelAvatar(
                 showOnlineIndicator = showOnlineIndicator,
                 onlineIndicatorAlignment = onlineIndicatorAlignment,
                 onlineIndicator = onlineIndicator,
-                onClick = onClick
+                onClick = onClick,
             )
         }
         /**
@@ -204,7 +204,7 @@ private fun ChannelAvatarPreview(channel: Channel) {
         ChannelAvatar(
             channel = channel,
             currentUser = PreviewUserData.user1,
-            modifier = Modifier.size(36.dp)
+            modifier = Modifier.size(36.dp),
         )
     }
 }

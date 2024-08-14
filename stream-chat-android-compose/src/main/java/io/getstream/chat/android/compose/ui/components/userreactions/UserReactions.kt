@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.components.userreactions
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -45,7 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param items The list of user reactions to display.
  * @param modifier Modifier for styling.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun UserReactions(
     items: List<UserReactionItemState>,
@@ -59,19 +57,19 @@ public fun UserReactions(
     val reactionCountText = LocalContext.current.resources.getQuantityString(
         R.plurals.stream_compose_message_reactions,
         reactionCount,
-        reactionCount
+        reactionCount,
     )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier.background(ChatTheme.colors.barsBackground)
+        modifier = modifier.background(ChatTheme.colors.barsBackground),
     ) {
         Text(
             text = reactionCountText,
             style = ChatTheme.typography.title3Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            color = ChatTheme.colors.textHighEmphasis
+            color = ChatTheme.colors.textHighEmphasis,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -79,7 +77,7 @@ public fun UserReactions(
         if (reactionCount > 0) {
             BoxWithConstraints(
                 modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 val reactionItemWidth = ChatTheme.dimens.userReactionItemWidth
                 val maxColumns = maxOf((maxWidth / reactionItemWidth).toInt(), 1)
@@ -90,7 +88,7 @@ public fun UserReactions(
                     modifier = Modifier
                         .width(reactionGridWidth)
                         .align(Alignment.Center),
-                    columns = GridCells.Fixed(columns)
+                    columns = GridCells.Fixed(columns),
                 ) {
                     items(reactionCount) { index ->
                         itemContent(items[index])

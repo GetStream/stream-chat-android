@@ -46,15 +46,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
+import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.ui.channels.ChannelsScreen
+import io.getstream.chat.android.compose.ui.channels.SearchMode
 import io.getstream.chat.android.compose.ui.channels.header.ChannelListHeader
 import io.getstream.chat.android.compose.ui.channels.info.SelectedChannelMenu
 import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
@@ -63,6 +62,10 @@ import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
@@ -71,7 +74,7 @@ class ChannelsActivity : BaseConnectedActivity() {
         ChannelViewModelFactory(
             ChatClient.instance(),
             QuerySortByField.descByName("last_updated"),
-            null
+            null,
         )
     }
 
@@ -88,19 +91,25 @@ class ChannelsActivity : BaseConnectedActivity() {
          * or build a custom component yourself, like [MyCustomUi].
          */
         setContent {
-            ChatTheme(dateFormatter = ChatApp.dateFormatter) {
+            ChatTheme(
+                dateFormatter = ChatApp.dateFormatter,
+                autoTranslationEnabled = ChatApp.autoTranslationEnabled,
+                allowUIAutomationTest = true,
+            ) {
                 ChannelsScreen(
+                    viewModelFactory = factory,
                     title = stringResource(id = R.string.app_name),
                     isShowingHeader = true,
-                    isShowingSearch = true,
-                    onItemClick = ::openMessages,
+                    searchMode = SearchMode.Messages,
+                    onChannelClick = ::openMessages,
+                    onSearchMessageItemClick = ::openMessages,
                     onBackPressed = ::finish,
                     onHeaderAvatarClick = {
                         listViewModel.viewModelScope.launch {
                             ChatHelper.disconnectUser()
                             openUserLogin()
                         }
-                    }
+                    },
                 )
 
 //                MyCustomUiSimplified()
@@ -116,19 +125,23 @@ class ChannelsActivity : BaseConnectedActivity() {
     @Composable
     private fun MyCustomUiSimplified() {
         val user by ChatClient.instance().clientState.user.collectAsState()
+        val connectionState by ChatClient.instance().clientState.connectionState.collectAsState()
 
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 ChannelListHeader(
                     title = stringResource(id = R.string.app_name),
-                    currentUser = user
+                    currentUser = user,
+                    connectionState = connectionState,
                 )
-            }
+            },
         ) {
             ChannelList(
-                modifier = Modifier.fillMaxSize(),
-                itemContent = {
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
+                channelContent = {
                     CustomChannelListItem(channelItem = it, user = user)
                 },
                 divider = {
@@ -136,9 +149,9 @@ class ChannelsActivity : BaseConnectedActivity() {
                         modifier = Modifier
                             .fillMaxWidth(0.5f)
                             .height(0.5.dp)
-                            .background(color = ChatTheme.colors.textLowEmphasis)
+                            .background(color = ChatTheme.colors.textLowEmphasis),
                     )
-                }
+                },
             )
         }
     }
@@ -147,7 +160,7 @@ class ChannelsActivity : BaseConnectedActivity() {
      * An example of a customized DefaultChannelItem component.
      */
     @Composable
-    private fun CustomChannelListItem(channelItem: ChannelItemState, user: User?) {
+    private fun CustomChannelListItem(channelItem: ItemState.ChannelItemState, user: User?) {
         ChannelItem(
             channelItem = channelItem,
             currentUser = user,
@@ -160,9 +173,9 @@ class ChannelsActivity : BaseConnectedActivity() {
                 Text(
                     text = ChatTheme.channelNameFormatter.formatChannelName(it.channel, user),
                     style = ChatTheme.typography.bodyBold,
-                    color = ChatTheme.colors.textHighEmphasis
+                    color = ChatTheme.colors.textHighEmphasis,
                 )
-            }
+            },
         )
     }
 
@@ -187,7 +200,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                 ChannelListHeader(
                     title = stringResource(id = R.string.app_name),
                     currentUser = user,
-                    connectionState = connectionState
+                    connectionState = connectionState,
                 )
 
                 SearchInput(
@@ -198,15 +211,15 @@ class ChannelsActivity : BaseConnectedActivity() {
                     query = query,
                     onValueChange = {
                         query = it
-                        listViewModel.setSearchQuery(it)
-                    }
+                        listViewModel.setSearchQuery(SearchQuery.Channels(it))
+                    },
                 )
 
                 ChannelList(
                     modifier = Modifier.fillMaxSize(),
                     viewModel = listViewModel,
                     onChannelClick = ::openMessages,
-                    onChannelLongClick = { listViewModel.selectChannel(it) }
+                    onChannelLongClick = { listViewModel.selectChannel(it) },
                 )
             }
 
@@ -223,7 +236,7 @@ class ChannelsActivity : BaseConnectedActivity() {
                     selectedChannel = selectedChannel,
                     currentUser = user,
                     onChannelOptionClick = { action -> listViewModel.performChannelAction(action) },
-                    onDismiss = { listViewModel.dismissChannelAction() }
+                    onDismiss = { listViewModel.dismissChannelAction() },
                 )
             }
         }
@@ -234,8 +247,20 @@ class ChannelsActivity : BaseConnectedActivity() {
             MessagesActivity.createIntent(
                 context = this,
                 channelId = channel.cid,
-                messageId = null
-            )
+                messageId = null,
+                parentMessageId = null,
+            ),
+        )
+    }
+
+    private fun openMessages(message: Message) {
+        startActivity(
+            MessagesActivity.createIntent(
+                context = this,
+                channelId = message.cid,
+                messageId = message.id,
+                parentMessageId = message.parentId,
+            ),
         )
     }
 
@@ -247,7 +272,9 @@ class ChannelsActivity : BaseConnectedActivity() {
 
     companion object {
         fun createIntent(context: Context): Intent {
-            return Intent(context, ChannelsActivity::class.java)
+            return Intent(context, ChannelsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
         }
     }
 }

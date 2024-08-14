@@ -1,10 +1,10 @@
 package io.getstream.chat.docs.kotlin.client.helpers
 
-import io.getstream.chat.android.client.models.UploadedFile
-import io.getstream.chat.android.client.models.UploadedImage
+import io.getstream.result.Error
+import io.getstream.chat.android.models.UploadedFile
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.result.Result
 import java.io.File
 
 class MyFileUploader : FileUploader {
@@ -16,9 +16,9 @@ class MyFileUploader : FileUploader {
         callback: ProgressCallback,
     ): Result<UploadedFile> {
         return try {
-            Result.success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
+            Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
-            Result.error(e)
+            Result.Failure(Error.ThrowableError(message = "Could not send file.", cause = e))
         }
     }
 
@@ -29,9 +29,9 @@ class MyFileUploader : FileUploader {
         file: File,
     ): Result<UploadedFile> {
         return try {
-            Result.success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
+            Result.Success(UploadedFile(file = "file url", thumbUrl = "thumb url"))
         } catch (e: Exception) {
-            Result.error(e)
+            Result.Failure(Error.ThrowableError(message = "Could not send file.", cause = e))
         }
     }
 
@@ -41,11 +41,11 @@ class MyFileUploader : FileUploader {
         userId: String,
         file: File,
         callback: ProgressCallback,
-    ): Result<UploadedImage> {
+    ): Result<UploadedFile> {
         return try {
-            Result.success(UploadedImage(file = "url"))
+            Result.Success(UploadedFile(file = "url"))
         } catch (e: Exception) {
-            Result.error(e)
+            Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
         }
     }
 
@@ -54,11 +54,11 @@ class MyFileUploader : FileUploader {
         channelId: String,
         userId: String,
         file: File,
-    ): Result<UploadedImage> {
+    ): Result<UploadedFile> {
         return try {
-            Result.success(UploadedImage(file = "url"))
+            Result.Success(UploadedFile(file = "url"))
         } catch (e: Exception) {
-            Result.error(e)
+            Result.Failure(Error.ThrowableError(message = "Could not send image.", cause = e))
         }
     }
 
@@ -69,9 +69,9 @@ class MyFileUploader : FileUploader {
         url: String,
     ): Result<Unit> {
         return try {
-            Result.success(Unit)
+            Result.Success(Unit)
         } catch (e: Exception) {
-            Result.error(e)
+            Result.Failure(Error.ThrowableError(message = "Could not delete file.", cause = e))
         }
     }
 
@@ -82,9 +82,9 @@ class MyFileUploader : FileUploader {
         url: String,
     ): Result<Unit> {
         return try {
-            Result.success(Unit)
+            Result.Success(Unit)
         } catch (e: Exception) {
-            Result.error(e)
+            Result.Failure(Error.ThrowableError(message = "Could not delete image.", cause = e))
         }
     }
 }

@@ -28,6 +28,12 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     @InternalStreamChatApi
     public var shouldRefresh: Boolean = false
 
+    @InternalStreamChatApi
+    public var isWatchChannel: Boolean = false
+
+    @InternalStreamChatApi
+    public var isNotificationUpdate: Boolean = false
+
     public val messages: MutableMap<String, Any> = mutableMapOf()
     public val watchers: MutableMap<String, Any> = mutableMapOf()
     public val members: MutableMap<String, Any> = mutableMapOf()
@@ -48,6 +54,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
     }
 
     public open fun withWatchers(limit: Int, offset: Int): QueryChannelRequest {
+        state = true
         val watchers: MutableMap<String, Any> = HashMap()
         watchers[KEY_LIMIT] = limit
         watchers[KEY_OFFSET] = offset
@@ -96,6 +103,14 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         }
         val keys = messages.keys
         return keys.contains(Pagination.AROUND_ID.toString())
+    }
+
+    /**
+     * @return Whether the request contains any of [Pagination] values or not. If it does the messages are being
+     * filtered.
+     */
+    public fun isFilteringMessages(): Boolean {
+        return Pagination.values().map { it.toString() }.intersect(messages.keys).isNotEmpty()
     }
 
     /**
@@ -160,6 +175,7 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         if (watchers != other.watchers) return false
         if (members != other.members) return false
         if (data != other.data) return false
+        if (isNotificationUpdate != other.isNotificationUpdate) return false
         return true
     }
 
@@ -172,11 +188,27 @@ public open class QueryChannelRequest : ChannelRequest<QueryChannelRequest> {
         result = 31 * result + watchers.hashCode()
         result = 31 * result + members.hashCode()
         result = 31 * result + data.hashCode()
+        result = 31 * result + isNotificationUpdate.hashCode()
         return result
     }
 
-    private companion object {
+    override fun toString(): String {
+        return "QueryChannelRequest(" +
+            "state=$state, " +
+            "watch=$watch, " +
+            "presence=$presence, " +
+            "shouldRefresh=$shouldRefresh, " +
+            "isWatchChannel=$isWatchChannel, " +
+            "isNotificationUpdate=$isNotificationUpdate, " +
+            "messages=$messages, " +
+            "watchers=$watchers, " +
+            "members=$members, " +
+            "data=$data)"
+    }
+
+    internal companion object {
         private const val KEY_LIMIT = "limit"
         private const val KEY_OFFSET = "offset"
+        internal const val KEY_MEMBERS = "members"
     }
 }

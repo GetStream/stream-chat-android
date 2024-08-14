@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.socket
 
 import io.getstream.chat.android.client.scope.UserScope
 import io.getstream.chat.android.client.utils.TimeProvider
-import io.getstream.logging.StreamLog
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -35,8 +35,8 @@ internal class HealthMonitor(
     private val timeProvider: TimeProvider = TimeProvider,
     private val retryInterval: RetryInterval = ExponencialRetryInterval,
     private val userScope: UserScope,
-    private val checkCallback: () -> Unit,
-    private val reconnectCallback: () -> Unit,
+    private val checkCallback: suspend () -> Unit,
+    private val reconnectCallback: suspend () -> Unit,
 ) {
 
     private var consecutiveFailures = 0
@@ -45,7 +45,7 @@ internal class HealthMonitor(
     private var healthCheckJob: Job? = null
     private var reconnectJob: Job? = null
 
-    private val logger = StreamLog.getLogger("Chat:SocketMonitor")
+    private val logger by taggedLogger("Chat:SocketMonitor")
 
     /**
      * Stop monitoring connection.
@@ -141,7 +141,7 @@ internal class HealthMonitor(
 
     private fun CoroutineScope.launchDelayed(
         delayMilliseconds: Long,
-        block: suspend CoroutineScope.() -> Unit
+        block: suspend CoroutineScope.() -> Unit,
     ): Job = launch {
         delay(delayMilliseconds)
         block()
@@ -158,7 +158,7 @@ internal class HealthMonitor(
             val max = min(500 + consecutiveFailures * 2000, 25000)
             val min = min(
                 max(250, (consecutiveFailures - 1) * 2000),
-                25000
+                25000,
             )
             return floor(Math.random() * (max - min) + min).toLong()
         }

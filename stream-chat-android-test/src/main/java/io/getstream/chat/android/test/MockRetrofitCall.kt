@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.test
 
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.log.taggedLogger
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -36,7 +36,7 @@ public class MockRetrofitCall<T : Any>(
     public val doWork: suspend () -> Unit,
 ) : Call<T> {
 
-    private val logger = StreamLog.getLogger("Chat:MockRetrofitCall")
+    private val logger by taggedLogger("Chat:MockRetrofitCall")
 
     private val executed = AtomicBoolean(false)
     private val job = AtomicReference<Job>()
@@ -46,7 +46,12 @@ public class MockRetrofitCall<T : Any>(
         logger.d { "[cancel] no args" }
         job.get()?.cancel()
         job.set(null)
-        pendingCallback.get()?.onResult(Result.error(AsyncTestCallCanceledException()))
+        pendingCallback.get()
+            ?.onResult(
+                Result.Failure(
+                    Error.ThrowableError(message = "", cause = AsyncTestCallCanceledException()),
+                ),
+            )
         pendingCallback.set(null)
     }
 
@@ -54,7 +59,7 @@ public class MockRetrofitCall<T : Any>(
         logger.d { "[enqueue] no args" }
         if (executed.get()) {
             logger.w { "[enqueue] rejected (already executed)" }
-            callback.onResult(Result.error(ChatError(message = "Already executed.")))
+            callback.onResult(Result.Failure(Error.GenericError(message = "Already executed.")))
             return
         }
         pendingCallback.set(callback)
@@ -65,7 +70,7 @@ public class MockRetrofitCall<T : Any>(
                 doWork()
                 logger.w { "[enqueue] work completed" }
                 callback.onResult(result)
-            }
+            },
         )
     }
 

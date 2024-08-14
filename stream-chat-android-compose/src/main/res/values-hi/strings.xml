@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -115,7 +115,6 @@
   <string name="stream_compose_thread_title">"चर्चा पर जवाब"</string>
   <string name="stream_compose_unmute_user">"यूजर को म्यूट से हटायें"</string>
   <string name="stream_compose_unpin_message">"इस चैट से अनपिन करें"</string>
-  <string name="stream_compose_untitled_channel">"बिना नाम वाला चैनल"</string>
   <string name="stream_compose_upload_file_count">"अपलोडिंग %1$d / %2$d …"</string>
   <string name="stream_compose_upload_progress">"%1$s / %2$s"</string>
   <string name="stream_compose_user_status_last_seen">"पिछली बार देखा %1$s"</string>

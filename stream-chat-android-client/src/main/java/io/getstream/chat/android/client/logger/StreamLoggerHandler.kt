@@ -16,20 +16,20 @@
 
 package io.getstream.chat.android.client.logger
 
-import io.getstream.logging.Priority
-import io.getstream.logging.Priority.ASSERT
-import io.getstream.logging.Priority.DEBUG
-import io.getstream.logging.Priority.ERROR
-import io.getstream.logging.Priority.INFO
-import io.getstream.logging.Priority.VERBOSE
-import io.getstream.logging.Priority.WARN
-import io.getstream.logging.StreamLogger
+import io.getstream.log.Priority
+import io.getstream.log.Priority.ASSERT
+import io.getstream.log.Priority.DEBUG
+import io.getstream.log.Priority.ERROR
+import io.getstream.log.Priority.INFO
+import io.getstream.log.Priority.VERBOSE
+import io.getstream.log.Priority.WARN
+import io.getstream.log.StreamLogger
 
 /**
  * A connection layer between [StreamLogger] and [ChatLoggerHandler].
  */
 internal class StreamLoggerHandler(
-    private val handler: ChatLoggerHandler?
+    private val handler: ChatLoggerHandler?,
 ) : StreamLogger {
 
     /**

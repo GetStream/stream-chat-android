@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.userreactions.UserReactionItemState
+import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
  * Provides sample user reactions that will be used to render component previews.
@@ -30,7 +31,7 @@ internal object PreviewUserReactionData {
     fun user1Reaction() = UserReactionItemState(
         user = PreviewUserData.user1,
         painter = painterResource(R.drawable.stream_compose_ic_reaction_thumbs_up),
-        type = "like"
+        type = "like",
     )
 
     @Composable
@@ -56,7 +57,7 @@ internal object PreviewUserReactionData {
 
     @Composable
     fun oneUserReaction() = listOf(
-        user1Reaction()
+        user1Reaction(),
     )
 
     @Composable
@@ -64,6 +65,6 @@ internal object PreviewUserReactionData {
         user1Reaction(),
         user2Reaction(),
         user3Reaction(),
-        user4Reaction()
+        user4Reaction(),
     )
 }

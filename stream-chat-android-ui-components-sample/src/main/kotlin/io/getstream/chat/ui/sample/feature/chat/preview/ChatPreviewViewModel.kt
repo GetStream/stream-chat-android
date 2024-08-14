@@ -23,8 +23,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.livedata.utils.Event
+import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.common.CHANNEL_ARG_DRAFT
+import io.getstream.result.Result
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
@@ -48,11 +49,11 @@ class ChatPreviewViewModel(
                     channelType = "messaging",
                     channelId = "",
                     memberIds = listOf(memberId, user.id),
-                    extraData = mapOf(CHANNEL_ARG_DRAFT to true)
+                    extraData = mapOf(CHANNEL_ARG_DRAFT to true),
                 ).await()
 
-                if (result.isSuccess) {
-                    cid = result.data().cid
+                if (result is Result.Success) {
+                    cid = result.value.cid
                     _state.value = State(cid!!)
                 }
             }
@@ -70,7 +71,7 @@ class ChatPreviewViewModel(
         viewModelScope.launch {
             val result =
                 chatClient.channel(cid).update(message = null, extraData = mapOf(CHANNEL_ARG_DRAFT to false)).await()
-            if (result.isSuccess) {
+            if (result is Result.Success) {
                 _events.value = Event(UiEvent.NavigateToChat(cid))
             }
         }

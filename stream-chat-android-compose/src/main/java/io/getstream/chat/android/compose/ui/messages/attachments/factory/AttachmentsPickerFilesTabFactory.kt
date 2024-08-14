@@ -30,9 +30,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.getstream.sdk.chat.model.AttachmentMetaData
-import com.getstream.sdk.chat.utils.AttachmentFilter
-import com.getstream.sdk.chat.utils.StorageHelper
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.compose.R
@@ -42,6 +39,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.Files
 import io.getstream.chat.android.compose.ui.components.attachments.files.FilesPicker
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
+import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
@@ -61,7 +61,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
      * @param isSelected If the tab is selected.
      */
     @Composable
-    override fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
+    override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
             contentDescription = stringResource(id = R.string.stream_compose_files_option),
@@ -76,6 +76,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     /**
      * Emits content that allows users to pick files in this tab.
      *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
      * @param onAttachmentItemSelected Handler when the item selection state changes.
@@ -83,7 +84,8 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
      */
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    override fun pickerTabContent(
+    override fun PickerTabContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
@@ -91,13 +93,17 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
     ) {
         var storagePermissionRequested by rememberSaveable { mutableStateOf(false) }
         val storagePermissionState = rememberMultiplePermissionsState(
-            permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) listOf(
-                Manifest.permission.READ_MEDIA_IMAGES,
-                Manifest.permission.READ_MEDIA_VIDEO,
-                Manifest.permission.READ_MEDIA_AUDIO,
-            ) else listOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE
-            )
+            permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                listOf(
+                    Manifest.permission.READ_MEDIA_IMAGES,
+                    Manifest.permission.READ_MEDIA_VIDEO,
+                    Manifest.permission.READ_MEDIA_AUDIO,
+                )
+            } else {
+                listOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                )
+            },
         ) {
             storagePermissionRequested = true
         }
@@ -120,14 +126,15 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
                             Toast.makeText(
                                 context,
                                 R.string.stream_compose_message_composer_file_not_supported,
-                                Toast.LENGTH_SHORT
+                                Toast.LENGTH_SHORT,
                             ).show()
                         }
 
                         onAttachmentsSubmitted(attachments)
-                    }
+                    },
                 )
             }
+
             else -> {
                 val revokedPermissionState = storagePermissionState.revokedPermissions.first()
                 MissingPermissionContent(revokedPermissionState)
@@ -139,7 +146,7 @@ public class AttachmentsPickerFilesTabFactory : AttachmentsPickerTabFactory {
         LaunchedEffect(storagePermissionState.allPermissionsGranted) {
             if (storagePermissionState.allPermissionsGranted) {
                 onAttachmentsChanged(
-                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) }
+                    storageHelper.getFiles().map { AttachmentPickerItemState(it, false) },
                 )
             }
         }

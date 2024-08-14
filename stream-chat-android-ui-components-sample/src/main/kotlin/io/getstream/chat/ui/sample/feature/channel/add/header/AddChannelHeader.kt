@@ -17,7 +17,7 @@
 package io.getstream.chat.ui.sample.feature.channel.add.header
 
 import android.content.Context
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 interface AddChannelHeader {
     val viewContext: Context

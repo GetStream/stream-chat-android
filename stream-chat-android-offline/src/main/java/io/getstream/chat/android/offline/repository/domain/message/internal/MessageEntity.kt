@@ -21,8 +21,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import androidx.room.Relation
-import io.getstream.chat.android.client.models.MessageSyncType
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.offline.repository.domain.message.attachment.internal.AttachmentEntity
 import io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal.ChannelInfoEntity
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionEntity
@@ -45,9 +44,7 @@ internal data class MessageEntity(
     indices = [
         Index(value = ["cid", "createdAt"]),
         Index(value = ["syncStatus"]),
-        Index(value = ["syncType"]),
-        Index(value = ["syncStatus", "syncType"])
-    ]
+    ],
 )
 internal data class MessageInnerEntity(
     @PrimaryKey
@@ -62,13 +59,10 @@ internal data class MessageInnerEntity(
     val type: String = "",
     /** if the message has been synced to the servers, default is synced */
     val syncStatus: SyncStatus = SyncStatus.COMPLETED,
-
-    val syncType: MessageSyncType? = null,
-
-    val syncContent: MessageSyncContentEntity? = null,
-
     /** the number of replies */
     val replyCount: Int = 0,
+    /** the number of deleted replies */
+    val deletedReplyCount: Int = 0,
     /** when the message was created */
     val createdAt: Date? = null,
     /** when the message was created locally */
@@ -87,12 +81,15 @@ internal data class MessageInnerEntity(
     val reactionCounts: Map<String, Int> = emptyMap(),
     /** a mapping between reaction type and the reaction score, ie like:10, heart:4 */
     val reactionScores: Map<String, Int> = emptyMap(),
+    val reactionGroups: Map<String, ReactionGroupEntity> = emptyMap(),
     /** parent id, used for threads */
     val parentId: String? = null,
     /** slash command like /giphy etc */
     val command: String? = null,
     /** if the message was sent by shadow banned user */
     val shadowed: Boolean = false,
+    /** message internationalization mapping.*/
+    val i18n: Map<String, String> = emptyMap(),
     /** if the message is also shown in the channel **/
     val showInChannel: Boolean = false,
     @Embedded(prefix = "channel_info")
@@ -125,11 +122,11 @@ internal data class MessageInnerEntity(
      * Note: This property is local only, it is not sent to the backend.
      */
     var skipEnrichUrl: Boolean = false,
-)
 
-internal data class MessageSyncDescriptionEntity(
-    val type: MessageSyncType,
-    val content: String,
+    /** Contains moderation details of the message **/
+    val moderationDetails: ModerationDetailsEntity? = null,
+    /** When the message text was updated */
+    val messageTextUpdatedAt: Date? = null,
 )
 
 internal const val MESSAGE_ENTITY_TABLE_NAME = "stream_chat_message"

@@ -16,14 +16,15 @@
 
 package io.getstream.chat.android.client.plugin.factory
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.client.plugin.DependencyResolver
 import io.getstream.chat.android.client.plugin.Plugin
+import io.getstream.chat.android.models.User
 
 /**
  * Interface used to add new plugins to the SDK. Use this to provide a [Plugin] that will be used to cause side effects
  * in certain API calls.
  */
-public interface PluginFactory {
+public interface PluginFactory : DependencyResolver {
 
     /**
      * Creates a [Plugin]

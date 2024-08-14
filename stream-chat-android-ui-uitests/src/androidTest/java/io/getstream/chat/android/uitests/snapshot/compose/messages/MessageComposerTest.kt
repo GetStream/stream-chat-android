@@ -16,11 +16,11 @@
 
 package io.getstream.chat.android.uitests.snapshot.compose.messages
 
-import io.getstream.chat.android.client.models.ChannelCapabilities
-import io.getstream.chat.android.common.composer.MessageComposerState
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.util.extensions.toSet
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.ChannelCapabilities
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.uitests.snapshot.compose.ComposeScreenshotTest
 import org.junit.Test
 
@@ -31,9 +31,9 @@ class MessageComposerTest : ComposeScreenshotTest() {
     fun messageComposerWithEmptyInput() = runScreenshotTest {
         MessageComposer(
             messageComposerState = MessageComposerState(
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             ),
-            onSendMessage = { _, _ -> }
+            onSendMessage = { _, _ -> },
         )
     }
 
@@ -42,9 +42,9 @@ class MessageComposerTest : ComposeScreenshotTest() {
         MessageComposer(
             messageComposerState = MessageComposerState(
                 inputValue = "Message text",
-                ownCapabilities = ChannelCapabilities.toSet()
+                ownCapabilities = ChannelCapabilities.toSet(),
             ),
-            onSendMessage = { _, _ -> }
+            onSendMessage = { _, _ -> },
         )
     }
 }

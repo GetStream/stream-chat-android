@@ -22,7 +22,7 @@ public class TestObserver<T> : Observer<T> {
     public var lastObservedValue: T? = null
         private set
 
-    override fun onChanged(value: T?) {
+    public override fun onChanged(value: T) {
         lastObservedValue = value
     }
 

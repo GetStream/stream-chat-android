@@ -51,7 +51,7 @@ public fun ImageAvatar(
         modifier.clickable(
             onClick = onClick,
             indication = rememberRipple(bounded = false),
-            interactionSource = remember { MutableInteractionSource() }
+            interactionSource = remember { MutableInteractionSource() },
         )
     } else {
         modifier
@@ -61,6 +61,6 @@ public fun ImageAvatar(
         modifier = clickableModifier.clip(shape),
         contentScale = ContentScale.Crop,
         painter = painter,
-        contentDescription = contentDescription
+        contentDescription = contentDescription,
     )
 }

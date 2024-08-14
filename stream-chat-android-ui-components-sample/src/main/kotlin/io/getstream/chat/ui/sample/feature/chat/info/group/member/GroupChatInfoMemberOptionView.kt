@@ -38,7 +38,7 @@ class GroupChatInfoMemberOptionView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
         context,
         attrs,
-        defStyleAttr
+        defStyleAttr,
     ) {
         init(attrs)
     }
@@ -47,6 +47,10 @@ class GroupChatInfoMemberOptionView : FrameLayout {
         binding.root.setOnClickListener {
             listener.onClick()
         }
+    }
+
+    fun setOnOptionText(text: CharSequence) {
+        binding.titleTextView.text = text
     }
 
     private fun init(attrs: AttributeSet?) {

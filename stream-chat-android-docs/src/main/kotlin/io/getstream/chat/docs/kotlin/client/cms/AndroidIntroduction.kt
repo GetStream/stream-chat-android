@@ -3,18 +3,20 @@ package io.getstream.chat.docs.kotlin.client.cms
 import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField.Companion.descByName
+import io.getstream.chat.android.models.querysort.QuerySortByField
+import io.getstream.chat.android.models.querysort.QuerySortByField.Companion.descByName
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Filters
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Filters
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.models.User
+import io.getstream.result.Result
+import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
+import io.getstream.chat.android.state.plugin.config.StatePluginConfig
+import io.getstream.chat.android.state.plugin.factory.StreamStatePluginFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -28,20 +30,23 @@ class AndroidIntroduction {
         val token = "{{ chat_user_token }}"
         // Step 1 - Set up the OfflinePlugin for offline storage
         val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(
+            appContext = applicationContext,
+        )
+
+        val statePluginFactory = StreamStatePluginFactory(
+            config = StatePluginConfig(
                 backgroundSyncEnabled = true,
                 userPresence = true,
-                persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
             ),
-            appContext = applicationContext,
+            appContext = applicationContext
         )
 
         // Step 2 - Set up the client, together with offline plugin, for API calls
         val client = ChatClient.Builder(apiKey, applicationContext)
             // Change log level
             .logLevel(ChatLogLevel.ALL)
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(offlinePluginFactory, statePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
 
         // Step 3 - Authenticate and connect the user
@@ -54,10 +59,13 @@ class AndroidIntroduction {
             user = user,
             token = token, // or client.devToken(userId); if auth is disabled for your app
         ).enqueue { result ->
-            if (result.isSuccess) {
-                // Handle success
-            } else {
-                // Handler error
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }
@@ -74,11 +82,14 @@ class AndroidIntroduction {
 
         // Creating a channel with the low level client
         channelClient.create(memberIds = emptyList(), extraData = extraData).enqueue { result ->
-            if (result.isSuccess) {
-                val channel: Channel = result.data()
-                // Use channel by calling methods on channelClient
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val channel: Channel = result.value
+                    // Use channel by calling methods on channelClient
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
 
@@ -108,10 +119,13 @@ class AndroidIntroduction {
         )
 
         channelClient.sendMessage(message).enqueue { result ->
-            if (result.isSuccess) {
-                val message: Message = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val message: Message = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }
@@ -124,7 +138,7 @@ class AndroidIntroduction {
             Filters.eq("type", "messaging"),
             Filters.`in`("members", "john"),
         )
-    val sort = QuerySortByField<Channel>().descByName("lastMessageAt")
+        val sort = QuerySortByField<Channel>().descByName("lastMessageAt")
 
         val request = QueryChannelsRequest(
             filter = filter,
@@ -134,10 +148,13 @@ class AndroidIntroduction {
         ).withWatch().withState()
 
         client.queryChannels(request).enqueue { result ->
-            if (result.isSuccess) {
-                val channels: List<Channel> = result.data()
-            } else {
-                // Handle result.error()
+            when (result) {
+                is Result.Success -> {
+                    val channels: List<Channel> = result.value
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }

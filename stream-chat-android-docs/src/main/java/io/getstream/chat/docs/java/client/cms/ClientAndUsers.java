@@ -5,14 +5,13 @@ import android.content.Context;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
+import io.getstream.chat.android.models.FilterObject;
 import io.getstream.chat.android.client.api.models.QueryUsersRequest;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.client.models.User;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.User;
 import io.getstream.chat.android.client.token.TokenProvider;
 import io.getstream.chat.docs.TokenService;
 
@@ -38,10 +37,11 @@ public class ClientAndUsers {
          */
         @SuppressWarnings("Convert2Lambda")
         public void connectingUser() {
-            User user = new User();
-            user.setId("bender");
-            user.setName("Bender");
-            user.setImage("https://bit.ly/321RmWb");
+            User user = new User.Builder()
+                    .withId("bender")
+                    .withName("Bender")
+                    .withImage("https://bit.ly/321RmWb")
+                    .build();
 
             // You can setup a user token in two ways:
 
@@ -50,10 +50,10 @@ public class ClientAndUsers {
             client.connectUser(user, token).enqueue(result -> {
                 if (result.isSuccess()) {
                     // Logged in
-                    User userRes = result.data().getUser();
-                    String connectionId = result.data().getConnectionId();
+                    User userRes = result.getOrNull().getUser();
+                    String connectionId = result.getOrNull().getConnectionId();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
 
@@ -84,10 +84,11 @@ public class ClientAndUsers {
          * @see <a href="https://getstream.io/chat/docs/tokens_and_authentication/?language=java#development-tokens">Development Tokens</a>
          */
         public void developmentToken() {
-            User user = new User();
-            user.setId("bender");
-            user.setName("Bender");
-            user.setImage("https://bit.ly/321RmWb");
+            User user = new User.Builder()
+                    .withId("bender")
+                    .withName("Bender")
+                    .withImage("https://bit.ly/321RmWb")
+                    .build();
 
             String token = client.devToken(user.getId());
 
@@ -99,10 +100,11 @@ public class ClientAndUsers {
          */
         @SuppressWarnings("Convert2Lambda")
         public void tokenExpiration() {
-            User user = new User();
-            user.setId("bender");
-            user.setName("Bender");
-            user.setImage("https://bit.ly/321RmWb");
+            User user = new User.Builder()
+                    .withId("bender")
+                    .withName("Bender")
+                    .withImage("https://bit.ly/321RmWb")
+                    .build();
 
             TokenProvider tokenProvider = new TokenProvider() {
                 @NotNull
@@ -148,9 +150,9 @@ public class ClientAndUsers {
 
             client.queryUsers(request).enqueue(result -> {
                 if (result.isSuccess()) {
-                    List<User> users = result.data();
+                    List<User> users = result.getOrNull();
                 } else {
-                    // Handle result.error()
+                    // Handle error
                 }
             });
         }
@@ -201,7 +203,7 @@ public class ClientAndUsers {
                 if (disconnectResult.isSuccess()) {
                     client.connectUser(user, token).enqueue(loginResult -> { /* ... */ });
                 } else {
-                    // Handle result.error()
+                    // Handle result error
                 }
             });
         }

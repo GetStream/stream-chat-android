@@ -16,39 +16,48 @@
 
 package io.getstream.chat.android.client.interceptor.message.internal
 
-import io.getstream.chat.android.client.Mother.randomAttachment
-import io.getstream.chat.android.client.Mother.randomUser
+import io.getstream.chat.android.client.channel.ChannelMessagesUpdateLogic
+import io.getstream.chat.android.client.channel.state.ChannelStateLogicProvider
 import io.getstream.chat.android.client.extensions.uploadId
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.SyncStatus
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomAttachment
+import io.getstream.chat.android.randomFile
+import io.getstream.chat.android.randomMessage
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import org.amshove.kluent.`should be equal to`
 import org.amshove.kluent.`should not be equal to`
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
 internal class PrepareMessageLogicImplTest {
 
+    private val channelMessagesUpdateLogic: ChannelMessagesUpdateLogic = mock()
+
     private val clientState: ClientState = mock()
-    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(clientState)
+    private val logic: ChannelStateLogicProvider = mock {
+        on(it.channelStateLogic(any(), any())) doReturn channelMessagesUpdateLogic
+    }
+    private val prepareMessageInterceptorImpl = PrepareMessageLogicImpl(clientState, logic)
 
     @Test
     fun `given a message has attachments, the status should be updated accordingly`() {
-        val attachment: Attachment = randomAttachment()
+        val attachment: Attachment = randomAttachment(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.syncStatus `should be equal to` SyncStatus.AWAITING_ATTACHMENTS
@@ -57,7 +66,7 @@ internal class PrepareMessageLogicImplTest {
     @Test
     fun `given message is prepared, it should always have id, user, cid, type, createdLocallyAt and syncStatus`() {
         val newUser = randomUser()
-        val attachment: Attachment = randomAttachment()
+        val attachment: Attachment = randomAttachment().copy(upload = randomFile())
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(attachment),
             syncStatus = SyncStatus.SYNC_NEEDED,
@@ -72,7 +81,7 @@ internal class PrepareMessageLogicImplTest {
             messageWithAttachments,
             randomString(),
             randomString(),
-            newUser
+            newUser,
         )
 
         preparedMessage.run {
@@ -91,14 +100,14 @@ internal class PrepareMessageLogicImplTest {
 
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.syncStatus `should be equal to` SyncStatus.IN_PROGRESS
@@ -110,14 +119,14 @@ internal class PrepareMessageLogicImplTest {
 
         val messageWithAttachments = randomMessage(
             attachments = mutableListOf(),
-            syncStatus = SyncStatus.SYNC_NEEDED
+            syncStatus = SyncStatus.SYNC_NEEDED,
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.syncStatus `should be equal to` SyncStatus.SYNC_NEEDED
@@ -127,14 +136,14 @@ internal class PrepareMessageLogicImplTest {
     fun `given message id and cid is empty, they should be generated`() {
         val messageWithAttachments = randomMessage(
             cid = "",
-            id = ""
+            id = "",
         )
 
         val preparedMessage = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
         preparedMessage.cid `should not be equal to` ""
@@ -143,18 +152,22 @@ internal class PrepareMessageLogicImplTest {
 
     @Test
     fun `given message's attachment upload id is empty, it should be generated`() {
-        val attachment = randomAttachment { uploadId = null }
+        val attachment = randomAttachment().copy(upload = randomFile())
         val messageWithAttachments = randomMessage(
-            attachments = mutableListOf(attachment)
+            attachments = mutableListOf(attachment),
         )
 
-        prepareMessageInterceptorImpl.prepareMessage(
+        println("initialAttachments: ${messageWithAttachments.attachments}")
+
+        val result = prepareMessageInterceptorImpl.prepareMessage(
             messageWithAttachments,
             randomString(),
             randomString(),
-            randomUser()
+            randomUser(),
         )
 
-        attachment.uploadId `should not be equal to` null
+        println("resultAttachments: ${result.attachments}")
+
+        result.attachments.first().uploadId `should not be equal to` null
     }
 }

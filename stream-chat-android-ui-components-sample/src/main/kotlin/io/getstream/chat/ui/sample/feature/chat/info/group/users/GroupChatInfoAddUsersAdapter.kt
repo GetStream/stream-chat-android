@@ -21,7 +21,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 import io.getstream.chat.ui.sample.common.appThemeContext
 import io.getstream.chat.ui.sample.databinding.ChatInfoGroupAddUsersItemBinding
 
@@ -34,7 +34,7 @@ class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdap
         override fun areContentsTheSame(oldItem: User, newItem: User): Boolean {
             return oldItem == newItem
         }
-    }
+    },
 ) {
 
     private var userClickListener: UserClickListener? = null
@@ -64,7 +64,7 @@ class GroupChatInfoAddUsersAdapter : ListAdapter<User, GroupChatInfoAddUsersAdap
 
         fun bind(user: User) {
             this.user = user
-            binding.userAvatarView.setUserData(user)
+            binding.userAvatarView.setUser(user)
             binding.userNameTextView.text = user.name
         }
     }

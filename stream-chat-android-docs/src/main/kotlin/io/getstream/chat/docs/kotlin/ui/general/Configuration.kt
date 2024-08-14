@@ -3,37 +3,44 @@
 package io.getstream.chat.docs.kotlin.ui.general
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.Typeface
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.ColorDrawable
+import android.text.format.DateUtils
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import coil.imageLoader
-import coil.request.ImageRequest
-import com.getstream.sdk.chat.adapter.MessageListItem
-import com.getstream.sdk.chat.images.ImageHeadersProvider
-import com.getstream.sdk.chat.navigation.ChatNavigationHandler
-import com.getstream.sdk.chat.navigation.destinations.ChatDestination
-import com.getstream.sdk.chat.utils.DateFormatter
-import io.getstream.chat.android.client.models.User
+import androidx.core.content.res.ResourcesCompat
 import io.getstream.chat.android.markdown.MarkdownTextTransformer
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.ChatUI
-import io.getstream.chat.android.ui.MessagePreviewFormatter
-import io.getstream.chat.android.ui.MimeTypeIconProvider
-import io.getstream.chat.android.ui.SupportedReactions
-import io.getstream.chat.android.ui.avatar.AvatarBitmapFactory
-import io.getstream.chat.android.ui.avatar.AvatarStyle
-import io.getstream.chat.android.ui.common.ChannelNameFormatter
-import io.getstream.chat.android.ui.common.navigation.ChatNavigator
-import io.getstream.chat.android.ui.common.style.ChatFonts
-import io.getstream.chat.android.ui.common.style.TextStyle
-import io.getstream.chat.android.ui.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
+import io.getstream.chat.android.ui.common.utils.ChannelNameFormatter
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.AttachmentPreviewFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.QuotedAttachmentFactoryManager
+import io.getstream.chat.android.ui.font.ChatFonts
+import io.getstream.chat.android.ui.font.TextStyle
+import io.getstream.chat.android.ui.helper.MessagePreviewFormatter
+import io.getstream.chat.android.ui.helper.MimeTypeIconProvider
+import io.getstream.chat.android.ui.helper.SupportedReactions
+import io.getstream.chat.android.ui.helper.transformer.ChatMessageTextTransformer
+import io.getstream.chat.android.ui.navigation.ChatNavigationHandler
+import io.getstream.chat.android.ui.navigation.ChatNavigator
+import io.getstream.chat.android.ui.navigation.destinations.ChatDestination
+import io.getstream.chat.android.ui.widgets.avatar.AvatarImageView
+import io.getstream.chat.android.ui.widgets.avatar.AvatarStyle
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarRenderer
+import io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarViewProvider
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarRenderer
+import io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
 import io.getstream.chat.docs.R
-import io.getstream.chat.docs.kotlin.ui.utility.GrayscaleTransformation
-import org.threeten.bp.LocalDateTime
-import org.threeten.bp.LocalTime
-import org.threeten.bp.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 
 /**
  * [General Configuration](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/)
@@ -46,12 +53,19 @@ private class ChatUiSnippets {
      * [Custom Reactions](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#custom-reactions)
      */
     fun customReactions() {
+        // Create a drawable for the non-selected reaction option
         val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
-        val loveDrawableSelected =
-            ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!.apply { setTint(Color.RED) }
+        // Create a drawable for the selected reaction option and set a tint to it
+        val loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+            .mutate()
+            .apply { setTint(Color.RED) }
+
+        // Create a map of reactions
         val supportedReactionsData = mapOf(
             "love" to SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected)
         )
+
+        // Replace the default reactions with your custom reactions
         ChatUI.supportedReactions = SupportedReactions(context, supportedReactionsData)
     }
 
@@ -75,42 +89,12 @@ private class ChatUiSnippets {
         }
     }
 
-    fun defaultAvatar() {
-        object : AvatarBitmapFactory(context) {
-            override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
-                return createDefaultUserBitmap(user, style, avatarSize)
-            }
-        }
-    }
-
-    /**
-     * [Customizing Avatar](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#customizing-avatar)
-     */
-    fun customizingAvatar() {
-        ChatUI.avatarBitmapFactory = object : AvatarBitmapFactory(context) {
-            override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
-                val imageResult = context.imageLoader.execute(
-                    ImageRequest.Builder(context)
-                        .data(user.image)
-                        .apply {
-                            if (!user.online) {
-                                transformations(GrayscaleTransformation())
-                            }
-                        }
-                        .build()
-                )
-
-                return (imageResult.drawable as? BitmapDrawable)?.bitmap
-            }
-        }
-    }
-
     /**
      * [Customizing Image Headers](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#adding-extra-headers-to-image-requests)
      */
     fun customizingImageHeaders() {
         ChatUI.imageHeadersProvider = object : ImageHeadersProvider {
-            override fun getImageRequestHeaders(): Map<String, String> {
+            override fun getImageRequestHeaders(url: String): Map<String, String> {
                 return mapOf("token" to "12345")
             }
         }
@@ -119,17 +103,31 @@ private class ChatUiSnippets {
     /**
      * [Changing the Default Font](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#changing-the-default-font)
      */
-    fun changingTheDefaultFont() {
-        ChatUI.fonts = object : ChatFonts {
-            override fun setFont(textStyle: TextStyle, textView: TextView) {
-                textStyle.apply(textView)
-            }
+    class ChangingTheDefaultFont : AppCompatActivity() {
 
-            override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
-                textStyle.apply(textView)
-            }
+        /**
+         * Holds no significant value, it's just so that
+         * we can simply use 'context' inside the tutorials
+         * without specifying where it's coming from.
+         */
+        val context = applicationContext
 
-            override fun getFont(textStyle: TextStyle): Typeface? = textStyle.font
+        fun changingTheDefaultFont() {
+            ChatUI.fonts = object : ChatFonts {
+
+                // Fetch the font you want to use
+                val font = ResourcesCompat.getFont(context, R.font.stream_roboto_regular)
+
+                override fun setFont(textStyle: TextStyle, textView: TextView) {
+                    textView.setTypeface(font, Typeface.BOLD)
+                }
+
+                override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
+                    textView.setTypeface(font, Typeface.BOLD)
+                }
+
+                override fun getFont(textStyle: TextStyle): Typeface? = font
+            }
         }
     }
 
@@ -156,7 +154,7 @@ private class ChatUiSnippets {
      */
     fun customizingNavigator() {
         val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
-            // Perform some custom action here
+            // Perform a custom action here
             true
         }
 
@@ -183,17 +181,103 @@ private class ChatUiSnippets {
      */
     fun customizingDateFormatter() {
         ChatUI.dateFormatter = object : DateFormatter {
-            private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
-            private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+            private val dateFormat: DateFormat = SimpleDateFormat("dd/MM/yyyy")
+            private val timeFormat: DateFormat = SimpleDateFormat("HH:mm")
 
-            override fun formatDate(localDateTime: LocalDateTime?): String {
-                localDateTime ?: return ""
-                return dateFormatter.format(localDateTime)
+            override fun formatDate(date: Date?): String {
+                date ?: return ""
+                return dateFormat.format(date)
             }
 
-            override fun formatTime(localTime: LocalTime?): String {
-                localTime ?: return ""
-                return dateTimeFormatter.format(localTime)
+            override fun formatTime(date: Date?): String {
+                date ?: return ""
+                return timeFormat.format(date)
+            }
+
+            override fun formatRelativeTime(date: Date?): String {
+                date ?: return ""
+
+                return DateUtils.getRelativeDateTimeString(
+                    context,
+                    date.time,
+                    DateUtils.MINUTE_IN_MILLIS,
+                    DateUtils.WEEK_IN_MILLIS,
+                    0,
+                ).toString()
+            }
+        }
+    }
+
+    /**
+     * [Customizing Attachments](https://getstream.io/chat/docs/sdk/android/v5/ui/general-customization/chatui/#customizing-attachments)
+     */
+    private class CustomizingAttachments {
+
+        private fun customizeMessageList() {
+            val attachmentFactoryManager = AttachmentFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.attachmentFactoryManager = attachmentFactoryManager
+        }
+
+        private fun customizeMessageComposerOrInput() {
+            val attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.attachmentPreviewFactoryManager = attachmentPreviewFactoryManager
+        }
+
+        private fun customizeQuotedMessageContent() {
+            val quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
+                // Set your custom attachment factories here
+            )
+
+            ChatUI.quotedAttachmentFactoryManager = quotedAttachmentFactoryManager
+        }
+    }
+
+    /**
+     * [Disabling Video Thumbnails](https://getstream.io/chat/docs/sdk/android/ui/general-customization/chatui/#disabling-video-thumbnails)
+     */
+    private fun disablingVideoThumbnails() {
+        ChatUI.videoThumbnailsEnabled = false
+    }
+
+    private fun customizingUserAvatarRenderer() {
+        ChatUI.userAvatarRenderer = object : UserAvatarRenderer {
+            override fun render(style: AvatarStyle, user: User, target: UserAvatarView) {
+                val placeholder = ColorDrawable(Color.RED)
+                target.setAvatar(avatar = user.image, placeholder = placeholder)
+                target.setOnline(user.online)
+            }
+        }
+    }
+
+    private fun customizingChannelAvatarRenderer() {
+        ChatUI.channelAvatarRenderer = object : ChannelAvatarRenderer {
+            override fun render(
+                style: AvatarStyle,
+                channel: Channel,
+                currentUser: User?,
+                targetProvider: ChannelAvatarViewProvider,
+            ) {
+                val placeholder = ColorDrawable(Color.RED)
+
+                val target1: AvatarImageView = targetProvider.regular()
+                target1.setAvatar(avatar = channel.image, placeholder = placeholder)
+
+                val user = channel.members.first { it.user.id != currentUser?.id }.user
+                val target2: UserAvatarView = targetProvider.singleUser()
+                target2.setAvatar(avatar = user.image, placeholder = placeholder)
+                target2.setOnline(user.online)
+
+                val users = channel.members.filter { it.user.id != currentUser?.id }.map { it.user }
+                val target3: List<AvatarImageView> = targetProvider.userGroup(users.size)
+                target3.forEachIndexed { index, targetItem ->
+                    targetItem.setAvatar(avatar = users[index].image, placeholder = placeholder)
+                }
             }
         }
     }

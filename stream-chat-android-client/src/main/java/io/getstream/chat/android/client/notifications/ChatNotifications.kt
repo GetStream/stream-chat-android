@@ -16,32 +16,30 @@
 
 package io.getstream.chat.android.client.notifications
 
+import android.app.Application
 import android.content.Context
+import io.getstream.android.push.permissions.NotificationPermissionManager
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NewMessageEvent
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Device
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.PushMessage
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManager
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionManagerImpl
-import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Device
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PushMessage
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@InternalStreamChatApi
-public interface ChatNotifications {
-    public fun onSetUser()
-    public fun setDevice(device: Device)
-    public fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
-    public fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
-    public suspend fun onLogout(flushPersistence: Boolean)
-    public fun displayNotification(channel: Channel, message: Message)
-    public fun dismissChannelNotifications(channelType: String, channelId: String)
+internal interface ChatNotifications {
+    fun onSetUser()
+    fun setDevice(device: Device)
+    fun onPushMessage(message: PushMessage, pushNotificationReceivedListener: PushNotificationReceivedListener)
+    fun onNewMessageEvent(newMessageEvent: NewMessageEvent)
+    suspend fun onLogout(flushPersistence: Boolean)
+    fun displayNotification(channel: Channel, message: Message)
+    fun dismissChannelNotifications(channelType: String, channelId: String)
 }
 
 @Suppress("TooManyFunctions")
@@ -51,18 +49,19 @@ internal class ChatNotificationsImpl constructor(
     private val context: Context,
     private val scope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
 ) : ChatNotifications {
-    private val logger = StreamLog.getLogger("Chat:Notifications")
+    private val logger by taggedLogger("Chat:Notifications")
 
     private val pushTokenUpdateHandler = PushTokenUpdateHandler(context)
     private val showedMessages = mutableSetOf<String>()
-    private val permissionManager: NotificationPermissionManager = NotificationPermissionManagerImpl(
-        context = context,
-        requestPermissionOnAppLaunch = notificationConfig.requestPermissionOnAppLaunch,
-        onPermissionStatus = { status ->
-            logger.i { "[onPermissionStatus] status: $status" }
-            handler.onNotificationPermissionStatus(status)
-        }
-    )
+    private val permissionManager: NotificationPermissionManager =
+        NotificationPermissionManager.createNotificationPermissionsManager(
+            application = context.applicationContext as Application,
+            requestPermissionOnAppLaunch = notificationConfig.requestPermissionOnAppLaunch,
+            onPermissionStatus = { status ->
+                logger.i { "[onPermissionStatus] status: $status" }
+                handler.onNotificationPermissionStatus(status)
+            },
+        )
 
     init {
         logger.i { "<init> no args" }
@@ -70,11 +69,13 @@ internal class ChatNotificationsImpl constructor(
 
     override fun onSetUser() {
         logger.i { "[onSetUser] no args" }
-        permissionManager.start()
+        permissionManager
+            .takeIf { notificationConfig.requestPermissionOnAppLaunch() }
+            ?.start()
         notificationConfig.pushDeviceGenerators.firstOrNull { it.isValidForThisDevice(context) }
             ?.let {
                 it.onPushDeviceGeneratorSelected()
-                it.asyncGenerateDevice(::setDevice)
+                it.asyncGeneratePushDevice { setDevice(it.toDevice()) }
             }
     }
 
@@ -110,7 +111,7 @@ internal class ChatNotificationsImpl constructor(
     }
 
     override suspend fun onLogout(flushPersistence: Boolean) {
-        logger.i { "[onLogout] no args" }
+        logger.i { "[onLogout] flusPersistence: $flushPersistence" }
         permissionManager.stop()
         handler.dismissAllNotifications()
         cancelLoadDataWork()

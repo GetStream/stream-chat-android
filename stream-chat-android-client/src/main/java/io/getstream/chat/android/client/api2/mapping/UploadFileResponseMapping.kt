@@ -17,10 +17,10 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api.models.UploadFileResponse
-import io.getstream.chat.android.client.models.UploadedFile
+import io.getstream.chat.android.models.UploadedFile
 
 internal fun UploadFileResponse.toUploadedFile() =
     UploadedFile(
         file = this.file,
-        thumbUrl = this.thumb_url
+        thumbUrl = this.thumb_url,
     )

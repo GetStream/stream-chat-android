@@ -24,7 +24,7 @@
     android:paddingEnd="@dimen/stream_ui_spacing_small"
     >
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.GapView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
         android:id="@+id/gapView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -51,8 +51,8 @@
         tools:visibility="visible"
         />
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/marginStart"
@@ -84,7 +84,7 @@
         app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
         >
 
-        <io.getstream.chat.android.ui.message.list.adapter.view.internal.MessageReplyView
+        <io.getstream.chat.android.ui.feature.messages.list.adapter.view.MessageReplyView
             android:id="@+id/replyView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -97,10 +97,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hyphenationFrequency="normal"
-            android:paddingLeft="@dimen/stream_ui_spacing_medium"
-            android:paddingTop="@dimen/stream_ui_spacing_small"
-            android:paddingRight="@dimen/stream_ui_spacing_medium"
-            android:paddingBottom="@dimen/stream_ui_spacing_small"
+            android:paddingStart="@dimen/stream_ui_message_text_padding_start"
+            android:paddingTop="@dimen/stream_ui_message_text_padding_top"
+            android:paddingEnd="@dimen/stream_ui_message_text_padding_end"
+            android:paddingBottom="@dimen/stream_ui_message_text_padding_bottom"
             android:textAppearance="@style/StreamUiTextAppearance.Body"
             android:textColorLink="@color/stream_ui_accent_blue"
             android:textDirection="locale"
@@ -110,7 +110,7 @@
 
     </LinearLayout>
 
-    <io.getstream.chat.android.ui.message.list.reactions.view.internal.ViewReactionsView
+    <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
         android:id="@+id/reactionsView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,7 +130,7 @@
         app:layout_constraintStart_toStartOf="parent"
         />
 
-    <io.getstream.chat.android.ui.message.list.adapter.view.internal.FootnoteView
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
         android:id="@+id/footnote"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -146,14 +146,14 @@
         android:layout_height="24dp"
         android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/footnote"
-        app:layout_constraintEnd_toStartOf="@id/avatarMineView"
+        app:layout_constraintEnd_toStartOf="@id/userAvatarMineView"
         tools:ignore="ContentDescription"
         tools:src="@drawable/stream_ui_ic_warning"
         tools:visibility="visible"
         />
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarMineView"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarMineView"
         style="?attr/streamUiMessageListItemAvatarStyle"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

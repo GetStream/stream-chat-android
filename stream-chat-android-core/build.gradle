@@ -3,9 +3,9 @@ import io.getstream.chat.android.Dependencies
 
 plugins {
     id 'java-library'
+    id 'java-test-fixtures'
     id 'kotlin'
 }
-
 
 ext {
     PUBLISH_GROUP_ID = Configuration.artifactGroup
@@ -15,8 +15,9 @@ ext {
 
 apply from: "${rootDir}/scripts/publish-module.gradle"
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+    withSourcesJar()
 }
 test {
     useJUnitPlatform()
@@ -27,18 +28,22 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=kotlin.RequiresOptIn',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
+                '-opt-in=kotlin.RequiresOptIn',
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi',
         ]
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 }
 
 dependencies {
-    api project(":libraries:logging:stream-logger")
-
     implementation Dependencies.kotlinReflect
     implementation Dependencies.coroutinesCore
     implementation Dependencies.androidxAnnotations
+    compileOnly Dependencies.composeStableMarker
+
+    api Dependencies.streamResult
+    api Dependencies.streamResultCall
+    implementation Dependencies.streamLog
 
     detektPlugins(Dependencies.detektFormatting)
 

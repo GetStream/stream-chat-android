@@ -16,21 +16,21 @@
 
 package io.getstream.chat.android.client.utils
 
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.User
 
 /**
  * Partially merges [that] user data into [this] user data.
  */
 @InternalStreamChatApi
-public fun User.mergePartially(that: User): User {
-    this.role = that.role
-    this.createdAt = that.createdAt
-    this.updatedAt = that.updatedAt
-    this.lastActive = that.lastActive
-    this.banned = that.banned
-    this.name = that.name
-    this.image = that.image
-    this.extraData = that.extraData
-    return this
-}
+public fun User.mergePartially(that: User): User = this.copy(
+    role = that.role,
+    createdAt = that.createdAt,
+    updatedAt = that.updatedAt,
+    lastActive = that.lastActive,
+    banned = that.banned,
+    name = that.name,
+    image = that.image,
+    privacySettings = that.privacySettings,
+    extraData = that.extraData,
+)

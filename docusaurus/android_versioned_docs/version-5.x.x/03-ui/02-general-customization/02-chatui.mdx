@@ -1,0 +1,590 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Configuration
+
+The SDK provides an API for general configuration of the UI Component library's behavior and appearance, which is exposed via the `ChatUI` object.
+
+`ChatUI` allows you to override the default implementations of commonly used parts of the SDK such as:
+
+* Available message reactions
+* The UI used for rendering attachments
+* MIME type icons for attachments
+* Default font used across the UI components
+* Attachments URLs
+* Text transformations
+
+The full list of `ChatUI` properties you can override include:
+
+* `style`: Allows overriding the global, default style of UI components, such as `defaultTextStyle`.
+* `navigator`: Allows intercepting and modifying default navigation between SDK components (for example: navigating from `MessageListView` to `AttachmentGalleryActivity`).
+* `imageHeadersProvider`: Allows adding extra headers to image loading requests.
+* `fonts`: The default font for `TextView`s displayed by UI Components.
+* `messageTextTransformer`: Used to transform the way text is rendered on screen, for example: create clickable link text or implement markdown support. You can override it with `MarkdownTextTransformer` if you want to use Stream's ready-made markdown support.
+* `supportedReactions`: The set of supported message reactions.
+* `mimeTypeIconProvider`: The icons used for different mime types.
+* `channelNameFormatter`: Allows customizing the way channel names are formatted.
+* `messagePreviewFormatter`: Allows you to generate a preview text for the given message.
+* `dateFormatter`: Allows changing the way dates are formatted.
+* `attachmentFactoryManager`: Allows changing the way attachments are displayed in the message list. Includes adding UI for custom attachments.
+* `attachmentPreviewFactoryManager`: Allows changing the way attachments are displayed in the message composer. Includes adding UI for custom attachments.
+* `quotedAttachmentFactoryManager`: Allows changing the way attachments are displayed in quoted messages both in the message list and the message composer. Includes adding UI for custom attachments.
+* `currentUserProvider`: provides the currently logged in user.
+
+:::note
+`ChatUI` is initialized out-of-the-box with default implementations - no initialization is required on app startup.
+:::
+
+## Custom Reactions
+
+By default, the SDK provides 5 built-in reactions:
+
+![Default reactions](../../assets/chatui_default_reactions.png)
+
+You can change the default reactions by overriding `ChatUI.supportedReactions` with your own set of reactions:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// Create a drawable for the non-selected reaction option
+val loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+// Create a drawable for the selected reaction option and set a tint to it
+val loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love)!!
+    .mutate()
+    .apply { setTint(Color.RED) }
+
+// Create a map of reactions
+val supportedReactionsData = mapOf(
+    "love" to SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected)
+)
+
+// Replace the default reactions with your custom reactions
+ChatUI.supportedReactions = SupportedReactions(context, supportedReactionsData)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Create a drawable for the non-selected reaction option
+Drawable loveDrawable = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love);
+// Create a drawable for the selected reaction option and set a tint to it
+Drawable loveDrawableSelected = ContextCompat.getDrawable(context, R.drawable.stream_ui_ic_reaction_love).mutate();
+loveDrawableSelected.setTint(Color.RED);
+
+// Create a map of reactions
+Map<String, SupportedReactions.ReactionDrawable> supportedReactionsData = new HashMap<>();
+supportedReactionsData.put("love", new SupportedReactions.ReactionDrawable(loveDrawable, loveDrawableSelected));
+
+// Replace the default reactions with your custom reactions
+ChatUI.setSupportedReactions(new SupportedReactions(context, supportedReactionsData));
+```
+</TabItem>
+</Tabs>
+
+As a result, only the _love_ reaction is available in the chat, and when selected, it will have a red tint.
+
+| Normal state - available reactions | Active state - reaction selected |
+| --- | --- |
+|![Light_mode](../../assets/chat_ui_custom_reaction.png)|![Dark_mode](../../assets/chat_ui_custom_reaction_active.png)|
+
+## Custom MIME Type Icons
+
+When possible, the SDK displays thumbnails for image and video files. When thumbnails are unavailable or when other types of files are in question, mime type icons are displayed in `MessageListView`, `MessageComposer` and attachment picker.
+
+By default, the SDK provides built-in MIME type icons for the most popular file types and displays a generic file icon for others.
+
+To customize these icons, you need to override `ChatUI.mimeTypeIconProvider` like so:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.mimeTypeIconProvider = MimeTypeIconProvider { mimeType ->
+    when {
+        // Generic icon for missing MIME type
+        mimeType == null -> R.drawable.stream_ui_ic_file
+        // Special icon for XLS files
+        mimeType == "application/vnd.ms-excel" -> R.drawable.stream_ui_ic_file_xls
+        // Generic icon for audio files
+        mimeType.contains("audio") -> R.drawable.stream_ui_ic_file_mp3
+        // Generic icon for video files
+        mimeType.contains("video") -> R.drawable.stream_ui_ic_file_mov
+        // Generic icon for other files
+        else -> R.drawable.stream_ui_ic_file
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setMimeTypeIconProvider(mimeType -> {
+    if (mimeType == null) {
+        // Generic icon for missing MIME type
+        return R.drawable.stream_ui_ic_file;
+    } else if (mimeType.equals("application/vnd.ms-excel")) {
+        // Special icon for XLS files
+        return R.drawable.stream_ui_ic_file_xls;
+    } else if (mimeType.contains("audio")) {
+        // Generic icon for audio files
+        return R.drawable.stream_ui_ic_file_mp3;
+    } else if (mimeType.contains("video")) {
+        // Generic icon for video files
+        return R.drawable.stream_ui_ic_file_mov;
+    } else {
+        // Generic icon for other files
+        return R.drawable.stream_ui_ic_file;
+    }
+});
+```
+</TabItem>
+</Tabs>
+
+## Customizing Avatars
+`AvatarView` is used in the lists of channels, users, and messages. An avatar is a small image which identifies a specific channel or user.
+
+The image in the `AvatarView` is being displayed based on the `image` property, present in both `Channel` and `User` objects:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Default Avatar Light Mode](../../assets/default_channel.png) | ![Default Avatar Dark Mode](../../assets/default_channel_dark.png) |
+
+The `AvatarView` will use the default gradient color with initials if the `image` property cannot be loaded:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Default Avatar Light Mode](../../assets/default_avatar.png) | ![Default Avatar Dark Mode](../../assets/default_avatar_dark.png) |
+
+
+#### Customizing Avatars Using Styles
+You can configure the avatar shape, border width, online indicator and other aspects using [AvatarStyle](https://github.com/GetStream/stream-chat-android/blob/v5/stream-chat-android-ui-components/src/main/kotlin/io/getstream/chat/android/ui/avatar/AvatarStyle.kt). You can create this kind of avatar by changing the shape and corner radius:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Light Mode](../../assets/square_avatar.png) | ![Dark Mode](../../assets/square_avatar_dark.png)
+
+You can also change the background and the image using `AvatarBitmapFactory`.
+
+#### Customizing Avatars Using AvatarBitmapFactory
+
+Overriding the `AvatarBitmapFactory` allows you to add custom logic for the channel's and user's avatars displayed using `AvatarView`. 
+
+The factory has a pair of methods for both the user and channel avatars, such as `createUserBitmap` and `createDefaultUserBitmap`. The first should load the avatar from the network, this is attempted first when an avatar is requested. If the first method fails, the `Default` variant is called as a fallback. This should have an implementation that never fails, and always returns a valid bitmap.
+
+:::note
+The methods mentioned above are suspending functions. If you don't use coroutines, you'll find variants with `Blocking` in their name which you can use instead.
+:::
+
+**If you don't want to use avatars from the internet and only use the default avatar**, you can call `createDefaultUserBitmap` inside `createUserBitmap` in your custom implementation of `AvatarBitmapFactory`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+object : AvatarBitmapFactory(context) {
+    override suspend fun createUserBitmap(user: User, style: AvatarStyle, avatarSize: Int): Bitmap? {
+        return createDefaultUserBitmap(user, style, avatarSize)
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+new AvatarBitmapFactory(context) {
+    @Nullable
+    @Override
+    public Object createUserBitmap(@NonNull User user, @NonNull AvatarStyle style, int avatarSize, @NonNull Continuation<? super Bitmap> $completion) {
+        return createDefaultUserBitmap(user, style, avatarSize, $completion);
+    }
+};
+```
+</TabItem>
+</Tabs>
+
+
+**If you only would like to change the gradient colors for the default avatar**, you can use `stream_ui_avatar_gradient_colors`.
+
+The default color set includes a variety of colors: 
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Colorful Avatars Light Mode](../../assets/colorful_avatars.png) | ![Colorful Avatars Dark Mode](../../assets/colorful_avatars_dark.png) |
+
+The set can be overridden in the `color.xml` file - you can expand or reduce the number of supported colors, like in the example below:
+
+```
+<array name="stream_ui_avatar_gradient_colors">
+    <item>@color/stream_ui_avatar_gradient_blue</item>
+</array>        
+```
+
+Which creates:
+
+| Light Mode | Dark Mode |
+|---|---|
+| ![Blue Gradient Avatars Light Mode](../../assets/blue_gradients_avatars.png) | ![Blue Gradient Avatars Dark Mode](../../assets/blue_gradients_avatars_dark.png) |
+
+If you add custom loading logic for your avatars, you can also override the `userBitmapKey` and `channelBitmapKey` methods to get the correct caching behavior. The cache keys returned from these methods should include a representation of the pieces of data you use to load the avatars.
+
+## Adding Extra Headers to Image Requests
+
+If you're [using your own CDN](https://getstream.io/chat/docs/android/file_uploads/?language=kotlin#using-your-own-cdn), you might also need to add extra headers to image loading requests. You can do this by creating your own implementation of the `ImageHeadersProvider` interface and then setting it on `ChatUI`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.imageHeadersProvider = object : ImageHeadersProvider {
+    override fun getImageRequestHeaders(): Map<String, String> {
+        return mapOf("token" to "12345")
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setImageHeadersProvider(() -> {
+    Map<String, String> headers = new HashMap<>();
+    headers.put("token", "12345");
+
+    return headers;
+});
+```
+</TabItem>
+</Tabs>
+
+## Changing the Default Font
+
+You can customize the default fonts used by all of the UI components. To change the fonts, implement the `ChatFont` interface and set the new implementation on `ChatUI`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.fonts = object : ChatFonts {
+    override fun setFont(textStyle: TextStyle, textView: TextView) {
+        textStyle.apply(textView)
+    }
+
+    override fun setFont(textStyle: TextStyle, textView: TextView, defaultTypeface: Typeface) {
+        textStyle.apply(textView)
+    }
+
+    override fun getFont(textStyle: TextStyle): Typeface? = textStyle.font
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setFonts(new ChatFonts() {
+    @Override
+    public void setFont(@NonNull TextStyle textStyle, @NonNull TextView textView) {
+        textStyle.apply(textView);
+    }
+
+    @Override
+    public void setFont(@NonNull TextStyle textStyle, @NonNull TextView textView, @NonNull Typeface defaultTypeface) {
+        textStyle.apply(textView);
+    }
+
+    @Nullable
+    @Override
+    public Typeface getFont(@NonNull TextStyle textStyle) {
+        return textStyle.getFont();
+    }
+});
+```
+</TabItem>
+</Tabs>
+
+## Transforming Message Text
+
+You can easily provide a transformer that can transform and apply the message text to a given `TextView`. You need to override `ChatUI.messageTextTransformer` to an instance of `ChatMessageTextTransformer`s implementation.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView: TextView, messageItem: MessageItem ->
+    // Transform messages to upper case.
+    textView.text = messageItem.message.text.uppercase()
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setMessageTextTransformer((textView, messageItem) -> {
+    textView.setText(messageItem.getMessage().getText().toUpperCase(Locale.ROOT));
+});
+```
+</TabItem>
+</Tabs>
+
+Stream UI TextView components don't have `android:autoLink` property set because it conflicts with Markdown plugins.
+:::note
+You can use `AutoLinkableTextTransformer` if you want to apply custom transformation but keep links clickable.
+:::
+
+## Markdown
+
+The SDK provides a standalone Markdown module `stream-chat-android-markdown-transformer` that contains `MarkdownTextTransformer` which is an implementation of `ChatMessageTextTransformer`. It uses the [Markwon](https://github.com/noties/Markwon) library internally.
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.messageTextTransformer = MarkdownTextTransformer(context)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setMessageTextTransformer(new MarkdownTextTransformer(context));
+```
+</TabItem>
+</Tabs>
+
+If you use `MarkdownTextTransformer`, don't use `android:autoLink` attribute because it'll break the markdown [Linkify](https://noties.io/Markwon/docs/v4/linkify/) implementation.
+
+Then the SDK will parse Markdown automatically:
+
+| Markdown Input in the Message Composer | Message with Markdown in the Message List |
+|---|---|
+| ![Markdown Input in the Message Composer](../../assets/markdown_support.png) | ![Markdown Message in the Message List](../../assets/markdown_support_result.png) |
+
+## Navigator
+
+The SDK performs navigation in certain cases:
+
+- Navigating to `AttachmentGalleryActivity` after clicking on an image attachment.
+- Opening the browser after clicking a link in the chat.
+
+This action is performed by `ChatNavigator`. You can customize its behavior by providing your own implementation of `ChatNavigationHandler`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val navigationHandler = ChatNavigationHandler { destination: ChatDestination ->
+    // Perform a custom action here
+    true
+}
+
+ChatUI.navigator = ChatNavigator(navigationHandler)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatNavigationHandler chatNavigatorHandler = destination -> {
+    // Perform a custom action here
+    return true;
+};
+
+ChatUI.setNavigator(new ChatNavigator(chatNavigatorHandler));
+```
+</TabItem>
+</Tabs>
+
+## Customizing ChannelNameFormatter
+
+You can customize the way channel names are formatted by overriding the default `ChannelNameFormatter`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.channelNameFormatter = ChannelNameFormatter { channel, currentUser ->
+    channel.name
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setChannelNameFormatter((channel, currentUser) -> channel.getName());
+```
+</TabItem>
+</Tabs>
+
+## Customizing MessagePreviewFormatter
+
+You can change the way the last messages are formatted in the channel list by overriding the default `MessagePreviewFormatter`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.messagePreviewFormatter = MessagePreviewFormatter { channel, message, currentUser ->
+    message.text
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setMessagePreviewFormatter((channel, message, currentUser) -> message.getText());
+```
+</TabItem>
+</Tabs>
+
+## Customizing DateFormatter
+
+Overriding the `DateFormatter` allows you to change the way dates are formatted in the application:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+ChatUI.dateFormatter = object: DateFormatter {
+    private val dateFormatter = DateTimeFormatter.ofPattern("yy MM dd")
+    private val dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+
+    override fun formatDate(localDateTime: LocalDateTime?): String {
+        localDateTime ?: return ""
+        return dateFormatter.format(localDateTime)
+    }
+
+    override fun formatTime(localTime: LocalTime?): String {
+        localTime ?: return ""
+        return dateTimeFormatter.format(localTime)
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatUI.setDateFormatter(new DateFormatter() {
+    private DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yy MM dd");
+    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
+    @NonNull
+    @Override
+    public String formatDate(@Nullable LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "";
+        }
+        return dateFormatter.format(localDateTime);
+    }
+
+    @NonNull
+    @Override
+    public String formatTime(@Nullable LocalTime localTime) {
+        if (localTime == null) {
+            return "";
+        }
+        return dateTimeFormatter.format(localTime);
+    }
+});
+```
+</TabItem>
+</Tabs>
+
+## Customizing Attachments
+
+Stream allows both overriding the way the out-of-the-box supported attachments (image, video, etc.) are displayed, and implementing UI for custom attachments.
+
+In the intro section, we've mentioned the different types of attachment factory managers. Depending on which part of the UI you want to customize, you will have to override different `ChatUI` properties.
+
+If you want to customize the way attachments are presented in `MessageListView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val attachmentFactoryManager = AttachmentFactoryManager(
+    // Set your custom attachment factories here
+)
+
+ChatUI.attachmentFactoryManager = attachmentFactoryManager
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+AttachmentFactoryManager attachmentFactoryManager = new AttachmentFactoryManager(
+        // Set your custom attachment factories here
+);
+
+ChatUI.setAttachmentFactoryManager(attachmentFactoryManager);
+```
+</TabItem>
+</Tabs>
+
+If you want to customize the way attachments are presented in `MessageInputView` or `MessageComposerView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val attachmentPreviewFactoryManager = AttachmentPreviewFactoryManager(
+    // Set your custom attachment factories here
+)
+
+ChatUI.attachmentPreviewFactoryManager = attachmentPreviewFactoryManager
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+AttachmentPreviewFactoryManager attachmentPreviewFactoryManager = new AttachmentPreviewFactoryManager(
+        // Set your custom attachment factories here
+);
+
+ChatUI.setAttachmentPreviewFactoryManager(attachmentPreviewFactoryManager);
+```
+</TabItem>
+</Tabs>
+
+If you want to customize the way attachments are presented inside quoted messages in `MessageListView`:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val quotedAttachmentFactoryManager = QuotedAttachmentFactoryManager(
+    // Set your custom attachment factories here
+)
+
+ChatUI.quotedAttachmentFactoryManager = quotedAttachmentFactoryManager
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+QuotedAttachmentFactoryManager quotedAttachmentFactoryManager = new QuotedAttachmentFactoryManager(
+        // Set your custom attachment factories here
+);
+
+ChatUI.setQuotedAttachmentFactoryManager(quotedAttachmentFactoryManager);
+```
+</TabItem>
+</Tabs>
+
+### Guide on Adding Support for Custom Attachments
+
+The following documentation pages cover the topic extensively:
+
+* [Detailed guide on implementing custom attachments if you are using `MessageInputView`](../06-guides/08-adding-custom-attachments-message-input.mdx)
+* [Detailed guide on implementing custom attachments if you are using `MessageComposerView`](../06-guides/09-adding-custom-attachments-message-composer.mdx)
+

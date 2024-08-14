@@ -54,17 +54,17 @@
                 android:text="Sizes"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewSmall"
                 style="@style/StreamUiMessageListAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewMedium"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewLarge"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 />
@@ -76,22 +76,22 @@
                 android:text="Different user counts"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarView1"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarView2"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarView3"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarView4"
                 style="@style/StreamUiUserAvatarStyle"
                 />
@@ -103,22 +103,22 @@
                 android:text="Missing avatars"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarViewMissing1"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarViewMissing2"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarViewMissing3"
                 style="@style/StreamUiUserAvatarStyle"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
                 android:id="@+id/avatarViewMissing4"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 />
@@ -130,19 +130,19 @@
                 android:text="Online indicator"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewSmallIndicator"
                 style="@style/StreamUiMessageListAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewMediumIndicator"
                 style="@style/StreamUiUserAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewLargeIndicator"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 />
@@ -154,28 +154,28 @@
                 android:text="Online indicator position"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewIndicatorTopLeft"
                 style="@style/StreamUiUserAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
                 app:streamUiAvatarOnlineIndicatorPosition="topLeft"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewIndicatorBottomLeft"
                 style="@style/StreamUiUserAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
                 app:streamUiAvatarOnlineIndicatorPosition="bottomLeft"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewIndicatorTopRight"
                 style="@style/StreamUiUserAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
                 app:streamUiAvatarOnlineIndicatorPosition="topRight"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewIndicatorBottomRight"
                 style="@style/StreamUiUserAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
@@ -189,7 +189,7 @@
                 android:text="With border"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewSmallIndicatorBorder"
                 style="@style/StreamUiMessageListAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
@@ -197,7 +197,7 @@
                 app:streamUiAvatarBorderColor="@color/grey_dark"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewMediumIndicatorBorder"
                 style="@style/StreamUiUserAvatarStyle"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
@@ -205,7 +205,7 @@
                 app:streamUiAvatarBorderColor="@color/grey_dark"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 android:id="@+id/avatarViewLargeIndicatorBorder"
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 app:streamUiAvatarBorderWidth="4dp"
@@ -219,7 +219,7 @@
                 android:text="Custom indicator colors"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 style="@style/StreamUiMessageListAvatarStyle"
                 android:id="@+id/avatarViewSmallColors"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
@@ -229,7 +229,7 @@
                 app:streamUiAvatarOnlineIndicatorBorderColor="@color/stream_ui_avatar_gradient_yellow"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 style="@style/StreamUiUserAvatarStyle"
                 android:id="@+id/avatarViewMediumColors"
                 app:streamUiAvatarOnlineIndicatorEnabled="true"
@@ -239,7 +239,7 @@
                 app:streamUiAvatarOnlineIndicatorBorderColor="@color/stream_ui_avatar_gradient_yellow"
                 />
 
-            <io.getstream.chat.android.ui.avatar.AvatarView
+            <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
                 style="@style/StreamUiGroupActionsAvatarStyle"
                 android:id="@+id/avatarViewLargeColors"
                 app:streamUiAvatarBorderWidth="4dp"

@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.uitests.util
 
-import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.MessageType
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import org.threeten.bp.LocalDateTime
 import org.threeten.bp.ZoneId
 import java.util.Date
@@ -33,121 +33,117 @@ import java.util.Date
 @OptIn(InternalStreamChatApi::class)
 object TestData {
 
-    fun user1(): User = User().apply {
-        id = "jc"
-        name = "Jc Miñarro"
-        image = FakeImageLoader.AVATAR_JC
-        online = true
-    }
+    fun user1(): User = User().copy(
+        id = "jc",
+        name = "Jc Miñarro",
+        image = FakeImageLoader.AVATAR_JC,
+        online = true,
+    )
 
-    fun user2(): User = User().apply {
-        id = "amit"
-        name = "Amit Kumar"
-        image = FakeImageLoader.AVATAR_AMIT
-    }
+    fun user2(): User = User().copy(
+        id = "amit",
+        name = "Amit Kumar",
+        image = FakeImageLoader.AVATAR_AMIT,
+    )
 
-    fun user3(): User = User().apply {
-        id = "filip"
-        name = "Filip Babić"
-        image = FakeImageLoader.AVATAR_FILIP
-    }
+    fun user3(): User = User().copy(
+        id = "filip",
+        name = "Filip Babić",
+        image = FakeImageLoader.AVATAR_FILIP,
+    )
 
-    fun user4(): User = User().apply {
-        id = "rafal"
-        name = "Rafal Adasiewicz"
-        image = FakeImageLoader.AVATAR_RAFAL
-    }
+    fun user4(): User = User().copy(
+        id = "rafal",
+        name = "Rafal Adasiewicz",
+        image = FakeImageLoader.AVATAR_RAFAL,
+    )
 
-    fun user5(): User = User().apply {
-        id = "belal"
-        name = "Belal Khan"
-        image = FakeImageLoader.AVATAR_BELAL
-    }
+    fun user5(): User = User().copy(
+        id = "belal",
+        name = "Belal Khan",
+        image = FakeImageLoader.AVATAR_BELAL,
+    )
 
     fun member1() = Member(
         user = user1(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member2() = Member(
         user = user2(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member3() = Member(
         user = user3(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member4() = Member(
         user = user4(),
-        isInvited = false
+        isInvited = false,
     )
 
     fun member5() = Member(
         user = user5(),
-        isInvited = false
+        isInvited = false,
     )
 
-    fun message1(): Message = Message().apply {
-        id = "message1"
-        text = "Ladies and gentlemen, we have liftoff"
-        createdAt = date1()
-        type = ModelType.message_regular
-        user = user1()
-    }
+    fun message1(): Message = Message().copy(
+        id = "message1",
+        text = "Ladies and gentlemen, we have liftoff",
+        createdAt = date1(),
+        type = MessageType.REGULAR,
+        user = user1(),
+    )
 
-    fun message2(): Message = Message().apply {
-        id = "message2"
-        text = "Space!"
-        createdAt = date2()
-        type = ModelType.message_regular
-        user = user2()
-    }
+    fun message2(): Message = Message().copy(
+        id = "message2",
+        text = "Space!",
+        createdAt = date2(),
+        type = MessageType.REGULAR,
+        user = user2(),
+    )
 
-    fun message3(): Message = Message().apply {
-        id = "message3"
-        text = "They ain't in space yet"
-        createdAt = date3()
-        type = ModelType.message_regular
-        user = user3()
-    }
+    fun message3(): Message = Message().copy(
+        id = "message3",
+        text = "They ain't in space yet",
+        createdAt = date3(),
+        type = MessageType.REGULAR,
+        user = user3(),
+    )
 
-    fun message4(): Message = Message().apply {
-        id = "message4"
-        text = "OK, not to be that guy, but by my calculations, they’re technically in space now"
-        createdAt = date4()
-        type = ModelType.message_regular
-        user = user4()
-    }
+    fun message4(): Message = Message().copy(
+        id = "message4",
+        text = "OK, not to be that guy, but by my calculations, they’re technically in space now",
+        createdAt = date4(),
+        type = MessageType.REGULAR,
+        user = user4(),
+    )
 
-    fun channel1() = Channel().apply {
-        type = "messaging"
-        id = "channel1"
-        cid = "messaging:channel1"
-        unreadCount = 0
-    }
+    fun channel1() = Channel().copy(
+        type = "messaging",
+        id = "channel1",
+        unreadCount = 0,
+    )
 
-    fun channel2() = Channel().apply {
-        type = "messaging"
-        id = "channel2"
-        cid = "messaging:channel2"
-        unreadCount = 0
-    }
+    fun channel2() = Channel().copy(
+        type = "messaging",
+        id = "channel2",
+        unreadCount = 0,
+    )
 
-    fun channel3() = Channel().apply {
-        type = "messaging"
-        id = "channel3"
-        cid = "messaging:channel3"
-        unreadCount = 0
-    }
+    fun channel3() = Channel().copy(
+        type = "messaging",
+        id = "channel3",
+        unreadCount = 0,
+    )
 
-    fun channel4() = Channel().apply {
-        type = "messaging"
-        id = "channel4"
-        cid = "messaging:channel4"
-        unreadCount = 0
-    }
+    fun channel4() = Channel().copy(
+        type = "messaging",
+        id = "channel4",
+        unreadCount = 0,
+    )
 
     fun date1() = LocalDateTime.of(2020, 12, 7, 9, 0).toDate()
 
@@ -159,29 +155,29 @@ object TestData {
 
     fun reaction1(): Reaction = Reaction(
         type = "like",
-        user = user1()
+        user = user1(),
     )
 
     fun reaction2(): Reaction = Reaction(
         type = "love",
-        user = user2()
+        user = user2(),
     )
 
     fun reaction3(): Reaction = Reaction(
         type = "wow",
-        user = user3()
+        user = user3(),
     )
 
     fun reaction4(): Reaction = Reaction(
         type = "sad",
-        user = user4()
+        user = user4(),
     )
 
     private fun LocalDateTime.toDate(): Date {
         return Date(
             atZone(ZoneId.systemDefault())
                 .toInstant()
-                .toEpochMilli()
+                .toEpochMilli(),
         )
     }
 }

@@ -27,9 +27,12 @@ internal data class UpstreamMemberDto(
     val invited: Boolean?,
     val invite_accepted_at: Date?,
     val invite_rejected_at: Date?,
-    val shadow_banned: Boolean,
-    val banned: Boolean = false,
+    val shadow_banned: Boolean?,
+    val banned: Boolean? = false,
     val channel_role: String?,
+    val notifications_muted: Boolean?,
+    val status: String?,
+    val ban_expires: Date?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -40,7 +43,10 @@ internal data class DownstreamMemberDto(
     val invited: Boolean?,
     val invite_accepted_at: Date?,
     val invite_rejected_at: Date?,
-    val shadow_banned: Boolean = false,
-    val banned: Boolean = false,
+    val shadow_banned: Boolean? = false,
+    val banned: Boolean? = false,
     val channel_role: String?,
+    val notifications_muted: Boolean?,
+    val status: String?,
+    val ban_expires: Date?,
 )

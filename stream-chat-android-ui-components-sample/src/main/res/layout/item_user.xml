@@ -23,8 +23,8 @@
     android:paddingHorizontal="@dimen/spacing_small"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarImageView"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,7 +68,7 @@
         app:flow_wrapMode="chain"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/arrowImageView"
-        app:layout_constraintStart_toEndOf="@+id/avatarImageView"
+        app:layout_constraintStart_toEndOf="@+id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         />
 

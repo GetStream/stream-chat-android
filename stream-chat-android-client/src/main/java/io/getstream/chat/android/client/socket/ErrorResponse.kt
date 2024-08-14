@@ -22,7 +22,7 @@ internal data class ErrorResponse(
     var statusCode: Int = -1,
     val exceptionFields: Map<String, String> = mapOf(),
     var moreInfo: String = "",
-    val details: List<ErrorDetail> = emptyList()
+    val details: List<ErrorDetail> = emptyList(),
 ) {
     var duration: String = ""
 }

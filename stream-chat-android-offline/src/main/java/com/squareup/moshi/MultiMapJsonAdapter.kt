@@ -17,7 +17,7 @@
 package com.squareup.moshi
 
 import com.squareup.moshi.JsonAdapter.Factory
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
 import java.io.IOException
 import java.lang.reflect.Type
 
@@ -46,7 +46,7 @@ internal class MultiMapJsonAdapter<K, V>(
             }
             if (keys.contains(key)) {
                 val exception = MultiMapJsonDataException(
-                    "Map key '$key' has multiple values at path ${writer.path};\nmap: $map"
+                    "Map key '$key' has multiple values at path ${writer.path};\nmap: $map",
                 )
                 StreamLog.e(TAG, exception) { "[toJson] failed: $exception" }
                 continue
@@ -70,7 +70,7 @@ internal class MultiMapJsonAdapter<K, V>(
             val replaced = result.put(key, value)
             if (replaced != null) {
                 val exception = MultiMapJsonDataException(
-                    "Map key '$key' has multiple values at path ${reader.path}: $replaced and $value"
+                    "Map key '$key' has multiple values at path ${reader.path}: $replaced and $value",
                 )
                 StreamLog.e(TAG, exception) { "[fromJson] failed: $exception" }
             }

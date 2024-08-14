@@ -21,8 +21,8 @@
     android:layout_height="64dp"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/memberAvatar"
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginStart="@dimen/spacing_small"
         app:layout_constraintBottom_toTopOf="@id/separator"
@@ -41,7 +41,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@id/separator"
         app:layout_constraintEnd_toStartOf="@id/deleteMemberButton"
-        app:layout_constraintStart_toEndOf="@id/memberAvatar"
+        app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         />
 

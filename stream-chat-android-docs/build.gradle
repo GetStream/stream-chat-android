@@ -3,11 +3,13 @@ import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 apply from: "${rootDir}/scripts/android.gradle"
 apply from: "${rootDir}/scripts/detekt-disabled.gradle"
 
 android {
+    namespace "io.getstream.chat.docs"
     defaultConfig {
         applicationId "io.getstream.chat.docs"
     }
@@ -66,10 +68,6 @@ android {
         viewBinding true
         compose true
     }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
-    }
 }
 
 repositories {
@@ -85,15 +83,13 @@ repositories {
 }
 
 dependencies {
+    implementation project(":stream-chat-android-offline")
+    implementation project(":stream-chat-android-state")
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-compose")
-    implementation project(":stream-chat-android-pushprovider-firebase")
-    implementation project(":stream-chat-android-pushprovider-huawei")
-    implementation project(":stream-chat-android-pushprovider-xiaomi")
     implementation project(":stream-chat-android-markdown-transformer")
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
@@ -102,6 +98,11 @@ dependencies {
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
+    implementation Dependencies.composeLifecycle
+    implementation Dependencies.navigationCompose
+    implementation Dependencies.streamPushFirebase
+    implementation Dependencies.streamPushHuawei
+    implementation Dependencies.streamPushXiaomi
 
     implementation Dependencies.constraintLayout
     implementation Dependencies.androidxFragmentKtx
@@ -110,6 +111,8 @@ dependencies {
     implementation Dependencies.shimmer
     implementation Dependencies.firebaseMessaging
     implementation Dependencies.huaweiPush
-    compileOnly files('../libraries/external/MiPush_SDK_Client_5_0_6-G_3rd.aar')
+    compileOnly files('../libraries/external/MiPush_SDK_Client_5_1_8-G_3rd.aar')
     implementation Dependencies.coil
+    implementation Dependencies.composeLandscapistCoil
+    implementation Dependencies.composeLandscapistPlaceholder
 }

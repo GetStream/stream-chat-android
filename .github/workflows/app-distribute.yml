@@ -5,8 +5,6 @@ on:
     branches:
       - develop
       - main
-      - release
-      - v5
 
 jobs:
   build_ui_components_sample_app:
@@ -14,11 +12,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: Prepare environment
         run: |
           git fetch --unshallow
@@ -34,10 +32,10 @@ jobs:
           name: stream-chat-android-ui-components-sample-release
           path: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
         with:
           appId: ${{secrets.FIREBASE_UI_SAMPLE_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-ui-components-sample/build/outputs/apk/demo/release/stream-chat-android-ui-components-sample-demo-release.apk
 
@@ -46,11 +44,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - name: Prepare environment
         run: |
           git fetch --unshallow
@@ -66,9 +64,9 @@ jobs:
           name: stream-chat-android-compose-sample-release
           path: stream-chat-android-compose-sample/build/outputs/apk/release/
       - name: Upload artifact to Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
         with:
           appId: ${{secrets.FIREBASE_COMPOSE_SAMPLE_APP_ID}}
-          token: ${{secrets.FIREBASE_TOKEN}}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: stream-testers
           file: stream-chat-android-compose-sample/build/outputs/apk/release/stream-chat-android-compose-sample-release.apk

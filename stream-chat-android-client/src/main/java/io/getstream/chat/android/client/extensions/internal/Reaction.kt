@@ -16,13 +16,13 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.extensions.isPermanent
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.client.errors.isPermanent
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import io.getstream.result.Result
 
 /** Updates collection of reactions with more recent data of [users]. */
 @InternalStreamChatApi
@@ -67,24 +67,23 @@ public fun mergeReactions(
  */
 @InternalStreamChatApi
 public fun Reaction.updateSyncStatus(result: Result<*>): Reaction {
-    return if (result.isSuccess) {
-        copy(syncStatus = SyncStatus.COMPLETED)
-    } else {
-        updateFailedReactionSyncStatus(result.error())
+    return when (result) {
+        is Result.Success -> copy(syncStatus = SyncStatus.COMPLETED)
+        is Result.Failure -> updateFailedReactionSyncStatus(result.value)
     }
 }
 
 /**
- * Updates the reaction's sync status based on [chatError].
+ * Updates the reaction's sync status based on [error].
  * Status can be either [SyncStatus.FAILED_PERMANENTLY] or [SyncStatus.SYNC_NEEDED] depends on type of error.
  *
- * @param chatError The error returned by the API call.
+ * @param error The error returned by the API call.
  *
  * @return [Reaction] object with updated [Reaction.syncStatus].
  */
-private fun Reaction.updateFailedReactionSyncStatus(chatError: ChatError): Reaction {
+private fun Reaction.updateFailedReactionSyncStatus(error: Error): Reaction {
     return copy(
-        syncStatus = if (chatError.isPermanent()) {
+        syncStatus = if (error.isPermanent()) {
             SyncStatus.FAILED_PERMANENTLY
         } else {
             SyncStatus.SYNC_NEEDED

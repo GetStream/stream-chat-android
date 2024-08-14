@@ -21,8 +21,8 @@
     android:layout_height="64dp"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <io.getstream.chat.android.ui.widgets.avatar.ChannelAvatarView
+        android:id="@+id/channelAvatarView"
         style="@style/StreamUiChannelListAvatarStyle"
         android:layout_marginVertical="12dp"
         android:layout_marginStart="8dp"
@@ -43,7 +43,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/membersCountTextView"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toEndOf="@id/avatarView"
+        app:layout_constraintStart_toEndOf="@id/channelAvatarView"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Gebruiker, Usuario, Benutzer, User, Gebruiker, Usuario, Benutzer, User"
         />

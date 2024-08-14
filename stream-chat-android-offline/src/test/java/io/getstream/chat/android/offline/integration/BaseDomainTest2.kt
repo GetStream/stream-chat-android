@@ -26,35 +26,33 @@ import androidx.work.testing.WorkManagerTestInitHelper
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.ChatEventListener
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField
 import io.getstream.chat.android.client.channel.ChannelClient
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.ConnectedEvent
 import io.getstream.chat.android.client.events.DisconnectedEvent
-import io.getstream.chat.android.client.models.ChannelConfig
-import io.getstream.chat.android.client.models.Config
-import io.getstream.chat.android.client.models.ConnectionData
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.client.test.SynchronizedCoroutineTest
 import io.getstream.chat.android.client.test.utils.TestDataHelper
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.client.utils.observable.Disposable
+import io.getstream.chat.android.models.ChannelConfig
+import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.ConnectionData
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.offline.repository.database.internal.ChatDatabase
 import io.getstream.chat.android.offline.repository.factory.internal.DatabaseRepositoryFactory
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCall
 import io.getstream.chat.android.test.TestCoroutineRule
-import io.getstream.chat.android.test.randomString
+import io.getstream.result.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeFalse
-import org.amshove.kluent.shouldBeTrue
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -113,24 +111,6 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         db.close()
     }
 
-    /**
-     * checks if a response is succesful and raises a clear error message if it's not
-     */
-    fun assertSuccess(result: Result<*>) {
-        if (result.isError) {
-            result.isError.shouldBeFalse()
-        }
-    }
-
-    /**
-     * checks if a response failed and raises a clear error message if it succeeded
-     */
-    fun assertFailure(result: Result<*>) {
-        if (!result.isError) {
-            result.isError.shouldBeTrue()
-        }
-    }
-
     private fun createClientMock(isConnected: Boolean = true): ChatClient {
         val createdAt = Date()
         val rawCreatedAt = streamDateFormatter.format(createdAt)
@@ -141,18 +121,18 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             DisconnectedEvent(EventType.CONNECTION_DISCONNECTED, Date(), null)
         }
 
-        val queryChannelsResult = Result.success(listOf(data.channel1))
-        val queryChannelResult = Result.success(data.channel1)
+        val queryChannelsResult = Result.Success(listOf(data.channel1))
+        val queryChannelResult = Result.Success(data.channel1)
         channelClientMock = mock {
             on { query(any()) } doReturn TestCall(
-                Result(data.channel1)
+                Result.Success(data.channel1),
             )
             on { watch(any<WatchChannelRequest>()) } doReturn TestCall(
-                Result(data.channel1)
+                Result.Success(data.channel1),
             )
         }
         val events = listOf<ChatEvent>()
-        val eventResults = Result(events)
+        val eventResults = Result.Success(events)
         val client = mock<ChatClient> {
             on { subscribe(any()) } doAnswer { invocation ->
                 val listener = invocation.arguments[0] as ChatEventListener<ChatEvent>
@@ -165,15 +145,15 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
             on { getSyncHistory(any(), any<Date>()) } doReturn TestCall(eventResults)
             on { queryChannels(any()) } doReturn TestCall(queryChannelsResult)
             on { queryChannelsInternal(any()) } doReturn TestCall(queryChannelsResult)
-            on { queryChannelInternal(any(), any(), any()) } doReturn TestCall(queryChannelResult)
+            on { queryChannel(any(), any(), any(), any()) } doReturn TestCall(queryChannelResult)
             on { channel(any(), any()) } doReturn channelClientMock
             on { channel(any()) } doReturn channelClientMock
             on { sendReaction(any(), any(), any()) } doReturn TestCall(
-                Result(data.reaction1)
+                Result.Success(data.reaction1),
             )
         }
         whenever(client.connectUser(any(), any<String>(), anyOrNull())) doAnswer {
-            TestCall(Result(ConnectionData(it.arguments[0] as User, randomString())))
+            TestCall(Result.Success(ConnectionData(it.arguments[0] as User, randomString())))
         }
 
         return client
@@ -183,7 +163,7 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         return Room
             .inMemoryDatabaseBuilder(
                 InstrumentationRegistry.getInstrumentation().targetContext,
-                ChatDatabase::class.java
+                ChatDatabase::class.java,
             )
             .allowMainThreadQueries()
             // Use a separate thread for Room transactions to avoid deadlocks
@@ -198,16 +178,16 @@ internal open class BaseDomainTest2 : SynchronizedCoroutineTest {
         val context = ApplicationProvider.getApplicationContext() as Context
 
         repos = RepositoryFacade.create(
-            DatabaseRepositoryFactory(db, data.user1),
+            DatabaseRepositoryFactory(db, data.user1, this),
             getTestScope(),
-            Config(connectEventsEnabled = true, muteEnabled = true)
+            Config(connectEventsEnabled = true, muteEnabled = true),
         )
 
         WorkManagerTestInitHelper.initializeTestWorkManager(context)
         // TODO: a chat domain without a user set should raise a clear error
         client.connectUser(
             data.user1,
-            data.user1Token
+            data.user1Token,
         ).enqueue()
 
         repos.insertChannelConfig(ChannelConfig("messaging", data.config1))

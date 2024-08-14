@@ -17,7 +17,7 @@
 package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
-import io.getstream.chat.android.client.models.Attachment
+import io.getstream.chat.android.models.Attachment
 
 internal fun Attachment.toDto(): AttachmentDto =
     AttachmentDto(
@@ -36,7 +36,6 @@ internal fun Attachment.toDto(): AttachmentDto =
         title_link = titleLink,
         author_link = authorLink,
         type = type,
-        url = url,
         original_height = originalHeight,
         original_width = originalWidth,
         extraData = extraData,
@@ -59,7 +58,6 @@ internal fun AttachmentDto.toDomain(): Attachment =
         title = title,
         titleLink = title_link,
         type = type,
-        url = url,
         originalHeight = original_height,
         originalWidth = original_width,
         extraData = extraData.toMutableMap(),

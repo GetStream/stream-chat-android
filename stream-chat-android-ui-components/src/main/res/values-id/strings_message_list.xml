@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
   <plurals name="stream_ui_message_list_thread_separator">
     <item quantity="other">"%d Balasan"</item>
   </plurals>
+  <string name="stream_ui_message_audio_reply_info">"Pesan suara"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Terjadi kesalahan. Berkas tidak dapat ditampilkan"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Terjadi kesalahan. Tidak dapat membuka lampiran: %1$s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Data gagal dimuat karena url tidak valid."</string>

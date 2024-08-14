@@ -28,6 +28,7 @@
     <!-- Greys -->
     <color name="stream_ui_black">#000000</color>
     <color name="stream_ui_black_50">#80000000</color>
+    <color name="stream_ui_black_85">#D9000000</color>
     <color name="stream_ui_grey">#7A7A7A</color>
     <color name="stream_ui_grey_gainsboro">#DBDBDB</color>
     <color name="stream_ui_grey_whisper">#ECEBEB</color>
@@ -41,6 +42,10 @@
     <color name="stream_ui_overlay_dark">#99000000</color>
     <color name="stream_ui_background_gradient_start">#F7F7F7</color>
     <color name="stream_ui_background_gradient_end">#FCFCFC</color>
+    <color name="stream_ui_message_list_image_attachment_background">#E9EAED</color>
+    <color name="stream_ui_message_list_video_attachment_background">#E9EAED</color>
+    <color name="stream_ui_unread_label_background_color">#E9EAED</color>
+    <color name="stream_ui_unread_label_text_color">#747881</color>
 
     <!-- Other -->
     <color name="stream_ui_icon_button_background">#FFFFFF</color>
@@ -48,7 +53,6 @@
     <color name="stream_ui_button_text_color">#FFFFFF</color>
     <color name="stream_ui_border">#E8E8E8</color>
     <color name="stream_ui_highlight">#FBF4DD</color>
-
 
     <!-- Avatar gradient colors -->
     <color name="stream_ui_avatar_gradient_orange">#FF8A65</color>
@@ -74,4 +78,14 @@
 
     <!-- Message replies -->
     <color name="stream_ui_bars_background">#FFFFFF</color>
+
+    <!-- Make status bar icons dark -->
+    <bool name="stream_ui_light_status_bar">true</bool>
+
+    <!-- Search Input -->
+    <color name="stream_ui_search_input_background_outline_color">@color/stream_ui_grey_whisper</color>
+
+    <!-- Audio Record Player -->
+    <color name="stream_ui_audio_record_player_speed_text_color">#080707</color>
+    <color name="stream_ui_audio_record_player_duration_text_color">#747881</color>
 </resources>

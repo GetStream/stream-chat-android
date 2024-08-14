@@ -16,17 +16,23 @@
 
 package io.getstream.chat.android.client.extensions.internal
 
-import io.getstream.chat.android.client.models.Attachment
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 /** Updates collection of messages with more recent data of [users]. */
 @InternalStreamChatApi
 public fun Collection<Message>.updateUsers(users: Map<String, User>): List<Message> = map { it.updateUsers(users) }
+
+/** Updates collection of messages with more recent data of [users]. */
+@InternalStreamChatApi
+public fun Map<String, Message>.updateUsers(users: Map<String, User>): Map<String, Message> = mapValues { (_, value) ->
+    value.updateUsers(users)
+}
 
 /**
  * Updates a message with more recent data of [users]. It updates author user, latestReactions, replyTo message,
@@ -38,7 +44,9 @@ public fun Message.updateUsers(users: Map<String, User>): Message =
         copy(
             user = if (users.containsKey(user.id)) {
                 users[user.id] ?: user
-            } else user,
+            } else {
+                user
+            },
             latestReactions = latestReactions.updateByUsers(users).toMutableList(),
             replyTo = replyTo?.updateUsers(users),
             mentionedUsers = mentionedUsers.updateUsers(users).toMutableList(),
@@ -58,11 +66,10 @@ public fun Message.updateUsers(users: Map<String, User>): Message =
  * @param channel The channel whose members we can check for the mention.
  */
 @InternalStreamChatApi
-public fun Message.populateMentions(channel: Channel) {
+public fun Message.populateMentions(channel: Channel): Message {
     if ('@' !in text) {
-        return
+        return this
     }
-
     val text = text.lowercase()
     val mentions = mentionedUsersIds.toMutableSet() + channel.members.mapNotNullTo(mutableListOf()) { member ->
         if (text.contains("@${member.user.name.lowercase()}")) {
@@ -71,8 +78,7 @@ public fun Message.populateMentions(channel: Channel) {
             null
         }
     }
-
-    mentionedUsersIds = mentions.toMutableList()
+    return copy(mentionedUsersIds = mentions.toList())
 }
 
 @InternalStreamChatApi
@@ -106,7 +112,8 @@ public fun Message.users(): List<User> {
         mentionedUsers +
         ownReactions.mapNotNull(Reaction::user) +
         threadParticipants +
-        (pinnedBy?.let { listOf(it) } ?: emptyList())
+        (pinnedBy?.let { listOf(it) } ?: emptyList()) +
+        (poll?.votes?.mapNotNull { it.user } ?: emptyList())
 }
 
 /**
@@ -132,9 +139,6 @@ public fun Message.shouldIncrementUnreadCount(
 
     return user.id != currentUserId && !silent && !shadowed && isMoreRecent
 }
-
-@InternalStreamChatApi
-public fun Message.isEphemeral(): Boolean = type == Message.TYPE_EPHEMERAL
 
 @InternalStreamChatApi
 public fun Message.hasPendingAttachments(): Boolean =

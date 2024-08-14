@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
 
     Licensed under the Stream License;
     you may not use this file except in compliance with the License.
@@ -15,13 +15,6 @@
     limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-  <string name="stream_ui_message_input_capture_media">"Cattura Foto o Video"</string>
-  <string name="stream_ui_message_input_permission_camera_message">"Sono necessarie le autorizzazioni per l\'accesso alla fotocamera e all\'archivio per poter scattare foto e video"</string>
-  <string name="stream_ui_message_input_permission_camera_title">"Autorizzazione per l\'accesso alla Fotocamera e all\'Archivio"</string>
-  <string name="stream_ui_message_input_permission_setting_message">"Abilita le autorizzazioni nella App Impostazioni"</string>
-  <string name="stream_ui_message_input_permission_storage_message">"Le autorizzazioni di accesso all\'archivio sono necessarie per poter inviare e salvare foto, video, musica e altri file"</string>
-  <string name="stream_ui_message_input_permission_storage_title">"Autorizzazione per l\'accesso all\'Archivio"</string>
-  <string name="stream_ui_message_input_permissions_setting_button">"Impostazioni"</string>
   <string name="stream_ui_message_list_attachment_display_error">"Errore. Impossibile visualizzare il file"</string>
   <string name="stream_ui_message_list_attachment_invalid_mime_type">"Qualcosa è andato storto. Impossibile aprire l\'allegato: %s"</string>
   <string name="stream_ui_message_list_attachment_invalid_url">"Caricamento non riuscito a causa di un URL non valido."</string>

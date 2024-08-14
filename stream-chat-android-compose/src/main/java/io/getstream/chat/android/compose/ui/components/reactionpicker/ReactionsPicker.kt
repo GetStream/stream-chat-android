@@ -26,15 +26,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.common.state.MessageAction
-import io.getstream.chat.android.common.state.React
-import io.getstream.chat.android.compose.previewdata.PreviewMessageData
 import io.getstream.chat.android.compose.ui.components.SimpleMenu
 import io.getstream.chat.android.compose.ui.components.reactionoptions.ExtendedReactionsOptions
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.ReactionIcon
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.previewdata.PreviewMessageData
+import io.getstream.chat.android.ui.common.state.messages.MessageAction
+import io.getstream.chat.android.ui.common.state.messages.React
 
 /**
  * The default maximum number of reactions shown in the picker.
@@ -56,7 +56,6 @@ private const val DefaultNumberOfReactions = 5
  * @param centerContent The content shown at the center of [ReactionsPicker].
  * By default displays all available reactions.
  */
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun ReactionsPicker(
     message: Message,
@@ -73,7 +72,7 @@ public fun ReactionsPicker(
             message = message,
             onMessageAction = onMessageAction,
             cells = cells,
-            reactionTypes = reactionTypes
+            reactionTypes = reactionTypes,
         )
     },
 ) {
@@ -83,7 +82,7 @@ public fun ReactionsPicker(
         overlayColor = overlayColor,
         headerContent = headerContent,
         centerContent = centerContent,
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
     )
 }
 
@@ -111,11 +110,11 @@ internal fun DefaultReactionsPickerCenterContent(
             onMessageAction(
                 React(
                     reaction = Reaction(messageId = message.id, reactionOptionItemState.type),
-                    message = message
-                )
+                    message = message,
+                ),
             )
         },
-        cells = cells
+        cells = cells,
     )
 }
 
@@ -129,7 +128,7 @@ internal fun ReactionPickerPreview() {
     ChatTheme {
         ReactionsPicker(
             message = PreviewMessageData.messageWithOwnReaction,
-            onMessageAction = {}
+            onMessageAction = {},
         )
     }
 }

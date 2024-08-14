@@ -32,6 +32,7 @@ import io.getstream.chat.android.client.api2.model.dto.ChannelUserUnbannedEventD
 import io.getstream.chat.android.client.api2.model.dto.ChannelVisibleEventDto
 import io.getstream.chat.android.client.api2.model.dto.ChatEventDto
 import io.getstream.chat.android.client.api2.model.dto.ConnectedEventDto
+import io.getstream.chat.android.client.api2.model.dto.ConnectionErrorEventDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamUserDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserBannedEventDto
 import io.getstream.chat.android.client.api2.model.dto.GlobalUserUnbannedEventDto
@@ -52,9 +53,13 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationInviteAccepte
 import io.getstream.chat.android.client.api2.model.dto.NotificationInviteRejectedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationInvitedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMarkReadEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
+import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
+import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
+import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.ReactionUpdateEventDto
@@ -66,8 +71,11 @@ import io.getstream.chat.android.client.api2.model.dto.UserPresenceChangedEventD
 import io.getstream.chat.android.client.api2.model.dto.UserStartWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserStopWatchingEventDto
 import io.getstream.chat.android.client.api2.model.dto.UserUpdatedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteCastedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteChangedEventDto
+import io.getstream.chat.android.client.api2.model.dto.VoteRemovedEventDto
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.models.EventType
+import io.getstream.chat.android.models.EventType
 import java.lang.reflect.Type
 
 internal class EventAdapterFactory : JsonAdapter.Factory {
@@ -87,6 +95,7 @@ internal class EventDtoAdapter(
         moshi.adapter(Types.newParameterizedType(Map::class.java, String::class.java, Any::class.java))
 
     private val connectedEventAdapter = moshi.adapter(ConnectedEventDto::class.java)
+    private val connectionErrorEventAdapter = moshi.adapter(ConnectionErrorEventDto::class.java)
     private val healthEventAdapter = moshi.adapter(HealthEventDto::class.java)
     private val newMessageEventAdapter = moshi.adapter(NewMessageEventDto::class.java)
     private val messageDeletedEventAdapter = moshi.adapter(MessageDeletedEventDto::class.java)
@@ -110,6 +119,7 @@ internal class EventDtoAdapter(
     private val userStopWatchingEventAdapter = moshi.adapter(UserStopWatchingEventDto::class.java)
     private val notificationAddedToChannelEventAdapter = moshi.adapter(NotificationAddedToChannelEventDto::class.java)
     private val notificationMarkReadEventAdapter = moshi.adapter(NotificationMarkReadEventDto::class.java)
+    private val notificationMarkUnreadEventAdapter = moshi.adapter(NotificationMarkUnreadEventDto::class.java)
     private val markAllReadEventAdapter = moshi.adapter(MarkAllReadEventDto::class.java)
     private val notificationMessageNewEventAdapter = moshi.adapter(NotificationMessageNewEventDto::class.java)
     private val notificationInvitedEventAdapter = moshi.adapter(NotificationInvitedEventDto::class.java)
@@ -130,6 +140,12 @@ internal class EventDtoAdapter(
     private val globalUserBannedEventAdapter = moshi.adapter(GlobalUserBannedEventDto::class.java)
     private val channelUserUnbannedEventAdapter = moshi.adapter(ChannelUserUnbannedEventDto::class.java)
     private val globalUserUnbannedEventAdapter = moshi.adapter(GlobalUserUnbannedEventDto::class.java)
+    private val pollUpdatedEventAdapter = moshi.adapter(PollUpdatedEventDto::class.java)
+    private val pollDeletedEventAdapter = moshi.adapter(PollDeletedEventDto::class.java)
+    private val pollClosedEventAdapter = moshi.adapter(PollClosedEventDto::class.java)
+    private val voteCastedEventAdapter = moshi.adapter(VoteCastedEventDto::class.java)
+    private val voteChangedEventAdapter = moshi.adapter(VoteChangedEventDto::class.java)
+    private val voteRemovedEventAdapter = moshi.adapter(VoteRemovedEventDto::class.java)
 
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount")
     override fun fromJson(reader: JsonReader): ChatEventDto? {
@@ -145,6 +161,7 @@ internal class EventDtoAdapter(
                 map.containsKey("me") -> connectedEventAdapter
                 else -> healthEventAdapter
             }
+            EventType.CONNECTION_ERROR -> connectionErrorEventAdapter
             EventType.MESSAGE_NEW -> newMessageEventAdapter
             EventType.MESSAGE_DELETED -> messageDeletedEventAdapter
             EventType.MESSAGE_UPDATED -> messageUpdatedEventAdapter
@@ -175,6 +192,7 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> notificationMarkReadEventAdapter
                 else -> markAllReadEventAdapter
             }
+            EventType.NOTIFICATION_MARK_UNREAD -> notificationMarkUnreadEventAdapter
             EventType.NOTIFICATION_MESSAGE_NEW -> notificationMessageNewEventAdapter
             EventType.NOTIFICATION_INVITED -> notificationInvitedEventAdapter
             EventType.NOTIFICATION_INVITE_ACCEPTED -> notificationInviteAcceptedEventAdapter
@@ -195,12 +213,18 @@ internal class EventDtoAdapter(
                 map.containsKey("cid") -> channelUserUnbannedEventAdapter
                 else -> globalUserUnbannedEventAdapter
             }
+            EventType.POLL_UPDATED -> pollUpdatedEventAdapter
+            EventType.POLL_DELETED -> pollDeletedEventAdapter
+            EventType.POLL_CLOSED -> pollClosedEventAdapter
+            EventType.POLL_VOTE_CASTED -> voteCastedEventAdapter
+            EventType.POLL_VOTE_CHANGED -> voteChangedEventAdapter
+            EventType.POLL_VOTE_REMOVED -> voteRemovedEventAdapter
             else -> // Custom case, early return
                 return UnknownEventDto(
                     type = type ?: EventType.UNKNOWN,
                     created_at = moshi.adapter(ExactDate::class.java).fromJsonValue(map["created_at"])!!,
                     user = moshi.adapter(DownstreamUserDto::class.java).fromJsonValue(map["user"]),
-                    rawData = map
+                    rawData = map,
                 )
         }
 

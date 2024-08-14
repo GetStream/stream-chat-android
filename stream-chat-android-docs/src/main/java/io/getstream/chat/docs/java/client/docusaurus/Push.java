@@ -20,24 +20,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import io.getstream.android.push.PushDeviceGenerator;
+import io.getstream.android.push.firebase.FirebaseMessagingDelegate;
+import io.getstream.android.push.firebase.FirebasePushDeviceGenerator;
+import io.getstream.android.push.huawei.HuaweiMessagingDelegate;
+import io.getstream.android.push.huawei.HuaweiPushDeviceGenerator;
+import io.getstream.android.push.permissions.NotificationPermissionStatus;
+import io.getstream.android.push.xiaomi.XiaomiMessagingDelegate;
+import io.getstream.android.push.xiaomi.XiaomiPushDeviceGenerator;
 import io.getstream.chat.android.client.ChatClient;
 import io.getstream.chat.android.client.events.NewMessageEvent;
-import io.getstream.chat.android.client.models.Channel;
-import io.getstream.chat.android.client.models.Device;
-import io.getstream.chat.android.client.models.Message;
-import io.getstream.chat.android.client.models.PushMessage;
-import io.getstream.chat.android.client.models.PushProvider;
 import io.getstream.chat.android.client.notifications.handler.NotificationConfig;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandler;
 import io.getstream.chat.android.client.notifications.handler.NotificationHandlerFactory;
-import io.getstream.chat.android.client.notifications.handler.PushDeviceGenerator;
-import io.getstream.chat.android.client.notifications.permissions.NotificationPermissionStatus;
-import io.getstream.chat.android.pushprovider.firebase.FirebaseMessagingDelegate;
-import io.getstream.chat.android.pushprovider.firebase.FirebasePushDeviceGenerator;
-import io.getstream.chat.android.pushprovider.huawei.HuaweiMessagingDelegate;
-import io.getstream.chat.android.pushprovider.huawei.HuaweiPushDeviceGenerator;
-import io.getstream.chat.android.pushprovider.xiaomi.XiaomiMessagingDelegate;
-import io.getstream.chat.android.pushprovider.xiaomi.XiaomiPushDeviceGenerator;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.Device;
+import io.getstream.chat.android.models.Message;
+import io.getstream.chat.android.models.PushMessage;
+import io.getstream.chat.android.models.PushProvider;
 
 /**
  * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/">Push Notifications</a>
@@ -49,8 +49,9 @@ public class Push {
      */
     public void configureNotification(Context context, NotificationHandler notificationHandler) {
         boolean pushNotificationEnabled = true;
+        boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
 
         new ChatClient.Builder("api-key", context)
                 .notifications(notificationConfig, notificationHandler)
@@ -62,10 +63,11 @@ public class Push {
      */
     public void customNotificationHandler(Context context) {
         boolean pushNotificationEnabled = true;
+        boolean ignorePushMessagesWhenUserOnline = true;
         List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
-        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
+        NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
 
-        NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (messageId, channelType, channelId) -> {
+        NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (message, channel) -> {
             // Return the intent you want to be triggered when the notification is clicked
             Intent intent = new Intent();
 
@@ -149,7 +151,7 @@ public class Push {
      * @see <a href="https://getstream.io/chat/docs/sdk/android/client/guides/push-notifications/#dismissing-notifications">Dismissing Notifications</a>
      */
     public void dismissingNotifications() {
-        ChatClient.dismissChannelNotifications("messaging", "general");
+        ChatClient.instance().dismissChannelNotifications("messaging", "general");
     }
 
     /**
@@ -173,8 +175,13 @@ public class Push {
          */
         public void configureFirebaseNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new FirebasePushDeviceGenerator());
-            NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+            boolean ignorePushMessagesWhenUserOnline = true;
+            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+                    new FirebasePushDeviceGenerator(
+                            "providerName"
+                    )
+            );
+            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -189,7 +196,7 @@ public class Push {
             public void onNewToken(@NonNull String token) {
                 // Update device's token on Stream backend
                 try {
-                    FirebaseMessagingDelegate.registerFirebaseToken(token, "optional-provider-name");
+                    FirebaseMessagingDelegate.registerFirebaseToken(token, "providerName");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -220,8 +227,11 @@ public class Push {
          */
         public void configureHuaweiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", null));
-            NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+            boolean ignorePushMessagesWhenUserOnline = true;
+            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(
+                    new HuaweiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "providerName")
+            );
+            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -235,7 +245,7 @@ public class Push {
             public void onNewToken(String token) {
                 // Update device's token on Stream backend
                 try {
-                    HuaweiMessagingDelegate.registerHuaweiToken(token, "optional-provider-name");
+                    HuaweiMessagingDelegate.registerHuaweiToken(token, "providerName");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }
@@ -265,8 +275,9 @@ public class Push {
          */
         public void configureXiaomiNotifications(Context context) {
             boolean pushNotificationEnabled = true;
-            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", null, Region.Global));
-            NotificationConfig notificationConfig = new NotificationConfig(true, pushDeviceGeneratorList);
+            boolean ignorePushMessagesWhenUserOnline = true;
+            List<PushDeviceGenerator> pushDeviceGeneratorList = Collections.singletonList(new XiaomiPushDeviceGenerator(context, "YOUR HUAWEI APP ID", "YOUR XIAOMI APP KEY", "providerName", Region.Global));
+            NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, ignorePushMessagesWhenUserOnline, pushDeviceGeneratorList);
             new ChatClient.Builder("apiKey", context)
                     .notifications(notificationConfig)
                     .build();
@@ -281,7 +292,7 @@ public class Push {
             public void onReceiveRegisterResult(Context context, MiPushCommandMessage miPushCommandMessage) {
                 // Update device's token on Stream backend
                 try {
-                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "optional-provider-name");
+                    XiaomiMessagingDelegate.registerXiaomiToken(miPushCommandMessage, "providerName");
                 } catch (IllegalStateException exception) {
                     // ChatClient was not initialized
                 }

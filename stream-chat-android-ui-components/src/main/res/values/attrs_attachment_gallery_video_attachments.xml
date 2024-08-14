@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <declare-styleable name="AttachmentGalleryVideoAttachments">
+
+        <!-- The drawable for the play button icon displayed above videos in the main viewing
+         area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoButtonIcon" format="reference" />
+        <!-- Tints the icon overlaid above videos in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconTint"
+            format="reference|color" />
+        <!-- The background color of the View containing the play button overlaid above
+         the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconBackgroundColor"
+            format="color|reference" />
+        <!-- The corner radius of the play button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconCornerRadius"
+            format="dimension" />
+        <!-- The elevation of the play button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconElevation"
+            format="dimension" />
+        <!-- Sets the top padding of the play video icon displayed above the main viewing
+         area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingTop"
+            format="dimension" />
+        <!-- Sets the bottom padding of the play video icon in the main viewing
+        area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingBottom"
+            format="dimension" />
+        <!-- Sets the start padding of the play video icon in the main viewing
+        area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingStart"
+            format="dimension" />
+        <!-- Sets the end padding of the play video icon in the main viewing
+        area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPaddingEnd"
+            format="dimension" />
+        <!-- Sets the padding of the play video icon in the main viewing
+        area of the gallery. Using this attribute overrides other padding attributes such as
+        padding top, bottom, start and end.-->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayVideoIconPadding"
+            format="dimension" />
+        <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayIconWidth" format="dimension">
+            <!-- The view should be as big as its parent (minus padding).
+                 Introduced in API Level 8. -->
+            <enum name="match_parent" value="-1" />
+            <!-- The view should be only big enough to enclose its content (plus padding). -->
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <!-- Sets the width of the play video button in the main viewing area of the gallery. -->
+        <attr name="streamUiAttachmentGalleryViewMediaPlayIconHeight" format="dimension">
+            <!-- The view should be as big as its parent (minus padding).
+                 Introduced in API Level 8. -->
+            <enum name="match_parent" value="-1" />
+            <!-- The view should be only big enough to enclose its content (plus padding). -->
+            <enum name="wrap_content" value="-2" />
+        </attr>
+        <!-- A placeholder drawable used before the image is loaded. -->
+        <attr name="streamUiAttachmentGalleryViewMediaImagePlaceholder" format="reference" />
+
+    </declare-styleable>
+</resources>

@@ -21,10 +21,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import io.getstream.chat.android.client.models.Reaction
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.LOVE
-import io.getstream.chat.android.ui.SupportedReactions.DefaultReactionTypes.WUT
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.LOVE
+import io.getstream.chat.android.ui.helper.SupportedReactions.DefaultReactionTypes.WUT
 import io.getstream.chat.android.uitests.databinding.FragmentComponentBrowserEditReactionsViewBinding
 import io.getstream.chat.android.uitests.snapshot.utils.randomMessage
 
@@ -51,33 +51,29 @@ class ComponentBrowserEditReactionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
             editReactionsView1.setMessage(
-                message = randomMessage().apply {
-                    ownReactions = mutableListOf()
-                },
-                isMyMessage = true
+                message = randomMessage().copy(ownReactions = mutableListOf()),
+                isMyMessage = true,
             )
             editReactionsView2.setMessage(
-                message = randomMessage().apply {
-                    ownReactions = mutableListOf()
-                },
-                isMyMessage = false
+                message = randomMessage().copy(ownReactions = mutableListOf()),
+                isMyMessage = false,
             )
             editReactionsView3.setMessage(
-                message = randomMessage().apply {
-                    ownReactions = mutableListOf(
-                        Reaction(type = LOVE)
-                    )
-                },
-                isMyMessage = true
-            )
-            editReactionsView4.setMessage(
-                message = randomMessage().apply {
+                message = randomMessage().copy(
                     ownReactions = mutableListOf(
                         Reaction(type = LOVE),
-                        Reaction(type = WUT)
-                    )
-                },
-                isMyMessage = false
+                    ),
+                ),
+                isMyMessage = true,
+            )
+            editReactionsView4.setMessage(
+                message = randomMessage().copy(
+                    ownReactions = mutableListOf(
+                        Reaction(type = LOVE),
+                        Reaction(type = WUT),
+                    ),
+                ),
+                isMyMessage = false,
             )
         }
     }

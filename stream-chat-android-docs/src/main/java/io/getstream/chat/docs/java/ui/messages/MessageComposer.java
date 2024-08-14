@@ -1,7 +1,8 @@
 package io.getstream.chat.docs.java.ui.messages;
 
+import static java.util.Collections.emptyList;
+
 import android.content.Context;
-import android.os.Bundle;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,87 +12,198 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.getstream.sdk.chat.viewmodel.MessageInputViewModel;
-import com.getstream.sdk.chat.viewmodel.messages.MessageListViewModel;
 import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import io.getstream.chat.android.client.models.Attachment;
-import io.getstream.chat.android.common.composer.MessageComposerState;
-import io.getstream.chat.android.common.state.Edit;
-import io.getstream.chat.android.common.state.MessageAction;
-import io.getstream.chat.android.common.state.MessageMode;
-import io.getstream.chat.android.common.state.Reply;
-import io.getstream.chat.android.ui.StyleTransformer;
-import io.getstream.chat.android.ui.TransformStyle;
-import io.getstream.chat.android.ui.message.composer.MessageComposerContext;
-import io.getstream.chat.android.ui.message.composer.MessageComposerView;
-import io.getstream.chat.android.ui.message.composer.MessageComposerViewStyle;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCenterContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerCommandSuggestionsContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerFooterContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerHeaderContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerLeadingContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerMentionSuggestionsContent;
-import io.getstream.chat.android.ui.message.composer.content.DefaultMessageComposerTrailingContent;
-import io.getstream.chat.android.ui.message.composer.content.MessageComposerContent;
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModel;
-import io.getstream.chat.android.ui.message.composer.viewmodel.MessageComposerViewModelBinding;
-import io.getstream.chat.android.ui.message.list.MessageListView;
-import io.getstream.chat.android.ui.message.list.viewmodel.factory.MessageListViewModelFactory;
+import io.getstream.chat.android.client.ChatClient;
+import io.getstream.chat.android.client.channel.ChannelClient;
+import io.getstream.chat.android.models.FilterObject;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.Member;
+import io.getstream.chat.android.models.User;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.models.querysort.QuerySorter;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.CompatUserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.DefaultUserQueryFilter;
+import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler;
+import io.getstream.chat.android.ui.common.feature.messages.composer.query.filter.DefaultQueryFilter;
+import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.DefaultStreamTransliterator;
+import io.getstream.chat.android.ui.common.feature.messages.composer.transliteration.StreamTransliterator;
+import io.getstream.chat.android.ui.common.state.messages.Edit;
+import io.getstream.chat.android.ui.common.state.messages.MessageMode;
+import io.getstream.chat.android.ui.common.state.messages.Reply;
+import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerContext;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView;
+import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerViewStyle;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCenterContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerCommandSuggestionsContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerFooterContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerHeaderContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerLeadingContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerMentionSuggestionsContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.DefaultMessageComposerTrailingContent;
+import io.getstream.chat.android.ui.feature.messages.composer.content.MessageComposerContent;
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView;
+import io.getstream.chat.android.ui.helper.TransformStyle;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinder;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModel;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.messages.MessageListViewModelFactory;
 import io.getstream.chat.docs.databinding.MessageComposerLeadingContentBinding;
+import io.getstream.result.call.Call;
+import io.getstream.result.call.CallKt;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function0;
 
 /**
- * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
+ * [Message Composer](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer)
  */
 public class MessageComposer extends Fragment {
 
-    class ChatFragmentSnippet1 extends Fragment {
+    /**
+     * [Usage](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#usage)
+     */
+    class Usage extends Fragment {
 
         private MessageComposerView messageComposerView;
+        private MessageListView messageListView;
 
-        // Create MessageComposerViewModel for a given channel
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-                .cid("channelType:channelId")
-                .build();
-        ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+        public void usage1() {
+            // Create MessageComposerViewModel for a given channel
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid("messaging:123")
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+            // Bind MessageComposerViewModel with MessageComposerView
             MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
         }
-    }
 
-    class ChatFragmentSnippet2 extends Fragment {
+        public void usage2() {
+            // Create MessageComposerViewModel for a given channel
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid("messaging:123")
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
 
-        MessageComposerView messageComposerView;
-        MessageListView messageListView;
-        ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder()
-                .cid("channelType:channelId")
-                .build();
-        ViewModelProvider provider = new ViewModelProvider(this, factory);
-        MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
-        MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
+            // Bind MessageComposerViewModel with MessageComposerView
+            // Handle message building
+            MessageComposerViewModelBinder.with(viewModel)
+                    .messageBuilder(viewModel::buildNewMessage)
+                    .onSendMessageButtonClick((message) -> {
+                        // Handle send button click
+                        return Unit.INSTANCE;
+                    })
+                    .onTextInputChange((text) -> {
+                        // Handle input text change
+                        return Unit.INSTANCE;
+                    })
+                    .onAttachmentSelection((attachments) -> {
+                        // Handle attachment selection
+                        return Unit.INSTANCE;
+                    })
+                    .onAttachmentRemoval((attachment) -> {
+                        // Handle attachment removal
+                        return Unit.INSTANCE;
+                    })
+                    .onMentionSelection((user) -> {
+                        // Handle mention selection
+                        return Unit.INSTANCE;
+                    })
+                    .onCommandSelection((command) -> {
+                        // Handle command selection
+                        return Unit.INSTANCE;
+                    })
+                    .onAlsoSendToChannelSelection((checked) -> {
+                        // Handle "also send to channel" checkbox selection
+                        return Unit.INSTANCE;
+                    })
+                    .onDismissActionClick(() -> {
+                        // Handle dismiss action button click
+                        return Unit.INSTANCE;
+                    })
+                    .onCommandsButtonClick(() -> {
+                        // Handle commands button click
+                        return Unit.INSTANCE;
+                    })
+                    .onDismissSuggestions(() -> {
+                        // Handle when suggestions popup is dismissed
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonHold(() -> {
+                        // Handle audio recording button hold
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonLock(() -> {
+                        // Handle audio recording button lock
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonCancel(() -> {
+                        // Handle audio recording button cancel
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioRecordButtonRelease(() -> {
+                        // Handle audio recording button release
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioDeleteButtonClick(() -> {
+                        // Handle audio recording delete button click
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioStopButtonClick(() -> {
+                        // Handle audio recording stop button click
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioPlaybackButtonClick(() -> {
+                        // Handle audio recording playback button click
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioCompleteButtonClick(() -> {
+                        // Handle audio recording completion
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioSliderDragStart((progress) -> {
+                        // Handle audio recording slider drag start
+                        return Unit.INSTANCE;
+                    })
+                    .onAudioSliderDragStop((progress) -> {
+                        // Handle audio recording slider drag stop
+                        return Unit.INSTANCE;
+                    })
+                    .bind(messageComposerView, getViewLifecycleOwner());
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+        }
 
-        @Override
-        public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-            super.onViewCreated(view, savedInstanceState);
+        public void usage3() {
+            // Create ViewModels for MessageComposerView and MessageListView
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid("messaging:123")
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel messageComposerViewModel = provider.get(MessageComposerViewModel.class);
+            MessageListViewModel messageListViewModel = provider.get(MessageListViewModel.class);
+
+            // Bind MessageComposerViewModel with MessageComposerView
             MessageComposerViewModelBinding.bind(messageComposerViewModel, messageComposerView, getViewLifecycleOwner());
+
+            // Bind MessageListViewModel with MessageListView
+            MessageListViewModelBinding.bind(messageListViewModel, messageListView, getViewLifecycleOwner());
 
             // Integrate MessageComposerView with MessageListView
             messageListViewModel.getMode().observe(getViewLifecycleOwner(), mode -> {
-                if (mode instanceof MessageListViewModel.Mode.Thread) {
-                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageListViewModel.Mode.Thread) mode).getParentMessage(), null));
-                } else if (mode instanceof MessageListViewModel.Mode.Normal) {
+                if (mode instanceof MessageMode.MessageThread) {
+                    messageComposerViewModel.setMessageMode(new MessageMode.MessageThread(((MessageMode.MessageThread) mode).getParentMessage()));
+                } else if (mode instanceof MessageMode.Normal) {
                     messageComposerViewModel.leaveThread();
                 }
             });
@@ -103,14 +215,12 @@ public class MessageComposer extends Fragment {
     /**
      * [Handling Actions](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#handling-actions)
      */
-    private class MessageComposerHandlingActionsSnippet {
+    class HandlingActions {
 
         private MessageComposerView messageComposerView;
-
         private MessageComposerViewModel messageComposerViewModel;
 
-
-        public void handlingActionsSnippet1() {
+        public void handlingActions1() {
             messageComposerView.setSendMessageButtonClickListener(() -> {
                 // Handle send button click
                 return Unit.INSTANCE;
@@ -151,15 +261,59 @@ public class MessageComposer extends Fragment {
                 // Handle when suggestions popup is dismissed
                 return Unit.INSTANCE;
             });
+            messageComposerView.setDismissSuggestionsListener(() -> {
+                // Handle when suggestions popup is dismissed
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonLockListener(() -> {
+                // Handle audio record button lock
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonHoldListener(() -> {
+                // Handle audio record button hold
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonCancelListener(() -> {
+                // Handle audio record button cancel
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioRecordButtonReleaseListener(() -> {
+                // Handle audio record button release
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioDeleteButtonClickListener(() -> {
+                // Handle audio delete button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioStopButtonClickListener(() -> {
+                // Handle audio stop button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioPlaybackButtonClickListener(() -> {
+                // Handle audio playback button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioCompleteButtonClickListener(() -> {
+                // Handle audio complete button click
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioSliderDragStartListener((progress) -> {
+                // Handle audio slider drag start
+                return Unit.INSTANCE;
+            });
+            messageComposerView.setAudioSliderDragStopListener((progress) -> {
+                // Handle audio slider drag stop
+                return Unit.INSTANCE;
+            });
             messageComposerView.setAttachmentsButtonClickListener(() -> {
                 // Handle attachments button click
                 return Unit.INSTANCE;
             });
         }
 
-        public void handlingActionsSnippet2() {
+        public void handlingActions2() {
             messageComposerView.setSendMessageButtonClickListener(() -> {
-                messageComposerViewModel.sendMessage(messageComposerViewModel.buildNewMessage());
+                messageComposerViewModel.sendMessage();
                 return Unit.INSTANCE;
             });
             messageComposerView.setTextInputChangeListener((text) -> {
@@ -208,25 +362,21 @@ public class MessageComposer extends Fragment {
     /**
      * [Customization](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#customization)
      */
-    private class MessageComposerCustomizationSnippet {
+    class Customization {
 
         private Context context;
-
-        private FragmentManager fragmentManager;
-
+        private FragmentManager supportFragmentManager;
         private MessageComposerView messageComposerView;
-
         private MessageComposerViewModel messageComposerViewModel;
 
-
-        public void styleTransformationSnippet() {
+        public void styleTransformation() {
             TransformStyle.setMessageComposerStyleTransformer(source -> {
                 // Customize the style
                 return source;
             });
         }
 
-        public void contentCustomizationSnippet1() {
+        public void contentCustomization1() {
             DefaultMessageComposerLeadingContent leadingContent = new DefaultMessageComposerLeadingContent(context);
             leadingContent.setAttachmentsButtonClickListener(() -> messageComposerView.getAttachmentsButtonClickListener().invoke());
             leadingContent.setCommandsButtonClickListener(() -> messageComposerView.getCommandsButtonClickListener().invoke());
@@ -261,7 +411,7 @@ public class MessageComposer extends Fragment {
             messageComposerView.setMentionSuggestionsContent(mentionSuggestionsContent);
         }
 
-        public void contentCustomizationSnippet2() {
+        public void contentCustomization2() {
             DefaultMessageComposerLeadingContent leadingContent = new DefaultMessageComposerLeadingContent(context);
             leadingContent.setAttachmentsButtonClickListener(() -> {
                 // Show attachment dialog and invoke messageComposerViewModel.addSelectedAttachments(attachments)
@@ -320,14 +470,17 @@ public class MessageComposer extends Fragment {
             messageComposerView.setMentionSuggestionsContent(mentionSuggestionsContent);
         }
 
-        public void contentCustomizationSnippet3() {
+        public void contentCustomization3() {
+            // Create an instance of a date picker dialog
             MaterialDatePicker<Long> datePickerDialog = MaterialDatePicker.Builder.datePicker().build();
             datePickerDialog.addOnPositiveButtonClickListener(selection -> {
                 // Handle date selection
             });
+
             CustomMessageComposerLeadingContent leadingContent = new CustomMessageComposerLeadingContent(context);
             leadingContent.datePickerButtonClickListener = () -> {
-                datePickerDialog.show(fragmentManager, null);
+                // Show the date picker dialog
+                datePickerDialog.show(supportFragmentManager, null);
                 return Unit.INSTANCE;
             };
 
@@ -366,6 +519,91 @@ public class MessageComposer extends Fragment {
             public void renderState(@NonNull MessageComposerState state) {
                 // Render the state of the component
             }
+
+            @Nullable
+            @Override
+            public View findViewByKey(@NonNull String key) {
+                // Return the required view if contained in the component
+                return null;
+            }
+        }
+    }
+
+    /**
+     * [Changing Mention Search](https://getstream.io/chat/docs/sdk/android/ui/message-components/message-composer/#changing-mention-search)
+     */
+    class ChangingMentionSearch extends Fragment {
+
+        private ChatClient chatClient;
+        private ChannelClient channelClient;
+
+        private MessageComposerView messageComposerView;
+        private MessageListView messageListView;
+
+        private Call<List<User>> queryMembers(String query) {
+            FilterObject filter = Filters.eq("name", query);
+            QuerySorter<Member> sort = QuerySortByField.descByName("name");
+            Call<List<Member>> membersCall = channelClient.queryMembers(0, 30, filter, sort, emptyList());
+            return CallKt.map(membersCall, members -> {
+                List<User> users = new ArrayList<>();
+                for (Member member : members) {
+                    users.add(member.getUser());
+                }
+                return users;
+            });
+        }
+
+        public void usage0() {
+            String cid = "messaging:123";
+            StreamTransliterator transliterator = new DefaultStreamTransliterator("Cyrl-Latn");
+            DefaultUserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(
+                    chatClient,
+                    cid,
+                    new DefaultUserQueryFilter(transliterator)
+            );
+        }
+
+        public void usage1() {
+            String cid = "messaging:123";
+            ChatClient chatClient = ChatClient.instance();
+            UserLookupHandler defaultUserLookupHandler = new DefaultUserLookupHandler(chatClient, cid);
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid(cid)
+                    .userLookupHandler(defaultUserLookupHandler)
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
+        }
+
+        public void usage2() {
+            String cid = "messaging:123";
+            CompatUserLookupHandler customUserLookupHandler = (query, callback) -> {
+                // Implement your custom user lookup
+                Call<List<User>> queryCall = ChangingMentionSearch.this.queryMembers(query);
+                queryCall.enqueue(result -> {
+                    if (result.isSuccess()) {
+                        callback.invoke(result.getOrThrow());
+                    } else {
+                        callback.invoke(emptyList());
+                    }
+                });
+                return () -> {
+                    queryCall.cancel();
+                    return Unit.INSTANCE;
+                };
+            };
+
+            // Create MessageComposerViewModel for a given channel
+            ViewModelProvider.Factory factory = new MessageListViewModelFactory.Builder(requireContext())
+                    .cid(cid)
+                    .userLookupHandlerCompat(customUserLookupHandler)
+                    .build();
+            ViewModelProvider provider = new ViewModelProvider(this, factory);
+            MessageComposerViewModel viewModel = provider.get(MessageComposerViewModel.class);
+
+            // Bind MessageComposerViewModel with MessageComposerView
+            MessageComposerViewModelBinding.bind(viewModel, messageComposerView, getViewLifecycleOwner());
         }
     }
 }

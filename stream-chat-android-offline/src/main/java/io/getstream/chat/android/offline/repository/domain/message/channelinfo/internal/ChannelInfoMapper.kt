@@ -16,7 +16,7 @@
 
 package io.getstream.chat.android.offline.repository.domain.message.channelinfo.internal
 
-import io.getstream.chat.android.client.models.ChannelInfo
+import io.getstream.chat.android.models.ChannelInfo
 
 internal fun ChannelInfo.toEntity(): ChannelInfoEntity = ChannelInfoEntity(
     cid = cid,

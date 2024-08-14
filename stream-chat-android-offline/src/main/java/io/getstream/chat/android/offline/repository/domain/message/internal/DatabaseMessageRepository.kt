@@ -18,22 +18,31 @@ package io.getstream.chat.android.offline.repository.domain.message.internal
 
 import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.offline.extensions.launchWithMutex
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.Date
 
 internal class DatabaseMessageRepository(
+    private val scope: CoroutineScope,
     private val messageDao: MessageDao,
+    private val replyMessageDao: ReplyMessageDao,
     private val getUser: suspend (userId: String) -> User,
-    private val currentUser: User?,
-    private val cacheSize: Int = 100,
-    private var messageCache: LruCache<String, Message> = LruCache(cacheSize),
+    private val currentUser: User,
+    cacheSize: Int = 1000,
 ) : MessageRepository {
     // the message cache, specifically caches messages on which we're receiving events
     // (saving a few trips to the db when you get 10 likes on 1 message)
+
+    private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
+    private val replyMessageCache: LruCache<String, Message> = LruCache(cacheSize)
+    private val dbMutex = Mutex()
 
     /**
      * Select messages for a channel in a desired page.
@@ -44,11 +53,9 @@ internal class DatabaseMessageRepository(
     override suspend fun selectMessagesForChannel(
         cid: String,
         pagination: AnyChannelPaginationRequest?,
-    ): List<Message> {
-        return selectMessagesEntitiesForChannel(cid, pagination)
-            .map { it.toModel(getUser, ::selectMessage) }
-            .filterReactions()
-    }
+    ): List<Message> =
+        selectMessagesEntitiesForChannel(cid, pagination)
+            .map { it.toMessage() }
 
     /**
      * Select messages for a thread in a desired page.
@@ -56,29 +63,32 @@ internal class DatabaseMessageRepository(
      * @param messageId String.
      * @param limit limit of messages
      */
-    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> {
-        return messageDao.messagesForThread(messageId, limit)
-            .map { it.toModel(getUser, ::selectMessage) }
-            .filterReactions()
-    }
+    override suspend fun selectMessagesForThread(messageId: String, limit: Int): List<Message> =
+        messageDao.messagesForThread(messageId, limit)
+            .map { it.toMessage() }
+
+    private suspend fun selectRepliedMessage(messageId: String): Message? =
+        replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser)
 
     /**
      * Selects messages by IDs.
      *
      * @param messageIds A list of [Message.id] as query specification.
-     * @param forceCache A boolean flag that forces cache in repository and fetches data directly in database if passed
-     * value is true.
      *
      * @return A list of messages found in repository.
      */
-    override suspend fun selectMessages(messageIds: List<String>, forceCache: Boolean): List<Message> {
-        return if (forceCache) {
-            fetchMessages(messageIds)
-        } else {
-            val missingMessageIds = messageIds.filter { messageCache.get(it) == null }
-            val cachedIds = messageIds - missingMessageIds
-            cachedIds.mapNotNull { messageCache[it] } + fetchMessages(missingMessageIds)
-        }
+    override suspend fun selectMessages(messageIds: List<String>): List<Message> {
+        return messageIds.map { it to messageCache[it] }
+            .partition { it.second != null }
+            .let { (cachedMessages, missingMessages) ->
+                cachedMessages.mapNotNull { it.second } +
+                    (
+                        missingMessages.map { it.first }
+                            .takeUnless { it.isEmpty() }
+                            ?.let { fetchMessagesFromDB(it) }
+                            ?: emptyList()
+                        )
+            }
     }
 
     /**
@@ -86,32 +96,37 @@ internal class DatabaseMessageRepository(
      *
      * @param messageId String.
      */
-    override suspend fun selectMessage(messageId: String): Message? {
-        return messageCache[messageId] ?: messageDao.select(messageId)?.toModel(getUser, ::selectMessage)
-            ?.filterReactions()
-            ?.also { messageCache.put(it.id, it) }
-    }
+    override suspend fun selectMessage(messageId: String): Message? =
+        messageCache[messageId] ?: fetchMessageFromDB(messageId)
 
     /**
      * Inserts many messages.
      *
      * @param messages list of [Message]
-     * @param cache Boolean.
      */
-    override suspend fun insertMessages(messages: List<Message>, cache: Boolean) {
+    override suspend fun insertMessages(messages: List<Message>) {
         if (messages.isEmpty()) return
-        val messagesToInsert = messages.flatMap(Companion::allMessages)
-        for (message in messagesToInsert) {
-            require(message.cid.isNotEmpty()) {
-                "message.cid can not be empty. Id of the message: ${message.id}. Text: ${message.text}"
-            }
+        val validMessages = messages
+            .filter { message -> message.cid.isNotEmpty() }
+
+        val messagesToInsert = validMessages
+            .filter { messageCache.get(it.id) != it }
+            .map(Message::toEntity)
+        val replyMessages = validMessages
+            .mapNotNull { message -> message.replyTo }
+
+        val replyMessagesToInsert = replyMessages
+            .filter { replyMessageCache.get(it.id) != it }
+            .map(Message::toReplyEntity)
+
+        replyMessages.forEach { replyMessageCache.put(it.id, it) }
+        validMessages.forEach { messageCache.put(it.id, it) }
+        scope.launchWithMutex(dbMutex) {
+            replyMessagesToInsert.takeUnless { it.isEmpty() }
+                ?.let { replyMessageDao.insert(it) }
+            messagesToInsert.takeUnless { it.isEmpty() }
+                ?.let { messageDao.insert(it) }
         }
-        for (m in messagesToInsert) {
-            if (messageCache.get(m.id) != null || cache) {
-                messageCache.put(m.id, m)
-            }
-        }
-        messageDao.insert(messagesToInsert.map { it.toEntity() })
     }
 
     /**
@@ -120,8 +135,8 @@ internal class DatabaseMessageRepository(
      * @param message [Message]
      * @param cache Boolean.
      */
-    override suspend fun insertMessage(message: Message, cache: Boolean) {
-        insertMessages(listOf(message), cache)
+    override suspend fun insertMessage(message: Message) {
+        insertMessages(listOf(message))
     }
 
     /**
@@ -131,10 +146,15 @@ internal class DatabaseMessageRepository(
      * @param hideMessagesBefore Boolean.
      */
     override suspend fun deleteChannelMessagesBefore(cid: String, hideMessagesBefore: Date) {
-        // delete the messages
-        messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore)
-        // wipe the cache
-        messageCache = LruCache(cacheSize)
+        messageCache.evictAll()
+        replyMessageCache.evictAll()
+        scope.launchWithMutex(dbMutex) { messageDao.deleteChannelMessagesBefore(cid, hideMessagesBefore) }
+    }
+
+    override suspend fun deleteChannelMessages(cid: String) {
+        messageCache.evictAll()
+        replyMessageCache.evictAll()
+        scope.launchWithMutex(dbMutex) { messageDao.deleteMessages(cid) }
     }
 
     /**
@@ -143,8 +163,8 @@ internal class DatabaseMessageRepository(
      * @param message [Message]
      */
     override suspend fun deleteChannelMessage(message: Message) {
-        messageDao.deleteMessage(message.cid, message.id)
         messageCache.remove(message.id)
+        scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
     }
 
     /**
@@ -162,12 +182,26 @@ internal class DatabaseMessageRepository(
      * @param syncStatus [SyncStatus]
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectMessage) }
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage) }
+    }
+
+    override suspend fun evictMessage(messageId: String) {
+        messageCache.remove(messageId)
+        replyMessageCache.remove(messageId)
+    }
+
+    override suspend fun evictMessages() {
+        messageCache.evictAll()
+        replyMessageCache.evictAll()
     }
 
     override suspend fun clear() {
         messageCache.evictAll()
-        messageDao.deleteAll()
+        replyMessageCache.evictAll()
+        dbMutex.withLock {
+            messageDao.deleteAll()
+            replyMessageDao.deleteAll()
+        }
     }
 
     private suspend fun selectMessagesEntitiesForChannel(
@@ -203,39 +237,35 @@ internal class DatabaseMessageRepository(
     }
 
     /** Fetches messages from [MessageDao] and cache values in [LruCache]. */
-    private suspend fun fetchMessages(messageIds: List<String>): List<Message> {
+    private suspend fun fetchMessagesFromDB(messageIds: List<String>): List<Message> {
         return messageDao.select(messageIds)
             .map { entity ->
-                entity.toModel(getUser, ::selectMessage).filterReactions().also { messageCache.put(it.id, it) }
+                entity.toMessage()
+                    .also { messageCache.put(it.id, it) }
             }
     }
 
-    private fun List<Message>.filterReactions(): List<Message> = also {
-        forEach { it.filterReactions() }
+    private suspend fun fetchMessageFromDB(messageId: String): Message? {
+        return messageDao.select(messageId)
+            ?.toMessage()
+            ?.also { messageCache.put(it.id, it) }
     }
+
+    private suspend fun MessageEntity.toMessage(): Message =
+        this.toModel(getUser, ::selectRepliedMessage).filterReactions()
 
     /**
      * Workaround to remove reactions which should not be displayed in the UI. This filtering
      * should be done in `MessageDao`.
      */
-    private fun Message.filterReactions(): Message = also {
-        if (ownReactions.isNotEmpty()) {
-            ownReactions = ownReactions
-                .filter { it.deletedAt == null }
-                .filter { currentUser == null || it.userId == currentUser.id }
-                .toMutableList()
-        }
-        if (latestReactions.isNotEmpty()) {
-            latestReactions = latestReactions
-                .filter { it.deletedAt == null }
-                .toMutableList()
-        }
-    }
+    private fun Message.filterReactions(): Message = copy(
+        ownReactions = ownReactions
+            .filter { it.deletedAt == null }
+            .filter { currentUser == null || it.userId == currentUser.id },
+        latestReactions = latestReactions.filter { it.deletedAt == null },
+    )
 
     private companion object {
         private const val DEFAULT_MESSAGE_LIMIT = 100
-
-        private fun allMessages(message: Message): List<Message> =
-            listOf(message) + (message.replyTo?.let(Companion::allMessages).orEmpty())
     }
 }

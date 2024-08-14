@@ -1,0 +1,148 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Offline Support
+
+The offline library provides a caching mechanism applied automatically to some of the `ChatClient` functions as side effects.
+The offline results, as well as online results, are being exposed through `StateFlow` objects that can be observed for changes.
+
+### Configuration
+
+When using the offline library, you first have to provide the `OfflinePlugin` to `ChatClient` as described on the [Getting Started](../../01-basics/04-getting-started.mdx#adding-an-offline-plugin) page:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val offlinePluginFactory = StreamOfflinePluginFactory(
+    config = Config(
+        backgroundSyncEnabled = true,
+        userPresence = true,
+        persistenceEnabled = true,
+        uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
+        useSequentialEventHandler = false,
+    ),
+    appContext = context,
+)
+
+ChatClient.Builder(apiKey, context).withPlugin(offlinePluginFactory).build()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Enables background sync which is performed to sync user actions done while offline.
+boolean backgroundSyncEnabled = true;
+// Enables the ability to receive information about user activity such as last active date and if they are online right now.
+boolean userPresence = true;
+// Enables using the database as an internal caching mechanism.
+boolean persistenceEnabled = true;
+// An enumeration of various network types used as a constraint inside upload attachments worker.
+UploadAttachmentsNetworkType uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING;
+// Whether the SDK will use a new sequential event handling mechanism.
+boolean useSequentialEventHandler = false;
+
+StreamOfflinePluginFactory offlinePluginFactory = new StreamOfflinePluginFactory(new Config(backgroundSyncEnabled, userPresence, persistenceEnabled, uploadAttachmentsNetworkType, useSequentialEventHandler), context);
+new ChatClient.Builder("apiKey", context).withPlugin(offlinePluginFactory).build();
+```
+</TabItem>
+</Tabs>
+
+You can configure some of the `OfflinePlugin` options using the `Config` class provided to the `StreamOfflinePluginFactory`. You can use the following properties:
+- `backgroundSyncEnabled` - Enables the background sync which is performed to sync user actions, such as sending the message, done without an active Internet connection.
+- `userPresence` - Enables the ability to receive information about user activity such as last active date and if they are online right now.
+- `persistenceEnabled` - Enables using the database as an internal caching mechanism. You can disable it if you want to have access to the `StateFlows` but you only want to keep the data in the memory.
+- `uploadAttachmentsNetworkType` - An enumeration of various network types used as a constraint inside upload attachments worker. Upload attachments might be heavy work so we allow restricting whether the job can be performed.
+
+### State
+
+The offline library gives you access to a few objects responsible for exposing the state to a particular situation:
+- [`QueryChannelsState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/querychannels/QueryChannelsState.kt) contains state related to a single query channels request. You can use it to collect information after performing the query channels request.
+- [`ChannelState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/channel/ChannelState.kt) contains state related to a single channel. You can use it to access channel related data after performing a watch channel request.
+- [`ThreadState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/channel/thread/ThreadState.kt) contains state for a single thread within the channel.
+- [`GlobalState`](https://github.com/GetStream/stream-chat-android/blob/main/stream-chat-android-offline/src/main/java/io/getstream/chat/android/offline/plugin/state/global/GlobalState.kt) contains global information for the current user such as connection state, mutes, unread counts, etc.
+
+You can access the objects mentioned above like this:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// Returns QueryChannelsState object based on filter and sort used to query channels
+val queryChannelsState = chatClient.state.queryChannels(filter = filter, sort = sort)
+
+// Returns ChannelState object for a given channel
+val channelState = chatClient.state.channel(channelType = "messaging", channelId = "sampleId")
+
+// Returns ThreadState object for a thread associated with a given parentMessageId
+val threadState = chatClient.state.thread(messageId = "parentMessageId")
+
+// Gives you access to GlobalState object
+val globalState = chatClient.globalState
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Returns QueryChannelsState object based on filter and sort used to query channels
+QueryChannelsState queryChannelsState = ChatClientExtensions.getState(chatClient).queryChannels(filter, sort);
+
+// Returns ChannelState object for a given channel
+ChannelState channelState = ChatClientExtensions.getState(chatClient).channel("messaging", "sampleId");
+
+// Returns ThreadState object for a thread associated with a given parentMessageId
+ThreadState threadState = ChatClientExtensions.getState(chatClient).thread("parentMessageId");
+
+// Gives you access to GlobalState object
+GlobalState globalState = ChatClientExtensions.getGlobalState(chatClient);
+```
+</TabItem>
+</Tabs>
+
+:::warning
+You should make sure that the user is connected before using the state. Accessing `chatClient.state` before connecting the user will result in a crash.
+:::
+
+Methods mentioned above return a state object associated with the API call but don't perform the API call itself.
+If you don't want to bother yourself about doing API calls when using state objects, you can use one of the provided extension functions:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+// Returns StateFlow<QueryChannelsState?> object and performs queryChannels request
+val queryChannelsState: StateFlow<QueryChannelsState?> = chatClient.queryChannelsAsState(request = queryChannelsRequest, coroutineScope = scope)
+
+// Returns StateFlow<ChannelState?> object and performs watchChannel request
+val channelState: StateFlow<ChannelState?> = chatClient.watchChannelAsState(cid = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+
+// Returns ThreadState object for a thread associated with a given parentMessageId
+val threadState: ThreadState = chatClient.getRepliesAsState(messageId = "messaging:sampleId", messageLimit = 30, coroutineScope = scope)
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+// Returns LiveData<QueryChannelsState> object and performs queryChannels request
+StateFlow<QueryChannelsState> queryChannelsStateStateFlow = ChatClientExtensions.queryChannelsAsState(chatClient, queryChannelsRequest);
+LiveData<QueryChannelsState> queryChannelsStateLiveData = FlowExtensions.asLiveData(queryChannelsStateStateFlow);
+
+// Returns LiveData<ChannelState> object and performs watchChannel request
+StateFlow<ChannelState> channelStateStateFlow = ChatClientExtensions.watchChannelAsState(chatClient, "messaging:sampleId", 30);
+LiveData<ChannelState> channelStateLiveData = FlowExtensions.asLiveData(channelStateStateFlow);
+
+// Returns ThreadState object for a thread associated with a given parentMessageId
+ThreadState threadState = ChatClientExtensions.getRepliesAsState(chatClient, "messaging:sampleId", 30);
+```
+</TabItem>
+</Tabs>
+
+### Supported Operations
+
+The offline library allows you to perform the following actions without the Internet connection:
+- Creating a channel
+- Sending, updating and deleting a message
+- Sending and deleting reactions

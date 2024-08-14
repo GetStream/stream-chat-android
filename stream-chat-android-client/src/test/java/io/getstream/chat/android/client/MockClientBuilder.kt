@@ -16,26 +16,28 @@
 
 package io.getstream.chat.android.client
 
-import androidx.lifecycle.testing.TestLifecycleOwner
 import io.getstream.chat.android.client.api.ChatClientConfig
 import io.getstream.chat.android.client.api2.MoshiChatApi
-import io.getstream.chat.android.client.clientstate.SocketStateService
+import io.getstream.chat.android.client.attachment.AttachmentsSender
+import io.getstream.chat.android.client.audio.StreamMediaPlayer
 import io.getstream.chat.android.client.clientstate.UserStateService
 import io.getstream.chat.android.client.events.ConnectedEvent
-import io.getstream.chat.android.client.models.EventType
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.notifications.ChatNotifications
+import io.getstream.chat.android.client.notifications.handler.NotificationConfig
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.persistance.repository.noop.NoOpRepositoryFactory
 import io.getstream.chat.android.client.scope.ClientTestScope
 import io.getstream.chat.android.client.scope.UserTestScope
+import io.getstream.chat.android.client.setup.state.internal.MutableClientState
 import io.getstream.chat.android.client.token.FakeTokenManager
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.TokenUtils
-import io.getstream.chat.android.client.utils.observable.FakeSocket
 import io.getstream.chat.android.client.utils.retry.NoRetryPolicy
+import io.getstream.chat.android.models.EventType
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.test.TestCoroutineExtension
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
@@ -59,7 +61,8 @@ internal class MockClientBuilder(
     val channelId = "channel-id"
     val token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ==.devtoken"
     val serverErrorCode = 500
-    val user = User().apply { id = userId }
+    val user = User(id = userId)
+    val userStateFlow = MutableStateFlow(user)
     val createdAt = Date()
     val rawCreatedAt = streamDateFormatter.format(createdAt)
     val connectedEvent = ConnectedEvent(
@@ -67,15 +70,15 @@ internal class MockClientBuilder(
         createdAt,
         rawCreatedAt,
         user,
-        connectionId
+        connectionId,
     )
 
-    private lateinit var socket: FakeSocket
     private lateinit var fileUploader: FileUploader
 
     lateinit var api: MoshiChatApi
     private lateinit var notificationsManager: ChatNotifications
     private lateinit var client: ChatClient
+    lateinit var attachmentSender: AttachmentsSender
 
     fun build(): ChatClient {
         val config = ChatClientConfig(
@@ -86,30 +89,28 @@ internal class MockClientBuilder(
             false,
             Mother.chatLoggerConfig(),
             false,
-            false
+            false,
+            NotificationConfig(),
         )
 
-        val lifecycleOwner = TestLifecycleOwner(coroutineDispatcher = testCoroutineExtension.dispatcher)
-
         val tokenUtil: TokenUtils = mock()
+        val mutableClientState: MutableClientState = mock()
         Mockito.`when`(tokenUtil.getUserId(token)) doReturn userId
-        socket = FakeSocket()
         fileUploader = mock()
         notificationsManager = mock()
+        val streamPlayer = mock<StreamMediaPlayer>()
 
         api = mock()
+        attachmentSender = mock()
 
-        val socketStateService = SocketStateService()
         val userStateService = UserStateService()
         val clientScope = ClientTestScope(testCoroutineExtension.scope)
         val userScope = UserTestScope(clientScope)
         client = ChatClient(
             config,
-            api,
-            socket,
-            notificationsManager,
+            api = api,
+            notifications = notificationsManager,
             tokenManager = FakeTokenManager(token),
-            socketStateService = socketStateService,
             userCredentialStorage = mock(),
             userStateService = userStateService,
             tokenUtils = tokenUtil,
@@ -117,16 +118,19 @@ internal class MockClientBuilder(
             userScope = userScope,
             retryPolicy = NoRetryPolicy(),
             appSettingsManager = mock(),
-            chatSocketExperimental = mock(),
-            lifecycleObserver = StreamLifecycleObserver(lifecycleOwner.lifecycle),
+            chatSocket = mock(),
             pluginFactories = emptyList(),
             repositoryFactoryProvider = NoOpRepositoryFactory.Provider,
-            clientState = mock()
+            mutableClientState = mutableClientState,
+            currentUserFetcher = mock(),
+            audioPlayer = streamPlayer,
         )
+
+        client.attachmentsSender = attachmentSender
 
         client.connectUser(user, token).enqueue()
 
-        socket.sendEvent(connectedEvent)
+        // socket.sendEvent(connectedEvent)
 
         return client.apply {
             plugins = mutableListOf()

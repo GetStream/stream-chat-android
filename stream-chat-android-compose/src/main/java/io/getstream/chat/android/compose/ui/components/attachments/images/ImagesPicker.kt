@@ -17,18 +17,25 @@
 package io.getstream.chat.android.compose.ui.components.attachments.images
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.rememberRipple
@@ -36,24 +43,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import coil.request.videoFrameMillis
-import com.getstream.sdk.chat.model.ModelType
-import com.getstream.sdk.chat.utils.MediaStringUtil
+import com.skydoves.landscapist.ImageOptions
+import com.skydoves.landscapist.coil.CoilImage
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 
 private const val DefaultNumberOfPicturesPerRow = 3
 
@@ -73,14 +79,14 @@ public fun ImagesPicker(
     itemContent: @Composable (AttachmentPickerItemState) -> Unit = { imageItem ->
         DefaultImagesPickerItem(
             imageItem = imageItem,
-            onImageSelected = onImageSelected
+            onImageSelected = onImageSelected,
         )
     },
 ) {
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(DefaultNumberOfPicturesPerRow),
-        contentPadding = PaddingValues(1.dp)
+        contentPadding = PaddingValues(1.dp),
     ) {
         items(images) { imageItem -> itemContent(imageItem) }
     }
@@ -98,7 +104,7 @@ internal fun DefaultImagesPickerItem(
     onImageSelected: (AttachmentPickerItemState) -> Unit,
 ) {
     val attachmentMetaData = imageItem.attachmentMetaData
-    val isVideo = attachmentMetaData.type == ModelType.attach_video
+    val isVideo = attachmentMetaData.type == AttachmentType.VIDEO
 
     val imageRequest = ImageRequest.Builder(LocalContext.current)
         .data(attachmentMetaData.uri.toString())
@@ -117,17 +123,14 @@ internal fun DefaultImagesPickerItem(
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(),
-                onClick = { onImageSelected(imageItem) }
-            )
+                onClick = { onImageSelected(imageItem) },
+            ),
     ) {
-        AsyncImage(
-            model = imageRequest,
-            imageLoader = LocalStreamImageLoader.current,
+        CoilImage(
+            imageRequest = { imageRequest },
+            imageLoader = { LocalStreamImageLoader.current },
             modifier = Modifier.fillMaxSize(),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            onSuccess = {
-            }
+            imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
 
         if (imageItem.isSelected) {
@@ -136,13 +139,13 @@ internal fun DefaultImagesPickerItem(
                     .align(Alignment.TopEnd)
                     .padding(4.dp)
                     .size(24.dp)
-                    .background(shape = CircleShape, color = ChatTheme.colors.overlayDark)
+                    .background(shape = CircleShape, color = ChatTheme.colors.overlayDark),
             ) {
                 Icon(
                     modifier = Modifier.align(Alignment.Center),
                     painter = painterResource(id = R.drawable.stream_compose_ic_checkmark),
                     contentDescription = null,
-                    tint = ChatTheme.colors.appBackground
+                    tint = ChatTheme.colors.appBackground,
                 )
             }
         }
@@ -160,44 +163,48 @@ internal fun DefaultImagesPickerItem(
  * @param modifier Modifier for styling.
  */
 @Composable
-private fun VideoThumbnailOverlay(
+private fun BoxScope.VideoThumbnailOverlay(
     videoLength: Long,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    val overlayShape = RoundedCornerShape(12.dp)
+
+    Row(
         modifier = modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Black
-                    )
-                )
+            .wrapContentSize()
+            .padding(horizontal = 4.dp, vertical = 5.dp)
+            .border(
+                width = 1.dp,
+                color = ChatTheme.colors.borders,
+                shape = overlayShape,
             )
+            .background(
+                shape = overlayShape,
+                color = ChatTheme.colors.barsBackground,
+            )
+            .align(Alignment.BottomCenter)
+            .padding(vertical = 2.dp, horizontal = 6.dp),
+        horizontalArrangement = Arrangement.Center,
     ) {
         Icon(
             modifier = Modifier
-                .padding(4.dp)
-                .size(24.dp)
+                .size(16.dp)
+                .aspectRatio(1f)
                 .mirrorRtl(LocalLayoutDirection.current)
-                .align(Alignment.BottomStart),
+                .align(Alignment.CenterVertically),
             painter = painterResource(id = R.drawable.stream_compose_ic_video),
             contentDescription = null,
-            tint = Color.White
+            tint = ChatTheme.colors.textHighEmphasis,
         )
 
-        if (videoLength != 0L) {
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp, vertical = 8.dp)
-                    .align(Alignment.BottomEnd),
-                text = MediaStringUtil.convertVideoLength(videoLength),
-                style = ChatTheme.typography.bodyBold,
-                color = Color.White
-            )
-        }
+        Text(
+            modifier = Modifier
+                .padding(start = 4.dp, end = 2.dp)
+                .align(Alignment.CenterVertically),
+            text = MediaStringUtil.convertVideoLength(videoLength),
+            style = ChatTheme.typography.footnote,
+            color = ChatTheme.colors.textHighEmphasis,
+        )
     }
 }
 

@@ -17,7 +17,11 @@
 package io.getstream.chat.android.uitests.snapshot.compose
 
 import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.testing.junit.testparameterinjector.TestParameter
@@ -56,7 +60,15 @@ abstract class ComposeScreenshotTest : ScreenshotTest {
             ChatTheme(
                 isInDarkMode = isDarkMode,
                 imageLoaderFactory = { FakeImageLoader(context) },
-                content = content
+                content = {
+                    if (isDarkMode) {
+                        Box(modifier = Modifier.background(Color.Black)) {
+                            content()
+                        }
+                    } else {
+                        content()
+                    }
+                },
             )
         }
         compareScreenshot(rule = composeRule, name = generateName())

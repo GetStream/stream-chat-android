@@ -50,4 +50,13 @@ internal data class MemberEntity(
 
     /** The user's channel-level role. */
     val channelRole: String? = null,
+
+    /** If the notifications are muted for this user in the channel. */
+    val notificationsMuted: Boolean? = null,
+
+    /** The user's status. */
+    val status: String? = null,
+
+    /** The date the ban expires. */
+    var banExpires: Date? = null,
 )

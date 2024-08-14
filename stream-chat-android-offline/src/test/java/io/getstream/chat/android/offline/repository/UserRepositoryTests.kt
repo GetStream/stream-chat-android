@@ -17,11 +17,11 @@
 package io.getstream.chat.android.offline.repository
 
 import app.cash.turbine.test
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.UserRepository
-import io.getstream.chat.android.client.test.randomUser
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.user.internal.DatabaseUserRepository
 import io.getstream.chat.android.offline.repository.domain.user.internal.UserDao
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.drop
@@ -50,7 +50,7 @@ internal class UserRepositoryTests {
     @BeforeEach
     fun setup() {
         userDao = mock()
-        sut = DatabaseUserRepository(userDao)
+        sut = DatabaseUserRepository(testCoroutines.scope, userDao)
     }
 
     @Test
@@ -150,9 +150,10 @@ internal class UserRepositoryTests {
         runTest {
             val newUser1 = randomUser()
             val newUser2 = randomUser()
-            val updatedUser1 = newUser1.copy(extraData = mutableMapOf()).apply {
-                name = "newUserName"
-            }
+            val updatedUser1 = newUser1.copy(
+                extraData = mutableMapOf(),
+                name = "newUserName",
+            )
             var observedTimes = 0
 
             sut.observeLatestUsers()

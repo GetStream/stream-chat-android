@@ -18,17 +18,25 @@ package io.getstream.chat.android.client.events
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.models.Vote
+import io.getstream.result.Error
 import java.util.Date
+import java.util.concurrent.atomic.AtomicInteger
+
+private val seqGenerator = AtomicInteger()
 
 public sealed class ChatEvent {
     public abstract val type: String
     public abstract val createdAt: Date
     public abstract val rawCreatedAt: String?
+
+    public val seq: Int = seqGenerator.incrementAndGet()
 }
 
 public sealed class CidEvent : ChatEvent() {
@@ -59,6 +67,10 @@ public sealed interface HasMember {
 
 public sealed interface HasOwnUser {
     public val me: User
+}
+
+public sealed interface HasPoll {
+    public val poll: Poll
 }
 
 /**
@@ -403,6 +415,25 @@ public data class NotificationMarkReadEvent(
 ) : CidEvent(), UserEvent, HasUnreadCounts
 
 /**
+ * Triggered when the the user mark as unread a conversation from a particular message
+ */
+public data class NotificationMarkUnreadEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    override val user: User,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val totalUnreadCount: Int = 0,
+    override val unreadChannels: Int = 0,
+    val unreadMessages: Int,
+    val firstUnreadMessageId: String,
+    val lastReadMessageAt: Date,
+    val lastReadMessageId: String,
+) : CidEvent(), UserEvent, HasUnreadCounts
+
+/**
  * Triggered when the total count of unread messages (across all channels the user is a member) changes
  */
 public data class MarkAllReadEvent(
@@ -540,6 +571,7 @@ public data class ChannelUserBannedEvent(
     override val channelId: String,
     override val user: User,
     val expiration: Date?,
+    val shadow: Boolean,
 ) : CidEvent(), UserEvent
 
 /**
@@ -631,6 +663,87 @@ public data class UserUpdatedEvent(
 ) : ChatEvent(), UserEvent
 
 /**
+ * Triggered when a poll is updated.
+ */
+public data class PollUpdatedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a poll is deleted.
+ */
+public data class PollDeletedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a poll is closed.
+ */
+public data class PollClosedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a vote is casted.
+ */
+public data class VoteCastedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+    val newVote: Vote,
+) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a vote is changed.
+ */
+public data class VoteChangedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+    val newVote: Vote,
+) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a vote is removed.
+ */
+public data class VoteRemovedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+    val removedVote: Vote,
+) : CidEvent(), HasPoll
+
+/**
  * Triggered when a user gets connected to the WS
  */
 public data class ConnectedEvent(
@@ -640,6 +753,17 @@ public data class ConnectedEvent(
     override val me: User,
     val connectionId: String,
 ) : ChatEvent(), HasOwnUser
+
+/**
+ * Triggered when a WS connection fails.
+ */
+public data class ConnectionErrorEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String,
+    val connectionId: String,
+    val error: ChatError,
+) : ChatEvent()
 
 /**
  * Triggered when a user is connecting to the WS
@@ -667,7 +791,7 @@ public data class ErrorEvent(
     override val type: String,
     override val createdAt: Date,
     override val rawCreatedAt: String?,
-    val error: ChatError,
+    val error: Error,
 ) : ChatEvent()
 
 /**

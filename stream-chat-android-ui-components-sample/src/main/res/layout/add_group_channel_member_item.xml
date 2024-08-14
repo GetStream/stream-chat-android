@@ -29,8 +29,8 @@
         android:layout_height="wrap_content"
         >
 
-        <io.getstream.chat.android.ui.avatar.AvatarView
-            android:id="@+id/memberAvatar"
+        <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+            android:id="@+id/userAvatarView"
             style="@style/StreamUiSelectedGroupMembersStyle"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

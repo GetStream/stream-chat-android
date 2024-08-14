@@ -35,14 +35,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
+import androidx.compose.ui.util.fastAny
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.buildAnnotatedMessageText
+import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
+import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Default text element for messages, with extra styling and padding for the chat bubble.
@@ -56,6 +58,7 @@ import io.getstream.chat.android.compose.ui.util.isSingleEmoji
  * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler used for long pressing on the message text.
+ * @param onLinkClick Handler used for clicking on a link in the message.
  */
 @Composable
 public fun MessageText(
@@ -63,48 +66,51 @@ public fun MessageText(
     currentUser: User?,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     val context = LocalContext.current
 
-    val textColor = if (message.isMine(currentUser)) {
-        ChatTheme.colors.ownMessageText
-    } else {
-        ChatTheme.colors.otherMessageText
-    }
-    val styledText = buildAnnotatedMessageText(message.text, textColor)
+    val styledText = ChatTheme.messageTextFormatter.format(message, currentUser)
+
     val annotations = styledText.getStringAnnotations(0, styledText.lastIndex)
 
     // TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808
     val style = when {
         message.isSingleEmoji() -> ChatTheme.typography.singleEmoji
         message.isFewEmoji() -> ChatTheme.typography.emojiOnly
-        else -> ChatTheme.typography.bodyBold
+        else -> if (message.isMine(currentUser)) {
+            ChatTheme.ownMessageTheme.textStyle
+        } else {
+            ChatTheme.otherMessageTheme.textStyle
+        }
     }
 
-    if (annotations.isNotEmpty()) {
+    if (annotations.fastAny { it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail }) {
         ClickableText(
             modifier = modifier
                 .padding(
                     start = 12.dp,
                     end = 12.dp,
                     top = 8.dp,
-                    bottom = 8.dp
+                    bottom = 8.dp,
                 ),
             text = styledText,
             style = style,
-            onLongPress = { onLongItemClick(message) }
+            onLongPress = { onLongItemClick(message) },
         ) { position ->
             val targetUrl = annotations.firstOrNull {
                 position in it.start..it.end
             }?.item
 
-            if (targetUrl != null && targetUrl.isNotEmpty()) {
-                context.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(targetUrl)
+            if (!targetUrl.isNullOrEmpty()) {
+                onLinkClick?.invoke(message, targetUrl) ?: run {
+                    context.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(targetUrl),
+                        ),
                     )
-                )
+                }
             }
         }
     } else {
@@ -114,11 +120,11 @@ public fun MessageText(
             modifier = modifier
                 .padding(
                     horizontal = horizontalPadding,
-                    vertical = verticalPadding
+                    vertical = verticalPadding,
                 )
                 .clipToBounds(),
             text = styledText,
-            style = style
+            style = style,
         )
     }
 }
@@ -151,7 +157,7 @@ private fun ClickableText(
                 layoutResult.value?.let { layoutResult ->
                     onClick(layoutResult.getOffsetForPosition(pos))
                 }
-            }
+            },
         )
     }
 
@@ -165,7 +171,7 @@ private fun ClickableText(
         onTextLayout = {
             layoutResult.value = it
             onTextLayout(it)
-        }
+        },
     )
 }
 
@@ -176,7 +182,7 @@ private fun MessageTextPreview() {
         MessageText(
             message = Message(text = "Hello World!"),
             currentUser = null,
-            onLongItemClick = {}
+            onLongItemClick = {},
         )
     }
 }

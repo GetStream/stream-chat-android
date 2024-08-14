@@ -19,21 +19,26 @@
     <string name="stream_ui_yesterday">Yesterday</string>
 
     <!-- Media capture -->
-    <string name="stream_ui_message_input_capture_media">Capture Image or Video</string>
+    <string name="stream_ui_message_composer_capture_media">Capture Image or Video</string>
+    <string name="stream_ui_message_composer_capture_media_take_photo">Capture Image</string>
+    <string name="stream_ui_message_composer_capture_media_video">Capture Video</string>
 
     <!-- Permissions -->
-    <string name="stream_ui_message_input_permission_camera_title">Camera and Storage Access Permission</string>
-    <string name="stream_ui_message_input_permission_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
-    <string name="stream_ui_message_input_permission_storage_title">Storage Access Permissions</string>
-    <string name="stream_ui_message_input_permission_storage_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
-    <string name="stream_ui_message_input_permission_setting_message">Enable permissions on App Settings</string>
-    <string name="stream_ui_message_input_permissions_setting_button">Settings</string>
+    <string name="stream_ui_message_composer_permission_camera_title">Camera and Storage Access Permission</string>
+    <string name="stream_ui_message_composer_permission_camera_message">Camera and storage access permissions are needed in order to be able to take photos and videos</string>
+    <string name="stream_ui_message_composer_permission_storage_title">Storage Access Permissions</string>
+    <string name="stream_ui_message_composer_permission_storage_message">Storage access permissions is needed in order to be able to send and save photos, videos, music and the other files</string>
+    <string name="stream_ui_message_composer_permission_audio_record_title">Record Audio Permissions</string>
+    <string name="stream_ui_message_composer_permission_audio_record_message">Record Audio permission is needed in order to be able to record and send audio files</string>
+    <string name="stream_ui_message_composer_permission_setting_message">Enable permissions on App Settings</string>
+    <string name="stream_ui_message_composer_permissions_setting_button">Settings</string>
 
     <!--Attachment View-->
     <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
     <string name="stream_ui_message_list_attachment_invalid_mime_type">Something went wrong. Unable to open attachment: %s</string>
     <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
+    <string name="stream_ui_message_list_video_display_error">Error. Video can\'t be displayed</string>
     <string name="stream_ui_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
 
     <!--Moderation Dialog-->
@@ -43,4 +48,6 @@
     <string name="stream_ui_moderation_dialog_edit">Edit message</string>
     <string name="stream_ui_moderation_dialog_delete">Delete message</string>
 
+
+    <string name="stream_ui_channel_list_untitled_channel">Channel without name</string>
 </resources>

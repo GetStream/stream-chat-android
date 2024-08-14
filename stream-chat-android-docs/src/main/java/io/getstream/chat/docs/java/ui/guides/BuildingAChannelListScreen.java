@@ -6,16 +6,16 @@ import androidx.lifecycle.ViewModelProvider;
 import java.util.Collections;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
-import io.getstream.chat.android.client.api.models.querysort.QuerySortByField;
-import io.getstream.chat.android.client.models.Filters;
-import io.getstream.chat.android.ui.channel.list.ChannelListView;
-import io.getstream.chat.android.ui.channel.list.header.ChannelListHeaderView;
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModel;
-import io.getstream.chat.android.ui.channel.list.header.viewmodel.ChannelListHeaderViewModelBinding;
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModelBinding;
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
+import io.getstream.chat.android.models.FilterObject;
+import io.getstream.chat.android.models.Filters;
+import io.getstream.chat.android.models.querysort.QuerySortByField;
+import io.getstream.chat.android.ui.feature.channels.header.ChannelListHeaderView;
+import io.getstream.chat.android.ui.feature.channels.list.ChannelListView;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModel;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListHeaderViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelBinding;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory;
 
 /**
  * [Building A Channel List Screen](https://getstream.io/chat/docs/sdk/android/ui/guides/building-channel-list-screen/)
@@ -35,7 +35,7 @@ public class BuildingAChannelListScreen extends Fragment {
 
         ViewModelProvider.Factory factory = new ChannelListViewModelFactory.Builder()
                 .filter(filter)
-                .sort(QuerySortByField.descByName("lastUpdated"))
+                .sort(QuerySortByField.descByName("last_updated"))
                 .limit(30)
                 .build();
 

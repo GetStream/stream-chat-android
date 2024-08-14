@@ -23,8 +23,26 @@
     android:background="?attr/selectableItemBackground"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
-        android:id="@+id/avatarView"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5"
+        />
+
+    <View
+        android:id="@+id/spacer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline"
+        />
+
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
         style="?attr/streamUiMentionPreviewItemAvatarStyle"
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
@@ -32,6 +50,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        tools:layout_height="@dimen/stream_ui_avatar_size_medium"
+        tools:layout_width="@dimen/stream_ui_avatar_size_medium"
         tools:src="@tools:sample/avatars"
         />
 
@@ -46,11 +66,9 @@
         android:textColor="@color/stream_ui_text_color_primary"
         android:textSize="@dimen/stream_ui_channel_item_title"
         android:textDirection="locale"
-        app:layout_constraintBottom_toTopOf="@+id/messageLabel"
+        app:layout_constraintBottom_toTopOf="@+id/spacer"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/avatarView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@+id/userAvatarView"
         tools:text="@tools:sample/full_names"
         />
 
@@ -65,10 +83,9 @@
         android:textColor="@color/stream_ui_text_color_secondary"
         android:textSize="@dimen/stream_ui_channel_item_message"
         android:textDirection="locale"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/messageTimeLabel"
         app:layout_constraintStart_toStartOf="@+id/senderNameLabel"
-        app:layout_constraintTop_toBottomOf="@+id/senderNameLabel"
+        app:layout_constraintTop_toBottomOf="@+id/spacer"
         tools:text="@tools:sample/lorem/random"
         />
 

@@ -28,62 +28,62 @@ import org.junit.Test
 class UserAvatarTest : ComposeScreenshotTest() {
 
     @Test
-    fun uerAvatarForUserWithoutImage() = runScreenshotTest {
+    fun userAvatarForUserWithoutImage() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1().copy(image = ""),
             showOnlineIndicator = false,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
         )
     }
 
     @Test
-    fun uerAvatarForUserWithImage() = runScreenshotTest {
+    fun userAvatarForUserWithImage() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = false,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
         )
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithTopEndIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithTopEndIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopEnd,
         )
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithBottomEndIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithBottomEndIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomEnd
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomEnd,
         )
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithTopStartIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithTopStartIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopStart
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.TopStart,
         )
     }
 
     @Test
-    fun uerAvatarForOnlineUserWithBottomStartIndicator() = runScreenshotTest {
+    fun userAvatarForOnlineUserWithBottomStartIndicator() = runScreenshotTest {
         UserAvatar(
             modifier = Modifier.size(40.dp),
             user = TestData.user1(),
             showOnlineIndicator = true,
-            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomStart
+            onlineIndicatorAlignment = OnlineIndicatorAlignment.BottomStart,
         )
     }
 }

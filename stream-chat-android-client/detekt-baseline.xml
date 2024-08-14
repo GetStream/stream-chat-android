@@ -3,9 +3,41 @@
   <ManuallySuppressedIssues/>
   <CurrentIssues>
     <ID>ForbiddenComment:MessageUtils.kt$// TODO: type should be a sealed/class or enum at the client level</ID>
+    <ID>FunctionOnlyReturningConstant:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$fun createStreamCdnImageLinkWithoutDimensionParameters()</ID>
+    <ID>LongMethod:ChatClient.kt$ChatClient$private suspend fun handleEvent(event: ChatEvent)</ID>
+    <ID>LongMethod:ChatClientDebuggerTest.kt$ChatClientDebuggerTest$@BeforeEach fun setUp()</ID>
+    <ID>LongMethod:ChatSocket.kt$ChatSocket$@Suppress("ComplexMethod") private fun observeSocketStateService(): Job</ID>
+    <ID>LongMethod:PinnedMessagesRequest.kt$PinnedMessagesRequest.Companion$fun create( limit: Int, sort: QuerySorter&lt;Message>, pagination: PinnedMessagesPagination, ): PinnedMessagesRequest</ID>
+    <ID>MagicNumber:Identifiers.kt$31</ID>
+    <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$100</ID>
+    <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$10000</ID>
+    <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$100f</ID>
+    <ID>MagicNumber:StreamDateFormatter.kt$StreamDateFormatter$300</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$127f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$16</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$1_000_000f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$24</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$2_147_483_648f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$32767f</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$4</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor$8</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$16</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$32</ID>
+    <ID>MagicNumber:WaveformExtractor.kt$WaveformExtractor.&lt;no name provided>$8</ID>
+    <ID>MaxLineLength:BaseChatModule.kt$BaseChatModule$NetworkStateProvider(userScope, appContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager)</ID>
     <ID>MaxLineLength:Message.kt$*</ID>
+    <ID>MaxLineLength:MoshiChatApi.kt$MoshiChatApi$pinnedMessages = response.pinned_messages.map { it.toDomain(currentUserIdProvider()).enrichWithCid(channel.cid) }</ID>
     <ID>MaxLineLength:Reaction.kt$*</ID>
-    <ID>ReturnCount:Channel.kt$@InternalStreamChatApi public fun Channel.addMember(member: Member?): Channel</ID>
-    <ID>UnusedPrivateMember:ChatEventsObservable.kt$ChatEventsObservable$private val logger = StreamLog.getLogger("Chat:EventsObservable")</ID>
+    <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS"</ID>
+    <ID>MaxLineLength:StringExtensionsKtTest.kt$StringExtensionsKtTest.Companion$"https://us-east.stream-io-cdn.com/1/images/IMAGE_NAME.jpg?Key-Pair-Id=SODHGWNRLG&amp;Policy=akIjUneI9Kmbds2&amp;Signature=dsnIjJ8-gfdgihih8-GkhdfgfdGFG32--KHJDFj349sfsdf~SFDf2~Fsdfgrg3~kjnooi23Jig-Kjoih34iW~k7Jbe2~Jnk33j-Fsiniiz2~Sfj23iJihn-Jinfnsiw2kS&amp;oh=$originalHeight&amp;ow=$originalWidth"</ID>
+    <ID>MaxLineLength:WaveformExtractor.kt$WaveformExtractor$logger.v { "[handle16bit] this.totalSamples: $totalSamples, sampleRate: $sampleRate, duration: $durationInSeconds" }</ID>
+    <ID>ReturnCount:PushTokenUpdateHandler.kt$PushTokenUpdateHandler$private suspend fun removeStoredDeviceInternal(): Boolean</ID>
+    <ID>ReturnCount:RepositoryFacade.kt$RepositoryFacade$override suspend fun insertReaction(reaction: Reaction)</ID>
+    <ID>SwallowedException:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:StreamPayloadParser.kt$StreamPayloadParser$e: Throwable</ID>
+    <ID>TooGenericExceptionCaught:WaveformExtractor.kt$WaveformExtractor$e: Exception</ID>
+    <ID>TooManyFunctions:Identifiers.kt$io.getstream.chat.android.client.api.models.identifier.Identifiers.kt</ID>
+    <ID>TooManyFunctions:NativeMediaPlayer.kt$NativeMediaPlayer</ID>
+    <ID>UnusedPrivateMember:StreamAudioPlayer.kt$StreamMediaPlayer$private fun normalize(uri: String): String</ID>
   </CurrentIssues>
 </SmellBaseline>

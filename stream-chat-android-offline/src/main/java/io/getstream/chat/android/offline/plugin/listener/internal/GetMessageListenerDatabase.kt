@@ -16,12 +16,12 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.plugin.listeners.GetMessageListener
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Message
+import io.getstream.log.StreamLog
+import io.getstream.result.Error
+import io.getstream.result.Result
 
 /**
  * An implementation of [GetMessageListener] used to perform database operations when making an API call
@@ -44,22 +44,24 @@ internal class GetMessageListenerDatabase(
      *
      * @param messageId The ID of the message we are fetching.
      * @param result The result of the API call. Will contain an instance of [Message] wrapped inside [Result] if
-     * the request was successful, or an instance of [ChatError] if the request had failed.
+     * the request was successful, or an instance of [Error] if the request had failed.
      */
     override suspend fun onGetMessageResult(
         messageId: String,
         result: Result<Message>,
     ) {
-        if (result.isSuccess) {
-            repositoryFacade.insertMessage(
-                message = result.data(),
-                cache = true
-            )
-        } else {
-            val error = result.error()
-            logger.e {
-                "[onGetMessageResult] Could not insert the message into the database. The API call " +
-                    "had failed with: ${error.message ?: error.cause?.message}"
+        when (result) {
+            is Result.Success -> {
+                repositoryFacade.insertMessage(
+                    message = result.value,
+                )
+            }
+            is Result.Failure -> {
+                val error = result.value
+                logger.e {
+                    "[onGetMessageResult] Could not insert the message into the database. The API call " +
+                        "had failed with: ${error.message}"
+                }
             }
         }
     }

@@ -4,9 +4,9 @@ import android.content.Context
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.logger.ChatLogLevel
 import io.getstream.chat.android.client.logger.ChatLoggerHandler
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.offline.model.message.attachments.UploadAttachmentsNetworkType
-import io.getstream.chat.android.offline.plugin.configuration.Config
+import io.getstream.chat.android.models.UploadAttachmentsNetworkType
+import io.getstream.chat.android.models.User
+import io.getstream.result.Result
 import io.getstream.chat.android.offline.plugin.factory.StreamOfflinePluginFactory
 
 /**
@@ -31,27 +31,23 @@ class DokkaRoot {
             user = user,
             token = token, // or client.devToken(userId); if auth is disabled for your app
         ).enqueue { result ->
-            if (result.isSuccess) {
-                // Handle success
-            } else {
-                // Handler error
+            when (result) {
+                is Result.Success -> {
+                    // Handle success
+                }
+                is Result.Failure -> {
+                    // Handler error
+                }
             }
         }
     }
 
     fun offlinePlugin(applicationContext: Context, apiKey: String) {
-        val offlinePluginFactory = StreamOfflinePluginFactory(
-            config = Config(
-                backgroundSyncEnabled = true,
-                userPresence = true,
-                persistenceEnabled = true,
-                uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.NOT_ROAMING,
-            ),
-            appContext = applicationContext,
-        )
+        val offlinePluginFactory = StreamOfflinePluginFactory(appContext = applicationContext)
 
         val client = ChatClient.Builder(apiKey, applicationContext)
-            .withPlugin(offlinePluginFactory)
+            .withPlugins(offlinePluginFactory)
+            .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
             .build()
     }
 

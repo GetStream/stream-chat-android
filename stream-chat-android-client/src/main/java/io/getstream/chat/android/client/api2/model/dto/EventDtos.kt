@@ -18,7 +18,7 @@ package io.getstream.chat.android.client.api2.model.dto
 
 import com.squareup.moshi.JsonClass
 import io.getstream.chat.android.client.api2.model.dto.utils.internal.ExactDate
-import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.result.Error
 import java.util.Date
 
 internal sealed class ChatEventDto
@@ -139,7 +139,7 @@ internal data class MessageDeletedEventDto(
     val channel_type: String,
     val channel_id: String,
     val message: DownstreamMessageDto,
-    val hard_delete: Boolean?
+    val hard_delete: Boolean?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -269,6 +269,22 @@ internal data class NotificationMarkReadEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class NotificationMarkUnreadEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val user: DownstreamUserDto,
+    val cid: String,
+    val channel_type: String,
+    val channel_id: String,
+    val first_unread_message_id: String,
+    val last_read_message_id: String,
+    val last_read_at: ExactDate,
+    val unread_messages: Int,
+    val total_unread_count: Int,
+    val unread_channels: Int,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class MarkAllReadEventDto(
     val type: String,
     val created_at: ExactDate,
@@ -376,6 +392,7 @@ internal data class ChannelUserBannedEventDto(
     val channel_id: String,
     val user: DownstreamUserDto,
     val expiration: Date?,
+    val shadow: Boolean?,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
@@ -446,11 +463,70 @@ internal data class UserUpdatedEventDto(
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)
+internal data class PollUpdatedEventDto(
+    val type: String,
+    val cid: String,
+    val poll: DownstreamPollDto,
+    val created_at: ExactDate,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class PollDeletedEventDto(
+    val type: String,
+    val cid: String,
+    val created_at: ExactDate,
+    val poll: DownstreamPollDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class PollClosedEventDto(
+    val type: String,
+    val cid: String,
+    val created_at: ExactDate,
+    val poll: DownstreamPollDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class VoteCastedEventDto(
+    val type: String,
+    val cid: String,
+    val created_at: ExactDate,
+    val poll: DownstreamPollDto,
+    val poll_vote: DownstreamVoteDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class VoteChangedEventDto(
+    val type: String,
+    val cid: String,
+    val poll: DownstreamPollDto,
+    val created_at: ExactDate,
+    val poll_vote: DownstreamVoteDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class VoteRemovedEventDto(
+    val type: String,
+    val cid: String,
+    val poll: DownstreamPollDto,
+    val created_at: ExactDate,
+    val poll_vote: DownstreamVoteDto,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
 internal data class ConnectedEventDto(
     val type: String,
     val created_at: ExactDate,
     val me: DownstreamUserDto,
     val connection_id: String,
+) : ChatEventDto()
+
+@JsonClass(generateAdapter = true)
+internal data class ConnectionErrorEventDto(
+    val type: String,
+    val created_at: ExactDate,
+    val connection_id: String,
+    val error: ErrorDto,
 ) : ChatEventDto()
 
 /**
@@ -481,7 +557,7 @@ internal data class DisconnectedEventDto(
 internal data class ErrorEventDto(
     val type: String,
     val created_at: ExactDate,
-    val error: ChatError,
+    val error: Error,
 ) : ChatEventDto()
 
 @JsonClass(generateAdapter = true)

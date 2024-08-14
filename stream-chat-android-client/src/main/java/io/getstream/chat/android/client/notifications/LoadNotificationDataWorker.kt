@@ -20,6 +20,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_SHORT_SERVICE
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
@@ -32,16 +33,16 @@ import androidx.work.workDataOf
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
-import io.getstream.chat.android.client.call.zipWith
-import io.getstream.chat.android.client.utils.stringify
-import io.getstream.logging.StreamLog
+import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
+import io.getstream.result.call.zipWith
 
 internal class LoadNotificationDataWorker(
     private val context: Context,
     workerParams: WorkerParameters,
 ) : CoroutineWorker(context, workerParams) {
 
-    private val logger = StreamLog.getLogger("Chat:Notifications-Loader")
+    private val logger by taggedLogger(TAG)
 
     override suspend fun doWork(): Result {
         val channelId: String = inputData.getString(DATA_CHANNEL_ID)!!
@@ -50,42 +51,61 @@ internal class LoadNotificationDataWorker(
 
         setForeground(createForegroundInfo())
 
+        logger.d { "[doWork] cid: $channelType:$channelId, messageId: $messageId" }
+
         return try {
             val client: ChatClient = ChatClient.instance()
             val getMessage = client.getMessage(messageId)
-            val getChannel = client.queryChannel(channelType, channelId, QueryChannelRequest())
+            val getChannel = client.queryChannel(
+                channelType,
+                channelId,
+                QueryChannelRequest().apply {
+                    isNotificationUpdate = true
+                },
+            )
 
             val result = getChannel.zipWith(getMessage).await()
+            when (result) {
+                is io.getstream.result.Result.Success -> {
+                    val (channel, message) = result.value
+                    val messageParentId = message.parentId
 
-            if (result.isSuccess) {
-                val (channel, message) = result.data()
-                val messageParentId = message.parentId
-
-                if (messageParentId != null) {
-                    logger.v { "[doWork] fetching thread parent message." }
-                    client.getMessage(messageParentId).await()
+                    if (messageParentId != null) {
+                        logger.v { "[doWork] fetching thread parent message." }
+                        client.getMessage(messageParentId).await()
+                    }
+                    ChatClient.displayNotification(channel = channel, message = message)
+                    logger.v { "[doWork] completed" }
+                    Result.success()
                 }
-
-                ChatClient.displayNotification(channel = channel, message = message)
-                Result.success()
-            } else {
-                logger.e { "Error while loading notification data: ${result.error().stringify()}" }
-                Result.failure()
+                is io.getstream.result.Result.Failure -> {
+                    logger.e { "[doWork] failed: ${result.value}" }
+                    Result.failure()
+                }
             }
         } catch (exception: IllegalStateException) {
-            logger.e { "Error while loading notification data: ${exception.message}" }
+            logger.e { "[doWork] failed unexpectedly: ${exception.message}" }
             Result.failure()
         }
     }
 
     private fun createForegroundInfo(): ForegroundInfo {
-        return ForegroundInfo(
-            NOTIFICATION_ID,
-            createForegroundNotification(
-                notificationChannelId = context.getString(R.string.stream_chat_other_notifications_channel_id),
-                notificationChannelName = context.getString(R.string.stream_chat_other_notifications_channel_name),
-            ),
+        val foregroundNotification = createForegroundNotification(
+            notificationChannelId = context.getString(R.string.stream_chat_other_notifications_channel_id),
+            notificationChannelName = context.getString(R.string.stream_chat_other_notifications_channel_name),
         )
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                foregroundNotification,
+                FOREGROUND_SERVICE_TYPE_SHORT_SERVICE,
+            )
+        } else {
+            ForegroundInfo(
+                NOTIFICATION_ID,
+                foregroundNotification,
+            )
+        }
     }
 
     private fun createForegroundNotification(
@@ -117,6 +137,7 @@ internal class LoadNotificationDataWorker(
     }
 
     internal companion object {
+        private const val TAG = "Chat:Notifications-Loader"
         private const val DATA_CHANNEL_TYPE = "DATA_CHANNEL_TYPE"
         private const val DATA_CHANNEL_ID = "DATA_CHANNEL_ID"
         private const val DATA_MESSAGE_ID = "DATA_MESSAGE_ID"
@@ -130,13 +151,14 @@ internal class LoadNotificationDataWorker(
             channelType: String,
             messageId: String,
         ) {
+            StreamLog.d(TAG) { "/start/ cid: $channelType:$channelId, messageId: $messageId" }
             val syncMessagesWork = OneTimeWorkRequestBuilder<LoadNotificationDataWorker>()
                 .setInputData(
                     workDataOf(
                         DATA_CHANNEL_ID to channelId,
                         DATA_CHANNEL_TYPE to channelType,
-                        DATA_MESSAGE_ID to messageId
-                    )
+                        DATA_MESSAGE_ID to messageId,
+                    ),
                 )
                 .build()
 
@@ -150,6 +172,7 @@ internal class LoadNotificationDataWorker(
         }
 
         fun cancel(context: Context) {
+            StreamLog.d(TAG) { "/cancel/ no args" }
             WorkManager.getInstance(context).cancelUniqueWork(LOAD_NOTIFICATION_DATA_WORK_NAME)
         }
     }

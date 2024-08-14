@@ -29,8 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import com.getstream.sdk.chat.CaptureMediaContract
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
@@ -39,12 +37,17 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPi
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import java.io.File
 
 /**
  * Holds the information required to add support for "media capture" tab in the attachment picker.
+ *
+ * @property pickerMediaMode define which media type will be allowed.
  */
-public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFactory {
+public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode: PickerMediaMode) :
+    AttachmentsPickerTabFactory {
 
     /**
      * The attachment picker mode that this factory handles.
@@ -59,7 +62,7 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
      * @param isSelected If the tab is selected.
      */
     @Composable
-    override fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
+    override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
             contentDescription = stringResource(id = R.string.stream_compose_capture_option),
@@ -74,6 +77,7 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
     /**
      * Emits content that allows users to start media capture.
      *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
      * @param onAttachmentItemSelected Handler when the item selection state changes.
@@ -81,7 +85,8 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
      */
     @OptIn(ExperimentalPermissionsApi::class)
     @Composable
-    override fun pickerTabContent(
+    override fun PickerTabContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
@@ -95,7 +100,7 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
             if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
 
         val mediaCaptureResultLauncher =
-            rememberLauncherForActivityResult(contract = CaptureMediaContract()) { file: File? ->
+            rememberLauncherForActivityResult(contract = CaptureMediaContract(pickerMediaMode.mode)) { file: File? ->
                 val attachments = if (file == null) {
                     emptyList()
                 } else {
@@ -128,4 +133,23 @@ public class AttachmentsPickerMediaCaptureTabFactory : AttachmentsPickerTabFacto
             .requestedPermissions
             .contains(Manifest.permission.CAMERA)
     }
+
+    /**
+     * Define which media type will be allowed.
+     */
+    public enum class PickerMediaMode {
+        PHOTO,
+        VIDEO,
+        PHOTO_AND_VIDEO,
+    }
+
+    /**
+     * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
+     */
+    private val PickerMediaMode.mode: CaptureMediaContract.Mode
+        get() = when (this) {
+            PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
+            PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
+            PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+        }
 }

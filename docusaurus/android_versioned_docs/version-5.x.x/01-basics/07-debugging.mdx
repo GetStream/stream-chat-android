@@ -1,0 +1,213 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Debugging
+
+:::note
+*ChatClientDebugger* might be useful in investigation of issues happening on users side.
+:::
+
+To debug various flows inside the SDK, you can pass your own `ChatClientDebugger` implementation:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+val client = ChatClient.Builder("apiKey", context)
+    .clientDebugger(CustomChatClientDebugger())
+    .build()
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+ChatClient client = new ChatClient.Builder("apiKey", context)
+    .clientDebugger(new CustomChatClientDebugger())
+    .build()
+```
+</TabItem>
+</Tabs>
+
+### Debug Message Sending
+
+To debug a message sending flow you can override `ChatClientDebugger.debugSendMessage` function and provide your own `SendMessageDebugger` implementation:
+
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class CustomChatClientDebugger : ChatClientDebugger {
+
+    override fun onNonFatalErrorOccurred(
+        tag: String, 
+        src: String, 
+        desc: String, 
+        error: ChatError
+    ) {
+        // TODO: Implement your custom logic here
+    }
+
+    override fun debugSendMessage(
+        channelType: String,
+        channelId: String,
+        message: Message,
+        isRetrying: Boolean,
+    ): SendMessageDebugger {
+        return CustomSendMessageDebugger(
+            channelType,
+            channelId,
+            message,
+            isRetrying
+        )
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+class CustomChatClientDebugger implements ChatClientDebugger {
+
+    @Override
+    public void onNonFatalErrorOccurred(
+        @NonNull String tag, 
+        @NonNull String src, 
+        @NonNull String desc, 
+        @NonNull ChatError error
+    ) {
+        // TODO: Implement your custom logic here
+    }
+
+    @Override
+    public SendMessageDebugger debugSendMessage(
+        @NonNull String channelType,
+        @NonNull String channelId,
+        @NonNull Message message,
+        boolean isRetrying
+    ) {
+        return new CustomSendMessageDebugger(
+            channelType,
+            channelId,
+            message,
+            isRetrying
+        );
+    }
+}
+```
+</TabItem>
+</Tabs>
+
+Then in you custom `SendMessageDebugger` implementation you will be able to handle the entire message sending flow:
+<Tabs>
+<TabItem value="kotlin" label="Kotlin">
+
+```kotlin
+class CustomSendMessageDebugger(
+    private val channelType: String,
+    private val channelId: String,
+    private val message: Message,
+    private val isRetrying: Boolean,
+) : SendMessageDebugger {
+
+    override fun onStart(message: Message) {
+        // Called when the message sending flow starts.
+    }
+
+    override fun onInterceptionStart(message: Message) {
+        // Called when the message interception before sending it to the API starts.
+        // Reasons for interception might be:
+        //   - message attachment uploading
+        //   - message enriching by all required information
+    }
+
+    override fun onInterceptionUpdate(message: Message) {
+        // Called when there are intermediate message data updates.
+    }
+
+    override fun onInterceptionStop(result: Result<Message>) {
+        // Called when the message interception before sending it to the API stops.
+    }
+
+    override fun onSendStart(message: Message) {
+        // Called when the message sending to the API starts.
+    }
+
+    override fun onSendStop(result: Result<Message>) {
+        // Called when the message sending to the API stops.
+    }
+
+    override fun onStop(result: Result<Message>) {
+        // Called when the message sending flow stops.
+    }
+}
+```
+</TabItem>
+
+<TabItem value="java" label="Java">
+
+```java
+public class CustomSendMessageDebugger implements SendMessageDebugger {
+    @NonNull
+    private final String channelType;
+    @NonNull
+    private final String channelId;
+    @NonNull
+    private final Message message;
+    @NonNull
+    private final boolean isRetrying;
+
+    public JavaSendMessageDebugger(
+            @NonNull String channelType,
+            @NonNull String channelId,
+            @NonNull Message message,
+            boolean isRetrying
+    ) {
+        this.channelType = channelType;
+        this.channelId = channelId;
+        this.message = message;
+        this.isRetrying = isRetrying;
+    }
+
+    @Override
+    public void onStart(@NonNull Message message) {
+        // Called when the message sending flow starts.
+    }
+
+    @Override
+    public void onInterceptionStart(@NonNull Message message) {
+        // Called when the message interception before sending it to the API starts.
+        // Reasons for interception might be:
+        //   - message attachment uploading
+        //   - message enriching by all required information
+    }
+
+    @Override
+    public void onInterceptionUpdate(@NonNull Message message) {
+        // Called when there are intermediate message data updates.
+    }
+
+    @Override
+    public void onInterceptionStop(@NonNull Result<Message> result) {
+        // Called when the message interception before sending it to the API stops.
+    }
+
+    @Override
+    public void onSendStart(@NonNull Message message) {
+        // Called when the message sending to the API starts.
+    }
+
+    @Override
+    public void onSendStop(@NonNull Result<Message> result) {
+        // Called when the message sending to the API stops.
+    }
+
+    @Override
+    public void onStop(@NonNull Result<Message> result) {
+        // Called when the message sending flow stops.
+    }
+}
+```
+</TabItem>
+</Tabs>

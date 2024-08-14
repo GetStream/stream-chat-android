@@ -17,10 +17,12 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.positiveRandomInt
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.positiveRandomInt
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.DistinctCall
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
@@ -44,8 +46,8 @@ internal class DistinctCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    private val resultValue = Mother.randomString()
-    private val validResult: Result<String> = Result.success(resultValue)
+    private val resultValue = randomString()
+    private val validResult: Result<String> = Result.Success(resultValue)
 
     @Test
     fun `Call should be executed asynchronous only once and return a valid result`() = runTest {
@@ -105,7 +107,6 @@ internal class DistinctCallTest {
 
     @Test
     fun `Canceled Call should only notify sync methods`() = runTest {
-
         val blockedCall = BlockedCall(validResult)
         val spyCallBuilder = SpyCallBuilder(blockedCall)
         val callbacks: List<Call.Callback<String>> = List(positiveRandomInt(10)) { mock() }

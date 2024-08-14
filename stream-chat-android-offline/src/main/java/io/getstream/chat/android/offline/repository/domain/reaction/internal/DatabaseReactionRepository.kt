@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.offline.repository.domain.reaction.internal
 
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import java.util.Date
 
 /**
@@ -124,6 +124,15 @@ internal class DatabaseReactionRepository(
     ): List<Reaction> {
         return reactionDao.selectUserReactionsToMessage(messageId = messageId, userId = userId)
             .map { it.toModel(getUser) }
+    }
+
+    /**
+     * Deletes a reaction.
+     *
+     * @param reaction [Reaction]
+     */
+    override suspend fun deleteReaction(reaction: Reaction) {
+        reactionDao.delete(reaction.toEntity())
     }
 
     override suspend fun clear() {

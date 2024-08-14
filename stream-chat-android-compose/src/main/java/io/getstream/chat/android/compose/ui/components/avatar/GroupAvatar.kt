@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,9 +31,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.text.TextStyle
-import io.getstream.chat.android.client.models.User
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.extensions.internal.getAvatarPositionOffset
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.previewdata.PreviewUserData
 
 /**
  * Default max number of avatars shown in the grid.
@@ -63,7 +67,7 @@ public fun GroupAvatar(
         modifier.clickable(
             onClick = onClick,
             indication = rememberRipple(bounded = false),
-            interactionSource = remember { MutableInteractionSource() }
+            interactionSource = remember { MutableInteractionSource() },
         )
     } else {
         modifier
@@ -73,7 +77,7 @@ public fun GroupAvatar(
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             for (imageIndex in 0 until imageCount step 2) {
                 if (imageIndex < imageCount) {
@@ -88,8 +92,8 @@ public fun GroupAvatar(
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
-                            memberCount = imageCount
-                        )
+                            memberCount = imageCount,
+                        ),
                     )
                 }
             }
@@ -98,7 +102,7 @@ public fun GroupAvatar(
         Column(
             modifier = Modifier
                 .weight(1f, fill = false)
-                .fillMaxHeight()
+                .fillMaxHeight(),
         ) {
             for (imageIndex in 1 until imageCount step 2) {
                 if (imageIndex < imageCount) {
@@ -113,11 +117,22 @@ public fun GroupAvatar(
                         initialsAvatarOffset = getAvatarPositionOffset(
                             dimens = ChatTheme.dimens,
                             userPosition = imageIndex,
-                            memberCount = imageCount
-                        )
+                            memberCount = imageCount,
+                        ),
                     )
                 }
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun GroupAvatarPreview() {
+    ChatTheme {
+        GroupAvatar(
+            modifier = Modifier.size(36.dp),
+            users = listOf(PreviewUserData.user1, PreviewUserData.user2, PreviewUserData.user3, PreviewUserData.user4),
+        )
     }
 }

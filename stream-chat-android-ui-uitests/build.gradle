@@ -4,12 +4,14 @@ import io.getstream.chat.android.Versions
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose'
     id 'shot'
 }
 
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.uitests"
     defaultConfig {
         applicationId "io.getstream.chat.android.uitests"
         versionCode 1
@@ -35,10 +37,6 @@ android {
         compose true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion Versions.COMPOSE_COMPILER
-    }
-
     lintOptions {
         disable 'MissingTranslation'
     }
@@ -47,7 +45,7 @@ android {
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
         freeCompilerArgs += [
-                '-Xopt-in=kotlin.RequiresOptIn',
+                '-opt-in=kotlin.RequiresOptIn',
         ]
     }
 }
@@ -58,6 +56,7 @@ shot {
 }
 
 dependencies {
+    implementation project(":stream-chat-android-offline")
     implementation project(":stream-chat-android-ui-components")
     implementation project(":stream-chat-android-compose")
 
@@ -68,7 +67,6 @@ dependencies {
     implementation Dependencies.materialComponents
 
     // Compose
-    implementation Dependencies.composeCompiler
     implementation Dependencies.composeUi
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
@@ -77,11 +75,11 @@ dependencies {
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
-    implementation Dependencies.composeCoil
+    implementation Dependencies.composeLandscapistCoil
 
     // Coil
     androidTestImplementation Dependencies.coil
-    androidTestImplementation Dependencies.composeCoil
+    androidTestImplementation Dependencies.composeLandscapistCoil
     androidTestImplementation Dependencies.coilGif
     androidTestImplementation Dependencies.coilVideo
 
@@ -102,6 +100,7 @@ dependencies {
     androidTestImplementation Dependencies.composeUiTestManifest
     androidTestImplementation Dependencies.testParameterInjector
     androidTestImplementation Dependencies.okhttpMockWebserver
+    androidTestImplementation Dependencies.threeTenBp
 
     detektPlugins(Dependencies.detektFormatting)
 }

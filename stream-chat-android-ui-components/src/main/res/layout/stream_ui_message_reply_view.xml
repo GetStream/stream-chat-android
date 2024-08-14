@@ -23,7 +23,7 @@
     android:padding="@dimen/stream_ui_spacing_tiny"
     >
 
-    <io.getstream.chat.android.ui.avatar.AvatarView
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
         android:id="@+id/replyAvatarView"
         style="?attr/streamUiReplyAvatarStyle"
         android:layout_marginHorizontal="@dimen/stream_ui_spacing_tiny"
@@ -65,11 +65,20 @@
             android:textDirection="locale"
             android:textSize="12sp"
             app:layout_constrainedWidth="true"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/attachmentContainer"
             app:layout_constraintTop_toTopOf="parent"
             app:lineHeight="14sp"
             tools:text="@tools:sample/lorem/random"
+            />
+
+        <TextView
+            android:id="@+id/additionalInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/replyText"
+            app:layout_constraintStart_toStartOf="@+id/replyText"
+            android:textAppearance="@style/StreamUiTextAppearance.Footnote"
+            android:paddingStart="@dimen/stream_ui_spacing_tiny"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

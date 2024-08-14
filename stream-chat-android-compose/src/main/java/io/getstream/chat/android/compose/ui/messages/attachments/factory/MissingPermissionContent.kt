@@ -36,7 +36,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.uiutils.extension.openSystemSettings
+import io.getstream.chat.android.uiutils.util.openSystemSettings
 
 /**
  * Shows the UI if we're missing permissions to fetch data for attachments.
@@ -51,23 +51,25 @@ internal fun MissingPermissionContent(permissionState: PermissionState) {
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.READ_MEDIA_IMAGES,
         Manifest.permission.READ_MEDIA_AUDIO,
-        Manifest.permission.READ_MEDIA_VIDEO -> R.string.stream_ui_message_input_permission_storage_title
-        else -> R.string.stream_ui_message_input_permission_camera_title
+        Manifest.permission.READ_MEDIA_VIDEO,
+        -> R.string.stream_ui_message_composer_permission_storage_title
+        else -> R.string.stream_ui_message_composer_permission_camera_title
     }
 
     val message = when (permissionState.permission) {
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.READ_MEDIA_IMAGES,
         Manifest.permission.READ_MEDIA_AUDIO,
-        Manifest.permission.READ_MEDIA_VIDEO -> R.string.stream_ui_message_input_permission_storage_message
-        else -> R.string.stream_ui_message_input_permission_camera_message
+        Manifest.permission.READ_MEDIA_VIDEO,
+        -> R.string.stream_ui_message_composer_permission_storage_message
+        else -> R.string.stream_ui_message_composer_permission_camera_message
     }
 
     val context = LocalContext.current
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             modifier = Modifier.padding(16.dp),
@@ -90,7 +92,7 @@ internal fun MissingPermissionContent(permissionState: PermissionState) {
 
         TextButton(
             colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-            onClick = { context.openSystemSettings() }
+            onClick = { context.openSystemSettings() },
         ) {
             Text(stringResource(id = R.string.stream_compose_grant_permission))
         }

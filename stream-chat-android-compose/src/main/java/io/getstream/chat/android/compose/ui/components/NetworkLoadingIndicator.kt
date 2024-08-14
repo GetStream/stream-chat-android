@@ -51,7 +51,7 @@ public fun NetworkLoadingIndicator(
     Row(
         modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
         CircularProgressIndicator(
             modifier = Modifier

@@ -16,20 +16,19 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomMessage
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomMessage
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -57,7 +56,6 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.IN_PROGRESS
             },
-            eq(false)
         )
     }
 
@@ -74,7 +72,6 @@ internal class EditMessageListenerDatabaseTest {
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false)
         )
     }
 
@@ -84,14 +81,13 @@ internal class EditMessageListenerDatabaseTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.success(testMessage))
+        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.Success(testMessage))
 
         verify(userRepository).insertUsers(testMessage.users())
         verify(messageRepository).insertMessage(
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.COMPLETED
             },
-            eq(false)
         )
     }
 
@@ -101,14 +97,13 @@ internal class EditMessageListenerDatabaseTest {
 
         val testMessage = randomMessage()
 
-        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.error(ChatError()))
+        editMessageListenerDatabase.onMessageEditResult(testMessage, Result.Failure(Error.GenericError("")))
 
         verify(userRepository).insertUsers(testMessage.users())
         verify(messageRepository).insertMessage(
             argThat { message ->
                 testMessage.id == message.id && message.syncStatus == SyncStatus.SYNC_NEEDED
             },
-            eq(false)
         )
     }
 }

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalComposeUiApi::class)
+
 package io.getstream.chat.android.compose.ui.channels.list
 
 import androidx.compose.foundation.layout.Box
@@ -27,11 +29,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.handlers.LoadMoreHandler
-import io.getstream.chat.android.compose.state.channels.list.ChannelItemState
 import io.getstream.chat.android.compose.state.channels.list.ChannelsState
+import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.LoadingFooter
 
 /**
@@ -59,17 +63,19 @@ public fun Channels(
     contentPadding: PaddingValues = PaddingValues(),
     helperContent: @Composable BoxScope.() -> Unit = {},
     loadingMoreContent: @Composable () -> Unit = { DefaultChannelsLoadingMoreIndicator() },
-    itemContent: @Composable (ChannelItemState) -> Unit,
+    itemContent: @Composable (ItemState) -> Unit,
     divider: @Composable () -> Unit,
 ) {
     val (_, isLoadingMore, endOfChannels, channelItems) = channelsState
 
     Box(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("Stream_Channels"),
             state = lazyListState,
             horizontalAlignment = Alignment.CenterHorizontally,
-            contentPadding = contentPadding
+            contentPadding = contentPadding,
         ) {
             item {
                 DummyFirstChannelItem()
@@ -77,7 +83,7 @@ public fun Channels(
 
             items(
                 items = channelItems,
-                key = { it.channel.cid }
+                key = { it.key },
             ) { item ->
                 itemContent(item)
 
@@ -120,6 +126,6 @@ private fun DummyFirstChannelItem() {
     Box(
         modifier = Modifier
             .height(1.dp)
-            .fillMaxWidth()
+            .fillMaxWidth(),
     )
 }

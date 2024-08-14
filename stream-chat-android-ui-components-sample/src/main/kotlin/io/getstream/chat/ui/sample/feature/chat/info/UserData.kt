@@ -16,9 +16,17 @@
 
 package io.getstream.chat.ui.sample.feature.chat.info
 
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.User
 import java.io.Serializable
 import java.util.Date
+
+data class MemberData(
+    val user: UserData,
+    val channelRole: String?,
+    val banned: Boolean,
+    val banExpires: Date?,
+) : Serializable
 
 data class UserData(
     val id: String,
@@ -29,14 +37,14 @@ data class UserData(
     val lastActive: Date?,
 ) : Serializable
 
-fun UserData.toUser(): User = User().also { user ->
-    user.id = id
-    user.name = name
-    user.image = image
-    user.online = online
-    user.createdAt = createdAt
-    user.lastActive = lastActive
-}
+fun UserData.toUser(): User = User(
+    id = id,
+    name = name,
+    image = image,
+    online = online,
+    createdAt = createdAt,
+    lastActive = lastActive,
+)
 
 fun User.toUserData() = UserData(
     id = id,
@@ -45,4 +53,18 @@ fun User.toUserData() = UserData(
     online = online,
     createdAt = createdAt,
     lastActive = lastActive,
+)
+
+fun MemberData.toMember(): Member = Member(
+    user = user.toUser(),
+    channelRole = channelRole,
+    banned = banned,
+    banExpires = banExpires,
+)
+
+fun Member.toMemberData() = MemberData(
+    user = user.toUserData(),
+    channelRole = channelRole,
+    banned = banned,
+    banExpires = banExpires,
 )

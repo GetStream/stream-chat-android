@@ -29,6 +29,6 @@ public data class ChannelsState(
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
     val endOfChannels: Boolean = false,
-    val channelItems: List<ChannelItemState> = emptyList(),
-    val searchQuery: String = "",
+    val channelItems: List<ItemState> = emptyList(),
+    val searchQuery: SearchQuery = SearchQuery.Empty,
 )

@@ -28,6 +28,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -46,8 +48,13 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.guides.R
 import io.getstream.chat.android.guides.login.LoginActivity
 import io.getstream.chat.android.guides.catalog.compose.customattachments.ChannelsActivity as ComposeCustomAttachmentsActivity
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.composer.ChannelsActivity as MessageComposerCustomAttachmentsActivity
-import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.input.ChannelsActivity as MessageInputCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.compose.customizingimageandvideoattachments.ChannelsActivity as ComposeCustomizingImageAndVideoAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.compose.customreactions.ChannelsActivity as ComposeCustomReactionsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.channelsscreen.ChannelsActivity as UiComponentsChannelsScreenActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.customattachments.ChannelsActivity as UiComponentsCustomAttachmentsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.customcomposer.ChannelsActivity as UiComponentsCustomComposerActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.customreactions.ChannelsActivity as UiComponentsCustomReactionsActivity
+import io.getstream.chat.android.guides.catalog.uicomponents.messagesscreen.ChannelsActivity as UiComponentsMessagesScreenActivity
 
 /**
  * An Activity with a list of guides and samples.
@@ -77,7 +84,7 @@ class CatalogActivity : AppCompatActivity() {
                     .size(56.dp)
                     .padding(4.dp)
                     .align(Alignment.End),
-                onClick = ::logout
+                onClick = ::logout,
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_logout),
@@ -86,29 +93,70 @@ class CatalogActivity : AppCompatActivity() {
                 )
             }
 
-            GuideSection(stringResource(R.string.catalog_section_compose))
-
-            GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_compose_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_compose_description)
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize(),
             ) {
-                startActivity(ComposeCustomAttachmentsActivity.createIntent(this@CatalogActivity))
-            }
+                GuideSection(stringResource(R.string.catalog_section_compose))
 
-            GuideSection(stringResource(R.string.catalog_section_uicomponents))
+                GuideItem(
+                    titleText = stringResource(R.string.compose_custom_attachments_guide_title),
+                    descriptionText = stringResource(R.string.compose_custom_attachments_guide_description),
+                ) {
+                    startActivity(ComposeCustomAttachmentsActivity.createIntent(this@CatalogActivity))
+                }
 
-            GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_message_input_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_message_input_description)
-            ) {
-                startActivity(MessageInputCustomAttachmentsActivity.createIntent(this@CatalogActivity))
-            }
+                GuideItem(
+                    titleText = stringResource(R.string.compose_customizing_image_and_video_previews_title),
+                    descriptionText = stringResource(R.string.compose_customizing_image_and_video_previews_description),
+                ) {
+                    startActivity(ComposeCustomizingImageAndVideoAttachmentsActivity.createIntent(this@CatalogActivity))
+                }
 
-            GuideItem(
-                titleText = stringResource(R.string.custom_attachments_guide_message_composer_title),
-                descriptionText = stringResource(R.string.custom_attachments_guide_message_composer_description)
-            ) {
-                startActivity(MessageComposerCustomAttachmentsActivity.createIntent(this@CatalogActivity))
+                GuideItem(
+                    titleText = stringResource(R.string.compose_custom_reactions_guide_title),
+                    descriptionText = stringResource(R.string.compose_custom_reactions_guide_description),
+                ) {
+                    startActivity(ComposeCustomReactionsActivity.createIntent(this@CatalogActivity))
+                }
+
+                GuideSection(stringResource(R.string.catalog_section_uicomponents))
+
+                GuideItem(
+                    titleText = stringResource(R.string.uicomponents_custom_attachments_guide_title),
+                    descriptionText = stringResource(R.string.uicomponents_custom_attachments_guide_description),
+                ) {
+                    startActivity(UiComponentsCustomAttachmentsActivity.createIntent(this@CatalogActivity))
+                }
+
+                GuideItem(
+                    titleText = stringResource(R.string.uicomponents_custom_reactions_guide_title),
+                    descriptionText = stringResource(R.string.uicomponents_custom_reactions_guide_description),
+                ) {
+                    startActivity(UiComponentsCustomReactionsActivity.createIntent(this@CatalogActivity))
+                }
+
+                GuideItem(
+                    titleText = stringResource(R.string.uicomponents_channels_screen_guide_title),
+                    descriptionText = stringResource(R.string.uicomponents_channels_screen_guide_description),
+                ) {
+                    startActivity(UiComponentsChannelsScreenActivity.createIntent(this@CatalogActivity))
+                }
+
+                GuideItem(
+                    titleText = stringResource(R.string.uicomponents_messages_screen_guide_title),
+                    descriptionText = stringResource(R.string.uicomponents_messages_screen_guide_description),
+                ) {
+                    startActivity(UiComponentsMessagesScreenActivity.createIntent(this@CatalogActivity))
+                }
+
+                GuideItem(
+                    titleText = stringResource(R.string.uicomponents_custom_composer_guide_title),
+                    descriptionText = stringResource(R.string.uicomponents_custom_composer_guide_description),
+                ) {
+                    startActivity(UiComponentsCustomComposerActivity.createIntent(this@CatalogActivity))
+                }
             }
         }
     }
@@ -136,13 +184,13 @@ class CatalogActivity : AppCompatActivity() {
                 .clickable(
                     onClick = onClick,
                     indication = rememberRipple(),
-                    interactionSource = remember { MutableInteractionSource() }
+                    interactionSource = remember { MutableInteractionSource() },
                 ),
             elevation = 4.dp,
-            backgroundColor = ChatTheme.colors.inputBackground
+            backgroundColor = ChatTheme.colors.inputBackground,
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
             ) {
                 Text(
                     text = titleText,

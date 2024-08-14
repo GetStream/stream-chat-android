@@ -17,10 +17,10 @@
 package io.getstream.chat.android.compose
 
 import android.content.Context
-import com.getstream.sdk.chat.model.ModelType
-import io.getstream.chat.android.client.models.Attachment
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.MediaAttachmentPreviewHandler
-import io.getstream.chat.android.test.randomString
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.randomString
 import org.amshove.kluent.`should be equal to`
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -52,23 +52,23 @@ internal class MediaAttachmentPreviewHandlerTest {
                 false,
             ),
             Arguments.of(
-                Attachment(assetUrl = randomString(), type = ModelType.attach_audio),
+                Attachment(assetUrl = randomString(), type = AttachmentType.AUDIO),
                 true,
             ),
             Arguments.of(
-                Attachment(assetUrl = randomString(), type = ModelType.attach_video),
+                Attachment(assetUrl = randomString(), type = AttachmentType.VIDEO),
                 true,
             ),
         ) +
             listOf(
-                ModelType.attach_audio,
-                randomString() + ModelType.attach_audio,
-                randomString() + ModelType.attach_audio + randomString(),
-                ModelType.attach_audio + randomString(),
-                ModelType.attach_video,
-                randomString() + ModelType.attach_video,
-                randomString() + ModelType.attach_video + randomString(),
-                ModelType.attach_video + randomString(),
+                AttachmentType.AUDIO,
+                randomString() + AttachmentType.AUDIO,
+                randomString() + AttachmentType.AUDIO + randomString(),
+                AttachmentType.AUDIO + randomString(),
+                AttachmentType.VIDEO,
+                randomString() + AttachmentType.VIDEO,
+                randomString() + AttachmentType.VIDEO + randomString(),
+                AttachmentType.VIDEO + randomString(),
                 "mpeg-3",
                 "x-mpeg3",
                 "mp3", "mpeg",

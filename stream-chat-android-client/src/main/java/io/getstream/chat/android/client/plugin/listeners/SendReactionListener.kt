@@ -17,9 +17,9 @@
 package io.getstream.chat.android.client.plugin.listeners
 
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.User
+import io.getstream.result.Result
 
 /**
  * Listener for [io.getstream.chat.android.client.ChatClient.sendReaction] calls.
@@ -61,12 +61,12 @@ public interface SendReactionListener {
 
     /**
      * Runs precondition check for [ChatClient.sendReaction].
-     * The request will be run if the method returns [Result.success] and won't be made if it returns [Result.error].
+     * The request will be run if the method returns [Result.Success] and won't be made if it returns [Result.Failure].
      *
      * @param currentUser The currently logged in user.
      * @param reaction The [Reaction] to send.
      *
-     * @return [Result.success] if the precondition is fulfilled, [Result.error] otherwise.
+     * @return [Result.Success] if the precondition is fulfilled, [Result.Failure] otherwise.
      */
-    public fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit>
+    public suspend fun onSendReactionPrecondition(currentUser: User?, reaction: Reaction): Result<Unit>
 }

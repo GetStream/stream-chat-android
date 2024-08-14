@@ -28,7 +28,7 @@ import androidx.navigation.fragment.navArgs
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.events.NotificationChannelMutesUpdatedEvent
 import io.getstream.chat.android.client.subscribeFor
-import io.getstream.chat.android.livedata.utils.EventObserver
+import io.getstream.chat.android.state.utils.EventObserver
 import io.getstream.chat.ui.sample.R
 import io.getstream.chat.ui.sample.common.initToolbar
 import io.getstream.chat.ui.sample.common.navigateSafely
@@ -94,7 +94,7 @@ class ChatInfoFragment : Fragment() {
                     is ChatInfoViewModel.ErrorEvent.DeleteChannelError -> R.string.chat_info_error_delete_channel
                     is ChatInfoViewModel.ErrorEvent.MuteChannelError -> R.string.chat_info_error_mute_channel
                 }.let(::showToast)
-            }
+            },
         )
     }
 
@@ -131,19 +131,19 @@ class ChatInfoFragment : Fragment() {
                     is ChatInfoItem.Option.Stateful.MuteDistinctChannel -> ChatInfoViewModel.Action.OptionMuteDistinctChannelClicked(isChecked)
                     is ChatInfoItem.Option.Stateful.Block -> ChatInfoViewModel.Action.OptionBlockUserClicked(isChecked)
                     else -> throw IllegalStateException("Chat info option $option is not supported!")
-                }
+                },
             )
         }
         adapter.setChatInfoOptionClickListener { option ->
             when (option) {
                 ChatInfoItem.Option.PinnedMessages -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToPinnedMessageListFragment(args.cid)
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToPinnedMessageListFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedMedia -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid)
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedMediaFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedFiles -> findNavController().navigateSafely(
-                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid)
+                    ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedFilesFragment(args.cid),
                 )
                 ChatInfoItem.Option.SharedGroups -> {
                     // Option shouldn't be visible when member is not set
@@ -152,7 +152,7 @@ class ChatInfoFragment : Fragment() {
                         ChatInfoFragmentDirections.actionChatInfoFragmentToChatInfoSharedGroupsFragment(
                             member.getUserId(),
                             member.user.name,
-                        )
+                        ),
                     )
                 }
                 ChatInfoItem.Option.DeleteConversation -> {

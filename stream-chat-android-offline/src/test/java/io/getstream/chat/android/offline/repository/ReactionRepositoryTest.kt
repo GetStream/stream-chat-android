@@ -16,16 +16,16 @@
 
 package io.getstream.chat.android.offline.repository
 
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
-import io.getstream.chat.android.client.test.randomReaction
-import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.DatabaseReactionRepository
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.ReactionDao
 import io.getstream.chat.android.offline.repository.domain.reaction.internal.toEntity
+import io.getstream.chat.android.randomReaction
+import io.getstream.chat.android.randomString
+import io.getstream.chat.android.randomUser
 import io.getstream.chat.android.test.TestCoroutineRule
-import io.getstream.chat.android.test.randomString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.coInvoking
@@ -68,7 +68,7 @@ internal class ReactionRepositoryTest {
         verify(reactionDao).insert(
             argThat {
                 this.messageId == messageId && this.userId == currentUser.id
-            }
+            },
         )
     }
 

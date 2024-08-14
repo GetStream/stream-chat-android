@@ -30,6 +30,7 @@ public interface TokenProvider {
     /**
      * Loads the token for the current user.
      * The token will be loaded only if the token was not loaded yet or existing one has expired.
+     * If the token cannot be loaded, returns an empty string and never throws an exception.
      *
      * @return The valid JWT token.
      */

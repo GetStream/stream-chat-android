@@ -26,7 +26,7 @@ import java.util.Date
  */
 @StreamHandsOff(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map"
+        "content of [extraData] map",
 )
 @JsonClass(generateAdapter = true)
 internal data class UpstreamUserDto(
@@ -35,6 +35,8 @@ internal data class UpstreamUserDto(
     val name: String,
     val image: String,
     val invisible: Boolean,
+    val privacy_settings: PrivacySettingsDto?,
+    val language: String,
     val role: String,
     val devices: List<DeviceDto>,
     val teams: List<String>,
@@ -48,7 +50,7 @@ internal data class UpstreamUserDto(
  */
 @StreamHandsOff(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map"
+        "content of [extraData] map",
 )
 @JsonClass(generateAdapter = true)
 internal data class DownstreamUserDto(
@@ -56,11 +58,14 @@ internal data class DownstreamUserDto(
     val name: String?,
     val image: String?,
     val role: String,
-    val invisible: Boolean = false,
+    val invisible: Boolean? = false,
+    val privacy_settings: PrivacySettingsDto?,
+    val language: String?,
     val banned: Boolean,
     val devices: List<DeviceDto>?,
     val online: Boolean,
     val created_at: Date?,
+    val deactivated_at: Date?,
     val updated_at: Date?,
     val last_active: Date?,
     val total_unread_count: Int = 0,
@@ -78,4 +83,11 @@ internal data class PartialUpdateUserDto(
     val id: String,
     val set: Map<String, Any>,
     val unset: List<String>,
+)
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamUserBlockDto(
+    val blocked_by_user_id: String,
+    val blocked_user_id: String,
+    val created_at: Date,
 )

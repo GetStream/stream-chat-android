@@ -22,30 +22,38 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.livedata.utils.Event
-import io.getstream.chat.android.offline.extensions.watchChannelAsState
-import io.getstream.chat.android.offline.plugin.state.channel.ChannelState
+import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.state.extensions.watchChannelAsState
+import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
+import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 
 class ChatViewModel(
     private val cid: String,
-    chatClient: ChatClient = ChatClient.instance(),
+    private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    private val logger by taggedLogger("Chat:ChannelVM")
 
     /**
      * Holds information about the current channel and is actively updated.
      */
-    private val channelState: StateFlow<ChannelState?> =
-        chatClient.watchChannelAsState(cid, DEFAULT_MESSAGE_LIMIT, viewModelScope)
+    private val channelState: StateFlow<ChannelState?> = observeChannelState()
 
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
 
     val members: LiveData<List<Member>> = channelState.filterNotNull().flatMapLatest { it.members }.asLiveData()
+
+    private fun observeChannelState(): StateFlow<ChannelState?> {
+        val messageLimit = 0
+        logger.d { "[observeChannelState] cid: $cid, messageLimit: $messageLimit" }
+        return chatClient.watchChannelAsState(cid, messageLimit, viewModelScope)
+    }
 
     fun onAction(action: Action) {
         when (action) {
@@ -56,7 +64,7 @@ class ChatViewModel(
                         NavigationEvent.NavigateToGroupChatInfo(cid)
                     } else {
                         NavigationEvent.NavigateToChatInfo(cid)
-                    }
+                    },
                 )
             }
         }
@@ -71,13 +79,5 @@ class ChatViewModel(
 
         data class NavigateToChatInfo(override val cid: String) : NavigationEvent()
         data class NavigateToGroupChatInfo(override val cid: String) : NavigationEvent()
-    }
-
-    private companion object {
-
-        /**
-         * The default limit for messages count in requests.
-         */
-        private const val DEFAULT_MESSAGE_LIMIT: Int = 30
     }
 }

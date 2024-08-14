@@ -19,13 +19,13 @@ package io.getstream.chat.android.offline.plugin.listener.internal
 import io.getstream.chat.android.client.extensions.internal.users
 import io.getstream.chat.android.client.extensions.updateFailedMessage
 import io.getstream.chat.android.client.extensions.updateMessageOnlineState
-import io.getstream.chat.android.client.models.Message
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.UserRepository
 import io.getstream.chat.android.client.plugin.listeners.EditMessageListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.result.Result
 
 /**
  * Implementation of [EditMessageListener] that deals with database read and write.
@@ -59,11 +59,9 @@ internal class EditMessageListenerDatabase(
      * @param result the result of the API call.
      */
     override suspend fun onMessageEditResult(originalMessage: Message, result: Result<Message>) {
-        val parsedMessage = if (result.isSuccess) {
-            val message = result.data()
-            message.copy(syncStatus = SyncStatus.COMPLETED)
-        } else {
-            originalMessage.updateFailedMessage(result.error())
+        val parsedMessage = when (result) {
+            is Result.Success -> result.value.copy(syncStatus = SyncStatus.COMPLETED)
+            is Result.Failure -> originalMessage.updateFailedMessage(result.value)
         }
 
         saveMessage(parsedMessage)
@@ -71,6 +69,6 @@ internal class EditMessageListenerDatabase(
 
     private suspend fun saveMessage(message: Message) {
         userRepository.insertUsers(message.users())
-        messageRepository.insertMessage(message, false)
+        messageRepository.insertMessage(message)
     }
 }

@@ -15,6 +15,7 @@ apply from: "${rootDir}/scripts/publish-module.gradle"
 apply from: "${rootDir}/scripts/android.gradle"
 
 android {
+    namespace "io.getstream.chat.android.ui.utils"
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
     }
@@ -46,15 +47,30 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
         freeCompilerArgs += [
                 '-progressive',
                 '-Xexplicit-api=strict',
-                '-Xopt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
+                '-opt-in=io.getstream.chat.android.core.internal.InternalStreamChatApi'
         ]
     }
 }
 
 dependencies {
     implementation project(':stream-chat-android-client')
+    implementation project(':stream-chat-android-state')
 
     implementation Dependencies.androidxAnnotations
+    implementation Dependencies.coroutinesCore
+
+    testImplementation project(":stream-chat-android-test")
+    testImplementation Dependencies.junitJupiterApi
+    testImplementation Dependencies.junitJupiterParams
+    testRuntimeOnly Dependencies.junitJupiterEngine
+    testRuntimeOnly Dependencies.junitVintageEngine
+
+    testImplementation testFixtures(project(":stream-chat-android-core"))
+
+    testImplementation Dependencies.kluent
+    testImplementation Dependencies.mockito
+    testImplementation Dependencies.mockitoKotlin
+    testImplementation Dependencies.coroutinesTest
 
     detektPlugins(Dependencies.detektFormatting)
 }

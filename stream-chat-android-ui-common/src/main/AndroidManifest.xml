@@ -15,14 +15,17 @@
     limitations under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="io.getstream.chat.android.ui.common"
     >
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="29" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"
+        />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"
+        />
 
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
@@ -39,13 +42,13 @@
 
     <application>
         <activity
-            android:name="com.getstream.sdk.chat.view.activity.AttachmentDocumentActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+            android:name=".feature.documents.AttachmentDocumentActivity"
             android:exported="false"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
             />
 
         <provider
-            android:name="com.getstream.sdk.chat.StreamFileProvider"
+            android:name=".StreamFileProvider"
             android:authorities="${applicationId}.streamfileprovider"
             android:exported="false"
             android:grantUriPermissions="true"
@@ -53,18 +56,6 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/stream_filepaths"
-                />
-        </provider>
-
-        <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge"
-            >
-            <meta-data
-                android:name="com.getstream.sdk.chat.startup.ThreeTenInitializer"
-                android:value="androidx.startup"
                 />
         </provider>
     </application>

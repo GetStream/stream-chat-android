@@ -18,7 +18,7 @@ package io.getstream.chat.android.compose.sample.data
 
 import android.content.Context
 import android.content.SharedPreferences
-import io.getstream.chat.android.client.models.User
+import io.getstream.chat.android.models.User
 
 /**
  * A repository that is used for persisting and fetching authentication data
@@ -42,14 +42,12 @@ class UserCredentialsRepository(context: Context) {
 
         return UserCredentials(
             apiKey = apiKey,
-            user = User().apply {
-                id = userId
-                name = userName
-                if (userImage.isNotEmpty()) {
-                    image = userImage
-                }
-            },
-            token = token
+            user = User(
+                id = userId,
+                name = userName,
+                image = userImage,
+            ),
+            token = token,
         )
     }
 

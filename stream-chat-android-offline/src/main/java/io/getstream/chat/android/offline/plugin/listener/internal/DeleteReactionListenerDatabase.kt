@@ -16,18 +16,18 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.extensions.internal.removeMyReaction
 import io.getstream.chat.android.client.extensions.internal.updateSyncStatus
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.chat.android.client.models.User
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.persistance.repository.ReactionRepository
 import io.getstream.chat.android.client.plugin.listeners.DeleteReactionListener
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.User
+import io.getstream.result.Error
+import io.getstream.result.Result
 import java.util.Date
 
 internal class DeleteReactionListenerDatabase(
@@ -64,8 +64,7 @@ internal class DeleteReactionListenerDatabase(
         reactionsRepository.insertReaction(reaction)
 
         messageRepository.selectMessage(messageId = messageId)?.copy()?.let { cachedMessage ->
-            cachedMessage.removeMyReaction(reaction)
-            messageRepository.insertMessage(cachedMessage)
+            messageRepository.insertMessage(cachedMessage.removeMyReaction(reaction))
         }
     }
 
@@ -89,7 +88,7 @@ internal class DeleteReactionListenerDatabase(
         reactionsRepository.selectUserReactionToMessage(
             reactionType = reactionType,
             messageId = messageId,
-            userId = currentUser.id
+            userId = currentUser.id,
         )?.let { cachedReaction ->
             reactionsRepository.insertReaction(cachedReaction.updateSyncStatus(result))
         }
@@ -102,9 +101,9 @@ internal class DeleteReactionListenerDatabase(
      */
     override fun onDeleteReactionPrecondition(currentUser: User?): Result<Unit> {
         return if (currentUser != null) {
-            Result.success(Unit)
+            Result.Success(Unit)
         } else {
-            Result.error(ChatError(message = "Current user is null!"))
+            Result.Failure(Error.GenericError(message = "Current user is null!"))
         }
     }
 }

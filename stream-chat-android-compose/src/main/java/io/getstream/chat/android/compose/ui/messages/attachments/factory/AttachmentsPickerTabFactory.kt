@@ -17,9 +17,10 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import androidx.compose.runtime.Composable
-import com.getstream.sdk.chat.model.AttachmentMetaData
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 
 /**
  * Holds the information required to add support for a [AttachmentsPickerMode] mode
@@ -33,24 +34,33 @@ public interface AttachmentsPickerTabFactory {
     public val attachmentsPickerMode: AttachmentsPickerMode
 
     /**
+     * Determines if the picker tab is enabled.
+     *
+     * @return True if the tab is enabled, false otherwise.
+     */
+    public fun isPickerTabEnabled(channel: Channel): Boolean = true
+
+    /**
      * Emits an icon for the tab.
      *
      * @param isEnabled If the tab is enabled.
      * @param isSelected If the tab is selected.
      */
     @Composable
-    public fun pickerTabIcon(isEnabled: Boolean, isSelected: Boolean)
+    public fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean)
 
     /**
      * Emits a content for the tab.
      *
+     * @param onAttachmentPickerAction A lambda that will be invoked when an action is happened.
      * @param attachments The list of attachments to display.
      * @param onAttachmentsChanged Handler to set the loaded list of attachments to display.
      * @param onAttachmentItemSelected Handler when the item selection state changes.
      * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
     @Composable
-    public fun pickerTabContent(
+    public fun PickerTabContent(
+        onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
         attachments: List<AttachmentPickerItemState>,
         onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,

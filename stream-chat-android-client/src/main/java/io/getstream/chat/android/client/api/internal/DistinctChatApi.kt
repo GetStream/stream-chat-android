@@ -17,26 +17,27 @@
 package io.getstream.chat.android.client.api.internal
 
 import io.getstream.chat.android.client.api.ChatApi
-import io.getstream.chat.android.client.api.models.FilterObject
 import io.getstream.chat.android.client.api.models.PinnedMessagesPagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter
 import io.getstream.chat.android.client.api2.optimisation.hash.ChannelQueryKey
+import io.getstream.chat.android.client.api2.optimisation.hash.GetNewerRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetPinnedMessagesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetReactionsHash
 import io.getstream.chat.android.client.api2.optimisation.hash.GetRepliesHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryBanedUsersHash
 import io.getstream.chat.android.client.api2.optimisation.hash.QueryMembersHash
-import io.getstream.chat.android.client.call.Call
-import io.getstream.chat.android.client.call.DistinctCall
-import io.getstream.chat.android.client.models.BannedUser
-import io.getstream.chat.android.client.models.BannedUsersSort
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.Reaction
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.BannedUser
+import io.getstream.chat.android.models.BannedUsersSort
+import io.getstream.chat.android.models.Channel
+import io.getstream.chat.android.models.FilterObject
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
+import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.log.StreamLog
+import io.getstream.result.call.Call
+import io.getstream.result.call.DistinctCall
 import kotlinx.coroutines.CoroutineScope
 import java.util.Date
 import java.util.concurrent.ConcurrentHashMap
@@ -75,6 +76,16 @@ internal class DistinctChatApi(
         StreamLog.d(TAG) { "[getReplies] messageId: $messageId, limit: $limit, uniqueKey: $uniqueKey" }
         return getOrCreate(uniqueKey) {
             delegate.getReplies(messageId, limit)
+        }
+    }
+
+    override fun getNewerReplies(parentId: String, limit: Int, lastId: String?): Call<List<Message>> {
+        val uniqueKey = GetNewerRepliesHash(parentId, limit, lastId).hashCode()
+        StreamLog.d(TAG) {
+            "[getNewerReplies] parentId: $parentId, limit: $limit, lastId: $lastId, uniqueKey: $uniqueKey"
+        }
+        return getOrCreate(uniqueKey) {
+            delegate.getNewerReplies(parentId, limit, lastId)
         }
     }
 
@@ -139,7 +150,7 @@ internal class DistinctChatApi(
             createdAtAfter,
             createdAtAfterOrEqual,
             createdAtBefore,
-            createdAtBeforeOrEqual
+            createdAtBeforeOrEqual,
         ).hashCode()
 
         StreamLog.d(TAG) { "[queryBannedUsers] uniqueKey: $uniqueKey" }
@@ -153,7 +164,7 @@ internal class DistinctChatApi(
                 createdAtAfter,
                 createdAtAfterOrEqual,
                 createdAtBefore,
-                createdAtBeforeOrEqual
+                createdAtBeforeOrEqual,
             )
         }
     }

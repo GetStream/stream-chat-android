@@ -6,18 +6,18 @@ import androidx.annotation.Nullable;
 import java.util.Map;
 
 import io.getstream.chat.android.client.ChatClient;
-import io.getstream.chat.android.client.api.models.FilterObject;
-import io.getstream.chat.android.client.api.models.querysort.QuerySorter;
-import io.getstream.chat.android.client.events.ChatEventHandler;
 import io.getstream.chat.android.client.events.CidEvent;
-import io.getstream.chat.android.client.events.EventHandlingResult;
 import io.getstream.chat.android.client.events.HasChannel;
-import io.getstream.chat.android.client.models.Channel;
 import io.getstream.chat.android.client.setup.state.ClientState;
-import io.getstream.chat.android.offline.event.handler.chat.DefaultChatEventHandler;
-import io.getstream.chat.android.offline.event.handler.chat.factory.ChatEventHandlerFactory;
-import io.getstream.chat.android.ui.channel.list.viewmodel.ChannelListViewModel;
-import io.getstream.chat.android.ui.channel.list.viewmodel.factory.ChannelListViewModelFactory;
+import io.getstream.chat.android.models.Channel;
+import io.getstream.chat.android.models.FilterObject;
+import io.getstream.chat.android.models.querysort.QuerySorter;
+import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler;
+import io.getstream.chat.android.state.event.handler.chat.DefaultChatEventHandler;
+import io.getstream.chat.android.state.event.handler.chat.EventHandlingResult;
+import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModel;
+import io.getstream.chat.android.ui.viewmodel.channels.ChannelListViewModelFactory;
 import kotlinx.coroutines.flow.StateFlow;
 
 /**
@@ -59,7 +59,8 @@ public class ChannelListUpdates {
         @NonNull
         @Override
         public ChatEventHandler chatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels) {
-            return new PublicChatEventHandler(channels, ChatClient.instance().getClientState());
+            ChatClient chatClient = ChatClient.instance();
+            return new PublicChatEventHandler(channels, chatClient.getClientState());
         }
     }
 
@@ -97,7 +98,8 @@ public class ChannelListUpdates {
         @NonNull
         @Override
         public ChatEventHandler chatEventHandler(@NonNull StateFlow<? extends Map<String, Channel>> channels) {
-            return new PrivateChatEventHandler(channels, ChatClient.instance().getClientState());
+            ChatClient chatClient = ChatClient.instance();
+            return new PrivateChatEventHandler(channels, chatClient.getClientState());
         }
     }
 

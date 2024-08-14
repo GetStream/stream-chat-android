@@ -16,13 +16,14 @@
 
 package io.getstream.chat.android.client.call
 
-import io.getstream.chat.android.client.errors.ChatError
 import io.getstream.chat.android.client.errors.ChatErrorCode
-import io.getstream.chat.android.client.errors.ChatNetworkError
 import io.getstream.chat.android.client.errors.ChatRequestError
+import io.getstream.chat.android.client.errors.fromChatErrorCode
 import io.getstream.chat.android.client.parser.ChatParser
-import io.getstream.chat.android.client.utils.Result
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
@@ -63,11 +64,19 @@ internal class RetrofitCall<T : Any>(
             callback.onResult(result)
         }
 
-    private fun Throwable.toFailedResult(): Result<T> = Result(this.toFailedError())
+    private fun Throwable.toFailedResult(): Result<T> = Result.Failure(this.toFailedError())
 
-    private fun Throwable.toFailedError(): ChatError = when (this) {
-        is ChatRequestError -> ChatNetworkError.create(streamCode, message.toString(), statusCode, cause)
-        else -> ChatNetworkError.create(ChatErrorCode.NETWORK_FAILED, this)
+    private fun Throwable.toFailedError(): Error = when (this) {
+        is ChatRequestError -> Error.NetworkError(
+            serverErrorCode = streamCode,
+            message = message.toString(),
+            statusCode = statusCode,
+            cause = cause,
+        )
+        else -> Error.NetworkError.fromChatErrorCode(
+            chatErrorCode = ChatErrorCode.NETWORK_FAILED,
+            cause = this,
+        )
     }
 
     @Suppress("TooGenericExceptionCaught")
@@ -83,7 +92,7 @@ internal class RetrofitCall<T : Any>(
     private suspend fun Response<T>.getResult(): Result<T> = withContext(callScope.coroutineContext) {
         if (isSuccessful) {
             try {
-                Result(body()!!)
+                Result.Success(body()!!)
             } catch (t: Throwable) {
                 t.toFailedResult()
             }
@@ -91,9 +100,9 @@ internal class RetrofitCall<T : Any>(
             val errorBody = errorBody()
 
             if (errorBody != null) {
-                Result(parser.toError(errorBody))
+                Result.Failure(parser.toError(errorBody))
             } else {
-                Result(parser.toError(raw()))
+                Result.Failure(parser.toError(raw()))
             }
         }
     }

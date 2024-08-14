@@ -19,11 +19,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-lint
@@ -32,6 +32,24 @@ jobs:
       - name: Detekt
         if: always()
         run: ./gradlew detekt
+  vale:
+    name: Vale doc linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: errata-ai/vale-action@reviewdog
+        with:
+          # added, diff_context, file, nofilter
+          filter_mode: nofilter
+          # github-pr-check, github-pr-review, github-check
+          reporter: github-pr-check
+          fail_on_error: true
+          files: docusaurus
+          version: "2.30.0"
+        env:
+          # Required, set by GitHub actions automatically:
+          # https://docs.github.com/en/actions/security-guides/automatic-token-authentication#about-the-github_token-secret
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
   api_check:
     name: API check
@@ -39,11 +57,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-APICheck
@@ -56,11 +74,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-build
@@ -73,11 +91,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3.1.0
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v3.6.0
         with:
           distribution: adopt
-          java-version: 11
+          java-version: 17
       - uses: ./.github/actions/gradle-cache
         with:
           key-prefix: gradle-test

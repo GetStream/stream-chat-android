@@ -16,19 +16,18 @@
 
 package io.getstream.chat.android.offline.plugin.listener.internal
 
-import io.getstream.chat.android.client.errors.ChatNetworkError
-import io.getstream.chat.android.client.models.Channel
-import io.getstream.chat.android.client.models.Member
 import io.getstream.chat.android.client.persistance.repository.RepositoryFacade
 import io.getstream.chat.android.client.setup.state.ClientState
-import io.getstream.chat.android.client.test.randomChannel
-import io.getstream.chat.android.client.test.randomMember
-import io.getstream.chat.android.client.test.randomUser
-import io.getstream.chat.android.client.utils.Result
-import io.getstream.chat.android.client.utils.SyncStatus
+import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.randomChannel
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomUser
+import io.getstream.result.Error
+import io.getstream.result.Result
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.amshove.kluent.shouldBeEqualTo
+import org.amshove.kluent.shouldBeInstanceOf
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.doReturn
@@ -70,7 +69,7 @@ internal class CreateChannelTests {
                         this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
             )
         }
 
@@ -105,7 +104,7 @@ internal class CreateChannelTests {
                         this.members.map(Member::getUserId).containsAll(members.map(Member::getUserId)) &&
                         createdBy == currentUser &&
                         syncStatus == SyncStatus.IN_PROGRESS
-                }
+                },
             )
         }
 
@@ -121,7 +120,8 @@ internal class CreateChannelTests {
             val channelType = "channelType"
             val channelId = "channelId"
             val result =
-                Result.success(randomChannel(id = channelId, type = channelType, cid = "$channelType:$channelId"))
+                Result.Success(randomChannel(id = channelId, type = channelType))
+            val expected = result.value.copy(syncStatus = SyncStatus.COMPLETED)
 
             sut.onCreateChannelResult(
                 channelType = channelType,
@@ -130,7 +130,7 @@ internal class CreateChannelTests {
                 result = result,
             )
 
-            verify(repos).insertChannel(result.data())
+            verify(repos).insertChannel(expected)
         }
 
     @Test
@@ -145,7 +145,7 @@ internal class CreateChannelTests {
             val channelType = "channelType"
             val channelId = "channel"
             val result =
-                Result.success(randomChannel())
+                Result.Success(randomChannel())
 
             sut.onCreateChannelResult(
                 channelType = channelType,
@@ -164,11 +164,11 @@ internal class CreateChannelTests {
             val channelId = "channel"
             val cid = "$channelType:$channelId"
             val channel =
-                randomChannel(id = channelId, type = channelType, cid = cid, syncStatus = SyncStatus.IN_PROGRESS)
+                randomChannel(id = channelId, type = channelType, syncStatus = SyncStatus.IN_PROGRESS)
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.error<Channel>(ChatNetworkError.create(0, "", 500, null))
+            val result = Result.Failure(Error.NetworkError(message = "", serverErrorCode = 0, statusCode = 500))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -187,7 +187,7 @@ internal class CreateChannelTests {
                         this.id == channelId &&
                         this.cid == cid &&
                         syncStatus == SyncStatus.SYNC_NEEDED
-                }
+                },
             )
         }
 
@@ -198,11 +198,11 @@ internal class CreateChannelTests {
             val channelId = "channel"
             val cid = "$channelType:$channelId"
             val channel =
-                randomChannel(id = channelId, type = channelType, cid = cid, syncStatus = SyncStatus.IN_PROGRESS)
+                randomChannel(id = channelId, type = channelType, syncStatus = SyncStatus.IN_PROGRESS)
             val repos = mock<RepositoryFacade> {
                 on(it.selectChannels(listOf(cid))) doReturn listOf(channel)
             }
-            val result = Result.error<Channel>(ChatNetworkError.create(60, "", 403, null))
+            val result = Result.Failure(Error.NetworkError(message = "", serverErrorCode = 60, statusCode = 403))
             val sut = Fixture()
                 .givenMockedRepos(repos)
                 .givenOnlineState()
@@ -221,7 +221,7 @@ internal class CreateChannelTests {
                         this.id == channelId &&
                         this.cid == cid &&
                         syncStatus == SyncStatus.FAILED_PERMANENTLY
-                }
+                },
             )
         }
 
@@ -236,7 +236,7 @@ internal class CreateChannelTests {
                 currentUser = null,
             )
 
-            result.isError shouldBeEqualTo true
+            result shouldBeInstanceOf Result.Failure::class
         }
 
     @Test
@@ -250,7 +250,7 @@ internal class CreateChannelTests {
                 currentUser = randomUser(),
             )
 
-            result.isError shouldBeEqualTo true
+            result shouldBeInstanceOf Result.Failure::class
         }
 
     @Test
@@ -264,7 +264,7 @@ internal class CreateChannelTests {
                 currentUser = randomUser(),
             )
 
-            result.isSuccess shouldBeEqualTo true
+            result shouldBeInstanceOf Result.Success::class
         }
 
     private inner class Fixture {
@@ -284,11 +284,11 @@ internal class CreateChannelTests {
             repositoryFacade = repos
         }
 
-        fun get(): CreateChannelListenerImpl {
-            return CreateChannelListenerImpl(
+        fun get(): CreateChannelListenerDatabase {
+            return CreateChannelListenerDatabase(
                 clientState,
                 repositoryFacade,
-                repositoryFacade
+                repositoryFacade,
             )
         }
     }

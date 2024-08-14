@@ -63,7 +63,7 @@ public fun TypingIndicatorAnimatedDot(
     Box(
         Modifier
             .background(color, CircleShape)
-            .size(5.dp)
+            .size(5.dp),
     )
 }
 

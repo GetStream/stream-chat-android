@@ -26,7 +26,7 @@ import java.util.Date
  */
 @StreamHandsOff(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map"
+        "content of [extraData] map",
 )
 @JsonClass(generateAdapter = true)
 internal data class UpstreamReactionDto(
@@ -47,7 +47,7 @@ internal data class UpstreamReactionDto(
  */
 @StreamHandsOff(
     reason = "Field names can't be changed because [CustomObjectDtoAdapter] class uses reflections to add/remove " +
-        "content of [extraData] map"
+        "content of [extraData] map",
 )
 @JsonClass(generateAdapter = true)
 internal data class DownstreamReactionDto(
@@ -61,3 +61,11 @@ internal data class DownstreamReactionDto(
 
     val extraData: Map<String, Any>,
 ) : ExtraDataDto
+
+@JsonClass(generateAdapter = true)
+internal data class DownstreamReactionGroupDto(
+    val count: Int,
+    val sum_scores: Int,
+    val first_reaction_at: Date,
+    val last_reaction_at: Date,
+)

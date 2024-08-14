@@ -17,11 +17,12 @@
 package io.getstream.chat.android.client.call
 
 import io.getstream.chat.android.client.BlockedCall
-import io.getstream.chat.android.client.Mother
-import io.getstream.chat.android.client.errors.ChatError
-import io.getstream.chat.android.client.utils.Result
+import io.getstream.chat.android.randomString
 import io.getstream.chat.android.test.TestCoroutineExtension
-import io.getstream.chat.android.test.randomString
+import io.getstream.result.Error
+import io.getstream.result.Result
+import io.getstream.result.call.Call
+import io.getstream.result.call.onErrorReturn
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
@@ -43,12 +44,12 @@ internal class ReturnOnErrorCallTest {
         val testCoroutines = TestCoroutineExtension()
     }
 
-    private val resultValue = Mother.randomString()
-    private val errorResultValue = Mother.randomString()
-    private val validResult: Result<String> = Result.success(resultValue)
-    private val error: ChatError = ChatError(randomString())
-    private val errorResult: Result<String> = Result.error(error)
-    private val onErrorResult: Result<String> = Result.success(errorResultValue)
+    private val resultValue = randomString()
+    private val errorResultValue = randomString()
+    private val validResult: Result<String> = Result.Success(resultValue)
+    private val error: Error = Error.GenericError(message = randomString())
+    private val errorResult: Result<String> = Result.Failure(error)
+    private val onErrorResult: Result<String> = Result.Success(errorResultValue)
     private val spyOnError = SpyOnError(onErrorResult)
 
     @Test
@@ -90,7 +91,7 @@ internal class ReturnOnErrorCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` validResult
-            }
+            },
         )
         spyOnError.`should not be invoked`()
         blockedCall.isStarted() `should be equal to` true
@@ -109,7 +110,7 @@ internal class ReturnOnErrorCallTest {
         Mockito.verify(callback, only()).onResult(
             org.mockito.kotlin.check {
                 it `should be equal to` onErrorResult
-            }
+            },
         )
         spyOnError `should be invoked with` error
         blockedCall.isStarted() `should be equal to` true
@@ -174,22 +175,22 @@ internal class ReturnOnErrorCallTest {
         val result = deferedResult.await()
 
         result `should be equal to` onErrorResult
-        spyOnError `should be invoked with` Call.callCanceledError<String>().error()
+        spyOnError `should be invoked with` (Call.callCanceledError<String>() as Result.Failure).value
         blockedCall.isStarted() `should be equal to` true
         blockedCall.isCompleted() `should be equal to` false
         blockedCall.isCanceled() `should be equal to` true
     }
 
-    private class SpyOnError<T : Any>(private val result: Result<T>) : suspend (ChatError) -> Result<T> {
+    private class SpyOnError<T : Any>(private val result: Result<T>) : suspend (Error) -> Result<T> {
         private var invocations = 0
-        private var error: ChatError? = null
-        override suspend fun invoke(error: ChatError): Result<T> {
+        private var error: Error? = null
+        override suspend fun invoke(error: Error): Result<T> {
             invocations++
             this.error = error
             return result
         }
 
-        infix fun `should be invoked with`(error: ChatError) {
+        infix fun `should be invoked with`(error: Error) {
             invocations `should be equal to` 1
             this.error `should be equal to` error
         }

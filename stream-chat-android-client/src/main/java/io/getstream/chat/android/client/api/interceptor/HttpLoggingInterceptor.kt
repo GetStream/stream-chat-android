@@ -16,10 +16,10 @@
 
 package io.getstream.chat.android.client.api.interceptor
 
-import io.getstream.chat.android.client.models.Constants
 import io.getstream.chat.android.core.internal.StreamHandsOff
-import io.getstream.logging.SilentStreamLogger
-import io.getstream.logging.StreamLog
+import io.getstream.chat.android.models.Constants
+import io.getstream.log.StreamLog
+import io.getstream.log.taggedLogger
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -34,14 +34,13 @@ import java.util.concurrent.TimeUnit
 
 internal class HttpLoggingInterceptor : Interceptor {
 
-    private val logger = StreamLog.getLogger("Chat:Http")
+    private val logger by taggedLogger("Chat:Http")
 
     @Throws(IOException::class)
     @Suppress("LongMethod", "ComplexMethod", "ReturnCount", "TooGenericExceptionCaught", "ReturnCount")
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
-        val noLoggerSet = StreamLog.inspect { it is SilentStreamLogger }
-        if (noLoggerSet) {
+        if (!StreamLog.isInstalled) {
             return chain.proceed(request)
         }
 
@@ -97,8 +96,12 @@ internal class HttpLoggingInterceptor : Interceptor {
         val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
         logger.i {
             "<-- ${response.code}${
-            if (response.message.isEmpty()) "" else ' ' +
-                response.message
+                if (response.message.isEmpty()) {
+                    ""
+                } else {
+                    ' ' +
+                        response.message
+                }
             } ${response.request.url} (${tookMs}ms${", $bodySize body"})"
         }
 
@@ -139,7 +142,7 @@ internal class HttpLoggingInterceptor : Interceptor {
     @StreamHandsOff(
         reason = "Request body shouldn't be log entirely as it might produce OutOfMemory " +
             "exceptions when sending big files." +
-            " The log will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes."
+            " The log will be limited to ${Constants.MAX_REQUEST_BODY_LENGTH} bytes.",
     )
     private fun logRequestBody(buffer: Buffer, charset: Charset) {
         logger.i { buffer.readString(minOf(buffer.size, Constants.MAX_REQUEST_BODY_LENGTH), charset) }

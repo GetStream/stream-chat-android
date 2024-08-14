@@ -28,12 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.getstream.sdk.chat.utils.extensions.isMine
-import io.getstream.chat.android.client.models.Message
-import io.getstream.chat.android.client.models.User
-import io.getstream.chat.android.client.models.initials
 import io.getstream.chat.android.compose.ui.components.avatar.Avatar
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.initials
+import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
  * Wraps the quoted message into a component that shows only the sender avatar, text and single attachment preview.
@@ -63,20 +63,20 @@ public fun QuotedMessage(
     leadingContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageLeadingContent(
             message = it,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
     centerContent: @Composable RowScope.(Message) -> Unit = {
         DefaultQuotedMessageCenterContent(
             message = it,
             replyMessage = replyMessage,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
     trailingContent: @Composable (Message) -> Unit = {
         DefaultQuotedMessageTrailingContent(
             message = it,
-            currentUser = currentUser
+            currentUser = currentUser,
         )
     },
 ) {
@@ -85,9 +85,9 @@ public fun QuotedMessage(
             interactionSource = MutableInteractionSource(),
             indication = null,
             onLongClick = { onLongItemClick(message) },
-            onClick = { onQuotedMessageClick(message) }
+            onClick = { onQuotedMessageClick(message) },
         ),
-        verticalAlignment = Alignment.Bottom
+        verticalAlignment = Alignment.Bottom,
     ) {
         leadingContent(message)
 
@@ -166,6 +166,6 @@ public fun RowScope.DefaultQuotedMessageCenterContent(
         message = message,
         replyMessage = replyMessage,
         modifier = Modifier.weight(1f, fill = false),
-        currentUser = currentUser
+        currentUser = currentUser,
     )
 }
