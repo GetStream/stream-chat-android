@@ -20,6 +20,10 @@ android {
     namespace = "io.getstream.chat.android.previewdata"
     resourcePrefix = "stream_compose_previewdata"
 
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
+    }
+
     buildFeatures {
         compose = true
     }
