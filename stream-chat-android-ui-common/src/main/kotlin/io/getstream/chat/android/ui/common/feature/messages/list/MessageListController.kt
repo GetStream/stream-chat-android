@@ -467,7 +467,10 @@ public class MessageListController(
                     is MessagesState.NoQueryActive,
                     -> _messageListState.value.copy(isLoading = true)
 
-                    is MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
+                    is MessagesState.OfflineNoResults -> _messageListState.value.copy(
+                        isLoading = false,
+                        messageItems = emptyList(),
+                    )
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
                         messageItems = groupMessages(
