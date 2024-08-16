@@ -57,6 +57,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Message list is cleared when the channel remove all its messages. [#5360](https://github.com/GetStream/stream-chat-android/pull/5360)
 
 ### ⬆️ Improved
 
@@ -68,6 +69,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Message list is cleared when the channel remove all its messages. [#5360](https://github.com/GetStream/stream-chat-android/pull/5360)
 
 ### ⬆️ Improved
 
