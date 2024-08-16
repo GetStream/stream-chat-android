@@ -82,8 +82,6 @@ internal class PollView : RecyclerView {
 
         val pollItems = mutableListOf<PollItem>()
         pollItems.add(PollItem.Header(poll.name, poll.description))
-        println("JcLog [setPoll]: poll.voteCountsByOption -> ${poll.voteCountsByOption}")
-        println("JcLog [setPoll]: poll.votes.count -> ${poll.votes.size}")
         pollItems.addAll(
             poll.options.map { option ->
                 PollItem.Answer(

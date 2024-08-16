@@ -76,11 +76,7 @@ internal object MessageListItemDiffCallback : DiffUtil.ItemCallback<MessageListI
             user = oldMessage.user != newMessage.user,
             mentions = oldMessage.mentionedUsers != newMessage.mentionedUsers,
             footer = oldItem.showMessageFooter != newItem.showMessageFooter,
-            poll = oldMessage.poll?.also {
-                println("JcLog: MessageListItemDiffCallback.getMessageChangePayload: oldMessage.poll = $it")
-            } != newMessage.poll?.also {
-                println("JcLog: MessageListItemDiffCallback.getMessageChangePayload: newMessage.poll = $it")
-            },
+            poll = oldMessage.poll != newMessage.poll,
         )
     }
 
