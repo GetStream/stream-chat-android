@@ -62,6 +62,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
 
 ### ⚠️ Changed
 
