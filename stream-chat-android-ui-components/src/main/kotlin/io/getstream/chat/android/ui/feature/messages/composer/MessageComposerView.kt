@@ -28,6 +28,7 @@ import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -66,6 +67,8 @@ import io.getstream.log.taggedLogger
 public class MessageComposerView : ConstraintLayout {
 
     private val logger by taggedLogger("Chat:MsgComposerView")
+
+    private var arePollEnabled: Boolean = false
 
     /**
      * Generated binding class for the XML layout.
@@ -151,7 +154,13 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            attachmentsPickerDialogBuilder(messageComposerContext.style.attachmentsPickerDialogStyle)
+            attachmentsPickerDialogBuilder(
+                messageComposerContext.style.attachmentsPickerDialogStyle
+                    .copy(
+                        pollAttachmentsTabEnabled = arePollEnabled &&
+                            messageComposerContext.style.attachmentsPickerDialogStyle.pollAttachmentsTabEnabled,
+                    ),
+            )
                 .show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
@@ -371,7 +380,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
 
         renderSuggestion(state)
-
+        arePollEnabled = state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
         validationErrorRenderer.renderValidationErrors(state.validationErrors)
     }
 
