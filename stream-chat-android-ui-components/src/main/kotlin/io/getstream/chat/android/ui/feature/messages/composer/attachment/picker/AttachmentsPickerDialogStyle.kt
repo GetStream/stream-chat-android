@@ -96,6 +96,8 @@ public data class AttachmentsPickerDialogStyle(
     // Camera attachments tab
     val cameraAttachmentsTabEnabled: Boolean,
     val cameraAttachmentsTabIconDrawable: Drawable,
+    val pollAttachmentsTabEnabled: Boolean,
+    val pollAttachmentsTabIconDrawable: Drawable,
     val allowAccessToCameraButtonText: String,
     val allowAccessToCameraIconDrawable: Drawable,
     val pickerMediaMode: PickerMediaMode,

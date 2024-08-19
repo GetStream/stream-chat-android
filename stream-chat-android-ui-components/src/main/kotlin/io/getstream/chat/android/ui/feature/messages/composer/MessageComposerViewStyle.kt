@@ -1338,6 +1338,15 @@ public data class MessageComposerViewStyle(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
+            val pollAttachmentsTabEnabled = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerPollAttachmentsTabEnabled,
+                true,
+            )
+
+            val pollAttachmentsTabIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerPollAttachmentsTabIconDrawable,
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_poll)!!
+
             val allowAccessToCameraButtonText = a.getText(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_camera_access)
@@ -1388,6 +1397,8 @@ public data class MessageComposerViewStyle(
                 cameraAttachmentsTabIconDrawable = cameraAttachmentsTabIconDrawable,
                 allowAccessToCameraButtonText = allowAccessToCameraButtonText,
                 allowAccessToCameraIconDrawable = allowAccessToCameraIconDrawable,
+                pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
+                pollAttachmentsTabIconDrawable = pollAttachmentsTabIconDrawable,
                 pickerMediaMode = pickerMediaMode,
             ).let(TransformStyle.attachmentsPickerStyleTransformer::transform)
         }
