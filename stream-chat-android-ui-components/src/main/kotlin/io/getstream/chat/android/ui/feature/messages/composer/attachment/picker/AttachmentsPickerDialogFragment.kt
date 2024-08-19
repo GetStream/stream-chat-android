@@ -25,6 +25,7 @@ import android.widget.FrameLayout
 import androidx.core.view.descendants
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import io.getstream.chat.android.ui.databinding.StreamUiDialogAttachmentBinding
@@ -66,6 +67,11 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
     private var attachmentsSelectionListener: AttachmentsSelectionListener? = null
 
     /**
+     * A listener that is invoked when poll submission has been completed.
+     */
+    private var pollSubmissionListener: PollSubmissionListener? = null
+
+    /**
      * The list of currently selected attachments.
      */
     private var selectedAttachments: List<AttachmentMetaData> = emptyList()
@@ -93,7 +99,6 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
      */
     private fun setupDialog() {
         binding.container.setBackgroundColor(style.attachmentsPickerBackgroundColor)
-
         setupAttachButton()
         setupTabs()
         setupPages()
@@ -150,6 +155,11 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
 
             override fun onSelectedAttachmentsSubmitted() {
                 attachmentSelectionListener?.onAttachmentsSelected(selectedAttachments)
+                dismiss()
+            }
+
+            override fun onPollSubmitted(pollConfig: PollConfig?) {
+                pollConfig?.let { pollSubmissionListener?.onPollSubmitted(it) }
                 dismiss()
             }
         }
@@ -214,6 +224,13 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         this.attachmentsSelectionListener = attachmentsSelectionListener
     }
 
+    /**
+     * Sets the listener that will be notified when poll submission has been completed.
+     */
+    public fun setPollSubmissionListener(pollSubmissionListener: PollSubmissionListener) {
+        this.pollSubmissionListener = pollSubmissionListener
+    }
+
     private fun setSelectedTab(checkedTextView: CheckedTextView, pagePosition: Int) {
         binding.attachmentPager.setCurrentItem(pagePosition, false)
         binding.attachmentButtonsContainer.descendants.forEach {
@@ -250,6 +267,7 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
                     mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
                     fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
                     cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,
+                    pollAttachmentsTabEnabled = style.pollAttachmentsTabEnabled,
                 ),
         ): AttachmentsPickerDialogFragment {
             return AttachmentsPickerDialogFragment().apply {
@@ -266,5 +284,14 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
          * @param attachments The list of selected attachments.
          */
         public fun onAttachmentsSelected(attachments: List<Attachment>)
+    }
+
+    public fun interface PollSubmissionListener {
+        /**
+         * Called when poll submission has been completed.
+         *
+         * @param pollConfig The configuration of the submitted poll.
+         */
+        public fun onPollSubmitted(pollConfig: PollConfig)
     }
 }
