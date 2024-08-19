@@ -1415,6 +1415,25 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public fun createTabIcon (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)Landroid/graphics/drawable/Drawable;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment : androidx/appcompat/app/AppCompatDialogFragment {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$Companion;
+	public static final field TAG Ljava/lang/String;
+	public fun <init> ()V
+	public fun getTheme ()I
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$Companion {
+	public final fun newInstance (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment;
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollDialogFragment$CreatePollDialogListener {
+	public abstract fun onCreatePoll (Lio/getstream/chat/android/models/PollConfig;)V
+	public abstract fun onDismiss ()V
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollViewModel : androidx/lifecycle/ViewModel {
 	public fun <init> ()V
 	public final fun createOption ()V
