@@ -22,6 +22,7 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.MessageComposerController
 import io.getstream.chat.android.ui.common.state.messages.Edit
@@ -165,6 +166,10 @@ public class MessageComposerViewModel(
      */
     public fun removeSelectedAttachment(attachment: Attachment): Unit =
         messageComposerController.removeSelectedAttachment(attachment)
+
+    public fun createPoll(pollConfig: PollConfig) {
+        messageComposerController.createPoll(pollConfig)
+    }
 
     /**
      * Sends a given message using our Stream API. Based on the internal state, we either edit an existing message,

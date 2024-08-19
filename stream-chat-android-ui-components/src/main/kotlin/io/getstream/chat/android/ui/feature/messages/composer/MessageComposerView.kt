@@ -30,6 +30,7 @@ import androidx.core.view.children
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
@@ -101,6 +102,11 @@ public class MessageComposerView : ConstraintLayout {
     public var attachmentSelectionListener: (List<Attachment>) -> Unit = {}
 
     /**
+     * Selection listener invoked when a poll is submitted.
+     */
+    public var pollSubmissionListener: (PollConfig) -> Unit = {}
+
+    /**
      * Click listener for the remove attachment button.
      */
     public var attachmentRemovalListener: (Attachment) -> Unit = {}
@@ -145,6 +151,9 @@ public class MessageComposerView : ConstraintLayout {
             .newInstance(it).apply {
                 setAttachmentsSelectionListener { attachments: List<Attachment> ->
                     attachmentSelectionListener(attachments)
+                }
+                setPollSubmissionListener { pollConfig ->
+                    pollSubmissionListener(pollConfig)
                 }
             }
     }

@@ -24,6 +24,7 @@ import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.alsoSendToChannelSelectionListener
@@ -44,6 +45,7 @@ import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelD
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.dismissActionClickListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.dismissSuggestionsListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.mentionSelectionListener
+import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.pollSubmissionListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.sendMessageButtonClickListener
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModelDefaults.textInputChangeListener
 import kotlinx.coroutines.launch
@@ -59,6 +61,7 @@ import kotlinx.coroutines.launch
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
  * @param attachmentRemovalListener Click listener for the remove attachment button.
+ * @param pollSubmissionListener Selection listener invoked when a poll is submitted.
  * @param mentionSelectionListener Selection listener invoked when a mention suggestion item is selected.
  * @param commandSelectionListener Selection listener invoked when a command suggestion item is selected.
  * @param alsoSendToChannelSelectionListener Selection listener for the "also send to channel" checkbox.
@@ -86,6 +89,7 @@ public fun MessageComposerViewModel.bindView(
     textInputChangeListener: (String) -> Unit = this.textInputChangeListener,
     attachmentSelectionListener: (List<Attachment>) -> Unit = this.attachmentSelectionListener,
     attachmentRemovalListener: (Attachment) -> Unit = this.attachmentRemovalListener,
+    pollSubmissionListener: (PollConfig) -> Unit = this.pollSubmissionListener,
     mentionSelectionListener: (User) -> Unit = this.mentionSelectionListener,
     commandSelectionListener: (Command) -> Unit = this.commandSelectionListener,
     alsoSendToChannelSelectionListener: (Boolean) -> Unit = this.alsoSendToChannelSelectionListener,
@@ -107,6 +111,7 @@ public fun MessageComposerViewModel.bindView(
     view.textInputChangeListener = textInputChangeListener
     view.attachmentSelectionListener = attachmentSelectionListener
     view.attachmentRemovalListener = attachmentRemovalListener
+    view.pollSubmissionListener = pollSubmissionListener
     view.mentionSelectionListener = mentionSelectionListener
     view.commandSelectionListener = commandSelectionListener
     view.alsoSendToChannelSelectionListener = alsoSendToChannelSelectionListener
@@ -141,6 +146,7 @@ public fun MessageComposerViewModel.bindView(
  * @param textInputChangeListener Text change listener invoked each time after text was changed.
  * @param attachmentSelectionListener Selection listener invoked when attachments are selected.
  * @param attachmentRemovalListener Click listener for the remove attachment button.
+ * @param pollSubmissionListener Selection listener invoked when a poll is submitted.
  * @param mentionSelectionListener Selection listener invoked when a mention suggestion item is selected.
  * @param commandSelectionListener Selection listener invoked when a command suggestion item is selected.
  * @param alsoSendToChannelSelectionListener Selection listener for the "also send to channel" checkbox.
@@ -169,6 +175,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
     textInputChangeListener: ((String) -> Unit)? = null,
     attachmentSelectionListener: ((List<Attachment>) -> Unit)? = null,
     attachmentRemovalListener: ((Attachment) -> Unit)? = null,
+    pollSubmissionListener: ((PollConfig) -> Unit)? = null,
     mentionSelectionListener: ((User) -> Unit)? = null,
     commandSelectionListener: ((Command) -> Unit)? = null,
     alsoSendToChannelSelectionListener: ((Boolean) -> Unit)? = null,
@@ -194,6 +201,7 @@ public fun MessageComposerViewModel.bindViewDefaults(
         textInputChangeListener = this.textInputChangeListener and textInputChangeListener,
         attachmentSelectionListener = this.attachmentSelectionListener and attachmentSelectionListener,
         attachmentRemovalListener = this.attachmentRemovalListener and attachmentRemovalListener,
+        pollSubmissionListener = this.pollSubmissionListener and pollSubmissionListener,
         mentionSelectionListener = this.mentionSelectionListener and mentionSelectionListener,
         commandSelectionListener = this.commandSelectionListener and commandSelectionListener,
         alsoSendToChannelSelectionListener = this.alsoSendToChannelSelectionListener and alsoSendToChannelSelectionListener,
@@ -245,6 +253,7 @@ internal object MessageComposerViewModelDefaults {
                 it,
             )
         }
+    val MessageComposerViewModel.pollSubmissionListener: (PollConfig) -> Unit get() = { createPoll(it) }
     val MessageComposerViewModel.attachmentRemovalListener: (Attachment) -> Unit get() = { removeSelectedAttachment(it) }
     val MessageComposerViewModel.mentionSelectionListener: (User) -> Unit get() = { selectMention(it) }
     val MessageComposerViewModel.commandSelectionListener: (Command) -> Unit get() = { selectCommand(it) }
