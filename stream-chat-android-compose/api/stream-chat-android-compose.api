@@ -2703,6 +2703,7 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageC
 	public final fun buildNewMessage (Ljava/lang/String;Ljava/util/List;)Lio/getstream/chat/android/models/Message;
 	public static synthetic fun buildNewMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/models/Message;
 	public final fun clearData ()V
+	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
 	public final fun dismissMessageActions ()V
 	public final fun getAlsoSendToChannel ()Lkotlinx/coroutines/flow/MutableStateFlow;
 	public final fun getCommandSuggestions ()Lkotlinx/coroutines/flow/MutableStateFlow;
@@ -2738,7 +2739,6 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/MessageL
 	public final fun castVote (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Poll;Lio/getstream/chat/android/models/Option;)V
 	public final fun clearNewMessageState ()V
 	public final fun closePoll (Ljava/lang/String;)V
-	public final fun createPoll (Lio/getstream/chat/android/models/PollConfig;)V
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;)V
 	public final fun deleteMessage (Lio/getstream/chat/android/models/Message;Z)V
 	public static synthetic fun deleteMessage$default (Lio/getstream/chat/android/compose/viewmodel/messages/MessageListViewModel;Lio/getstream/chat/android/models/Message;ZILjava/lang/Object;)V

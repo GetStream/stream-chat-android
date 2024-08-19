@@ -47,7 +47,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -1750,28 +1749,6 @@ public class MessageListController(
                 ErrorEvent.UnmuteUserError(it)
             }
         })
-    }
-
-    /**
-     * Creates a poll with the given [pollConfig].
-     *
-     * @param pollConfig Configuration for creating a poll.
-     */
-    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
-        cid.cidToTypeAndId().let { (channelType, channelId) ->
-            chatClient.sendPoll(
-                channelType = channelType,
-                channelId = channelId,
-                pollConfig = pollConfig,
-            ).enqueue { response ->
-                onResult(response)
-                if (response is Result.Failure) {
-                    onActionResult(response.value) {
-                        ErrorEvent.PollCreationError(it)
-                    }
-                }
-            }
-        }
     }
 
     /**

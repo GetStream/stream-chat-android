@@ -620,7 +620,7 @@ private fun BoxScope.AttachmentsPickerMenu(
             },
             onAttachmentPickerAction = { action ->
                 if (action is AttachmentPickerPollCreation) {
-                    listViewModel.createPoll(
+                    composerViewModel.createPoll(
                         pollConfig = PollConfig(
                             name = action.question,
                             options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
