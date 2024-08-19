@@ -1279,6 +1279,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public final fun setAttachmentSelectionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentSelectionListener;)V
 	public final fun setAttachmentsPickerTabFactories (Ljava/util/List;)V
 	public final fun setAttachmentsSelectionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$AttachmentsSelectionListener;)V
+	public final fun setPollSubmissionListener (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$PollSubmissionListener;)V
 	public final fun setStyle (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)V
 }
 
@@ -1289,6 +1290,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/co
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$Companion {
 	public final fun newInstance (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;Ljava/util/List;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment;
 	public static synthetic fun newInstance$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$Companion;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;Ljava/util/List;ILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment;
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogFragment$PollSubmissionListener {
+	public abstract fun onPollSubmitted (Lio/getstream/chat/android/models/PollConfig;)V
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle : io/getstream/chat/android/ui/helper/ViewStyle {
@@ -1384,7 +1389,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabFactories {
 	public static final field INSTANCE Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabFactories;
-	public final fun defaultFactories (ZZZ)Ljava/util/List;
+	public final fun defaultFactories (ZZZZ)Ljava/util/List;
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabFactory {
@@ -1393,6 +1398,7 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/co
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabListener {
+	public abstract fun onPollSubmitted (Lio/getstream/chat/android/models/PollConfig;)V
 	public abstract fun onSelectedAttachmentsChanged (Ljava/util/List;)V
 	public abstract fun onSelectedAttachmentsSubmitted ()V
 }
@@ -1410,6 +1416,12 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 }
 
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/media/AttachmentsPickerMediaTabFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabFactory {
+	public fun <init> ()V
+	public fun createTabFragment (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabListener;)Landroidx/fragment/app/Fragment;
+	public fun createTabIcon (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)Landroid/graphics/drawable/Drawable;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/poll/AttachmentsPickerPollTabFactory : io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabFactory {
 	public fun <init> ()V
 	public fun createTabFragment (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/factory/AttachmentsPickerTabListener;)Landroidx/fragment/app/Fragment;
 	public fun createTabIcon (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)Landroid/graphics/drawable/Drawable;
