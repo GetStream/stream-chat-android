@@ -1431,6 +1431,21 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public final fun setSuggestAnOption (Z)V
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/OptionsAdapter : androidx/recyclerview/widget/ListAdapter {
+	public fun <init> (Lkotlin/jvm/functions/Function2;)V
+	public fun getItemId (I)J
+	public synthetic fun onBindViewHolder (Landroidx/recyclerview/widget/RecyclerView$ViewHolder;I)V
+	public fun onBindViewHolder (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/OptionsAdapter$OptionViewHolder;I)V
+	public synthetic fun onCreateViewHolder (Landroid/view/ViewGroup;I)Landroidx/recyclerview/widget/RecyclerView$ViewHolder;
+	public fun onCreateViewHolder (Landroid/view/ViewGroup;I)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/OptionsAdapter$OptionViewHolder;
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/OptionsAdapter$OptionViewHolder : androidx/recyclerview/widget/RecyclerView$ViewHolder {
+	public fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiPollOptionBinding;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Landroid/view/ViewGroup;Lio/getstream/chat/android/ui/databinding/StreamUiPollOptionBinding;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun bind (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer;)V
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer {
 	public fun <init> (ILjava/lang/String;Z)V
 	public final fun component1 ()I
