@@ -1415,6 +1415,37 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/attach
 	public fun createTabIcon (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/AttachmentsPickerDialogStyle;)Landroid/graphics/drawable/Drawable;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/CreatePollViewModel : androidx/lifecycle/ViewModel {
+	public fun <init> ()V
+	public final fun createOption ()V
+	public final fun createPollConfig ()V
+	public final fun getMaxAnswerError ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getOptions ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPollConfig ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun getPollIsReady ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun onOptionTextChanged (ILjava/lang/String;)V
+	public final fun onTitleChanged (Ljava/lang/String;)V
+	public final fun setAllowMultipleVotes (Z)V
+	public final fun setAnnonymousPoll (Z)V
+	public final fun setMaxAnswer (Ljava/lang/Integer;)V
+	public final fun setSuggestAnOption (Z)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer {
+	public fun <init> (ILjava/lang/String;Z)V
+	public final fun component1 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun copy (ILjava/lang/String;Z)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer;ILjava/lang/String;ZILjava/lang/Object;)Lio/getstream/chat/android/ui/feature/messages/composer/attachment/picker/poll/PollAnswer;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDuplicateError ()Z
+	public final fun getId ()I
+	public final fun getText ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/composer/attachment/preview/AttachmentPreviewFactoryManager {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;)V
