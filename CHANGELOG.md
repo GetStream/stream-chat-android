@@ -72,6 +72,7 @@
 ### 🐞 Fixed
 - Message list is cleared when the channel remove all its messages. [#5360](https://github.com/GetStream/stream-chat-android/pull/5360)
 - Increase max allowed votes base on available options. [#5363](https://github.com/GetStream/stream-chat-android/pull/5363)
+- Poll Attachment show description instead of question twice. [#5364](https://github.com/GetStream/stream-chat-android/pull/5364)
 
 ### ⬆️ Improved
 
