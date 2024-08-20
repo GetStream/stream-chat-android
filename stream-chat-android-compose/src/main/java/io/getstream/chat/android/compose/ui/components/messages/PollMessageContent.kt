@@ -194,7 +194,7 @@ private fun PollMessageContent(
         item {
             Text(
                 modifier = Modifier.padding(bottom = 8.dp),
-                text = poll.name,
+                text = poll.description,
                 color = ChatTheme.colors.textLowEmphasis,
                 fontSize = 12.sp,
             )
