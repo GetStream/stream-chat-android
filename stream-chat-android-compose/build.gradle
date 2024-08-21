@@ -68,7 +68,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 dependencies {
     api project(':stream-chat-android-ui-common')
-    compileOnly(project(":stream-chat-android-previewdata"))
+    implementation(project(":stream-chat-android-previewdata"))
     implementation project(":stream-chat-android-ui-utils")
 
     implementation Dependencies.androidxAppCompat

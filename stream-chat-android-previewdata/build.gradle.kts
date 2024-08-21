@@ -4,7 +4,6 @@ import io.getstream.chat.android.Dependencies
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 rootProject.extra.apply {
@@ -23,10 +22,6 @@ android {
     defaultConfig {
         consumerProguardFiles("consumer-rules.pro")
     }
-
-    buildFeatures {
-        compose = true
-    }
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -38,11 +33,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 dependencies {
-    implementation(project(":stream-chat-android-state"))
-    implementation(project(":stream-chat-android-client"))
-
-    // Compose
-    implementation(Dependencies.composeUi)
+    api(project(":stream-chat-android-client"))
 
     detektPlugins(Dependencies.detektFormatting)
 }
