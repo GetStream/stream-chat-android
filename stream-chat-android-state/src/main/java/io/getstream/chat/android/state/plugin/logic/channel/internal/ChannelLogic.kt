@@ -649,6 +649,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateMemberBanned(
                     memberUserId = event.user.id,
                     banned = true,
+                    banExpires = event.expiration,
                     shadow = event.shadow,
                 )
             }
@@ -656,6 +657,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateMemberBanned(
                     memberUserId = event.user.id,
                     banned = false,
+                    banExpires = null,
                     shadow = false,
                 )
             }
