@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.extensions.internal
 
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
@@ -44,7 +45,9 @@ public fun Channel.users(): List<User> {
 
 @InternalStreamChatApi
 public val Channel.lastMessage: Message?
-    get() = messages.maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
+    get() = messages
+        .filterNot { it.isDeleted() }
+        .maxByOrNull { it.createdAt ?: it.createdLocallyAt ?: Date(0) }
 
 @InternalStreamChatApi
 public fun Channel.updateLastMessage(
@@ -60,6 +63,7 @@ public fun Channel.updateLastMessage(
             .associateBy { it.id } + (message.id to message)
         )
         .values
+        .filterNot { it.isDeleted() }
         .sortedBy { it.createdAt ?: it.createdLocallyAt }
 
     val newReads = read.map { read ->
