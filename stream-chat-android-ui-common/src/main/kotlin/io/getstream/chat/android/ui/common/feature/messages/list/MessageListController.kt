@@ -235,10 +235,11 @@ public class MessageListController(
         .flatMapLatest { state ->
             combine(
                 state.channelData,
+                state.members,
                 state.membersCount,
                 state.watcherCount,
                 state.pinnedMessages,
-            ) { _, _, _, _ ->
+            ) { _, _, _, _, _ ->
                 state.toChannel()
             }
         }
