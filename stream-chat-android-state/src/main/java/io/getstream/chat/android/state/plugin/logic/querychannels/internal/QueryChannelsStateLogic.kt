@@ -142,8 +142,11 @@ internal class QueryChannelsStateLogic(
      */
     internal suspend fun addChannelsState(channels: List<Channel>) {
         mutableState.queryChannelsSpec.cids += channels.map { it.cid }
-        val existingChannels = mutableState.rawChannels
-        mutableState.setChannels((existingChannels ?: emptyMap()) + channels.map { it.cid to it })
+        val existingChannels = mutableState.rawChannels ?: emptyMap()
+        mutableState.setChannels(
+            existingChannels +
+                channels.map { it.cid to it.joinMessages(existingChannels[it.cid]) },
+        )
         channels.map { channel ->
             coroutineScope.async {
                 logicRegistry.channelState(channel.type, channel.id).updateDataForChannel(
@@ -156,6 +159,12 @@ internal class QueryChannelsStateLogic(
             it.await()
         }
     }
+
+    private fun Channel.joinMessages(existingChannel: Channel?): Channel =
+        copy(
+            messages = ((existingChannel?.messages ?: emptyList()) + messages)
+                .distinctBy { it.id },
+        )
 
     /**
      * Remove channels to state.

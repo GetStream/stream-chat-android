@@ -154,7 +154,7 @@ public fun randomMessage(
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
     messageTextUpdatedAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
+    deletedAt: Date? = randomDateOrNull(),
     updatedLocallyAt: Date? = randomDate(),
     createdLocallyAt: Date? = randomDate(),
     user: User = randomUser(),
