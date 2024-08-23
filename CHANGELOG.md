@@ -62,6 +62,7 @@
 - Ensure channels list doesn't show deleted messages on the last message preview. [#5367](https://github.com/GetStream/stream-chat-android/pull/5367)
 
 ### ⬆️ Improved
+- `MessageOptionsDialogFragment` now uses `MessageListItemViewHolderFactory` to get item view type. [#5369](https://github.com/GetStream/stream-chat-android/pull/5369)
 
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
