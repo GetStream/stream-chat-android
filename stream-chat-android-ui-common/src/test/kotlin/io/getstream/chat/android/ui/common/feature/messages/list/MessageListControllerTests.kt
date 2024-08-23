@@ -60,7 +60,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
-import org.amshove.kluent.`should not be equal to`
 import org.amshove.kluent.shouldBeFalse
 import org.amshove.kluent.shouldBeNull
 import org.amshove.kluent.shouldBeTrue

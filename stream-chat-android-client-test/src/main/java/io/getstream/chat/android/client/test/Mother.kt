@@ -508,7 +508,6 @@ public fun randomChannelUserBannedEvent(
     banExpires: Date? = null,
     shadow: Boolean = false,
 ): ChannelUserBannedEvent {
-
     val (type, id) = cid.cidToTypeAndId()
     return ChannelUserBannedEvent(
         type = randomString(),
