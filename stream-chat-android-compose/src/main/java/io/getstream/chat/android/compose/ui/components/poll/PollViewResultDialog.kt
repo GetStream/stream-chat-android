@@ -61,6 +61,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewPollData
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
@@ -130,17 +131,18 @@ public fun PollViewResultDialog(
 internal fun LazyListScope.pollViewResultContent(
     poll: Poll,
 ) {
-    val votes = poll.votes
-    val options = poll.options.sortedByDescending { option -> votes.count { it.optionId == option.id } }
+    val options = poll.options.sortedByDescending { option -> poll.voteCountsByOption[option.id] ?: 0 }
 
     itemsIndexed(
         items = options,
         key = { _, option -> option.id },
     ) { index, option ->
+        val optionVotes = poll.votes.filter { it.optionId == option.id }
         PollViewResultItem(
             index = index,
             option = option,
-            votes = votes.filter { it.optionId == option.id },
+            votesCount = poll.voteCountsByOption[option.id] ?: optionVotes.size,
+            votes = optionVotes.takeUnless { poll.votingVisibility == VotingVisibility.ANONYMOUS } ?: emptyList(),
         )
     }
 }
@@ -149,6 +151,7 @@ internal fun LazyListScope.pollViewResultContent(
 private fun PollViewResultItem(
     index: Int,
     option: Option,
+    votesCount: Int,
     votes: List<Vote>,
 ) {
     Column(
@@ -180,7 +183,7 @@ private fun PollViewResultItem(
             }
 
             Text(
-                text = stringResource(id = R.string.stream_compose_poll_vote_counts, votes.size),
+                text = stringResource(id = R.string.stream_compose_poll_vote_counts, votesCount),
                 color = ChatTheme.colors.textHighEmphasis,
                 fontSize = 16.sp,
             )

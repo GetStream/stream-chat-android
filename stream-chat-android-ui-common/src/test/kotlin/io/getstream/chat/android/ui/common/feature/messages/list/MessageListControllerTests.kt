@@ -60,6 +60,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.test.runTest
 import org.amshove.kluent.`should be equal to`
+import org.amshove.kluent.shouldBeFalse
+import org.amshove.kluent.shouldBeNull
+import org.amshove.kluent.shouldBeTrue
+import org.amshove.kluent.shouldNotBeNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.mockito.kotlin.any
@@ -425,13 +429,62 @@ internal class MessageListControllerTests {
 
         delay(1000)
 
-        controller.channel.value.members.size `should be equal to` 2
+        controller.channel.value.members.size `should be equal to` 4
 
         membersCountState.value = 4
 
         delay(1000)
 
         controller.channel.value.members.size `should be equal to` 4
+    }
+
+    @Test
+    fun `When member gets banned the updated Channel instance must be emitted`() = runTest {
+        val chatClient: ChatClient = mock()
+        val members = randomMembers(size = 2) {
+            randomMember(banned = false, banExpires = null)
+        }
+        val channelData = ChannelData(
+            type = CHANNEL_TYPE,
+            id = CHANNEL_ID,
+            memberCount = members.size,
+        )
+
+        val membersState = MutableStateFlow(members)
+        val channelDataState = MutableStateFlow(channelData)
+        val membersCountState = MutableStateFlow(members.size)
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(
+                channelDataState = channelDataState,
+                membersState = membersState,
+                membersCountState = membersCountState,
+            )
+            .get()
+
+        delay(1000)
+
+        controller.channel.value.members.size `should be equal to` members.size
+        controller.channel.value.members.forEach {
+            it.banned.shouldBeFalse()
+            it.banExpires.shouldBeNull()
+        }
+
+        delay(1000)
+
+        membersState.value = members.map {
+            it.copy(banned = true, banExpires = randomDate())
+        }
+
+        delay(1000)
+
+        controller.channel.value.members.size `should be equal to` members.size
+        controller.channel.value.members.forEach {
+            it.banned.shouldBeTrue()
+            it.banExpires.shouldNotBeNull()
+        }
     }
 
     @Test

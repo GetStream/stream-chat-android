@@ -171,6 +171,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
                 lazyListState = questionListLazyState,
                 onQuestionsChanged = {
                     optionItemList = it
+                    switchItemList = updateMaxVotesAllowedSwitch(optionItemList, switchItemList)
                     hasErrorOnOptions = it.fastAny { item -> item.pollOptionError != null }
                 },
             )
@@ -197,6 +198,27 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
         }
     }
 }
+
+/**
+ * Updates the max votes allowed switch based on the number of options available.
+ *
+ * @param optionItemList The list of poll options.
+ * @param switchItemList The list of poll switches.
+ */
+private fun updateMaxVotesAllowedSwitch(
+    optionItemList: List<PollOptionItem>,
+    switchItemList: List<PollSwitchItem>,
+): List<PollSwitchItem> =
+    switchItemList.map {
+        when (it.key) {
+            "maxVotesAllowed" -> it.copy(
+                pollSwitchInput = it.pollSwitchInput?.copy(
+                    maxValue = optionItemList.count { item -> item.title.isNotBlank() },
+                ),
+            )
+            else -> it
+        }
+    }
 
 @Preview
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)

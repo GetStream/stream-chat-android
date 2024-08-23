@@ -624,7 +624,6 @@ private fun BoxScope.AttachmentsPickerMenu(
                         pollConfig = PollConfig(
                             name = action.question,
                             options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
-                            description = action.question,
                             allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
                             votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
                                 VotingVisibility.ANONYMOUS

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.test
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedByUserEvent
 import io.getstream.chat.android.client.events.ChannelUpdatedEvent
+import io.getstream.chat.android.client.events.ChannelUserBannedEvent
 import io.getstream.chat.android.client.events.ChannelVisibleEvent
 import io.getstream.chat.android.client.events.MemberAddedEvent
 import io.getstream.chat.android.client.events.MemberRemovedEvent
@@ -34,6 +35,7 @@ import io.getstream.chat.android.client.events.ReactionNewEvent
 import io.getstream.chat.android.client.events.TypingStartEvent
 import io.getstream.chat.android.client.events.TypingStopEvent
 import io.getstream.chat.android.client.events.UserStartWatchingEvent
+import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.parser2.adapters.internal.StreamDateFormatter
 import io.getstream.chat.android.client.query.QueryChannelsSpec
 import io.getstream.chat.android.models.Channel
@@ -496,5 +498,26 @@ public fun randomMemberRemovedEvent(cid: String = randomString(), member: Member
         channelType = randomString(),
         channelId = randomString(),
         member = member,
+    )
+}
+
+public fun randomChannelUserBannedEvent(
+    cid: String = randomCID(),
+    user: User = randomUser(),
+    createdAt: Date = Date(),
+    banExpires: Date? = null,
+    shadow: Boolean = false,
+): ChannelUserBannedEvent {
+    val (type, id) = cid.cidToTypeAndId()
+    return ChannelUserBannedEvent(
+        type = randomString(),
+        createdAt = createdAt,
+        rawCreatedAt = streamFormatter.format(createdAt),
+        user = user,
+        cid = cid,
+        channelType = type,
+        channelId = id,
+        expiration = banExpires,
+        shadow = shadow,
     )
 }

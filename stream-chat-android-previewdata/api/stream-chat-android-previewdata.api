@@ -1,5 +1,4 @@
 public final class io/getstream/chat/android/previewdata/PreviewChannelData {
-	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewChannelData;
 	public final fun getChannelWithFewMembers ()Lio/getstream/chat/android/models/Channel;
 	public final fun getChannelWithImage ()Lio/getstream/chat/android/models/Channel;
@@ -10,7 +9,6 @@ public final class io/getstream/chat/android/previewdata/PreviewChannelData {
 }
 
 public final class io/getstream/chat/android/previewdata/PreviewMembersData {
-	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewMembersData;
 	public final fun getManyMembers ()Ljava/util/List;
 	public final fun getMember1 ()Lio/getstream/chat/android/models/Member;
@@ -21,7 +19,6 @@ public final class io/getstream/chat/android/previewdata/PreviewMembersData {
 }
 
 public final class io/getstream/chat/android/previewdata/PreviewMessageData {
-	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewMessageData;
 	public final fun getMessage1 ()Lio/getstream/chat/android/models/Message;
 	public final fun getMessage2 ()Lio/getstream/chat/android/models/Message;
@@ -31,7 +28,6 @@ public final class io/getstream/chat/android/previewdata/PreviewMessageData {
 }
 
 public final class io/getstream/chat/android/previewdata/PreviewPollData {
-	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewPollData;
 	public final fun getOption1 ()Lio/getstream/chat/android/models/Option;
 	public final fun getOption2 ()Lio/getstream/chat/android/models/Option;
@@ -40,14 +36,12 @@ public final class io/getstream/chat/android/previewdata/PreviewPollData {
 }
 
 public final class io/getstream/chat/android/previewdata/PreviewReactionData {
-	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewReactionData;
 	public final fun getManyReaction ()Ljava/util/List;
 	public final fun getOneReaction ()Ljava/util/List;
 }
 
 public final class io/getstream/chat/android/previewdata/PreviewUserData {
-	public static final field $stable I
 	public static final field INSTANCE Lio/getstream/chat/android/previewdata/PreviewUserData;
 	public final fun getUser1 ()Lio/getstream/chat/android/models/User;
 	public final fun getUser2 ()Lio/getstream/chat/android/models/User;
