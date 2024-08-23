@@ -324,18 +324,21 @@ internal class ChannelStateLogicTest {
     fun `Given ChannelUserBannedEvent updates the channel state`() {
         /* Given */
         val originMembers = randomMembers(size = 2) { idx ->
-            randomMember(user = randomUser(id = "user_${idx+1}"), banned = false, banExpires = null, shadowBanned = false)
+            randomMember(user = randomUser(id = "user_${idx + 1}"), banned = false, banExpires = null, shadowBanned = false)
         }
         _members.value = originMembers
         _membersCount.value = originMembers.size
         val bannedEvent = randomChannelUserBannedEvent(
             cid = mutableState.cid,
             user = originMembers.first().user,
-            banExpires = randomDate()
+            banExpires = randomDate(),
         )
         val expectedMembers = originMembers.map {
-            if (it.user.id != bannedEvent.user.id) it
-            else it.copy(banned = true, banExpires = bannedEvent.expiration)
+            if (it.user.id != bannedEvent.user.id) {
+                it
+            } else {
+                it.copy(banned = true, banExpires = bannedEvent.expiration)
+            }
         }
 
         /* When */
@@ -343,7 +346,7 @@ internal class ChannelStateLogicTest {
             memberUserId = bannedEvent.user.id,
             banned = true,
             banExpires = bannedEvent.expiration,
-            shadow = false
+            shadow = false,
         )
 
         /* Then */
