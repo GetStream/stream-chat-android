@@ -27,6 +27,7 @@ import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
 import io.getstream.chat.android.models.LinkPreview
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.feature.messages.composer.mention.UserLookupHandler
 import io.getstream.chat.android.ui.common.feature.messages.composer.typing.TypingSuggester
@@ -557,6 +558,23 @@ public class MessageComposerController(
         selectedAttachments.value = selectedAttachments.value - attachment
 
         handleValidationErrors()
+    }
+
+    /**
+     * Creates a poll with the given [pollConfig].
+     *
+     * @param pollConfig Configuration for creating a poll.
+     */
+    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
+        channelCid.cidToTypeAndId().let { (channelType, channelId) ->
+            chatClient.sendPoll(
+                channelType = channelType,
+                channelId = channelId,
+                pollConfig = pollConfig,
+            ).enqueue { response ->
+                onResult(response)
+            }
+        }
     }
 
     /**

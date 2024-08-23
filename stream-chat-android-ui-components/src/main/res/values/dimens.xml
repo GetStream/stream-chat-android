@@ -15,6 +15,7 @@
     limitations under the License.
 -->
 <resources>
+    <dimen name="stream_ui_spacing">32dp</dimen>
     <dimen name="stream_ui_spacing_medium">16dp</dimen>
     <dimen name="stream_ui_spacing_small">8dp</dimen>
     <dimen name="stream_ui_spacing_tiny">4dp</dimen>

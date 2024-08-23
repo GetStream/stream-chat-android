@@ -65,6 +65,7 @@
 
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
+- Create a new UI to create a poll message. [#5361](https://github.com/GetStream/stream-chat-android/pull/5361)
 
 ### ⚠️ Changed
 

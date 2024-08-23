@@ -411,6 +411,9 @@
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText" format="string" />
         <attr name="streamUiMessageComposerAttachmentsPickerAllowAccessToCameraIconDrawable" format="reference" />
 
+        <attr name="streamUiMessageComposerAttachmentsPickerPollAttachmentsTabEnabled" format="boolean" />
+        <attr name="streamUiMessageComposerAttachmentsPickerPollAttachmentsTabIconDrawable" format="reference" />
+
         <!-- Audio record player view style -->
         <attr name="streamUiMessageComposerAudioRecordPlayerViewStyle" format="reference" />
     </declare-styleable>
