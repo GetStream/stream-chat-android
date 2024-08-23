@@ -429,7 +429,7 @@ internal class MessageListControllerTests {
 
         delay(1000)
 
-        controller.channel.value.members.size `should be equal to` 2
+        controller.channel.value.members.size `should be equal to` 4
 
         membersCountState.value = 4
 

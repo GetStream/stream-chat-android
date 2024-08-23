@@ -46,6 +46,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- Fixed `MessageListController.channel.members` not being updated when a member is banned. [#5368](https://github.com/GetStream/stream-chat-android/pull/5368)
 
 ### ⬆️ Improved
 
