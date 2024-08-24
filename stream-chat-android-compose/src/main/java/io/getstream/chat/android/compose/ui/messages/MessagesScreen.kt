@@ -331,7 +331,7 @@ public fun MessagesScreen(
  * displayed as a link attachment. False by default.
  */
 @Composable
-private fun BoxScope.MessageMenus(
+public fun BoxScope.MessageMenus(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     skipPushNotification: Boolean,
@@ -570,9 +570,10 @@ private fun BoxScope.MessagesScreenReactionsPicker(
  * @param composerViewModel The [MessageComposerViewModel] used to read state and
  * perform actions.
  */
+@Suppress("LongMethod")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun BoxScope.AttachmentsPickerMenu(
+public fun BoxScope.AttachmentsPickerMenu(
     listViewModel: MessageListViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
@@ -660,7 +661,7 @@ private fun BoxScope.AttachmentsPickerMenu(
  * perform actions.
  */
 @Composable
-private fun MessageModerationDialog(
+public fun MessageModerationDialog(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     skipPushNotification: Boolean,
@@ -711,7 +712,7 @@ private fun MessageModerationDialog(
  * perform actions.
  */
 @Composable
-private fun MessageDialogs(listViewModel: MessageListViewModel) {
+public fun MessageDialogs(listViewModel: MessageListViewModel) {
     val messageActions = listViewModel.messageActions
 
     val deleteAction = messageActions.firstOrNull { it is Delete }
@@ -748,7 +749,7 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
 }
 
 @Composable
-private fun PollDialogs(listViewModel: MessageListViewModel) {
+public fun PollDialogs(listViewModel: MessageListViewModel) {
     val dismiss = { listViewModel.displayPollMoreOptions(null) }
     val selectedPoll = listViewModel.pollState.selectedPoll
 
