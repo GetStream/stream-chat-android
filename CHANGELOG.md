@@ -82,6 +82,11 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `PollDialogs` component used to show poll dialogs. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `MessageDialogs` component used to prompt the user with message flagging and deletion actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `MessageModerationDialog` component used for message that needs to be moderated. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `AttachmentsPickerMenu` component used to show the attachment picker menu. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `MessageMenus` component used to prompt the user with message actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 
 ### ⚠️ Changed
 
