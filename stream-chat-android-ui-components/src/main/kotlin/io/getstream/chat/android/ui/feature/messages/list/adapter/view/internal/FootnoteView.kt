@@ -194,7 +194,7 @@ internal class FootnoteView : LinearLayoutCompat {
             setTextStyle(style.textStyleMessageDate)
         }
         footnote.editedLabel.isVisible = editedAt != null
-        footnote.editedInfo.text = context.getString(R.string.stream_ui_message_list_footntoe_edited_at, editedAt)
+        footnote.editedInfo.text = context.getString(R.string.stream_ui_message_list_footnote_edited_at, editedAt)
         footnote.editedInfo.isVisible = false
         footnote.root.setOnClickListener {
             if (editedAt != null) {
