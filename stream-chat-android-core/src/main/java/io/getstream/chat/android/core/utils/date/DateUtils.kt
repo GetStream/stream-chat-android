@@ -81,7 +81,7 @@ public fun Date.diff(that: Date): TimeDuration {
 }
 
 /**
- * Returns difference between [this] date and [now] time in [TimeDuration].
+ * Returns true if the date is within the specified duration from now.
  */
 @InternalStreamChatApi
 public inline fun Date?.isWithinDurationFromNow(
