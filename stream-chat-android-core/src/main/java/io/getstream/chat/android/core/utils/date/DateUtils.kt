@@ -79,3 +79,14 @@ public fun Date.diff(that: Date): TimeDuration {
     val diff = abs(time - that.time)
     return TimeDuration.millis(diff)
 }
+
+/**
+ * Returns difference between [this] date and [now] time in [TimeDuration].
+ */
+@InternalStreamChatApi
+public inline fun Date?.isWithinDurationFromNow(
+    duration: TimeDuration,
+    now: () -> Long = { System.currentTimeMillis() },
+): Boolean {
+    return this != null && (now() - this.time) < duration.millis
+}

@@ -134,7 +134,7 @@ public fun MessageFooter(
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(end = 8.dp)
+                            .padding(end = 4.dp)
                             .weight(1f, fill = false),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
                         style = ChatTheme.typography.footnote,
@@ -156,14 +156,20 @@ public fun MessageFooter(
  * If the `messageTextUpdatedAt` time is slightly in the future, it resets the time to the current system time.
  *
  * @param message The message object containing the `messageTextUpdatedAt` timestamp.
+ * @param modifier Modifier for styling.
+ * @param formatType The type of formatting to provide. By default, it's [DateFormatType.RELATIVE].
  */
 @Composable
-internal fun MessageEditedTimestamp(message: Message) {
+internal fun MessageEditedTimestamp(
+    message: Message,
+    modifier: Modifier = Modifier,
+    formatType: DateFormatType = DateFormatType.RELATIVE,
+) {
     val editedAt = message.messageTextUpdatedAt?.also {
         val now = System.currentTimeMillis()
         if (it.time > now) {
             it.time = now
         }
     }
-    Timestamp(date = editedAt, formatType = DateFormatType.RELATIVE)
+    Timestamp(date = editedAt, modifier = modifier, formatType = formatType)
 }
