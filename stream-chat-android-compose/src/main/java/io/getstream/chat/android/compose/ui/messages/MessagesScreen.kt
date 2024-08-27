@@ -146,12 +146,12 @@ public fun MessagesScreen(
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
     topBar: (
-    @Composable (
-        Modifier,
-        MessageComposerViewModel,
-        MessageListViewModel,
-        AttachmentsPickerViewModel,
-    ) -> Unit
+        @Composable (
+            Modifier,
+            MessageComposerViewModel,
+            MessageListViewModel,
+            AttachmentsPickerViewModel,
+        ) -> Unit
     )? = null,
     bottomBar: (
         @Composable (
