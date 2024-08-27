@@ -36,6 +36,7 @@ import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
@@ -165,11 +166,6 @@ internal fun MessageEditedTimestamp(
     modifier: Modifier = Modifier,
     formatType: DateFormatType = DateFormatType.RELATIVE,
 ) {
-    val editedAt = message.messageTextUpdatedAt?.also {
-        val now = System.currentTimeMillis()
-        if (it.time > now) {
-            it.time = now
-        }
-    }
+    val editedAt = message.messageTextUpdatedAt?.truncateFuture()
     Timestamp(date = editedAt, modifier = modifier, formatType = formatType)
 }

@@ -24,7 +24,10 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.core.utils.date.isWithinDurationFromNow
+import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.SyncStatus
+import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -347,7 +350,12 @@ internal class FootnoteDecorator(
     private fun setupMessageFooterTime(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
         val updatedAt = data.message.getUpdatedAtOrNull()
-        val editedAt = data.message.messageTextUpdatedAt?.let(dateFormatter::formatRelativeTime)
+        val editedAt = data.message.messageTextUpdatedAt.truncateFuture()?.let {
+            when (it.isWithinDurationFromNow(ONE_MINUTE_DURATION)) {
+                true -> footnoteView.context.getString(R.string.stream_ui_message_list_footnote_edited_now)
+                else -> dateFormatter.formatRelativeTime(it)
+            }
+        }
 
         when {
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
@@ -432,5 +440,9 @@ internal class FootnoteDecorator(
         val isFailedPermanently = status == SyncStatus.FAILED_PERMANENTLY
 
         return isNotBottomPosition || isTheirs || isEphemeral || isDeleted || isFailedPermanently
+    }
+
+    private companion object {
+        private val ONE_MINUTE_DURATION = TimeDuration.minutes(1)
     }
 }

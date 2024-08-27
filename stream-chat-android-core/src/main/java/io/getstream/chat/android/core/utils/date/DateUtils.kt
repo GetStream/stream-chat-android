@@ -90,3 +90,15 @@ public inline fun Date?.isWithinDurationFromNow(
 ): Boolean {
     return this != null && (now() - this.time) < duration.millis
 }
+
+/**
+ * Truncates the date to the current time if it's in the future.
+ */
+@InternalStreamChatApi
+public inline fun Date?.truncateFuture(
+    now: () -> Long = { System.currentTimeMillis() },
+): Date? = this?.apply {
+    if (time > now()) {
+        time = now()
+    }
+}

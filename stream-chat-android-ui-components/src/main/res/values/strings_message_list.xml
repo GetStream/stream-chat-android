@@ -72,8 +72,9 @@
     <string name="stream_ui_message_list_flag_confirmation_positive_button">Flag</string>
     <string name="stream_ui_message_list_flag_confirmation_negative_button">Cancel</string>
 
-    <string name="stream_ui_message_list_footntoe_edited_label"> · Edited</string>
-    <string name="stream_ui_message_list_footntoe_edited_at">Edited %s</string>
+    <string name="stream_ui_message_list_footnote_edited_label"> · Edited</string>
+    <string name="stream_ui_message_list_footnote_edited_at">Edited %s</string>
+    <string name="stream_ui_message_list_footnote_edited_now">just now</string>
 
 
     <!-- Attachment Viewer -->

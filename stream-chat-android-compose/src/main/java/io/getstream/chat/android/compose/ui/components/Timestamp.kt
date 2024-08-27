@@ -50,7 +50,6 @@ public fun Timestamp(
     formatter: DateFormatter = ChatTheme.dateFormatter,
     formatType: DateFormatType = DATE,
 ) {
-
     val timestamp = if (LocalInspectionMode.current) {
         "13:49"
     } else {
