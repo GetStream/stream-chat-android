@@ -543,10 +543,9 @@ public class MessageListController(
             }
             .onFirst { channelUserRead ->
                 unreadLabelState.value = channelUserRead.lastReadMessageId
+                    ?.takeUnless { channelState.value?.messages?.value.isNullOrEmpty() }
                     ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
-                    ?.let {
-                        UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton)
-                    }
+                    ?.let { UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton) }
             }.launchIn(scope)
     }
 

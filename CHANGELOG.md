@@ -49,6 +49,7 @@
 - Fixed `MessageListController.channel.members` not being updated when a member is banned. [#5368](https://github.com/GetStream/stream-chat-android/pull/5368)
 
 ### ⬆️ Improved
+- Hide "Unread Messages" button when there are no messages on the messages list. [#5376](https://github.com/GetStream/stream-chat-android/pull/5376)
 
 ### ✅ Added
 
