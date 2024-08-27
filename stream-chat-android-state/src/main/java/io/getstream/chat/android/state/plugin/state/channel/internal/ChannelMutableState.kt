@@ -450,7 +450,10 @@ internal class ChannelMutableState(
      */
     internal fun deleteWatcher(user: User, watchersCount: Int) {
         logger.v { "[deleteWatcher] user.id: ${user.id}, watchersCount: $watchersCount" }
-        _watchers?.let { upsertWatchers((it.value - user.id).values.toList(), watchersCount) }
+        _watchers?.apply {
+            value = value - user.id
+            _watcherCount?.value = watchersCount.takeUnless { it < 0 } ?: value.size
+        }
     }
 
     fun deleteMessage(message: Message) {
