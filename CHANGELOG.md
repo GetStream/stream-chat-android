@@ -78,6 +78,7 @@
 - Increase max allowed votes base on available options. [#5363](https://github.com/GetStream/stream-chat-android/pull/5363)
 - Poll Attachment show description instead of question twice. [#5364](https://github.com/GetStream/stream-chat-android/pull/5364)
 - Show proper votes count in anonymous polls. [#5366](https://github.com/GetStream/stream-chat-android/pull/5366)
+- Fixed `DefaultQuotedMessageTextFormatter` not using the correct text style. [#5373](https://github.com/GetStream/stream-chat-android/pull/5373)
 - Fixed `Message.messageTextUpdatedAt` fluctuations within `MessageFooter` when editing a message. [#5374](https://github.com/GetStream/stream-chat-android/pull/5374)
 
 ### ⬆️ Improved
