@@ -26,7 +26,6 @@ import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.SyncStatus
-import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
 import io.getstream.chat.android.ui.common.helper.DateFormatter
@@ -434,9 +433,5 @@ internal class FootnoteDecorator(
         val isFailedPermanently = status == SyncStatus.FAILED_PERMANENTLY
 
         return isNotBottomPosition || isTheirs || isEphemeral || isDeleted || isFailedPermanently
-    }
-
-    private companion object {
-        private val ONE_MINUTE_DURATION = TimeDuration.minutes(1)
     }
 }
