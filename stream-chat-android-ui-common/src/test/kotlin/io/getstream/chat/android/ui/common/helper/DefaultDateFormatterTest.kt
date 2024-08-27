@@ -19,6 +19,8 @@ package io.getstream.chat.android.ui.common.helper
 import android.content.Context
 import com.google.testing.junit.testparameterinjector.TestParameter
 import com.google.testing.junit.testparameterinjector.TestParameterInjector
+import io.getstream.chat.android.core.utils.date.isWithinDurationFromNow
+import io.getstream.chat.android.models.TimeDuration
 import org.amshove.kluent.shouldBeEqualTo
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,7 +41,15 @@ internal class DefaultDateFormatterTest {
         private val is24Hour: Boolean = false,
         private val dateTimePattern: String = "yyyy-MM-dd",
     ) : DefaultDateFormatter.DateContext {
+        private val oneMinuteDuration = TimeDuration.minutes(1)
+
         override fun now(): Date = now
+        override fun isWithinLastMinute(date: Date?): Boolean {
+            return date.isWithinDurationFromNow(oneMinuteDuration) {
+                now.time
+            }
+        }
+
         override fun yesterdayString() = YESTERDAY_STRING
         override fun is24Hour(): Boolean = is24Hour
         override fun dateTimePattern(): String = dateTimePattern

@@ -20,19 +20,13 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
-import androidx.compose.ui.res.stringResource
-import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.state.DateFormatType.DATE
 import io.getstream.chat.android.compose.state.DateFormatType.RELATIVE
 import io.getstream.chat.android.compose.state.DateFormatType.TIME
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.core.utils.date.isWithinDurationFromNow
-import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import java.util.Date
-
-private val ONE_MINUTE_DURATION = TimeDuration.minutes(1)
 
 /**
  * Represents a timestamp in the app, that's used primarily for channels and messages.
@@ -56,10 +50,7 @@ public fun Timestamp(
         when (formatType) {
             TIME -> formatter.formatTime(date)
             DATE -> formatter.formatDate(date)
-            RELATIVE -> when (date.isWithinDurationFromNow(ONE_MINUTE_DURATION)) {
-                true -> stringResource(id = R.string.stream_compose_message_list_footnote_edited_now)
-                else -> formatter.formatRelativeTime(date)
-            }
+            RELATIVE -> formatter.formatRelativeTime(date)
         }
     }
 

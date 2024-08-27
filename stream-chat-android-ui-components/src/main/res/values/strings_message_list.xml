@@ -74,7 +74,6 @@
 
     <string name="stream_ui_message_list_footnote_edited_label"> · Edited</string>
     <string name="stream_ui_message_list_footnote_edited_at">Edited %s</string>
-    <string name="stream_ui_message_list_footnote_edited_now">just now</string>
 
 
     <!-- Attachment Viewer -->

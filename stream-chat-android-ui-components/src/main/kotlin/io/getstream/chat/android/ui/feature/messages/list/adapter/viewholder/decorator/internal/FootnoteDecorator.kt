@@ -24,7 +24,6 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.client.utils.message.isGiphy
-import io.getstream.chat.android.core.utils.date.isWithinDurationFromNow
 import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.TimeDuration
@@ -350,12 +349,7 @@ internal class FootnoteDecorator(
     private fun setupMessageFooterTime(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
         val updatedAt = data.message.getUpdatedAtOrNull()
-        val editedAt = data.message.messageTextUpdatedAt.truncateFuture()?.let {
-            when (it.isWithinDurationFromNow(ONE_MINUTE_DURATION)) {
-                true -> footnoteView.context.getString(R.string.stream_ui_message_list_footnote_edited_now)
-                else -> dateFormatter.formatRelativeTime(it)
-            }
-        }
+        val editedAt = data.message.messageTextUpdatedAt.truncateFuture()?.let(dateFormatter::formatRelativeTime)
 
         when {
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()
