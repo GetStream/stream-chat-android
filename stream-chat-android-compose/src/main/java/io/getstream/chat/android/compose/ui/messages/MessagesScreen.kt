@@ -125,6 +125,8 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
+ * @param topBar custom top bar to be displayed on top of the messages list.
+ * @param bottomBar custom bottom bar to be displayed at the bottom of the messages list.
  * Default: [ThreadMessagesStart.BOTTOM].
  */
 @Suppress("LongMethod")
@@ -143,6 +145,22 @@ public fun MessagesScreen(
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
+    topBar: (
+    @Composable (
+        Modifier,
+        MessageComposerViewModel,
+        MessageListViewModel,
+        AttachmentsPickerViewModel,
+    ) -> Unit
+    )? = null,
+    bottomBar: (
+        @Composable (
+            Modifier,
+            MessageComposerViewModel,
+            MessageListViewModel,
+            AttachmentsPickerViewModel,
+        ) -> Unit
+    )? = null,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
@@ -189,58 +207,64 @@ public fun MessagesScreen(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (showHeader) {
-                    val connectionState by listViewModel.connectionState.collectAsState()
-                    val user by listViewModel.user.collectAsState()
+                    val defaultHeader: @Composable () -> Unit = {
+                        val connectionState by listViewModel.connectionState.collectAsState()
+                        val user by listViewModel.user.collectAsState()
 
-                    MessageListHeader(
-                        modifier = Modifier
-                            .height(56.dp),
-                        channel = listViewModel.channel,
-                        currentUser = user,
-                        typingUsers = listViewModel.typingUsers,
-                        connectionState = connectionState,
-                        messageMode = messageMode,
-                        onBackPressed = backAction,
-                        onHeaderTitleClick = onHeaderTitleClick,
-                        onChannelAvatarClick = onChannelAvatarClick,
-                    )
+                        MessageListHeader(
+                            modifier = Modifier
+                                .height(56.dp),
+                            channel = listViewModel.channel,
+                            currentUser = user,
+                            typingUsers = listViewModel.typingUsers,
+                            connectionState = connectionState,
+                            messageMode = messageMode,
+                            onBackPressed = backAction,
+                            onHeaderTitleClick = onHeaderTitleClick,
+                            onChannelAvatarClick = onChannelAvatarClick,
+                        )
+                    }
+                    topBar?.invoke(Modifier, composerViewModel, listViewModel, attachmentsPickerViewModel)
+                        ?: defaultHeader.invoke()
                 }
             },
             bottomBar = {
-                MessageComposer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.Center),
-                    viewModel = composerViewModel,
-                    onAttachmentsClick = remember(attachmentsPickerViewModel) {
-                        {
-                            attachmentsPickerViewModel.changeAttachmentState(
-                                true,
-                            )
-                        }
-                    },
-                    onCommandsClick = remember(composerViewModel) { { composerViewModel.toggleCommandsVisibility() } },
-                    onCancelAction = remember(listViewModel, composerViewModel) {
-                        {
-                            listViewModel.dismissAllMessageActions()
-                            composerViewModel.dismissMessageActions()
-                        }
-                    },
-                    onLinkPreviewClick = onComposerLinkPreviewClick,
-                    onSendMessage = remember(composerViewModel) {
-                        {
-                                message ->
-                            composerViewModel.sendMessage(
-                                message.copy(
-                                    skipPushNotification = skipPushNotification,
-                                    skipEnrichUrl = skipEnrichUrl,
-                                ),
-                            )
-                        }
-                    },
-                    statefulStreamMediaRecorder = statefulStreamMediaRecorder,
-                )
+                val modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .align(Alignment.Center)
+                bottomBar?.invoke(modifier, composerViewModel, listViewModel, attachmentsPickerViewModel)
+                    ?: MessageComposer(
+                        modifier = modifier,
+                        viewModel = composerViewModel,
+                        onAttachmentsClick = remember(attachmentsPickerViewModel) {
+                            {
+                                attachmentsPickerViewModel.changeAttachmentState(
+                                    true,
+                                )
+                            }
+                        },
+                        onCommandsClick = remember(composerViewModel) { { composerViewModel.toggleCommandsVisibility() } },
+                        onCancelAction = remember(listViewModel, composerViewModel) {
+                            {
+                                listViewModel.dismissAllMessageActions()
+                                composerViewModel.dismissMessageActions()
+                            }
+                        },
+                        onLinkPreviewClick = onComposerLinkPreviewClick,
+                        onSendMessage = remember(composerViewModel) {
+                            {
+                                    message ->
+                                composerViewModel.sendMessage(
+                                    message.copy(
+                                        skipPushNotification = skipPushNotification,
+                                        skipEnrichUrl = skipEnrichUrl,
+                                    ),
+                                )
+                            }
+                        },
+                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
+                    )
             },
         ) {
             val currentState = listViewModel.currentMessagesState

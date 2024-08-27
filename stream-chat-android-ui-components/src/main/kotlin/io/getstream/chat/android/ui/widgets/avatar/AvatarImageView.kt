@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.widgets.avatar
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.util.AttributeSet
