@@ -60,6 +60,7 @@
 ### 🐞 Fixed
 - Message list is cleared when the channel remove all its messages. [#5360](https://github.com/GetStream/stream-chat-android/pull/5360)
 - Ensure channels list doesn't show deleted messages on the last message preview. [#5367](https://github.com/GetStream/stream-chat-android/pull/5367)
+- Fixed `Message.messageTextUpdatedAt` fluctuations within `FootnoteDecorator` when editing a message. [#5374](https://github.com/GetStream/stream-chat-android/pull/5374)
 
 ### ⬆️ Improved
 - `MessageOptionsDialogFragment` now uses `MessageListItemViewHolderFactory` to get item view type. [#5369](https://github.com/GetStream/stream-chat-android/pull/5369)
