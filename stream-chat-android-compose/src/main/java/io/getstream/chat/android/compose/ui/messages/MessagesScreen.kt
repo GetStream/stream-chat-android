@@ -244,7 +244,11 @@ public fun MessagesScreen(
                                 )
                             }
                         },
-                        onCommandsClick = remember(composerViewModel) { { composerViewModel.toggleCommandsVisibility() } },
+                        onCommandsClick = remember(composerViewModel) {
+                            {
+                                composerViewModel.toggleCommandsVisibility()
+                            }
+                        },
                         onCancelAction = remember(listViewModel, composerViewModel) {
                             {
                                 listViewModel.dismissAllMessageActions()
