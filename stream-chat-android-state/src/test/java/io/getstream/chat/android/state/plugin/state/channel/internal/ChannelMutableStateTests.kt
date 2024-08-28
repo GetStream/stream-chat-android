@@ -24,6 +24,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.runTest
+import org.amshove.kluent.shouldBeEqualTo
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -87,6 +88,37 @@ internal class ChannelMutableStateTests {
 
         // then
         channelState.assertPinnedMessagesSizeEqualsTo(size = 0)
+    }
+
+    @Test
+    fun `When watchers get inserted, the watchers list should be updated`() = runTest {
+        // given
+        val watchers = listOf(currentUser, User(id = "bob", name = "Bob"))
+
+        // when
+        channelState.upsertWatchers(watchers, watchers.size)
+
+        // then
+        channelState.watcherCount.value shouldBeEqualTo watchers.size
+        channelState.watchers.value.size shouldBeEqualTo watchers.size
+        channelState.watchers.value shouldBeEqualTo watchers
+    }
+
+    @Test
+    fun `When a watcher gets deleted, the watchers list should be updated`() = runTest {
+        // given
+        val anotherUser = User(id = "bob", name = "Bob")
+        val watchers = listOf(currentUser, anotherUser)
+        channelState.upsertWatchers(watchers, watchers.size)
+        val newWatcherCount = watchers.size - 1
+
+        // when
+        channelState.deleteWatcher(anotherUser, newWatcherCount)
+
+        // then
+        channelState.watcherCount.value shouldBeEqualTo newWatcherCount
+        channelState.watchers.value.size shouldBeEqualTo newWatcherCount
+        channelState.watchers.value shouldBeEqualTo listOf(currentUser)
     }
 
     private fun ChannelMutableState.assertPinnedMessagesSizeEqualsTo(size: Int) {
