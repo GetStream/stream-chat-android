@@ -83,6 +83,7 @@
 - Show proper votes count in anonymous polls. [#5366](https://github.com/GetStream/stream-chat-android/pull/5366)
 - Fixed `DefaultQuotedMessageTextFormatter` not using the correct text style. [#5373](https://github.com/GetStream/stream-chat-android/pull/5373)
 - Fixed `Message.messageTextUpdatedAt` fluctuations within `MessageFooter` when editing a message. [#5374](https://github.com/GetStream/stream-chat-android/pull/5374)
+- Expose `topBarContent` and `bottomBarContent` in `MessageScreen`. [#5377](https://github.com/GetStream/stream-chat-android/pull/5377)
 
 ### ⬆️ Improved
 - Added `showFileSize` parameter to `StreamAttachmentFactories.defaultFactories` to control file size UI visibility. [#5383](https://github.com/GetStream/stream-chat-android/pull/5383)
