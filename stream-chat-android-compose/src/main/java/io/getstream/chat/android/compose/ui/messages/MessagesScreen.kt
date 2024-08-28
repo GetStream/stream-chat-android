@@ -331,7 +331,6 @@ internal fun DefaultBottomBarContent(
     skipEnrichUrl: Boolean = false,
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
 ) {
-
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
     val attachmentsPickerViewModel =
