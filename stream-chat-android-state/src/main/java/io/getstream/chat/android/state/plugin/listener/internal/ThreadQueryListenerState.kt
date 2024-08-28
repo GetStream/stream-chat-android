@@ -91,21 +91,19 @@ internal class ThreadQueryListenerState(
     ) {
         val threadLogic = logic.thread(parentId)
         result.onSuccess { messages ->
-            threadLogic.upsertMessages(messages)
-            threadLogic.setEndOfNewerMessages(messages.size < limit)
             threadLogic.updateNewestMessageInThread(messages)
+            threadLogic.setEndOfNewerMessages(messages.size < limit)
+            threadLogic.upsertMessages(messages)
         }
         threadLogic.setLoading(false)
     }
 
-    private fun onResult(threadLogic: ThreadLogic?, result: Result<List<Message>>, limit: Int) {
+    private fun onResult(threadLogic: ThreadLogic, result: Result<List<Message>>, limit: Int) {
         if (result is Result.Success) {
             val newMessages = result.value
-            threadLogic?.run {
-                upsertMessages(newMessages)
-                setEndOfOlderMessages(newMessages.size < limit)
-                updateOldestMessageInThread(newMessages)
-            }
+            threadLogic.updateOldestMessageInThread(newMessages)
+            threadLogic.setEndOfOlderMessages(newMessages.size < limit)
+            threadLogic.upsertMessages(newMessages)
         }
     }
 }
