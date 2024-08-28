@@ -726,7 +726,7 @@ public class MessageComposerController(
      */
     public fun selectMention(user: User) {
         val username = user.name.ifEmpty { user.id }
-        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@${username} "
+        val augmentedMessageText = "${messageText.substringBeforeLast("@")}@$username "
 
         setMessageInputInternal(augmentedMessageText, MessageInput.Source.MentionSelected)
         selectedMentions += user

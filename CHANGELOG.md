@@ -66,6 +66,7 @@
 
 ### ⬆️ Improved
 - `MessageOptionsDialogFragment` now uses `MessageListItemViewHolderFactory` to get item view type. [#5369](https://github.com/GetStream/stream-chat-android/pull/5369)
+- Default `MentionsViewHolder` uses `user.id` if `user.name` is empty. [#5384](https://github.com/GetStream/stream-chat-android/pull/5384)
 
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
@@ -86,6 +87,7 @@
 - Expose `topBarContent` and `bottomBarContent` in `MessageScreen`. [#5377](https://github.com/GetStream/stream-chat-android/pull/5377)
 
 ### ⬆️ Improved
+- `DefaultMentionSuggestionItemCenterContent` component uses `user.id` if `user.name` is empty. [#5384](https://github.com/GetStream/stream-chat-android/pull/5384)
 
 ### ✅ Added
 - Add `PollDialogs` component used to show poll dialogs. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
