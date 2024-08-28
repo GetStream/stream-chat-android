@@ -145,22 +145,8 @@ public fun MessagesScreen(
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
-    topBar: (
-        @Composable (
-            Modifier,
-            MessageComposerViewModel,
-            MessageListViewModel,
-            AttachmentsPickerViewModel,
-        ) -> Unit
-    )? = null,
-    bottomBar: (
-        @Composable (
-            Modifier,
-            MessageComposerViewModel,
-            MessageListViewModel,
-            AttachmentsPickerViewModel,
-        ) -> Unit
-    )? = null,
+    topBar: (@Composable (Modifier) -> Unit)? = null,
+    bottomBar: (@Composable (Modifier) -> Unit)? = null,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
@@ -224,7 +210,7 @@ public fun MessagesScreen(
                             onChannelAvatarClick = onChannelAvatarClick,
                         )
                     }
-                    topBar?.invoke(Modifier, composerViewModel, listViewModel, attachmentsPickerViewModel)
+                    topBar?.invoke(Modifier)
                         ?: defaultHeader.invoke()
                 }
             },
@@ -233,7 +219,7 @@ public fun MessagesScreen(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.Center)
-                bottomBar?.invoke(modifier, composerViewModel, listViewModel, attachmentsPickerViewModel)
+                bottomBar?.invoke(modifier)
                     ?: MessageComposer(
                         modifier = modifier,
                         viewModel = composerViewModel,
