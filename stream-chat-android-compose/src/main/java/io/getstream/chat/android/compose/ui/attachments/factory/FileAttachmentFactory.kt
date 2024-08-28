@@ -36,6 +36,7 @@ import io.getstream.chat.android.uiutils.extension.isAnyFileType
  */
 @Suppress("FunctionName")
 public fun FileAttachmentFactory(
+    showFileSize: (Attachment) -> Boolean = { true },
     onContentItemClick: (
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
@@ -57,6 +58,7 @@ public fun FileAttachmentFactory(
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentFileWidth),
             attachmentState = state,
+            showFileSize = showFileSize,
             onItemClick = onContentItemClick,
         )
     },

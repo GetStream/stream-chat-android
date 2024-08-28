@@ -98,6 +98,7 @@ public object StreamAttachmentFactories {
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
         ) -> Unit = ::onMediaAttachmentContentItemClick,
+        showFileSize: (Attachment) -> Boolean = { true },
         onFileContentItemClick: (
             previewHandlers: List<AttachmentPreviewHandler>,
             attachment: Attachment,
@@ -121,9 +122,9 @@ public object StreamAttachmentFactories {
             onContentItemClick = onMediaContentItemClick,
         ),
         FileAttachmentFactory(
+            showFileSize = showFileSize,
             onContentItemClick = onFileContentItemClick,
         ),
-        FileAttachmentFactory(),
         AudioRecordAttachmentFactory(),
         UnsupportedAttachmentFactory(),
     )
