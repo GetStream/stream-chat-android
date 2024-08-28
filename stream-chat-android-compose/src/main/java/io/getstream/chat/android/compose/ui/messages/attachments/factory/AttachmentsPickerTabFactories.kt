@@ -22,6 +22,17 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
  */
 public object AttachmentsPickerTabFactories {
 
+    public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> {
+        val otherFactories = defaultFactories(
+            imagesTabEnabled = false,
+            filesTabEnabled = false,
+            takeImageEnabled = true,
+            recordVideoEnabled = true,
+            pollEnabled = true
+        )
+        return listOf(AttachmentsPickerSystemTabFactory(otherFactories))
+    }
+
     /**
      * Builds the default list of attachment picker tab factories.
      *

@@ -232,6 +232,7 @@ public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     autoTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
+    useDefaultSystemMediaPicker: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -259,7 +260,12 @@ public fun ChatTheme(
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
-    attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
+    attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
+        if (useDefaultSystemMediaPicker) {
+            AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions()
+        } else {
+            AttachmentsPickerTabFactories.defaultFactories()
+        },
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
