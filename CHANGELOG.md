@@ -35,6 +35,7 @@
 
 ## stream-chat-android-state
 ### 🐞 Fixed
+- Fixed `ChannelState.watchers` not being updated when a watcher gets deleted. [#5378](https://github.com/GetStream/stream-chat-android/pull/5378)
 
 ### ⬆️ Improved
 
