@@ -102,7 +102,7 @@
         android:textDirection="locale"
         android:textSize="@dimen/stream_ui_text_small"
         android:visibility="gone"
-        android:text="@string/stream_ui_message_list_footntoe_edited_label"
+        android:text="@string/stream_ui_message_list_footnote_edited_label"
         tools:visibility="visible"
         />
     </androidx.appcompat.widget.LinearLayoutCompat>

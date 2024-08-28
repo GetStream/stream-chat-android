@@ -22,6 +22,8 @@ import android.os.Build
 import android.text.format.DateFormat
 import android.text.format.DateUtils
 import androidx.annotation.RequiresApi
+import io.getstream.chat.android.core.utils.date.isWithinDurationFromNow
+import io.getstream.chat.android.models.TimeDuration
 import io.getstream.chat.android.ui.common.R
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -174,13 +176,16 @@ internal class DefaultDateFormatter(
     override fun formatRelativeTime(date: Date?): String {
         date ?: return ""
 
-        return DateUtils.getRelativeDateTimeString(
-            dateContext.context(),
-            date.time,
-            DateUtils.MINUTE_IN_MILLIS,
-            DateUtils.WEEK_IN_MILLIS,
-            0,
-        ).toString()
+        return when (dateContext.isWithinLastMinute(date)) {
+            true -> dateContext.context().getString(R.string.stream_ui_message_list_footnote_edited_now)
+            else -> DateUtils.getRelativeDateTimeString(
+                dateContext.context(),
+                date.time,
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.WEEK_IN_MILLIS,
+                0,
+            ).toString()
+        }
     }
 
     /**
@@ -247,10 +252,34 @@ internal class DefaultDateFormatter(
     }
 
     interface DateContext {
+        /**
+         * Returns the current date-time.
+         */
         fun now(): Date
+
+        /**
+         * Returns true if the [date] is within the last minute.
+         */
+        fun isWithinLastMinute(date: Date?): Boolean
+
+        /**
+         * Returns the string representation of yesterday.
+         */
         fun yesterdayString(): String
+
+        /**
+         * Returns true if the device is set to 24-hour time format.
+         */
         fun is24Hour(): Boolean
+
+        /**
+         * Returns the date-time pattern for the current locale.
+         */
         fun dateTimePattern(): String
+
+        /**
+         * Returns the context.
+         */
         fun context(): Context
     }
 
@@ -258,6 +287,8 @@ internal class DefaultDateFormatter(
         private val context: Context,
         private val locale: Locale,
     ) : DateContext {
+
+        private val oneMinuteDuration = TimeDuration.minutes(1)
 
         private val dateTimePatternLazy by lazy {
             DateFormat.getBestDateTimePattern(locale, "yy MM dd")
@@ -271,6 +302,10 @@ internal class DefaultDateFormatter(
 
         override fun is24Hour(): Boolean {
             return DateFormat.is24HourFormat(context)
+        }
+
+        override fun isWithinLastMinute(date: Date?): Boolean {
+            return date.isWithinDurationFromNow(oneMinuteDuration)
         }
 
         override fun dateTimePattern(): String {
