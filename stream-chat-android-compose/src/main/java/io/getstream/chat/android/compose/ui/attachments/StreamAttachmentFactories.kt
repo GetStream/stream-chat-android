@@ -74,7 +74,7 @@ public object StreamAttachmentFactories {
      * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
      * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
-
+     * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */

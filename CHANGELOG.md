@@ -85,6 +85,7 @@
 - Fixed `Message.messageTextUpdatedAt` fluctuations within `MessageFooter` when editing a message. [#5374](https://github.com/GetStream/stream-chat-android/pull/5374)
 
 ### ⬆️ Improved
+- Added `showFileSize` parameter to `StreamAttachmentFactories.defaultFactories` to control file size UI visibility. [#5383](https://github.com/GetStream/stream-chat-android/pull/5383)
 
 ### ✅ Added
 - Add `PollDialogs` component used to show poll dialogs. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
