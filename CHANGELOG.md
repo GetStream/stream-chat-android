@@ -86,6 +86,7 @@
 - Expose `topBarContent` and `bottomBarContent` in `MessageScreen`. [#5377](https://github.com/GetStream/stream-chat-android/pull/5377)
 
 ### ⬆️ Improved
+- Added `showFileSize` parameter to `StreamAttachmentFactories.defaultFactories` to control file size UI visibility. [#5383](https://github.com/GetStream/stream-chat-android/pull/5383)
 
 ### ✅ Added
 - Add `PollDialogs` component used to show poll dialogs. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
