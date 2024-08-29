@@ -205,6 +205,11 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
     private var fileSharingJob: Job? = null
 
     /**
+     * The current state of the screen.
+     */
+    private var uiState: MediaGalleryPreviewActivityState? = null
+
+    /**
      * The ViewModel that exposes screen data.
      */
     private val mediaGalleryPreviewViewModel by viewModels<MediaGalleryPreviewViewModel>(factoryProducer = { factory })
@@ -216,16 +221,18 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mediaGalleryPreviewActivityState = intent?.getParcelableExtra<MediaGalleryPreviewActivityState>(
-            KeyMediaGalleryPreviewActivityState,
-        )
+
+        uiState = savedInstanceState?.getParcelable(
+            KeyMediaGalleryPreviewActivityState
+        ) ?: intent?.getParcelableExtra(KeyMediaGalleryPreviewActivityState)
+
         val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
         val streamCdnImageResizing = intent?.createStreamCdnImageResizing()
             ?: StreamCdnImageResizing.defaultStreamCdnImageResizing()
-        val messageId = mediaGalleryPreviewActivityState?.messageId ?: ""
+        val messageId = uiState?.messageId ?: ""
 
         if (!mediaGalleryPreviewViewModel.hasCompleteMessage) {
-            val message = mediaGalleryPreviewActivityState?.toMessage()
+            val message = uiState?.toMessage()
 
             if (message != null) {
                 mediaGalleryPreviewViewModel.message = message
@@ -254,6 +261,13 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
 
                 MediaGalleryPreviewContentWrapper(message, attachmentPosition)
             }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        uiState?.also {
+            outState.putParcelable(KeyMediaGalleryPreviewActivityState, it)
         }
     }
 
