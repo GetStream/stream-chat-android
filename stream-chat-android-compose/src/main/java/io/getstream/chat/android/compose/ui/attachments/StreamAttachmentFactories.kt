@@ -74,7 +74,7 @@ public object StreamAttachmentFactories {
      * @param onGiphyContentItemClick Lambda called when a giphy attachment content item gets clicked.
      * @param onMediaContentItemClick Lambda called when a image or video attachment content item gets clicked.
      * @param onFileContentItemClick Lambda called when a file attachment content item gets clicked.
-
+     * @param showFileSize Lambda called to determine if the file size should be shown for a given attachment.
      *
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
@@ -98,6 +98,7 @@ public object StreamAttachmentFactories {
             streamCdnImageResizing: StreamCdnImageResizing,
             skipEnrichUrl: Boolean,
         ) -> Unit = ::onMediaAttachmentContentItemClick,
+        showFileSize: (Attachment) -> Boolean = { true },
         onFileContentItemClick: (
             previewHandlers: List<AttachmentPreviewHandler>,
             attachment: Attachment,
@@ -121,9 +122,9 @@ public object StreamAttachmentFactories {
             onContentItemClick = onMediaContentItemClick,
         ),
         FileAttachmentFactory(
+            showFileSize = showFileSize,
             onContentItemClick = onFileContentItemClick,
         ),
-        FileAttachmentFactory(),
         AudioRecordAttachmentFactory(),
         UnsupportedAttachmentFactory(),
     )
