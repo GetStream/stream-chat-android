@@ -223,7 +223,7 @@ public class MediaGalleryPreviewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         uiState = savedInstanceState?.getParcelable(
-            KeyMediaGalleryPreviewActivityState
+            KeyMediaGalleryPreviewActivityState,
         ) ?: intent?.getParcelableExtra(KeyMediaGalleryPreviewActivityState)
 
         val videoThumbnailsEnabled = intent?.getBooleanExtra(KeyVideoThumbnailsEnabled, true) ?: true
