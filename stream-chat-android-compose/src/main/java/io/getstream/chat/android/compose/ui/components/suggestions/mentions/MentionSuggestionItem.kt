@@ -114,22 +114,26 @@ internal fun RowScope.DefaultMentionSuggestionItemCenterContent(user: User) {
     Column(
         modifier = Modifier
             .weight(1f)
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .align(Alignment.CenterVertically),
     ) {
+        val username = "@${user.id}"
         Text(
-            text = user.name,
+            text = user.name.ifEmpty { username },
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textHighEmphasis,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Text(
-            text = "@${user.id}",
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        if (user.name.isNotEmpty()) {
+            Text(
+                text = username,
+                style = ChatTheme.typography.body,
+                color = ChatTheme.colors.textLowEmphasis,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 

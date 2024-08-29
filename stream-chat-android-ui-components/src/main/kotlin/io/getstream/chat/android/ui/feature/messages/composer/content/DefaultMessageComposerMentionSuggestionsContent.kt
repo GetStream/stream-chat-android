@@ -206,7 +206,9 @@ private class MentionsViewHolder(
         binding.userAvatarView.doOnLayout {
             binding.userAvatarView.setUser(item)
         }
-        binding.usernameTextView.text = item.name
-        binding.mentionNameTextView.text = String.format(mentionTemplateText, item.name.lowercase())
+        val username = String.format(mentionTemplateText, item.id.lowercase())
+        binding.usernameTextView.text = item.name.ifEmpty { username }
+        binding.mentionNameTextView.isVisible = item.name.isNotEmpty()
+        binding.mentionNameTextView.text = username
     }
 }
