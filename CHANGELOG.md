@@ -87,6 +87,7 @@
 
 ### ⬆️ Improved
 - Added `showFileSize` parameter to `StreamAttachmentFactories.defaultFactories` to control file size UI visibility. [#5383](https://github.com/GetStream/stream-chat-android/pull/5383)
+- Made `MessagesScreen` edge-to-edge friendly. [#5386](https://github.com/GetStream/stream-chat-android/pull/5386)
 
 ### ✅ Added
 - Add `PollDialogs` component used to show poll dialogs. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
