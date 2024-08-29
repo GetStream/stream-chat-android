@@ -313,8 +313,7 @@ internal fun DefaultTopBarContent(
 
     MessageListHeader(
         modifier = Modifier
-            .height(56.dp)
-            .systemBarsPadding(),
+            .height(56.dp),
         channel = listViewModel.channel,
         currentUser = user,
         typingUsers = listViewModel.typingUsers,
