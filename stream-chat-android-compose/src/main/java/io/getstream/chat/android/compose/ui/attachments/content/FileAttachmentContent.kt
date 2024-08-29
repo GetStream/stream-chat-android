@@ -78,6 +78,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    showFileSize: (Attachment) -> Boolean = { true },
     onItemClick: (
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
@@ -108,6 +109,7 @@ public fun FileAttachmentContent(
                         onLongClick = { onItemLongClick(message) },
                     ),
                 attachment = attachment,
+                showFileSize = showFileSize,
             )
         }
     }
@@ -122,6 +124,7 @@ public fun FileAttachmentContent(
 @Composable
 public fun FileAttachmentItem(
     attachment: Attachment,
+    showFileSize: (Attachment) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -137,7 +140,7 @@ public fun FileAttachmentItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             FileAttachmentImage(attachment = attachment)
-            FileAttachmentDescription(attachment = attachment)
+            FileAttachmentDescription(attachment = attachment, showFileSize = showFileSize)
             FileAttachmentDownloadIcon(attachment = attachment)
         }
     }
@@ -150,7 +153,10 @@ public fun FileAttachmentItem(
  *  @param attachment The attachment for which the information is displayed.
  */
 @Composable
-private fun FileAttachmentDescription(attachment: Attachment) {
+private fun FileAttachmentDescription(
+    attachment: Attachment,
+    showFileSize: (Attachment) -> Boolean,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth(0.85f)
@@ -166,11 +172,13 @@ private fun FileAttachmentDescription(attachment: Attachment) {
             color = ChatTheme.colors.textHighEmphasis,
         )
 
-        Text(
-            text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
-        )
+        if (showFileSize(attachment)) {
+            Text(
+                text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        }
     }
 }
 
