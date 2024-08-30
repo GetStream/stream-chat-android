@@ -649,7 +649,7 @@ public fun BoxScope.AttachmentsPickerMenu(
             targetValue = when {
                 isFullScreenContent -> screenHeight.dp
                 ChatTheme.useDefaultSystemMediaPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
-                else  -> ChatTheme.dimens.attachmentsPickerHeight
+                else -> ChatTheme.dimens.attachmentsPickerHeight
             },
             label = "full sized picker animation",
         )
