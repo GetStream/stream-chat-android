@@ -195,17 +195,19 @@ private fun InnerContent(params: InnerContentParams, actions: InnerContentAction
         mutableStateOf(false)
     }
 
-    DialogContent(
+    DialogContent(DialogContentParams(
         pollsFactory = pollsFactory,
         mediaCaptureTabFactory = mediaCaptureTabFactory,
         mediaSelected = mediaSelected,
         pollSelected = pollSelected,
-        onAttachmentPickerAction = actions.onAttachmentPickerAction,
         attachments = params.attachments,
+    ), DialogContentActions(
+        onAttachmentPickerAction = actions.onAttachmentPickerAction,
         onAttachmentsChanged = actions.onAttachmentsChanged,
         onAttachmentItemSelected = actions.onAttachmentItemSelected,
         onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
         onDismissPollDialog = { pollSelected = false }
+    )
     )
 
     ButtonRow(
@@ -217,34 +219,23 @@ private fun InnerContent(params: InnerContentParams, actions: InnerContentAction
 }
 
 @Composable
-private fun DialogContent(
-    pollsFactory: AttachmentsPickerTabFactory?,
-    mediaCaptureTabFactory: AttachmentsPickerTabFactory?,
-    mediaSelected: Boolean,
-    pollSelected: Boolean,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-    attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    onDismissPollDialog: () -> Unit,
-) {
-    if (mediaSelected) {
-        mediaCaptureTabFactory?.PickerTabContent(
-            onAttachmentPickerAction = onAttachmentPickerAction,
-            attachments = attachments,
-            onAttachmentsChanged = onAttachmentsChanged,
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
+private fun DialogContent(params: DialogContentParams, actions: DialogContentActions) {
+    if (params.mediaSelected) {
+        params.mediaCaptureTabFactory?.PickerTabContent(
+            onAttachmentPickerAction = actions.onAttachmentPickerAction,
+            attachments = params.attachments,
+            onAttachmentsChanged = actions.onAttachmentsChanged,
+            onAttachmentItemSelected = actions.onAttachmentItemSelected,
+            onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
         )
     }
 
-    if (pollSelected) {
+    if (params.pollSelected) {
         Dialog(
             properties = DialogProperties(
                 usePlatformDefaultWidth = false,
             ),
-            onDismissRequest = onDismissPollDialog,
+            onDismissRequest = actions.onDismissPollDialog,
         ) {
             Box(
                 modifier = Modifier
@@ -252,12 +243,12 @@ private fun DialogContent(
                     .fillMaxWidth()
                     .fillMaxHeight(), // Ensure the dialog fills the height
             ) {
-                pollsFactory?.PickerTabContent(
-                    onAttachmentPickerAction = onAttachmentPickerAction,
-                    attachments = attachments,
-                    onAttachmentsChanged = onAttachmentsChanged,
-                    onAttachmentItemSelected = onAttachmentItemSelected,
-                    onAttachmentsSubmitted = onAttachmentsSubmitted,
+                params.pollsFactory?.PickerTabContent(
+                    onAttachmentPickerAction = actions.onAttachmentPickerAction,
+                    attachments = params.attachments,
+                    onAttachmentsChanged = actions.onAttachmentsChanged,
+                    onAttachmentItemSelected = actions.onAttachmentItemSelected,
+                    onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
                 )
             }
         }
@@ -368,6 +359,8 @@ private fun RoundedIconButton(
     }
 }
 
+//  Data classes to combine parameters.
+
 private data class InnerContentParams(
     val otherFactories: List<AttachmentsPickerTabFactory>,
     val attachments: List<AttachmentPickerItemState>,
@@ -380,4 +373,20 @@ private data class InnerContentActions(
     val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     val onFilesClick: () -> Unit,
     val onImagesClick: () -> Unit,
+)
+
+private data class DialogContentActions(
+    val onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    val onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+    val onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+    val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    val onDismissPollDialog: () -> Unit,
+)
+
+private data class DialogContentParams(
+    val pollsFactory: AttachmentsPickerTabFactory?,
+    val mediaCaptureTabFactory: AttachmentsPickerTabFactory?,
+    val mediaSelected: Boolean,
+    val pollSelected: Boolean,
+    val attachments: List<AttachmentPickerItemState>,
 )
