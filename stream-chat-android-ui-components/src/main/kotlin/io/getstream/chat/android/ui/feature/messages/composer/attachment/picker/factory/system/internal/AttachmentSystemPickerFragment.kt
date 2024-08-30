@@ -124,7 +124,11 @@ internal class AttachmentSystemPickerFragment : Fragment() {
             filePickerLauncher.launch(filePickerIntent)
         }
         binding.buttonMedia.setOnClickListener {
-            imagePickerLauncher.launch(PickVisualMediaRequest(mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+            imagePickerLauncher.launch(
+                PickVisualMediaRequest(
+                    mediaType = ActivityResultContracts.PickVisualMedia.ImageAndVideo,
+                ),
+            )
         }
         captureMedia = activity?.activityResultRegistry
             ?.register(

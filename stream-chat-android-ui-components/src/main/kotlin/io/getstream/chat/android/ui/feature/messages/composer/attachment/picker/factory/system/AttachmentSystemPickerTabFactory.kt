@@ -59,7 +59,7 @@ public class AttachmentSystemPickerTabFactory(
                 fileAttachmentsTabEnabled,
                 cameraAttachmentsTabEnabled,
                 pollAttachmentsTabEnabled,
-            )
+            ),
         )
     }
 }

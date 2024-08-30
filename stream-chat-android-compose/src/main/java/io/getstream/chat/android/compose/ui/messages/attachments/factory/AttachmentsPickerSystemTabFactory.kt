@@ -167,8 +167,8 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
                 // Start photo picker
                 imagePickerLauncher.launch(
                     PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageAndVideo
-                    )
+                        ActivityResultContracts.PickVisualMedia.ImageAndVideo,
+                    ),
                 )
             },
         )
@@ -210,14 +210,14 @@ private fun InnerContent(
         onAttachmentsChanged = onAttachmentsChanged,
         onAttachmentItemSelected = onAttachmentItemSelected,
         onAttachmentsSubmitted = onAttachmentsSubmitted,
-        onDismissPollDialog = { pollSelected = false }
+        onDismissPollDialog = { pollSelected = false },
     )
 
     ButtonRow(
         onFilesClick = onFilesClick,
         onImagesClick = onImagesClick,
         onMediaClick = { mediaSelected = !mediaSelected },
-        onPollClick = { pollSelected = !pollSelected }
+        onPollClick = { pollSelected = !pollSelected },
     )
 }
 
@@ -232,7 +232,7 @@ private fun DialogContent(
     onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
     onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    onDismissPollDialog: () -> Unit
+    onDismissPollDialog: () -> Unit,
 ) {
     if (mediaSelected) {
         mediaCaptureTabFactory?.PickerTabContent(
@@ -274,7 +274,7 @@ private fun ButtonRow(
     onFilesClick: () -> Unit,
     onImagesClick: () -> Unit,
     onMediaClick: () -> Unit,
-    onPollClick: () -> Unit
+    onPollClick: () -> Unit,
 ) {
     val buttons = listOf<@Composable () -> Unit>(
         {
@@ -308,7 +308,7 @@ private fun ButtonRow(
                 contentDescription = stringResource(id = R.string.stream_compose_poll_option),
                 text = stringResource(id = R.string.stream_compose_poll_option),
             )
-        }
+        },
     )
 
     Row(
