@@ -1094,7 +1094,7 @@ public data class MessageComposerViewStyle(
                     attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(
                         context,
                         useDefaultSystemPicker,
-                        a
+                        a,
                     ),
                     useSystemFilePicker = useDefaultSystemPicker,
                     audioRecordPlayerViewStyle = playerViewStyle,
