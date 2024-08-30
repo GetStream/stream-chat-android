@@ -1,22 +1,23 @@
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-# Pick files without permissions.
+# System Media Picker
+
 Sometimes its not desirable for an app to have the `READ_MEDIA_IMAGES` and `READ_MEDIA_VIDEO` permissions.
 In this guide, we will explain how to set up the new `useDefaultSystemMediaPicker` parameter in both `ChatTheme` and `ChatUI`, why it is important, and how to remove permissions from the `AndroidManifest.xml` using `tools:node="remove"`.
 
-### Why `useDefaultSystemMediaPicker` is Important
+### The importance of System Media Picker
 
-The `useDefaultSystemMediaPicker` parameter allows you to use the system's default file picker instead of the custom file picker provided by the library. This can be beneficial for several reasons:
-- **Consistency**: Provides a consistent user experience by using the familiar system file picker.
-- **Permissions**: Reduces the need for additional permissions, as the system file picker handles permissions internally.
-- **Simplicity**: Simplifies the implementation by leveraging the built-in functionality of the system file picker.
+The `useDefaultSystemMediaPicker` parameter allows you to use the system's default media picker instead of the custom media picker provided by the library. This can be beneficial for several reasons:
+- **Consistency**: Provides a consistent user experience by using the familiar system media picker.
+- **Permissions**: Reduces the need for additional permissions, as the system media picker handles permissions internally.
+- **Simplicity**: Simplifies the implementation by leveraging the built-in functionality of the system media picker.
 
-### Setting Up `useDefaultSystemMediaPicker`
+### Setting Up System Media Picker
 
-#### In `ChatTheme`
+#### In Compose UI
 
-To enable the system default picker in `ChatTheme`, set the `useDefaultSystemMediaPicker` parameter to `true` when initializing the theme.
+To enable the system media picker in `ChatTheme`, set the `useDefaultSystemMediaPicker` parameter to `true` when initializing the theme.
 
 ```kotlin
 ChatTheme(
@@ -26,17 +27,50 @@ ChatTheme(
 }
 ```
 
-#### In `ChatUI`
+#### In XML-based UI
 
-You cannot directly set this property in `ChatUI`. Instead you need to pass it via the `MessageComposerView` or more specifically its style.
-The property is called `useDefaultSystemPicker`.
+There are two options for enabling usage of the system media picker in XML-based UI: `XML attributes` and `StyleTransformer`.
 
-````
-Now, let's remove the permissions from the `AndroidManifest.xml`.
+Let's start with the `XML Attributes` option. 
+You can enable the system media picker by setting the `streamUiMessageComposerAttachmentsPickerSystemPickerEnabled` attribute to `true` in the `MessageComposerView` XML layout.
 
-### Removing Permissions from AndroidManifest.xml
+```xml
+<io.getstream.chat.android.ui.feature.messages.composer.MessageComposerView
+  android:id="@+id/messageComposerView"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  app:streamUiMessageComposerAttachmentsPickerSystemPickerEnabled="true"
+  />
+```
 
-When using the system default picker, you can remove unnecessary permissions from your `AndroidManifest.xml` to streamline your app's permission requests. Use the `tools:node="remove"` attribute to remove permissions.
+You can also enable the system media picker using the `StyleTransformer` as shown below. 
+
+```kotlin
+// Set the property directly in the AttachmentsPickerDialogStyle
+TransformStyle.attachmentsPickerStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        useDefaultSystemMediaPicker = true,
+    )
+}
+
+// Or set the property in the MessageComposerStyle
+TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+    defaultStyle.copy(
+        attachmentsPickerDialogStyle = defaultStyle.attachmentsPickerDialogStyle.copy(
+            useDefaultSystemMediaPicker = true,
+        ),
+    )
+}
+```
+
+Please be advised that setting `useDefaultSystemMediaPicker` in `MessageComposerStyle` will override the value set in `AttachmentsPickerDialogStyle`.
+
+### Removing Permissions from your Project
+
+Let's remove the permissions from the `AndroidManifest.xml`.
+
+When using the system media picker, you can remove unnecessary permissions from your `AndroidManifest.xml` to streamline your app's permission requests. 
+Use the `tools:node="remove"` attribute to remove permissions.
 
 ```xml
 <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
