@@ -285,7 +285,7 @@ public data class MessageComposerViewStyle(
     public val messageReplyTextStyleTheirs: TextStyle,
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
-    public val useSystemFilePicker: Boolean,
+    public val useDefaultSystemMediaPicker: Boolean,
     public val attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle,
     public val audioRecordPlayerViewStyle: AudioRecordPlayerViewStyle?,
 ) : ViewStyle {
@@ -979,7 +979,7 @@ public data class MessageComposerViewStyle(
                     }
                 }
 
-                val useDefaultSystemPicker = a.getBoolean(
+                val useDefaultSystemMediaPicker = a.getBoolean(
                     R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
                     false,
                 )
@@ -1093,10 +1093,10 @@ public data class MessageComposerViewStyle(
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
                     attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(
                         context,
-                        useDefaultSystemPicker,
+                        useDefaultSystemMediaPicker,
                         a,
                     ),
-                    useSystemFilePicker = useDefaultSystemPicker,
+                    useDefaultSystemMediaPicker = useDefaultSystemMediaPicker,
                     audioRecordPlayerViewStyle = playerViewStyle,
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }

@@ -1258,7 +1258,7 @@ public final class io/getstream/chat/android/ui/feature/messages/composer/Messag
 	public final fun getSendMessageButtonIconTintList ()Landroid/content/res/ColorStateList;
 	public final fun getSendMessageButtonPadding ()I
 	public final fun getSendMessageButtonWidth ()I
-	public final fun getUseSystemFilePicker ()Z
+	public final fun getUseDefaultSystemMediaPicker ()Z
 	public fun hashCode ()I
 	public final fun toMessageReplyStyle ()Lio/getstream/chat/android/ui/feature/messages/list/MessageReplyStyle;
 	public fun toString ()Ljava/lang/String;
