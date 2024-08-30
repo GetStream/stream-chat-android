@@ -189,6 +189,9 @@ io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory
 io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.camera
 io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.file
 io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.media
+io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.poll
+io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system
+io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll
 io.getstream.chat.android.ui.feature.messages.composer.attachment.preview
 io.getstream.chat.android.ui.feature.messages.composer.attachment.preview.factory
 io.getstream.chat.android.ui.feature.messages.composer.content
