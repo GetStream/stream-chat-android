@@ -119,6 +119,7 @@
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
 - Create a new UI to create a poll message. [#5361](https://github.com/GetStream/stream-chat-android/pull/5361)
+- Added system attachment picker to select media without extra permissions. [#5380](https://github.com/GetStream/stream-chat-android/pull/5380) 
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -141,6 +142,7 @@
 - Add `MessageModerationDialog` component used for message that needs to be moderated. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 - Add `AttachmentsPickerMenu` component used to show the attachment picker menu. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 - Add `MessageMenus` component used to prompt the user with message actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Added system attachment picker to select media without extra permissions. [#5380](https://github.com/GetStream/stream-chat-android/pull/5380)
 
 # August 09th, 2024 - 6.4.4
 ## stream-chat-android-core
