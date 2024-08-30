@@ -34,6 +34,7 @@ import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 
+@Suppress("TooManyFunctions")
 internal class QueryChannelsStateLogic(
     private val mutableState: QueryChannelsMutableState,
     private val stateRegistry: StateRegistry,
@@ -145,7 +146,10 @@ internal class QueryChannelsStateLogic(
         val existingChannels = mutableState.rawChannels ?: emptyMap()
         mutableState.setChannels(
             existingChannels +
-                channels.map { it.cid to it.joinMessages(existingChannels[it.cid]) },
+                channels.map {
+                    it.cid to it.joinMessages(existingChannels[it.cid])
+                        .joinMembers(existingChannels[it.cid])
+                },
         )
         channels.map { channel ->
             coroutineScope.async {
@@ -165,6 +169,24 @@ internal class QueryChannelsStateLogic(
             messages = ((existingChannel?.messages ?: emptyList()) + messages)
                 .distinctBy { it.id },
         )
+
+    /**
+     * The list of members is merged with the existing list of members but only used if it is smaller than the
+     * number of members in the channel.
+     *
+     * @param existingChannel Channel? The existing channel.
+     *
+     * @return Channel The channel with the members list updated.
+     */
+    private fun Channel.joinMembers(existingChannel: Channel?): Channel =
+        existingChannel?.let { oldChannel ->
+            val members = (members.associateBy { it.getUserId() } + (oldChannel.members.associateBy { it.getUserId() }))
+                .takeUnless { it.size > memberCount }
+                ?.values
+                ?.toList()
+                ?: members
+            copy(members = members)
+        } ?: this
 
     /**
      * Remove channels to state.

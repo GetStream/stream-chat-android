@@ -38,6 +38,7 @@
 - Fixed `ChannelState.watchers` not being updated when a watcher gets deleted. [#5378](https://github.com/GetStream/stream-chat-android/pull/5378)
 
 ### ⬆️ Improved
+- Keep members updated on QueryChannelsState. [5382](https://github.com/GetStream/stream-chat-android/pull/5382) 
 
 ### ✅ Added
 
@@ -66,6 +67,7 @@
 
 ### ⬆️ Improved
 - `MessageOptionsDialogFragment` now uses `MessageListItemViewHolderFactory` to get item view type. [#5369](https://github.com/GetStream/stream-chat-android/pull/5369)
+- Default `MentionsViewHolder` uses `user.id` if `user.name` is empty. [#5384](https://github.com/GetStream/stream-chat-android/pull/5384)
 
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
@@ -86,6 +88,7 @@
 - Expose `topBarContent` and `bottomBarContent` in `MessageScreen`. [#5377](https://github.com/GetStream/stream-chat-android/pull/5377)
 
 ### ⬆️ Improved
+- `DefaultMentionSuggestionItemCenterContent` component uses `user.id` if `user.name` is empty. [#5384](https://github.com/GetStream/stream-chat-android/pull/5384)
 - Added `showFileSize` parameter to `StreamAttachmentFactories.defaultFactories` to control file size UI visibility. [#5383](https://github.com/GetStream/stream-chat-android/pull/5383)
 
 ### ✅ Added
