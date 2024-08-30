@@ -1091,7 +1091,11 @@ public data class MessageComposerViewStyle(
                     messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
-                    attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, useDefaultSystemPicker, a),
+                    attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(
+                        context,
+                        useDefaultSystemPicker,
+                        a
+                    ),
                     useSystemFilePicker = useDefaultSystemPicker,
                     audioRecordPlayerViewStyle = playerViewStyle,
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
@@ -1099,7 +1103,11 @@ public data class MessageComposerViewStyle(
         }
 
         @Suppress("MaxLineLength", "LongMethod", "ComplexMethod")
-        private fun createAttachmentPickerDialogStyle(context: Context, useDefaultSystemPicker: Boolean, a: TypedArray): AttachmentsPickerDialogStyle {
+        private fun createAttachmentPickerDialogStyle(
+            context: Context,
+            useDefaultSystemPicker: Boolean,
+            a: TypedArray,
+        ): AttachmentsPickerDialogStyle {
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
                 context.getColorCompat(R.color.stream_ui_white_smoke),
