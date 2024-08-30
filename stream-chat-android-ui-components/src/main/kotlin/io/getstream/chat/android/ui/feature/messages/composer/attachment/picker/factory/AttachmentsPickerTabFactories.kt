@@ -20,7 +20,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.file.AttachmentsPickerFileTabFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.media.AttachmentsPickerMediaTabFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.poll.AttachmentsPickerPollTabFactory
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.AttachmentsSystemPickerTabFactory
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.AttachmentsPickerSystemTabFactory
 
 /**
  * Provides the default list of tab factories for the attachment picker.
@@ -34,7 +34,7 @@ public object AttachmentsPickerTabFactories {
         pollAttachmentsTabEnabled: Boolean,
     ): List<AttachmentsPickerTabFactory> {
         return listOf(
-            AttachmentsSystemPickerTabFactory(
+            AttachmentsPickerSystemTabFactory(
                 mediaAttachmentsTabEnabled,
                 fileAttachmentsTabEnabled,
                 cameraAttachmentsTabEnabled,
