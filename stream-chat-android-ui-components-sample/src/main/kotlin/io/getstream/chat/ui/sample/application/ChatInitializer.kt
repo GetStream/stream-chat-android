@@ -189,21 +189,6 @@ class ChatInitializer(
             )
         }*/
 
-        TransformStyle.attachmentsPickerStyleTransformer = StyleTransformer { defaultStyle ->
-            defaultStyle.copy(
-                useDefaultSystemMediaPicker = false,
-            )
-        }
-
-        TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
-            defaultStyle.copy(
-                // useDefaultSystemMediaPicker = true,
-                attachmentsPickerDialogStyle = defaultStyle.attachmentsPickerDialogStyle.copy(
-                    useDefaultSystemMediaPicker = true,
-                ),
-            )
-        }
-
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }
 }
