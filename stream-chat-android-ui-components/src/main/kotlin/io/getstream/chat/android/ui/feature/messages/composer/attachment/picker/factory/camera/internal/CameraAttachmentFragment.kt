@@ -145,7 +145,7 @@ internal class CameraAttachmentFragment : Fragment() {
         _binding = null
     }
 
-    private object LauncherRequestsKeys {
+    internal object LauncherRequestsKeys {
         const val CAPTURE_MEDIA = "capture_media_request_key"
     }
 
@@ -165,7 +165,7 @@ internal class CameraAttachmentFragment : Fragment() {
         /**
          * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
          */
-        private val PickerMediaMode.mode: CaptureMediaContract.Mode
+        internal val PickerMediaMode.mode: CaptureMediaContract.Mode
             get() = when (this) {
                 PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
                 PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO

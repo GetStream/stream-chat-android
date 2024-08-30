@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.log.taggedLogger
 
 /**
  * A filter that is used to filter out attachments that will not be accepted by the backend.
@@ -34,6 +35,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMet
 public class AttachmentFilter(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
+    private val logger by taggedLogger("AttachmentFilter")
     /**
      * Filters out attachments that can be uploaded to the backend according to files
      * and images upload configurations.
@@ -65,6 +67,29 @@ public class AttachmentFilter(
                 blockedMimeTypes = if (isImage) blockedImageMimeTypes else blockedFileMimeTypes,
             )
         }
+    }
+
+    /**
+     * Returns the list of supported MIME types by the server according to the upload config values.
+     */
+    public fun getSupportedMimeTypes(): List<String> {
+        val default = listOf("*/*") // All files
+        val fileUploadConfig = chatClient.getAppSettings().app.fileUploadConfig
+        val imageUploadConfig = chatClient.getAppSettings().app.imageUploadConfig
+
+        // Allowed
+        val allowedFileMimeTypes = fileUploadConfig.allowedMimeTypes.toTypedArray()
+        val allowedImageMimeTypes = imageUploadConfig.allowedMimeTypes.toTypedArray()
+        // Blocked
+        val blockedFileMimeTypes = fileUploadConfig.blockedMimeTypes.toTypedArray()
+        val blockedImageMimeTypes = imageUploadConfig.blockedMimeTypes.toTypedArray()
+
+        // Combined
+        val allowed = allowedFileMimeTypes + allowedImageMimeTypes
+        val blocked = blockedFileMimeTypes + blockedImageMimeTypes
+        val result = allowed.filterNot { it in blocked }
+        logger.d { "Supported MIME types: $result" }
+        return result.ifEmpty { default }
     }
 
     /**

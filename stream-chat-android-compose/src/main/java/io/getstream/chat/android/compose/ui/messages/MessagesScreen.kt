@@ -644,7 +644,13 @@ public fun BoxScope.AttachmentsPickerMenu(
         var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
         val screenHeight = LocalConfiguration.current.screenHeightDp
         val pickerHeight by animateDpAsState(
-            targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
+            targetValue = if (isFullScreenContent) screenHeight.dp else {
+                if (ChatTheme.useDefaultSystemMediaPicker) {
+                    220.dp
+                } else {
+                    ChatTheme.dimens.attachmentsPickerHeight
+                }
+            },
             label = "full sized picker animation",
         )
 

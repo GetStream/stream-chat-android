@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
@@ -24,6 +26,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -39,7 +42,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -126,17 +131,21 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
     ) {
 
         val context = LocalContext.current
+        val attachmentFilter = AttachmentFilter()
         val storageHelper: StorageHelperWrapper = remember {
-            StorageHelperWrapper(context, StorageHelper(), AttachmentFilter())
+            StorageHelperWrapper(context, StorageHelper(), attachmentFilter)
         }
 
         val filePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.GetContent()
-        ) { uri: Uri? ->
+            contract = ActivityResultContracts.StartActivityForResult()
+        ) { result ->
             // Handle the file URI
-            uri?.let {
-                val attachmentMetadata = storageHelper.getAttachmentsMetadataFromUris(listOf(uri))
-                onAttachmentsSubmitted(attachmentMetadata)
+            if (result.resultCode == Activity.RESULT_OK) {
+                val uri = result.data?.data
+                uri?.let {
+                    val attachmentMetadata = storageHelper.getAttachmentsMetadataFromUris(listOf(uri))
+                    onAttachmentsSubmitted(attachmentMetadata)
+                }
             }
         }
 
@@ -159,7 +168,13 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
             otherFactories = otherFactories,
             onFilesClick = {
                 // Start file picker
-                filePickerLauncher.launch("*/*")
+                val filePickerIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                    type = "*/*" // General type to include multiple types
+                    putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
+                    addCategory(Intent.CATEGORY_OPENABLE)
+                }
+
+                filePickerLauncher.launch(filePickerIntent)
             },
             onImagesClick = {
                 // Start photo picker
@@ -260,14 +275,16 @@ private fun InnerContent(
         }
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = Modifier.fillMaxWidth(),
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         horizontalArrangement = Arrangement.Center,
-        verticalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        items(buttons.size) { index ->
-            buttons[index]()
+        buttons.forEach { button ->
+            button()
         }
     }
 }
@@ -278,9 +295,7 @@ private fun RoundedIconButton(
     iconPainter: Painter,
     contentDescription: String,
     text: String,
-    borderColor: Color = colorResource(id = R.color.stream_compose_primary_accent),
-    borderWidth: Dp = 2.dp,
-    iconTint: Color = ChatTheme.colors.primaryAccent,
+    iconTint: Color = ChatTheme.colors.overlayDark,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -293,21 +308,23 @@ private fun RoundedIconButton(
             backgroundColor = ChatTheme.colors.barsBackground,
             modifier = Modifier
                 .clip(CircleShape)
-                .size(72.dp) // Ensure the Card is circular
+                .size(72.dp)
+                .padding(12.dp)
                 .clickable(onClick = onClick)
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
+                    .clip(CircleShape)
                     .fillMaxSize()
-                    .border(BorderStroke(borderWidth, borderColor), shape = CircleShape)
-                    .padding(8.dp)
             ) {
                 Icon(
                     painter = iconPainter,
                     contentDescription = contentDescription,
                     tint = iconTint,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier
+                        .size(48.dp)
+                        .padding(12.dp)
                 )
             }
         }

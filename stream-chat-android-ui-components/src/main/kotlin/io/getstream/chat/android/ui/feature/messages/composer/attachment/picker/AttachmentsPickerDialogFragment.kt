@@ -22,8 +22,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckedTextView
 import android.widget.FrameLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.descendants
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.card.MaterialCardView
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.ui.R
@@ -171,6 +174,21 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
             attachmentsPickerTabListener = attachmentsPickerTabListener,
         )
         binding.attachmentPager.isUserInputEnabled = false
+        setupPagerContainerHeight()
+    }
+
+    private fun setupPagerContainerHeight() {
+        val pagerContainer = binding.root.findViewById<MaterialCardView>(R.id.pagerContainer)
+        val viewPager = binding.root.findViewById<ViewPager2>(R.id.attachmentPager)
+
+        viewPager.adapter?.let { adapter ->
+            if (adapter.itemCount == 1) {
+                val layoutParams = pagerContainer.layoutParams
+                layoutParams.height = ConstraintLayout.LayoutParams.WRAP_CONTENT
+                pagerContainer.layoutParams = layoutParams
+            }
+        }
+        pagerContainer.requestLayout()
     }
 
     override fun onDestroyView() {
@@ -262,13 +280,23 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
          */
         public fun newInstance(
             style: AttachmentsPickerDialogStyle,
-            attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories
-                .defaultFactories(
-                    mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
-                    fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
-                    cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,
-                    pollAttachmentsTabEnabled = style.pollAttachmentsTabEnabled,
-                ),
+            attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
+                if (style.useSystemPicker) {
+                    AttachmentsPickerTabFactories
+                        .defaultFactoriesWithoutPermission(
+                            mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
+                            fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
+                            cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,
+                            pollAttachmentsTabEnabled = style.pollAttachmentsTabEnabled,
+                        )
+                } else {
+                    AttachmentsPickerTabFactories.defaultFactories(
+                        mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
+                        fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
+                        cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,
+                        pollAttachmentsTabEnabled = style.pollAttachmentsTabEnabled,
+                    )
+                },
         ): AttachmentsPickerDialogFragment {
             return AttachmentsPickerDialogFragment().apply {
                 setStyle(style)

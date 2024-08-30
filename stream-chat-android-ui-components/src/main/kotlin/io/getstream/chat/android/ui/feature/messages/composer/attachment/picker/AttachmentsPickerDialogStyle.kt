@@ -25,6 +25,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
 /**
  * Style for [AttachmentsPickerDialogFragment].
  *
+ * @param useSystemPicker If the system pickers should be used that does not require the `READ_MEDIA` permission.
  * @param attachmentsPickerBackgroundColor The background color of the picker.
  * @param allowAccessButtonTextStyle The text style used for all the buttons used to request required permissions.
  * @param submitAttachmentsButtonIconDrawable The icon for the submit selected attachments button.
@@ -61,6 +62,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
  * @param pickerMediaMode define which media type will be allowed.
  */
 public data class AttachmentsPickerDialogStyle(
+    val useSystemPicker: Boolean = true,
     @ColorInt val attachmentsPickerBackgroundColor: Int,
     val allowAccessButtonTextStyle: TextStyle,
     // Dialog header section

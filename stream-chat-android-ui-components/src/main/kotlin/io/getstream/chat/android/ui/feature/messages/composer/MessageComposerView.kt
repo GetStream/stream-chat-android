@@ -71,6 +71,8 @@ public class MessageComposerView : ConstraintLayout {
 
     private var arePollEnabled: Boolean = false
 
+    private var useSystemPickerForAttachments: Boolean = false
+
     /**
      * Generated binding class for the XML layout.
      */
@@ -163,6 +165,8 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
+            val useSystemPicker = messageComposerContext.style.attachmentsPickerDialogStyle.useSystemPicker
+
             attachmentsPickerDialogBuilder(
                 messageComposerContext.style.attachmentsPickerDialogStyle
                     .copy(
