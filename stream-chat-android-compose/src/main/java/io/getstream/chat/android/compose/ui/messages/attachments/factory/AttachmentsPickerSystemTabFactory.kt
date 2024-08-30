@@ -147,50 +147,45 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
         }
 
         InnerContent(
-            onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsChanged = onAttachmentsChanged,
-            onAttachmentsSubmitted = onAttachmentsSubmitted,
-            attachments = attachments,
-            onAttachmentPickerAction = onAttachmentPickerAction,
-            otherFactories = otherFactories,
-            onFilesClick = {
-                // Start file picker
-                val filePickerIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                    type = "*/*" // General type to include multiple types
-                    putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
-                    addCategory(Intent.CATEGORY_OPENABLE)
-                }
+            InnerContentParams(
+                attachments = attachments,
+                otherFactories = otherFactories,
+            ),
+            InnerContentActions(
+                onAttachmentItemSelected = onAttachmentItemSelected,
+                onAttachmentsChanged = onAttachmentsChanged,
+                onAttachmentsSubmitted = onAttachmentsSubmitted,
+                onAttachmentPickerAction = onAttachmentPickerAction,
+                onFilesClick = {
+                    // Start file picker
+                    val filePickerIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                        type = "*/*" // General type to include multiple types
+                        putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                    }
 
-                filePickerLauncher.launch(filePickerIntent)
-            },
-            onImagesClick = {
-                // Start photo picker
-                imagePickerLauncher.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageAndVideo,
-                    ),
-                )
-            },
+                    filePickerLauncher.launch(filePickerIntent)
+                },
+                onImagesClick = {
+                    // Start photo picker
+                    imagePickerLauncher.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageAndVideo,
+                        ),
+                    )
+                }
+            )
         )
     }
 }
 
 @Composable
-private fun InnerContent(
-    otherFactories: List<AttachmentsPickerTabFactory>,
-    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-    attachments: List<AttachmentPickerItemState>,
-    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
-    onFilesClick: () -> Unit,
-    onImagesClick: () -> Unit,
-) {
+private fun InnerContent(params: InnerContentParams, actions: InnerContentActions) {
     val pollsFactory = remember {
-        otherFactories.firstOrNull { it.attachmentsPickerMode == Poll }
+        params.otherFactories.firstOrNull { it.attachmentsPickerMode == Poll }
     }
     val mediaCaptureTabFactory = remember {
-        otherFactories.firstOrNull { it.attachmentsPickerMode == MediaCapture }
+        params.otherFactories.firstOrNull { it.attachmentsPickerMode == MediaCapture }
     }
 
     var pollSelected by remember {
@@ -205,19 +200,19 @@ private fun InnerContent(
         mediaCaptureTabFactory = mediaCaptureTabFactory,
         mediaSelected = mediaSelected,
         pollSelected = pollSelected,
-        onAttachmentPickerAction = onAttachmentPickerAction,
-        attachments = attachments,
-        onAttachmentsChanged = onAttachmentsChanged,
-        onAttachmentItemSelected = onAttachmentItemSelected,
-        onAttachmentsSubmitted = onAttachmentsSubmitted,
-        onDismissPollDialog = { pollSelected = false },
+        onAttachmentPickerAction = actions.onAttachmentPickerAction,
+        attachments = params.attachments,
+        onAttachmentsChanged = actions.onAttachmentsChanged,
+        onAttachmentItemSelected = actions.onAttachmentItemSelected,
+        onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
+        onDismissPollDialog = { pollSelected = false }
     )
 
     ButtonRow(
-        onFilesClick = onFilesClick,
-        onImagesClick = onImagesClick,
+        onFilesClick = actions.onFilesClick,
+        onImagesClick = actions.onImagesClick,
         onMediaClick = { mediaSelected = !mediaSelected },
-        onPollClick = { pollSelected = !pollSelected },
+        onPollClick = { pollSelected = !pollSelected }
     )
 }
 
@@ -372,3 +367,17 @@ private fun RoundedIconButton(
         )
     }
 }
+
+private data class InnerContentParams(
+    val otherFactories: List<AttachmentsPickerTabFactory>,
+    val attachments: List<AttachmentPickerItemState>,
+)
+
+private data class InnerContentActions(
+    val onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    val onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+    val onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+    val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    val onFilesClick: () -> Unit,
+    val onImagesClick: () -> Unit,
+)
