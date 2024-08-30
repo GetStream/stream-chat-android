@@ -235,7 +235,7 @@ public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     autoTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
-    useDefaultSystemMediaPicker: Boolean = true,
+    useDefaultSystemMediaPicker: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
