@@ -285,6 +285,7 @@ public data class MessageComposerViewStyle(
     public val messageReplyTextStyleTheirs: TextStyle,
     @ColorInt public val messageReplyMessageBackgroundStrokeColorTheirs: Int,
     @Px public val messageReplyMessageBackgroundStrokeWidthTheirs: Float,
+    public val useSystemFilePicker: Boolean,
     public val attachmentsPickerDialogStyle: AttachmentsPickerDialogStyle,
     public val audioRecordPlayerViewStyle: AudioRecordPlayerViewStyle?,
 ) : ViewStyle {
@@ -978,6 +979,11 @@ public data class MessageComposerViewStyle(
                     }
                 }
 
+                val useDefaultSystemPicker = a.getBoolean(
+                    R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
+                    false,
+                )
+
                 return MessageComposerViewStyle(
                     backgroundColor = backgroundColor,
                     buttonIconDrawableTintColor = buttonIconDrawableTintColor,
@@ -1085,14 +1091,15 @@ public data class MessageComposerViewStyle(
                     messageReplyTextStyleTheirs = messageReplyTextStyleTheirs,
                     messageReplyMessageBackgroundStrokeColorTheirs = messageReplyMessageBackgroundStrokeColorTheirs,
                     messageReplyMessageBackgroundStrokeWidthTheirs = messageReplyMessageBackgroundStrokeWidthTheirs,
-                    attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, a),
+                    attachmentsPickerDialogStyle = createAttachmentPickerDialogStyle(context, useDefaultSystemPicker, a),
+                    useSystemFilePicker = useDefaultSystemPicker,
                     audioRecordPlayerViewStyle = playerViewStyle,
                 ).let(TransformStyle.messageComposerStyleTransformer::transform)
             }
         }
 
         @Suppress("MaxLineLength", "LongMethod", "ComplexMethod")
-        private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle {
+        private fun createAttachmentPickerDialogStyle(context: Context, useDefaultSystemPicker: Boolean, a: TypedArray): AttachmentsPickerDialogStyle {
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
                 context.getColorCompat(R.color.stream_ui_white_smoke),
@@ -1361,6 +1368,7 @@ public data class MessageComposerViewStyle(
             )
 
             return AttachmentsPickerDialogStyle(
+                useSystemPicker = useDefaultSystemPicker,
                 attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
                 allowAccessButtonTextStyle = allowAccessButtonTextStyle,
                 submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,

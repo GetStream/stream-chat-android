@@ -1,0 +1,47 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Pick files without permissions.
+Sometimes its not desirable for an app to have the `READ_MEDIA_IMAGES` and `READ_MEDIA_VIDEO` permissions.
+In this guide, we will explain how to set up the new `useDefaultSystemMediaPicker` parameter in both `ChatTheme` and `ChatUI`, why it is important, and how to remove permissions from the `AndroidManifest.xml` using `tools:node="remove"`.
+
+### Why `useDefaultSystemMediaPicker` is Important
+
+The `useDefaultSystemMediaPicker` parameter allows you to use the system's default file picker instead of the custom file picker provided by the library. This can be beneficial for several reasons:
+- **Consistency**: Provides a consistent user experience by using the familiar system file picker.
+- **Permissions**: Reduces the need for additional permissions, as the system file picker handles permissions internally.
+- **Simplicity**: Simplifies the implementation by leveraging the built-in functionality of the system file picker.
+
+### Setting Up `useDefaultSystemMediaPicker`
+
+#### In `ChatTheme`
+
+To enable the system default picker in `ChatTheme`, set the `useDefaultSystemMediaPicker` parameter to `true` when initializing the theme.
+
+```kotlin
+ChatTheme(
+    useDefaultSystemMediaPicker = true
+) {
+    // Your composable content
+}
+```
+
+#### In `ChatUI`
+
+You cannot directly set this property in `ChatUI`. Instead you need to pass it via the `MessageComposerView` or more specifically its style.
+The property is called `useDefaultSystemPicker`.
+
+````
+Now, let's remove the permissions from the `AndroidManifest.xml`.
+
+### Removing Permissions from AndroidManifest.xml
+
+When using the system default picker, you can remove unnecessary permissions from your `AndroidManifest.xml` to streamline your app's permission requests. Use the `tools:node="remove"` attribute to remove permissions.
+
+```xml
+<uses-permission android:name="android.permission.READ_MEDIA_IMAGES" tools:node="remove" />
+<uses-permission android:name="android.permission.READ_MEDIA_VIDEO" tools:node="remove" />
+<uses-permission android:name="android.permission.READ_MEDIA_AUDIO" tools:node="remove" />
+```
+
+By following these steps you can remove unnecessary permissions from your `AndroidManifest.xml`.

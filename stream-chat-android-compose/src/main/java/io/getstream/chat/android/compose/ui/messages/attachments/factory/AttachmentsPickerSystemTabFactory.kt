@@ -165,7 +165,11 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
             },
             onImagesClick = {
                 // Start photo picker
-                imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+                imagePickerLauncher.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageAndVideo
+                    )
+                )
             },
         )
     }
@@ -196,6 +200,40 @@ private fun InnerContent(
         mutableStateOf(false)
     }
 
+    DialogContent(
+        pollsFactory = pollsFactory,
+        mediaCaptureTabFactory = mediaCaptureTabFactory,
+        mediaSelected = mediaSelected,
+        pollSelected = pollSelected,
+        onAttachmentPickerAction = onAttachmentPickerAction,
+        attachments = attachments,
+        onAttachmentsChanged = onAttachmentsChanged,
+        onAttachmentItemSelected = onAttachmentItemSelected,
+        onAttachmentsSubmitted = onAttachmentsSubmitted,
+        onDismissPollDialog = { pollSelected = false }
+    )
+
+    ButtonRow(
+        onFilesClick = onFilesClick,
+        onImagesClick = onImagesClick,
+        onMediaClick = { mediaSelected = !mediaSelected },
+        onPollClick = { pollSelected = !pollSelected }
+    )
+}
+
+@Composable
+private fun DialogContent(
+    pollsFactory: AttachmentsPickerTabFactory?,
+    mediaCaptureTabFactory: AttachmentsPickerTabFactory?,
+    mediaSelected: Boolean,
+    pollSelected: Boolean,
+    onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
+    attachments: List<AttachmentPickerItemState>,
+    onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
+    onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
+    onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+    onDismissPollDialog: () -> Unit
+) {
     if (mediaSelected) {
         mediaCaptureTabFactory?.PickerTabContent(
             onAttachmentPickerAction = onAttachmentPickerAction,
@@ -211,7 +249,7 @@ private fun InnerContent(
             properties = DialogProperties(
                 usePlatformDefaultWidth = false,
             ),
-            onDismissRequest = { pollSelected = false },
+            onDismissRequest = onDismissPollDialog,
         ) {
             Box(
                 modifier = Modifier
@@ -229,7 +267,15 @@ private fun InnerContent(
             }
         }
     }
+}
 
+@Composable
+private fun ButtonRow(
+    onFilesClick: () -> Unit,
+    onImagesClick: () -> Unit,
+    onMediaClick: () -> Unit,
+    onPollClick: () -> Unit
+) {
     val buttons = listOf<@Composable () -> Unit>(
         {
             RoundedIconButton(
@@ -247,22 +293,22 @@ private fun InnerContent(
                 text = stringResource(id = R.string.stream_compose_images_option),
             )
         },
-    ) + listOf<(@Composable () -> Unit)>(
         {
             RoundedIconButton(
-                onClick = { mediaSelected = !mediaSelected },
+                onClick = onMediaClick,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
                 contentDescription = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
                 text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
             )
-        }, {
+        },
+        {
             RoundedIconButton(
-                onClick = { pollSelected = !pollSelected },
+                onClick = onPollClick,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_poll),
                 contentDescription = stringResource(id = R.string.stream_compose_poll_option),
                 text = stringResource(id = R.string.stream_compose_poll_option),
             )
-        },
+        }
     )
 
     Row(

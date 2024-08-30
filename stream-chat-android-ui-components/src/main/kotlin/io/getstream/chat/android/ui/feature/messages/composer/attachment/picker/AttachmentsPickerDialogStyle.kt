@@ -62,7 +62,7 @@ import io.getstream.chat.android.ui.helper.ViewStyle
  * @param pickerMediaMode define which media type will be allowed.
  */
 public data class AttachmentsPickerDialogStyle(
-    val useSystemPicker: Boolean = true,
+    val useSystemPicker: Boolean = false,
     @ColorInt val attachmentsPickerBackgroundColor: Int,
     val allowAccessButtonTextStyle: TextStyle,
     // Dialog header section
