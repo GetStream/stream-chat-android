@@ -1,37 +1,7 @@
-# UNRELEASED CHANGELOG
-## Common changes for all artifacts
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-client
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
+# August 30th, 2024 - 6.5.0
 ## stream-chat-android-offline
-### 🐞 Fixed
-
-### ⬆️ Improved
-
 ### ✅ Added
 - Store poll info on local data base. [#5283](https://github.com/GetStream/stream-chat-android/pull/5283)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-state
 ### 🐞 Fixed
@@ -40,24 +10,12 @@
 ### ⬆️ Improved
 - Keep members updated on QueryChannelsState. [5382](https://github.com/GetStream/stream-chat-android/pull/5382) 
 
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
 - Fixed `MessageListController.channel.members` not being updated when a member is banned. [#5368](https://github.com/GetStream/stream-chat-android/pull/5368)
 
 ### ⬆️ Improved
 - Hide "Unread Messages" button when there are no messages on the messages list. [#5376](https://github.com/GetStream/stream-chat-android/pull/5376)
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
@@ -72,10 +30,6 @@
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
 - Create a new UI to create a poll message. [#5361](https://github.com/GetStream/stream-chat-android/pull/5361)
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -98,21 +52,6 @@
 - Add `MessageModerationDialog` component used for message that needs to be moderated. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 - Add `AttachmentsPickerMenu` component used to show the attachment picker menu. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 - Add `MessageMenus` component used to prompt the user with message actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-markdown-transformer
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
 
 # August 09th, 2024 - 6.4.4
 ## stream-chat-android-core
