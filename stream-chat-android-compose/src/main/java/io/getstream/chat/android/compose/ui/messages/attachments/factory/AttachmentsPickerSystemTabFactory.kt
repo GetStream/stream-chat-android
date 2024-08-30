@@ -332,14 +332,14 @@ private fun RoundedIconButton(
             modifier = Modifier
                 .clip(CircleShape)
                 .size(72.dp)
-                .padding(12.dp)
-                .clickable(onClick = onClick),
+                .padding(12.dp),
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .clip(CircleShape)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .clickable(onClick = onClick),
             ) {
                 Icon(
                     painter = iconPainter,
