@@ -1092,7 +1092,10 @@ public data class MessageComposerViewStyle(
         }
 
         @Suppress("MaxLineLength", "LongMethod", "ComplexMethod")
-        private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle {
+        private fun createAttachmentPickerDialogStyle(
+            context: Context,
+            a: TypedArray,
+        ): AttachmentsPickerDialogStyle {
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
                 context.getColorCompat(R.color.stream_ui_white_smoke),
@@ -1360,7 +1363,13 @@ public data class MessageComposerViewStyle(
                 PickerMediaMode.PHOTO_AND_VIDEO,
             )
 
+            val useDefaultSystemMediaPicker = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
+                false,
+            )
+
             return AttachmentsPickerDialogStyle(
+                useDefaultSystemMediaPicker = useDefaultSystemMediaPicker,
                 attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
                 allowAccessButtonTextStyle = allowAccessButtonTextStyle,
                 submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,
