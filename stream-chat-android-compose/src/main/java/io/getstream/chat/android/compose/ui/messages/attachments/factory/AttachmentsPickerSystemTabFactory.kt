@@ -22,32 +22,22 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -60,10 +50,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -129,7 +117,6 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
         onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
-
         val context = LocalContext.current
         val attachmentFilter = AttachmentFilter()
         val storageHelper: StorageHelperWrapper = remember {
@@ -137,7 +124,7 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
         }
 
         val filePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult()
+            contract = ActivityResultContracts.StartActivityForResult(),
         ) { result ->
             // Handle the file URI
             if (result.resultCode == Activity.RESULT_OK) {
@@ -150,7 +137,7 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
         }
 
         val imagePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia()
+            contract = ActivityResultContracts.PickVisualMedia(),
         ) { uri: Uri? ->
             // Handle the image URI
             uri?.let {
@@ -179,7 +166,7 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
             onImagesClick = {
                 // Start photo picker
                 imagePickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
-            }
+            },
         )
     }
 }
@@ -215,26 +202,29 @@ private fun InnerContent(
             attachments = attachments,
             onAttachmentsChanged = onAttachmentsChanged,
             onAttachmentItemSelected = onAttachmentItemSelected,
-            onAttachmentsSubmitted = onAttachmentsSubmitted
+            onAttachmentsSubmitted = onAttachmentsSubmitted,
         )
     }
 
     if (pollSelected) {
-        Dialog(properties = DialogProperties(
-            usePlatformDefaultWidth = false
-        ), onDismissRequest = { pollSelected = false }) {
+        Dialog(
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+            ),
+            onDismissRequest = { pollSelected = false },
+        ) {
             Box(
                 modifier = Modifier
                     .background(ChatTheme.colors.appBackground)
                     .fillMaxWidth()
-                    .fillMaxHeight() // Ensure the dialog fills the height
+                    .fillMaxHeight(), // Ensure the dialog fills the height
             ) {
                 pollsFactory?.PickerTabContent(
                     onAttachmentPickerAction = onAttachmentPickerAction,
                     attachments = attachments,
                     onAttachmentsChanged = onAttachmentsChanged,
                     onAttachmentItemSelected = onAttachmentItemSelected,
-                    onAttachmentsSubmitted = onAttachmentsSubmitted
+                    onAttachmentsSubmitted = onAttachmentsSubmitted,
                 )
             }
         }
@@ -246,7 +236,7 @@ private fun InnerContent(
                 onClick = onFilesClick,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
                 contentDescription = stringResource(id = R.string.stream_compose_files_option),
-                text = stringResource(id = R.string.stream_compose_files_option)
+                text = stringResource(id = R.string.stream_compose_files_option),
             )
         },
         {
@@ -254,34 +244,33 @@ private fun InnerContent(
                 onClick = onImagesClick,
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
                 contentDescription = stringResource(id = R.string.stream_compose_images_option),
-                text = stringResource(id = R.string.stream_compose_images_option)
+                text = stringResource(id = R.string.stream_compose_images_option),
             )
-        }
+        },
     ) + listOf<(@Composable () -> Unit)>(
         {
             RoundedIconButton(
                 onClick = { mediaSelected = !mediaSelected },
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
                 contentDescription = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
-                text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo)
+                text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
             )
         }, {
             RoundedIconButton(
                 onClick = { pollSelected = !pollSelected },
                 iconPainter = painterResource(id = R.drawable.stream_compose_ic_poll),
                 contentDescription = stringResource(id = R.string.stream_compose_poll_option),
-                text = stringResource(id = R.string.stream_compose_poll_option)
+                text = stringResource(id = R.string.stream_compose_poll_option),
             )
-        }
+        },
     )
-
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         buttons.forEach { button ->
             button()
@@ -300,7 +289,7 @@ private fun RoundedIconButton(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(8.dp)
+        modifier = Modifier.padding(8.dp),
     ) {
         Card(
             shape = CircleShape,
@@ -310,13 +299,13 @@ private fun RoundedIconButton(
                 .clip(CircleShape)
                 .size(72.dp)
                 .padding(12.dp)
-                .clickable(onClick = onClick)
+                .clickable(onClick = onClick),
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .clip(CircleShape)
-                    .fillMaxSize()
+                    .fillMaxSize(),
             ) {
                 Icon(
                     painter = iconPainter,
@@ -324,7 +313,7 @@ private fun RoundedIconButton(
                     tint = iconTint,
                     modifier = Modifier
                         .size(48.dp)
-                        .padding(12.dp)
+                        .padding(12.dp),
                 )
             }
         }
@@ -333,7 +322,7 @@ private fun RoundedIconButton(
             text = text,
             style = ChatTheme.typography.footnote,
             color = ChatTheme.colors.textLowEmphasis,
-            modifier = Modifier.padding(top = 4.dp)
+            modifier = Modifier.padding(top = 4.dp),
         )
     }
 }

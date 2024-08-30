@@ -57,11 +57,11 @@ internal class AttachmentFilterTest {
     fun `Given upload configs When getting supported MIME types Should return correct MIME types`() {
         val fileUploadConfig = fileUploadConfig(
             allowedMimeTypes = listOf("application/pdf", "text/plain"),
-            blockedMimeTypes = listOf("application/zip")
+            blockedMimeTypes = listOf("application/zip"),
         )
         val imageUploadConfig = fileUploadConfig(
             allowedMimeTypes = listOf("image/jpeg", "image/png"),
-            blockedMimeTypes = listOf("image/gif")
+            blockedMimeTypes = listOf("image/gif"),
         )
 
         whenever(chatClient.getAppSettings().app.fileUploadConfig) doReturn fileUploadConfig

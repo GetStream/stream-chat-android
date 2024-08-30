@@ -36,6 +36,7 @@ public class AttachmentFilter(
     private val chatClient: ChatClient = ChatClient.instance(),
 ) {
     private val logger by taggedLogger("AttachmentFilter")
+
     /**
      * Filters out attachments that can be uploaded to the backend according to files
      * and images upload configurations.

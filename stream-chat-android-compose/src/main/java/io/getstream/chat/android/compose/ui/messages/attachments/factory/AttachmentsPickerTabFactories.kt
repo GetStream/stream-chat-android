@@ -28,7 +28,7 @@ public object AttachmentsPickerTabFactories {
             filesTabEnabled = false,
             takeImageEnabled = true,
             recordVideoEnabled = true,
-            pollEnabled = true
+            pollEnabled = true,
         )
         return listOf(AttachmentsPickerSystemTabFactory(otherFactories))
     }

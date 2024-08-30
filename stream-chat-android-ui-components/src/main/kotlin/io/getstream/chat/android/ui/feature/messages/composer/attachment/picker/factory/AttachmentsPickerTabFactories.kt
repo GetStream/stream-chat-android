@@ -33,11 +33,14 @@ public object AttachmentsPickerTabFactories {
         cameraAttachmentsTabEnabled: Boolean,
         pollAttachmentsTabEnabled: Boolean,
     ): List<AttachmentsPickerTabFactory> {
-        return listOf(AttachmentSystemPickerTabFactory(
-            mediaAttachmentsTabEnabled,
-            fileAttachmentsTabEnabled,
-            cameraAttachmentsTabEnabled,
-            pollAttachmentsTabEnabled))
+        return listOf(
+            AttachmentSystemPickerTabFactory(
+                mediaAttachmentsTabEnabled,
+                fileAttachmentsTabEnabled,
+                cameraAttachmentsTabEnabled,
+                pollAttachmentsTabEnabled,
+            ),
+        )
     }
 
     /**
