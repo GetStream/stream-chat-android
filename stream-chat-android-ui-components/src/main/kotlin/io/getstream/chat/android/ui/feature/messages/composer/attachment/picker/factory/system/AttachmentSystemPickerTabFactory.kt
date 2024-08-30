@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal.AttachmentSystemPickerConfig
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal.AttachmentSystemPickerFragment
 
 /**
@@ -53,10 +54,12 @@ public class AttachmentSystemPickerTabFactory(
         return AttachmentSystemPickerFragment.newInstance(
             style,
             attachmentsPickerTabListener,
-            mediaAttachmentsTabEnabled,
-            fileAttachmentsTabEnabled,
-            cameraAttachmentsTabEnabled,
-            pollAttachmentsTabEnabled,
+            AttachmentSystemPickerConfig(
+                mediaAttachmentsTabEnabled,
+                fileAttachmentsTabEnabled,
+                cameraAttachmentsTabEnabled,
+                pollAttachmentsTabEnabled,
+            )
         )
     }
 }

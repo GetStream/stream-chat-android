@@ -43,13 +43,10 @@ import java.io.File
 
 internal class AttachmentSystemPickerFragment : Fragment() {
 
+    private lateinit var config: AttachmentSystemPickerConfig
     private var _binding: StreamUiFragmentAttachmentSystemPickerBinding? = null
     private val binding get() = _binding!!
 
-    private var mediaAttachmentsTabEnabled: Boolean = true
-    private var fileAttachmentsTabEnabled: Boolean = true
-    private var cameraAttachmentsTabEnabled: Boolean = true
-    private var pollAttachmentsTabEnabled: Boolean = true
     private lateinit var style: AttachmentsPickerDialogStyle
 
     /**
@@ -96,21 +93,21 @@ internal class AttachmentSystemPickerFragment : Fragment() {
 
     private fun setupViews() {
         // Adjust visibility of the tabs based on the enabled flags
-        if (!fileAttachmentsTabEnabled) {
+        if (!config.fileAttachmentsTabEnabled) {
             binding.buttonFiles.visibility = View.GONE
             binding.textFiles.visibility = View.GONE
         }
 
-        if (!mediaAttachmentsTabEnabled) {
+        if (!config.mediaAttachmentsTabEnabled) {
             binding.buttonMedia.visibility = View.GONE
             binding.textMedia.visibility = View.GONE
         }
 
-        if (!cameraAttachmentsTabEnabled) {
+        if (!config.cameraAttachmentsTabEnabled) {
             binding.buttonCapture.visibility = View.GONE
             binding.textCapture.visibility = View.GONE
         }
-        if (!pollAttachmentsTabEnabled) {
+        if (!config.pollAttachmentsTabEnabled) {
             binding.buttonPolls.visibility = View.GONE
             binding.textPoll.visibility = View.GONE
         }
@@ -188,17 +185,18 @@ internal class AttachmentSystemPickerFragment : Fragment() {
         fun newInstance(
             style: AttachmentsPickerDialogStyle,
             attachmentsPickerTabListener: AttachmentsPickerTabListener,
-            mediaAttachmentsTabEnabled: Boolean,
-            fileAttachmentsTabEnabled: Boolean,
-            cameraAttachmentsTabEnabled: Boolean,
-            pollAttachmentsTabEnabled: Boolean,
+            config: AttachmentSystemPickerConfig,
         ): Fragment = AttachmentSystemPickerFragment().apply {
             this.style = style
             this.attachmentsPickerTabListener = attachmentsPickerTabListener
-            this.mediaAttachmentsTabEnabled = mediaAttachmentsTabEnabled
-            this.fileAttachmentsTabEnabled = fileAttachmentsTabEnabled
-            this.cameraAttachmentsTabEnabled = cameraAttachmentsTabEnabled
-            this.pollAttachmentsTabEnabled = pollAttachmentsTabEnabled
+            this.config = config
         }
     }
 }
+
+public data class AttachmentSystemPickerConfig(
+    val mediaAttachmentsTabEnabled: Boolean,
+    val fileAttachmentsTabEnabled: Boolean,
+    val cameraAttachmentsTabEnabled: Boolean,
+    val pollAttachmentsTabEnabled: Boolean,
+)
