@@ -21,13 +21,13 @@ import androidx.fragment.app.Fragment
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.AttachmentsPickerDialogStyle
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabFactory
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.AttachmentsPickerTabListener
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal.AttachmentSystemPickerConfig
-import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal.AttachmentSystemPickerFragment
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal.AttachmentsSystemPickerConfig
+import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.system.internal.AttachmentsSystemPickerFragment
 
 /**
  * An attachment factory that creates a tab with the few icons and uses system pickers instead.
  */
-public class AttachmentSystemPickerTabFactory(
+public class AttachmentsSystemPickerTabFactory(
     private val mediaAttachmentsTabEnabled: Boolean,
     private val fileAttachmentsTabEnabled: Boolean,
     private val cameraAttachmentsTabEnabled: Boolean,
@@ -51,10 +51,10 @@ public class AttachmentSystemPickerTabFactory(
         style: AttachmentsPickerDialogStyle,
         attachmentsPickerTabListener: AttachmentsPickerTabListener,
     ): Fragment {
-        return AttachmentSystemPickerFragment.newInstance(
+        return AttachmentsSystemPickerFragment.newInstance(
             style,
             attachmentsPickerTabListener,
-            AttachmentSystemPickerConfig(
+            AttachmentsSystemPickerConfig(
                 mediaAttachmentsTabEnabled,
                 fileAttachmentsTabEnabled,
                 cameraAttachmentsTabEnabled,

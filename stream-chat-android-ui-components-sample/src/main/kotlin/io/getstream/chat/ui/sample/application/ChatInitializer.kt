@@ -162,7 +162,6 @@ class ChatInitializer(
             )
         }
 
-        TransformStyle.attachmentsPickerStyleTransformer
         /*val lightGray = ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
         TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
@@ -189,6 +188,21 @@ class ChatInitializer(
                 ),
             )
         }*/
+
+        TransformStyle.attachmentsPickerStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                useDefaultSystemMediaPicker = false,
+            )
+        }
+
+        TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                // useDefaultSystemMediaPicker = true,
+                attachmentsPickerDialogStyle = defaultStyle.attachmentsPickerDialogStyle.copy(
+                    useDefaultSystemMediaPicker = true,
+                ),
+            )
+        }
 
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
     }

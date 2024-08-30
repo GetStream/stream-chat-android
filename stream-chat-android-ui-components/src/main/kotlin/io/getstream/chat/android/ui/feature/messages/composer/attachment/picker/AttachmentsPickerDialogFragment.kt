@@ -281,9 +281,9 @@ public class AttachmentsPickerDialogFragment : BottomSheetDialogFragment() {
         public fun newInstance(
             style: AttachmentsPickerDialogStyle,
             attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
-                if (style.useSystemPicker) {
+                if (style.useDefaultSystemMediaPicker) {
                     AttachmentsPickerTabFactories
-                        .defaultFactoriesWithoutPermission(
+                        .defaultFactoriesWithoutPermissions(
                             mediaAttachmentsTabEnabled = style.mediaAttachmentsTabEnabled,
                             fileAttachmentsTabEnabled = style.fileAttachmentsTabEnabled,
                             cameraAttachmentsTabEnabled = style.cameraAttachmentsTabEnabled,

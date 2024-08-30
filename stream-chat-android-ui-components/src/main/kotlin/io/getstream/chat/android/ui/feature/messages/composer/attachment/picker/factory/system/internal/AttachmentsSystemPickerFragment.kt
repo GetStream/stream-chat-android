@@ -41,9 +41,9 @@ import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import java.io.File
 
-internal class AttachmentSystemPickerFragment : Fragment() {
+internal class AttachmentsSystemPickerFragment : Fragment() {
 
-    private lateinit var config: AttachmentSystemPickerConfig
+    private lateinit var config: AttachmentsSystemPickerConfig
     private var _binding: StreamUiFragmentAttachmentSystemPickerBinding? = null
     private val binding get() = _binding!!
 
@@ -189,8 +189,8 @@ internal class AttachmentSystemPickerFragment : Fragment() {
         fun newInstance(
             style: AttachmentsPickerDialogStyle,
             attachmentsPickerTabListener: AttachmentsPickerTabListener,
-            config: AttachmentSystemPickerConfig,
-        ): Fragment = AttachmentSystemPickerFragment().apply {
+            config: AttachmentsSystemPickerConfig,
+        ): Fragment = AttachmentsSystemPickerFragment().apply {
             this.style = style
             this.attachmentsPickerTabListener = attachmentsPickerTabListener
             this.config = config
@@ -198,7 +198,7 @@ internal class AttachmentSystemPickerFragment : Fragment() {
     }
 }
 
-public data class AttachmentSystemPickerConfig(
+internal data class AttachmentsSystemPickerConfig(
     val mediaAttachmentsTabEnabled: Boolean,
     val fileAttachmentsTabEnabled: Boolean,
     val cameraAttachmentsTabEnabled: Boolean,
