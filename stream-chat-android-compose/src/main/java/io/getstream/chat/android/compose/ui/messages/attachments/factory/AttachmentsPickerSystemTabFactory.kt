@@ -173,8 +173,8 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
                             ActivityResultContracts.PickVisualMedia.ImageAndVideo,
                         ),
                     )
-                }
-            )
+                },
+            ),
         )
     }
 }
@@ -195,26 +195,28 @@ private fun InnerContent(params: InnerContentParams, actions: InnerContentAction
         mutableStateOf(false)
     }
 
-    DialogContent(DialogContentParams(
-        pollsFactory = pollsFactory,
-        mediaCaptureTabFactory = mediaCaptureTabFactory,
-        mediaSelected = mediaSelected,
-        pollSelected = pollSelected,
-        attachments = params.attachments,
-    ), DialogContentActions(
-        onAttachmentPickerAction = actions.onAttachmentPickerAction,
-        onAttachmentsChanged = actions.onAttachmentsChanged,
-        onAttachmentItemSelected = actions.onAttachmentItemSelected,
-        onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
-        onDismissPollDialog = { pollSelected = false }
-    )
+    DialogContent(
+        DialogContentParams(
+            pollsFactory = pollsFactory,
+            mediaCaptureTabFactory = mediaCaptureTabFactory,
+            mediaSelected = mediaSelected,
+            pollSelected = pollSelected,
+            attachments = params.attachments,
+        ),
+        DialogContentActions(
+            onAttachmentPickerAction = actions.onAttachmentPickerAction,
+            onAttachmentsChanged = actions.onAttachmentsChanged,
+            onAttachmentItemSelected = actions.onAttachmentItemSelected,
+            onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
+            onDismissPollDialog = { pollSelected = false },
+        ),
     )
 
     ButtonRow(
         onFilesClick = actions.onFilesClick,
         onImagesClick = actions.onImagesClick,
         onMediaClick = { mediaSelected = !mediaSelected },
-        onPollClick = { pollSelected = !pollSelected }
+        onPollClick = { pollSelected = !pollSelected },
     )
 }
 
