@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
 
 ### ❌ Removed
 
