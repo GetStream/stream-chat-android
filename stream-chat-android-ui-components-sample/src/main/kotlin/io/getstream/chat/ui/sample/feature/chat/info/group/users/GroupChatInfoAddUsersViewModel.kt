@@ -121,15 +121,11 @@ class GroupChatInfoAddUsersViewModel(
         if (members.isEmpty()) {
             return
         }
-        val currentMembers = members
         val currentState = _state.value!!
         val filter = if (currentState.query.isEmpty()) {
-            Filters.nin("id", currentMembers.map { it.getUserId() })
+            Filters.neutral()
         } else {
-            Filters.and(
-                Filters.autocomplete("name", currentState.query),
-                Filters.nin("id", currentMembers.map { it.getUserId() }),
-            )
+            Filters.autocomplete("name", currentState.query)
         }
 
         val result = ChatClient.instance().queryUsers(
