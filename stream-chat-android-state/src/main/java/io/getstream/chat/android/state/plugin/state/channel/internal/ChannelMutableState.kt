@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -33,7 +34,6 @@ import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.state.utils.internal.combineStates
-import io.getstream.chat.android.state.utils.internal.filter
 import io.getstream.chat.android.state.utils.internal.mapState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -80,6 +80,13 @@ internal class ChannelMutableState(
     private var _loadingOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loadingNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _lastSentMessageDate: MutableStateFlow<Date?>? = MutableStateFlow(null)
+    private val deletedMessagesIds: Set<String>
+        get() = _messages
+            ?.value
+            ?.values
+            ?.mapNotNull { it.takeIf { it.isDeleted() }?.id }
+            ?.toSet()
+            ?: emptySet()
 
     /** Channel config data. */
     private var _channelConfig: MutableStateFlow<Config>? = MutableStateFlow(Config())
@@ -539,7 +546,7 @@ internal class ChannelMutableState(
     }
 
     fun upsertMessages(updatedMessages: Collection<Message>) {
-        _messages?.apply { value += updatedMessages.associateBy(Message::id) }
+        _messages?.apply { value += (updatedMessages.associateBy(Message::id) - deletedMessagesIds) }
         _pinnedMessages?.value
             ?.let { pinnedMessages ->
                 val pinnedMessageIds = pinnedMessages.keys
@@ -560,7 +567,7 @@ internal class ChannelMutableState(
 
     fun upsertPinnedMessages(messages: Collection<Message>) {
         logger.d { "[upsertPinnedMessages] messages.size: ${messages.size}" }
-        setPinned { pinned -> pinned + messages.associateBy(Message::id) }
+        setPinned { pinned -> pinned + (messages.associateBy(Message::id) - deletedMessagesIds) }
     }
 
     private inline fun setPinned(producer: (Map<String, Message>) -> Map<String, Message>) {
