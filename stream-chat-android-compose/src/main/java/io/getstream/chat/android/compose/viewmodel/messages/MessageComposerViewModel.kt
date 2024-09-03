@@ -206,7 +206,7 @@ public class MessageComposerViewModel(
      * @return [Message] object, with all the data required to send it to the API.
      */
     public fun buildNewMessage(
-        message: String,
+        message: String = input.value,
         attachments: List<Attachment> = emptyList(),
     ): Message = messageComposerController.buildNewMessage(message, attachments)
 
@@ -249,6 +249,27 @@ public class MessageComposerViewModel(
      * Clears the input and the current state of the composer.
      */
     public fun clearData(): Unit = messageComposerController.clearData()
+
+    public fun startRecording(): Unit = messageComposerController.startRecording()
+
+    public fun lockRecording(): Unit = messageComposerController.lockRecording()
+
+    public fun cancelRecording(): Unit = messageComposerController.cancelRecording()
+
+    public fun stopRecording(): Unit = messageComposerController.stopRecording()
+
+    public fun toggleRecordingPlayback(): Unit = messageComposerController.toggleRecordingPlayback()
+
+    public fun completeRecording(): Unit = messageComposerController.completeRecording()
+
+    public fun pauseRecording(): Unit = messageComposerController.pauseRecording()
+
+    public fun seekRecordingTo(progress: Float): Unit = messageComposerController.seekRecordingTo(progress)
+
+    public fun sendRecording() {
+        completeRecording()
+        sendMessage(buildNewMessage(input.value, selectedAttachments.value))
+    }
 
     /**
      * Disposes the inner [MessageComposerController].

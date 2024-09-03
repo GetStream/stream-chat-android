@@ -108,7 +108,7 @@
             android:textAlignment="center"
             android:textColor="@color/stream_ui_audio_record_player_speed_text_color"
             android:textSize="@dimen/stream_ui_audio_record_player_speed_text_size"
-            android:visibility="gone"
+            android:visibility="visible"
             tools:text="x0.5"
             />
     </FrameLayout>

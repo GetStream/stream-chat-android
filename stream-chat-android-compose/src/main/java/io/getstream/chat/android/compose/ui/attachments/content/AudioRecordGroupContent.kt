@@ -18,51 +18,55 @@ package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import io.getstream.chat.android.client.ChatClient
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
-import io.getstream.chat.android.models.Attachment
-import io.getstream.chat.android.models.AttachmentType
-import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
+import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 
 @Composable
 public fun AudioRecordGroupContent(
     modifier: Modifier = Modifier,
     attachmentState: AttachmentState,
+    viewModelFactory: AudioPlayerViewModelFactory,
 ) {
-    val audioPlayer = ChatClient.instance().audioPlayer
-    val audioTracks =
-        attachmentState.message
-            .attachments
-            .filter { attachment -> attachment.isAudioRecording() && attachment.assetUrl != null }
+
+    val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
+
+    val audioRecordings = attachmentState.message.attachments
+        .filter { attachment -> attachment.isAudioRecording() && attachment.assetUrl != null }
+
+    val playerState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
-        audioTracks.forEach { track ->
-            AudioRecordAttachmentContent(audioTrack = track) { audioTrack ->
-                audioPlayer.clearTracks()
-                audioTracks.forEachIndexed { index, track ->
-                    audioPlayer.registerTrack(track.assetUrl!!, track.hashCode(), index)
-                }
-                audioTrack.assetUrl?.let { trackUrl ->
-                    audioPlayer.play(trackUrl, audioTrack.hashCode())
-                }
-            }
+        audioRecordings.forEach { audioRecording ->
+            AudioRecordAttachmentContent(
+                attachment = audioRecording,
+                playerState = playerState,
+                onPlayToggleClick = { attachment ->
+                    viewModel.playOrPause(attachment)
+                },
+                onPlaySpeedClick = { attachment ->
+                    viewModel.changeSpeed(attachment)
+                },
+            )
         }
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
-@Composable
-internal fun AudioRecordGroupContentPreview() {
-    val attachment = Attachment(type = AttachmentType.AUDIO_RECORDING, assetUrl = "asd")
-    val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
-
-    ChatPreviewTheme {
-        AudioRecordGroupContent(
-            attachmentState = attachmentState,
-        )
-    }
-}
+// @Preview(showSystemUi = true, showBackground = true)
+// @Composable
+// internal fun AudioRecordGroupContentPreview() {
+//     val attachment = Attachment(type = AttachmentType.AUDIO_RECORDING, assetUrl = "asd")
+//     val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
+//
+//     ChatPreviewTheme {
+//         AudioRecordGroupContent(
+//             attachmentState = attachmentState,
+//             viewModelFactory = vmFactory,
+//         )
+//     }
+// }

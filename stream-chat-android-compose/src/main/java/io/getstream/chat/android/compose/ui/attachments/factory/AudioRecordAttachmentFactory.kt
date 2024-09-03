@@ -23,12 +23,35 @@ import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordGroupContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
+import io.getstream.log.StreamLog
 
 /**
  * An [AttachmentFactory] that will be used if no other [AttachmentFactory] can handle the attachments.
  */
+// @Suppress("FunctionName")
+// public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+//     canHandle = { attachments ->
+//         attachments.any { it.isAudioRecording() }
+//     },
+//     content = @Composable { modifier, attachmentState ->
+//         AudioRecordGroupContent(
+//             modifier = modifier
+//                 .wrapContentHeight()
+//                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
+//             attachmentState = attachmentState,
+//         )
+//     },
+// )
+
 @Suppress("FunctionName")
-public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+public fun AudioRecordAttachmentFactory(
+    vmFactory: AudioPlayerViewModelFactory
+): AttachmentFactory = AudioRecordAttachmentFactoryImpl(vmFactory)
+
+private class AudioRecordAttachmentFactoryImpl(
+    private val vmFactory: AudioPlayerViewModelFactory
+) : AttachmentFactory(
     canHandle = { attachments ->
         attachments.any { it.isAudioRecording() }
     },
@@ -38,6 +61,19 @@ public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
             attachmentState = attachmentState,
+            viewModelFactory = vmFactory
         )
     },
-)
+) {
+    init {
+        StreamLog.i("AudioRecordAttachmentFactoryImpl") {
+            "<init> no args"
+        }
+    }
+
+    protected fun finalize() {
+        StreamLog.i("AudioRecordAttachmentFactoryImpl") {
+            "<destroy> no args"
+        }
+    }
+}

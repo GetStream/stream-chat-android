@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
+import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
 import io.getstream.chat.android.compose.ui.attachments.content.onFileUploadContentItemClick
@@ -37,6 +38,7 @@ import io.getstream.chat.android.compose.ui.attachments.factory.UploadAttachment
 import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
 import io.getstream.chat.android.compose.ui.theme.StreamDimens
+import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -57,6 +59,7 @@ public object StreamAttachmentFactories {
     /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
      *
+     * @param chatClient The ChatClient instance used to interact with the Stream Chat API.
      * @param linkDescriptionMaxLines - The limit of how long the link attachment descriptions can be.
      * @param giphyInfoType Used to modify the quality and dimensions of the rendered
      * Giphy attachments.
@@ -79,6 +82,7 @@ public object StreamAttachmentFactories {
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
     public fun defaultFactories(
+        chatClient: ChatClient = ChatClient.instance(),
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
@@ -121,11 +125,13 @@ public object StreamAttachmentFactories {
             skipEnrichUrl = skipEnrichUrl,
             onContentItemClick = onMediaContentItemClick,
         ),
+        AudioRecordAttachmentFactory(
+            AudioPlayerViewModelFactory(chatClient.audioPlayer),
+        ),
         FileAttachmentFactory(
             showFileSize = showFileSize,
             onContentItemClick = onFileContentItemClick,
         ),
-        AudioRecordAttachmentFactory(),
         UnsupportedAttachmentFactory(),
     )
 
