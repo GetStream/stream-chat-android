@@ -130,6 +130,7 @@ public class RepositoryFacade private constructor(
 
     @InternalStreamChatApi
     public suspend fun markMessageAsDeleted(message: Message) {
+        messageRepository.insertMessage(message)
         messageRepository.evictMessage(message.id)
         channelsRepository.updateChannelMessage(message)
     }
