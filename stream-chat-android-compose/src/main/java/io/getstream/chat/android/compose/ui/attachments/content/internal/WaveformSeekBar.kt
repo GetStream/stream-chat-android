@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,11 @@ public fun WaveformSeekBar(
     var widthPx by remember { mutableFloatStateOf(0f) }
     var pressed by remember { mutableStateOf(false) }
     var currentProgress by remember { mutableFloatStateOf(progress) }
+
+    // Sync currentProgress when progress changes from parent
+    LaunchedEffect(progress) {
+        currentProgress = progress
+    }
 
     Box(
         modifier = modifier
@@ -110,7 +116,7 @@ public fun WaveformSeekBar(
         // Draw the waveform
         WaveformTrack(
             waveform = waveform,
-            progress = progress,
+            progress = currentProgress,
             modifier = Modifier.fillMaxSize()
         )
 
@@ -118,7 +124,7 @@ public fun WaveformSeekBar(
 
         WaveformThumb(
             pressed = pressed,
-            progress = progress,
+            progress = currentProgress,
             parentWidthPx = widthPx,
         )
     }
