@@ -107,6 +107,7 @@ public object StreamAttachmentFactories {
         UploadAttachmentFactory(
             onContentItemClick = onUploadContentItemClick,
         ),
+        AudioRecordAttachmentFactory(),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
             onContentItemClick = onLinkContentItemClick,
@@ -125,7 +126,6 @@ public object StreamAttachmentFactories {
             showFileSize = showFileSize,
             onContentItemClick = onFileContentItemClick,
         ),
-        AudioRecordAttachmentFactory(),
         UnsupportedAttachmentFactory(),
     )
 
