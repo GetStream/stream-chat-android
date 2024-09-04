@@ -25,10 +25,12 @@
         <activity
             android:name=".ui.attachments.preview.MediaPreviewActivity"
             android:exported="false"
+            android:theme="@style/StreamCompose.MediaPreview"
             />
         <activity
             android:name=".ui.attachments.preview.MediaGalleryPreviewActivity"
             android:exported="false"
+            android:theme="@style/StreamCompose.MediaGalleryPreview"
             />
     </application>
 </manifest>
