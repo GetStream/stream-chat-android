@@ -33,6 +33,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.log.StreamLog
 import kotlin.random.Random
 
@@ -177,8 +178,8 @@ private fun WaveformThumb(
 @Composable
 internal fun WaveformTrack(
     modifier: Modifier = Modifier,
-    passedColor: Color = Color.Blue,
-    upcomingColor: Color = Color.LightGray,
+    passedColor: Color = ChatTheme.colors.primaryAccent,
+    futureColor: Color = /*Color(0xFF7A7A7A)*/Color.LightGray,
     waveform: List<Float>,
     progress: Float,
 ) {
@@ -209,7 +210,7 @@ internal fun WaveformTrack(
 
             // Draw the bar, color based on whether it is before or after the progress threshold
             drawRoundRect(
-                color = if (centerX < thresholdX) passedColor else upcomingColor,
+                color = if (centerX < thresholdX) passedColor else futureColor,
                 topLeft = topLeft,
                 cornerRadius = barCornerRadius,
                 size = barSize
