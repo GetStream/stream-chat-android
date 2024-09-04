@@ -29,7 +29,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -46,12 +45,12 @@ public fun WaveformSeekBar(
     progress: Float,
     onValueChange: (Float) -> Unit,
 ) {
-    var width by remember { mutableStateOf(0.dp) }
+    StreamLog.v("WaveformSeekBar") {
+        "[onDraw] progress: $progress"
+    }
+    var widthPx by remember { mutableFloatStateOf(0f) }
     var pressed by remember { mutableStateOf(false) }
-
-    val density = LocalDensity.current
-
-    var thumbOffset by remember { mutableStateOf(16.dp) }
+    var currentProgress by remember { mutableFloatStateOf(progress) }
 
     Box(
         modifier = modifier
@@ -65,12 +64,14 @@ public fun WaveformSeekBar(
                     change.consume()
 
                     StreamLog.v("WaveformSeekBar") {
-                        "[detectHorizontalDragGestures] width: $width, dragAmount: $dragAmount, change: $change"
+                        "[detectHorizontalDragGestures] width: $widthPx, dragAmount: $dragAmount, change: $change"
                     }
-                    if (width.value > 0) {
-                        val center = change.position.x.toDp()
-                        val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
-                        thumbOffset = left.coerceIn(0.dp, width - DEFAULT_TRACKER_WIDTH_DP.dp)
+                    if (widthPx > 0) {
+                        currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
+
+                        // val center = change.position.x.toDp()
+                        // val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
+                        // thumbOffset = left.coerceIn(0.dp, width - DEFAULT_TRACKER_WIDTH_DP.dp)
                     }
                 }
             }
@@ -81,10 +82,12 @@ public fun WaveformSeekBar(
                             "[detectTapGestures] press: $it"
                         }
                         pressed = true
-                        if (width.value > 0) {
-                            val center = it.x.toDp()
-                            val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
-                            thumbOffset = left.coerceIn(0.dp, width - PRESSED_TRACKER_WIDTH_DP.dp)
+                        if (widthPx > 0) {
+                            currentProgress = (it.x / widthPx).coerceIn(0f, 1f)
+
+                            // val center = it.x.toDp()
+                            // val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
+                            // thumbOffset = left.coerceIn(0.dp, width - PRESSED_TRACKER_WIDTH_DP.dp)
                         }
                     },
                 ) { offset ->
@@ -101,9 +104,7 @@ public fun WaveformSeekBar(
                 StreamLog.v("WaveformSeekBar") {
                     "[onSizeChanged] Size changed: $size"
                 }
-                with (density) {
-                    width = size.width.toDp()
-                }
+                widthPx = size.width.toFloat()
             }
     ) {
         // Draw the waveform
@@ -117,7 +118,8 @@ public fun WaveformSeekBar(
 
         WaveformThumb(
             pressed = pressed,
-            thumbOffset = thumbOffset,
+            progress = progress,
+            parentWidthPx = widthPx,
         )
     }
 }
@@ -126,19 +128,30 @@ public fun WaveformSeekBar(
 private fun WaveformThumb(
     modifier: Modifier = Modifier,
     pressed: Boolean = false,
-    thumbOffset: Dp
+    progress: Float,
+    parentWidthPx: Float,
 ) {
 
-    val width = when (pressed) {
+    val thumbWidth = when (pressed) {
         true -> PRESSED_TRACKER_WIDTH_DP
         else -> DEFAULT_TRACKER_WIDTH_DP
+    }
+
+    val thumbOffset = when (parentWidthPx > 0) {
+        true -> with (LocalDensity.current) {
+            val parentWidth = parentWidthPx.toDp()
+            val center = parentWidth * progress
+            val left = center - (thumbWidth.dp / 2)
+            left.coerceIn(0.dp, parentWidth - thumbWidth.dp)
+        }
+        else -> 0.dp
     }
 
     Box(
         modifier = modifier
             .offset(thumbOffset)
             .fillMaxHeight()
-            .width(width.dp)
+            .width(thumbWidth.dp)
             .background(Color.White, RoundedCornerShape(5.dp))
             .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
     )
@@ -147,7 +160,7 @@ private fun WaveformThumb(
 @Composable
 internal fun WaveformTrack(
     modifier: Modifier = Modifier,
-    passedColor: Color = Color.Red,
+    passedColor: Color = Color.Blue,
     upcomingColor: Color = Color.LightGray,
     waveform: List<Float>,
     progress: Float,
