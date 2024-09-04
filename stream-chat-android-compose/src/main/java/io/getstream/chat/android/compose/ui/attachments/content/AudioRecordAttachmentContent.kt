@@ -167,7 +167,8 @@ public fun AudioRecordAttachmentContent(
                 } else {
                     StreamImage(
                         modifier = Modifier
-                            .wrapContentSize(),
+                            .size(height = 40.dp, width = 34.dp)
+                            /*.wrapContentSize()*/,
                         data = { R.drawable.stream_compose_ic_file_aac },
                         imageOptions = ImageOptions(
                             contentScale = ContentScale.Fit,
