@@ -28,6 +28,7 @@ internal class AudioPlayerViewModel(
             "[onCleared] no args"
         }
         super.onCleared()
+        controller.reset()
     }
 
     protected fun finalize() {

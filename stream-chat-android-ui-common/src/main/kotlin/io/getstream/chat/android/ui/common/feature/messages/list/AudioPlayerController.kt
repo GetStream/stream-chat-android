@@ -2,6 +2,7 @@ package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
+import io.getstream.chat.android.client.audio.PlayerState
 import io.getstream.chat.android.client.audio.ProgressData
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
@@ -170,8 +171,9 @@ public class AudioPlayerController(
             return
         }
         val playerState = audioPlayer.currentState
-        if (playerState != AudioState.PAUSE) {
-            logger.v { "[resume] rejected (not paused): $playerState" }
+        val isIdleOrPaused = playerState == AudioState.IDLE || playerState == AudioState.PAUSE
+        if (!isIdleOrPaused) {
+            logger.v { "[resume] rejected (not idle or paused): $playerState" }
             return
         }
         val audioHash = curState.playingId
@@ -200,7 +202,7 @@ public class AudioPlayerController(
         logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = state.value ?: return
         setState(curState.copy(
-            isPlaying = true,
+            isPlaying = progressState.currentPosition > 0,
             playingProgress = progressState.progress,
             playbackInMs = progressState.currentPosition,
             durationInMs = progressState.duration,
