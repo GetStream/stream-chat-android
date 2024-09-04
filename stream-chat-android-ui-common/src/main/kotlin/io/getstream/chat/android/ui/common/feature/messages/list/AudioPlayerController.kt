@@ -76,11 +76,13 @@ public class AudioPlayerController(
             logger.v { "[startSeek] rejected (no assetUrl): $attachment" }
             return
         }
+        val audioHash = attachment.assetUrl.hashCode()
         val curState = state.value
-        if (curState?.attachment != attachment) {
-            logger.v { "[startSeek] rejected (not playing): $attachment" }
+        if (curState?.playingId != audioHash) {
+            logger.v { "[startSeek] rejected (not playing): $audioHash" }
             return
         }
+        logger.i { "[startSeek] audioHash: ${curState.playingId}" }
         audioPlayer.startSeek(curState.playingId)
     }
 
@@ -93,15 +95,16 @@ public class AudioPlayerController(
             logger.v { "[seekTo] rejected (no assetUrl): $attachment" }
             return
         }
-        val curState = state.value
-        if (curState?.attachment != attachment) {
-            logger.v { "[seekTo] rejected (not playing): $attachment" }
-            return
-        }
+        // val curState = state.value
+        // if (curState?.attachment != attachment) {
+        //     logger.v { "[seekTo] rejected (not playing): $attachment" }
+        //     return
+        // }
+        val audioHash = attachment.assetUrl.hashCode()
         val durationInSeconds = attachment.duration ?: NULL_DURATION
         val positionInMs = (progress * durationInSeconds * MILLIS_IN_SECOND).toInt()
-        logger.d { "[seekTo] positionInMs: $positionInMs, audioHash: ${curState.playingId}" }
-        audioPlayer.seekTo(positionInMs, curState.playingId)
+        logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash" }
+        audioPlayer.seekTo(positionInMs, audioHash)
     }
 
     /**
@@ -123,7 +126,7 @@ public class AudioPlayerController(
             audioPlayer.resetAudio(curState.playingId)
         }
 
-        val audioHash = attachment.hashCode()
+        val audioHash = attachment.assetUrl.hashCode()
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
@@ -199,7 +202,7 @@ public class AudioPlayerController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
+        //logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = state.value ?: return
         setState(curState.copy(
             isPlaying = progressState.currentPosition > 0,
@@ -219,7 +222,7 @@ public class AudioPlayerController(
     }
 
     private fun setState(newState: AudioPlayerState?) {
-        logger.v { "[setState] ${state.value?.stringify()} => ${newState?.stringify()}" }
+        //logger.v { "[setState] ${state.value?.stringify()} => ${newState?.stringify()}" }
         state.value = newState
     }
 
