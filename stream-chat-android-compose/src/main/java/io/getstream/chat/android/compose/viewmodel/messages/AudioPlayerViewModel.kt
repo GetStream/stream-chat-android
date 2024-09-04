@@ -43,6 +43,10 @@ internal class AudioPlayerViewModel(
     fun changeSpeed(attachment: Attachment) {
         controller.changeSpeed(attachment)
     }
+
+    fun seekTo(attachment: Attachment, progress: Float) {
+        controller.seekTo(attachment, progress)
+    }
 }
 
 @InternalStreamChatApi

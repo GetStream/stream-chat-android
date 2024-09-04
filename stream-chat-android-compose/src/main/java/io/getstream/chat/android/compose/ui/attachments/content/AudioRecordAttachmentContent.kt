@@ -45,6 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.attachments.content.internal.WaveformSeekBar
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -69,6 +70,7 @@ public fun AudioRecordAttachmentContent(
     playerState: AudioPlayerState?,
     onPlayToggleClick: (Attachment) -> Unit,
     onPlaySpeedClick: (Attachment) -> Unit,
+    onPlayProgressChanged: (Attachment, Float) -> Unit,
 ) {
 
     val trackProgress = playerState?.playingProgress ?: 0F
@@ -76,6 +78,7 @@ public fun AudioRecordAttachmentContent(
         ?: (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
     val playing = playerState?.isPlaying == true
     val speed = playerState?.playingSpeed ?: 1F
+    val waveform = playerState?.waveform ?: attachment.waveformData ?: emptyList()
 
     StreamLog.i("AudioRecordAttachmentContent") {
         "speed: $speed"
@@ -125,19 +128,13 @@ public fun AudioRecordAttachmentContent(
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
-            // Slider(
-            //     value = trackProgress,
-            //     onValueChange = {},
-            //     modifier = Modifier.weight(1F),
-            // )
-
             WaveformSeekBar(
                 modifier = Modifier
                     .height(36.dp)
                     .weight(1f),
-                waveform = playerState?.waveform ?: emptyList(),
+                waveform = waveform,
                 progress = trackProgress,
-                onValueChange = {},
+                onValueChange = { onPlayProgressChanged(attachment, it) },
             )
 
             Box(
@@ -167,8 +164,7 @@ public fun AudioRecordAttachmentContent(
                 } else {
                     StreamImage(
                         modifier = Modifier
-                            .size(height = 40.dp, width = 34.dp)
-                            /*.wrapContentSize()*/,
+                            .size(height = 40.dp, width = 34.dp),
                         data = { R.drawable.stream_compose_ic_file_aac },
                         imageOptions = ImageOptions(
                             contentScale = ContentScale.Fit,
@@ -194,6 +190,7 @@ internal fun AudioRecordAttachmentContentPreview() {
             playerState = AudioPlayerState(attachment = attachment),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},
+            onPlayProgressChanged = { _, _ -> }
         )
     }
 }

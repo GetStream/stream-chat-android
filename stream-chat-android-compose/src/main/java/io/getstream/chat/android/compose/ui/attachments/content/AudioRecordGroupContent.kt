@@ -52,6 +52,9 @@ public fun AudioRecordGroupContent(
                 onPlaySpeedClick = { attachment ->
                     viewModel.changeSpeed(attachment)
                 },
+                onPlayProgressChanged = { attachment, progress ->
+                    viewModel.seekTo(attachment, progress)
+                },
             )
         }
     }
