@@ -66,6 +66,23 @@ public class AudioPlayerController(
         audioPlayer.changeSpeed()
     }
 
+    public fun startSeek(attachment: Attachment) {
+        if (attachment.isAudioRecording().not()) {
+            logger.v { "[startSeek] rejected (not an audio recording): ${attachment.type}" }
+            return
+        }
+        attachment.assetUrl ?: run {
+            logger.v { "[startSeek] rejected (no assetUrl): $attachment" }
+            return
+        }
+        val curState = state.value
+        if (curState?.attachment != attachment) {
+            logger.v { "[startSeek] rejected (not playing): $attachment" }
+            return
+        }
+        audioPlayer.startSeek(curState.playingId)
+    }
+
     public fun seekTo(attachment: Attachment, progress: Float) {
         if (attachment.isAudioRecording().not()) {
             logger.v { "[seekTo] rejected (not an audio recording): ${attachment.type}" }

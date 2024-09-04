@@ -70,7 +70,8 @@ public fun AudioRecordAttachmentContent(
     playerState: AudioPlayerState?,
     onPlayToggleClick: (Attachment) -> Unit,
     onPlaySpeedClick: (Attachment) -> Unit,
-    onPlayProgressChanged: (Attachment, Float) -> Unit,
+    onScrubberDragStart: (Attachment) -> Unit = {},
+    onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
 
     val trackProgress = playerState?.playingProgress ?: 0F
@@ -134,7 +135,12 @@ public fun AudioRecordAttachmentContent(
                     .weight(1f),
                 waveform = waveform,
                 progress = trackProgress,
-                onValueChange = { onPlayProgressChanged(attachment, it) },
+                onDragStart = {
+                    onScrubberDragStart(attachment)
+                },
+                onDragStop = { progress ->
+                    onScrubberDragStop(attachment, progress)
+                }
             )
 
             Box(
@@ -190,7 +196,6 @@ internal fun AudioRecordAttachmentContentPreview() {
             playerState = AudioPlayerState(attachment = attachment),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},
-            onPlayProgressChanged = { _, _ -> }
         )
     }
 }

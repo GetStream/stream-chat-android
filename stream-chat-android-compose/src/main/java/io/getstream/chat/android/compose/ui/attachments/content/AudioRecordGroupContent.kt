@@ -52,7 +52,10 @@ public fun AudioRecordGroupContent(
                 onPlaySpeedClick = { attachment ->
                     viewModel.changeSpeed(attachment)
                 },
-                onPlayProgressChanged = { attachment, progress ->
+                onScrubberDragStart = { attachment ->
+                    viewModel.startSeek(attachment)
+                },
+                onScrubberDragStop = { attachment, progress ->
                     viewModel.seekTo(attachment, progress)
                 },
             )

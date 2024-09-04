@@ -44,11 +44,13 @@ public fun WaveformSeekBar(
     modifier: Modifier = Modifier,
     waveform: List<Float>,
     progress: Float,
-    onValueChange: (Float) -> Unit,
+    onDragStart: () -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
+    onDragStop: (Float) -> Unit = { StreamLog.e("WaveformSeekBar") { "[onDragStop] progress: $it" } },
 ) {
+    /*TODO
     StreamLog.v("WaveformSeekBar") {
         "[onDraw] progress: $progress"
-    }
+    }*/
     var widthPx by remember { mutableFloatStateOf(0f) }
     var pressed by remember { mutableStateOf(false) }
     var currentProgress by remember { mutableFloatStateOf(progress) }
@@ -62,16 +64,23 @@ public fun WaveformSeekBar(
         modifier = modifier
             .fillMaxSize()
             .pointerInput(Unit) {
-                detectDragGestures(onDragEnd = {
-                    pressed = false
-                }, onDragCancel = {
-                    pressed = false
-                }) { change, dragAmount ->
+                detectDragGestures(
+                    onDragEnd = {
+                        StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] end" }
+                        onDragStop(currentProgress)
+                        pressed = false
+                    },
+                    onDragCancel = {
+                        StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] cancel" }
+                        onDragStop(currentProgress)
+                        pressed = false
+                    }
+                ) { change, dragAmount ->
                     change.consume()
 
-                    StreamLog.v("WaveformSeekBar") {
+                    /*StreamLog.v("WaveformSeekBar") {
                         "[detectHorizontalDragGestures] width: $widthPx, dragAmount: $dragAmount, change: $change"
-                    }
+                    }*/
                     if (widthPx > 0) {
                         currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
 
@@ -94,6 +103,7 @@ public fun WaveformSeekBar(
                             // val center = it.x.toDp()
                             // val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
                             // thumbOffset = left.coerceIn(0.dp, width - PRESSED_TRACKER_WIDTH_DP.dp)
+                            onDragStart()
                         }
                     },
                 ) { offset ->
@@ -101,7 +111,7 @@ public fun WaveformSeekBar(
                     StreamLog.v("WaveformSeekBar") {
                         "[detectTapGestures] tap: $offset"
                     }
-
+                    onDragStop(currentProgress)
                     pressed = false
 
                 }
@@ -144,12 +154,13 @@ private fun WaveformThumb(
     }
 
     val thumbOffset = when (parentWidthPx > 0) {
-        true -> with (LocalDensity.current) {
+        true -> with(LocalDensity.current) {
             val parentWidth = parentWidthPx.toDp()
             val center = parentWidth * progress
             val left = center - (thumbWidth.dp / 2)
             left.coerceIn(0.dp, parentWidth - thumbWidth.dp)
         }
+
         else -> 0.dp
     }
 
@@ -171,7 +182,7 @@ internal fun WaveformTrack(
     waveform: List<Float>,
     progress: Float,
 ) {
-    StreamLog.v("WaveformTrack") { "[onDraw] progress: $progress" }
+    // TODO StreamLog.v("WaveformTrack") { "[onDraw] progress: $progress" }
     val totalBars = waveform.size
     var barCornerRadius by remember(totalBars) { mutableStateOf(CornerRadius.Zero) }
     Canvas(modifier = modifier) {
@@ -231,7 +242,6 @@ internal fun WaveformSeekBarPreview() {
                     .height(36.dp),
                 waveform = waveform,
                 progress = 0.0f,
-                onValueChange = {},
             )
         }
     }

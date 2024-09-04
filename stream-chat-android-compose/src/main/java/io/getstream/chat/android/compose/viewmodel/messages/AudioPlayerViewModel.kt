@@ -47,6 +47,10 @@ internal class AudioPlayerViewModel(
     fun seekTo(attachment: Attachment, progress: Float) {
         controller.seekTo(attachment, progress)
     }
+
+    fun startSeek(attachment: Attachment) {
+        controller.startSeek(attachment)
+    }
 }
 
 @InternalStreamChatApi
