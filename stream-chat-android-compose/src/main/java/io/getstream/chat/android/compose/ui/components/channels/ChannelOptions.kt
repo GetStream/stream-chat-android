@@ -110,6 +110,7 @@ public fun buildDefaultChannelOptionsState(
 ): List<ChannelOptionState> {
     val canLeaveChannel = ownCapabilities.contains(ChannelCapabilities.LEAVE_CHANNEL)
     val canDeleteChannel = ownCapabilities.contains(ChannelCapabilities.DELETE_CHANNEL)
+    val canMuteChannel = ownCapabilities.contains(ChannelCapabilities.MUTE_CHANNEL)
 
     return listOfNotNull(
         ChannelOptionState(
@@ -130,22 +131,29 @@ public fun buildDefaultChannelOptionsState(
         } else {
             null
         },
-        if (isMuted) {
+        if (canMuteChannel) {
+            val uiData = when (isMuted) {
+                true -> Triple(
+                    R.string.stream_compose_selected_channel_menu_unmute_channel,
+                    R.drawable.stream_compose_ic_unmute,
+                    UnmuteChannel(selectedChannel)
+                )
+                false -> Triple(
+                    R.string.stream_compose_selected_channel_menu_mute_channel,
+                    R.drawable.stream_compose_ic_mute,
+                    MuteChannel(selectedChannel)
+                )
+            }
+
             ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_selected_channel_menu_unmute_channel),
+                title = stringResource(id = uiData.first),
                 titleColor = ChatTheme.colors.textHighEmphasis,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_unmute),
+                iconPainter = painterResource(id = uiData.second),
                 iconColor = ChatTheme.colors.textLowEmphasis,
-                action = UnmuteChannel(selectedChannel),
+                action = uiData.third,
             )
         } else {
-            ChannelOptionState(
-                title = stringResource(id = R.string.stream_compose_selected_channel_menu_mute_channel),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_mute),
-                iconColor = ChatTheme.colors.textLowEmphasis,
-                action = MuteChannel(selectedChannel),
-            )
+            null
         },
         if (canDeleteChannel) {
             ChannelOptionState(
