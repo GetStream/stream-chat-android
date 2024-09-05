@@ -30,6 +30,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.InitializationState
 import io.getstream.chat.android.models.OrFilterObject
+import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -90,6 +91,7 @@ internal class ChannelListViewModelTest {
                     loading = false,
                 )
                 .givenChannelMutes()
+                .givenTypingChannels()
                 .get()
 
             val channelsState = viewModel.channelsState
@@ -163,6 +165,7 @@ internal class ChannelListViewModelTest {
                 )
                 .givenChannelMutes(listOf(channelMute))
                 .givenUnmuteChannel()
+                .givenTypingChannels()
                 .get()
 
             viewModel.selectChannel(channel1)
@@ -331,6 +334,10 @@ internal class ChannelListViewModelTest {
 
         fun givenChannelMutes(channelMutes: List<ChannelMute> = emptyList()) = apply {
             whenever(globalState.channelMutes) doReturn MutableStateFlow(channelMutes)
+        }
+
+        fun givenTypingChannels(typingChannels: Map<String, TypingEvent> = emptyMap()) = apply {
+            whenever(globalState.typingChannels) doReturn MutableStateFlow(typingChannels)
         }
 
         fun givenIsOffline(isOffline: Boolean = false) = apply {
