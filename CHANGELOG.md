@@ -14,6 +14,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ✅ Added
 
@@ -67,6 +68,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix condition to show async-voice attachments on MessageList. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ⬆️ Improved
 
