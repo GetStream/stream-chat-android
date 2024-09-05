@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+    <LinearLayout
+        android:id="@+id/flow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:flow_horizontalGap="12dp"
+        app:flow_verticalGap="12dp"
+        app:flow_wrapMode="aligned"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Files Button Group -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/button_files"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="4dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/stream_ui_message_composer_attachment_picker_files"
+                    android:padding="12dp"
+                    android:src="@drawable/stream_ui_attachment_permission_file"
+                    app:tint="@color/stream_gray_dark"
+                    />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text_files"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/stream_ui_message_composer_attachment_picker_files"
+                />
+        </LinearLayout>
+
+        <!-- Media Button Group -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/button_media"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="4dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/stream_ui_message_composer_capture_media_take_photo"
+                    android:padding="12dp"
+                    android:src="@drawable/stream_ui_icon_picture_placeholder"
+                    app:tint="@color/stream_gray_dark"
+                    />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text_media"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/stream_ui_message_composer_attachment_picker_media"
+                />
+        </LinearLayout>
+
+        <!-- Capture Button Group -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/button_capture"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="4dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/stream_ui_message_composer_attachment_picker_capture"
+                    android:padding="12dp"
+                    android:src="@drawable/stream_ui_attachment_permission_camera"
+                    app:tint="@color/stream_gray_dark"
+                    />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text_capture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/stream_ui_message_composer_attachment_picker_capture"
+                />
+        </LinearLayout>
+
+        <!-- Polls Button Group -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical"
+            >
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/button_polls"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="4dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/stream_ui_message_composer_attachment_picker_poll"
+                    android:padding="12dp"
+                    android:src="@drawable/stream_ui_attachment_poll"
+                    app:tint="@color/stream_gray_dark"
+                    />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/text_poll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp"
+                android:text="@string/stream_ui_message_composer_attachment_picker_poll"
+                />
+        </LinearLayout>
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
