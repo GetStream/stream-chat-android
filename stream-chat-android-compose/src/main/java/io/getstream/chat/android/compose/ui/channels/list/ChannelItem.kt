@@ -341,6 +341,7 @@ private fun ChannelItemPreview(
             channelItem = ItemState.ChannelItemState(
                 channel = channel,
                 isMuted = isMuted,
+                typingUsers = emptyList(),
             ),
             currentUser = currentUser,
             onChannelClick = {},
