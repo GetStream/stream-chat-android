@@ -163,13 +163,13 @@ private fun buildMuteOption(
         true -> Triple(
             R.string.stream_compose_selected_channel_menu_unmute_channel,
             R.drawable.stream_compose_ic_unmute,
-            UnmuteChannel(selectedChannel)
+            UnmuteChannel(selectedChannel),
         )
 
         false -> Triple(
             R.string.stream_compose_selected_channel_menu_mute_channel,
             R.drawable.stream_compose_ic_mute,
-            MuteChannel(selectedChannel)
+            MuteChannel(selectedChannel),
         )
     }
 
