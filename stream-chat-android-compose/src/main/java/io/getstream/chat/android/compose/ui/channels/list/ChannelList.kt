@@ -374,11 +374,26 @@ private fun ChannelListForContentStatePreview() {
         ChannelsState(
             isLoading = false,
             channelItems = listOf(
-                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithImage),
-                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithMessages),
-                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithFewMembers),
-                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithManyMembers),
-                ItemState.ChannelItemState(channel = PreviewChannelData.channelWithOnlineUser),
+                ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithImage,
+                    typingUsers = emptyList(),
+                ),
+                ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithMessages,
+                    typingUsers = emptyList(),
+                ),
+                ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithFewMembers,
+                    typingUsers = emptyList(),
+                ),
+                ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithManyMembers,
+                    typingUsers = emptyList(),
+                ),
+                ItemState.ChannelItemState(
+                    channel = PreviewChannelData.channelWithOnlineUser,
+                    typingUsers = emptyList(),
+                ),
             ),
         ),
     )
