@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +50,7 @@ import io.getstream.chat.android.client.extensions.currentUserUnreadCount
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.ui.components.Timestamp
+import io.getstream.chat.android.compose.ui.components.TypingIndicator
 import io.getstream.chat.android.compose.ui.components.avatar.ChannelAvatar
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.components.channels.UnreadCountIndicator
@@ -90,8 +92,7 @@ public fun ChannelItem(
     },
     centerContent: @Composable RowScope.(ItemState.ChannelItemState) -> Unit = {
         DefaultChannelItemCenterContent(
-            channel = it.channel,
-            isMuted = it.isMuted,
+            channelItemState = it,
             currentUser = currentUser,
         )
     },
@@ -166,8 +167,7 @@ internal fun DefaultChannelItemLeadingContent(
  */
 @Composable
 internal fun RowScope.DefaultChannelItemCenterContent(
-    channel: Channel,
-    isMuted: Boolean,
+    channelItemState: ItemState.ChannelItemState,
     currentUser: User?,
 ) {
     Column(
@@ -180,7 +180,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
         val channelName: (@Composable (modifier: Modifier) -> Unit) = @Composable {
             Text(
                 modifier = it,
-                text = ChatTheme.channelNameFormatter.formatChannelName(channel, currentUser),
+                text = ChatTheme.channelNameFormatter.formatChannelName(channelItemState.channel, currentUser),
                 style = ChatTheme.typography.bodyBold,
                 fontSize = 16.sp,
                 maxLines = 1,
@@ -189,7 +189,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             )
         }
 
-        if (isMuted) {
+        if (channelItemState.isMuted) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 channelName(Modifier.weight(weight = 1f, fill = false))
 
@@ -206,19 +206,51 @@ internal fun RowScope.DefaultChannelItemCenterContent(
             channelName(Modifier)
         }
 
-        val lastMessageText = channel.getLastMessage(currentUser)?.let { lastMessage ->
-            ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
-        } ?: AnnotatedString("")
+        if (channelItemState.typingUsers.isNotEmpty()) {
+            UserTypingIndicator(channelItemState.typingUsers)
+        } else {
+            val lastMessageText = channelItemState.channel.getLastMessage(currentUser)?.let { lastMessage ->
+                ChatTheme.messagePreviewFormatter.formatMessagePreview(lastMessage, currentUser)
+            } ?: AnnotatedString("")
 
-        if (lastMessageText.isNotEmpty()) {
-            Text(
-                text = lastMessageText,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textLowEmphasis,
-            )
+            if (lastMessageText.isNotEmpty()) {
+                Text(
+                    text = lastMessageText,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = ChatTheme.typography.body,
+                    color = ChatTheme.colors.textLowEmphasis,
+                )
+            }
         }
+    }
+}
+
+/**
+ * Shows the user typing indicator for the provided users.
+ *
+ * @param users The list of users currently typing.
+ */
+@Composable
+private fun UserTypingIndicator(users: List<User>) {
+    Row(
+        modifier = Modifier,
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TypingIndicator()
+        Text(
+            text = LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_header_typing_users,
+                users.size,
+                users.first().name,
+                users.size - 1,
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            style = ChatTheme.typography.body,
+            color = ChatTheme.colors.textLowEmphasis,
+        )
     }
 }
 
