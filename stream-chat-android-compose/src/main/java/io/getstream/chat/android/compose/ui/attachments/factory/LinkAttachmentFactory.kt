@@ -36,11 +36,10 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * @param linkDescriptionMaxLines - The limit of how many lines we show for the link description.
  * @param onContentItemClick Lambda called when an item gets clicked.
  */
-@Suppress("FunctionName")
-public fun LinkAttachmentFactory(
+public class LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
     onContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
-): AttachmentFactory = AttachmentFactory(
+) : AttachmentFactory(
     canHandle = { links -> links.any { it.hasLink() && !it.isGiphy() } },
     content = @Composable { modifier, state ->
         LinkAttachmentContent(

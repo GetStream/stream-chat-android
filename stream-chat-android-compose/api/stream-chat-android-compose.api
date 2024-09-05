@@ -494,8 +494,9 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Unsu
 	public static final fun UnsupportedAttachmentContent (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/AudioRecordAttachmentFactoryKt {
-	public static final fun AudioRecordAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/AudioRecordAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/AudioRecordAttachmentFactory;
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/factory/ComposableSingletons$AudioRecordAttachmentFactoryKt {
@@ -535,37 +536,48 @@ public final class io/getstream/chat/android/compose/ui/attachments/factory/Comp
 	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function4;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/FileAttachmentFactoryKt {
-	public static final fun FileAttachmentFactory (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun FileAttachmentFactory$default (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/FileAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/GiphyAttachmentFactoryKt {
-	public static final fun GiphyAttachmentFactory (Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun GiphyAttachmentFactory$default (Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/GiphyAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lio/getstream/chat/android/ui/common/utils/GiphyInfoType;Lio/getstream/chat/android/ui/common/utils/GiphySizingMode;Landroidx/compose/ui/layout/ContentScale;Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/LinkAttachmentFactoryKt {
-	public static final fun LinkAttachmentFactory (ILkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun LinkAttachmentFactory$default (ILkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/LinkAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public fun <init> (ILkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (ILkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/MediaAttachmentFactoryKt {
-	public static final fun MediaAttachmentFactory (IZLkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun MediaAttachmentFactory$default (IZLkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/MediaAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (IZLkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;)V
+	public synthetic fun <init> (IZLkotlin/jvm/functions/Function6;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/QuotedAttachmentFactoryKt {
-	public static final fun QuotedAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/QuotedAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/QuotedAttachmentFactory;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/UnsupportedAttachmentFactoryKt {
-	public static final fun UnsupportedAttachmentFactory ()Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/UnsupportedAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/factory/UnsupportedAttachmentFactory;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/factory/UploadAttachmentFactoryKt {
-	public static final fun UploadAttachmentFactory (Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
-	public static synthetic fun UploadAttachmentFactory$default (Lkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/attachments/AttachmentFactory;
+public final class io/getstream/chat/android/compose/ui/attachments/factory/UploadAttachmentFactory : io/getstream/chat/android/compose/ui/attachments/AttachmentFactory {
+	public static final field $stable I
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function2;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class io/getstream/chat/android/compose/ui/attachments/preview/ComposableSingletons$MediaGalleryPreviewActivityKt {
