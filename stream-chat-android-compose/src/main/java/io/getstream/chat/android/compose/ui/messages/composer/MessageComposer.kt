@@ -20,7 +20,12 @@ import android.Manifest
 import android.os.Build
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,10 +61,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -67,6 +77,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -772,108 +783,219 @@ internal fun DefaultMessageComposerTrailingContent(
     if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
-        Row(
-            modifier = Modifier
-                .height(44.dp)
-                .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // TODO don't show if the own ability to send attachments isn't given
-            if (statefulStreamMediaRecorder != null) {
-                Box(
-                    modifier = Modifier
-                        .semantics { contentDescription = recordAudioButtonDescription }
-                        .size(32.dp)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onLongPress = {
-                                    /**
-                                     * An internal function used to handle audio recording. It initiates the recording
-                                     * and stops and saves the file once the appropriate gesture has been completed.
-                                     */
-                                    fun handleAudioRecording() = coroutineScope.launch {
-                                        awaitPointerEventScope {
-                                            statefulStreamMediaRecorder.startAudioRecording(
-                                                context = context,
-                                                recordingName = "audio_recording_${Date()}",
-                                            )
+        var isRecordingVisible by remember { mutableStateOf(value = true) }
+        val layoutDirection = LocalLayoutDirection.current
 
-                                            while (true) {
-                                                val event = awaitPointerEvent(PointerEventPass.Main)
-
-                                                if (event.changes.all { it.changedToUp() }) {
-                                                    statefulStreamMediaRecorder
-                                                        .stopRecording()
-                                                        .onSuccess {
-                                                            StreamLog.i("MessageComposer") {
-                                                                "[onRecordingSaved] attachment: $it"
-                                                            }
-                                                            onRecordingSaved(it.attachment)
-                                                        }
-                                                        .onError {
-                                                            streamLog(throwable = it.extractCause()) {
-                                                                "Could not save audio recording: ${it.message}"
-                                                            }
-                                                        }
-                                                    break
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    when {
-                                        !storageAndRecordingPermissionState.allPermissionsGranted -> {
-                                            storageAndRecordingPermissionState.launchMultiplePermissionRequest()
-                                        }
-
-                                        isRecording == MediaRecorderState.UNINITIALIZED -> {
-                                            handleAudioRecording()
-                                        }
-
-                                        else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
-                                    }
-                                },
-                            )
-                        },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val layoutDirection = LocalLayoutDirection.current
-
+        if (isRecordingVisible) {
+            IconButton(
+                modifier = Modifier
+                    .background(Color.Red)
+                    .semantics { contentDescription = sendButtonDescription },
+                enabled = isSendButtonEnabled && isInputValid,
+                content = {
                     Icon(
                         modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
-                        contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-                        // TODO disable if max attachments are reached
-                        tint = if (isRecording == MediaRecorderState.RECORDING) {
-                            ChatTheme.colors.primaryAccent
-                        } else {
-                            ChatTheme.colors.textLowEmphasis
+                        painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                        contentDescription = stringResource(id = R.string.stream_compose_send_message),
+                        tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
+                    )
+                },
+                onClick = {
+                    if (isInputValid) {
+                        onSendMessage(value, attachments)
+                    }
+                },
+            )
+        }
+
+        var micSize by remember { mutableStateOf(IntSize.Zero) }
+
+        Box(
+            modifier = Modifier
+                .size(if (isRecordingVisible) 48.dp else 0.dp)
+                .onSizeChanged {
+                    StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
+                    micSize = it
+                }
+                .background(Color.Yellow)
+                .semantics { contentDescription = recordAudioButtonDescription }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onPress = { offset ->
+                            val updated = offset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
+                            StreamLog.d("MessageComposer") { "[onMicPress] offset: $offset, updated: $updated" }
+                            isRecordingVisible = false
+                        },
+                        onTap = { offset ->
+                            StreamLog.d("MessageComposer") { "[onMicTap] offset: $offset" }
+                            isRecordingVisible = true
                         },
                     )
                 }
-            }
+                /*.pointerInput(Unit) {
+                    awaitEachGesture {
+                        val event = awaitPointerEvent() // Await the next pointer event
+                        for (change in event.changes) {
+                            StreamLog.v("MessageComposer") { "[onPress] change: $change" }
+                            if (change.changedToDown()) {
+                                //change.consume()
+                                // Handle the "down" event (onPress)
+                                StreamLog.d("MessageComposer") { "[onPress] down position: ${change.position}" }
+                                isRecordingVisible = false
+                            } else if (change.changedToUp()) {
+                                //change.consume()
+                                // Handle the "up" event (onTap)
+                                StreamLog.d("MessageComposer") { "[onTap] up position: ${change.position}" }
+                                isRecordingVisible = true
+                            }
+                        }
+                    }
+                }*/
+                /*.pointerInput(Unit) {
+                    awaitEachGesture {
+                        // Await the first pointer down event
+                        val downEvent = awaitFirstDown().also {
+                            StreamLog.d("MessageComposer") { "[onPress] down position: ${it.position}" }
+                            isRecordingVisible = false
+                        }
+                        downEvent.consume()
+
+                        // Wait for up or cancel after the down event
+                        val upEvent = waitForUpOrCancellation()
+                        upEvent?.consume()
+
+                        if (upEvent != null) {
+                            // Handle the up event (onTap)
+                            StreamLog.d("MessageComposer") { "[onTap] up position: ${upEvent.position}" }
+                            isRecordingVisible = true
+                        } else {
+                            // Handle gesture cancellation
+                            StreamLog.d("MessageComposer") { "[onCancel] gesture was cancelled" }
+                            isRecordingVisible = true
+                        }
+
+                        // Consume the down event to ensure the system doesn't cancel the gesture early
+                        //downEvent.consume()
+                    }
+                }*/
+                .pointerInput(Unit) {
+                    detectDragGestures(
+                        onDragStart = { offset ->
+                            StreamLog.v("MessageComposer") { "[onMicDragStart] offset: $offset" }
+                            isRecordingVisible = false
+                        },
+                        onDrag = { change, _ ->
+                            change.consume()
+                            StreamLog.v("MessageComposer") { "[onMicDrag] offset: ${change.position}" }
+                        },
+                        onDragEnd = {
+                            StreamLog.v("MessageComposer") { "[onMicDragEnd] no args" }
+                            isRecordingVisible = true
+                        },
+                        onDragCancel = {
+                            StreamLog.v("MessageComposer") { "[onMicDragCancel] no args" }
+                            isRecordingVisible = true
+                        }
+                    )
+                }, // Set size to match IconButton
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
+                painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
+                contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
+                // TODO disable if max attachments are reached
+                tint = if (isRecording == MediaRecorderState.RECORDING) {
+                    ChatTheme.colors.primaryAccent
+                } else {
+                    ChatTheme.colors.textLowEmphasis
+                },
+            )
         }
 
-        IconButton(
-            modifier = Modifier
-                .semantics { contentDescription = sendButtonDescription },
-            enabled = isSendButtonEnabled && isInputValid,
-            content = {
-                val layoutDirection = LocalLayoutDirection.current
 
-                Icon(
-                    modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                    tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-                )
-            },
-            onClick = {
-                if (isInputValid) {
-                    onSendMessage(value, attachments)
-                }
-            },
-        )
+
+        // Row(
+        //     modifier = Modifier
+        //         .height(44.dp)
+        //         .padding(horizontal = 4.dp),
+        //     verticalAlignment = Alignment.CenterVertically,
+        // ) {
+        //     // TODO don't show if the own ability to send attachments isn't given
+        //     if (statefulStreamMediaRecorder != null) {
+        //         Box(
+        //             modifier = Modifier
+        //                 .semantics { contentDescription = recordAudioButtonDescription }
+        //                 .size(32.dp)
+        //                 .pointerInput(Unit) {
+        //                     detectTapGestures(
+        //                         onLongPress = {
+        //                             /**
+        //                              * An internal function used to handle audio recording. It initiates the recording
+        //                              * and stops and saves the file once the appropriate gesture has been completed.
+        //                              */
+        //                             fun handleAudioRecording() = coroutineScope.launch {
+        //                                 awaitPointerEventScope {
+        //                                     statefulStreamMediaRecorder.startAudioRecording(
+        //                                         context = context,
+        //                                         recordingName = "audio_recording_${Date()}",
+        //                                     )
+        //
+        //                                     while (true) {
+        //                                         val event = awaitPointerEvent(PointerEventPass.Main)
+        //
+        //                                         if (event.changes.all { it.changedToUp() }) {
+        //                                             statefulStreamMediaRecorder
+        //                                                 .stopRecording()
+        //                                                 .onSuccess {
+        //                                                     StreamLog.i("MessageComposer") {
+        //                                                         "[onRecordingSaved] attachment: $it"
+        //                                                     }
+        //                                                     onRecordingSaved(it.attachment)
+        //                                                 }
+        //                                                 .onError {
+        //                                                     streamLog(throwable = it.extractCause()) {
+        //                                                         "Could not save audio recording: ${it.message}"
+        //                                                     }
+        //                                                 }
+        //                                             break
+        //                                         }
+        //                                     }
+        //                                 }
+        //                             }
+        //
+        //                             when {
+        //                                 !storageAndRecordingPermissionState.allPermissionsGranted -> {
+        //                                     storageAndRecordingPermissionState.launchMultiplePermissionRequest()
+        //                                 }
+        //
+        //                                 isRecording == MediaRecorderState.UNINITIALIZED -> {
+        //                                     handleAudioRecording()
+        //                                 }
+        //
+        //                                 else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
+        //                             }
+        //                         },
+        //                     )
+        //                 },
+        //             contentAlignment = Alignment.Center,
+        //         ) {
+        //             val layoutDirection = LocalLayoutDirection.current
+        //
+        //             Icon(
+        //                 modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
+        //                 painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
+        //                 contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
+        //                 // TODO disable if max attachments are reached
+        //                 tint = if (isRecording == MediaRecorderState.RECORDING) {
+        //                     ChatTheme.colors.primaryAccent
+        //                 } else {
+        //                     ChatTheme.colors.textLowEmphasis
+        //                 },
+        //             )
+        //         }
+        //     }
+        // }
     }
 
     // TODO release recorder after the composable moves of screen
