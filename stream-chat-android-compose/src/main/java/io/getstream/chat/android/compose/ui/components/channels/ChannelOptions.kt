@@ -131,30 +131,7 @@ public fun buildDefaultChannelOptionsState(
         } else {
             null
         },
-        if (canMuteChannel) {
-            val uiData = when (isMuted) {
-                true -> Triple(
-                    R.string.stream_compose_selected_channel_menu_unmute_channel,
-                    R.drawable.stream_compose_ic_unmute,
-                    UnmuteChannel(selectedChannel)
-                )
-                false -> Triple(
-                    R.string.stream_compose_selected_channel_menu_mute_channel,
-                    R.drawable.stream_compose_ic_mute,
-                    MuteChannel(selectedChannel)
-                )
-            }
-
-            ChannelOptionState(
-                title = stringResource(id = uiData.first),
-                titleColor = ChatTheme.colors.textHighEmphasis,
-                iconPainter = painterResource(id = uiData.second),
-                iconColor = ChatTheme.colors.textLowEmphasis,
-                action = uiData.third,
-            )
-        } else {
-            null
-        },
+        buildMuteOption(canMuteChannel, isMuted, selectedChannel),
         if (canDeleteChannel) {
             ChannelOptionState(
                 title = stringResource(id = R.string.stream_compose_selected_channel_menu_delete_conversation),
@@ -174,6 +151,37 @@ public fun buildDefaultChannelOptionsState(
             action = Cancel,
         ),
     )
+}
+
+@Composable
+private fun buildMuteOption(
+    canMuteChannel: Boolean,
+    isMuted: Boolean,
+    selectedChannel: Channel,
+) = if (canMuteChannel) {
+    val uiData = when (isMuted) {
+        true -> Triple(
+            R.string.stream_compose_selected_channel_menu_unmute_channel,
+            R.drawable.stream_compose_ic_unmute,
+            UnmuteChannel(selectedChannel)
+        )
+
+        false -> Triple(
+            R.string.stream_compose_selected_channel_menu_mute_channel,
+            R.drawable.stream_compose_ic_mute,
+            MuteChannel(selectedChannel)
+        )
+    }
+
+    ChannelOptionState(
+        title = stringResource(id = uiData.first),
+        titleColor = ChatTheme.colors.textHighEmphasis,
+        iconPainter = painterResource(id = uiData.second),
+        iconColor = ChatTheme.colors.textLowEmphasis,
+        action = uiData.third,
+    )
+} else {
+    null
 }
 
 /**
