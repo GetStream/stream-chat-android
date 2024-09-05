@@ -72,6 +72,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391) 
 
 ### ⚠️ Changed
 
