@@ -58,7 +58,7 @@ class MessagesActivity : ComponentActivity() {
         GiphyAttachmentFactory(),
         customMediaAttachmentFactory,
         FileAttachmentFactory(),
-        UnsupportedAttachmentFactory(),
+        UnsupportedAttachmentFactory,
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {

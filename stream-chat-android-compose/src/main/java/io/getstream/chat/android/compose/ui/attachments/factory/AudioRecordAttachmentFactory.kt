@@ -27,8 +27,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * An [AttachmentFactory] that will be used if no other [AttachmentFactory] can handle the attachments.
  */
-@Suppress("FunctionName")
-public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+public object AudioRecordAttachmentFactory : AttachmentFactory(
     canHandle = { attachments ->
         attachments.any { it.isAudioRecording() }
     },

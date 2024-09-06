@@ -31,13 +31,16 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * attachment is a media attachment or [FileAttachmentQuotedContent] in case the attachment is a file to build the UI
  * for the quoted message.
  */
-@Suppress("FunctionName")
-public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+public object QuotedAttachmentFactory : AttachmentFactory(
     canHandle = {
-        if (it.isEmpty()) return@AttachmentFactory false
-        val attachment = it.first()
-        attachment.isFile() || attachment.isImage() || attachment.isVideo() || attachment.isGiphy() ||
-            attachment.hasLink()
+        it.firstOrNull()
+            ?.let { attachment ->
+                attachment.isFile() ||
+                    attachment.isImage() ||
+                    attachment.isVideo() ||
+                    attachment.isGiphy() ||
+                    attachment.hasLink()
+            } ?: false
     },
     content = @Composable { modifier, attachmentState ->
         val attachment = attachmentState.message.attachments.first()
@@ -46,6 +49,7 @@ public fun QuotedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
             attachment.isImage() || attachment.isVideo() || attachment.isGiphy() || attachment.hasLink() -> {
                 MediaAttachmentQuotedContent(modifier = modifier, attachment = attachment)
             }
+
             attachment.isFile() -> FileAttachmentQuotedContent(modifier = modifier, attachment = attachment)
         }
     },

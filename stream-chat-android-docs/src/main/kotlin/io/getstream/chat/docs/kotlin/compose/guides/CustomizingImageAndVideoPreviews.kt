@@ -87,7 +87,7 @@ private object CustomizingImageAndVideoPreviewsSnippet {
             GiphyAttachmentFactory(),
             customMediaAttachmentFactory,
             FileAttachmentFactory(),
-            UnsupportedAttachmentFactory()
+            UnsupportedAttachmentFactory
         )
 
         override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {

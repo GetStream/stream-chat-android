@@ -34,14 +34,13 @@ import io.getstream.chat.android.uiutils.extension.isAnyFileType
  *
  * @param onContentItemClick Lambda called when an item gets clicked.
  */
-@Suppress("FunctionName")
-public fun FileAttachmentFactory(
+public class FileAttachmentFactory(
     showFileSize: (Attachment) -> Boolean = { true },
     onContentItemClick: (
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
     ) -> Unit = ::onFileAttachmentContentItemClick,
-): AttachmentFactory = AttachmentFactory(
+) : AttachmentFactory(
     canHandle = { attachments ->
         attachments.any { it.isAnyFileType() }
     },

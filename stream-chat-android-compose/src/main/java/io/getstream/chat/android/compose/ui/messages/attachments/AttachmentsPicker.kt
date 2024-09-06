@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -92,8 +93,9 @@ public fun AttachmentsPicker(
 
     Box(
         modifier = Modifier
-            .fillMaxSize()
             .background(ChatTheme.attachmentPickerTheme.backgroundOverlay)
+            .safeDrawingPadding()
+            .fillMaxSize()
             .clickable(
                 onClick = onDismiss,
                 indication = null,
