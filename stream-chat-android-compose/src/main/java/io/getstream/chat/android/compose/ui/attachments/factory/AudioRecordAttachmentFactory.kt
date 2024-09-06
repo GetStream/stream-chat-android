@@ -32,6 +32,7 @@ import io.getstream.log.StreamLog
 public class AudioRecordAttachmentFactory(
     private val viewModelFactory: AudioPlayerViewModelFactory
 ) : AttachmentFactory(
+    type = Type.BuiltIn.AUDIO_RECORD,
     canHandle = { attachments ->
         attachments.any { it.isAudioRecording() }
     },
