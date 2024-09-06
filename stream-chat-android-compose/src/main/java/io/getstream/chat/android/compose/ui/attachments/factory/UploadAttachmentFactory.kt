@@ -33,10 +33,9 @@ import io.getstream.chat.android.uiutils.extension.isUploading
  *
  * @param onContentItemClick Lambda called when an item gets clicked.
  */
-@Suppress("FunctionName")
-public fun UploadAttachmentFactory(
+public class UploadAttachmentFactory(
     onContentItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClick,
-): AttachmentFactory = AttachmentFactory(
+) : AttachmentFactory(
     canHandle = { attachments -> attachments.any { it.isUploading() } },
     content = @Composable { modifier, state ->
         FileUploadContent(
