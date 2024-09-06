@@ -20,6 +20,13 @@ package io.getstream.chat.android.models
  * Filter object that specifies requests for backend queries.
  */
 public sealed class FilterObject
+
+@Deprecated(
+    message = "This filter will stop to be supported in the future.",
+    level = DeprecationLevel.WARNING,
+)
+public data class NotInFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()
+
 public data class AndFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
 public data class OrFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
 public data class NorFilterObject internal constructor(val filterObjects: Set<FilterObject>) : FilterObject()
@@ -46,6 +53,5 @@ public data class LessThanOrEqualsFilterObject internal constructor(
     val value: Any,
 ) : FilterObject()
 public data class InFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()
-public data class NotInFilterObject internal constructor(val fieldName: String, val values: Set<Any>) : FilterObject()
 public data class DistinctFilterObject internal constructor(val memberIds: Set<String>) : FilterObject()
 public object NeutralFilterObject : FilterObject()
