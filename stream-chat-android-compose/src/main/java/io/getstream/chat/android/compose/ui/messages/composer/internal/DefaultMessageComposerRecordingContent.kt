@@ -6,7 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -26,20 +29,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.PaintingStyle.Companion.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import kotlin.random.Random
 
 @Composable
 internal fun DefaultMessageComposerRecordingContent(
+    waveformData: List<Float>,
+    progress: Float = 0f,
+    isThumbVisible: Boolean = false,
     onPlaybackClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onStopClick: () -> Unit,
@@ -50,6 +56,9 @@ internal fun DefaultMessageComposerRecordingContent(
             .fillMaxWidth()
             .height(112.dp)
     ) {
+        // Creating guidelines
+        val horizontalGuideline = createGuidelineFromTop(0.5f) // 50% from the top
+
         val (
             playbackButton, timerText, sliderText, waveformView, deleteButton, stopButton, completeButton
         ) = createRefs()
@@ -59,13 +68,14 @@ internal fun DefaultMessageComposerRecordingContent(
             contentDescription = null,
             modifier = Modifier
                 .size(32.dp)
+                .padding(4.dp)
                 .clickable { onPlaybackClick() }
                 .focusable(true)
                 .background(Color.Transparent)
                 .constrainAs(playbackButton) {
                     top.linkTo(parent.top)
                     start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
+                    bottom.linkTo(horizontalGuideline)
                 },
             tint = colorResource(id = R.color.stream_compose_accent_red)
         )
@@ -80,8 +90,25 @@ internal fun DefaultMessageComposerRecordingContent(
                 }
         )
 
-        Text(
-            text = "Slide to Cancel",
+        WaveformSlider(
+            waveformData = waveformData,
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp)
+                .constrainAs(waveformView) {
+                    top.linkTo(parent.top)
+                    bottom.linkTo(horizontalGuideline)
+                    start.linkTo(timerText.end)
+                    end.linkTo(parent.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                },
+            visibleBarLimit = 100,
+            adjustBarWidthToLimit = true,
+            isThumbVisible = isThumbVisible,
+            progress = progress,
+        )
+
+        Row(
             modifier = Modifier
                 .padding(end = 96.dp)
                 .constrainAs(sliderText) {
@@ -89,37 +116,37 @@ internal fun DefaultMessageComposerRecordingContent(
                     bottom.linkTo(playbackButton.bottom)
                     end.linkTo(parent.end)
                 },
-            textAlign = TextAlign.Center,
-            color = colorResource(id = R.color.stream_compose_grey)
-        )
-
-        // WaveformView(
-        //     modifier = Modifier
-        //         .padding(vertical = 8.dp, start = 16.dp)
-        //         .constrainAs(waveformView) {
-        //             top.linkTo(parent.top)
-        //             bottom.linkTo(playbackButton.bottom)
-        //             start.linkTo(timerText.end)
-        //             end.linkTo(parent.end)
-        //             width = Dimension.fillToConstraints
-        //         },
-        //     tint = colorResource(id = R.color.stream_ui_accent_blue)
-        // )
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
+                tint = colorResource(id = R.color.stream_compose_grey),
+                contentDescription = null
+            )
+            Text(
+                text = "Slide to Cancel",
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(bottom = 2.dp),
+                color = colorResource(id = R.color.stream_compose_grey)
+            )
+        }
 
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_delete),
             contentDescription = null,
             modifier = Modifier
                 .size(32.dp)
+                .padding(4.dp)
                 .clickable { onDeleteClick() }
                 .focusable(true)
                 .background(Color.Transparent)
                 .constrainAs(deleteButton) {
-                    top.linkTo(playbackButton.bottom)
+                    top.linkTo(horizontalGuideline)
                     bottom.linkTo(parent.bottom)
                     start.linkTo(parent.start)
                 },
-            tint = colorResource(id = R.color.stream_compose_accent_blue)
+            tint = colorResource(id = R.color.stream_compose_accent_red)
         )
 
         Icon(
@@ -127,15 +154,17 @@ internal fun DefaultMessageComposerRecordingContent(
             contentDescription = null,
             modifier = Modifier
                 .size(32.dp)
+                .padding(4.dp)
                 .clickable { onStopClick() }
                 .focusable(true)
                 .background(Color.Transparent)
                 .constrainAs(stopButton) {
-                    top.linkTo(deleteButton.top)
-                    bottom.linkTo(deleteButton.bottom)
+                    top.linkTo(horizontalGuideline)
                     start.linkTo(deleteButton.end)
+                    bottom.linkTo(parent.bottom)
+                    end.linkTo(completeButton.start)
                 },
-            tint = colorResource(id = R.color.stream_compose_accent_blue)
+            tint = colorResource(id = R.color.stream_compose_accent_red)
         )
 
         Icon(
@@ -143,12 +172,13 @@ internal fun DefaultMessageComposerRecordingContent(
             contentDescription = null,
             modifier = Modifier
                 .size(32.dp)
+                .padding(4.dp)
                 .clickable { onCompleteClick() }
                 .focusable(true)
                 .background(Color.Transparent)
                 .constrainAs(completeButton) {
-                    top.linkTo(stopButton.top)
-                    bottom.linkTo(stopButton.bottom)
+                    top.linkTo(horizontalGuideline)
+                    bottom.linkTo(parent.bottom)
                     end.linkTo(parent.end)
                 },
             tint = colorResource(id = R.color.stream_compose_accent_blue)
@@ -164,8 +194,7 @@ internal fun WaveformView(
 ) {
     Canvas(
         modifier = modifier
-            .fillMaxWidth()
-            .height(100.dp)
+            .fillMaxSize()
     ) {
         val canvasWidth = size.width
         val canvasHeight = size.height
@@ -176,8 +205,8 @@ internal fun WaveformView(
             val lineHeight = (amplitude * canvasHeight / 2)
             drawLine(
                 color = waveformColor,
-                start = androidx.compose.ui.geometry.Offset(x, canvasHeight / 2 - lineHeight),
-                end = androidx.compose.ui.geometry.Offset(x, canvasHeight / 2 + lineHeight),
+                start = Offset(x, canvasHeight / 2 - lineHeight),
+                end = Offset(x, canvasHeight / 2 + lineHeight),
                 strokeWidth = 4f,
             )
         }
@@ -199,8 +228,7 @@ internal fun WaveformView2(
 
     Canvas(
         modifier = modifier
-            .fillMaxWidth()
-            .height(100.dp)
+            .fillMaxSize()
             .pointerInput(Unit) {
                 detectDragGestures(
                     onDragStart = {
@@ -226,7 +254,7 @@ internal fun WaveformView2(
         val paintPassed = Paint().apply {
             color = Color.Blue // Passed bar color
         }
-        val paintUpcoming = Paint().apply {
+        val paintFuture = Paint().apply {
             color = Color.Gray // Upcoming bar color
         }
 
@@ -244,7 +272,7 @@ internal fun WaveformView2(
 
             val passed = !isSliderVisible || left + barWidth / 2f < currentProgress * size.width
             drawRoundRect(
-                color = if (passed) paintPassed.color else paintUpcoming.color,
+                color = if (passed) paintPassed.color else paintFuture.color,
                 topLeft = Offset(left, top),
                 size = androidx.compose.ui.geometry.Size(barWidth, barHeight),
                 cornerRadius = androidx.compose.ui.geometry.CornerRadius(barWidth / 2f)
@@ -268,15 +296,27 @@ internal fun WaveformView2(
 @Preview(showBackground = true)
 @Composable
 internal fun DefaultMessageComposerRecordingContentPreview() {
-    DefaultMessageComposerRecordingContent(
-        onPlaybackClick = {},
-        onDeleteClick = {},
-        onStopClick = {},
-        onCompleteClick = {}
-    )
+    val randomWaveformData = List(40) { Random.nextFloat() }
+    ChatPreviewTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(112.dp)
+        ) {
+            DefaultMessageComposerRecordingContent(
+                //waveformData = emptyList(),
+                waveformData = randomWaveformData,
+                onPlaybackClick = {},
+                onDeleteClick = {},
+                onStopClick = {},
+                onCompleteClick = {}
+            )
+        }
+    }
 }
 
 
+/*
 @Preview(showBackground = true)
 @Composable
 internal fun RandomWaveformPreview() {
@@ -294,7 +334,7 @@ internal fun RandomWaveformPreview() {
 @Composable
 internal fun RandomWaveformPreview2() {
     // Generating random waveform data
-    val waveformData = remember { List(100) { kotlin.random.Random.nextFloat() } }
+    val waveformData = remember { List(250) { kotlin.random.Random.nextFloat() } }
 
     Column(
         modifier = Modifier
@@ -307,8 +347,8 @@ internal fun RandomWaveformPreview2() {
             waveform = waveformData,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp),
+                .height(112.dp),
             progress = 0.5f // Example progress
         )
     }
-}
+}*/

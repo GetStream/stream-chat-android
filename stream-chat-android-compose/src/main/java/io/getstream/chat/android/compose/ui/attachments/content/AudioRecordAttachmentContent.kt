@@ -131,7 +131,7 @@ public fun AudioRecordAttachmentContent(
                 modifier = Modifier
                     .height(36.dp)
                     .weight(1f),
-                waveform = waveform,
+                waveformData = waveform,
                 progress = trackProgress,
                 onDragStart = {
                     onScrubberDragStart(attachment)
@@ -180,7 +180,7 @@ public fun AudioRecordAttachmentContent(
     }
 }
 
-@Preview(showSystemUi = true, showBackground = true)
+@Preview(showBackground = true)
 @Composable
 internal fun AudioRecordAttachmentContentPreview() {
     val attachment = Attachment(type = "audio_recording")

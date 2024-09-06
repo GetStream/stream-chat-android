@@ -40,10 +40,25 @@ import kotlin.random.Random
 private const val DEFAULT_TRACKER_WIDTH_DP = 7
 private const val PRESSED_TRACKER_WIDTH_DP = 10
 
+/**
+ * A slider that displays a waveform and allows the user to seek through it.
+ *
+ * @param modifier Modifier for styling.
+ * @param waveformData The waveform data to display.
+ * @param futureColor The color of the waveform that is ahead of the current progress.
+ * @param passedColor The color of the waveform that is behind the current progress.
+ * @param visibleBarLimit The number of bars to display at once.
+ * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
+ * @param barSpacingRatio The ratio of space between bars.
+ * @param progress The current progress of the waveform.
+ * @param isThumbVisible Whether to display the thumb.
+ * @param onDragStart Callback when the user starts dragging the thumb.
+ * @param onDragStop Callback when the user stops dragging the thumb.
+ */
 @Composable
 public fun WaveformSlider(
     modifier: Modifier = Modifier,
-    waveform: List<Float>,
+    waveformData: List<Float>,
     futureColor: Color = Color.LightGray,
     passedColor: Color = ChatTheme.colors.primaryAccent,
     visibleBarLimit: Int = 100,
@@ -133,7 +148,7 @@ public fun WaveformSlider(
         // Draw the waveform
         WaveformTrack(
             modifier = Modifier.fillMaxSize(),
-            waveform = waveform,
+            waveformData = waveformData,
             futureColor = futureColor,
             passedColor = passedColor,
             visibleBarLimit = visibleBarLimit,
@@ -192,7 +207,7 @@ internal fun WaveformTrack(
     modifier: Modifier = Modifier,
     passedColor: Color = ChatTheme.colors.primaryAccent,
     futureColor: Color = /*Color(0xFF7A7A7A)*/Color.LightGray,
-    waveform: List<Float> = emptyList(),
+    waveformData: List<Float> = emptyList(),
     visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
     barSpacingRatio: Float = 0.2f,
@@ -206,12 +221,12 @@ internal fun WaveformTrack(
 
     val totalBars = when (adjustBarWidthToLimit) {
         true -> visibleBarLimit
-        else -> when (waveform.size > visibleBarLimit ) {
+        else -> when (waveformData.size > visibleBarLimit ) {
             true -> visibleBarLimit
-            else -> waveform.size
+            else -> waveformData.size
         }
     }
-    val visibleBars = minOf(visibleBarLimit, waveform.size)
+    val visibleBars = minOf(visibleBarLimit, waveformData.size)
     var barCornerRadius by remember(totalBars) { mutableStateOf(CornerRadius.Zero) }
     Canvas(modifier = modifier) {
         val canvasW = size.width
@@ -230,8 +245,8 @@ internal fun WaveformTrack(
 
         // Precompute constant values outside the loop
         val startIdx = maxOf(0, totalBars - visibleBarLimit)
-        for (index in startIdx until waveform.size) {
-            val amplitude = waveform[index]
+        for (index in startIdx until waveformData.size) {
+            val amplitude = waveformData[index]
             // Calculate the position and size of each bar
             val barHeight = amplitude * canvasH
             val topLeft = Offset(
@@ -277,7 +292,7 @@ internal fun WaveformSeekBarPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(36.dp),
-                waveform = waveform,
+                waveformData = waveform,
                 progress = 0.0f,
             )
         }
@@ -306,7 +321,7 @@ internal fun WaveformTrackPreview() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(36.dp),
-                waveform = waveform,
+                waveformData = waveform,
                 progress = 0f,
                 adjustBarWidthToLimit = true,
                 visibleBarLimit = 100,
