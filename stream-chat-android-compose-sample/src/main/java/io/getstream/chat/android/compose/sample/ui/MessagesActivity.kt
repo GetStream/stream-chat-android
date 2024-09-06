@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -58,7 +59,6 @@ import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
@@ -92,14 +92,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageOptionsState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsPickerState
 import io.getstream.chat.android.ui.common.state.messages.list.SelectedMessageReactionsState
-import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import io.getstream.sdk.chat.audio.recording.MediaRecorderState
-import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 class MessagesActivity : BaseConnectedActivity() {
-
-    private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-    private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
     private val factory by lazy {
         MessagesViewModelFactory(
@@ -158,27 +152,11 @@ class MessagesActivity : BaseConnectedActivity() {
                     onUserAvatarClick = { user ->
                         Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                     },
-                    // TODO
-                    // statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )
 
                 // MyCustomUi()
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (statefulStreamMediaRecorder.mediaRecorderState.value == MediaRecorderState.RECORDING) {
-            streamMediaRecorder.stopRecording()
-        } else {
-            streamMediaRecorder.release()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        streamMediaRecorder.stopRecording()
     }
 
     @Composable
@@ -358,7 +336,6 @@ class MessagesActivity : BaseConnectedActivity() {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = composerViewModel,
-            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
             integrations = {},
             input = { inputState ->
                 MessageInput(
