@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
 
 ### ❌ Removed
 
@@ -14,6 +15,7 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ✅ Added
 
@@ -67,10 +69,13 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix condition to show async-voice attachments on MessageList. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391)
+- Added typing indicator on `ChannelList`. [#5399](https://github.com/GetStream/stream-chat-android/pull/5399)
 
 ### ⚠️ Changed
 

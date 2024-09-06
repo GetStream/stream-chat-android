@@ -111,6 +111,9 @@ public object StreamAttachmentFactories {
         UploadAttachmentFactory(
             onContentItemClick = onUploadContentItemClick,
         ),
+        AudioRecordAttachmentFactory(
+            viewModelFactory = AudioPlayerViewModelFactory(chatClient.audioPlayer),
+        ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
             onContentItemClick = onLinkContentItemClick,
@@ -125,14 +128,11 @@ public object StreamAttachmentFactories {
             skipEnrichUrl = skipEnrichUrl,
             onContentItemClick = onMediaContentItemClick,
         ),
-        AudioRecordAttachmentFactory(
-            AudioPlayerViewModelFactory(chatClient.audioPlayer),
-        ),
         FileAttachmentFactory(
             showFileSize = showFileSize,
             onContentItemClick = onFileContentItemClick,
         ),
-        UnsupportedAttachmentFactory(),
+        UnsupportedAttachmentFactory,
     )
 
     /**
@@ -141,6 +141,6 @@ public object StreamAttachmentFactories {
      * @return a [List] of various [AttachmentFactory] instances that provide different quoted attachments support.
      */
     public fun defaultQuotedFactories(): List<AttachmentFactory> = listOf(
-        QuotedAttachmentFactory(),
+        QuotedAttachmentFactory,
     )
 }

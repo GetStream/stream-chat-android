@@ -29,28 +29,8 @@ import io.getstream.log.StreamLog
 /**
  * An [AttachmentFactory] that will be used if no other [AttachmentFactory] can handle the attachments.
  */
-// @Suppress("FunctionName")
-// public fun AudioRecordAttachmentFactory(): AttachmentFactory = AttachmentFactory(
-//     canHandle = { attachments ->
-//         attachments.any { it.isAudioRecording() }
-//     },
-//     content = @Composable { modifier, attachmentState ->
-//         AudioRecordGroupContent(
-//             modifier = modifier
-//                 .wrapContentHeight()
-//                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
-//             attachmentState = attachmentState,
-//         )
-//     },
-// )
-
-@Suppress("FunctionName")
-public fun AudioRecordAttachmentFactory(
-    vmFactory: AudioPlayerViewModelFactory
-): AttachmentFactory = AudioRecordAttachmentFactoryImpl(vmFactory)
-
-private class AudioRecordAttachmentFactoryImpl(
-    private val vmFactory: AudioPlayerViewModelFactory
+public class AudioRecordAttachmentFactory(
+    private val viewModelFactory: AudioPlayerViewModelFactory
 ) : AttachmentFactory(
     canHandle = { attachments ->
         attachments.any { it.isAudioRecording() }
@@ -61,7 +41,7 @@ private class AudioRecordAttachmentFactoryImpl(
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
             attachmentState = attachmentState,
-            viewModelFactory = vmFactory
+            viewModelFactory = viewModelFactory
         )
     },
 ) {
