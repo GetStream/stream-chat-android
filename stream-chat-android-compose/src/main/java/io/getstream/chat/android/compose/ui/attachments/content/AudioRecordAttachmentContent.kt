@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -30,7 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
-import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
@@ -47,7 +45,7 @@ import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.attachments.content.internal.WaveformSeekBar
+import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StreamImage
@@ -129,7 +127,7 @@ public fun AudioRecordAttachmentContent(
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
-            WaveformSeekBar(
+            WaveformSlider(
                 modifier = Modifier
                     .height(36.dp)
                     .weight(1f),
