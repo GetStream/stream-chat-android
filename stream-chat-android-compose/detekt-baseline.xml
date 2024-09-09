@@ -74,7 +74,6 @@
     <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
     <ID>MaxLineLength:MediaAttachmentContent.kt$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
-    <ID>MaxLineLength:MediaAttachmentFactory.kt$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:MessageItem.kt$message.isDeleted() &amp;&amp; messageItem.deletedMessageVisibility == DeletedMessageVisibility.VISIBLE_FOR_CURRENT_USER</ID>
     <ID>MaxLineLength:MessageItem.kt$messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM)</ID>
     <ID>MaxLineLength:MessageOptions.kt$iconPainter = painterResource(id = if (selectedMessage.pinned) R.drawable.stream_compose_ic_unpin_message else R.drawable.stream_compose_ic_pin_message)</ID>

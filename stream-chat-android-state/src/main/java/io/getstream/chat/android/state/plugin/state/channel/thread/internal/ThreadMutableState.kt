@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.state.channel.thread.internal
 
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +36,14 @@ internal class ThreadMutableState(
     private var _endOfNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _oldestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
     private var _newestInThread: MutableStateFlow<Message?>? = MutableStateFlow(null)
+
+    private val deletedMessagesIds: Set<String>
+        get() = _messages
+            ?.value
+            ?.values
+            ?.mapNotNull { it.takeIf { it.isDeleted() }?.id }
+            ?.toSet()
+            ?: emptySet()
 
     val rawMessage: StateFlow<Map<String, Message>> = _messages!!
     override val messages: StateFlow<List<Message>> = rawMessage
@@ -72,7 +81,7 @@ internal class ThreadMutableState(
     }
 
     fun upsertMessages(messages: List<Message>) {
-        _messages?.apply { value += messages.associateBy(Message::id) }
+        _messages?.apply { value += (messages.associateBy(Message::id) - deletedMessagesIds) }
     }
 
     fun destroy() {

@@ -20,6 +20,7 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
@@ -44,6 +45,7 @@ internal class DatabaseMessageRepository(
 
     private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
     private val replyMessageCache: LruCache<String, Message> = LruCache(cacheSize)
+    private val deletedMessageIds: MutableSet<String> = mutableSetOf()
     private val dbMutex = Mutex()
 
     /**
@@ -110,6 +112,7 @@ internal class DatabaseMessageRepository(
         if (messages.isEmpty()) return
         val validMessages = messages
             .filter { message -> message.cid.isNotEmpty() }
+            .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
             .filter { messageCache.get(it.id) != it }
@@ -121,6 +124,7 @@ internal class DatabaseMessageRepository(
             .filter { replyMessageCache.get(it.id) != it }
             .map(Message::toReplyEntity)
 
+        validMessages.filter { it.isDeleted() }.let { deletedMessageIds.addAll(it.map { it.id }) }
         (replyMessages + messages)
             .mapNotNull { it.poll?.toEntity() }
             .takeUnless { it.isEmpty() }
@@ -170,6 +174,7 @@ internal class DatabaseMessageRepository(
      * @param message [Message]
      */
     override suspend fun deleteChannelMessage(message: Message) {
+        deletedMessageIds.add(message.id)
         messageCache.remove(message.id)
         scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
     }
@@ -251,14 +256,19 @@ internal class DatabaseMessageRepository(
         return messageDao.select(messageIds)
             .map { entity ->
                 entity.toMessage()
-                    .also { messageCache.put(it.id, it) }
+                    .also(::updateCache)
             }
     }
 
     private suspend fun fetchMessageFromDB(messageId: String): Message? {
         return messageDao.select(messageId)
             ?.toMessage()
-            ?.also { messageCache.put(it.id, it) }
+            ?.also(::updateCache)
+    }
+
+    private fun updateCache(message: Message) {
+        messageCache.put(message.id, message)
+        message.takeIf { message.isDeleted() }?.let { deletedMessageIds.add(it.id) }
     }
 
     private suspend fun MessageEntity.toMessage(): Message =
