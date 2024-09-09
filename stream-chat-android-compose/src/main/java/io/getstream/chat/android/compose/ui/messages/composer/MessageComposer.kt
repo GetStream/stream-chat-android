@@ -808,6 +808,7 @@ internal fun DefaultMessageComposerTrailingContent(
         }
 
         var micSize by remember { mutableStateOf(IntSize.Zero) }
+        var micStartOffset = remember { Offset.Zero }
 
         Box(
             modifier = Modifier
@@ -824,8 +825,8 @@ internal fun DefaultMessageComposerTrailingContent(
                             val updated = offset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
                             StreamLog.d("MessageComposer") { "[onMicPress] offset: $offset, updated: $updated" }
                             isRecordingVisible = false
-
-                            onStartRecording(updated)
+                            onStartRecording(Offset.Zero)
+                            micStartOffset = updated
                         },
                         onTap = { offset ->
                             StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset" }
@@ -884,13 +885,16 @@ internal fun DefaultMessageComposerTrailingContent(
                 .pointerInput(Unit) {
                     detectDragGestures(
                         onDragStart = { offset ->
-                            StreamLog.v("MessageComposer") { "[onMicDragStart] offset: $offset" }
+                            val diffOffset = offset.minus(micStartOffset)
+                            StreamLog.v("MessageComposer") { "[onMicDragStart] diffOffset: $diffOffset" }
                             isRecordingVisible = false
+                            onHoldRecording(diffOffset)
                         },
                         onDrag = { change, _ ->
                             change.consume()
-                            StreamLog.v("MessageComposer") { "[onMicDrag] offset: ${change.position}" }
-                            onHoldRecording(change.position)
+                            val diffOffset = change.position.minus(micStartOffset)
+                            StreamLog.v("MessageComposer") { "[onMicDrag] diffOffset: $diffOffset" }
+                            onHoldRecording(diffOffset)
                         },
                         onDragEnd = {
                             StreamLog.e("MessageComposer") { "[onMicDragEnd] no args" }

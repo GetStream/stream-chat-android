@@ -19,8 +19,10 @@ import androidx.compose.material.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -99,6 +101,20 @@ internal fun DefaultMessageComposerRecordingContent(
     }
 
     val recordingStopControlVisible = recordingState is RecordingState.Locked
+
+    var currentOffset by remember { mutableStateOf(IntOffset.Zero) }
+    var previousOffset by remember { mutableStateOf(IntOffset.Zero) }
+
+    // Calculate the difference between the current and previous offsets
+    val offsetDifference = IntOffset(
+        x = currentOffset.x - previousOffset.x,
+        y = currentOffset.y - previousOffset.y
+    )
+
+    // Whenever the current offset changes, update the previous offset
+    LaunchedEffect(currentOffset) {
+        previousOffset = currentOffset
+    }
 
     DefaultMessageComposerRecordingContent(
         waveformVisible = waveformVisible,
@@ -190,9 +206,10 @@ internal fun DefaultMessageComposerRecordingContent(
                     val density = LocalDensity.current
                     // 64 is width of the mic popup icon
                     // 48 is width of the mic icon next to the send button
-                    val xOffset = with(density) { ((64 - 48) / 2).dp.toPx().toInt() }
+                    val xOffset = with(density) { ((64 - 48) / 2).dp.toPx().toInt() } + holdControlsOffset.x
+                    val yOffset = holdControlsOffset.y
                     Popup(
-                        offset = IntOffset(xOffset, 0),
+                        offset = IntOffset(xOffset, yOffset),
                         properties = PopupProperties(clippingEnabled = false),
                         alignment = Alignment.CenterEnd,
                     ) {
