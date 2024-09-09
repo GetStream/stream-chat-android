@@ -129,7 +129,7 @@ internal class DatabaseUserRepository(
             privacySettings = privacySettings?.toEntity(),
             banned = isBanned,
             extraData = extraData,
-            mutes = mutes.map { mute -> mute.target.id },
+            mutes = mutes.map { mute -> mute.target?.id.orEmpty() },
         )
 
     private fun toModel(userEntity: UserEntity): User = with(userEntity) {
