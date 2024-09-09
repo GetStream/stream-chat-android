@@ -26,8 +26,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 /**
  * An [AttachmentFactory] that will be used if no other [AttachmentFactory] can handle the attachments.
  */
-@Suppress("FunctionName")
-public fun UnsupportedAttachmentFactory(): AttachmentFactory = AttachmentFactory(
+public object UnsupportedAttachmentFactory : AttachmentFactory(
     canHandle = { true },
     content = @Composable { modifier, _ ->
         UnsupportedAttachmentContent(

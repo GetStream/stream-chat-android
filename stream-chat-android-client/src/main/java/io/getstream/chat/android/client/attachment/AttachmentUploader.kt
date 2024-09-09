@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.attachment
 
 import android.webkit.MimeTypeMap
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.extensions.EXTRA_UPLOAD_ID
 import io.getstream.chat.android.client.extensions.uploadId
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.utils.ProgressCallback
@@ -266,7 +267,7 @@ public class AttachmentUploader(private val client: ChatClient = ChatClient.inst
                 else -> imageUrl
             },
             assetUrl = uploadedFile.file,
-            extraData = extraData + uploadedFile.extraData,
+            extraData = (extraData + uploadedFile.extraData) - EXTRA_UPLOAD_ID,
         )
     }
 
