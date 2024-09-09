@@ -26,8 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -37,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -52,56 +51,88 @@ internal fun DefaultMessageComposerRecordingContent(
     onStopClick: () -> Unit = {},
     onCompleteClick: () -> Unit = {},
 ) {
-    when (val state = messageComposerState.recording) {
-        is RecordingState.Idle -> Unit
-        is RecordingState.Hold -> {
-            DefaultMessageComposerRecordingContent(
-                waveformData = state.waveform,
-                onPlaybackClick = onPlaybackClick,
-                onDeleteClick = onDeleteClick,
-                onStopClick = onStopClick,
-                onCompleteClick = onCompleteClick
-            )
-        }
 
-        is RecordingState.Overview -> {
-            DefaultMessageComposerRecordingContent(
-                waveformData = state.waveform,
-                waveformProgress = state.playingProgress,
-                isThumbVisible = state.isPlaying,
-                onPlaybackClick = onPlaybackClick,
-                onDeleteClick = onDeleteClick,
-                onStopClick = onStopClick,
-                onCompleteClick = onCompleteClick
-            )
-        }
+    val recordingState = messageComposerState.recording
 
-        is RecordingState.Locked -> {
-            DefaultMessageComposerRecordingContent(
-                waveformData = state.waveform,
-                waveformProgress = 0f,
-                isThumbVisible = false,
-                onPlaybackClick = onPlaybackClick,
-                onDeleteClick = onDeleteClick,
-                onStopClick = onStopClick,
-                onCompleteClick = onCompleteClick
-            )
-        }
-
-        is RecordingState.Complete -> {}
+    val waveformVisible = when (recordingState) {
+        is RecordingState.Locked,
+        is RecordingState.Overview -> true
+        else -> false
     }
+
+    val waveformData = when (recordingState) {
+        is RecordingState.Recording -> recordingState.waveform
+        is RecordingState.Overview -> recordingState.waveform
+        else -> emptyList()
+    }
+
+    val waveformProgress = when (recordingState) {
+        is RecordingState.Overview -> recordingState.playingProgress
+        is RecordingState.Locked -> 1f // Locked state should color all bars as passed
+        else -> 0f
+    }
+
+    val slideToCancelVisible = recordingState is RecordingState.Hold
+
+    val slideToCancelProgress = when (recordingState) {
+        is RecordingState.Hold -> {
+            // TODO implement slide to cancel progress
+            0f
+        }
+        else -> 0f
+    }
+
+    val isThumbVisible = recordingState is RecordingState.Overview
+
+    val holdControlsVisible = recordingState.let { it is RecordingState.Hold || it is RecordingState.Locked }
+    val holdControlsLocked = recordingState is RecordingState.Locked
+    val holdControlsOffset = when (recordingState) {
+        is RecordingState.Hold -> IntOffset(recordingState.offsetX.toInt(), recordingState.offsetY.toInt())
+        else -> IntOffset.Zero
+    }
+
+
+    val recordingControlsVisible = when (recordingState) {
+        is RecordingState.Locked,
+        is RecordingState.Overview -> true
+        else -> false
+    }
+
+    val recordingStopControlVisible = recordingState is RecordingState.Locked
+
+    DefaultMessageComposerRecordingContent(
+        waveformVisible = waveformVisible,
+        waveformData = waveformData,
+        waveformProgress = waveformProgress,
+        slideToCancelVisible = slideToCancelVisible,
+        slideToCancelProgress = slideToCancelProgress,
+        waveformThumbVisible = isThumbVisible,
+        holdControlsVisible = holdControlsVisible,
+        holdControlsLocked = holdControlsLocked,
+        holdControlsOffset = holdControlsOffset,
+        recordingControlsVisible = recordingControlsVisible,
+        recordingStopControlVisible = recordingStopControlVisible,
+        onPlaybackClick = onPlaybackClick,
+        onDeleteClick = onDeleteClick,
+        onStopClick = onStopClick,
+        onCompleteClick = onCompleteClick
+    )
 }
 
 @Composable
 internal fun DefaultMessageComposerRecordingContent(
     modifier: Modifier = Modifier,
-    isWaveformVisible: Boolean = true,
+    waveformVisible: Boolean = true,
+    waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
     waveformProgress: Float = 0f,
-    isSlideToCancelVisible: Boolean = true,
+    slideToCancelVisible: Boolean = true,
     slideToCancelProgress: Float = 0f,
-    isThumbVisible: Boolean = false,
-    areControlsVisible: Boolean = true,
+    holdControlsVisible: Boolean = false,
+    holdControlsLocked: Boolean = false,
+    holdControlsOffset: IntOffset = IntOffset.Zero,
+    recordingControlsVisible: Boolean = true,
+    recordingStopControlVisible: Boolean = true,
     onPlaybackClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onStopClick: () -> Unit,
@@ -113,7 +144,7 @@ internal fun DefaultMessageComposerRecordingContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp),
+                .height(48.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(painter = painterResource(id = R.drawable.stream_compose_ic_mic),
@@ -132,10 +163,12 @@ internal fun DefaultMessageComposerRecordingContent(
             )
 
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .height(48.dp)
+                    .background(Color.Yellow),
                 contentAlignment = Alignment.CenterEnd,
             ) {
-                if (isWaveformVisible) {
+                if (waveformVisible) {
                     WaveformSlider(
                         waveformData = waveformData,
                         modifier = Modifier
@@ -144,19 +177,43 @@ internal fun DefaultMessageComposerRecordingContent(
                             .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
                         visibleBarLimit = 100,
                         adjustBarWidthToLimit = true,
-                        isThumbVisible = isThumbVisible,
+                        isThumbVisible = waveformThumbVisible,
                         progress = waveformProgress,
                     )
                 }
 
-                if (isSlideToCancelVisible) {
+                if (slideToCancelVisible) {
                     RecordingSlideToCancelIndicator(slideToCancelProgress)
+                }
+                
+                if (holdControlsVisible) {
+                    val density = LocalDensity.current
+                    // 64 is width of the mic popup icon
+                    // 48 is width of the mic icon next to the send button
+                    val xOffset = with(density) { ((64 - 48) / 2).dp.toPx().toInt() }
+                    Popup(
+                        offset = IntOffset(xOffset, 0),
+                        properties = PopupProperties(clippingEnabled = false),
+                        alignment = Alignment.CenterEnd,
+                    ) {
+                        RecordingMicIcon()
+                    }
+
+                    // val yOffset = with(density) { -48.dp.toPx() }
+                    //
+                    // Popup(
+                    //     alignment = Alignment.BottomEnd,
+                    //     offset = IntOffset(0, yOffset.toInt()),
+                    // ) {
+                    //     RecordingLockableIcon(locked = holdControlsLocked)
+                    // }
                 }
             }
         }
 
-        if (areControlsVisible) {
+        if (recordingControlsVisible) {
             RecordingControlButtons(
+                isStopControlVisible = recordingStopControlVisible,
                 onDeleteClick = onDeleteClick,
                 onStopClick = onStopClick,
                 onCompleteClick = onCompleteClick
@@ -166,42 +223,7 @@ internal fun DefaultMessageComposerRecordingContent(
 }
 
 @Composable
-private fun RecordingSlideToCancelControls(
-    x: Float,
-    y: Float,
-    onLock: () -> Unit,
-    onCancel: () -> Unit,
-) {
-
-
-
-    RecordingSlideToCancelIndicator(0f)
-}
-
-@Composable
 private fun RecordingMicIcon() {
-    Box(
-        modifier = Modifier
-            .size(64.dp)
-            .clip(CircleShape)
-            .shadow(2.dp, CircleShape)
-            .background(Color.LightGray, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-            contentDescription = null,
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp)
-                .focusable(true),
-            tint = colorResource(id = R.color.stream_compose_accent_blue),
-        )
-    }
-}
-
-@Composable
-private fun RecordingMicIcon2() {
     Card(
         modifier = Modifier
             .size(64.dp),
@@ -209,14 +231,6 @@ private fun RecordingMicIcon2() {
         backgroundColor = Color.LightGray,
         shape = CircleShape,
     ) {
-        /*Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-            contentDescription = null,
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp),
-            tint = colorResource(id = R.color.stream_compose_accent_blue),
-        )*/
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
@@ -239,87 +253,49 @@ private fun RecordingLockableIcon(
     locked: Boolean,
 ) {
     if (locked) {
-        RecordingLockIcon()
-    } else {
         RecordingLockedIcon()
+    } else {
+        RecordingLockIcon()
     }
 }
 
 @Composable
 private fun RecordingLockIcon() {
-    Icon(
-        painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
-        contentDescription = null,
+    Card(
         modifier = Modifier
             .size(width = 54.dp, height = 92.dp)
             .padding(4.dp),
-    )
+        shape = CircleShape,
+    ) {
+        Box {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(width = 48.dp, height = 88.dp),
+                tint = Color.Unspecified,
+            )
+        }
+    }
 }
 
 @Composable
 private fun RecordingLockedIcon() {
-    Icon(
-        painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
-        contentDescription = null,
+    Card(
         modifier = Modifier
             .size(52.dp)
             .padding(4.dp),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-internal fun DefaultRecordingSlideToCancelControlsPreview() {
-    ChatPreviewTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Box(
+        shape = CircleShape,
+    ) {
+        Box {
+            Icon(
+                painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
+                contentDescription = null,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color.Yellow),
-                contentAlignment = Alignment.Center,
-            ) {
-                RecordingSlideToCancelControls(
-                    x = 0f,
-                    y = 0f,
-                    onLock = {},
-                    onCancel = {}
-                )
-
-                // Popup(
-                //     offset = IntOffset(0, 0),
-                //     alignment = Alignment.CenterEnd,
-                //
-                // ) {
-                //     Card(
-                //         modifier = Modifier
-                //             .size(64.dp),
-                //         shape = CircleShape,
-                //         elevation = 2.dp,
-                //     ) {
-                //         Icon(
-                //             painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                //             contentDescription = null,
-                //             modifier = Modifier
-                //                 .size(32.dp)
-                //                 .padding(4.dp),
-                //             tint = colorResource(id = R.color.stream_compose_accent_blue),
-                //         )
-                //     }
-                // }
-
-                Popup(
-                    offset = IntOffset(0, 0),
-                    alignment = Alignment.CenterEnd,) {
-                    RecordingMicIcon2()
-                }
-            }
+                    .size(48.dp),
+                tint = Color.Unspecified,
+            )
         }
-
     }
 }
 
@@ -358,6 +334,7 @@ private fun RecordingSlideToCancelIndicator(
 
 @Composable
 private fun RecordingControlButtons(
+    isStopControlVisible: Boolean,
     onDeleteClick: () -> Unit,
     onStopClick: () -> Unit,
     onCompleteClick: () -> Unit,
@@ -365,7 +342,7 @@ private fun RecordingControlButtons(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
@@ -384,26 +361,25 @@ private fun RecordingControlButtons(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        IconButton(
-            onClick = onStopClick,
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp)
-                .focusable(true),
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
-                contentDescription = null,
-                modifier = Modifier,
-                tint = colorResource(id = R.color.stream_compose_accent_red)
-            )
-
+        if (isStopControlVisible) {
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(
+                onClick = onStopClick,
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(4.dp)
+                    .focusable(true),
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
+                    contentDescription = null,
+                    modifier = Modifier,
+                    tint = colorResource(id = R.color.stream_compose_accent_red)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
-
         IconButton(
             onClick = onCompleteClick,
             modifier = Modifier
@@ -433,14 +409,18 @@ internal fun DefaultMessageComposerRecordingContentPreview() {
             contentAlignment = Alignment.Center,
         ) {
             DefaultMessageComposerRecordingContent(
-                //waveformData = emptyList(),
                 modifier = Modifier.fillMaxWidth(),
-                isWaveformVisible = false,
+                waveformVisible = true,
+                waveformThumbVisible = true,
                 waveformData = randomWaveformData,
                 waveformProgress = 0.2f,
-                isSlideToCancelVisible = true,
-                slideToCancelProgress = 0.0f,
-                areControlsVisible = true,
+                slideToCancelVisible = true,
+                slideToCancelProgress = 1.0f,
+                holdControlsVisible = true,
+                holdControlsLocked = false,
+                holdControlsOffset = IntOffset(0, 0),
+                recordingControlsVisible = true,
+                recordingStopControlVisible = true,
                 onPlaybackClick = {},
                 onDeleteClick = {},
                 onStopClick = {},

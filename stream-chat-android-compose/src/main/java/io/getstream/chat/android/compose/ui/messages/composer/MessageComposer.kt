@@ -21,11 +21,8 @@ import android.os.Build
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,19 +52,13 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.changedToDown
-import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -82,7 +73,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.attachments.audio.RunningWaveForm
@@ -109,12 +99,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.log.Priority
 import io.getstream.log.StreamLog
-import io.getstream.log.streamLog
-import io.getstream.sdk.chat.audio.recording.MediaRecorderState
-import kotlinx.coroutines.launch
-import java.util.Date
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -123,7 +108,6 @@ import java.util.Date
  * @param viewModel The ViewModel that provides pieces of data to show in the composer, like the
  * currently selected integration data or the user input. It also handles sending messages.
  * @param modifier Modifier for styling.
- * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
  * @param onAttachmentsClick Handler for the default Attachments integration.
@@ -163,6 +147,15 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
+    onStartRecording: (Offset) -> Unit = { viewModel.startRecording(it.x to it.y) },
+    onHoldRecording: (Offset) -> Unit = { viewModel.holdRecording(it.x to it.y) },
+    onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
+    onStopRecording: () -> Unit = { viewModel.stopRecording() },
+    onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
+    onCompleteRecording: () -> Unit = { viewModel.completeRecording() },
+    onPauseRecording: () -> Unit = { viewModel.pauseRecording() },
+    onSeekRecording: (Float) -> Unit = { viewModel.seekRecordingTo(it) },
+    onSendRecording: () -> Unit = { viewModel.sendRecording() },
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
@@ -222,6 +215,9 @@ public fun MessageComposer(
 
                 onSendMessage(message)
             },
+            onStartRecording = onStartRecording,
+            onHoldRecording = onHoldRecording,
+            onCancelRecording = onCancelRecording,
         )
     },
 ) {
@@ -293,6 +289,15 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
+    onStartRecording: (Offset) -> Unit = {},
+    onHoldRecording: (Offset) -> Unit = {},
+    onCancelRecording: () -> Unit = {},
+    onStopRecording: () -> Unit = {},
+    onToggleRecordingPlayback: () -> Unit = {},
+    onCompleteRecording: () -> Unit = {},
+    onPauseRecording: () -> Unit = {},
+    onSeekRecording: (Float) -> Unit = {},
+    onSendRecording: () -> Unit = {},
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
@@ -342,12 +347,15 @@ public fun MessageComposer(
         DefaultMessageComposerTrailingContent(
             value = it.inputValue,
             coolDownTime = it.coolDownTime,
-            validationErrors = it.validationErrors,
             attachments = it.attachments,
-            onSendMessage = onSendMessage,
+            validationErrors = it.validationErrors,
             ownCapabilities = it.ownCapabilities,
             isInEditMode = it.action is Edit,
             isRecording = it.recording is RecordingState.Recording,
+            onSendMessage = onSendMessage,
+            onStartRecording = onStartRecording,
+            onHoldRecording = onHoldRecording,
+            onCancelRecording = onCancelRecording,
         )
     },
 ) {
@@ -742,6 +750,9 @@ internal fun DefaultMessageComposerTrailingContent(
     isInEditMode: Boolean,
     isRecording: Boolean,
     onSendMessage: (String, List<Attachment>) -> Unit,
+    onStartRecording: (Offset) -> Unit,
+    onHoldRecording: (Offset) -> Unit,
+    onCancelRecording: () -> Unit,
 ) {
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
@@ -813,10 +824,14 @@ internal fun DefaultMessageComposerTrailingContent(
                             val updated = offset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
                             StreamLog.d("MessageComposer") { "[onMicPress] offset: $offset, updated: $updated" }
                             isRecordingVisible = false
+
+                            onStartRecording(updated)
                         },
                         onTap = { offset ->
-                            StreamLog.d("MessageComposer") { "[onMicTap] offset: $offset" }
+                            StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset" }
                             isRecordingVisible = true
+
+                            onCancelRecording()
                         },
                     )
                 }
@@ -875,14 +890,19 @@ internal fun DefaultMessageComposerTrailingContent(
                         onDrag = { change, _ ->
                             change.consume()
                             StreamLog.v("MessageComposer") { "[onMicDrag] offset: ${change.position}" }
+                            onHoldRecording(change.position)
                         },
                         onDragEnd = {
-                            StreamLog.v("MessageComposer") { "[onMicDragEnd] no args" }
+                            StreamLog.e("MessageComposer") { "[onMicDragEnd] no args" }
                             isRecordingVisible = true
+
+                            onCancelRecording()
                         },
                         onDragCancel = {
-                            StreamLog.v("MessageComposer") { "[onMicDragCancel] no args" }
+                            StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
                             isRecordingVisible = true
+
+                            onCancelRecording()
                         }
                     )
                 }, // Set size to match IconButton

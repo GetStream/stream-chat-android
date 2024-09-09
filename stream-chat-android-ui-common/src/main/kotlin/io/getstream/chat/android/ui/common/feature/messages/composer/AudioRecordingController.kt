@@ -157,7 +157,7 @@ internal class AudioRecordingController(
         }
     }
 
-    public fun startRecording() {
+    public fun startRecording(offset: Pair<Float, Float>? = null) {
         val state = this.recordingState.value
         if (state !is RecordingState.Idle) {
             logger.w { "[startRecording] rejected (state is not Idle): $state" }
@@ -165,8 +165,22 @@ internal class AudioRecordingController(
         }
         logger.i { "[startRecording] state: $state" }
         val recordingName = "audio_recording_${Date()}"
-        mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
-        this.recordingState.value = RecordingState.Hold()
+        //mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
+        this.recordingState.value = RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset)
+    }
+
+    public fun holdRecording(offset: Pair<Float, Float>? = null) {
+        val state = this.recordingState.value
+        if (state !is RecordingState.Hold) {
+            logger.w { "[holdRecording] rejected (state is not Hold): $state" }
+            return
+        }
+        if (offset == null) {
+            logger.v { "[holdRecording] rejected (offset is null)" }
+            return
+        }
+        logger.v { "[holdRecording] offset: Offset(${offset.first}:${offset.second})" }
+        this.recordingState.value = state.copy(offset = offset)
     }
 
     public fun lockRecording() {
@@ -461,6 +475,7 @@ internal class AudioRecordingController(
     }
 
     private fun List<Int>.downsampleToSingleMax(): Int {
+        1 to 1
         return max()
     }
 }
