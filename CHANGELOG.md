@@ -47,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- UnreadLabel is not added on the case all unread messages are deleted. [#5403](https://github.com/GetStream/stream-chat-android/pull/5403)
 
 ### ⬆️ Improved
 
