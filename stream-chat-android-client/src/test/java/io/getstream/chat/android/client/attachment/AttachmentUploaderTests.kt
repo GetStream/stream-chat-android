@@ -125,6 +125,7 @@ internal class AttachmentUploaderTests {
                 name = attachment.upload!!.name,
                 title = attachment.upload!!.name,
                 uploadState = Attachment.UploadState.Success,
+                extraData = attachment.extraData - EXTRA_UPLOAD_ID,
             )
             val result = sut.uploadAttachment(channelType, channelId, attachment)
             result.shouldBeInstanceOf(Result.Success::class)
@@ -150,6 +151,7 @@ internal class AttachmentUploaderTests {
                 name = attachment.upload!!.name,
                 title = attachment.upload!!.name,
                 uploadState = Attachment.UploadState.Success,
+                extraData = attachment.extraData - EXTRA_UPLOAD_ID,
             )
             val result = sut.uploadAttachment(
                 channelType,

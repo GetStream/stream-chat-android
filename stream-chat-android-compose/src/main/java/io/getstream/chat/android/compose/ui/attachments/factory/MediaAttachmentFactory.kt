@@ -37,7 +37,7 @@ import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentC
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentPreviewContent
 import io.getstream.chat.android.compose.ui.attachments.content.PlayButton
 import io.getstream.chat.android.compose.ui.attachments.content.onMediaAttachmentContentItemClick
-import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract
+import io.getstream.chat.android.compose.ui.attachments.preview.MediaGalleryPreviewContract.Input
 import io.getstream.chat.android.models.AttachmentType
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
@@ -55,12 +55,11 @@ import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizin
  * @param previewItemOverlayContent Represents the content overlaid above individual preview items.
  * By default it is used to display a play button over video previews.
  */
-@Suppress("FunctionName")
-public fun MediaAttachmentFactory(
+public class MediaAttachmentFactory(
     maximumNumberOfPreviewedItems: Int = 4,
     skipEnrichUrl: Boolean = false,
     onContentItemClick: (
-        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>,
+        mediaGalleryPreviewLauncher: ManagedActivityResultLauncher<Input, MediaGalleryPreviewResult?>,
         message: Message,
         attachmentPosition: Int,
         videoThumbnailsEnabled: Boolean,
@@ -77,32 +76,31 @@ public fun MediaAttachmentFactory(
             DefaultPreviewItemOverlayContent()
         }
     },
-): AttachmentFactory =
-    AttachmentFactory(
-        canHandle = {
-            it.none { attachment ->
-                !attachment.isImage() && !attachment.isVideo()
-            }
-        },
-        previewContent = { modifier, attachments, onAttachmentRemoved ->
-            MediaAttachmentPreviewContent(
-                attachments = attachments,
-                onAttachmentRemoved = onAttachmentRemoved,
-                modifier = modifier,
-                previewItemOverlayContent = previewItemOverlayContent,
-            )
-        },
-        content = @Composable { modifier, state ->
-            MediaAttachmentContent(
-                modifier = modifier,
-                attachmentState = state,
-                maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
-                itemOverlayContent = itemOverlayContent,
-                skipEnrichUrl = skipEnrichUrl,
-                onItemClick = onContentItemClick,
-            )
-        },
-    )
+) : AttachmentFactory(
+    canHandle = {
+        it.none { attachment ->
+            !attachment.isImage() && !attachment.isVideo()
+        }
+    },
+    previewContent = { modifier, attachments, onAttachmentRemoved ->
+        MediaAttachmentPreviewContent(
+            attachments = attachments,
+            onAttachmentRemoved = onAttachmentRemoved,
+            modifier = modifier,
+            previewItemOverlayContent = previewItemOverlayContent,
+        )
+    },
+    content = @Composable { modifier, state ->
+        MediaAttachmentContent(
+            modifier = modifier,
+            attachmentState = state,
+            maximumNumberOfPreviewedItems = maximumNumberOfPreviewedItems,
+            itemOverlayContent = itemOverlayContent,
+            skipEnrichUrl = skipEnrichUrl,
+            onItemClick = onContentItemClick,
+        )
+    },
+)
 
 /**
  * Represents the default play button that is
