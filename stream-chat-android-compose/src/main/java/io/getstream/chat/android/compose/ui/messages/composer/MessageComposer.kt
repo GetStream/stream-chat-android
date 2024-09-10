@@ -203,6 +203,7 @@ public fun MessageComposer(
         DefaultMessageComposerRecordingContent(
             messageComposerState = it,
             onLockRecording = onLockRecording,
+            onCancelRecording = onCancelRecording,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
@@ -554,7 +555,9 @@ internal fun DefaultComposerIntegrations(
     val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val canSendAttachments = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 
-    if (canSendMessage) {
+    val isRecording = messageInputState.recording !is RecordingState.Idle
+
+    if (canSendMessage && !isRecording) {
         Row(
             modifier = Modifier
                 .height(44.dp)

@@ -20,8 +20,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -45,16 +42,17 @@ import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
-import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.log.StreamLog
+import kotlin.math.abs
 import kotlin.random.Random
 
 @Composable
 internal fun DefaultMessageComposerRecordingContent(
     messageComposerState: MessageComposerState,
     onLockRecording: () -> Unit = {},
+    onCancelRecording: () -> Unit = {},
     onPlaybackClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onStopClick: () -> Unit = {},
@@ -62,6 +60,8 @@ internal fun DefaultMessageComposerRecordingContent(
 ) {
 
     val recordingState = messageComposerState.recording
+
+    StreamLog.i("RecordingContent") { "[onCompose] recordingState: $recordingState" }
 
     val waveformVisible = when (recordingState) {
         is RecordingState.Locked,
@@ -82,14 +82,6 @@ internal fun DefaultMessageComposerRecordingContent(
     }
 
     val slideToCancelVisible = recordingState is RecordingState.Hold
-
-    val slideToCancelProgress = when (recordingState) {
-        is RecordingState.Hold -> {
-            // TODO implement slide to cancel progress
-            0f
-        }
-        else -> 0f
-    }
 
     val isThumbVisible = recordingState is RecordingState.Overview
 
@@ -114,7 +106,6 @@ internal fun DefaultMessageComposerRecordingContent(
         waveformData = waveformData,
         waveformProgress = waveformProgress,
         slideToCancelVisible = slideToCancelVisible,
-        slideToCancelProgress = slideToCancelProgress,
         waveformThumbVisible = isThumbVisible,
         holdControlsVisible = holdControlsVisible,
         holdControlsLocked = holdControlsLocked,
@@ -122,6 +113,7 @@ internal fun DefaultMessageComposerRecordingContent(
         recordingControlsVisible = recordingControlsVisible,
         recordingStopControlVisible = recordingStopControlVisible,
         onLockRecording = onLockRecording,
+        onCancelRecording = onCancelRecording,
         onPlaybackClick = onPlaybackClick,
         onDeleteClick = onDeleteClick,
         onStopClick = onStopClick,
@@ -137,30 +129,34 @@ internal fun DefaultMessageComposerRecordingContent(
     waveformData: List<Float>,
     waveformProgress: Float = 0f,
     slideToCancelVisible: Boolean = true,
-    slideToCancelProgress: Float = 0f,
     holdControlsVisible: Boolean = false,
     holdControlsLocked: Boolean = false,
     holdControlsOffset: IntOffset = IntOffset.Zero,
     recordingControlsVisible: Boolean = true,
     recordingStopControlVisible: Boolean = true,
     onLockRecording: () -> Unit = {},
-    onPlaybackClick: () -> Unit,
-    onDeleteClick: () -> Unit,
-    onStopClick: () -> Unit,
-    onCompleteClick: () -> Unit,
+    onCancelRecording: () -> Unit = {},
+    onPlaybackClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onStopClick: () -> Unit = {},
+    onCompleteClick: () -> Unit = {},
 ) {
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
+    val density = LocalDensity.current
+    val cancelThresholdX = with(density) { 96.dp.toPx().toInt() }
+
+    val cancelOffsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0).toFloat()
+    val slideToCancelProgress = (cancelOffsetX / cancelThresholdX).coerceIn(0f, 1f)
+
+    StreamLog.v("RecordingContent") { "[onCompose] cancelOffsetX: $cancelOffsetX, cancelThresholdX: $cancelThresholdX, slideToCancelProgress: $slideToCancelProgress, contentSize: $contentSize" }
+
     Column(
         modifier = modifier
             .onSizeChanged {
-                StreamLog.i("RecordingContent") {
-                    "Content size is $it"
-                }
                 contentSize = it
             }
     ) {
         RecordingContent(
-            parentSize = contentSize,
             waveformVisible = waveformVisible,
             waveformThumbVisible = waveformThumbVisible,
             waveformData = waveformData,
@@ -187,13 +183,67 @@ internal fun DefaultMessageComposerRecordingContent(
                 onCompleteClick = onCompleteClick
             )
         }
+
+        if (holdControlsVisible) {
+            val lockThresholdY = with(density) { 96.dp.toPx().toInt() }
+
+            val micBaseOffset = remember {
+                with(density) {
+                    // 64 is width of the mic popup icon
+                    // 48 is width of the mic icon next to the send button
+                    IntOffset(
+                        x = ((64 - 48) / 2).dp.toPx().toInt(),
+                        y = 0
+                    )
+                }
+            }
+            val micOffset = micBaseOffset + holdControlsOffset
+
+            Popup(
+                offset = micOffset,
+                properties = PopupProperties(clippingEnabled = false),
+                alignment = Alignment.CenterEnd,
+            ) {
+                RecordingMicIcon()
+            }
+
+            val lockOffset = with(density) {
+                IntOffset(
+                    // 4 is the offset from the right edge of the screen
+                    x = -4.dp.toPx().toInt(),
+                    y = when (holdControlsLocked) {
+                        // 96 is the height of the (RecordingContent + RecordingControlButtons)
+                        true -> -96.dp.toPx().toInt() - 16.dp.toPx().toInt()
+                        // 48 is the height of the RecordingContent
+                        else -> -48.dp.toPx().toInt() - 16.dp.toPx().toInt() + holdControlsOffset.y
+                    },
+                )
+            }
+
+            StreamLog.v("RecordingContent") { "[onCompose] contentSize: $contentSize, holdControlsLocked: $holdControlsLocked, lockOffset: $lockOffset" }
+
+            Popup(
+                offset = lockOffset,
+                alignment = Alignment.BottomEnd,
+            ) {
+                RecordingLockableIcon(locked = holdControlsLocked)
+            }
+
+            if (holdControlsOffset.y <= -lockThresholdY) {
+                StreamLog.i("RecordingContent") { "[onCompose] locking recording: $holdControlsOffset" }
+                onLockRecording()
+            }
+            if (cancelThresholdX > 0 && holdControlsOffset.x <= -cancelThresholdX) {
+                StreamLog.i("RecordingContent") { "[onCompose] canceling recording: $holdControlsOffset" }
+                onCancelRecording()
+            }
+        }
     }
 }
 
 @Composable
 private fun RecordingContent(
     modifier: Modifier = Modifier,
-    parentSize: IntSize,
     waveformVisible: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
@@ -254,62 +304,7 @@ private fun RecordingContent(
             }
 
             if (slideToCancelVisible) {
-                RecordingSlideToCancelIndicator(slideToCancelProgress)
-            }
-
-            if (holdControlsVisible) {
-                val density = LocalDensity.current
-
-                val lockThreshold = with(density) { 96.dp.toPx().toInt() }
-
-                val micBaseOffset = remember {
-                    with(density) {
-                        // 64 is width of the mic popup icon
-                        // 48 is width of the mic icon next to the send button
-                        IntOffset(
-                            x = ((64 - 48) / 2).dp.toPx().toInt(),
-                            y = 0
-                        )
-                    }
-                }
-                val micOffset = micBaseOffset + holdControlsOffset
-
-                if (micOffset.y <= -lockThreshold) {
-                    StreamLog.i("RecordingContent") { "Mic offset is $micOffset, locking recording" }
-                    onLockRecording()
-                }
-
-                Popup(
-                    offset = micOffset,
-                    properties = PopupProperties(clippingEnabled = false),
-                    alignment = Alignment.CenterEnd,
-                ) {
-                    RecordingMicIcon()
-                }
-
-
-                StreamLog.i("RecordingContent") { "parentSize is $parentSize" }
-
-
-                // 64 is width of the mic popup icon
-                val lockOffset = with(density) {
-                    // 4 is the offset from the right edge of the screen
-                    // 64 is the height of the mic popup icon
-                    IntOffset(
-                        x = -4.dp.toPx().toInt(),
-                        y = when (holdControlsLocked) {
-                            true -> -48.dp.toPx().toInt() - 16.dp.toPx().toInt()
-                            else -> -48.dp.toPx().toInt() - 16.dp.toPx().toInt() + holdControlsOffset.y
-                        }
-                    )
-                }
-
-                Popup(
-                    offset = lockOffset,
-                    alignment = Alignment.BottomEnd,
-                ) {
-                    RecordingLockableIcon(locked = holdControlsLocked)
-                }
+                RecordingSlideToCancelIndicator(slideToCancelProgress, holdControlsOffset)
             }
         }
     }
@@ -385,15 +380,13 @@ private fun RecordingLockedIcon() {
 @Composable
 private fun RecordingSlideToCancelIndicator(
     progress: Float = 0f,
+    holdControlsOffset: IntOffset,
 ) {
-    var stcWidth by remember { mutableIntStateOf(0) }
+    val offsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0)
     Row(
         modifier = Modifier
             .background(Color.Magenta)
-            .alpha(1 - progress)
-            .onSizeChanged {
-                stcWidth = it.width
-            },
+            .alpha(1 - progress),
     ) {
         Icon(
             modifier = Modifier.size(24.dp),
@@ -410,7 +403,7 @@ private fun RecordingSlideToCancelIndicator(
         )
         Spacer(modifier = Modifier.width(96.dp))
         Spacer(modifier = Modifier.width(with(LocalDensity.current) {
-            (stcWidth * progress).toDp()
+            offsetX.toDp()
         }))
     }
 }
@@ -498,16 +491,12 @@ internal fun DefaultMessageComposerRecordingContentPreview() {
                 waveformData = randomWaveformData,
                 waveformProgress = 0.2f,
                 slideToCancelVisible = true,
-                slideToCancelProgress = 1.0f,
                 holdControlsVisible = true,
                 holdControlsLocked = false,
                 holdControlsOffset = IntOffset(0, 0),
                 recordingControlsVisible = true,
                 recordingStopControlVisible = true,
-                onPlaybackClick = {},
-                onDeleteClick = {},
-                onStopClick = {},
-                onCompleteClick = {})
+            )
         }
     }
 }
