@@ -285,8 +285,7 @@ private fun RecordingContent(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp)
-                .background(Color.Yellow),
+                .height(48.dp),
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (waveformVisible) {
@@ -384,9 +383,7 @@ private fun RecordingSlideToCancelIndicator(
 ) {
     val offsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0)
     Row(
-        modifier = Modifier
-            .background(Color.Magenta)
-            .alpha(1 - progress),
+        modifier = Modifier.alpha(1 - progress),
     ) {
         Icon(
             modifier = Modifier.size(24.dp),

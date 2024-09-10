@@ -789,10 +789,9 @@ internal fun DefaultMessageComposerTrailingContent(
     if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
-        var isRecordingVisible by remember { mutableStateOf(value = true) }
         val layoutDirection = LocalLayoutDirection.current
 
-        if (isRecordingVisible) {
+        if (!isRecording) {
             IconButton(
                 modifier = Modifier
                     .background(Color.Red)
@@ -819,7 +818,7 @@ internal fun DefaultMessageComposerTrailingContent(
 
         Box(
             modifier = Modifier
-                .size(if (isRecordingVisible) 48.dp else 0.dp)
+                .size(if (isRecording) 0.dp else 48.dp)
                 .onSizeChanged {
                     StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
                     micSize = it
@@ -831,14 +830,11 @@ internal fun DefaultMessageComposerTrailingContent(
                         onPress = { offset ->
                             val updated = offset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
                             StreamLog.d("MessageComposer") { "[onMicPress] offset: $offset, updated: $updated" }
-                            isRecordingVisible = false
                             onStartRecording(Offset.Zero)
                             micStartOffset = updated
                         },
                         onTap = { offset ->
                             StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset" }
-                            isRecordingVisible = true
-
                             onCancelRecording()
                         },
                     )
@@ -894,7 +890,6 @@ internal fun DefaultMessageComposerTrailingContent(
                         onDragStart = { offset ->
                             val diffOffset = offset.minus(micStartOffset)
                             StreamLog.v("MessageComposer") { "[onMicDragStart] diffOffset: $diffOffset" }
-                            isRecordingVisible = false
                             onHoldRecording(diffOffset)
                         },
                         onDrag = { change, _ ->
@@ -905,14 +900,10 @@ internal fun DefaultMessageComposerTrailingContent(
                         },
                         onDragEnd = {
                             StreamLog.e("MessageComposer") { "[onMicDragEnd] no args" }
-                            isRecordingVisible = true
-
                             onCancelRecording()
                         },
                         onDragCancel = {
                             StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
-                            isRecordingVisible = true
-
                             onCancelRecording()
                         }
                     )
