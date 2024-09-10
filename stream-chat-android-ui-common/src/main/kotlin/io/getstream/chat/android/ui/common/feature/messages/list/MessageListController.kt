@@ -817,6 +817,8 @@ public class MessageListController(
             groupedMessages.add(StartOfTheChannelItemState(channel))
         }
 
+        var unreadLabelAdded = false
+        var lastReadMessageFound = false
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
@@ -846,6 +848,14 @@ public class MessageListController(
                     groupedMessages.add(DateSeparatorItemState(createdAt))
                 }
             }
+
+            lastReadMessageFound = lastReadMessageFound || unreadLabel?.lastReadMessageId == previousMessage?.id
+
+            unreadLabel
+                ?.takeIf { lastReadMessageFound }
+                ?.takeUnless { unreadLabelAdded }
+                ?.takeUnless { message.isDeleted() }
+                ?.let { unreadLabelAdded = groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
                 groupedMessages.add(SystemMessageItemState(message = message))
@@ -877,11 +887,6 @@ public class MessageListController(
                     ),
                 )
             }
-
-            unreadLabel
-                ?.takeIf { it.lastReadMessageId == message.id }
-                ?.takeIf { nextMessage != null }
-                ?.let { groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (index == 0 && shouldAddThreadSeparator) {
                 groupedMessages.add(
