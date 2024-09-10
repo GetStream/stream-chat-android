@@ -52,6 +52,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -151,6 +152,7 @@ public fun MessageComposer(
     onHoldRecording: (Offset) -> Unit = { viewModel.holdRecording(it.x to it.y) },
     onLockRecording: () -> Unit = { viewModel.lockRecording() },
     onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
+    onDeleteRecording: () -> Unit = { viewModel.cancelRecording() },
     onStopRecording: () -> Unit = { viewModel.stopRecording() },
     onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
     onCompleteRecording: () -> Unit = { viewModel.completeRecording() },
@@ -204,17 +206,15 @@ public fun MessageComposer(
             messageComposerState = it,
             onLockRecording = onLockRecording,
             onCancelRecording = onCancelRecording,
+            onDeleteRecording = onDeleteRecording,
+            onStopRecording = onStopRecording,
+            onToggleRecordingPlayback = onToggleRecordingPlayback,
+            onCompleteRecording = onCompleteRecording,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
-            value = it.inputValue,
-            coolDownTime = it.coolDownTime,
-            validationErrors = it.validationErrors,
-            attachments = it.attachments,
-            ownCapabilities = it.ownCapabilities,
-            isInEditMode = it.action is Edit,
-            isRecording = it.recording is RecordingState.Recording,
+            messageComposerState = it,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
@@ -223,6 +223,7 @@ public fun MessageComposer(
             onStartRecording = onStartRecording,
             onHoldRecording = onHoldRecording,
             onCancelRecording = onCancelRecording,
+            onSendRecording = onSendRecording,
         )
     },
 ) {
@@ -350,24 +351,19 @@ public fun MessageComposer(
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
-            value = it.inputValue,
-            coolDownTime = it.coolDownTime,
-            attachments = it.attachments,
-            validationErrors = it.validationErrors,
-            ownCapabilities = it.ownCapabilities,
-            isInEditMode = it.action is Edit,
-            isRecording = it.recording is RecordingState.Recording,
+            messageComposerState = it,
             onSendMessage = onSendMessage,
             onStartRecording = onStartRecording,
             onHoldRecording = onHoldRecording,
             onCancelRecording = onCancelRecording,
+            onSendRecording = onSendRecording,
         )
     },
 ) {
     val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val isRecording = messageComposerState.recording is RecordingState.Recording
+    val noRecording = messageComposerState.recording is RecordingState.Idle
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -394,7 +390,7 @@ public fun MessageComposer(
                     )
                 }
 
-                if (isRecording) {
+                if (!noRecording) {
                     audioRecordingContent(messageComposerState)
                 } else {
                     input(messageComposerState)
@@ -664,75 +660,6 @@ private fun RowScope.DefaultComposerInputContent(
 }
 
 /**
- * Used to display audio recording information while audio recording is in progress.
- *
- * @param statefulStreamMediaRecorder Used for recording audio messages.
- */
-@Composable
-internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .align(Alignment.CenterVertically)
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .weight(1f),
-    ) {
-        val amplitudeSample = statefulStreamMediaRecorder.latestMaxAmplitude.value
-        val recordingDuration = statefulStreamMediaRecorder.activeRecordingDuration.value
-
-        val recordingDurationFormatted by remember(recordingDuration) {
-            derivedStateOf {
-                // TODO consider moving to common
-                val remainder = recordingDuration % 60_000
-                val seconds = String.format("%02d", remainder / 1000)
-                val minutes = String.format("%02d", (recordingDuration - remainder) / 60_000)
-
-                "$minutes:$seconds"
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(12.dp)
-                    .align(Alignment.CenterVertically),
-                painter = painterResource(id = R.drawable.stream_compose_ic_circle),
-                tint = Color.Red,
-                // TODO add later
-                contentDescription = null,
-            )
-
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = recordingDurationFormatted,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
-            )
-        }
-
-        RunningWaveForm(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .fillMaxWidth()
-                .height(20.dp),
-            maxInputValue = 20_000,
-            barWidth = 8.dp,
-            barGap = 2.dp,
-            restartKey = true,
-            newValueKey = amplitudeSample.key,
-            latestValue = amplitudeSample.value,
-        )
-    }
-}
-
-/**
  * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
  *
  * @param value The input value.
@@ -749,18 +676,23 @@ internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun DefaultMessageComposerTrailingContent(
-    value: String,
-    coolDownTime: Int,
-    attachments: List<Attachment>,
-    validationErrors: List<ValidationError>,
-    ownCapabilities: Set<String>,
-    isInEditMode: Boolean,
-    isRecording: Boolean,
+    messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     onStartRecording: (Offset) -> Unit,
     onHoldRecording: (Offset) -> Unit,
     onCancelRecording: () -> Unit,
+    onSendRecording: () -> Unit,
 ) {
+    val value = messageComposerState.inputValue
+    val coolDownTime = messageComposerState.coolDownTime
+    val validationErrors = messageComposerState.validationErrors
+    val attachments = messageComposerState.attachments
+    val ownCapabilities = messageComposerState.ownCapabilities
+    val isInEditMode = messageComposerState.action is Edit
+
+    val recordingState by rememberUpdatedState(newValue = messageComposerState.recording)
+    val isRecording = recordingState !is RecordingState.Idle
+
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
@@ -794,7 +726,7 @@ internal fun DefaultMessageComposerTrailingContent(
         if (!isRecording) {
             IconButton(
                 modifier = Modifier
-                    .background(Color.Red)
+                    .background(Color.Magenta)
                     .semantics { contentDescription = sendButtonDescription },
                 enabled = isSendButtonEnabled && isInputValid,
                 content = {
@@ -834,8 +766,10 @@ internal fun DefaultMessageComposerTrailingContent(
                             micStartOffset = updated
                         },
                         onTap = { offset ->
-                            StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset" }
-                            onCancelRecording()
+                            StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset, recordingState: $recordingState" }
+                            if (recordingState is RecordingState.Hold) {
+                                onSendRecording()
+                            }
                         },
                     )
                 }
@@ -899,8 +833,10 @@ internal fun DefaultMessageComposerTrailingContent(
                             onHoldRecording(diffOffset)
                         },
                         onDragEnd = {
-                            StreamLog.e("MessageComposer") { "[onMicDragEnd] no args" }
-                            onCancelRecording()
+                            StreamLog.e("MessageComposer") { "[onMicDragEnd] recordingState: $recordingState" }
+                            if (recordingState is RecordingState.Hold) {
+                                onSendRecording()
+                            }
                         },
                         onDragCancel = {
                             StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
