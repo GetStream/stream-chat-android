@@ -542,10 +542,24 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
+                val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
+                    .fold(emptyList<Message>()) { acc, message ->
+                        when {
+                            channelUserRead.lastReadMessageId == message.id -> emptyList()
+                            else -> acc + message
+                        }
+                    }
                 unreadLabelState.value = channelUserRead.lastReadMessageId
-                    ?.takeUnless { channelState.value?.messages?.value.isNullOrEmpty() }
-                    ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
-                    ?.let { UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton) }
+                    ?.takeUnless { unreadMessages.isEmpty() }
+                    ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                    ?.let { lastReadMessageId ->
+                        UnreadLabel(
+                            unreadCount = channelUserRead.unreadMessages,
+                            lastReadMessageId = lastReadMessageId,
+                            buttonVisibility = shouldShowButton &&
+                                unreadMessages.any { !it.isDeleted() },
+                        )
+                    }
             }.launchIn(scope)
     }
 
