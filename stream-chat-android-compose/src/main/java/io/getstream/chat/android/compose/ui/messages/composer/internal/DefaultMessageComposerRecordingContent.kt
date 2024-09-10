@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -35,19 +38,23 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.extensions.limitTo
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
+import io.getstream.log.StreamLog
 import kotlin.random.Random
 
 @Composable
 internal fun DefaultMessageComposerRecordingContent(
     messageComposerState: MessageComposerState,
+    onLockRecording: () -> Unit = {},
     onPlaybackClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onStopClick: () -> Unit = {},
@@ -102,20 +109,6 @@ internal fun DefaultMessageComposerRecordingContent(
 
     val recordingStopControlVisible = recordingState is RecordingState.Locked
 
-    var currentOffset by remember { mutableStateOf(IntOffset.Zero) }
-    var previousOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-    // Calculate the difference between the current and previous offsets
-    val offsetDifference = IntOffset(
-        x = currentOffset.x - previousOffset.x,
-        y = currentOffset.y - previousOffset.y
-    )
-
-    // Whenever the current offset changes, update the previous offset
-    LaunchedEffect(currentOffset) {
-        previousOffset = currentOffset
-    }
-
     DefaultMessageComposerRecordingContent(
         waveformVisible = waveformVisible,
         waveformData = waveformData,
@@ -128,6 +121,7 @@ internal fun DefaultMessageComposerRecordingContent(
         holdControlsOffset = holdControlsOffset,
         recordingControlsVisible = recordingControlsVisible,
         recordingStopControlVisible = recordingStopControlVisible,
+        onLockRecording = onLockRecording,
         onPlaybackClick = onPlaybackClick,
         onDeleteClick = onDeleteClick,
         onStopClick = onStopClick,
@@ -149,84 +143,41 @@ internal fun DefaultMessageComposerRecordingContent(
     holdControlsOffset: IntOffset = IntOffset.Zero,
     recordingControlsVisible: Boolean = true,
     recordingStopControlVisible: Boolean = true,
+    onLockRecording: () -> Unit = {},
     onPlaybackClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onStopClick: () -> Unit,
     onCompleteClick: () -> Unit,
 ) {
+    var contentSize by remember { mutableStateOf(IntSize.Zero) }
     Column(
         modifier = modifier
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(32.dp)
-                    .padding(4.dp)
-                    .clickable { onPlaybackClick() }
-                    .focusable(true)
-                    .background(Color.Transparent),
-                tint = colorResource(id = R.color.stream_compose_accent_red))
-
-            Text(
-                text = "00:00",
-                modifier = Modifier,
-            )
-
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .height(48.dp)
-                    .background(Color.Yellow),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                if (waveformVisible) {
-                    WaveformSlider(
-                        waveformData = waveformData,
-                        modifier = Modifier
-                            .height(36.dp)
-                            .align(Alignment.CenterStart)
-                            .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
-                        visibleBarLimit = 100,
-                        adjustBarWidthToLimit = true,
-                        isThumbVisible = waveformThumbVisible,
-                        progress = waveformProgress,
-                    )
+            .onSizeChanged {
+                StreamLog.i("RecordingContent") {
+                    "Content size is $it"
                 }
-
-                if (slideToCancelVisible) {
-                    RecordingSlideToCancelIndicator(slideToCancelProgress)
-                }
-                
-                if (holdControlsVisible) {
-                    val density = LocalDensity.current
-                    // 64 is width of the mic popup icon
-                    // 48 is width of the mic icon next to the send button
-                    val xOffset = with(density) { ((64 - 48) / 2).dp.toPx().toInt() } + holdControlsOffset.x
-                    val yOffset = holdControlsOffset.y
-                    Popup(
-                        offset = IntOffset(xOffset, yOffset),
-                        properties = PopupProperties(clippingEnabled = false),
-                        alignment = Alignment.CenterEnd,
-                    ) {
-                        RecordingMicIcon()
-                    }
-
-                    // val yOffset = with(density) { -48.dp.toPx() }
-                    //
-                    // Popup(
-                    //     alignment = Alignment.BottomEnd,
-                    //     offset = IntOffset(0, yOffset.toInt()),
-                    // ) {
-                    //     RecordingLockableIcon(locked = holdControlsLocked)
-                    // }
-                }
+                contentSize = it
             }
-        }
+    ) {
+        RecordingContent(
+            parentSize = contentSize,
+            waveformVisible = waveformVisible,
+            waveformThumbVisible = waveformThumbVisible,
+            waveformData = waveformData,
+            waveformProgress = waveformProgress,
+            slideToCancelVisible = slideToCancelVisible,
+            slideToCancelProgress = slideToCancelProgress,
+            holdControlsVisible = holdControlsVisible,
+            holdControlsLocked = holdControlsLocked,
+            holdControlsOffset = holdControlsOffset,
+            recordingControlsVisible = recordingControlsVisible,
+            recordingStopControlVisible = recordingStopControlVisible,
+            onLockRecording = onLockRecording,
+            onPlaybackClick = onPlaybackClick,
+            onDeleteClick = onDeleteClick,
+            onStopClick = onStopClick,
+            onCompleteClick = onCompleteClick
+        )
 
         if (recordingControlsVisible) {
             RecordingControlButtons(
@@ -240,12 +191,135 @@ internal fun DefaultMessageComposerRecordingContent(
 }
 
 @Composable
+private fun RecordingContent(
+    modifier: Modifier = Modifier,
+    parentSize: IntSize,
+    waveformVisible: Boolean = true,
+    waveformThumbVisible: Boolean = false,
+    waveformData: List<Float>,
+    waveformProgress: Float = 0f,
+    slideToCancelVisible: Boolean = true,
+    slideToCancelProgress: Float = 0f,
+    holdControlsVisible: Boolean = false,
+    holdControlsLocked: Boolean = false,
+    holdControlsOffset: IntOffset = IntOffset.Zero,
+    recordingControlsVisible: Boolean = true,
+    recordingStopControlVisible: Boolean = true,
+    onLockRecording: () -> Unit = {},
+    onPlaybackClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onStopClick: () -> Unit,
+    onCompleteClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+            contentDescription = null,
+            modifier = Modifier
+                .size(32.dp)
+                .padding(4.dp)
+                .clickable { onPlaybackClick() }
+                .focusable(true)
+                .background(Color.Transparent),
+            tint = colorResource(id = R.color.stream_compose_accent_red))
+
+        Text(
+            text = "00:00",
+            modifier = Modifier,
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .background(Color.Yellow),
+            contentAlignment = Alignment.CenterEnd,
+        ) {
+            if (waveformVisible) {
+                WaveformSlider(
+                    waveformData = waveformData,
+                    modifier = Modifier
+                        .height(36.dp)
+                        .align(Alignment.CenterStart)
+                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
+                    visibleBarLimit = 100,
+                    adjustBarWidthToLimit = true,
+                    isThumbVisible = waveformThumbVisible,
+                    progress = waveformProgress,
+                )
+            }
+
+            if (slideToCancelVisible) {
+                RecordingSlideToCancelIndicator(slideToCancelProgress)
+            }
+
+            if (holdControlsVisible) {
+                val density = LocalDensity.current
+
+                val lockThreshold = with(density) { 96.dp.toPx().toInt() }
+
+                val micBaseOffset = remember {
+                    with(density) {
+                        // 64 is width of the mic popup icon
+                        // 48 is width of the mic icon next to the send button
+                        IntOffset(
+                            x = ((64 - 48) / 2).dp.toPx().toInt(),
+                            y = 0
+                        )
+                    }
+                }
+                val micOffset = micBaseOffset + holdControlsOffset
+
+                if (micOffset.y <= -lockThreshold) {
+                    StreamLog.i("RecordingContent") { "Mic offset is $micOffset, locking recording" }
+                    onLockRecording()
+                }
+
+                Popup(
+                    offset = micOffset,
+                    properties = PopupProperties(clippingEnabled = false),
+                    alignment = Alignment.CenterEnd,
+                ) {
+                    RecordingMicIcon()
+                }
+
+
+                StreamLog.i("RecordingContent") { "parentSize is $parentSize" }
+
+
+                // 64 is width of the mic popup icon
+                val lockOffset = with(density) {
+                    // 4 is the offset from the right edge of the screen
+                    // 64 is the height of the mic popup icon
+                    IntOffset(
+                        x = -4.dp.toPx().toInt(),
+                        y = when (holdControlsLocked) {
+                            true -> -48.dp.toPx().toInt() - 16.dp.toPx().toInt()
+                            else -> -48.dp.toPx().toInt() - 16.dp.toPx().toInt() + holdControlsOffset.y
+                        }
+                    )
+                }
+
+                Popup(
+                    offset = lockOffset,
+                    alignment = Alignment.BottomEnd,
+                ) {
+                    RecordingLockableIcon(locked = holdControlsLocked)
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun RecordingMicIcon() {
     Card(
-        modifier = Modifier
-            .size(64.dp),
-        elevation = 2.dp,
-        backgroundColor = Color.LightGray,
+        modifier = Modifier.size(64.dp),
+        backgroundColor = colorResource(id = R.color.stream_compose_grey_gainsboro),
         shape = CircleShape,
     ) {
         Box(
@@ -280,39 +354,31 @@ private fun RecordingLockableIcon(
 private fun RecordingLockIcon() {
     Card(
         modifier = Modifier
-            .size(width = 54.dp, height = 92.dp)
-            .padding(4.dp),
-        shape = CircleShape,
+            .size(width = 48.dp, height = 88.dp),
+        shape = RoundedCornerShape(24.dp),
     ) {
-        Box {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(width = 48.dp, height = 88.dp),
-                tint = Color.Unspecified,
-            )
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
+            contentDescription = null,
+            modifier = Modifier
+                .size(width = 48.dp, height = 88.dp),
+            tint = Color.Unspecified,
+        )
     }
 }
 
 @Composable
 private fun RecordingLockedIcon() {
     Card(
-        modifier = Modifier
-            .size(52.dp)
-            .padding(4.dp),
+        modifier = Modifier.size(48.dp),
         shape = CircleShape,
     ) {
-        Box {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(48.dp),
-                tint = Color.Unspecified,
-            )
-        }
+        Icon(
+            painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
+            contentDescription = null,
+            modifier = Modifier.size(48.dp),
+            tint = Color.Unspecified,
+        )
     }
 }
 

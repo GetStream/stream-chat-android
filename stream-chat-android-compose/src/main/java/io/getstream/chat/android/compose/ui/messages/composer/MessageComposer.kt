@@ -149,6 +149,7 @@ public fun MessageComposer(
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
     onStartRecording: (Offset) -> Unit = { viewModel.startRecording(it.x to it.y) },
     onHoldRecording: (Offset) -> Unit = { viewModel.holdRecording(it.x to it.y) },
+    onLockRecording: () -> Unit = { viewModel.lockRecording() },
     onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
     onStopRecording: () -> Unit = { viewModel.stopRecording() },
     onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
@@ -199,7 +200,10 @@ public fun MessageComposer(
         )
     },
     audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerRecordingContent(it)
+        DefaultMessageComposerRecordingContent(
+            messageComposerState = it,
+            onLockRecording = onLockRecording,
+        )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
