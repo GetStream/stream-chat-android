@@ -1,7 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -62,6 +61,15 @@ internal fun DefaultMessageComposerRecordingContent(
 
     StreamLog.i("RecordingContent") { "[onCompose] recordingState: $recordingState" }
 
+    val recordingTimeMs = when (recordingState) {
+        is RecordingState.Recording -> recordingState.durationInMs
+        is RecordingState.Overview -> when (recordingState.isPlaying) {
+            true -> (recordingState.durationInMs * recordingState.playingProgress).toInt()
+            else -> recordingState.durationInMs
+        }
+        else -> 0
+    }
+
     val waveformVisible = when (recordingState) {
         is RecordingState.Locked,
         is RecordingState.Overview -> true
@@ -102,6 +110,7 @@ internal fun DefaultMessageComposerRecordingContent(
     val recordingStopControlVisible = recordingState is RecordingState.Locked
 
     DefaultMessageComposerRecordingContent(
+        recordingTimeMs = recordingTimeMs,
         waveformVisible = waveformVisible,
         waveformData = waveformData,
         waveformPlaying = waveformPlaying,
@@ -125,6 +134,7 @@ internal fun DefaultMessageComposerRecordingContent(
 @Composable
 internal fun DefaultMessageComposerRecordingContent(
     modifier: Modifier = Modifier,
+    recordingTimeMs: Int = 0,
     waveformVisible: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
@@ -159,6 +169,7 @@ internal fun DefaultMessageComposerRecordingContent(
             }
     ) {
         RecordingContent(
+            recordingTimeMs = recordingTimeMs,
             waveformVisible = waveformVisible,
             waveformThumbVisible = waveformThumbVisible,
             waveformData = waveformData,
@@ -249,6 +260,7 @@ internal fun DefaultMessageComposerRecordingContent(
 @Composable
 private fun RecordingContent(
     modifier: Modifier = Modifier,
+    recordingTimeMs: Int = 0,
     waveformVisible: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
@@ -303,7 +315,7 @@ private fun RecordingContent(
         }
 
         Text(
-            text = "00:00",
+            text = formatMillis(recordingTimeMs),
             modifier = Modifier,
         )
 
@@ -317,7 +329,7 @@ private fun RecordingContent(
                 WaveformSlider(
                     waveformData = waveformData,
                     modifier = Modifier
-                        .height(36.dp)
+                        .fillMaxSize()
                         .align(Alignment.CenterStart)
                         .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
                     visibleBarLimit = 100,
@@ -494,6 +506,13 @@ private fun RecordingControlButtons(
 
         }
     }
+}
+
+private fun formatMillis(milliseconds: Int): String {
+    val totalSeconds = milliseconds / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return "%02d:%02d".format(minutes, seconds)
 }
 
 @Preview(showBackground = true)
