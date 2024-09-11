@@ -1,6 +1,5 @@
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +41,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.log.StreamLog
@@ -179,16 +179,8 @@ internal fun DefaultMessageComposerRecordingContent(
             waveformProgress = waveformProgress,
             slideToCancelVisible = slideToCancelVisible,
             slideToCancelProgress = slideToCancelProgress,
-            holdControlsVisible = holdControlsVisible,
-            holdControlsLocked = holdControlsLocked,
             holdControlsOffset = holdControlsOffset,
-            recordingControlsVisible = recordingControlsVisible,
-            recordingStopControlVisible = recordingStopControlVisible,
-            onLockRecording = onLockRecording,
             onToggleRecordingPlayback = onToggleRecordingPlayback,
-            onDeleteRecording = onDeleteRecording,
-            onStopRecording = onStopRecording,
-            onCompleteRecording = onCompleteRecording
         )
 
         if (recordingControlsVisible) {
@@ -270,61 +262,67 @@ private fun RecordingContent(
     waveformProgress: Float = 0f,
     slideToCancelVisible: Boolean = true,
     slideToCancelProgress: Float = 0f,
-    holdControlsVisible: Boolean = false,
-    holdControlsLocked: Boolean = false,
     holdControlsOffset: IntOffset = IntOffset.Zero,
-    recordingControlsVisible: Boolean = true,
-    recordingStopControlVisible: Boolean = true,
-    onLockRecording: () -> Unit = {},
     onToggleRecordingPlayback: () -> Unit,
-    onDeleteRecording: () -> Unit,
-    onStopRecording: () -> Unit,
-    onCompleteRecording: () -> Unit,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(ChatTheme.messageComposerTheme.audioRecording.playbackHeight),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(
-            onClick = onToggleRecordingPlayback,
-            enabled = waveformThumbVisible,
-            modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp)
-                .focusable(true),
-        ) {
-            Icon(
-                painter = painterResource(
-                    id = when (waveformThumbVisible) {
-                        true -> when (waveformPlaying) {
-                            true -> R.drawable.stream_compose_ic_pause
-                            else -> R.drawable.stream_compose_ic_play
-                        }
-                        else -> R.drawable.stream_compose_ic_mic
-                    }
-                ),
-                contentDescription = null,
+        if (waveformThumbVisible) {
+            val btnStyle = when (waveformPlaying) {
+                true -> ChatTheme.messageComposerTheme.audioRecording.pauseButton
+                else -> ChatTheme.messageComposerTheme.audioRecording.playButton
+            }
+            IconButton(
+                onClick = onToggleRecordingPlayback,
                 modifier = Modifier
-                    .focusable(true)
-                    .background(Color.Transparent),
-                tint = colorResource(id = when (waveformThumbVisible) {
-                    true -> R.color.stream_compose_accent_blue
-                    else -> R.color.stream_compose_accent_red
-                })
-            )
+                    .width(btnStyle.width)
+                    .height(btnStyle.height)
+                    .padding(btnStyle.padding)
+                    .focusable(true),
+            ) {
+                Icon(
+                    painter = btnStyle.icon.painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(btnStyle.icon.width)
+                        .height(btnStyle.icon.height),
+                    tint = btnStyle.icon.tint,
+                )
+            }
+        } else {
+            val micStyle = ChatTheme.messageComposerTheme.audioRecording.micIndicator
+            Box(
+                modifier = Modifier
+                    .width(micStyle.width)
+                    .height(micStyle.height)
+                    .padding(micStyle.padding),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    painter = micStyle.icon.painter,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .width(micStyle.icon.width)
+                        .height(micStyle.icon.height),
+                    tint = micStyle.icon.tint,
+                )
+            }
         }
 
         Text(
             text = formatMillis(recordingTimeMs),
+            style = ChatTheme.messageComposerTheme.audioRecording.timerTextStyle,
             modifier = Modifier,
         )
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(48.dp),
+                .height(ChatTheme.messageComposerTheme.audioRecording.playbackHeight),
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (waveformVisible) {
@@ -332,7 +330,7 @@ private fun RecordingContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.CenterStart)
-                        .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
+                        .padding(ChatTheme.messageComposerTheme.audioRecording.waveformSliderPadding),
                     style = ChatTheme.messageComposerTheme.audioRecording.waveformSliderStyle,
                     waveformData = waveformData,
                     visibleBarLimit = 100,
@@ -427,7 +425,8 @@ private fun RecordingSlideToCancelIndicator(
     ) {
         val iconStyle = ChatTheme.messageComposerTheme.audioRecording.slideToCancelIconStyle
         Icon(
-            modifier = Modifier.width(iconStyle.width)
+            modifier = Modifier
+                .width(iconStyle.width)
                 .height(iconStyle.height),
             painter = iconStyle.painter,
             tint = iconStyle.tint,
@@ -458,7 +457,7 @@ private fun RecordingControlButtons(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp),
+            .height(ChatTheme.messageComposerTheme.audioRecording.controlsHeight),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val deleteStyle = ChatTheme.messageComposerTheme.audioRecording.deleteButton
@@ -473,7 +472,8 @@ private fun RecordingControlButtons(
             Icon(
                 painter = deleteStyle.icon.painter,
                 contentDescription = null,
-                modifier = Modifier.width(deleteStyle.icon.width)
+                modifier = Modifier
+                    .width(deleteStyle.icon.width)
                     .height(deleteStyle.icon.height),
                 tint = deleteStyle.icon.tint,
             )
@@ -493,7 +493,8 @@ private fun RecordingControlButtons(
                 Icon(
                     painter = stopStyle.icon.painter,
                     contentDescription = null,
-                    modifier = Modifier.width(stopStyle.icon.width)
+                    modifier = Modifier
+                        .width(stopStyle.icon.width)
                         .height(stopStyle.icon.height),
                     tint = stopStyle.icon.tint,
                 )
@@ -513,7 +514,8 @@ private fun RecordingControlButtons(
             Icon(
                 painter = completeStyle.icon.painter,
                 contentDescription = null,
-                modifier = Modifier.width(completeStyle.icon.width)
+                modifier = Modifier
+                    .width(completeStyle.icon.width)
                     .height(completeStyle.icon.height),
                 tint = completeStyle.icon.tint,
             )

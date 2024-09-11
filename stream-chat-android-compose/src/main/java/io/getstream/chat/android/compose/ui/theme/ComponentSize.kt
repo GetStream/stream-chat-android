@@ -28,3 +28,10 @@ public data class ComponentSize(
     val width: Dp,
     val height: Dp,
 )
+
+public data class ComponentPadding(
+    val start: Dp,
+    val top: Dp,
+    val end: Dp,
+    val bottom: Dp,
+)

@@ -7,7 +7,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.theme.IconButtonStyle
+import io.getstream.chat.android.compose.ui.theme.ComponentPadding
+import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
@@ -18,12 +19,23 @@ public data class AudioRecordingTheme(
     val showRecordButtonOverSend: Boolean = false,
     val recordButtonIconStyle: IconStyle,
     val waveformSliderStyle: WaveformSliderStyle,
+    val waveformSliderPadding: ComponentPadding,
     val slideToCancelTextStyle: TextStyle,
     val slideToCancelIconStyle: IconStyle,
     val slideToCancelMarginEnd: Dp,
-    val deleteButton: IconButtonStyle,
-    val stopButton: IconButtonStyle,
-    val completeButtonStyle: IconButtonStyle,
+
+    val micIndicator: IconContainerStyle,
+
+    val timerTextStyle: TextStyle,
+
+    val playbackHeight: Dp,
+    val playButton: IconContainerStyle,
+    val pauseButton: IconContainerStyle,
+
+    val controlsHeight: Dp,
+    val deleteButton: IconContainerStyle,
+    val stopButton: IconContainerStyle,
+    val completeButtonStyle: IconContainerStyle,
 ) {
 
     public companion object {
@@ -45,6 +57,7 @@ public data class AudioRecordingTheme(
                     height = 24.dp,
                 ),
                 waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
+                waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
                 slideToCancelTextStyle = typography.body.copy(
                     color = colors.textLowEmphasis,
                 ),
@@ -55,7 +68,49 @@ public data class AudioRecordingTheme(
                     height = 24.dp,
                 ),
                 slideToCancelMarginEnd = 96.dp,
-                deleteButton = IconButtonStyle(
+
+                playbackHeight = 48.dp,
+                micIndicator = IconContainerStyle(
+                    width = 32.dp,
+                    height = 32.dp,
+                    padding = 4.dp,
+                    icon = IconStyle(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                        tint = colors.errorAccent,
+                        width = 24.dp,
+                        height = 24.dp,
+                    ),
+                ),
+
+                timerTextStyle = typography.body.copy(
+                    color = colors.textLowEmphasis,
+                ),
+
+                playButton = IconContainerStyle(
+                    width = 32.dp,
+                    height = 32.dp,
+                    padding = 4.dp,
+                    icon = IconStyle(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_play),
+                        tint = colors.primaryAccent,
+                        width = 24.dp,
+                        height = 24.dp,
+                    ),
+                ),
+                pauseButton = IconContainerStyle(
+                    width = 32.dp,
+                    height = 32.dp,
+                    padding = 4.dp,
+                    icon = IconStyle(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_pause),
+                        tint = colors.primaryAccent,
+                        width = 24.dp,
+                        height = 24.dp,
+                    ),
+                ),
+
+                controlsHeight = 48.dp,
+                deleteButton = IconContainerStyle(
                     width = 32.dp,
                     height = 32.dp,
                     padding = 4.dp,
@@ -66,7 +121,7 @@ public data class AudioRecordingTheme(
                         height = 24.dp,
                     ),
                 ),
-                stopButton = IconButtonStyle(
+                stopButton = IconContainerStyle(
                     width = 32.dp,
                     height = 32.dp,
                     padding = 4.dp,
@@ -77,7 +132,7 @@ public data class AudioRecordingTheme(
                         height = 24.dp,
                     ),
                 ),
-                completeButtonStyle = IconButtonStyle(
+                completeButtonStyle = IconContainerStyle(
                     width = 32.dp,
                     height = 32.dp,
                     padding = 4.dp,

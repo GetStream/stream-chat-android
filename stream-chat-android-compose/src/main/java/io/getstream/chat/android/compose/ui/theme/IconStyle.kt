@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.Dp
 /**
  * Represents the styling for the icon button component.
  */
-public data class IconButtonStyle(
+public data class IconContainerStyle(
     val width: Dp,
     val height: Dp,
     val padding: Dp,
