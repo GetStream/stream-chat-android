@@ -461,53 +461,61 @@ private fun RecordingControlButtons(
             .height(48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        val deleteStyle = ChatTheme.messageComposerTheme.audioRecording.deleteButton
         IconButton(
             onClick = onDeleteRecording,
             modifier = Modifier
-                .size(32.dp)
-                .size(32.dp)
-                .padding(4.dp)
+                .width(deleteStyle.width)
+                .height(deleteStyle.height)
+                .padding(deleteStyle.padding)
                 .focusable(true),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_delete),
+                painter = deleteStyle.icon.painter,
                 contentDescription = null,
-                modifier = Modifier,
-                tint = colorResource(id = R.color.stream_compose_accent_blue)
+                modifier = Modifier.width(deleteStyle.icon.width)
+                    .height(deleteStyle.icon.height),
+                tint = deleteStyle.icon.tint,
             )
         }
 
         if (isStopControlVisible) {
             Spacer(modifier = Modifier.weight(1f))
+            val stopStyle = ChatTheme.messageComposerTheme.audioRecording.stopButton
             IconButton(
                 onClick = onStopRecording,
                 modifier = Modifier
-                    .size(32.dp)
-                    .padding(4.dp)
+                    .width(stopStyle.width)
+                    .height(stopStyle.height)
+                    .padding(stopStyle.padding)
                     .focusable(true),
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
+                    painter = stopStyle.icon.painter,
                     contentDescription = null,
-                    modifier = Modifier,
-                    tint = colorResource(id = R.color.stream_compose_accent_red)
+                    modifier = Modifier.width(stopStyle.icon.width)
+                        .height(stopStyle.icon.height),
+                    tint = stopStyle.icon.tint,
                 )
             }
         }
 
         Spacer(modifier = Modifier.weight(1f))
+        val completeStyle = ChatTheme.messageComposerTheme.audioRecording.completeButtonStyle
         IconButton(
             onClick = onCompleteRecording,
             modifier = Modifier
-                .size(32.dp)
-                .padding(4.dp)
+                .width(completeStyle.width)
+                .height(completeStyle.height)
+                .padding(completeStyle.padding)
                 .focusable(true),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_check_circle),
+                painter = completeStyle.icon.painter,
                 contentDescription = null,
-                modifier = Modifier,
-                tint = colorResource(id = R.color.stream_compose_accent_blue)
+                modifier = Modifier.width(completeStyle.icon.width)
+                    .height(completeStyle.icon.height),
+                tint = completeStyle.icon.tint,
             )
 
         }
