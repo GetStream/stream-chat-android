@@ -65,7 +65,7 @@ public fun WaveformSlider(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float,
     isThumbVisible: Boolean = true,
-    onDragStart: () -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
+    onDragStart: (Float) -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
     onDragStop: (Float) -> Unit = { StreamLog.e("WaveformSeekBar") { "[onDragStop] progress: $it" } },
 ) {
     /*TODO
@@ -124,7 +124,7 @@ public fun WaveformSlider(
                             // val center = it.x.toDp()
                             // val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
                             // thumbOffset = left.coerceIn(0.dp, width - PRESSED_TRACKER_WIDTH_DP.dp)
-                            onDragStart()
+                            onDragStart(currentProgress)
                         }
                     },
                 ) { offset ->

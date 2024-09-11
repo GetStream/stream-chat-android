@@ -150,10 +150,10 @@ public fun MessageComposer(
     onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
     onDeleteRecording: () -> Unit = { viewModel.cancelRecording() },
     onStopRecording: () -> Unit = { viewModel.stopRecording() },
-    onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
     onCompleteRecording: () -> Unit = { viewModel.sendRecording() },
-    onPauseRecording: () -> Unit = { viewModel.pauseRecording() },
-    onSeekRecording: (Float) -> Unit = { viewModel.seekRecordingTo(it) },
+    onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
+    onRecordingSliderDragStart: (Float) -> Unit = { viewModel.pauseRecording() },
+    onRecordingSliderDragStop: (Float) -> Unit = { viewModel.seekRecordingTo(it) },
     onSendRecording: () -> Unit = { viewModel.sendRecording() },
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
@@ -204,8 +204,10 @@ public fun MessageComposer(
             onCancelRecording = onCancelRecording,
             onDeleteRecording = onDeleteRecording,
             onStopRecording = onStopRecording,
-            onToggleRecordingPlayback = onToggleRecordingPlayback,
             onCompleteRecording = onCompleteRecording,
+            onToggleRecordingPlayback = onToggleRecordingPlayback,
+            onSliderDragStart = onRecordingSliderDragStart,
+            onSliderDragStop = onRecordingSliderDragStop,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {

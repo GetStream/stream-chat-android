@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
@@ -28,7 +27,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
@@ -50,9 +48,11 @@ internal fun DefaultMessageComposerRecordingContent(
     onLockRecording: () -> Unit = {},
     onCancelRecording: () -> Unit = {},
     onDeleteRecording: () -> Unit = {},
-    onToggleRecordingPlayback: () -> Unit = {},
     onStopRecording: () -> Unit = {},
     onCompleteRecording: () -> Unit = {},
+    onToggleRecordingPlayback: () -> Unit = {},
+    onSliderDragStart: (Float) -> Unit = {},
+    onSliderDragStop: (Float) -> Unit = {},
 ) {
 
     val recordingState = messageComposerState.recording
@@ -125,9 +125,11 @@ internal fun DefaultMessageComposerRecordingContent(
         onLockRecording = onLockRecording,
         onCancelRecording = onCancelRecording,
         onDeleteRecording = onDeleteRecording,
-        onToggleRecordingPlayback = onToggleRecordingPlayback,
         onStopRecording = onStopRecording,
-        onCompleteRecording = onCompleteRecording
+        onCompleteRecording = onCompleteRecording,
+        onToggleRecordingPlayback = onToggleRecordingPlayback,
+        onSliderDragStart = onSliderDragStart,
+        onSliderDragStop = onSliderDragStop,
     )
 }
 
@@ -149,9 +151,11 @@ internal fun DefaultMessageComposerRecordingContent(
     onLockRecording: () -> Unit = {},
     onCancelRecording: () -> Unit = {},
     onDeleteRecording: () -> Unit = {},
-    onToggleRecordingPlayback: () -> Unit = {},
     onStopRecording: () -> Unit = {},
     onCompleteRecording: () -> Unit = {},
+    onToggleRecordingPlayback: () -> Unit = {},
+    onSliderDragStart: (Float) -> Unit = {},
+    onSliderDragStop: (Float) -> Unit = {},
 ) {
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
     val density = LocalDensity.current
@@ -181,6 +185,8 @@ internal fun DefaultMessageComposerRecordingContent(
             slideToCancelProgress = slideToCancelProgress,
             holdControlsOffset = holdControlsOffset,
             onToggleRecordingPlayback = onToggleRecordingPlayback,
+            onSliderDragStart = onSliderDragStart,
+            onSliderDragStop = onSliderDragStop,
         )
 
         if (recordingControlsVisible) {
@@ -266,6 +272,8 @@ private fun RecordingContent(
     slideToCancelProgress: Float = 0f,
     holdControlsOffset: IntOffset = IntOffset.Zero,
     onToggleRecordingPlayback: () -> Unit,
+    onSliderDragStart: (Float) -> Unit,
+    onSliderDragStop: (Float) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -335,6 +343,8 @@ private fun RecordingContent(
                     adjustBarWidthToLimit = true,
                     isThumbVisible = waveformThumbVisible,
                     progress = waveformProgress,
+                    onDragStart = onSliderDragStart,
+                    onDragStop = onSliderDragStop,
                 )
             }
 
