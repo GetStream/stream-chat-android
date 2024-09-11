@@ -122,6 +122,10 @@
     <string name="stream_compose_message_composer_show_in_channel">Also send as direct message</string>
     <string name="stream_compose_message_composer_file_not_supported">File type is not supported</string>
 
+    <!-- Audio Recording -->
+    <string name="stream_compose_message_composer_slide_to_cancel">Slide to cancel</string>
+    <string name="stream_compose_message_composer_hold_to_record">Hold to start, release to send.</string>
+
     <string name="stream_compose_message_label">Send a message</string>
     <string name="stream_compose_cannot_send_messages_label">You can\'t send messages in this channel</string>
     <string name="stream_compose_send_message">Send</string>

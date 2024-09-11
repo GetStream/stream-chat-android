@@ -31,6 +31,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
@@ -40,6 +41,7 @@ import androidx.compose.ui.window.PopupProperties
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.log.StreamLog
@@ -327,11 +329,12 @@ private fun RecordingContent(
         ) {
             if (waveformVisible) {
                 WaveformSlider(
-                    waveformData = waveformData,
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.CenterStart)
                         .padding(top = 8.dp, bottom = 8.dp, start = 16.dp),
+                    style = ChatTheme.messageComposerTheme.audioRecording.waveformSliderStyle,
+                    waveformData = waveformData,
                     visibleBarLimit = 100,
                     adjustBarWidthToLimit = true,
                     isThumbVisible = waveformThumbVisible,
@@ -422,18 +425,21 @@ private fun RecordingSlideToCancelIndicator(
     Row(
         modifier = Modifier.alpha(1 - progress),
     ) {
+        val iconStyle = ChatTheme.messageComposerTheme.audioRecording.slideToCancelIconStyle
         Icon(
-            modifier = Modifier.size(24.dp),
-            painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
-            tint = colorResource(id = R.color.stream_compose_grey),
+            modifier = Modifier.width(iconStyle.width)
+                .height(iconStyle.height),
+            painter = iconStyle.painter,
+            tint = iconStyle.tint,
             contentDescription = null
         )
+
         Text(
-            text = "Slide to Cancel",
+            text = stringResource(id = R.string.stream_compose_message_composer_slide_to_cancel),
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .padding(bottom = 2.dp),
-            color = colorResource(id = R.color.stream_compose_grey)
+            style = ChatTheme.messageComposerTheme.audioRecording.slideToCancelTextStyle,
         )
         Spacer(modifier = Modifier.width(96.dp))
         Spacer(modifier = Modifier.width(with(LocalDensity.current) {

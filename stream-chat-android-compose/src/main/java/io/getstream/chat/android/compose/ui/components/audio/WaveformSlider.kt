@@ -33,7 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
-import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformThumbStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformTrackStyle
 import io.getstream.log.StreamLog
 import kotlin.random.Random
 
@@ -45,8 +47,7 @@ private const val PRESSED_TRACKER_WIDTH_DP = 10
  *
  * @param modifier Modifier for styling.
  * @param waveformData The waveform data to display.
- * @param futureColor The color of the waveform that is ahead of the current progress.
- * @param passedColor The color of the waveform that is behind the current progress.
+ * @param style The style for the waveform slider.
  * @param visibleBarLimit The number of bars to display at once.
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
  * @param barSpacingRatio The ratio of space between bars.
@@ -58,12 +59,10 @@ private const val PRESSED_TRACKER_WIDTH_DP = 10
 @Composable
 public fun WaveformSlider(
     modifier: Modifier = Modifier,
+    style: WaveformSliderStyle = WaveformSliderStyle.defaultStyle(),
     waveformData: List<Float>,
-    futureColor: Color = Color.LightGray,
-    passedColor: Color = ChatTheme.colors.primaryAccent,
     visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
-    barSpacingRatio: Float = 0.2f,
     progress: Float,
     isThumbVisible: Boolean = true,
     onDragStart: () -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
@@ -149,17 +148,16 @@ public fun WaveformSlider(
         WaveformTrack(
             modifier = Modifier.fillMaxSize(),
             waveformData = waveformData,
-            futureColor = futureColor,
-            passedColor = passedColor,
+            style = style.trackerStyle,
             visibleBarLimit = visibleBarLimit,
             adjustBarWidthToLimit = adjustBarWidthToLimit,
-            barSpacingRatio = barSpacingRatio,
             progress = currentProgress,
         )
 
         // Draw the thumb
         if (isThumbVisible) {
             WaveformThumb(
+                style = style.thumbStyle,
                 pressed = pressed,
                 progress = currentProgress,
                 parentWidthPx = widthPx,
@@ -171,24 +169,24 @@ public fun WaveformSlider(
 @Composable
 private fun WaveformThumb(
     modifier: Modifier = Modifier,
+    style: WaveformThumbStyle = WaveformThumbStyle.defaultStyle(),
     pressed: Boolean = false,
     progress: Float,
     parentWidthPx: Float,
 ) {
 
     val thumbWidth = when (pressed) {
-        true -> PRESSED_TRACKER_WIDTH_DP
-        else -> DEFAULT_TRACKER_WIDTH_DP
+        true -> style.widthPressed
+        else -> style.widthDefault
     }
 
     val thumbOffset = when (parentWidthPx > 0) {
         true -> with(LocalDensity.current) {
             val parentWidth = parentWidthPx.toDp()
             val center = parentWidth * progress
-            val left = center - (thumbWidth.dp / 2)
-            left.coerceIn(0.dp, parentWidth - thumbWidth.dp)
+            val left = center - (thumbWidth / 2)
+            left.coerceIn(0.dp, parentWidth - thumbWidth)
         }
-
         else -> 0.dp
     }
 
@@ -196,26 +194,24 @@ private fun WaveformThumb(
         modifier = modifier
             .offset(thumbOffset)
             .fillMaxHeight()
-            .width(thumbWidth.dp)
-            .background(Color.White, RoundedCornerShape(5.dp))
-            .border(1.dp, Color.LightGray, RoundedCornerShape(5.dp))
+            .width(thumbWidth)
+            .background(style.backgroundColor, style.backgroundShape)
+            .border(style.borderWidth, style.borderColor, style.borderShape)
     )
 }
 
 @Composable
 internal fun WaveformTrack(
     modifier: Modifier = Modifier,
-    passedColor: Color = ChatTheme.colors.primaryAccent,
-    futureColor: Color = /*Color(0xFF7A7A7A)*/Color.LightGray,
+    style: WaveformTrackStyle = WaveformTrackStyle.defaultStyle(),
     waveformData: List<Float> = emptyList(), visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
-    barSpacingRatio: Float = 0.2f,
     progress: Float = 0f,
 ) {
     // TODO StreamLog.v("WaveformTrack") { "[onDraw] progress: $progress" }
 
     // Ensure the spacing ratio is clamped between 0 and 1 (100% spacing would mean no bars)
-    val finalSpacingRatio = barSpacingRatio.coerceIn(0f, 1f)
+    val finalSpacingRatio = style.barSpacingRatio.coerceIn(0f, 1f)
     val finalProgress = progress.coerceIn(0f, 1f)
 
     val totalBars = when (adjustBarWidthToLimit) {
@@ -262,7 +258,7 @@ internal fun WaveformTrack(
 
             // Draw the bar, color based on whether it is before or after the progress threshold
             drawRoundRect(
-                color = if (centerX < thresholdX) passedColor else futureColor,
+                color = if (centerX < thresholdX) style.passedColor else style.futureColor,
                 topLeft = topLeft,
                 cornerRadius = barCornerRadius,
                 size = barSize
@@ -327,7 +323,6 @@ internal fun WaveformTrackPreview() {
                 progress = 0f,
                 adjustBarWidthToLimit = true,
                 visibleBarLimit = 100,
-                barSpacingRatio = 0.2f,
             )
         }
     }

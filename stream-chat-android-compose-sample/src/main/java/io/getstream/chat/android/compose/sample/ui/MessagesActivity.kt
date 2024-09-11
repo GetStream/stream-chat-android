@@ -132,6 +132,10 @@ class MessagesActivity : BaseConnectedActivity() {
                             tint = colors.overlayDark,
                             backgroundColor = colors.appBackground,
                         ),
+                        audioRecording = messageComposerTheme.audioRecording.copy(
+                            enabled = true,
+                            showRecordButtonOverSend = true,
+                        ),
                     )
                 },
                 attachmentPickerTheme = AttachmentPickerTheme.defaultTheme(colors).copy(

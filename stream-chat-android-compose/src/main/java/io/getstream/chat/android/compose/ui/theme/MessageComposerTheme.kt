@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.composer.AudioRecordingTheme
 
 /**
  * Represents the theming for the message composer.
@@ -39,6 +40,7 @@ public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,
     val linkPreview: ComposerLinkPreviewTheme,
     val inputField: ComposerInputFieldTheme,
+    val audioRecording: AudioRecordingTheme,
 ) {
 
     public companion object {
@@ -61,6 +63,7 @@ public data class MessageComposerTheme(
                 attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
                 linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
+                audioRecording = AudioRecordingTheme.defaultTheme(typography, colors),
             )
         }
     }
