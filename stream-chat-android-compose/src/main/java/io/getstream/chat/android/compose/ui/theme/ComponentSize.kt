@@ -28,7 +28,21 @@ import androidx.compose.ui.unit.dp
 public data class ComponentSize(
     val width: Dp,
     val height: Dp,
-)
+) {
+    public companion object {
+        /**
+         * Represents a zero size.
+         */
+        public val Zero: ComponentSize = ComponentSize(0.dp, 0.dp)
+
+        /**
+         * Creates a square size with the same value for width and height.
+         *
+         * @param size The size value.
+         */
+        public fun square(size: Dp): ComponentSize = ComponentSize(size, size)
+    }
+}
 
 /**
  * Represents the padding of a component.

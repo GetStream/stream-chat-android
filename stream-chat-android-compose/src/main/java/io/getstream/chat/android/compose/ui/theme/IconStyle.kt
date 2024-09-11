@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.unit.Dp
 
 /**
  * Represents the styling for the icon button component.

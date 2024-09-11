@@ -9,10 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material3.Icon
@@ -25,11 +22,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -41,6 +35,7 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.composer.AudioRecordingFloatingIconStyle
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
@@ -346,26 +341,7 @@ private fun RecordingContent(
 
 @Composable
 private fun RecordingMicIcon() {
-    Card(
-        modifier = Modifier.size(64.dp),
-        backgroundColor = colorResource(id = R.color.stream_compose_grey_gainsboro),
-        shape = CircleShape,
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize() // Ensures the Icon is centered inside the Card
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(32.dp) // Icon stays the correct size
-                    .padding(4.dp), // Padding inside the Icon itself, if needed
-                tint = colorResource(id = R.color.stream_compose_accent_blue),
-            )
-        }
-    }
+    RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.micFloatingButton)
 }
 
 @Composable
@@ -373,41 +349,34 @@ private fun RecordingLockableIcon(
     locked: Boolean,
 ) {
     if (locked) {
-        RecordingLockedIcon()
+        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.lockedFloatingIcon)
     } else {
-        RecordingLockIcon()
+        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.lockFloatingIcon)
     }
 }
 
 @Composable
-private fun RecordingLockIcon() {
+private fun RecordingFloatingIcon(
+    style: AudioRecordingFloatingIconStyle
+) {
     Card(
         modifier = Modifier
-            .size(width = 48.dp, height = 88.dp),
-        shape = RoundedCornerShape(24.dp),
+            .size(style.size)
+            .padding(style.padding),
+        shape = style.backgroundShape,
+        backgroundColor = style.backgroundColor,
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
-            contentDescription = null,
-            modifier = Modifier
-                .size(width = 48.dp, height = 88.dp),
-            tint = Color.Unspecified,
-        )
-    }
-}
-
-@Composable
-private fun RecordingLockedIcon() {
-    Card(
-        modifier = Modifier.size(48.dp),
-        shape = CircleShape,
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
-            contentDescription = null,
-            modifier = Modifier.size(48.dp),
-            tint = Color.Unspecified,
-        )
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Icon(
+                painter = style.icon.painter,
+                contentDescription = null,
+                modifier = Modifier.size(style.icon.size),
+                tint = style.icon.tint,
+            )
+        }
     }
 }
 

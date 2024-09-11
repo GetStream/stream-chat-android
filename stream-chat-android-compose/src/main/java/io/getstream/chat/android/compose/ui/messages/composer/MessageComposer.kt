@@ -81,6 +81,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMe
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -868,8 +869,7 @@ internal fun DefaultMessageComposerTrailingContent(
                 val iconStyle = ChatTheme.messageComposerTheme.audioRecording.recordButtonIconStyle
                 Icon(
                     modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection)
-                        .width(iconStyle.width)
-                        .height(iconStyle.height),
+                        .size(iconStyle.size),
                     painter = iconStyle.painter,
                     contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
                     tint = iconStyle.tint,
