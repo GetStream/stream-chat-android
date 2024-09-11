@@ -18,8 +18,11 @@ package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.Manifest
 import android.os.Build
+import android.os.SystemClock
+import android.widget.Space
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -28,12 +31,15 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
@@ -54,17 +60,21 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
+import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
@@ -97,6 +107,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.RecordingStat
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.log.StreamLog
+import kotlinx.coroutines.delay
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -725,17 +736,6 @@ internal fun DefaultMessageComposerTrailingContent(
         val layoutDirection = LocalLayoutDirection.current
 
         val sendEnabled = isSendButtonEnabled && isInputValid
-
-        /*val sendVisible = when (isRecordingEnabled) {
-            true -> when (isRecording) {
-                true -> false
-                else -> when (showRecordOverSend) {
-                    true -> sendEnabled
-                    else -> true
-                }
-            }
-            else -> true
-        }*/
         val sendVisible = when {
             !isRecordingEnabled -> true
             isRecording -> false
@@ -771,6 +771,31 @@ internal fun DefaultMessageComposerTrailingContent(
         if (recordVisible) {
             var micSize by remember { mutableStateOf(IntSize.Zero) }
             var micStartOffset = remember { Offset.Zero }
+            var holdStartTime = remember { 0L }
+
+            var showDurationWarning by remember { mutableStateOf(false) }
+
+            val onRecordingRelease = remember {
+                {
+                    val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
+                    StreamLog.d("MessageComposer") { "[onRecordingRelease] holdElapsedTime: $holdElapsedTime" }
+                    if (holdElapsedTime < 1000) {
+                        showDurationWarning = true
+                        onCancelRecording()
+                    } else {
+                        onSendRecording()
+                    }
+                }
+            }
+
+            if (showDurationWarning) {
+                val offset = with(LocalDensity.current) { micSize.height + 16.dp.toPx().toInt() }
+                HoldToRecordPopup(
+                    offset = offset,
+                    dismissTimeoutMs = 1000L,
+                    onDismissRequest = { showDurationWarning = false },
+                )
+            }
 
             val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
 
@@ -786,6 +811,7 @@ internal fun DefaultMessageComposerTrailingContent(
                     .pointerInput(Unit) {
                         detectTapGestures(
                             onPress = { offset ->
+                                holdStartTime = SystemClock.elapsedRealtime()
                                 val updated = offset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
                                 StreamLog.d("MessageComposer") { "[onMicPress] offset: $offset, updated: $updated" }
                                 onStartRecording(Offset.Zero)
@@ -794,7 +820,7 @@ internal fun DefaultMessageComposerTrailingContent(
                             onTap = { offset ->
                                 StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset, recordingState: $recordingState" }
                                 if (recordingState is RecordingState.Hold) {
-                                    onSendRecording()
+                                    onRecordingRelease()
                                 }
                             },
                         )
@@ -861,19 +887,22 @@ internal fun DefaultMessageComposerTrailingContent(
                             onDragEnd = {
                                 StreamLog.e("MessageComposer") { "[onMicDragEnd] recordingState: $recordingState" }
                                 if (recordingState is RecordingState.Hold) {
-                                    onSendRecording()
+                                    onRecordingRelease()
                                 }
                             },
                             onDragCancel = {
                                 StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
-                                onCancelRecording()
+                                if (recordingState is RecordingState.Hold) {
+                                    onRecordingRelease()
+                                }
                             }
                         )
                     }, // Set size to match IconButton
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection)
+                    modifier = Modifier
+                        .mirrorRtl(layoutDirection = layoutDirection)
                         .size(style.icon.size),
                     painter = style.icon.painter,
                     contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
@@ -884,6 +913,51 @@ internal fun DefaultMessageComposerTrailingContent(
     }
 
     // TODO release recorder after the composable moves of screen
+}
+
+@Composable
+private fun HoldToRecordPopup(
+    offset: Int,
+    dismissTimeoutMs: Long = 1000L,
+    onDismissRequest: () -> Unit,
+) {
+    LaunchedEffect(Unit) {
+        delay(dismissTimeoutMs)
+        onDismissRequest()
+    }
+    Popup(
+        onDismissRequest = onDismissRequest,
+        offset = IntOffset(0, -offset),
+        alignment = BottomCenter,
+        ) {
+        Row(
+            modifier = Modifier
+                .height(48.dp)
+                .fillMaxWidth(),
+        ) {
+            Spacer(modifier = Modifier.width(8.dp))
+            Card(
+                modifier = Modifier
+                    .weight(1f),
+                elevation = 2.dp,
+                shape = RoundedCornerShape(8.dp),
+                backgroundColor = Color.Black,
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .padding(horizontal = 16.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        style = ChatTheme.typography.title3,
+                        text = stringResource(id = R.string.stream_compose_message_composer_hold_to_record),
+                        color = Color.White
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+        }
+    }
 }
 
 /**
