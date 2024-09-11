@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
+import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.StreamColors
@@ -53,8 +54,7 @@ public data class AudioRecordingTheme(
                 recordButtonIconStyle = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
                     tint = colors.textLowEmphasis,
-                    width = 24.dp,
-                    height = 24.dp,
+                    size = ComponentSize(width = 24.dp, height = 24.dp),
                 ),
                 waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
                 waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
@@ -64,21 +64,18 @@ public data class AudioRecordingTheme(
                 slideToCancelIconStyle = IconStyle(
                     painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
                     tint = colors.textLowEmphasis,
-                    width = 24.dp,
-                    height = 24.dp,
+                    size = ComponentSize(width = 24.dp, height = 24.dp),
                 ),
                 slideToCancelMarginEnd = 96.dp,
 
                 playbackHeight = 48.dp,
                 micIndicator = IconContainerStyle(
-                    width = 32.dp,
-                    height = 32.dp,
-                    padding = 4.dp,
+                    size = ComponentSize(width = 32.dp, height = 32.dp),
+                    padding = ComponentPadding.all(4.dp),
                     icon = IconStyle(
                         painter = painterResource(id = R.drawable.stream_compose_ic_mic),
                         tint = colors.errorAccent,
-                        width = 24.dp,
-                        height = 24.dp,
+                        size = ComponentSize(width = 24.dp, height = 24.dp),
                     ),
                 ),
 
@@ -87,60 +84,50 @@ public data class AudioRecordingTheme(
                 ),
 
                 playButton = IconContainerStyle(
-                    width = 32.dp,
-                    height = 32.dp,
-                    padding = 4.dp,
+                    size = ComponentSize(width = 32.dp, height = 32.dp),
+                    padding = ComponentPadding.all(4.dp),
                     icon = IconStyle(
                         painter = painterResource(id = R.drawable.stream_compose_ic_play),
                         tint = colors.primaryAccent,
-                        width = 24.dp,
-                        height = 24.dp,
+                        size = ComponentSize(width = 24.dp, height = 24.dp),
                     ),
                 ),
                 pauseButton = IconContainerStyle(
-                    width = 32.dp,
-                    height = 32.dp,
-                    padding = 4.dp,
+                    size = ComponentSize(width = 32.dp, height = 32.dp),
+                    padding = ComponentPadding.all(4.dp),
                     icon = IconStyle(
                         painter = painterResource(id = R.drawable.stream_compose_ic_pause),
                         tint = colors.primaryAccent,
-                        width = 24.dp,
-                        height = 24.dp,
+                        size = ComponentSize(width = 24.dp, height = 24.dp),
                     ),
                 ),
 
                 controlsHeight = 48.dp,
                 deleteButton = IconContainerStyle(
-                    width = 32.dp,
-                    height = 32.dp,
-                    padding = 4.dp,
+                    size = ComponentSize(width = 32.dp, height = 32.dp),
+                    padding = ComponentPadding.all(4.dp),
                     icon = IconStyle(
                         painter = painterResource(id = R.drawable.stream_compose_ic_delete),
                         tint = colors.primaryAccent,
-                        width = 24.dp,
-                        height = 24.dp,
+                        size = ComponentSize(width = 24.dp, height = 24.dp),
                     ),
                 ),
                 stopButton = IconContainerStyle(
-                    width = 32.dp,
-                    height = 32.dp,
-                    padding = 4.dp,
+                    size = ComponentSize(width = 32.dp, height = 32.dp),
+                    padding = ComponentPadding.all(4.dp),
                     icon = IconStyle(
                         painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
                         tint = colors.errorAccent,
-                        width = 24.dp,
-                        height = 24.dp,
+                        size = ComponentSize(width = 24.dp, height = 24.dp),
                     ),
                 ),
                 completeButtonStyle = IconContainerStyle(
-                    width = 32.dp,
-                    height = 32.dp,
-                    padding = 4.dp,
+                    size = ComponentSize(width = 32.dp, height = 32.dp),
+                    padding = ComponentPadding.all(4.dp),
                     icon = IconStyle(
                         painter = painterResource(id = R.drawable.stream_compose_ic_check_circle),
                         tint = colors.primaryAccent,
-                        width = 24.dp,
-                        height = 24.dp,
+                        size = ComponentSize(width = 24.dp, height = 24.dp),
                     ),
                 ),
             )

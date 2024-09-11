@@ -17,6 +17,7 @@
 package io.getstream.chat.android.compose.ui.theme
 
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 /**
  * Represents the size of a component.
@@ -29,9 +30,31 @@ public data class ComponentSize(
     val height: Dp,
 )
 
+/**
+ * Represents the padding of a component.
+ *
+ * @param start The start padding.
+ * @param top The top padding.
+ * @param end The end padding.
+ * @param bottom The bottom padding.
+ */
 public data class ComponentPadding(
     val start: Dp,
     val top: Dp,
     val end: Dp,
     val bottom: Dp,
-)
+) {
+    public companion object {
+        /**
+         * Represents a zero padding.
+         */
+        public val Zero: ComponentPadding = ComponentPadding(0.dp, 0.dp, 0.dp, 0.dp)
+
+        /**
+         * Creates a padding with the same value for all sides.
+         *
+         * @param padding The padding value.
+         */
+        public fun all(padding: Dp): ComponentPadding = ComponentPadding(padding, padding, padding, padding)
+    }
+}

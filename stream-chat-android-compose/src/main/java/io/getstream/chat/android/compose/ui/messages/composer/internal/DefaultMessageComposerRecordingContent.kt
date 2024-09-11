@@ -42,6 +42,7 @@ import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.log.StreamLog
@@ -279,8 +280,7 @@ private fun RecordingContent(
             IconButton(
                 onClick = onToggleRecordingPlayback,
                 modifier = Modifier
-                    .width(btnStyle.width)
-                    .height(btnStyle.height)
+                    .size(btnStyle.size)
                     .padding(btnStyle.padding)
                     .focusable(true),
             ) {
@@ -288,8 +288,7 @@ private fun RecordingContent(
                     painter = btnStyle.icon.painter,
                     contentDescription = null,
                     modifier = Modifier
-                        .width(btnStyle.icon.width)
-                        .height(btnStyle.icon.height),
+                        .size(btnStyle.size),
                     tint = btnStyle.icon.tint,
                 )
             }
@@ -297,8 +296,7 @@ private fun RecordingContent(
             val micStyle = ChatTheme.messageComposerTheme.audioRecording.micIndicator
             Box(
                 modifier = Modifier
-                    .width(micStyle.width)
-                    .height(micStyle.height)
+                    .size(micStyle.size)
                     .padding(micStyle.padding),
                 contentAlignment = Alignment.Center,
             ) {
@@ -306,8 +304,7 @@ private fun RecordingContent(
                     painter = micStyle.icon.painter,
                     contentDescription = null,
                     modifier = Modifier
-                        .width(micStyle.icon.width)
-                        .height(micStyle.icon.height),
+                        .size(micStyle.size),
                     tint = micStyle.icon.tint,
                 )
             }
@@ -425,9 +422,7 @@ private fun RecordingSlideToCancelIndicator(
     ) {
         val iconStyle = ChatTheme.messageComposerTheme.audioRecording.slideToCancelIconStyle
         Icon(
-            modifier = Modifier
-                .width(iconStyle.width)
-                .height(iconStyle.height),
+            modifier = Modifier.size(iconStyle.size),
             painter = iconStyle.painter,
             tint = iconStyle.tint,
             contentDescription = null
@@ -464,17 +459,14 @@ private fun RecordingControlButtons(
         IconButton(
             onClick = onDeleteRecording,
             modifier = Modifier
-                .width(deleteStyle.width)
-                .height(deleteStyle.height)
+                .size(deleteStyle.size)
                 .padding(deleteStyle.padding)
                 .focusable(true),
         ) {
             Icon(
                 painter = deleteStyle.icon.painter,
                 contentDescription = null,
-                modifier = Modifier
-                    .width(deleteStyle.icon.width)
-                    .height(deleteStyle.icon.height),
+                modifier = Modifier.size(deleteStyle.icon.size),
                 tint = deleteStyle.icon.tint,
             )
         }
@@ -485,17 +477,14 @@ private fun RecordingControlButtons(
             IconButton(
                 onClick = onStopRecording,
                 modifier = Modifier
-                    .width(stopStyle.width)
-                    .height(stopStyle.height)
+                    .size(stopStyle.size)
                     .padding(stopStyle.padding)
                     .focusable(true),
             ) {
                 Icon(
                     painter = stopStyle.icon.painter,
                     contentDescription = null,
-                    modifier = Modifier
-                        .width(stopStyle.icon.width)
-                        .height(stopStyle.icon.height),
+                    modifier = Modifier.size(stopStyle.icon.size),
                     tint = stopStyle.icon.tint,
                 )
             }
@@ -506,8 +495,7 @@ private fun RecordingControlButtons(
         IconButton(
             onClick = onCompleteRecording,
             modifier = Modifier
-                .width(completeStyle.width)
-                .height(completeStyle.height)
+                .size(completeStyle.size)
                 .padding(completeStyle.padding)
                 .focusable(true),
         ) {
@@ -515,8 +503,7 @@ private fun RecordingControlButtons(
                 painter = completeStyle.icon.painter,
                 contentDescription = null,
                 modifier = Modifier
-                    .width(completeStyle.icon.width)
-                    .height(completeStyle.icon.height),
+                    .size(completeStyle.icon.size),
                 tint = completeStyle.icon.tint,
             )
 
