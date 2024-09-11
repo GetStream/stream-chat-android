@@ -144,8 +144,8 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
-    onStartRecording: (Offset) -> Unit = { viewModel.startRecording(it.x to it.y) },
-    onHoldRecording: (Offset) -> Unit = { viewModel.holdRecording(it.x to it.y) },
+    onStartRecording: (Offset) -> Unit = { viewModel.startRecording(it.toRestrictedCoordinates()) },
+    onHoldRecording: (Offset) -> Unit = { viewModel.holdRecording(it.toRestrictedCoordinates()) },
     onLockRecording: () -> Unit = { viewModel.lockRecording() },
     onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
     onDeleteRecording: () -> Unit = { viewModel.cancelRecording() },
@@ -957,3 +957,5 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
         SnackbarHost(hostState = snackbarHostState)
     }
 }
+
+private fun Offset.toRestrictedCoordinates(): Pair<Float, Float> = x.coerceAtMost(0f) to y.coerceAtMost(0f)

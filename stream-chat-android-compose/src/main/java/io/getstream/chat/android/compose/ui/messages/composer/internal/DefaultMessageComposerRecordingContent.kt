@@ -94,7 +94,9 @@ internal fun DefaultMessageComposerRecordingContent(
     val holdControlsVisible = recordingState.let { it is RecordingState.Hold || it is RecordingState.Locked }
     val holdControlsLocked = recordingState is RecordingState.Locked
     val holdControlsOffset = when (recordingState) {
-        is RecordingState.Hold -> IntOffset(recordingState.offsetX.toInt(), recordingState.offsetY.toInt())
+        is RecordingState.Hold -> IntOffset(
+            x = recordingState.offsetX.toInt().coerceAtMost(maximumValue = 0),
+            y = recordingState.offsetY.toInt().coerceAtMost(maximumValue = 0))
         else -> IntOffset.Zero
     }
 
@@ -222,12 +224,9 @@ internal fun DefaultMessageComposerRecordingContent(
             val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.lockEdgeOffset
             val lockOffset = with(density) {
                 IntOffset(
-                    // 4 is the offset from the right edge of the screen
                     x = -edgeOffset.x.toPx().toInt(),
                     y = when (holdControlsLocked) {
-                        // 96 is the height of the (RecordingContent + RecordingControlButtons)
                         true -> -totalContentHeight.toPx().toInt() - edgeOffset.y.toPx().toInt()
-                        // 48 is the height of the RecordingContent
                         else -> -playbackHeight.toPx().toInt() - edgeOffset.y.toPx().toInt() + holdControlsOffset.y
                     },
                 )
