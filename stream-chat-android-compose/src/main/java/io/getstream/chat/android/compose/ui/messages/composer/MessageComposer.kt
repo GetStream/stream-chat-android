@@ -81,6 +81,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMe
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
@@ -769,9 +770,12 @@ internal fun DefaultMessageComposerTrailingContent(
             var micSize by remember { mutableStateOf(IntSize.Zero) }
             var micStartOffset = remember { Offset.Zero }
 
+            val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
+
             Box(
                 modifier = Modifier
-                    .size(if (isRecording) 0.dp else 48.dp)
+                    .run { if (isRecording) size(0.dp) else size(style.size) }
+                    .padding(style.padding)
                     .onSizeChanged {
                         StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
                         micSize = it
@@ -866,13 +870,12 @@ internal fun DefaultMessageComposerTrailingContent(
                     }, // Set size to match IconButton
                 contentAlignment = Alignment.Center
             ) {
-                val iconStyle = ChatTheme.messageComposerTheme.audioRecording.recordButtonIconStyle
                 Icon(
                     modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection)
-                        .size(iconStyle.size),
-                    painter = iconStyle.painter,
+                        .size(style.icon.size),
+                    painter = style.icon.painter,
                     contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-                    tint = iconStyle.tint,
+                    tint = style.icon.tint,
                 )
             }
         }

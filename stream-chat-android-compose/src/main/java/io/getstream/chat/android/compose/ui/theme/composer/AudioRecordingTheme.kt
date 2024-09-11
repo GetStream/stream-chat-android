@@ -12,6 +12,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ComponentOffset
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
 import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
@@ -23,12 +24,13 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 public data class AudioRecordingTheme(
     val enabled: Boolean = false,
     val showRecordButtonOverSend: Boolean = false,
-    val recordButtonIconStyle: IconStyle,
+    val recordButton: IconContainerStyle,
     val waveformSliderStyle: WaveformSliderStyle,
     val waveformSliderPadding: ComponentPadding,
     val slideToCancelTextStyle: TextStyle,
     val slideToCancelIconStyle: IconStyle,
     val slideToCancelMarginEnd: Dp,
+    val slideToCancelThreshold: Dp,
 
     val micIndicator: IconContainerStyle,
     val timerTextStyle: TextStyle,
@@ -36,6 +38,9 @@ public data class AudioRecordingTheme(
     val micFloatingButton: AudioRecordingFloatingIconStyle,
     val lockFloatingIcon: AudioRecordingFloatingIconStyle,
     val lockedFloatingIcon: AudioRecordingFloatingIconStyle,
+
+    val lockThreshold: Dp,
+    val lockEdgeOffset: ComponentOffset,
 
     val playbackHeight: Dp,
     val playButton: IconContainerStyle,
@@ -59,10 +64,14 @@ public data class AudioRecordingTheme(
             return AudioRecordingTheme(
                 enabled = false,
                 showRecordButtonOverSend = false,
-                recordButtonIconStyle = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
-                    tint = colors.textLowEmphasis,
-                    size = ComponentSize.square(24.dp),
+                recordButton = IconContainerStyle(
+                    size = ComponentSize.square(48.dp),
+                    padding = ComponentPadding.Zero,
+                    icon = IconStyle(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
+                        tint = colors.textLowEmphasis,
+                        size = ComponentSize.square(24.dp),
+                    ),
                 ),
                 waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
                 waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
@@ -75,6 +84,7 @@ public data class AudioRecordingTheme(
                     size = ComponentSize.square(24.dp),
                 ),
                 slideToCancelMarginEnd = 96.dp,
+                slideToCancelThreshold = 96.dp,
 
                 playbackHeight = 48.dp,
                 micIndicator = IconContainerStyle(
@@ -132,6 +142,9 @@ public data class AudioRecordingTheme(
                     backgroundColor = Color.Unspecified,
                     backgroundShape = CircleShape,
                 ),
+
+                lockThreshold = 96.dp,
+                lockEdgeOffset = ComponentOffset(x = 4.dp, y = 16.dp),
 
                 playButton = IconContainerStyle(
                     size = ComponentSize.square(32.dp),

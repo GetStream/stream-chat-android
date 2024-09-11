@@ -134,7 +134,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         ),
                         audioRecording = messageComposerTheme.audioRecording.copy(
                             enabled = true,
-                            showRecordButtonOverSend = true,
+                            showRecordButtonOverSend = false,
                         ),
                     )
                 },

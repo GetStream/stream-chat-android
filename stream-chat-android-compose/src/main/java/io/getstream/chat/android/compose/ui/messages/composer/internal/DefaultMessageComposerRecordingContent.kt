@@ -153,7 +153,9 @@ internal fun DefaultMessageComposerRecordingContent(
 ) {
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
     val density = LocalDensity.current
-    val cancelThresholdX = with(density) { 96.dp.toPx().toInt() }
+    val cancelThresholdX = with(density) {
+        ChatTheme.messageComposerTheme.audioRecording.slideToCancelThreshold.toPx().toInt()
+    }
 
     val cancelOffsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0).toFloat()
     val slideToCancelProgress = (cancelOffsetX / cancelThresholdX).coerceIn(0f, 1f)
@@ -189,15 +191,17 @@ internal fun DefaultMessageComposerRecordingContent(
         }
 
         if (holdControlsVisible) {
-            val lockThresholdY = with(density) { 96.dp.toPx().toInt() }
+            val lockThresholdY = with(density) {
+                ChatTheme.messageComposerTheme.audioRecording.lockThreshold.toPx().toInt()
+            }
 
             if (!holdControlsLocked)  {
+                val micBaseWidth= ChatTheme.messageComposerTheme.audioRecording.recordButton.size.width
+                val micFloatingWidth= ChatTheme.messageComposerTheme.audioRecording.micFloatingButton.size.width
                 val micBaseOffset = remember {
                     with(density) {
-                        // 64 is width of the mic popup icon
-                        // 48 is width of the mic icon next to the send button
                         IntOffset(
-                            x = ((64 - 48) / 2).dp.toPx().toInt(),
+                            x = ((micFloatingWidth - micBaseWidth) / 2).toPx().toInt(),
                             y = 0
                         )
                     }
@@ -213,15 +217,18 @@ internal fun DefaultMessageComposerRecordingContent(
                 }
             }
 
+            val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playbackHeight
+            val totalContentHeight = playbackHeight + ChatTheme.messageComposerTheme.audioRecording.controlsHeight
+            val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.lockEdgeOffset
             val lockOffset = with(density) {
                 IntOffset(
                     // 4 is the offset from the right edge of the screen
-                    x = -4.dp.toPx().toInt(),
+                    x = -edgeOffset.x.toPx().toInt(),
                     y = when (holdControlsLocked) {
                         // 96 is the height of the (RecordingContent + RecordingControlButtons)
-                        true -> -96.dp.toPx().toInt() - 16.dp.toPx().toInt()
+                        true -> -totalContentHeight.toPx().toInt() - edgeOffset.y.toPx().toInt()
                         // 48 is the height of the RecordingContent
-                        else -> -48.dp.toPx().toInt() - 16.dp.toPx().toInt() + holdControlsOffset.y
+                        else -> -playbackHeight.toPx().toInt() - edgeOffset.y.toPx().toInt() + holdControlsOffset.y
                     },
                 )
             }
@@ -400,8 +407,7 @@ private fun RecordingSlideToCancelIndicator(
         Text(
             text = stringResource(id = R.string.stream_compose_message_composer_slide_to_cancel),
             modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .padding(bottom = 2.dp),
+                .align(Alignment.CenterVertically),
             style = ChatTheme.messageComposerTheme.audioRecording.slideToCancelTextStyle,
         )
         Spacer(modifier = Modifier.width(ChatTheme.messageComposerTheme.audioRecording.slideToCancelMarginEnd))

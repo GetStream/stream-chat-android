@@ -72,3 +72,18 @@ public data class ComponentPadding(
         public fun all(padding: Dp): ComponentPadding = ComponentPadding(padding, padding, padding, padding)
     }
 }
+
+/**
+ * Represents the offset of a component.
+ *
+ * @param x The x offset.
+ * @param y The y offset.
+ */
+public data class ComponentOffset(
+    val x: Dp,
+    val y: Dp,
+) {
+    public companion object {
+        public val Zero: ComponentOffset = ComponentOffset(0.dp, 0.dp)
+    }
+}
