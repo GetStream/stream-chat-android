@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.IconButtonStyle
@@ -19,6 +20,7 @@ public data class AudioRecordingTheme(
     val waveformSliderStyle: WaveformSliderStyle,
     val slideToCancelTextStyle: TextStyle,
     val slideToCancelIconStyle: IconStyle,
+    val slideToCancelMarginEnd: Dp,
     val deleteButton: IconButtonStyle,
     val stopButton: IconButtonStyle,
     val completeButtonStyle: IconButtonStyle,
@@ -52,6 +54,7 @@ public data class AudioRecordingTheme(
                     width = 24.dp,
                     height = 24.dp,
                 ),
+                slideToCancelMarginEnd = 96.dp,
                 deleteButton = IconButtonStyle(
                     width = 32.dp,
                     height = 32.dp,

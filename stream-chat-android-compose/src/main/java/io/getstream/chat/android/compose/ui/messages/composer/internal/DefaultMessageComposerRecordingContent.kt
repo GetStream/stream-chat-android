@@ -441,7 +441,7 @@ private fun RecordingSlideToCancelIndicator(
                 .padding(bottom = 2.dp),
             style = ChatTheme.messageComposerTheme.audioRecording.slideToCancelTextStyle,
         )
-        Spacer(modifier = Modifier.width(96.dp))
+        Spacer(modifier = Modifier.width(ChatTheme.messageComposerTheme.audioRecording.slideToCancelMarginEnd))
         Spacer(modifier = Modifier.width(with(LocalDensity.current) {
             offsetX.toDp()
         }))
