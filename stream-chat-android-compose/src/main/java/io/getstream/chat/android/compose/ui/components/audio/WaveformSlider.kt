@@ -207,8 +207,7 @@ internal fun WaveformTrack(
     modifier: Modifier = Modifier,
     passedColor: Color = ChatTheme.colors.primaryAccent,
     futureColor: Color = /*Color(0xFF7A7A7A)*/Color.LightGray,
-    waveformData: List<Float> = emptyList(),
-    visibleBarLimit: Int = 100,
+    waveformData: List<Float> = emptyList(), visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
     barSpacingRatio: Float = 0.2f,
     progress: Float = 0f,
@@ -244,13 +243,15 @@ internal fun WaveformTrack(
         }
 
         // Precompute constant values outside the loop
-        val startIdx = maxOf(0, totalBars - visibleBarLimit)
+        val startIdx = maxOf(0, waveformData.size - totalBars)
+        //StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }
+        val minBarHeight = 4.dp.toPx()
         for (index in startIdx until waveformData.size) {
             val amplitude = waveformData[index]
             // Calculate the position and size of each bar
-            val barHeight = amplitude * canvasH
+            val barHeight = maxOf(amplitude * canvasH, minBarHeight)
             val topLeft = Offset(
-                x = index * (barWidth + barSpacing),
+                x = (index - startIdx) * (barWidth + barSpacing),
                 y = halfHeight - barHeight / 2
             )
             val barSize = Size(
@@ -302,10 +303,10 @@ internal fun WaveformSeekBarPreview() {
 @Preview(showBackground = true)
 @Composable
 internal fun WaveformTrackPreview() {
-    val rand = Random(50)
     val waveform = mutableListOf<Float>()
-    for (i in 0 until 10) {
-        waveform.add(rand.nextFloat())
+    val barCount = 100
+    for (i in 0 until barCount) {
+        waveform.add((i + 1) / barCount.toFloat())
     }
 
 
@@ -313,14 +314,15 @@ internal fun WaveformTrackPreview() {
         Box(
             modifier = Modifier
                 .width(250.dp)
-                .height(60.dp)
+                .height(80.dp)
                 .background(Color.Black),
             contentAlignment = Alignment.Center
         ) {
             WaveformTrack(
                 modifier = Modifier
+                    .background(Color.Red)
                     .fillMaxWidth()
-                    .height(36.dp),
+                    .height(60.dp),
                 waveformData = waveform,
                 progress = 0f,
                 adjustBarWidthToLimit = true,
