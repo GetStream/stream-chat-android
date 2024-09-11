@@ -726,7 +726,6 @@ internal fun DefaultMessageComposerTrailingContent(
         if (!isRecording) {
             IconButton(
                 modifier = Modifier
-                    .background(Color.Magenta)
                     .semantics { contentDescription = sendButtonDescription },
                 enabled = isSendButtonEnabled && isInputValid,
                 content = {
@@ -755,7 +754,6 @@ internal fun DefaultMessageComposerTrailingContent(
                     StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
                     micSize = it
                 }
-                .background(Color.Yellow)
                 .semantics { contentDescription = recordAudioButtonDescription }
                 .pointerInput(Unit) {
                     detectTapGestures(
