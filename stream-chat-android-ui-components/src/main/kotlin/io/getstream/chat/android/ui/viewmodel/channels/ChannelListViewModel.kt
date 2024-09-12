@@ -399,7 +399,7 @@ public class ChannelListViewModel(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,
     ): List<Channel> {
-        val mutedChannelsIds = channelMutes.map { channelMute -> channelMute.channel.id }.toSet()
+        val mutedChannelsIds = channelMutes.map { channelMute -> channelMute.channel?.id.orEmpty() }.toSet()
         return channels.map { channel ->
             when {
                 channel.isMuted != channel.id in mutedChannelsIds ->

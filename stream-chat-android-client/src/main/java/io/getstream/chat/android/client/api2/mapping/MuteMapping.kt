@@ -23,8 +23,8 @@ import io.getstream.chat.android.models.UserId
 
 internal fun Mute.toDto(): UpstreamMuteDto =
     UpstreamMuteDto(
-        user = user.toDto(),
-        target = target.toDto(),
+        user = user?.toDto(),
+        target = target?.toDto(),
         created_at = createdAt,
         updated_at = updatedAt,
         expires = expires,
@@ -32,8 +32,8 @@ internal fun Mute.toDto(): UpstreamMuteDto =
 
 internal fun DownstreamMuteDto.toDomain(currentUserId: UserId?): Mute =
     Mute(
-        user = user.toDomain(currentUserId),
-        target = target.toDomain(currentUserId),
+        user = user?.toDomain(currentUserId),
+        target = target?.toDomain(currentUserId),
         createdAt = created_at,
         updatedAt = updated_at,
         expires = expires,

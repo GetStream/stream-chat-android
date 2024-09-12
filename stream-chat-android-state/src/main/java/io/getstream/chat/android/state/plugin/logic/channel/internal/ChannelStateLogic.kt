@@ -691,7 +691,7 @@ internal class ChannelStateLogic(
      */
     fun refreshMuteState() {
         val cid = mutableState.cid
-        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
+        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel?.cid == cid }
         StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
         updateMute(isChannelMuted)
     }
