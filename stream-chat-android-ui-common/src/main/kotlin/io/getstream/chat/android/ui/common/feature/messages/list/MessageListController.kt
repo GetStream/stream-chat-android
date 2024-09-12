@@ -1735,7 +1735,7 @@ public class MessageListController(
      * @param user The [User] for which to toggle the mute state.
      */
     public fun updateUserMute(user: User) {
-        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
+        val isUserMuted = chatClient.globalState.muted.value.any { it.target?.id == user.id }
 
         if (isUserMuted) {
             unmuteUser(user)

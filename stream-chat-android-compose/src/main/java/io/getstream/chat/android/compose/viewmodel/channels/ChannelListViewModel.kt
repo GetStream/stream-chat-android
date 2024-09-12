@@ -180,7 +180,7 @@ public class ChannelListViewModel(
      * @return True if the channel is muted for the current user.
      */
     public fun isChannelMuted(cid: String): Boolean {
-        return channelMutes.value.any { cid == it.channel.cid }
+        return channelMutes.value.any { cid == it.channel?.cid }
     }
 
     /**
@@ -640,7 +640,7 @@ public class ChannelListViewModel(
         channelMutes: List<ChannelMute>,
         typingEvents: Map<String, TypingEvent>,
     ): List<ItemState.ChannelItemState> {
-        val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
+        val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
         return channels.map {
             ItemState.ChannelItemState(
                 channel = it,

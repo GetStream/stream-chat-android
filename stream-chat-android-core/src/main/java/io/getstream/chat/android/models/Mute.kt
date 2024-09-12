@@ -21,8 +21,8 @@ import java.util.Date
 
 @Immutable
 public data class Mute(
-    val user: User,
-    val target: User,
+    val user: User?,
+    val target: User?,
     val createdAt: Date,
     val updatedAt: Date,
     val expires: Date?,
