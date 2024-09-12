@@ -19,12 +19,13 @@ package io.getstream.chat.android.compose.ui.messages.composer
 import android.Manifest
 import android.os.Build
 import android.os.SystemClock
-import android.widget.Space
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.awaitDragOrCancellation
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -809,95 +810,35 @@ internal fun DefaultMessageComposerTrailingContent(
                     }
                     .semantics { contentDescription = recordAudioButtonDescription }
                     .pointerInput(Unit) {
-                        detectTapGestures(
-                            onPress = { offset ->
-                                holdStartTime = SystemClock.elapsedRealtime()
-                                val updated = offset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
-                                StreamLog.d("MessageComposer") { "[onMicPress] offset: $offset, updated: $updated" }
-                                onStartRecording(Offset.Zero)
-                                micStartOffset = updated
-                            },
-                            onTap = { offset ->
-                                StreamLog.e("MessageComposer") { "[onMicTap] offset: $offset, recordingState: $recordingState" }
-                                if (recordingState is RecordingState.Hold) {
-                                    onRecordingRelease()
-                                }
-                            },
-                        )
-                    }
-                    /*.pointerInput(Unit) {
-                        awaitEachGesture {
-                            val event = awaitPointerEvent() // Await the next pointer event
-                            for (change in event.changes) {
-                                StreamLog.v("MessageComposer") { "[onPress] change: $change" }
-                                if (change.changedToDown()) {
-                                    //change.consume()
-                                    // Handle the "down" event (onPress)
-                                    StreamLog.d("MessageComposer") { "[onPress] down position: ${change.position}" }
-                                    isRecordingVisible = false
-                                } else if (change.changedToUp()) {
-                                    //change.consume()
-                                    // Handle the "up" event (onTap)
-                                    StreamLog.d("MessageComposer") { "[onTap] up position: ${change.position}" }
-                                    isRecordingVisible = true
-                                }
-                            }
-                        }
-                    }*/
-                    /*.pointerInput(Unit) {
                         awaitEachGesture {
                             // Await the first pointer down event
-                            val downEvent = awaitFirstDown().also {
-                                StreamLog.d("MessageComposer") { "[onPress] down position: ${it.position}" }
-                                isRecordingVisible = false
-                            }
+                            val downEvent = awaitFirstDown()
                             downEvent.consume()
 
-                            // Wait for up or cancel after the down event
-                            val upEvent = waitForUpOrCancellation()
-                            upEvent?.consume()
+                            val downOffset = downEvent.position
+                            holdStartTime = SystemClock.elapsedRealtime()
+                            val updated = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
+                            StreamLog.w("MessageComposer") { "[onDown] offset: $downOffset, updated: $updated" }
+                            onStartRecording(Offset.Zero)
+                            micStartOffset = updated
 
-                            if (upEvent != null) {
-                                // Handle the up event (onTap)
-                                StreamLog.d("MessageComposer") { "[onTap] up position: ${upEvent.position}" }
-                                isRecordingVisible = true
-                            } else {
-                                // Handle gesture cancellation
-                                StreamLog.d("MessageComposer") { "[onCancel] gesture was cancelled" }
-                                isRecordingVisible = true
-                            }
-
-                            // Consume the down event to ensure the system doesn't cancel the gesture early
-                            //downEvent.consume()
-                        }
-                    }*/
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                val diffOffset = offset.minus(micStartOffset)
-                                StreamLog.v("MessageComposer") { "[onMicDragStart] diffOffset: $diffOffset" }
-                                onHoldRecording(diffOffset)
-                            },
-                            onDrag = { change, _ ->
-                                change.consume()
-                                val diffOffset = change.position.minus(micStartOffset)
+                            // Await drag events
+                            while (true) {
+                                val dragEvent = awaitDragOrCancellation(downEvent.id)
+                                if (dragEvent == null || !dragEvent.pressed) {
+                                    StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
+                                    if (recordingState is RecordingState.Hold) {
+                                        onRecordingRelease()
+                                    }
+                                    break
+                                }
+                                dragEvent.consume()
+                                val diffOffset = dragEvent.position.minus(micStartOffset)
                                 StreamLog.v("MessageComposer") { "[onMicDrag] diffOffset: $diffOffset" }
                                 onHoldRecording(diffOffset)
-                            },
-                            onDragEnd = {
-                                StreamLog.e("MessageComposer") { "[onMicDragEnd] recordingState: $recordingState" }
-                                if (recordingState is RecordingState.Hold) {
-                                    onRecordingRelease()
-                                }
-                            },
-                            onDragCancel = {
-                                StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
-                                if (recordingState is RecordingState.Hold) {
-                                    onRecordingRelease()
-                                }
                             }
-                        )
-                    }, // Set size to match IconButton
+                        }
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
