@@ -76,6 +76,7 @@ import io.getstream.chat.android.compose.ui.theme.MessageComposerTheme
 import io.getstream.chat.android.compose.ui.theme.MessageOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.ReactionOptionsTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
+import io.getstream.chat.android.compose.ui.theme.StreamShapes
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.util.rememberMessageListState
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
@@ -116,23 +117,28 @@ class MessagesActivity : BaseConnectedActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+            val isInDarkMode = isSystemInDarkTheme()
+            val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
             val typography = StreamTypography.defaultTypography()
+            val shapes = StreamShapes.defaultShapes()
+            val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
             ChatTheme(
+                isInDarkMode = isInDarkMode,
                 colors = colors,
+                shapes = shapes,
                 typography = typography,
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 isComposerLinkPreviewEnabled = ChatApp.isComposerLinkPreviewEnabled,
                 allowUIAutomationTest = true,
-                messageComposerTheme = MessageComposerTheme.defaultTheme(typography).let { messageComposerTheme ->
-                    messageComposerTheme.copy(
-                        attachmentCancelIcon = messageComposerTheme.attachmentCancelIcon.copy(
+                messageComposerTheme = messageComposerTheme.let {
+                    it.copy(
+                        attachmentCancelIcon = it.attachmentCancelIcon.copy(
                             painter = painterResource(id = R.drawable.stream_compose_ic_clear),
                             tint = colors.overlayDark,
                             backgroundColor = colors.appBackground,
                         ),
-                        audioRecording = messageComposerTheme.audioRecording.copy(
+                        audioRecording = it.audioRecording.copy(
                             enabled = true,
                             showRecordButtonOverSend = false,
                         ),

@@ -55,6 +55,7 @@ public data class AudioRecordingTheme(
     val completeButtonStyle: IconContainerStyle,
 
     val holdToRecord: AudioRecordingHoldToRecordTheme,
+    val permissionRationale: AudioRecordingPermissionRationaleTheme,
 ) {
 
     public companion object {
@@ -214,7 +215,27 @@ public data class AudioRecordingTheme(
                         color = colors.textHighEmphasisInverse,
                     ),
                 ),
-            )
+                permissionRationale = AudioRecordingPermissionRationaleTheme(
+                    containerElevation = 2.dp,
+                    containerPadding = ComponentPadding(horizontal = 8.dp),
+                    containerColor = colorResource(when (isInDarkMode) {
+                        true -> R.color.stream_compose_white_85
+                        else -> R.color.stream_compose_black_85
+                    }),
+                    containerShape = RoundedCornerShape(4.dp),
+                    containerBottomOffset = 0.dp,
+                    contentHeight = 64.dp,
+                    contentSpace = 8.dp,
+                    contentPadding = ComponentPadding(horizontal = 8.dp),
+                    textStyle = typography.body.copy(
+                        color = colors.textHighEmphasisInverse,
+                    ),
+                    buttonTextStyle = typography.bodyBold.copy(
+                        color = colors.primaryAccent,
+                    ),
+                ),
+
+                )
         }
     }
 
@@ -249,6 +270,17 @@ public data class AudioRecordingHoldToRecordTheme(
     val contentHeight: Dp,
     val contentPadding: ComponentPadding,
     val textStyle: TextStyle,
-) {
+)
 
-}
+public data class AudioRecordingPermissionRationaleTheme(
+    val containerElevation: Dp,
+    val containerColor: Color,
+    val containerShape: Shape,
+    val containerPadding: ComponentPadding,
+    val containerBottomOffset: Dp,
+    val contentHeight: Dp,
+    val contentSpace: Dp,
+    val contentPadding: ComponentPadding,
+    val textStyle: TextStyle,
+    val buttonTextStyle: TextStyle,
+)

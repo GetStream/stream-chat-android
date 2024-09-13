@@ -17,14 +17,8 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.Manifest
-import android.os.Build
-import android.os.SystemClock
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.gestures.awaitDragOrCancellation
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -36,8 +30,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.Icon
@@ -51,32 +43,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
-import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
@@ -84,12 +66,11 @@ import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
 import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
-import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -103,8 +84,7 @@ import io.getstream.chat.android.ui.common.state.messages.composer.MessageCompos
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.log.StreamLog
-import kotlinx.coroutines.delay
+import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -668,16 +648,12 @@ private fun RowScope.DefaultComposerInputContent(
 /**
  * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
  *
- * @param value The input value.
- * @param coolDownTime The amount of time left in cool-down mode.
- * @param attachments The selected attachments.
- * @param validationErrors List of errors for message validation.
+ * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
- * @param streamMediaRecorder Used for recording audio messages.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
- * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
+ * @param onStartRecording Handler when the user starts recording an audio message.
+ * @param onHoldRecording Handler when the user holds the recording button.
+ * @param onCancelRecording Handler when the user cancels the recording.
+ * @param onSendRecording Handler when the user sends the recording.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -696,40 +672,19 @@ internal fun DefaultMessageComposerTrailingContent(
     val ownCapabilities = messageComposerState.ownCapabilities
     val isInEditMode = messageComposerState.action is Edit
 
-    val isRecordingEnabled = ChatTheme.messageComposerTheme.audioRecording.enabled
+    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
+    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
     val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
 
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
-    val recordAudioButtonDescription = stringResource(id = R.string.stream_compose_cd_record_audio_message)
-    var permissionsRequested by rememberSaveable { mutableStateOf(false) }
-
-    val recordingState by rememberUpdatedState(newValue = messageComposerState.recording)
-    val isRecording = recordingState !is RecordingState.Idle
-
-    // TODO test permissions on lower APIs etc
-    val storageAndRecordingPermissionState = rememberMultiplePermissionsState(
-        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(
-                Manifest.permission.READ_MEDIA_AUDIO,
-                Manifest.permission.RECORD_AUDIO,
-            )
-        } else {
-            listOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            )
-        },
-    ) {
-        // TODO should we track this or always ask?
-        permissionsRequested = true
-    }
 
     if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
+        val recordingState by rememberUpdatedState(newValue = messageComposerState.recording)
+        val isRecording = recordingState !is RecordingState.Idle
         val layoutDirection = LocalLayoutDirection.current
 
         val sendEnabled = isSendButtonEnabled && isInputValid
@@ -766,129 +721,13 @@ internal fun DefaultMessageComposerTrailingContent(
             else -> true
         }
         if (recordVisible) {
-            var micSize by remember { mutableStateOf(IntSize.Zero) }
-            var micStartOffset = remember { Offset.Zero }
-            var holdStartTime = remember { 0L }
-
-            var showDurationWarning by remember { mutableStateOf(false) }
-
-            val onRecordingRelease = remember {
-                {
-                    val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
-                    StreamLog.d("MessageComposer") { "[onRecordingRelease] holdElapsedTime: $holdElapsedTime" }
-                    if (holdElapsedTime < 1000) {
-                        showDurationWarning = true
-                        onCancelRecording()
-                    } else {
-                        onSendRecording()
-                    }
-                }
-            }
-
-            if (showDurationWarning) {
-                val offset = with(LocalDensity.current) { micSize.height /*+ 16.dp.toPx().toInt()*/ }
-                DefaultHoldToRecordPopup(
-                    offset = offset,
-                    dismissTimeoutMs = 1000L,
-                    onDismissRequest = { showDurationWarning = false },
-                )
-            }
-
-            val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
-
-            Box(
-                modifier = Modifier
-                    .run { if (isRecording) size(0.dp) else size(style.size) }
-                    .padding(style.padding)
-                    .onSizeChanged {
-                        StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
-                        micSize = it
-                    }
-                    .semantics { contentDescription = recordAudioButtonDescription }
-                    .pointerInput(Unit) {
-                        awaitEachGesture {
-                            // Await the first pointer down event
-                            val downEvent = awaitFirstDown()
-                            downEvent.consume()
-
-                            val downOffset = downEvent.position
-                            holdStartTime = SystemClock.elapsedRealtime()
-                            val updated = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
-                            StreamLog.w("MessageComposer") { "[onDown] offset: $downOffset, updated: $updated" }
-                            onStartRecording(Offset.Zero)
-                            micStartOffset = updated
-
-                            // Await drag events
-                            while (true) {
-                                val dragEvent = awaitDragOrCancellation(downEvent.id)
-                                if (dragEvent == null || !dragEvent.pressed) {
-                                    StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
-                                    if (recordingState is RecordingState.Hold) {
-                                        onRecordingRelease()
-                                    }
-                                    break
-                                }
-                                dragEvent.consume()
-                                val diffOffset = dragEvent.position.minus(micStartOffset)
-                                StreamLog.v("MessageComposer") { "[onMicDrag] diffOffset: $diffOffset" }
-                                onHoldRecording(diffOffset)
-                            }
-                        }
-                    },
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    modifier = Modifier
-                        .mirrorRtl(layoutDirection = layoutDirection)
-                        .size(style.icon.size),
-                    painter = style.icon.painter,
-                    contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-                    tint = style.icon.tint,
-                )
-            }
-        }
-    }
-
-    // TODO release recorder after the composable moves of screen
-}
-
-@Composable
-private fun DefaultHoldToRecordPopup(
-    offset: Int,
-    dismissTimeoutMs: Long = 1000L,
-    onDismissRequest: () -> Unit,
-) {
-    LaunchedEffect(Unit) {
-        delay(dismissTimeoutMs)
-        onDismissRequest()
-    }
-    Popup(
-        onDismissRequest = onDismissRequest,
-        offset = IntOffset(0, -offset),
-        alignment = BottomCenter,
-    ) {
-        val theme = ChatTheme.messageComposerTheme.audioRecording.holdToRecord
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(theme.containerPadding),
-            elevation = theme.containerElevation,
-            shape = theme.containerShape,
-            backgroundColor = theme.containerColor,
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(theme.contentHeight)
-                    .padding(theme.contentPadding),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    style = theme.textStyle,
-                    text = stringResource(id = R.string.stream_compose_message_composer_hold_to_record),
-                )
-            }
+            DefaultAudioRecordButton(
+                recordingState,
+                onCancelRecording,
+                onSendRecording,
+                onStartRecording,
+                onHoldRecording,
+            )
         }
     }
 }
