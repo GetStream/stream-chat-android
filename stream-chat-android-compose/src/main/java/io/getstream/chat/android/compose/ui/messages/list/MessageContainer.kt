@@ -95,6 +95,7 @@ public fun MessageContainer(
     onUserAvatarClick: ((User) -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    onTapUserMention: (User) -> Unit = {},
     dateSeparatorContent: @Composable (DateSeparatorItemState) -> Unit = {
         DefaultMessageDateSeparatorContent(dateSeparator = it)
     },
@@ -126,6 +127,7 @@ public fun MessageContainer(
                 onUserAvatarClick?.invoke(it.message.user)
             },
             onLinkClick = onLinkClick,
+            onTapUserMention = onTapUserMention,
         )
     },
     typingIndicatorContent: @Composable (TypingItemState) -> Unit = { },
@@ -286,6 +288,7 @@ internal fun DefaultMessageItem(
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: () -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
+    onTapUserMention: (User) -> Unit = {},
 ) {
     MessageItem(
         messageItem = messageItem,
@@ -303,5 +306,6 @@ internal fun DefaultMessageItem(
         onUserAvatarClick = onUserAvatarClick,
         onLinkClick = onLinkClick,
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
+        onTapUserMention = onTapUserMention,
     )
 }

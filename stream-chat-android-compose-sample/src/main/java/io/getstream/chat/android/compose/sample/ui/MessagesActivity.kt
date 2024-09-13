@@ -158,6 +158,9 @@ class MessagesActivity : BaseConnectedActivity() {
                     onUserAvatarClick = { user ->
                         Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                     },
+                    onTapUserMention = { user ->
+                        Log.i("MessagesActivity", "user mention tapped: ${user.id}")
+                    },
                     // TODO
                     // statefulStreamMediaRecorder = statefulStreamMediaRecorder
                 )

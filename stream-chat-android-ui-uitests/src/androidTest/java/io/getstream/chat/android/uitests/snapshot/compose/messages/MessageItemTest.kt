@@ -64,4 +64,31 @@ class MessageItemTest : ComposeScreenshotTest() {
             reactionSorting = ReactionSortingByCount,
         )
     }
+
+    @Test
+    fun messageItemForUserMentions() = runScreenshotTest {
+        MessageItem(
+            messageItem = MessageItemState(
+                message = TestData.message5(),
+                isMine = true,
+                showMessageFooter = true,
+            ),
+            onLongItemClick = {},
+            reactionSorting = ReactionSortingByCount,
+        )
+    }
+
+    @Test
+    fun messageItemForUserMentionsWithoutUsername() = runScreenshotTest {
+        MessageItem(
+            messageItem = MessageItemState(
+                message = TestData.message6(),
+                isMine = true,
+                showMessageFooter = true,
+            ),
+            onLongItemClick = {},
+            reactionSorting = ReactionSortingByCount,
+        )
+    }
+
 }

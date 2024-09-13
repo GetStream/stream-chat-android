@@ -142,6 +142,7 @@ public fun MessagesScreen(
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserAvatarClick: (User) -> Unit = {},
+    onTapUserMention: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
@@ -238,6 +239,7 @@ public fun MessagesScreen(
                 },
                 onUserAvatarClick = onUserAvatarClick,
                 onMessageLinkClick = onMessageLinkClick,
+                onTapUserMention = onTapUserMention,
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->
