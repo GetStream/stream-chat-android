@@ -106,7 +106,9 @@ internal class PollView : RecyclerView {
             .takeIf { poll.options.size > MAX_OPTIONS }
             ?.takeUnless { poll.closed }
             ?.let { pollItems.add(it) }
-        PollItem.ViewResults.takeUnless { poll.ownVotes.isEmpty() }
+        PollItem.ViewResults
+            .takeUnless { poll.ownVotes.isEmpty() || poll.closed }
+            ?.let { pollItems.add(it) }
         PollItem.Close.takeIf { isMine && !poll.closed }
             ?.let { pollItems.add(it) }
 
