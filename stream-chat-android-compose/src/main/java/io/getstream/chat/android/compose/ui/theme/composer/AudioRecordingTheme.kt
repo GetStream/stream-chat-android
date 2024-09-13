@@ -223,10 +223,10 @@ public data class AudioRecordingTheme(
                         else -> R.color.stream_compose_black_85
                     }),
                     containerShape = RoundedCornerShape(4.dp),
-                    containerBottomOffset = 0.dp,
+                    containerBottomOffset = 16.dp,
                     contentHeight = 64.dp,
                     contentSpace = 8.dp,
-                    contentPadding = ComponentPadding(horizontal = 8.dp),
+                    contentPadding = ComponentPadding(start = 16.dp, end = 8.dp),
                     textStyle = typography.body.copy(
                         color = colors.textHighEmphasisInverse,
                     ),

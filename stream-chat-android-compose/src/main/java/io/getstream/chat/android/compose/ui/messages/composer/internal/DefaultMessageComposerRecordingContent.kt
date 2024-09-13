@@ -2,10 +2,14 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import android.os.SystemClock
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +23,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Card
 import androidx.compose.material.IconButton
 import androidx.compose.material.TextButton
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,6 +37,7 @@ import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -130,6 +136,7 @@ internal fun DefaultAudioRecordButton(
 
     val style = ChatTheme.messageComposerTheme.audioRecording.recordButton
     val isRecording = recordingState !is RecordingState.Idle
+    val interactionSource = remember { MutableInteractionSource() }
     Box(
         modifier = Modifier
             .run { if (isRecording) size(0.dp) else size(style.size) }
@@ -138,6 +145,12 @@ internal fun DefaultAudioRecordButton(
                 StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
                 micSize = it
             }
+            .indication(
+                interactionSource, rememberRipple(
+                    bounded = true,
+                    radius = with (LocalDensity.current) { micSize.height.toDp() / 2 }
+                )
+            )
             .semantics { contentDescription = recordAudioButtonDescription }
             .pointerInput(Unit) {
                 awaitEachGesture {
@@ -145,38 +158,42 @@ internal fun DefaultAudioRecordButton(
                     val downEvent = awaitFirstDown()
                     downEvent.consume()
 
+                    // Trigger ripple when the gesture starts
+                    interactionSource.tryEmit(PressInteraction.Press(downEvent.position))
+
                     if (permissionState.status.shouldShowRationale) {
                         StreamLog.e("MessageComposer") { "[onMicDragCancel] show rationale" }
                         showPermissionRationale = true
-                        return@awaitEachGesture
                     } else if (!permissionState.status.isGranted) {
                         StreamLog.e("MessageComposer") { "[onMicDragCancel] no permissions" }
                         permissionState.launchPermissionRequest()
-                        return@awaitEachGesture
-                    }
+                    } else {
+                        val downOffset = downEvent.position
+                        holdStartTime = SystemClock.elapsedRealtime()
+                        val updated = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
+                        StreamLog.w("MessageComposer") { "[onDown] offset: $downOffset, updated: $updated" }
+                        onStartRecording(Offset.Zero)
+                        micStartOffset = updated
 
-                    val downOffset = downEvent.position
-                    holdStartTime = SystemClock.elapsedRealtime()
-                    val updated = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
-                    StreamLog.w("MessageComposer") { "[onDown] offset: $downOffset, updated: $updated" }
-                    onStartRecording(Offset.Zero)
-                    micStartOffset = updated
-
-                    // Await drag events
-                    while (true) {
-                        val dragEvent = awaitDragOrCancellation(downEvent.id)
-                        if (dragEvent == null || !dragEvent.pressed) {
-                            StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
-                            if (recordingState is RecordingState.Hold) {
-                                onRecordingRelease()
+                        // Await drag events
+                        while (true) {
+                            val dragEvent = awaitDragOrCancellation(downEvent.id)
+                            if (dragEvent == null || !dragEvent.pressed) {
+                                StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
+                                if (recordingState is RecordingState.Hold) {
+                                    onRecordingRelease()
+                                }
+                                break
                             }
-                            break
+                            dragEvent.consume()
+                            val diffOffset = dragEvent.position.minus(micStartOffset)
+                            StreamLog.v("MessageComposer") { "[onMicDrag] diffOffset: $diffOffset" }
+                            onHoldRecording(diffOffset)
                         }
-                        dragEvent.consume()
-                        val diffOffset = dragEvent.position.minus(micStartOffset)
-                        StreamLog.v("MessageComposer") { "[onMicDrag] diffOffset: $diffOffset" }
-                        onHoldRecording(diffOffset)
                     }
+
+                    // End the ripple when the gesture is complete
+                    interactionSource.tryEmit(PressInteraction.Release(PressInteraction.Press(downEvent.position)))
                 }
             },
         contentAlignment = Alignment.Center
