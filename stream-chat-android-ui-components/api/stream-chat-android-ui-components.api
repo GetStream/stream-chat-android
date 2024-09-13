@@ -3297,6 +3297,20 @@ public class io/getstream/chat/android/ui/feature/messages/list/background/Messa
 public final class io/getstream/chat/android/ui/feature/messages/list/background/MessageBackgroundFactoryImpl$Companion {
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/internal/PollResultsDialogFragment : androidx/appcompat/app/AppCompatDialogFragment {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/internal/PollResultsDialogFragment$Companion;
+	public static final field TAG Ljava/lang/String;
+	public fun <init> ()V
+	public fun getTheme ()I
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/internal/PollResultsDialogFragment$Companion {
+	public final fun newInstance (Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/ui/feature/messages/list/internal/PollResultsDialogFragment;
+}
+
 public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/AllPollOptionsDialogFragment : androidx/appcompat/app/AppCompatDialogFragment {
 	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/AllPollOptionsDialogFragment$Companion;
 	public static final field TAG Ljava/lang/String;
