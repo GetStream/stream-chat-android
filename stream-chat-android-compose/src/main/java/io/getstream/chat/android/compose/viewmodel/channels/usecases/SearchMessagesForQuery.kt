@@ -14,13 +14,13 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
 
-internal class SearchAndQueryMessages(
+internal class SearchMessagesForQuery(
     private val chatClient: ChatClient,
     private val logger: TaggedLogger,
     private val channelLimit: Int,
     private val iChannelViewState: IChannelViewState,
 ) : IChannelViewState by iChannelViewState {
-    suspend operator fun invoke(
+    internal suspend operator fun invoke(
         coroutineScope: CoroutineScope,
         query: String,
         searchDebouncer: Debouncer,
@@ -39,10 +39,11 @@ internal class SearchAndQueryMessages(
 
     private suspend fun searchMessagesForQuery(query: String) {
         logger.d { "[searchMessagesForQuery] query: '$query'" }
-        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(chatClient.clientState.user.value) ?: run {
-            logger.v { "[searchMessagesForQuery] rejected (no channel filter)" }
-            return
-        }
+        val channelFilter =
+            filterFlow.value ?: Filters.defaultChannelListFilter(chatClient.clientState.user.value) ?: run {
+                logger.v { "[searchMessagesForQuery] rejected (no channel filter)" }
+                return
+            }
         val newState = SearchMessageState(query = query, isLoading = true)
         searchMessageState.value = newState
         searchMessageState.value =
@@ -70,13 +71,13 @@ internal class SearchAndQueryMessages(
         }
     }
 
-
-     suspend fun loadMoreQueryMessages() {
+    suspend fun loadMoreQueryMessages() {
         logger.d { "[loadMoreQueryMessages] no args" }
-        val channelFilter = filterFlow.value ?: Filters.defaultChannelListFilter(chatClient.clientState.user.value) ?: run {
-            logger.v { "[loadMoreQueryMessages] rejected (no channel filter)" }
-            return
-        }
+        val channelFilter =
+            filterFlow.value ?: Filters.defaultChannelListFilter(chatClient.clientState.user.value) ?: run {
+                logger.v { "[loadMoreQueryMessages] rejected (no channel filter)" }
+                return
+            }
         val currentState = searchMessageState.value ?: run {
             logger.v { "[loadMoreQueryMessages] rejected (no current state)" }
             return
@@ -106,5 +107,4 @@ internal class SearchAndQueryMessages(
             logger.v { "[loadMoreQueryMessages] completed('$query'): ${it.messages.size}" }
         }
     }
-
 }

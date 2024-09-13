@@ -24,8 +24,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchAndQueryChannels
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchAndQueryMessages
+import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchChannelsForQuery
+import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchMessagesForQuery
 import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
@@ -33,6 +33,7 @@ import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
@@ -139,8 +140,8 @@ public class ChannelListViewModel(
         return channelMutes.value.any { cid == it.channel.cid }
     }
 
-    private val searchAndQueryChannels by lazy {
-        SearchAndQueryChannels(
+    private val searchChannelsForQuery by lazy {
+        SearchChannelsForQuery(
             channelLimit = channelLimit,
             messageLimit = messageLimit,
             memberLimit = memberLimit,
@@ -151,8 +152,8 @@ public class ChannelListViewModel(
         )
     }
 
-    private val searchAndQueryMessages by lazy {
-        SearchAndQueryMessages(chatClient, logger, channelLimit, this)
+    private val searchMessagesForQuery by lazy {
+        SearchMessagesForQuery(chatClient, logger, channelLimit, this)
     }
 
     /**
@@ -185,7 +186,7 @@ public class ChannelListViewModel(
                     is SearchQuery.Empty,
                     is SearchQuery.Channels,
                     -> {
-                        searchAndQueryChannels(
+                        searchChannelsForQuery(
                             searchScope = searchScope,
                             chListScope = chListScope,
                             config = query.getConfig(config),
@@ -193,7 +194,7 @@ public class ChannelListViewModel(
                     }
 
                     is SearchQuery.Messages -> {
-                        searchAndQueryMessages(
+                        searchMessagesForQuery(
                             coroutineScope = chListScope,
                             query = query.query,
                             searchDebouncer = searchDebouncer,
@@ -206,8 +207,6 @@ public class ChannelListViewModel(
                 }
             }.launchIn(viewModelScope)
     }
-
-
 
     /**
      * Changes the currently selected channel state. This updates the UI state and allows us to observe
@@ -277,14 +276,14 @@ public class ChannelListViewModel(
                 logger.e(throwable) {
                     "failed to loadMoreQueryChannels"
                 }
-            }) { searchAndQueryChannels.loadMoreQueryChannels() }
+            }) { searchChannelsForQuery.loadMoreQueryChannels() }
 
             is SearchQuery.Messages,
             -> searchScope.launch(CoroutineExceptionHandler { _, throwable ->
                 logger.e(throwable) {
                     "failed to loadMoreQueryMessages"
                 }
-            }) { searchAndQueryMessages.loadMoreQueryMessages() }
+            }) { searchMessagesForQuery.loadMoreQueryMessages() }
         }
     }
 
