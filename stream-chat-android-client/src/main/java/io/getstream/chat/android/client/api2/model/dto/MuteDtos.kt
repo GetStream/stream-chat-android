@@ -21,8 +21,8 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 internal data class UpstreamMuteDto(
-    val user: UpstreamUserDto,
-    val target: UpstreamUserDto,
+    val user: UpstreamUserDto?,
+    val target: UpstreamUserDto?,
     val created_at: Date,
     val updated_at: Date,
     val expires: Date?,
@@ -30,8 +30,8 @@ internal data class UpstreamMuteDto(
 
 @JsonClass(generateAdapter = true)
 internal data class DownstreamMuteDto(
-    val user: DownstreamUserDto,
-    val target: DownstreamUserDto,
+    val user: DownstreamUserDto?,
+    val target: DownstreamUserDto?,
     val created_at: Date,
     val updated_at: Date,
     val expires: Date?,

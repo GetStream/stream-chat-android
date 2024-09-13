@@ -1,3 +1,98 @@
+# UNRELEASED CHANGELOG
+## Common changes for all artifacts
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+- Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
+
+### ❌ Removed
+
+## stream-chat-android-client
+### 🐞 Fixed
+
+### ⬆️ Improved
+- `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-offline
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-state
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- UnreadLabel is not added on the case all unread messages are deleted. [#5403](https://github.com/GetStream/stream-chat-android/pull/5403)
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix condition to show async-voice attachments on MessageList. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
+
+### ⬆️ Improved
+
+### ✅ Added
+- Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391)
+- Added typing indicator on `ChannelList`. [#5399](https://github.com/GetStream/stream-chat-android/pull/5399)
+
+### ⚠️ Changed
+
+### ❌ Removed
+
+## stream-chat-android-markdown-transformer
+### 🐞 Fixed
+
+### ⬆️ Improved
+
+### ✅ Added
+
+### ⚠️ Changed
+
+### ❌ Removed
+
 # August 30th, 2024 - 6.5.0
 ## stream-chat-android-offline
 ### ✅ Added
@@ -30,6 +125,7 @@
 ### ✅ Added
 - Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
 - Create a new UI to create a poll message. [#5361](https://github.com/GetStream/stream-chat-android/pull/5361)
+- Added system attachment picker to select media without extra permissions. [#5380](https://github.com/GetStream/stream-chat-android/pull/5380) 
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
@@ -52,6 +148,7 @@
 - Add `MessageModerationDialog` component used for message that needs to be moderated. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 - Add `AttachmentsPickerMenu` component used to show the attachment picker menu. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
 - Add `MessageMenus` component used to prompt the user with message actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Added system attachment picker to select media without extra permissions. [#5380](https://github.com/GetStream/stream-chat-android/pull/5380)
 
 # August 09th, 2024 - 6.4.4
 ## stream-chat-android-core

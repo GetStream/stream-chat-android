@@ -31,7 +31,7 @@ public fun Channel.isAnonymousChannel(): Boolean = id.isAnonymousChannelId()
  *
  * @return True if the channel is muted for [user].
  */
-public fun Channel.isMutedFor(user: User): Boolean = user.channelMutes.any { mute -> mute.channel.cid == cid }
+public fun Channel.isMutedFor(user: User): Boolean = user.channelMutes.any { mute -> mute.channel?.cid == cid }
 
 /**
  * Returns a list of users that are members of the channel excluding the currently

@@ -542,10 +542,24 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
+                val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
+                    .fold(emptyList<Message>()) { acc, message ->
+                        when {
+                            channelUserRead.lastReadMessageId == message.id -> emptyList()
+                            else -> acc + message
+                        }
+                    }
                 unreadLabelState.value = channelUserRead.lastReadMessageId
-                    ?.takeUnless { channelState.value?.messages?.value.isNullOrEmpty() }
-                    ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
-                    ?.let { UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton) }
+                    ?.takeUnless { unreadMessages.isEmpty() }
+                    ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                    ?.let { lastReadMessageId ->
+                        UnreadLabel(
+                            unreadCount = channelUserRead.unreadMessages,
+                            lastReadMessageId = lastReadMessageId,
+                            buttonVisibility = shouldShowButton &&
+                                unreadMessages.any { !it.isDeleted() },
+                        )
+                    }
             }.launchIn(scope)
     }
 
@@ -817,6 +831,8 @@ public class MessageListController(
             groupedMessages.add(StartOfTheChannelItemState(channel))
         }
 
+        var unreadLabelAdded = false
+        var lastReadMessageFound = false
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
@@ -846,6 +862,14 @@ public class MessageListController(
                     groupedMessages.add(DateSeparatorItemState(createdAt))
                 }
             }
+
+            lastReadMessageFound = lastReadMessageFound || unreadLabel?.lastReadMessageId == previousMessage?.id
+
+            unreadLabel
+                ?.takeIf { lastReadMessageFound }
+                ?.takeUnless { unreadLabelAdded }
+                ?.takeUnless { message.isDeleted() }
+                ?.let { unreadLabelAdded = groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
                 groupedMessages.add(SystemMessageItemState(message = message))
@@ -877,11 +901,6 @@ public class MessageListController(
                     ),
                 )
             }
-
-            unreadLabel
-                ?.takeIf { it.lastReadMessageId == message.id }
-                ?.takeIf { nextMessage != null }
-                ?.let { groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (index == 0 && shouldAddThreadSeparator) {
                 groupedMessages.add(
@@ -1716,7 +1735,7 @@ public class MessageListController(
      * @param user The [User] for which to toggle the mute state.
      */
     public fun updateUserMute(user: User) {
-        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
+        val isUserMuted = chatClient.globalState.muted.value.any { it.target?.id == user.id }
 
         if (isUserMuted) {
             unmuteUser(user)
