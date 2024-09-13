@@ -24,22 +24,19 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.awaitTouchSlopOrCancellation
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Card
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
@@ -64,7 +61,6 @@ import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -790,8 +786,8 @@ internal fun DefaultMessageComposerTrailingContent(
             }
 
             if (showDurationWarning) {
-                val offset = with(LocalDensity.current) { micSize.height + 16.dp.toPx().toInt() }
-                HoldToRecordPopup(
+                val offset = with(LocalDensity.current) { micSize.height /*+ 16.dp.toPx().toInt()*/ }
+                DefaultHoldToRecordPopup(
                     offset = offset,
                     dismissTimeoutMs = 1000L,
                     onDismissRequest = { showDurationWarning = false },
@@ -857,7 +853,7 @@ internal fun DefaultMessageComposerTrailingContent(
 }
 
 @Composable
-private fun HoldToRecordPopup(
+private fun DefaultHoldToRecordPopup(
     offset: Int,
     dismissTimeoutMs: Long = 1000L,
     onDismissRequest: () -> Unit,
@@ -870,33 +866,29 @@ private fun HoldToRecordPopup(
         onDismissRequest = onDismissRequest,
         offset = IntOffset(0, -offset),
         alignment = BottomCenter,
-        ) {
-        Row(
+    ) {
+        val theme = ChatTheme.messageComposerTheme.audioRecording.holdToRecord
+        Card(
             modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(theme.containerPadding),
+            elevation = theme.containerElevation,
+            shape = theme.containerShape,
+            backgroundColor = theme.containerColor,
         ) {
-            Spacer(modifier = Modifier.width(8.dp))
-            Card(
+            Box(
                 modifier = Modifier
-                    .weight(1f),
-                elevation = 2.dp,
-                shape = RoundedCornerShape(8.dp),
-                backgroundColor = Color.Black,
+                    .fillMaxWidth()
+                    .height(theme.contentHeight)
+                    .padding(theme.contentPadding),
+                contentAlignment = Alignment.CenterStart
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        style = ChatTheme.typography.title3,
-                        text = stringResource(id = R.string.stream_compose_message_composer_hold_to_record),
-                        color = Color.White
-                    )
-                }
+                Text(
+                    style = theme.textStyle,
+                    text = stringResource(id = R.string.stream_compose_message_composer_hold_to_record),
+                )
             }
-            Spacer(modifier = Modifier.width(8.dp))
         }
     }
 }

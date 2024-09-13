@@ -289,6 +289,7 @@ public fun ChatTheme(
         colors = colors,
     ),
     messageComposerTheme: MessageComposerTheme = MessageComposerTheme.defaultTheme(
+        isInDarkMode = isInDarkMode,
         typography = typography,
         shapes = shapes,
         colors = colors,

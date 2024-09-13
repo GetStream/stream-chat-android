@@ -68,6 +68,7 @@
     <color name="stream_compose_white_smoke">#F2F2F2</color>
     <color name="stream_compose_white_snow">#FCFCFC</color>
     <color name="stream_compose_white">#FFFFFF</color>
+    <color name="stream_compose_white_85">#D9FFFFFF</color>
     <color name="stream_compose_blue_alice">#E9F2FF</color>
 
     <!-- Avatar gradient colors -->

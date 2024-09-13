@@ -21,6 +21,9 @@ import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 
+/**
+ * Represents the theme for the audio recording component.
+ */
 public data class AudioRecordingTheme(
     val enabled: Boolean = false,
     val showRecordButtonOverSend: Boolean = false,
@@ -50,13 +53,16 @@ public data class AudioRecordingTheme(
     val deleteButton: IconContainerStyle,
     val stopButton: IconContainerStyle,
     val completeButtonStyle: IconContainerStyle,
+
+    val holdToRecord: AudioRecordingHoldToRecordTheme,
 ) {
 
     public companion object {
         @Composable
         public fun defaultTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
@@ -193,6 +199,21 @@ public data class AudioRecordingTheme(
                         size = ComponentSize.square(24.dp),
                     ),
                 ),
+
+                holdToRecord = AudioRecordingHoldToRecordTheme(
+                    containerElevation = 2.dp,
+                    containerPadding = ComponentPadding(horizontal = 8.dp, vertical = 16.dp),
+                    containerColor = colorResource(when (isInDarkMode) {
+                        true -> R.color.stream_compose_white_85
+                        else -> R.color.stream_compose_black_85
+                    }),
+                    containerShape = RoundedCornerShape(16.dp),
+                    contentHeight = 48.dp,
+                    contentPadding = ComponentPadding(horizontal = 16.dp),
+                    textStyle = typography.bodyBold.copy(
+                        color = colors.textHighEmphasisInverse,
+                    ),
+                ),
             )
         }
     }
@@ -215,5 +236,19 @@ public data class AudioRecordingFloatingIconStyle(
     val size: ComponentSize get() = delegate.size
     val padding: ComponentPadding get() = delegate.padding
     val icon: IconStyle get() = delegate.icon
+}
+
+/**
+ * Represents the theme for the hold to record component.
+ */
+public data class AudioRecordingHoldToRecordTheme(
+    val containerElevation: Dp,
+    val containerColor: Color,
+    val containerShape: Shape,
+    val containerPadding: ComponentPadding,
+    val contentHeight: Dp,
+    val contentPadding: ComponentPadding,
+    val textStyle: TextStyle,
+) {
 
 }

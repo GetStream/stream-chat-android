@@ -53,16 +53,24 @@ public data class ComponentSize(
  * @param bottom The bottom padding.
  */
 public data class ComponentPadding(
-    val start: Dp,
-    val top: Dp,
-    val end: Dp,
-    val bottom: Dp,
+    val start: Dp = 0.dp,
+    val top: Dp = 0.dp,
+    val end: Dp = 0.dp,
+    val bottom: Dp = 0.dp,
 ) {
+
+    public constructor(horizontal: Dp = 0.dp, vertical: Dp = 0.dp) : this(
+        start = horizontal,
+        top = vertical,
+        end = horizontal,
+        bottom = vertical,
+    )
+
     public companion object {
         /**
          * Represents a zero padding.
          */
-        public val Zero: ComponentPadding = ComponentPadding(0.dp, 0.dp, 0.dp, 0.dp)
+        public val Zero: ComponentPadding = ComponentPadding()
 
         /**
          * Creates a padding with the same value for all sides.

@@ -52,9 +52,10 @@ public data class MessageComposerTheme(
          */
         @Composable
         public fun defaultTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
@@ -63,7 +64,7 @@ public data class MessageComposerTheme(
                 attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
                 linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
-                audioRecording = AudioRecordingTheme.defaultTheme(typography, colors),
+                audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }
     }
