@@ -64,6 +64,7 @@
 
 ### ✅ Added
 - Split poll options on the poll attachment to show a fit nubmer of options and a button to open new view with all options.[#5406](https://github.com/GetStream/stream-chat-android/pull/5406)
+- Add view to see poll results. [#5405](https://github.com/GetStream/stream-chat-android/pull/5405)
 
 ### ⚠️ Changed
 
