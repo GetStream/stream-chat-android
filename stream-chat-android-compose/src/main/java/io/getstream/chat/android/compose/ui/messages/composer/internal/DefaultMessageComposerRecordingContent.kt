@@ -31,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.BottomCenter
@@ -76,12 +77,14 @@ import kotlin.random.Random
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 internal fun DefaultAudioRecordButton(
-    recordingState: RecordingState,
+    state: RecordingState,
     onCancelRecording: () -> Unit,
     onSendRecording: () -> Unit,
     onStartRecording: (Offset) -> Unit,
     onHoldRecording: (Offset) -> Unit,
 ) {
+    val recordingState by rememberUpdatedState(newValue = state)
+
     val layoutDirection = LocalLayoutDirection.current
     val recordAudioButtonDescription = stringResource(id = R.string.stream_compose_cd_record_audio_message)
 
@@ -101,7 +104,7 @@ internal fun DefaultAudioRecordButton(
     val onRecordingRelease = remember {
         {
             val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
-            StreamLog.d("MessageComposer") { "[onRecordingRelease] holdElapsedTime: $holdElapsedTime" }
+            StreamLog.d("AudioRecordButton") { "[onRecordingRelease] holdElapsedTime: $holdElapsedTime" }
             if (holdElapsedTime < 1000) {
                 showDurationWarning = true
                 onCancelRecording()
@@ -121,7 +124,7 @@ internal fun DefaultAudioRecordButton(
 
     var showPermissionDenied by remember { mutableStateOf(false) }
     val permissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO) { permissionGranted ->
-        StreamLog.e("MessageComposer") { "[rememberPermissionState] permissionGranted: $permissionGranted" }
+        StreamLog.e("AudioRecordButton") { "[rememberPermissionState] permissionGranted: $permissionGranted" }
         showPermissionDenied = !permissionGranted
     }
     if (showPermissionDenied) {
@@ -142,7 +145,7 @@ internal fun DefaultAudioRecordButton(
             .run { if (isRecording) size(0.dp) else size(style.size) }
             .padding(style.padding)
             .onSizeChanged {
-                StreamLog.d("MessageComposer") { "[onMicSizeChanged] size: $it" }
+                StreamLog.d("AudioRecordButton") { "[onMicSizeChanged] size: $it" }
                 micSize = it
             }
             .indication(
@@ -162,16 +165,16 @@ internal fun DefaultAudioRecordButton(
                     interactionSource.tryEmit(PressInteraction.Press(downEvent.position))
 
                     if (permissionState.status.shouldShowRationale) {
-                        StreamLog.e("MessageComposer") { "[onMicDragCancel] show rationale" }
+                        StreamLog.e("AudioRecordButton") { "[onMicDragCancel] show rationale" }
                         showPermissionRationale = true
                     } else if (!permissionState.status.isGranted) {
-                        StreamLog.e("MessageComposer") { "[onMicDragCancel] no permissions" }
+                        StreamLog.e("AudioRecordButton") { "[onMicDragCancel] no permissions" }
                         permissionState.launchPermissionRequest()
                     } else {
                         val downOffset = downEvent.position
                         holdStartTime = SystemClock.elapsedRealtime()
                         val updated = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
-                        StreamLog.w("MessageComposer") { "[onDown] offset: $downOffset, updated: $updated" }
+                        StreamLog.w("AudioRecordButton") { "[onDown] offset: $downOffset, updated: $updated" }
                         onStartRecording(Offset.Zero)
                         micStartOffset = updated
 
@@ -179,7 +182,7 @@ internal fun DefaultAudioRecordButton(
                         while (true) {
                             val dragEvent = awaitDragOrCancellation(downEvent.id)
                             if (dragEvent == null || !dragEvent.pressed) {
-                                StreamLog.e("MessageComposer") { "[onMicDragCancel] no args" }
+                                StreamLog.e("AudioRecordButton") { "[onMicDragCancel] recordingState: $recordingState" }
                                 if (recordingState is RecordingState.Hold) {
                                     onRecordingRelease()
                                 }
@@ -187,7 +190,7 @@ internal fun DefaultAudioRecordButton(
                             }
                             dragEvent.consume()
                             val diffOffset = dragEvent.position.minus(micStartOffset)
-                            StreamLog.v("MessageComposer") { "[onMicDrag] diffOffset: $diffOffset" }
+                            StreamLog.v("AudioRecordButton") { "[onMicDrag] diffOffset: $diffOffset" }
                             onHoldRecording(diffOffset)
                         }
                     }

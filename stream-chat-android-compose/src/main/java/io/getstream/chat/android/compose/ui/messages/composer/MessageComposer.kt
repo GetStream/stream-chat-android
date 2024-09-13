@@ -683,8 +683,7 @@ internal fun DefaultMessageComposerTrailingContent(
     if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
-        val recordingState by rememberUpdatedState(newValue = messageComposerState.recording)
-        val isRecording = recordingState !is RecordingState.Idle
+        val isRecording = messageComposerState.recording !is RecordingState.Idle
         val layoutDirection = LocalLayoutDirection.current
 
         val sendEnabled = isSendButtonEnabled && isInputValid
@@ -722,7 +721,7 @@ internal fun DefaultMessageComposerTrailingContent(
         }
         if (recordVisible) {
             DefaultAudioRecordButton(
-                recordingState,
+                messageComposerState.recording,
                 onCancelRecording,
                 onSendRecording,
                 onStartRecording,
