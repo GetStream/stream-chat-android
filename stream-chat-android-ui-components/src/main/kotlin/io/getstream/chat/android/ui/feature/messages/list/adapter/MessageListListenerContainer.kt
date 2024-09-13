@@ -33,6 +33,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMess
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollCloseClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
@@ -72,6 +73,7 @@ public sealed interface MessageListListeners {
     public val linkClickListener: OnLinkClickListener
     public val unreadLabelReachedListener: OnUnreadLabelReachedListener
     public val onPollOptionClickListener: OnPollOptionClickListener
+    public val onShowAllPollOptionClickListener: OnShowAllPollOptionClickListener
     public val onPollCloseClickListener: OnPollCloseClickListener
     public val onViewPollResultClickListener: OnViewPollResultClickListener
 }

@@ -591,6 +591,7 @@ public class MessageListView : ConstraintLayout {
         false
     }
     private val defaultOnPollOptionClickListener = OnPollOptionClickListener { _, _, _ -> false }
+    private val defaultOnShowAllPollOptionClickListener = OnShowAllPollOptionClickListener { _, _ -> false }
     private val defaultOnPollCloseClickListener = OnPollCloseClickListener { false }
     private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { false }
 
@@ -606,6 +607,7 @@ public class MessageListView : ConstraintLayout {
         giphySendListener = defaultGiphySendListener,
         linkClickListener = defaultLinkClickListener,
         onPollOptionClickListener = defaultOnPollOptionClickListener,
+        onShowAllPollOptionClickListener = defaultOnShowAllPollOptionClickListener,
         onPollCloseClickListener = defaultOnPollCloseClickListener,
         onViewPollResultClickListener = defaultOnViewPollResultClickListener,
     )
@@ -2188,6 +2190,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnPollOptionClickListener {
         public fun onPollOptionClick(message: Message, poll: Poll, option: Option): Boolean
+    }
+
+    public fun interface OnShowAllPollOptionClickListener {
+        public fun onShowAllPollOptionClick(message: Message, poll: Poll): Boolean
     }
 
     public fun interface OnPollCloseClickListener {
