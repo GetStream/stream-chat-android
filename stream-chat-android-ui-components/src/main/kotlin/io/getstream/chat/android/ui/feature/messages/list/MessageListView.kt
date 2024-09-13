@@ -104,6 +104,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.Messa
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactory
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactoryImpl
+import io.getstream.chat.android.ui.feature.messages.list.internal.AllPollOptionsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.feature.messages.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
@@ -591,7 +592,14 @@ public class MessageListView : ConstraintLayout {
         false
     }
     private val defaultOnPollOptionClickListener = OnPollOptionClickListener { _, _, _ -> false }
-    private val defaultOnShowAllPollOptionClickListener = OnShowAllPollOptionClickListener { _, _ -> false }
+    private val defaultOnShowAllPollOptionClickListener = OnShowAllPollOptionClickListener { message, _ ->
+        val fm = context.getFragmentManager() ?: return@OnShowAllPollOptionClickListener false
+        fm.let { fragmentManager ->
+            AllPollOptionsDialogFragment.newInstance(message)
+                .show(fragmentManager, AllPollOptionsDialogFragment.TAG)
+        }
+        true
+    }
     private val defaultOnPollCloseClickListener = OnPollCloseClickListener { false }
     private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { false }
 
