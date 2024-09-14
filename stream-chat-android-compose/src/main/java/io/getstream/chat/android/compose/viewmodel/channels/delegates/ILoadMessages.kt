@@ -95,12 +95,14 @@ internal class StreamMessagesLoader(
         logger.d { "[observeSearchMessages] query: '$query'" }
         searchMessageState.filterNotNull().collectLatest {
             logger.v { "[observeSearchMessages] state: ${it.stringify()}" }
-            channelsState = channelsState.copy(
-                searchQuery = searchQuery.value,
-                isLoading = it.isLoading,
-                isLoadingMore = it.isLoadingMore,
-                endOfChannels = !it.canLoadMore,
-                channelItems = it.messages.map(ItemState::SearchResultItemState),
+            updateChannelState(
+                channelsState.copy(
+                    searchQuery = searchQuery.value,
+                    isLoading = it.isLoading,
+                    isLoadingMore = it.isLoadingMore,
+                    endOfChannels = !it.canLoadMore,
+                    channelItems = it.messages.map(ItemState::SearchResultItemState),
+                )
             )
         }
     }.onFailure {

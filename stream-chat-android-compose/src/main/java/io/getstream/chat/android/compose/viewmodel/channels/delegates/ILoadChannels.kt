@@ -46,7 +46,7 @@ internal class StreamChannelLoader(
                     channelMutes = channelMutes,
                     queryChannelsState = queryChannelsState
                 )
-            }.collectLatest { newState -> channelsState = newState }
+            }.collectLatest { newState -> updateChannelState(newState) }
         }
     }
 
@@ -80,14 +80,14 @@ internal class StreamChannelLoader(
         }
         lastNextQuery = nextQuery
         logger.v { "[loadMoreQueryChannels] offset: ${nextQuery.offset}, limit: ${nextQuery.limit}" }
-        channelsState = channelsState.copy(isLoadingMore = true)
+        updateChannelState(channelsState.copy(isLoadingMore = true))
         val result = chatClient.queryChannels(nextQuery).await()
         if (result.isSuccess) {
             logger.v { "[loadMoreQueryChannels] completed; channels.size: ${result.getOrNull()?.size}" }
         } else {
             logger.e { "[loadMoreQueryChannels] failed: ${result.errorOrNull()}" }
         }
-        channelsState = channelsState.copy(isLoadingMore = false)
+        updateChannelState(channelsState.copy(isLoadingMore = false))
     }
 
     private fun channelsState(

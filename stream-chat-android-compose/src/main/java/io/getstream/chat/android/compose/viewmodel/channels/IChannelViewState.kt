@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 
 internal interface IChannelViewState {
-    var channelsState: ChannelsState
+    val channelsState: ChannelsState
     var queryChannelsState: StateFlow<QueryChannelsState?>
     val channelMutes: StateFlow<List<ChannelMute>>
     val searchQuery: MutableStateFlow<SearchQuery>
@@ -28,17 +28,24 @@ internal interface IChannelViewState {
     val filterFlow: MutableStateFlow<FilterObject?>
     val querySortFlow: MutableStateFlow<QuerySorter<Channel>>
     val queryConfigFlow: Flow<QueryConfig<Channel>>
+
+    fun updateChannelState(channelsState: ChannelsState)
 }
 
 internal class ChannelViewStateImpl(
     chatClient: ChatClient,
     initialSort: QuerySorter<Channel>,
-    initialFilters: FilterObject?
+    initialFilters: FilterObject?,
 ) : IChannelViewState {
     /**
      * The current state of the channels screen. It holds all the information required to render the UI.
      */
     override var channelsState: ChannelsState by mutableStateOf(ChannelsState())
+        private set
+
+    override fun updateChannelState(channelsState: ChannelsState) {
+        this.channelsState = channelsState
+    }
 
     /**
      * Current query channels state that contains filter, sort and other states related to channels query.
@@ -55,7 +62,6 @@ internal class ChannelViewStateImpl(
      * queries and loads new data.
      */
     override val searchQuery: MutableStateFlow<SearchQuery> = MutableStateFlow<SearchQuery>(SearchQuery.Empty)
-
 
     /**
      * The current state of the search Messages. When changed, it emits a new value in a flow, which
@@ -79,7 +85,8 @@ internal class ChannelViewStateImpl(
      * The currently active query configuration, stored in a [MutableStateFlow]. It's created using
      * the `initialFilters` parameter and the initial sort, but can be changed.
      */
-    override val queryConfigFlow: Flow<QueryConfig<Channel>> = filterFlow.filterNotNull().combine(querySortFlow) { filters, sort ->
-        QueryConfig(filters = filters, querySort = sort)
-    }
+    override val queryConfigFlow: Flow<QueryConfig<Channel>> =
+        filterFlow.filterNotNull().combine(querySortFlow) { filters, sort ->
+            QueryConfig(filters = filters, querySort = sort)
+        }
 }
