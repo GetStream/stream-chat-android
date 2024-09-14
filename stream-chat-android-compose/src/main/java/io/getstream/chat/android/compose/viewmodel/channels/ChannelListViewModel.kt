@@ -24,9 +24,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
+import io.getstream.chat.android.compose.viewmodel.channels.delegates.StreamChannelSearchHelper
 import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchChannelsForQuery
 import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchMessagesForQuery
-import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
@@ -40,9 +40,7 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -52,9 +50,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 
 /**
  * A state store that represents all the information required to query, filter, show and react to
@@ -84,20 +80,12 @@ public class ChannelListViewModel(
 
     private val logger by taggedLogger("Chat:ChannelListVM")
 
-    /**
-     * The scope used for channel list operations.
-     */
-    private val chListScope = viewModelScope.let { it + SupervisorJob(it.coroutineContext.job) }
-
-    /**
-     * The scope used for search operations.
-     */
-    private val searchScope = viewModelScope.let { it + SupervisorJob(it.coroutineContext.job) }
-
-    /**
-     * The debouncer used for search operations.
-     */
-    private val searchDebouncer = Debouncer(searchDebounceMs, searchScope)
+    private val streamSearchHelper by lazy {
+        StreamChannelSearchHelper(
+            searchDebounceMs,
+            viewModelScope = viewModelScope
+        )
+    }
 
     /**
      * Currently selected channel, if any. Used to show the bottom drawer information when long
@@ -149,12 +137,18 @@ public class ChannelListViewModel(
             chatEventHandlerFactory = chatEventHandlerFactory,
             channelState = this,
             logger = logger,
-            chListScope = chListScope,
+            iHelpSearchWithDebounce = streamSearchHelper,
         )
     }
 
     private val searchMessagesForQuery by lazy {
-        SearchMessagesForQuery(chatClient, logger, channelLimit, this, searchDebouncer)
+        SearchMessagesForQuery(
+            chatClient = chatClient,
+            logger = logger,
+            channelLimit = channelLimit,
+            iChannelViewState = this,
+            iHelpSearchWithDebounce = streamSearchHelper,
+        )
     }
 
     /**
@@ -162,7 +156,6 @@ public class ChannelListViewModel(
      */
     init {
         setupFilters()
-
         setupSearchAndQuery()
     }
 
@@ -188,14 +181,12 @@ public class ChannelListViewModel(
                     is SearchQuery.Channels,
                     -> {
                         searchChannelsForQuery(
-                            searchScope = searchScope,
                             config = query.getConfig(config),
                         )
                     }
 
                     is SearchQuery.Messages -> {
                         searchMessagesForQuery(
-                            coroutineScope = chListScope,
                             query = query.query,
                         )
                     }
@@ -271,18 +262,10 @@ public class ChannelListViewModel(
         when (searchQuery.value) {
             is SearchQuery.Empty,
             is SearchQuery.Channels,
-            -> chListScope.launch(CoroutineExceptionHandler { _, throwable ->
-                logger.e(throwable) {
-                    "failed to loadMoreQueryChannels"
-                }
-            }) { searchChannelsForQuery.loadMoreQueryChannels() }
+            -> searchChannelsForQuery.loadMoreQueryChannels()
 
             is SearchQuery.Messages,
-            -> searchScope.launch(CoroutineExceptionHandler { _, throwable ->
-                logger.e(throwable) {
-                    "failed to loadMoreQueryMessages"
-                }
-            }) { searchMessagesForQuery.loadMoreQueryMessages() }
+            -> searchMessagesForQuery.loadMoreQueryMessages()
         }
     }
 
