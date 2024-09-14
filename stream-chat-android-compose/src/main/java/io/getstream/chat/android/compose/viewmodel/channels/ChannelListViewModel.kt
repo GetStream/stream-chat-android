@@ -149,11 +149,12 @@ public class ChannelListViewModel(
             chatEventHandlerFactory = chatEventHandlerFactory,
             channelState = this,
             logger = logger,
+            chListScope = chListScope,
         )
     }
 
     private val searchMessagesForQuery by lazy {
-        SearchMessagesForQuery(chatClient, logger, channelLimit, this)
+        SearchMessagesForQuery(chatClient, logger, channelLimit, this, searchDebouncer)
     }
 
     /**
@@ -188,7 +189,6 @@ public class ChannelListViewModel(
                     -> {
                         searchChannelsForQuery(
                             searchScope = searchScope,
-                            chListScope = chListScope,
                             config = query.getConfig(config),
                         )
                     }
@@ -197,7 +197,6 @@ public class ChannelListViewModel(
                         searchMessagesForQuery(
                             coroutineScope = chListScope,
                             query = query.query,
-                            searchDebouncer = searchDebouncer,
                         )
                     }
                 }
