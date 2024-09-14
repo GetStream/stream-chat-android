@@ -24,9 +24,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
-import io.getstream.chat.android.compose.viewmodel.channels.delegates.StreamChannelSearchHelper
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchChannelsForQuery
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchMessagesForQuery
+import io.getstream.chat.android.compose.viewmodel.channels.delegates.IStreamChannelListContent
+import io.getstream.chat.android.compose.viewmodel.channels.delegates.StreamChannelListContentLoader
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
@@ -40,16 +39,13 @@ import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.launch
 
 /**
@@ -79,13 +75,6 @@ public class ChannelListViewModel(
     IChannelViewState by ChannelViewStateImpl(chatClient, initialSort, initialFilters) {
 
     private val logger by taggedLogger("Chat:ChannelListVM")
-
-    private val streamSearchHelper by lazy {
-        StreamChannelSearchHelper(
-            searchDebounceMs,
-            viewModelScope = viewModelScope
-        )
-    }
 
     /**
      * Currently selected channel, if any. Used to show the bottom drawer information when long
@@ -128,28 +117,16 @@ public class ChannelListViewModel(
         return channelMutes.value.any { cid == it.channel.cid }
     }
 
-    private val searchChannelsForQuery by lazy {
-        SearchChannelsForQuery(
-            channelLimit = channelLimit,
-            messageLimit = messageLimit,
-            memberLimit = memberLimit,
-            chatClient = chatClient,
-            chatEventHandlerFactory = chatEventHandlerFactory,
-            channelState = this,
-            logger = logger,
-            iHelpSearchWithDebounce = streamSearchHelper,
-        )
-    }
-
-    private val searchMessagesForQuery by lazy {
-        SearchMessagesForQuery(
-            chatClient = chatClient,
-            logger = logger,
-            channelLimit = channelLimit,
-            iChannelViewState = this,
-            iHelpSearchWithDebounce = streamSearchHelper,
-        )
-    }
+    private val streamChannelListContent :IStreamChannelListContent = StreamChannelListContentLoader(
+        chatClient = chatClient,
+        chatEventHandlerFactory = chatEventHandlerFactory,
+        channelLimit = channelLimit,
+        memberLimit = memberLimit,
+        messageLimit = messageLimit,
+        channelViewState = this,
+        searchDebounceMs = searchDebounceMs,
+        coroutineScope = viewModelScope,
+    )
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
@@ -161,7 +138,11 @@ public class ChannelListViewModel(
 
     private fun setupFilters() {
         if (initialFilters == null) {
-            viewModelScope.launch {
+            viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
+                logger.e(throwable) {
+                    "Failed to setup filters"
+                }
+            }) {
                 val filter = buildDefaultFilter().first()
                 filterFlow.value = filter
             }
@@ -171,31 +152,10 @@ public class ChannelListViewModel(
     /**
      * Makes the initial query to request channels and starts observing state changes.
      */
-    @OptIn(ExperimentalCoroutinesApi::class)
     private fun setupSearchAndQuery() {
         logger.d { "[init] no args" }
-        searchQuery.combine(queryConfigFlow) { query, config -> query to config }
-            .mapLatest { (query, config) ->
-                when (query) {
-                    is SearchQuery.Empty,
-                    is SearchQuery.Channels,
-                    -> {
-                        searchChannelsForQuery(
-                            config = query.getConfig(config),
-                        )
-                    }
-
-                    is SearchQuery.Messages -> {
-                        searchMessagesForQuery(
-                            query = query.query,
-                        )
-                    }
-                }
-            }.catch {
-                logger.e(it) {
-                    "setupSearchAndQuery failed"
-                }
-            }.launchIn(viewModelScope)
+        streamChannelListContent.streamSearchQuery()
+            .launchIn(viewModelScope)
     }
 
     /**
@@ -254,19 +214,8 @@ public class ChannelListViewModel(
      */
     public fun loadMore() {
         logger.d { "[loadMore] no args" }
+        streamChannelListContent.loadMore()
 
-        if (chatClient.clientState.isOffline) {
-            logger.v { "[loadMore] rejected (client is offline)" }
-            return
-        }
-        when (searchQuery.value) {
-            is SearchQuery.Empty,
-            is SearchQuery.Channels,
-            -> searchChannelsForQuery.loadMoreQueryChannels()
-
-            is SearchQuery.Messages,
-            -> searchMessagesForQuery.loadMoreQueryMessages()
-        }
     }
 
     /**

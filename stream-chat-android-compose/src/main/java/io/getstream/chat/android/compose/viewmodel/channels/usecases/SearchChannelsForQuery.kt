@@ -26,6 +26,7 @@ internal class SearchChannelsForQuery(
     private val iHelpSearchWithDebounce: IHelpSearchWithDebounce,
 ) : IChannelViewState by channelState,
     IHelpSearchWithDebounce by iHelpSearchWithDebounce {
+
     private val channelLoader: ILoadChannels = StreamChannelLoader(
         chatClient = chatClient,
         chatEventHandlerFactory = chatEventHandlerFactory,

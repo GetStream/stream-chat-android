@@ -13,13 +13,13 @@ internal class SearchMessagesForQuery(
     chatClient: ChatClient,
     private val logger: TaggedLogger,
     channelLimit: Int,
-    private val iChannelViewState: IChannelViewState,
+    private val channelState: IChannelViewState,
     private val iHelpSearchWithDebounce: IHelpSearchWithDebounce,
-) : IChannelViewState by iChannelViewState, IHelpSearchWithDebounce by iHelpSearchWithDebounce {
+) : IChannelViewState by channelState, IHelpSearchWithDebounce by iHelpSearchWithDebounce {
 
     private val iLoadMessages =
         StreamMessagesLoader(
-            iChannelViewState = iChannelViewState,
+            iChannelViewState = channelState,
             searchDebouncer = searchDebouncer,
             logger = logger,
             chatClient = chatClient,
