@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewmodel.channels.usecases
+package io.getstream.chat.android.compose.viewmodel.channels.loadmessages
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.viewmodel.channels.SearchMessageState
@@ -20,13 +20,12 @@ internal class SearchMessages(
         channelLimit: Int,
     ): SearchMessageState {
         val offset = currentState.messages.size
-        val limit = channelLimit
-        logger.v { "[searchMessages] #$src; query: '${currentState.query}', offset: $offset, limit: $limit" }
+        logger.v { "[searchMessages] #$src; query: '${currentState.query}', offset: $offset, limit: $channelLimit" }
         val result = chatClient.searchMessages(
             channelFilter = channelFilter,
             messageFilter = Filters.autocomplete("text", currentState.query),
             offset = offset,
-            limit = limit,
+            limit = channelLimit,
         ).await()
         return when (result) {
             is io.getstream.result.Result.Success -> {
@@ -35,7 +34,7 @@ internal class SearchMessages(
                     messages = currentState.messages + result.value.messages,
                     isLoading = false,
                     isLoadingMore = false,
-                    canLoadMore = result.value.messages.size >= limit,
+                    canLoadMore = result.value.messages.size >= channelLimit,
                 )
             }
 

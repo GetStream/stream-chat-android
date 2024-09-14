@@ -26,27 +26,21 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.viewmodel.channels.delegates.IStreamChannelListContent
 import io.getstream.chat.android.compose.viewmodel.channels.delegates.StreamChannelListContentLoader
+import io.getstream.chat.android.compose.viewmodel.channels.filtering.IFilterChannels
+import io.getstream.chat.android.compose.viewmodel.channels.filtering.StreamChannelFilter
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
-import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.ChatEventHandler
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.chat.android.ui.common.state.channels.actions.Cancel
 import io.getstream.chat.android.ui.common.state.channels.actions.ChannelAction
-import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
 import io.getstream.log.taggedLogger
 import io.getstream.result.call.toUnitCall
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 /**
  * A state store that represents all the information required to query, filter, show and react to
@@ -101,13 +95,6 @@ public class ChannelListViewModel(
     public val user: StateFlow<User?> = chatClient.clientState.user
 
     /**
-     * Builds the default channel filter, which represents "messaging" channels that the current user is a part of.
-     */
-    private fun buildDefaultFilter(): Flow<FilterObject> {
-        return chatClient.clientState.user.map(Filters::defaultChannelListFilter).filterNotNull()
-    }
-
-    /**
      * Checks if the channel is muted for the current user.
      *
      * @param cid The CID of the channel that needs to be checked.
@@ -117,7 +104,7 @@ public class ChannelListViewModel(
         return channelMutes.value.any { cid == it.channel.cid }
     }
 
-    private val streamChannelListContent :IStreamChannelListContent = StreamChannelListContentLoader(
+    private val streamChannelListContent: IStreamChannelListContent = StreamChannelListContentLoader(
         chatClient = chatClient,
         chatEventHandlerFactory = chatEventHandlerFactory,
         channelLimit = channelLimit,
@@ -128,32 +115,14 @@ public class ChannelListViewModel(
         coroutineScope = viewModelScope,
     )
 
+    private val streamChannelFilter: IFilterChannels = StreamChannelFilter(chatClient, channelViewState = this)
+
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     init {
-        setupFilters()
-        setupSearchAndQuery()
-    }
-
-    private fun setupFilters() {
-        if (initialFilters == null) {
-            viewModelScope.launch(CoroutineExceptionHandler { _, throwable ->
-                logger.e(throwable) {
-                    "Failed to setup filters"
-                }
-            }) {
-                val filter = buildDefaultFilter().first()
-                filterFlow.value = filter
-            }
-        }
-    }
-
-    /**
-     * Makes the initial query to request channels and starts observing state changes.
-     */
-    private fun setupSearchAndQuery() {
         logger.d { "[init] no args" }
+        streamChannelFilter.setupFilters(initialFilters, viewModelScope)
         streamChannelListContent.streamSearchQuery()
             .launchIn(viewModelScope)
     }
@@ -215,7 +184,6 @@ public class ChannelListViewModel(
     public fun loadMore() {
         logger.d { "[loadMore] no args" }
         streamChannelListContent.loadMore()
-
     }
 
     /**

@@ -1,12 +1,10 @@
-package io.getstream.chat.android.compose.viewmodel.channels.usecases
+package io.getstream.chat.android.compose.viewmodel.channels.loadchannels
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
 import io.getstream.chat.android.compose.state.QueryConfig
 import io.getstream.chat.android.compose.viewmodel.channels.IChannelViewState
 import io.getstream.chat.android.compose.viewmodel.channels.delegates.IHelpSearchWithDebounce
-import io.getstream.chat.android.compose.viewmodel.channels.delegates.ILoadChannels
-import io.getstream.chat.android.compose.viewmodel.channels.delegates.StreamChannelLoader
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.log.TaggedLogger

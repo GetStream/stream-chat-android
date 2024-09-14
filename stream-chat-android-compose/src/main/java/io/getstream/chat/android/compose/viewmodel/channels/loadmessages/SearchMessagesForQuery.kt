@@ -1,9 +1,8 @@
-package io.getstream.chat.android.compose.viewmodel.channels.usecases
+package io.getstream.chat.android.compose.viewmodel.channels.loadmessages
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.viewmodel.channels.IChannelViewState
 import io.getstream.chat.android.compose.viewmodel.channels.delegates.IHelpSearchWithDebounce
-import io.getstream.chat.android.compose.viewmodel.channels.delegates.StreamMessagesLoader
 import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.cancelChildren

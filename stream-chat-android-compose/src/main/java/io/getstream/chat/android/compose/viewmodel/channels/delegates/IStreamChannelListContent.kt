@@ -1,15 +1,15 @@
 package io.getstream.chat.android.compose.viewmodel.channels.delegates
 
-import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
 import io.getstream.chat.android.compose.viewmodel.channels.IChannelViewState
 import io.getstream.chat.android.compose.viewmodel.channels.getConfig
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchChannelsForQuery
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchMessagesForQuery
+import io.getstream.chat.android.compose.viewmodel.channels.loadchannels.SearchChannelsForQuery
+import io.getstream.chat.android.compose.viewmodel.channels.loadmessages.SearchMessagesForQuery
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
@@ -70,6 +70,10 @@ internal class StreamChannelListContentLoader(
         )
     }
 
+    /**
+     * Makes the initial query to request channels and starts observing state changes.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun streamSearchQuery(): Flow<Any> {
         return searchQuery.combine(queryConfigFlow) { query, config -> query to config }
             .mapLatest { (query, config) ->

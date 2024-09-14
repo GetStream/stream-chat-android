@@ -1,4 +1,4 @@
-package io.getstream.chat.android.compose.viewmodel.channels.delegates
+package io.getstream.chat.android.compose.viewmodel.channels.loadchannels
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
@@ -16,11 +16,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
-
-internal interface ILoadChannels {
-    suspend fun load(queryChannelsRequest: QueryChannelsRequest)
-    suspend fun loadMore()
-}
 
 internal class StreamChannelLoader(
     private val chatClient: ChatClient,

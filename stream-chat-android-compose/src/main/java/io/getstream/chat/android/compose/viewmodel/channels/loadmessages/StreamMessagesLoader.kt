@@ -1,10 +1,9 @@
-package io.getstream.chat.android.compose.viewmodel.channels.delegates
+package io.getstream.chat.android.compose.viewmodel.channels.loadmessages
 
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.viewmodel.channels.IChannelViewState
 import io.getstream.chat.android.compose.viewmodel.channels.SearchMessageState
-import io.getstream.chat.android.compose.viewmodel.channels.usecases.SearchMessages
 import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.uiutils.extension.defaultChannelListFilter
@@ -12,11 +11,6 @@ import io.getstream.log.TaggedLogger
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filterNotNull
-
-internal interface ILoadMessages {
-    suspend fun load(query: String)
-    suspend fun loadMore()
-}
 
 internal class StreamMessagesLoader(
     iChannelViewState: IChannelViewState,
