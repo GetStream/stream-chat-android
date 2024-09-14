@@ -16,14 +16,13 @@ internal class SearchMessagesForQuery(
     private val iHelpSearchWithDebounce: IHelpSearchWithDebounce,
 ) : IChannelViewState by channelState, IHelpSearchWithDebounce by iHelpSearchWithDebounce {
 
-    private val iLoadMessages =
-        StreamMessagesLoader(
-            iChannelViewState = channelState,
-            searchDebouncer = searchDebouncer,
-            logger = logger,
-            chatClient = chatClient,
-            channelLimit = channelLimit
-        )
+    private val iLoadMessages = StreamMessagesLoader(
+        iChannelViewState = channelState,
+        searchDebouncer = searchDebouncer,
+        logger = logger,
+        chatClient = chatClient,
+        channelLimit = channelLimit
+    )
 
     internal suspend operator fun invoke(
         query: String,

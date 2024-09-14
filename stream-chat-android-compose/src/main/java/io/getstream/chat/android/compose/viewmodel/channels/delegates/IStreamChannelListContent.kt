@@ -72,6 +72,7 @@ internal class StreamChannelListContentLoader(
 
     /**
      * Makes the initial query to request channels and starts observing state changes.
+     * Combines the latest search query and filter to fetch channels and emit them to the UI.
      */
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun streamSearchQuery(): Flow<Any> {

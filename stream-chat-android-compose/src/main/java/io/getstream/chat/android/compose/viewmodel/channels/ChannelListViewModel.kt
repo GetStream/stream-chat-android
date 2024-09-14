@@ -104,18 +104,25 @@ public class ChannelListViewModel(
         return channelMutes.value.any { cid == it.channel.cid }
     }
 
-    private val streamChannelListContent: IStreamChannelListContent = StreamChannelListContentLoader(
-        chatClient = chatClient,
-        chatEventHandlerFactory = chatEventHandlerFactory,
-        channelLimit = channelLimit,
-        memberLimit = memberLimit,
-        messageLimit = messageLimit,
-        channelViewState = this,
-        searchDebounceMs = searchDebounceMs,
-        coroutineScope = viewModelScope,
-    )
+    private val streamChannelListContent: IStreamChannelListContent by lazy {
+        StreamChannelListContentLoader(
+            chatClient = chatClient,
+            chatEventHandlerFactory = chatEventHandlerFactory,
+            channelLimit = channelLimit,
+            memberLimit = memberLimit,
+            messageLimit = messageLimit,
+            channelViewState = this,
+            searchDebounceMs = searchDebounceMs,
+            coroutineScope = viewModelScope,
+        )
+    }
 
-    private val streamChannelFilter: IFilterChannels = StreamChannelFilter(chatClient, channelViewState = this)
+    private val streamChannelFilter: IFilterChannels by lazy {
+        StreamChannelFilter(
+            chatClient = chatClient,
+            channelViewState = this
+        )
+    }
 
     /**
      * Combines the latest search query and filter to fetch channels and emit them to the UI.
