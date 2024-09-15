@@ -90,5 +90,4 @@ class MessageItemTest : ComposeScreenshotTest() {
             reactionSorting = ReactionSortingByCount,
         )
     }
-
 }

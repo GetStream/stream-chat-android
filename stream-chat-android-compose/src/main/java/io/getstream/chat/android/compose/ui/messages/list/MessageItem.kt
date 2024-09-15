@@ -434,6 +434,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onRemoveVote Handler when a user cast a remove on an option.
  * @param onClosePoll Handler when a user close a poll.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
@@ -448,7 +449,6 @@ internal fun DefaultMessageItemCenterContent(
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
-
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {

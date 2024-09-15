@@ -28,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.models.User
 import java.util.regex.Pattern
 
 internal typealias AnnotationTag = String
@@ -165,13 +164,13 @@ private fun AnnotatedString.Builder.linkify(
 private fun AnnotatedString.Builder.tagUser(
     text: String,
     mentionsColor: Color,
-    mentionedUserNames: List<String>
+    mentionedUserNames: List<String>,
 ) {
     mentionedUserNames.forEach { userName ->
         val start = text.indexOf(userName)
         val end = start + userName.length
 
-        if(start < 0) return@forEach
+        if (start < 0) return@forEach
 
         addStyle(
             style = SpanStyle(

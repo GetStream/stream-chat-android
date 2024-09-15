@@ -180,7 +180,7 @@ private class DefaultMessageTextFormatter(
             mentionedUserNames = mentionedUserNames,
             builder = {
                 builder?.invoke(this, message, currentUser)
-            }
+            },
         )
     }
 }

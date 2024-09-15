@@ -18,7 +18,6 @@ package io.getstream.chat.android.compose.ui.components.messages
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicText
@@ -46,6 +45,7 @@ import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
@@ -87,8 +87,9 @@ public fun MessageText(
             ChatTheme.otherMessageTheme.textStyle
         }
     }
-
-    if (annotations.fastAny { it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention }) {
+    if (annotations.fastAny {
+            it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
+        }) {
         ClickableText(
             modifier = modifier
                 .padding(
@@ -104,20 +105,14 @@ public fun MessageText(
             val annotation = annotations.firstOrNull {
                 position in it.start..it.end
             }
-            if(annotation?.tag == AnnotationTagMention){
-                val identifier = annotation.item
-                val user: User? = message.mentionedUsers.firstOrNull { it.name == identifier }
-                    ?: message.mentionedUsers.firstOrNull { it.id == identifier }
-                user?.let { onTapUserMention.invoke(it) }
+            if (annotation?.tag == AnnotationTagMention) {
+                message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onTapUserMention.invoke(it) }
             } else {
                 val targetUrl = annotation?.item
                 if (!targetUrl.isNullOrEmpty()) {
                     onLinkClick?.invoke(message, targetUrl) ?: run {
                         context.startActivity(
-                            Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(targetUrl),
-                            ),
+                            Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)),
                         )
                     }
                 }

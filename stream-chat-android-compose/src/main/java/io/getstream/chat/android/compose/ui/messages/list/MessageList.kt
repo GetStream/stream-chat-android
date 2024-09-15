@@ -259,7 +259,7 @@ internal fun DefaultMessageContainer(
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,
         onLinkClick = onLinkClick,
-        onTapUserMention = onTapUserMention
+        onTapUserMention = onTapUserMention,
     )
 }
 
