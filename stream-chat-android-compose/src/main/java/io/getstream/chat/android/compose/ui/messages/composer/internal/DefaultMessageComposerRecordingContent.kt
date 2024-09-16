@@ -83,7 +83,6 @@ import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.uiutils.util.openSystemSettings
-import io.getstream.log.StreamLog
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.random.Random
@@ -125,7 +124,6 @@ internal fun DefaultAudioRecordButton(
     val onRecordingRelease = remember {
         {
             val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
-            StreamLog.d("AudioRecordButton") { "[onRecordingRelease] holdElapsedTime: $holdElapsedTime" }
             if (holdElapsedTime < holdToRecordThreshold) {
                 showDurationWarning = true
                 onCancelRecording()
@@ -145,7 +143,6 @@ internal fun DefaultAudioRecordButton(
 
     var showPermissionDenied by remember { mutableStateOf(false) }
     val permissionState = rememberPermissionState(Manifest.permission.RECORD_AUDIO) { permissionGranted ->
-        StreamLog.e("AudioRecordButton") { "[rememberPermissionState] permissionGranted: $permissionGranted" }
         showPermissionDenied = !permissionGranted
     }
     if (showPermissionDenied) {
@@ -165,10 +162,7 @@ internal fun DefaultAudioRecordButton(
         modifier = Modifier
             .run { if (isRecording) size(0.dp) else size(style.size) }
             .padding(style.padding)
-            .onSizeChanged {
-                StreamLog.d("AudioRecordButton") { "[onMicSizeChanged] size: $it" }
-                micSize = it
-            }
+            .onSizeChanged { micSize = it }
             .indication(
                 interactionSource,
                 rememberRipple(
@@ -187,16 +181,13 @@ internal fun DefaultAudioRecordButton(
                     interactionSource.tryEmit(PressInteraction.Press(downEvent.position))
 
                     if (permissionState.status.shouldShowRationale) {
-                        StreamLog.e("AudioRecordButton") { "[onMicDragCancel] show rationale" }
                         showPermissionRationale = true
                     } else if (!permissionState.status.isGranted) {
-                        StreamLog.e("AudioRecordButton") { "[onMicDragCancel] no permissions" }
                         permissionState.launchPermissionRequest()
                     } else {
                         val downOffset = downEvent.position
                         holdStartTime = SystemClock.elapsedRealtime()
                         val updated = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
-                        StreamLog.w("AudioRecordButton") { "[onDown] offset: $downOffset, updated: $updated" }
                         onStartRecording(Offset.Zero)
                         micStartOffset = updated
 
@@ -204,7 +195,6 @@ internal fun DefaultAudioRecordButton(
                         while (true) {
                             val dragEvent = awaitDragOrCancellation(downEvent.id)
                             if (dragEvent == null || !dragEvent.pressed) {
-                                StreamLog.e("AudioRecordButton") { "[onMicDragCancel] recordingState: $recordingState" }
                                 if (recordingState is RecordingState.Hold) {
                                     onRecordingRelease()
                                 }
@@ -212,7 +202,6 @@ internal fun DefaultAudioRecordButton(
                             }
                             dragEvent.consume()
                             val diffOffset = dragEvent.position.minus(micStartOffset)
-                            StreamLog.v("AudioRecordButton") { "[onMicDrag] diffOffset: $diffOffset" }
                             onHoldRecording(diffOffset)
                         }
                     }
@@ -345,8 +334,6 @@ internal fun DefaultMessageComposerRecordingContent(
 ) {
     val recordingState = messageComposerState.recording
 
-    StreamLog.i("RecordingContent") { "[onCompose] recordingState: $recordingState" }
-
     val recordingTimeMs = when (recordingState) {
         is RecordingState.Recording -> recordingState.durationInMs
         is RecordingState.Overview -> when (recordingState.isPlaying) {
@@ -456,8 +443,6 @@ internal fun DefaultMessageComposerRecordingContent(
     val cancelOffsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0).toFloat()
     val slideToCancelProgress = (cancelOffsetX / cancelThresholdX).coerceIn(0f, 1f)
 
-    StreamLog.v("RecordingContent") { "[onCompose] cancelOffsetX: $cancelOffsetX, cancelThresholdX: $cancelThresholdX, slideToCancelProgress: $slideToCancelProgress, contentSize: $contentSize" }
-
     Column(
         modifier = modifier
             .onSizeChanged {
@@ -529,8 +514,6 @@ internal fun DefaultMessageComposerRecordingContent(
                 )
             }
 
-            StreamLog.v("RecordingContent") { "[onCompose] contentSize: $contentSize, holdControlsLocked: $holdControlsLocked, lockOffset: $lockOffset" }
-
             Popup(
                 offset = lockOffset,
                 alignment = Alignment.BottomEnd,
@@ -539,11 +522,9 @@ internal fun DefaultMessageComposerRecordingContent(
             }
 
             if (holdControlsOffset.y <= -lockThresholdY) {
-                StreamLog.i("RecordingContent") { "[onCompose] locking recording: $holdControlsOffset" }
                 onLockRecording()
             }
             if (cancelThresholdX > 0 && holdControlsOffset.x <= -cancelThresholdX) {
-                StreamLog.i("RecordingContent") { "[onCompose] canceling recording: $holdControlsOffset" }
                 onCancelRecording()
             }
         }
