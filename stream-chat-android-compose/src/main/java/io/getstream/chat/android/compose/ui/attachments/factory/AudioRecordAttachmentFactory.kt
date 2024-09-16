@@ -36,7 +36,7 @@ public class AudioRecordAttachmentFactory(
 ) : AttachmentFactory(
     type = Type.BuiltIn.AUDIO_RECORD,
     canHandle = { attachments ->
-        attachments.any { it.isAudioRecording() }
+        attachments.all { it.isAudioRecording() }
     },
     previewContent = @Composable { modifier, attachments, onAttachmentRemoved ->
         AudioRecordAttachmentPreviewContent(

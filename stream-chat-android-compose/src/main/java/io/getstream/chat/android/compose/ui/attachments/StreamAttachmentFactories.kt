@@ -20,6 +20,7 @@ import android.content.Context
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.ui.layout.ContentScale
+import androidx.core.net.toUri
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.ui.attachments.content.onFileAttachmentContentItemClick
@@ -112,7 +113,11 @@ public object StreamAttachmentFactories {
             onContentItemClick = onUploadContentItemClick,
         ),
         AudioRecordAttachmentFactory(
-            viewModelFactory = AudioPlayerViewModelFactory(chatClient.audioPlayer),
+            viewModelFactory = AudioPlayerViewModelFactory(
+                audioPlayer = chatClient.audioPlayer,
+                hasRecordingUri = { it.upload != null || it.assetUrl != null },
+                getRecordingUri = { it.upload?.toUri()?.toString() ?: it.assetUrl },
+            ),
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,

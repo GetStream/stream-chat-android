@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.viewmodel.messages
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
@@ -52,14 +51,20 @@ internal class AudioPlayerViewModel(
     fun startSeek(attachment: Attachment) {
         controller.startSeek(attachment)
     }
+
+    fun reset(attachment: Attachment) {
+        controller.resetAudio(attachment)
+    }
 }
 
 @InternalStreamChatApi
 public class AudioPlayerViewModelFactory(
-    private val audioPlayer: AudioPlayer
+    private val audioPlayer: AudioPlayer,
+    private val hasRecordingUri: (Attachment) -> Boolean,
+    private val getRecordingUri: (Attachment) -> String?,
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AudioPlayerViewModel(AudioPlayerController(audioPlayer)) as T
+        return AudioPlayerViewModel(AudioPlayerController(audioPlayer, hasRecordingUri, getRecordingUri)) as T
     }
 }

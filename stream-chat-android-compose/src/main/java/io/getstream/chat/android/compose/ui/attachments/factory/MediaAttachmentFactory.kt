@@ -78,10 +78,8 @@ public class MediaAttachmentFactory(
     },
 ) : AttachmentFactory(
     type = Type.BuiltIn.MEDIA,
-    canHandle = {
-        it.none { attachment ->
-            !attachment.isImage() && !attachment.isVideo()
-        }
+    canHandle = { attachments ->
+        attachments.all { it.isImage() || it.isVideo() }
     },
     previewContent = { modifier, attachments, onAttachmentRemoved ->
         MediaAttachmentPreviewContent(

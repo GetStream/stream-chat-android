@@ -166,7 +166,10 @@ public fun AudioRecordAttachmentContentItem(
         else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
     }
     val speed = playerState?.playingSpeed?.takeIf { isAttachmentPlaying } ?: 1F
-    val waveform = playerState?.waveform ?: attachment.waveformData ?: emptyList()
+    val waveform = when (playing) {
+        true -> playerState?.waveform ?: emptyList()
+        else -> attachment.waveformData ?: emptyList()
+    }
 
     Surface(
         modifier = modifier
@@ -182,7 +185,7 @@ public fun AudioRecordAttachmentContentItem(
                 .padding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Card(elevation = 2.dp, shape = CircleShape) {
+            Card(elevation = 1.dp, shape = CircleShape) {
                 IconButton(
                     onClick = { onPlayToggleClick(attachment) },
                     modifier = Modifier
@@ -251,13 +254,12 @@ public fun AudioRecordAttachmentContentItem(
                         )
                     }
                 } else {
-                    StreamImage(
+                    Icon(
                         modifier = Modifier
                             .size(height = 40.dp, width = 34.dp),
-                        data = { R.drawable.stream_compose_ic_file_aac },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.Fit,
-                        ),
+                        painter = painterResource(id = R.drawable.stream_compose_ic_file_aac),
+                        contentDescription = null,
+                        tint = Color.Unspecified,
                     )
                 }
             }
