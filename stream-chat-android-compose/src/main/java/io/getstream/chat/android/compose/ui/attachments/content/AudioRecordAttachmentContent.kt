@@ -158,17 +158,15 @@ public fun AudioRecordAttachmentContentItem(
     onScrubberDragStart: (Attachment) -> Unit = {},
     onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
-
-    val trackProgress = playerState?.playingProgress ?: 0F
-    val playbackText = playerState?.playbackInMs?.let(DurationFormatter::formatDurationInMillis)
-        ?: (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
-    val playing = playerState?.isPlaying == true
-    val speed = playerState?.playingSpeed ?: 1F
-    val waveform = playerState?.waveform ?: attachment.waveformData ?: emptyList()
-
-    StreamLog.i("AudioRecordAttachmentContent") {
-        "speed: $speed"
+    val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
+    val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
+    val playing = isAttachmentPlaying && playerState?.isPlaying == true
+    val playbackText = when (playing) {
+        true -> (playerState?.playbackInMs ?: 0).let(DurationFormatter::formatDurationInMillis)
+        else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
     }
+    val speed = playerState?.playingSpeed?.takeIf { isAttachmentPlaying } ?: 1F
+    val waveform = playerState?.waveform ?: attachment.waveformData ?: emptyList()
 
     Surface(
         modifier = modifier
