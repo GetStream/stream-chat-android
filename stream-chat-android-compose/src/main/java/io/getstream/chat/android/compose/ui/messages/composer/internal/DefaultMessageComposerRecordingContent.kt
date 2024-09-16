@@ -2,7 +2,6 @@ package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
 import android.os.SystemClock
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -38,7 +37,6 @@ import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -74,6 +72,10 @@ import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.random.Random
 
+private const val HOLD_TO_RECORD_THRESHOLD = 1000L
+private const val HOLD_TO_RECORD_DISMISS_TIMEOUT = 1000L
+private const val PERMISSION_RATIONALE_DISMISS_TIMEOUT = 1000L
+
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 internal fun DefaultAudioRecordButton(
@@ -82,6 +84,9 @@ internal fun DefaultAudioRecordButton(
     onSendRecording: () -> Unit,
     onStartRecording: (Offset) -> Unit,
     onHoldRecording: (Offset) -> Unit,
+    holdToRecordThreshold: Long = HOLD_TO_RECORD_THRESHOLD,
+    holdToRecordDismissTimeout: Long = HOLD_TO_RECORD_DISMISS_TIMEOUT,
+    permissionRationaleDismissTimeout : Long = PERMISSION_RATIONALE_DISMISS_TIMEOUT
 ) {
     val recordingState by rememberUpdatedState(newValue = state)
 
@@ -96,7 +101,7 @@ internal fun DefaultAudioRecordButton(
     if (showDurationWarning) {
         DefaultHoldToRecordPopup(
             offset = micSize.height,
-            dismissTimeoutMs = 1000L,
+            dismissTimeoutMs = holdToRecordDismissTimeout,
             onDismissRequest = { showDurationWarning = false },
         )
     }
@@ -105,7 +110,7 @@ internal fun DefaultAudioRecordButton(
         {
             val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
             StreamLog.d("AudioRecordButton") { "[onRecordingRelease] holdElapsedTime: $holdElapsedTime" }
-            if (holdElapsedTime < 1000) {
+            if (holdElapsedTime < holdToRecordThreshold) {
                 showDurationWarning = true
                 onCancelRecording()
             } else {
@@ -117,7 +122,7 @@ internal fun DefaultAudioRecordButton(
     var showPermissionRationale by remember { mutableStateOf(false) }
     if (showPermissionRationale) {
         DefaultAudioRecordPermissionRationale(
-            dismissTimeoutMs = 1000L,
+            dismissTimeoutMs = permissionRationaleDismissTimeout,
             onDismissRequest = { showPermissionRationale = false },
         )
     }

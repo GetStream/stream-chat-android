@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +52,7 @@ import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -63,66 +65,21 @@ import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.utils.DurationFormatter
 import io.getstream.log.StreamLog
 
-@Deprecated(
-    message = "Use AudioRecordAttachmentContent instead",
-    replaceWith = ReplaceWith("AudioRecordAttachmentContent"),
-)
 @Composable
-public fun AudioRecordGroupContent(
+public fun AudioRecordAttachmentPreviewContent(
+    attachments: List<Attachment>,
+    onAttachmentRemoved: (Attachment) -> Unit,
     modifier: Modifier = Modifier,
-    attachmentState: AttachmentState,
-    viewModelFactory: AudioPlayerViewModelFactory,
-) {
-    AudioRecordAttachmentContent(
-        modifier = modifier,
-        attachmentState = attachmentState,
-        viewModelFactory = viewModelFactory,
-    )
-}
-
-
-@Deprecated(
-    message = "Use AudioRecordAttachmentContent instead",
-    replaceWith = ReplaceWith("AudioRecordAttachmentContent"),
-)
-@Composable
-public fun AudioRecordAttachmentContent(
-    modifier: Modifier = Modifier,
-    attachment: Attachment,
-    playerState: AudioPlayerState?,
-    onPlayToggleClick: (Attachment) -> Unit,
-    onPlaySpeedClick: (Attachment) -> Unit,
-    onScrubberDragStart: (Attachment) -> Unit = {},
-    onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
-) {
-    AudioRecordAttachmentContentItem(
-        modifier = modifier,
-        attachment = attachment,
-        playerState = playerState,
-        onPlayToggleClick = onPlayToggleClick,
-        onPlaySpeedClick = onPlaySpeedClick,
-        onScrubberDragStart = onScrubberDragStart,
-        onScrubberDragStop = onScrubberDragStop,
-    )
-}
-
-@Composable
-public fun AudioRecordAttachmentContent(
-    modifier: Modifier = Modifier,
-    attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
 ) {
 
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
-    val audioRecordings = attachmentState.message.attachments
-        .filter { attachment -> attachment.isAudioRecording() && attachment.assetUrl != null }
-
     val playerState by viewModel.state.collectAsState()
 
     Column(modifier = modifier) {
-        audioRecordings.forEach { audioRecording ->
-            AudioRecordAttachmentContentItem(
+        attachments.forEach { audioRecording ->
+            AudioRecordAttachmentPreviewContentItem(
                 attachment = audioRecording,
                 playerState = playerState,
                 onPlayToggleClick = { attachment ->
@@ -137,6 +94,7 @@ public fun AudioRecordAttachmentContent(
                 onScrubberDragStop = { attachment, progress ->
                     viewModel.seekTo(attachment, progress)
                 },
+                onAttachmentRemoved = onAttachmentRemoved,
             )
         }
     }
@@ -149,7 +107,7 @@ public fun AudioRecordAttachmentContent(
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-public fun AudioRecordAttachmentContentItem(
+public fun AudioRecordAttachmentPreviewContentItem(
     modifier: Modifier = Modifier,
     attachment: Attachment,
     playerState: AudioPlayerState?,
@@ -157,6 +115,7 @@ public fun AudioRecordAttachmentContentItem(
     onPlaySpeedClick: (Attachment) -> Unit,
     onScrubberDragStart: (Attachment) -> Unit = {},
     onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
+    onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
 
     val trackProgress = playerState?.playingProgress ?: 0F
@@ -214,54 +173,32 @@ public fun AudioRecordAttachmentContentItem(
                 color = ChatTheme.colors.textHighEmphasis,
             )
 
-            WaveformSlider(
-                modifier = Modifier
-                    .height(36.dp)
-                    .weight(1f),
-                waveformData = waveform,
-                progress = trackProgress,
-                onDragStart = {
-                    onScrubberDragStart(attachment)
-                },
-                onDragStop = { progress ->
-                    onScrubberDragStop(attachment, progress)
-                }
-            )
-
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(width = 48.dp),
-                contentAlignment = Alignment.Center
+                    .weight(1f)
             ) {
-                if (playing) {
-                    Card(
-                        onClick = { onPlaySpeedClick(attachment) },
-                        elevation = 2.dp,
-                        shape = CircleShape
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .size(height = 36.dp, width = 36.dp)
-                                .wrapContentSize(Alignment.Center),
-                            text = when (speed.isInt()) {
-                                true -> "x${speed.toInt()}"
-                                else -> "x$speed"
-                            },
-                            style = ChatTheme.typography.body,
-                            color = ChatTheme.colors.textHighEmphasis,
-                        )
+                WaveformSlider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(36.dp)
+                        .align(Alignment.Center),
+                    waveformData = waveform,
+                    progress = trackProgress,
+                    onDragStart = {
+                        onScrubberDragStart(attachment)
+                    },
+                    onDragStop = { progress ->
+                        onScrubberDragStop(attachment, progress)
                     }
-                } else {
-                    StreamImage(
-                        modifier = Modifier
-                            .size(height = 40.dp, width = 34.dp),
-                        data = { R.drawable.stream_compose_ic_file_aac },
-                        imageOptions = ImageOptions(
-                            contentScale = ContentScale.Fit,
-                        ),
-                    )
-                }
+                )
+
+                CancelIcon(
+                    modifier = Modifier
+                        .padding(4.dp)
+                        .align(Alignment.TopEnd),
+                    onClick = { onAttachmentRemoved(attachment) },
+                )
             }
         }
     }
@@ -269,16 +206,28 @@ public fun AudioRecordAttachmentContentItem(
 
 @Preview(showBackground = true)
 @Composable
-internal fun AudioRecordAttachmentContentItemPreview() {
-    val attachment = Attachment(type = "audio_recording")
+internal fun AudioRecordAttachmentPreviewContentItemPreview() {
+    val waveformData = (0..100).map { it.toFloat() }
+    val attachment = Attachment(
+        type = "audio_recording",
+        extraData = mutableMapOf(
+            "waveform" to waveformData,
+            "duration" to 1000,
+        )
+    )
 
     ChatPreviewTheme {
-        AudioRecordAttachmentContentItem(
+        AudioRecordAttachmentPreviewContentItem(
             modifier = Modifier
+                .background(Color.Yellow)
                 .width(250.dp)
                 .height(60.dp),
             attachment = attachment,
-            playerState = AudioPlayerState(attachment = attachment),
+            playerState = AudioPlayerState(
+                attachment = attachment,
+                waveform = waveformData,
+                isPlaying = false
+            ),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},
         )

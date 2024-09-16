@@ -138,7 +138,7 @@ public fun MessageComposer(
     onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
     onDeleteRecording: () -> Unit = { viewModel.cancelRecording() },
     onStopRecording: () -> Unit = { viewModel.stopRecording() },
-    onCompleteRecording: () -> Unit = { viewModel.sendRecording() },
+    onCompleteRecording: () -> Unit = { viewModel.completeRecording() },
     onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
     onRecordingSliderDragStart: (Float) -> Unit = { viewModel.pauseRecording() },
     onRecordingSliderDragStop: (Float) -> Unit = { viewModel.seekRecordingTo(it) },
