@@ -2,7 +2,6 @@
 
 package io.getstream.chat.docs.kotlin.compose.messages
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.activity.compose.setContent
@@ -30,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.messages.composer.MessageComposer
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -39,8 +37,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.docs.R
-import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/message-composer/#usage)
@@ -102,10 +98,6 @@ private object MessageComposerUsageSnippet {
 private object MessageComposerHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         val factory by lazy {
             MessagesViewModelFactory(
@@ -174,10 +166,6 @@ private object MessageComposerCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
 
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
-
         val factory by lazy {
             MessagesViewModelFactory(
                 context = this,
@@ -204,8 +192,6 @@ private object MessageComposerCustomizationSnippet {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 viewModel = composerViewModel,
-                //TODO add this and related entries to docs when documentation effort occurs
-                statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                 integrations = {},
                 input = { inputState ->
                     MessageInput(

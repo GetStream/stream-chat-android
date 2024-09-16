@@ -16,7 +16,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
@@ -29,8 +28,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -57,10 +54,6 @@ private object ChatThemeUsageSnippet {
 
     class MessageListActivity : AppCompatActivity() {
 
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -74,8 +67,6 @@ private object ChatThemeUsageSnippet {
                         ),
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {},
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -89,10 +80,6 @@ private object ChatThemeUsageSnippet {
 private object ChatThemeCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -115,8 +102,6 @@ private object ChatThemeCustomizationSnippet {
                         ),
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {},
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
