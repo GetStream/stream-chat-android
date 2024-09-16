@@ -104,6 +104,17 @@ import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
+ * @param onStartRecording Handler when the user starts recording an audio message.
+ * @param onHoldRecording Handler when the user holds the recording button.
+ * @param onLockRecording Handler when the user locks the recording.
+ * @param onCancelRecording Handler when the user cancels the recording.
+ * @param onDeleteRecording Handler when the user deletes the recording.
+ * @param onStopRecording Handler when the user stops the recording.
+ * @param onCompleteRecording Handler when the user completes the recording.
+ * @param onToggleRecordingPlayback Handler when the user toggles the recording playback.
+ * @param onRecordingSliderDragStart Handler when the user starts dragging the recording slider.
+ * @param onRecordingSliderDragStop Handler when the user stops dragging the recording slider.
+ * @param onSendRecording Handler when the user sends the recording.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
@@ -138,7 +149,12 @@ public fun MessageComposer(
     onCancelRecording: () -> Unit = { viewModel.cancelRecording() },
     onDeleteRecording: () -> Unit = { viewModel.cancelRecording() },
     onStopRecording: () -> Unit = { viewModel.stopRecording() },
-    onCompleteRecording: () -> Unit = { viewModel.completeRecording() },
+    onCompleteRecording: (Boolean) -> Unit = { sendOnComplete ->
+        when (sendOnComplete) {
+            true -> viewModel.sendRecording()
+            else -> viewModel.completeRecording()
+        }
+    },
     onToggleRecordingPlayback: () -> Unit = { viewModel.toggleRecordingPlayback() },
     onRecordingSliderDragStart: (Float) -> Unit = { viewModel.pauseRecording() },
     onRecordingSliderDragStop: (Float) -> Unit = { viewModel.seekRecordingTo(it) },
@@ -225,6 +241,17 @@ public fun MessageComposer(
         onMentionSelected = onMentionSelected,
         onCommandSelected = onCommandSelected,
         onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+        onStartRecording = onStartRecording,
+        onHoldRecording = onHoldRecording,
+        onLockRecording = onLockRecording,
+        onCancelRecording = onCancelRecording,
+        onDeleteRecording = onDeleteRecording,
+        onStopRecording = onStopRecording,
+        onCompleteRecording = onCompleteRecording,
+        onToggleRecordingPlayback = onToggleRecordingPlayback,
+        onRecordingSliderDragStart = onRecordingSliderDragStart,
+        onRecordingSliderDragStop = onRecordingSliderDragStop,
+        onSendRecording = onSendRecording,
         headerContent = headerContent,
         footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
@@ -253,6 +280,17 @@ public fun MessageComposer(
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
+ * @param onStartRecording Handler when the user starts recording an audio message.
+ * @param onHoldRecording Handler when the user holds the recording button.
+ * @param onLockRecording Handler when the user locks the recording.
+ * @param onCancelRecording Handler when the user cancels the recording.
+ * @param onDeleteRecording Handler when the user deletes the recording.
+ * @param onStopRecording Handler when the user stops the recording.
+ * @param onCompleteRecording Handler when the user completes the recording.
+ * @param onToggleRecordingPlayback Handler when the user toggles the recording playback.
+ * @param onRecordingSliderDragStart Handler when the user starts dragging the recording slider.
+ * @param onRecordingSliderDragStop Handler when the user stops dragging the recording slider.
+ * @param onSendRecording Handler when the user sends the recording.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
@@ -283,12 +321,14 @@ public fun MessageComposer(
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
     onStartRecording: (Offset) -> Unit = {},
     onHoldRecording: (Offset) -> Unit = {},
+    onLockRecording: () -> Unit = {},
     onCancelRecording: () -> Unit = {},
+    onDeleteRecording: () -> Unit = {},
     onStopRecording: () -> Unit = {},
+    onCompleteRecording: (Boolean) -> Unit = {},
     onToggleRecordingPlayback: () -> Unit = {},
-    onCompleteRecording: () -> Unit = {},
-    onPauseRecording: () -> Unit = {},
-    onSeekRecording: (Float) -> Unit = {},
+    onRecordingSliderDragStart: (Float) -> Unit = {},
+    onRecordingSliderDragStop: (Float) -> Unit = {},
     onSendRecording: () -> Unit = {},
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
@@ -333,7 +373,17 @@ public fun MessageComposer(
         )
     },
     audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
-        DefaultMessageComposerRecordingContent(messageComposerState = it)
+        DefaultMessageComposerRecordingContent(
+            messageComposerState = it,
+            onLockRecording = onLockRecording,
+            onCancelRecording = onCancelRecording,
+            onDeleteRecording = onDeleteRecording,
+            onStopRecording = onStopRecording,
+            onCompleteRecording = onCompleteRecording,
+            onToggleRecordingPlayback = onToggleRecordingPlayback,
+            onSliderDragStart = onRecordingSliderDragStart,
+            onSliderDragStop = onRecordingSliderDragStop,
+        )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(

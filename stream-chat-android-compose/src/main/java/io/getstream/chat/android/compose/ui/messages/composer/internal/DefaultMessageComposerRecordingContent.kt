@@ -321,7 +321,7 @@ internal fun DefaultMessageComposerRecordingContent(
     onCancelRecording: () -> Unit = {},
     onDeleteRecording: () -> Unit = {},
     onStopRecording: () -> Unit = {},
-    onCompleteRecording: () -> Unit = {},
+    onCompleteRecording: (Boolean) -> Unit = {},
     onToggleRecordingPlayback: () -> Unit = {},
     onSliderDragStart: (Float) -> Unit = {},
     onSliderDragStop: (Float) -> Unit = {},
@@ -424,7 +424,7 @@ internal fun DefaultMessageComposerRecordingContent(
     onCancelRecording: () -> Unit = {},
     onDeleteRecording: () -> Unit = {},
     onStopRecording: () -> Unit = {},
-    onCompleteRecording: () -> Unit = {},
+    onCompleteRecording: (Boolean) -> Unit = {},
     onToggleRecordingPlayback: () -> Unit = {},
     onSliderDragStart: (Float) -> Unit = {},
     onSliderDragStop: (Float) -> Unit = {},
@@ -432,7 +432,7 @@ internal fun DefaultMessageComposerRecordingContent(
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
     val density = LocalDensity.current
     val cancelThresholdX = with(density) {
-        ChatTheme.messageComposerTheme.audioRecording.slideToCancelThreshold.toPx().toInt()
+        ChatTheme.messageComposerTheme.audioRecording.slideToCancel.threshold.toPx().toInt()
     }
 
     val cancelOffsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0).toFloat()
@@ -472,12 +472,12 @@ internal fun DefaultMessageComposerRecordingContent(
 
         if (holdControlsVisible) {
             val lockThresholdY = with(density) {
-                ChatTheme.messageComposerTheme.audioRecording.lockThreshold.toPx().toInt()
+                ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx().toInt()
             }
 
             if (!holdControlsLocked)  {
                 val micBaseWidth= ChatTheme.messageComposerTheme.audioRecording.recordButton.size.width
-                val micFloatingWidth= ChatTheme.messageComposerTheme.audioRecording.micFloatingButton.size.width
+                val micFloatingWidth= ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic.size.width
                 val micBaseOffset = remember {
                     with(density) {
                         IntOffset(
@@ -497,9 +497,10 @@ internal fun DefaultMessageComposerRecordingContent(
                 }
             }
 
-            val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playbackHeight
-            val totalContentHeight = playbackHeight + ChatTheme.messageComposerTheme.audioRecording.controlsHeight
-            val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.lockEdgeOffset
+            val playbackHeight = ChatTheme.messageComposerTheme.audioRecording.playback.height
+            val controlsHeight = ChatTheme.messageComposerTheme.audioRecording.controls.height
+            val totalContentHeight = playbackHeight + controlsHeight
+            val edgeOffset = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockEdgeOffset
             val lockOffset = with(density) {
                 IntOffset(
                     x = -edgeOffset.x.toPx().toInt(),
@@ -547,16 +548,18 @@ private fun RecordingContent(
     onSliderDragStart: (Float) -> Unit,
     onSliderDragStop: (Float) -> Unit,
 ) {
+
+    val playbackTheme = ChatTheme.messageComposerTheme.audioRecording.playback
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(ChatTheme.messageComposerTheme.audioRecording.playbackHeight),
+            .height(playbackTheme.height),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (waveformThumbVisible) {
             val btnStyle = when (waveformPlaying) {
-                true -> ChatTheme.messageComposerTheme.audioRecording.pauseButton
-                else -> ChatTheme.messageComposerTheme.audioRecording.playButton
+                true -> playbackTheme.pauseButton
+                else -> playbackTheme.playButton
             }
             IconButton(
                 onClick = onToggleRecordingPlayback,
@@ -574,7 +577,7 @@ private fun RecordingContent(
                 )
             }
         } else {
-            val micStyle = ChatTheme.messageComposerTheme.audioRecording.micIndicator
+            val micStyle = playbackTheme.micIndicator
             Box(
                 modifier = Modifier
                     .size(micStyle.size)
@@ -593,14 +596,14 @@ private fun RecordingContent(
 
         Text(
             text = formatMillis(recordingTimeMs),
-            style = ChatTheme.messageComposerTheme.audioRecording.timerTextStyle,
+            style = playbackTheme.timerTextStyle,
             modifier = Modifier,
         )
 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(ChatTheme.messageComposerTheme.audioRecording.playbackHeight),
+                .height(playbackTheme.height),
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (waveformVisible) {
@@ -608,8 +611,8 @@ private fun RecordingContent(
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.CenterStart)
-                        .padding(ChatTheme.messageComposerTheme.audioRecording.waveformSliderPadding),
-                    style = ChatTheme.messageComposerTheme.audioRecording.waveformSliderStyle,
+                        .padding(playbackTheme.waveformSliderPadding),
+                    style = playbackTheme.waveformSliderStyle,
                     waveformData = waveformData,
                     visibleBarLimit = 100,
                     adjustBarWidthToLimit = true,
@@ -629,7 +632,7 @@ private fun RecordingContent(
 
 @Composable
 private fun RecordingMicIcon() {
-    RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.micFloatingButton)
+    RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic)
 }
 
 @Composable
@@ -637,9 +640,9 @@ private fun RecordingLockableIcon(
     locked: Boolean,
 ) {
     if (locked) {
-        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.lockedFloatingIcon)
+        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.locked)
     } else {
-        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.lockFloatingIcon)
+        RecordingFloatingIcon(ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lock)
     }
 }
 
@@ -673,11 +676,12 @@ private fun RecordingSlideToCancelIndicator(
     progress: Float = 0f,
     holdControlsOffset: IntOffset,
 ) {
+    val theme = ChatTheme.messageComposerTheme.audioRecording.slideToCancel
     val offsetX = abs(holdControlsOffset.x.takeIf { it <= 0 } ?: 0)
     Row(
         modifier = Modifier.alpha(1 - progress),
     ) {
-        val iconStyle = ChatTheme.messageComposerTheme.audioRecording.slideToCancelIconStyle
+        val iconStyle = theme.iconStyle
         Icon(
             modifier = Modifier.size(iconStyle.size),
             painter = iconStyle.painter,
@@ -689,9 +693,9 @@ private fun RecordingSlideToCancelIndicator(
             text = stringResource(id = R.string.stream_compose_message_composer_slide_to_cancel),
             modifier = Modifier
                 .align(Alignment.CenterVertically),
-            style = ChatTheme.messageComposerTheme.audioRecording.slideToCancelTextStyle,
+            style = theme.textStyle,
         )
-        Spacer(modifier = Modifier.width(ChatTheme.messageComposerTheme.audioRecording.slideToCancelMarginEnd))
+        Spacer(modifier = Modifier.width(theme.marginEnd))
         Spacer(modifier = Modifier.width(with(LocalDensity.current) {
             offsetX.toDp()
         }))
@@ -703,15 +707,17 @@ private fun RecordingControlButtons(
     isStopControlVisible: Boolean,
     onDeleteRecording: () -> Unit,
     onStopRecording: () -> Unit,
-    onCompleteRecording: () -> Unit,
+    onCompleteRecording: (Boolean) -> Unit,
 ) {
+    val sendOnComplete = ChatTheme.messageComposerTheme.audioRecording.sendOnComplete
+    val theme = ChatTheme.messageComposerTheme.audioRecording.controls
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(ChatTheme.messageComposerTheme.audioRecording.controlsHeight),
+            .height(theme.height),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val deleteStyle = ChatTheme.messageComposerTheme.audioRecording.deleteButton
+        val deleteStyle = theme.deleteButton
         IconButton(
             onClick = onDeleteRecording,
             modifier = Modifier
@@ -729,7 +735,7 @@ private fun RecordingControlButtons(
 
         if (isStopControlVisible) {
             Spacer(modifier = Modifier.weight(1f))
-            val stopStyle = ChatTheme.messageComposerTheme.audioRecording.stopButton
+            val stopStyle = theme.stopButton
             IconButton(
                 onClick = onStopRecording,
                 modifier = Modifier
@@ -747,9 +753,9 @@ private fun RecordingControlButtons(
         }
 
         Spacer(modifier = Modifier.weight(1f))
-        val completeStyle = ChatTheme.messageComposerTheme.audioRecording.completeButtonStyle
+        val completeStyle = theme.completeButton
         IconButton(
-            onClick = onCompleteRecording,
+            onClick = { onCompleteRecording(sendOnComplete) },
             modifier = Modifier
                 .size(completeStyle.size)
                 .padding(completeStyle.padding)

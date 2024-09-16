@@ -35,6 +35,9 @@ import io.getstream.chat.android.compose.ui.theme.composer.AudioRecordingTheme
 /**
  * Represents the theming for the message composer.
  * @param attachmentCancelIcon The theming for the cancel icon used in the message composer.
+ * @param linkPreview The theming for the link preview in the message composer.
+ * @param inputField The theming for the input field in the message composer.
+ * @param audioRecording The theming for the audio recording in the message composer.
  */
 public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,

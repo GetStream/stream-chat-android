@@ -23,37 +23,27 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 
 /**
  * Represents the theme for the audio recording component.
+ *
+ * @property enabled If the audio recording is enabled.
+ * @property sendOnComplete Sends the recording on "Complete" button click.  If false, attaches it for manual sending.
+ * @property showRecordButtonOverSend Shows the record button over the send button.
+ * @property recordButton The style for the record button.
+ * @property floatingIcons The theme for the floating icons.
+ * @property slideToCancel The theme for the slide to cancel component.
+ * @property playback The theme for the audio recording playback component.
+ * @property controls The theme for the audio recording controls component.
+ * @property holdToRecord The theme for the hold to record component.
+ * @property permissionRationale The theme for the permission rationale component.
  */
 public data class AudioRecordingTheme(
-    val enabled: Boolean = false,
-    val showRecordButtonOverSend: Boolean = false,
+    val enabled: Boolean,
+    val sendOnComplete: Boolean,
+    val showRecordButtonOverSend: Boolean,
     val recordButton: IconContainerStyle,
-    val waveformSliderStyle: WaveformSliderStyle,
-    val waveformSliderPadding: ComponentPadding,
-    val slideToCancelTextStyle: TextStyle,
-    val slideToCancelIconStyle: IconStyle,
-    val slideToCancelMarginEnd: Dp,
-    val slideToCancelThreshold: Dp,
-
-    val micIndicator: IconContainerStyle,
-    val timerTextStyle: TextStyle,
-
-    val micFloatingButton: AudioRecordingFloatingIconStyle,
-    val lockFloatingIcon: AudioRecordingFloatingIconStyle,
-    val lockedFloatingIcon: AudioRecordingFloatingIconStyle,
-
-    val lockThreshold: Dp,
-    val lockEdgeOffset: ComponentOffset,
-
-    val playbackHeight: Dp,
-    val playButton: IconContainerStyle,
-    val pauseButton: IconContainerStyle,
-
-    val controlsHeight: Dp,
-    val deleteButton: IconContainerStyle,
-    val stopButton: IconContainerStyle,
-    val completeButtonStyle: IconContainerStyle,
-
+    val floatingIcons: AudioRecordingFloatingIconsTheme,
+    val slideToCancel: AudioRecordingSlideToCancelTheme,
+    val playback: AudioRecordingPlaybackTheme,
+    val controls: AudioRecordingControlsTheme,
     val holdToRecord: AudioRecordingHoldToRecordTheme,
     val permissionRationale: AudioRecordingPermissionRationaleTheme,
 ) {
@@ -70,6 +60,7 @@ public data class AudioRecordingTheme(
         ): AudioRecordingTheme {
             return AudioRecordingTheme(
                 enabled = false,
+                sendOnComplete = true,
                 showRecordButtonOverSend = false,
                 recordButton = IconContainerStyle(
                     size = ComponentSize.square(48.dp),
@@ -80,127 +71,127 @@ public data class AudioRecordingTheme(
                         size = ComponentSize.square(24.dp),
                     ),
                 ),
-                waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
-                waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
-                slideToCancelTextStyle = typography.body.copy(
-                    color = colors.textLowEmphasis,
-                ),
-                slideToCancelIconStyle = IconStyle(
-                    painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
-                    tint = colors.textLowEmphasis,
-                    size = ComponentSize.square(24.dp),
-                ),
-                slideToCancelMarginEnd = 96.dp,
-                slideToCancelThreshold = 96.dp,
-
-                playbackHeight = 48.dp,
-                micIndicator = IconContainerStyle(
-                    size = ComponentSize.square(32.dp),
-                    padding = ComponentPadding.all(4.dp),
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_mic),
-                        tint = colors.errorAccent,
+                slideToCancel = AudioRecordingSlideToCancelTheme(
+                    textStyle = typography.body.copy(
+                        color = colors.textLowEmphasis,
+                    ),
+                    iconStyle = IconStyle(
+                        painter = painterResource(id = R.drawable.stream_compose_ic_arrow_left_black),
+                        tint = colors.textLowEmphasis,
                         size = ComponentSize.square(24.dp),
                     ),
+                    marginEnd = 96.dp,
+                    threshold = 96.dp,
                 ),
+                floatingIcons = AudioRecordingFloatingIconsTheme(
+                    mic = AudioRecordingFloatingIconStyle(
+                        delegate = IconContainerStyle(
+                            size = ComponentSize.square(64.dp),
+                            padding = ComponentPadding.Zero,
+                            icon = IconStyle(
+                                painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                                tint = colors.primaryAccent,
+                                size = ComponentSize.square(24.dp),
+                            ),
+                        ),
+                        backgroundColor = colorResource(id = R.color.stream_compose_grey_gainsboro),
+                        backgroundShape = CircleShape,
+                    ),
 
-                timerTextStyle = typography.body.copy(
-                    color = colors.textLowEmphasis,
+                    lock = AudioRecordingFloatingIconStyle(
+                        delegate = IconContainerStyle(
+                            size = ComponentSize(width = 48.dp, height = 88.dp),
+                            padding = ComponentPadding.Zero,
+                            icon = IconStyle(
+                                painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
+                                tint = Color.Unspecified,
+                                size = ComponentSize(width = 48.dp, height = 88.dp),
+                            ),
+                        ),
+                        backgroundColor = Color.Unspecified,
+                        backgroundShape = RoundedCornerShape(24.dp),
+                    ),
+                    locked = AudioRecordingFloatingIconStyle(
+                        delegate = IconContainerStyle(
+                            size = ComponentSize.square(48.dp),
+                            padding = ComponentPadding.Zero,
+                            icon = IconStyle(
+                                painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
+                                tint = Color.Unspecified,
+                                size = ComponentSize.square(48.dp),
+                            ),
+                        ),
+                        backgroundColor = Color.Unspecified,
+                        backgroundShape = CircleShape,
+                    ),
+                    lockThreshold = 96.dp,
+                    lockEdgeOffset = ComponentOffset(x = 4.dp, y = 16.dp),
                 ),
-
-                micFloatingButton = AudioRecordingFloatingIconStyle(
-                    delegate = IconContainerStyle(
-                        size = ComponentSize.square(64.dp),
-                        padding = ComponentPadding.Zero,
+                playback = AudioRecordingPlaybackTheme(
+                    height = 48.dp,
+                    micIndicator = IconContainerStyle(
+                        size = ComponentSize.square(32.dp),
+                        padding = ComponentPadding.all(4.dp),
                         icon = IconStyle(
                             painter = painterResource(id = R.drawable.stream_compose_ic_mic),
+                            tint = colors.errorAccent,
+                            size = ComponentSize.square(24.dp),
+                        ),
+                    ),
+                    playButton = IconContainerStyle(
+                        size = ComponentSize.square(32.dp),
+                        padding = ComponentPadding.all(4.dp),
+                        icon = IconStyle(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_play),
                             tint = colors.primaryAccent,
                             size = ComponentSize.square(24.dp),
                         ),
                     ),
-                    backgroundColor = colorResource(id = R.color.stream_compose_grey_gainsboro),
-                    backgroundShape = CircleShape,
-                ),
-
-                lockFloatingIcon = AudioRecordingFloatingIconStyle(
-                    delegate = IconContainerStyle(
-                        size = ComponentSize(width = 48.dp, height = 88.dp),
-                        padding = ComponentPadding.Zero,
+                    pauseButton = IconContainerStyle(
+                        size = ComponentSize.square(32.dp),
+                        padding = ComponentPadding.all(4.dp),
                         icon = IconStyle(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_mic_lock),
-                            tint = Color.Unspecified,
-                            size = ComponentSize(width = 48.dp, height = 88.dp),
+                            painter = painterResource(id = R.drawable.stream_compose_ic_pause),
+                            tint = colors.primaryAccent,
+                            size = ComponentSize.square(24.dp),
                         ),
                     ),
-                    backgroundColor = Color.Unspecified,
-                    backgroundShape = RoundedCornerShape(24.dp),
+                    timerTextStyle = typography.body.copy(
+                        color = colors.textLowEmphasis,
+                    ),
+                    waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
+                    waveformSliderPadding = ComponentPadding(start = 16.dp, top = 8.dp, end = 0.dp, bottom = 8.dp),
                 ),
-
-                lockedFloatingIcon = AudioRecordingFloatingIconStyle(
-                    delegate = IconContainerStyle(
-                        size = ComponentSize.square(48.dp),
-                        padding = ComponentPadding.Zero,
+                controls = AudioRecordingControlsTheme(
+                    height = 48.dp,
+                    deleteButton = IconContainerStyle(
+                        size = ComponentSize.square(32.dp),
+                        padding = ComponentPadding.all(4.dp),
                         icon = IconStyle(
-                            painter = painterResource(id = R.drawable.stream_compose_ic_mic_locked),
-                            tint = Color.Unspecified,
-                            size = ComponentSize.square(48.dp),
+                            painter = painterResource(id = R.drawable.stream_compose_ic_delete),
+                            tint = colors.primaryAccent,
+                            size = ComponentSize.square(24.dp),
                         ),
                     ),
-                    backgroundColor = Color.Unspecified,
-                    backgroundShape = CircleShape,
-                ),
-
-                lockThreshold = 96.dp,
-                lockEdgeOffset = ComponentOffset(x = 4.dp, y = 16.dp),
-
-                playButton = IconContainerStyle(
-                    size = ComponentSize.square(32.dp),
-                    padding = ComponentPadding.all(4.dp),
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_play),
-                        tint = colors.primaryAccent,
-                        size = ComponentSize.square(24.dp),
+                    stopButton = IconContainerStyle(
+                        size = ComponentSize.square(32.dp),
+                        padding = ComponentPadding.all(4.dp),
+                        icon = IconStyle(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
+                            tint = colors.errorAccent,
+                            size = ComponentSize.square(24.dp),
+                        ),
+                    ),
+                    completeButton = IconContainerStyle(
+                        size = ComponentSize.square(32.dp),
+                        padding = ComponentPadding.all(4.dp),
+                        icon = IconStyle(
+                            painter = painterResource(id = R.drawable.stream_compose_ic_check_circle),
+                            tint = colors.primaryAccent,
+                            size = ComponentSize.square(24.dp),
+                        ),
                     ),
                 ),
-                pauseButton = IconContainerStyle(
-                    size = ComponentSize.square(32.dp),
-                    padding = ComponentPadding.all(4.dp),
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_pause),
-                        tint = colors.primaryAccent,
-                        size = ComponentSize.square(24.dp),
-                    ),
-                ),
-
-                controlsHeight = 48.dp,
-                deleteButton = IconContainerStyle(
-                    size = ComponentSize.square(32.dp),
-                    padding = ComponentPadding.all(4.dp),
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_delete),
-                        tint = colors.primaryAccent,
-                        size = ComponentSize.square(24.dp),
-                    ),
-                ),
-                stopButton = IconContainerStyle(
-                    size = ComponentSize.square(32.dp),
-                    padding = ComponentPadding.all(4.dp),
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_stop_circle),
-                        tint = colors.errorAccent,
-                        size = ComponentSize.square(24.dp),
-                    ),
-                ),
-                completeButtonStyle = IconContainerStyle(
-                    size = ComponentSize.square(32.dp),
-                    padding = ComponentPadding.all(4.dp),
-                    icon = IconStyle(
-                        painter = painterResource(id = R.drawable.stream_compose_ic_check_circle),
-                        tint = colors.primaryAccent,
-                        size = ComponentSize.square(24.dp),
-                    ),
-                ),
-
                 holdToRecord = AudioRecordingHoldToRecordTheme(
                     containerElevation = 2.dp,
                     containerPadding = ComponentPadding(horizontal = 8.dp, vertical = 16.dp),
@@ -260,7 +251,32 @@ public data class AudioRecordingFloatingIconStyle(
 }
 
 /**
+ * Represents the theme for the floating icons in the audio recording component.
+ *
+ * @property mic The style for the mic icon.
+ * @property lock The style for the lock icon.
+ * @property locked The style for the locked icon.
+ * @property lockThreshold The threshold for the lock icon.
+ * @property lockEdgeOffset The edge offset for the lock icon.
+ */
+public data class AudioRecordingFloatingIconsTheme(
+    val mic: AudioRecordingFloatingIconStyle,
+    val lock: AudioRecordingFloatingIconStyle,
+    val locked: AudioRecordingFloatingIconStyle,
+    val lockThreshold: Dp,
+    val lockEdgeOffset: ComponentOffset,
+)
+
+/**
  * Represents the theme for the hold to record component.
+ *
+ * @property containerElevation The elevation of the container.
+ * @property containerColor The color of the container.
+ * @property containerShape The shape of the container.
+ * @property containerPadding The padding of the container.
+ * @property contentHeight The height of the content.
+ * @property contentPadding The padding of the content.
+ * @property textStyle The text style.
  */
 public data class AudioRecordingHoldToRecordTheme(
     val containerElevation: Dp,
@@ -272,6 +288,71 @@ public data class AudioRecordingHoldToRecordTheme(
     val textStyle: TextStyle,
 )
 
+/**
+ * Represents the theme for the slide to cancel component.
+ *
+ * @property textStyle The text style for the slide to cancel text.
+ * @property iconStyle The style for the slide to cancel icon.
+ * @property marginEnd The margin end for the slide to cancel component.
+ * @property threshold The threshold for the slide to cancel component.
+ */
+public data class AudioRecordingSlideToCancelTheme(
+    val textStyle: TextStyle,
+    val iconStyle: IconStyle,
+    val marginEnd: Dp,
+    val threshold: Dp,
+)
+
+/**
+ * Represents the theme for the audio recording playback component.
+ *
+ * @property height The height of the playback component.
+ * @property micIndicator The style for the mic indicator.
+ * @property playButton The style for the play button.
+ * @property pauseButton The style for the pause button.
+ * @property timerTextStyle The text style for the timer.
+ * @property waveformSliderStyle The style for the waveform slider.
+ * @property waveformSliderPadding The padding for the waveform slider.
+ */
+public data class AudioRecordingPlaybackTheme(
+    val height: Dp,
+    val micIndicator: IconContainerStyle,
+    val playButton: IconContainerStyle,
+    val pauseButton: IconContainerStyle,
+    val timerTextStyle: TextStyle,
+    val waveformSliderStyle: WaveformSliderStyle,
+    val waveformSliderPadding: ComponentPadding,
+)
+
+/**
+ * Represents the theme for the audio recording controls component.
+ *
+ * @property height The height of the controls component.
+ * @property deleteButton The style for the delete button.
+ * @property stopButton The style for the stop button.
+ * @property completeButton The style for the complete button.
+ */
+public data class AudioRecordingControlsTheme(
+    val height: Dp,
+    val deleteButton: IconContainerStyle,
+    val stopButton: IconContainerStyle,
+    val completeButton: IconContainerStyle,
+)
+
+/**
+ * Represents the theme for the permission rationale component.
+ *
+ * @property containerElevation The elevation of the container.
+ * @property containerColor The color of the container.
+ * @property containerShape The shape of the container.
+ * @property containerPadding The padding of the container.
+ * @property containerBottomOffset The bottom offset of the container.
+ * @property contentHeight The height of the content.
+ * @property contentSpace The space between the content.
+ * @property contentPadding The padding of the content.
+ * @property textStyle The text style.
+ * @property buttonTextStyle The text style for the button.
+ */
 public data class AudioRecordingPermissionRationaleTheme(
     val containerElevation: Dp,
     val containerColor: Color,
