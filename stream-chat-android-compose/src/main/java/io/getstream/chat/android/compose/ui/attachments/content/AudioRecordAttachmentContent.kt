@@ -39,13 +39,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.skydoves.landscapist.ImageOptions
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -54,14 +52,12 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.utils.DurationFormatter
-import io.getstream.log.StreamLog
 
 @Deprecated(
     message = "Use AudioRecordAttachmentContent instead",
@@ -79,7 +75,6 @@ public fun AudioRecordGroupContent(
         viewModelFactory = viewModelFactory,
     )
 }
-
 
 @Deprecated(
     message = "Use AudioRecordAttachmentContent instead",
@@ -112,7 +107,6 @@ public fun AudioRecordAttachmentContent(
     attachmentState: AttachmentState,
     viewModelFactory: AudioPlayerViewModelFactory,
 ) {
-
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
     val audioRecordings = attachmentState.message.attachments
@@ -183,7 +177,7 @@ public fun AudioRecordAttachmentContentItem(
                 .fillMaxWidth()
                 .height(60.dp)
                 .padding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Card(elevation = 1.dp, shape = CircleShape) {
                 IconButton(
@@ -197,7 +191,7 @@ public fun AudioRecordAttachmentContentItem(
                             id = when (playing) {
                                 true -> R.drawable.stream_compose_ic_pause
                                 else -> R.drawable.stream_compose_ic_play
-                            }
+                            },
                         ),
                         contentDescription = null,
                         tint = Color.Black,
@@ -226,20 +220,20 @@ public fun AudioRecordAttachmentContentItem(
                 },
                 onDragStop = { progress ->
                     onScrubberDragStop(attachment, progress)
-                }
+                },
             )
 
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(width = 48.dp),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 if (playing) {
                     Card(
                         onClick = { onPlaySpeedClick(attachment) },
                         elevation = 2.dp,
-                        shape = CircleShape
+                        shape = CircleShape,
                     ) {
                         Text(
                             modifier = Modifier

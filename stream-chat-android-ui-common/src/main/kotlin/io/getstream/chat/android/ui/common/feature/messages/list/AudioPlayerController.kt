@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.common.feature.messages.list
 
 import io.getstream.chat.android.client.audio.AudioPlayer
@@ -28,7 +44,7 @@ public class AudioPlayerController(
             logger.v { "[resetAudio] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode()  ?: run {
+        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
             logger.v { "[resetAudio] rejected (no recordingUri): $attachment" }
             return
         }
@@ -72,7 +88,7 @@ public class AudioPlayerController(
             logger.v { "[changeSpeed] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode()  ?: run {
+        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
             logger.v { "[changeSpeed] rejected (no recordingUri): $attachment" }
             return
         }
@@ -150,14 +166,16 @@ public class AudioPlayerController(
         val audioState = audioPlayer.currentState
         val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
         logger.d { "[play] audioHash: $audioHash" }
-        setState(AudioPlayerState(
-            attachment = attachment,
-            waveform = attachment.waveformData ?: emptyList(),
-            durationInMs = durationInMs,
-            isLoading = audioState == AudioState.LOADING,
-            isPlaying = audioState == AudioState.PLAYING,
-            playingId = audioHash,
-        ))
+        setState(
+            AudioPlayerState(
+                attachment = attachment,
+                waveform = attachment.waveformData ?: emptyList(),
+                durationInMs = durationInMs,
+                isLoading = audioState == AudioState.LOADING,
+                isPlaying = audioState == AudioState.PLAYING,
+                playingId = audioHash,
+            ),
+        )
     }
 
     /**
@@ -210,34 +228,39 @@ public class AudioPlayerController(
 
     private fun onAudioStateChanged(playbackState: AudioState) {
         val curState = state.value ?: return
-        setState(curState.copy(
-            isLoading = playbackState == AudioState.LOADING,
-            isPlaying = playbackState == AudioState.PLAYING,
-        ))
+        setState(
+            curState.copy(
+                isLoading = playbackState == AudioState.LOADING,
+                isPlaying = playbackState == AudioState.PLAYING,
+            ),
+        )
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        //logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
+        // logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = state.value ?: return
-        setState(curState.copy(
-            isPlaying = progressState.currentPosition > 0,
-            playingProgress = progressState.progress,
-            playbackInMs = progressState.currentPosition,
-            durationInMs = progressState.duration,
-        ))
-
+        setState(
+            curState.copy(
+                isPlaying = progressState.currentPosition > 0,
+                playingProgress = progressState.progress,
+                playbackInMs = progressState.currentPosition,
+                durationInMs = progressState.duration,
+            ),
+        )
     }
 
     private fun onAudioPlayingSpeed(speed: Float) {
         // logger.d { "[onAudioPlayingProgress] speed: $speed" }
         val curState = state.value ?: return
-        setState(curState.copy(
-            playingSpeed = speed,
-        ))
+        setState(
+            curState.copy(
+                playingSpeed = speed,
+            ),
+        )
     }
 
     private fun setState(newState: AudioPlayerState?) {
-        //logger.v { "[setState] ${state.value?.stringify()} => ${newState?.stringify()}" }
+        // logger.v { "[setState] ${state.value?.stringify()} => ${newState?.stringify()}" }
         state.value = newState
     }
 

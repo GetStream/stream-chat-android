@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.messages.composer.internal
 
 import android.Manifest
@@ -86,7 +102,7 @@ internal fun DefaultAudioRecordButton(
     onHoldRecording: (Offset) -> Unit,
     holdToRecordThreshold: Long = HOLD_TO_RECORD_THRESHOLD,
     holdToRecordDismissTimeout: Long = HOLD_TO_RECORD_DISMISS_TIMEOUT,
-    permissionRationaleDismissTimeout : Long = PERMISSION_RATIONALE_DISMISS_TIMEOUT
+    permissionRationaleDismissTimeout: Long = PERMISSION_RATIONALE_DISMISS_TIMEOUT,
 ) {
     val recordingState by rememberUpdatedState(newValue = state)
 
@@ -154,10 +170,11 @@ internal fun DefaultAudioRecordButton(
                 micSize = it
             }
             .indication(
-                interactionSource, rememberRipple(
+                interactionSource,
+                rememberRipple(
                     bounded = true,
-                    radius = with (LocalDensity.current) { micSize.height.toDp() / 2 }
-                )
+                    radius = with(LocalDensity.current) { micSize.height.toDp() / 2 },
+                ),
             )
             .semantics { contentDescription = recordAudioButtonDescription }
             .pointerInput(Unit) {
@@ -204,7 +221,7 @@ internal fun DefaultAudioRecordButton(
                     interactionSource.tryEmit(PressInteraction.Release(PressInteraction.Press(downEvent.position)))
                 }
             },
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             modifier = Modifier
@@ -247,7 +264,7 @@ internal fun DefaultHoldToRecordPopup(
                     .fillMaxWidth()
                     .height(theme.contentHeight)
                     .padding(theme.contentPadding),
-                contentAlignment = Alignment.CenterStart
+                contentAlignment = Alignment.CenterStart,
             ) {
                 Text(
                     style = theme.textStyle,
@@ -290,7 +307,7 @@ internal fun DefaultAudioRecordPermissionRationale(
                     .fillMaxWidth()
                     .height(theme.contentHeight)
                     .padding(theme.contentPadding),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
@@ -306,7 +323,7 @@ internal fun DefaultAudioRecordPermissionRationale(
                     Text(
                         style = theme.buttonTextStyle,
                         text = stringResource(id = R.string.stream_ui_message_composer_permissions_setting_button)
-                            .uppercase()
+                            .uppercase(),
                     )
                 }
             }
@@ -326,7 +343,6 @@ internal fun DefaultMessageComposerRecordingContent(
     onSliderDragStart: (Float) -> Unit = {},
     onSliderDragStop: (Float) -> Unit = {},
 ) {
-
     val recordingState = messageComposerState.recording
 
     StreamLog.i("RecordingContent") { "[onCompose] recordingState: $recordingState" }
@@ -342,7 +358,8 @@ internal fun DefaultMessageComposerRecordingContent(
 
     val waveformVisible = when (recordingState) {
         is RecordingState.Locked,
-        is RecordingState.Overview -> true
+        is RecordingState.Overview,
+        -> true
         else -> false
     }
 
@@ -368,14 +385,15 @@ internal fun DefaultMessageComposerRecordingContent(
     val holdControlsOffset = when (recordingState) {
         is RecordingState.Hold -> IntOffset(
             x = recordingState.offsetX.toInt().coerceAtMost(maximumValue = 0),
-            y = recordingState.offsetY.toInt().coerceAtMost(maximumValue = 0))
+            y = recordingState.offsetY.toInt().coerceAtMost(maximumValue = 0),
+        )
         else -> IntOffset.Zero
     }
 
-
     val recordingControlsVisible = when (recordingState) {
         is RecordingState.Locked,
-        is RecordingState.Overview -> true
+        is RecordingState.Overview,
+        -> true
         else -> false
     }
 
@@ -444,7 +462,7 @@ internal fun DefaultMessageComposerRecordingContent(
         modifier = modifier
             .onSizeChanged {
                 contentSize = it
-            }
+            },
     ) {
         RecordingContent(
             recordingTimeMs = recordingTimeMs,
@@ -466,7 +484,7 @@ internal fun DefaultMessageComposerRecordingContent(
                 isStopControlVisible = recordingStopControlVisible,
                 onDeleteRecording = onDeleteRecording,
                 onStopRecording = onStopRecording,
-                onCompleteRecording = onCompleteRecording
+                onCompleteRecording = onCompleteRecording,
             )
         }
 
@@ -475,14 +493,14 @@ internal fun DefaultMessageComposerRecordingContent(
                 ChatTheme.messageComposerTheme.audioRecording.floatingIcons.lockThreshold.toPx().toInt()
             }
 
-            if (!holdControlsLocked)  {
-                val micBaseWidth= ChatTheme.messageComposerTheme.audioRecording.recordButton.size.width
-                val micFloatingWidth= ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic.size.width
+            if (!holdControlsLocked) {
+                val micBaseWidth = ChatTheme.messageComposerTheme.audioRecording.recordButton.size.width
+                val micFloatingWidth = ChatTheme.messageComposerTheme.audioRecording.floatingIcons.mic.size.width
                 val micBaseOffset = remember {
                     with(density) {
                         IntOffset(
                             x = ((micFloatingWidth - micBaseWidth) / 2).toPx().toInt(),
-                            y = 0
+                            y = 0,
                         )
                     }
                 }
@@ -548,7 +566,6 @@ private fun RecordingContent(
     onSliderDragStart: (Float) -> Unit,
     onSliderDragStop: (Float) -> Unit,
 ) {
-
     val playbackTheme = ChatTheme.messageComposerTheme.audioRecording.playback
     Row(
         modifier = modifier
@@ -648,7 +665,7 @@ private fun RecordingLockableIcon(
 
 @Composable
 private fun RecordingFloatingIcon(
-    style: AudioRecordingFloatingIconStyle
+    style: AudioRecordingFloatingIconStyle,
 ) {
     Card(
         modifier = Modifier
@@ -659,7 +676,7 @@ private fun RecordingFloatingIcon(
     ) {
         Box(
             contentAlignment = Alignment.Center,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         ) {
             Icon(
                 painter = style.icon.painter,
@@ -686,7 +703,7 @@ private fun RecordingSlideToCancelIndicator(
             modifier = Modifier.size(iconStyle.size),
             painter = iconStyle.painter,
             tint = iconStyle.tint,
-            contentDescription = null
+            contentDescription = null,
         )
 
         Text(
@@ -696,9 +713,13 @@ private fun RecordingSlideToCancelIndicator(
             style = theme.textStyle,
         )
         Spacer(modifier = Modifier.width(theme.marginEnd))
-        Spacer(modifier = Modifier.width(with(LocalDensity.current) {
-            offsetX.toDp()
-        }))
+        Spacer(
+            modifier = Modifier.width(
+                with(LocalDensity.current) {
+                    offsetX.toDp()
+                },
+            ),
+        )
     }
 }
 
@@ -768,7 +789,6 @@ private fun RecordingControlButtons(
                     .size(completeStyle.icon.size),
                 tint = completeStyle.icon.tint,
             )
-
         }
     }
 }

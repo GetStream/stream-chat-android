@@ -23,7 +23,6 @@ import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentContent
 import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentPreviewContent
-import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordGroupContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.log.StreamLog
@@ -32,7 +31,7 @@ import io.getstream.log.StreamLog
  * An [AttachmentFactory] that will be used if no other [AttachmentFactory] can handle the attachments.
  */
 public class AudioRecordAttachmentFactory(
-    private val viewModelFactory: AudioPlayerViewModelFactory
+    private val viewModelFactory: AudioPlayerViewModelFactory,
 ) : AttachmentFactory(
     type = Type.BuiltIn.AUDIO_RECORD,
     canHandle = { attachments ->
@@ -43,7 +42,7 @@ public class AudioRecordAttachmentFactory(
             modifier = modifier,
             attachments = attachments,
             onAttachmentRemoved = onAttachmentRemoved,
-            viewModelFactory = viewModelFactory
+            viewModelFactory = viewModelFactory,
         )
     },
     content = @Composable { modifier, attachmentState ->
@@ -52,7 +51,7 @@ public class AudioRecordAttachmentFactory(
                 .wrapContentHeight()
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
             attachmentState = attachmentState,
-            viewModelFactory = viewModelFactory
+            viewModelFactory = viewModelFactory,
         )
     },
 ) {

@@ -28,7 +28,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -64,14 +63,13 @@ public fun AudioRecordAttachmentPreviewContent(
     modifier: Modifier = Modifier,
     viewModelFactory: AudioPlayerViewModelFactory,
 ) {
-
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
     val playerState by viewModel.state.collectAsState()
 
     LazyRow(
         modifier = modifier
-        .fillMaxWidth()
+            .fillMaxWidth(),
     ) {
         items(attachments) { audioRecording ->
             AudioRecordAttachmentPreviewContentItem(
@@ -110,7 +108,6 @@ public fun AudioRecordAttachmentPreviewContentItem(
     onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
-
     val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
     val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
     val playing = isAttachmentPlaying && playerState?.isPlaying == true
@@ -135,7 +132,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
                 .width(200.dp)
                 .height(50.dp)
                 .padding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Card(elevation = 1.dp, shape = CircleShape) {
                 IconButton(
@@ -149,7 +146,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
                             id = when (playing) {
                                 true -> R.drawable.stream_compose_ic_pause
                                 else -> R.drawable.stream_compose_ic_play
-                            }
+                            },
                         ),
                         contentDescription = null,
                         tint = Color.Black,
@@ -179,7 +176,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
                 },
                 onDragStop = { progress ->
                     onScrubberDragStop(attachment, progress)
-                }
+                },
             )
 
             CancelIcon(
@@ -200,7 +197,7 @@ internal fun AudioRecordAttachmentPreviewContentItemPreview() {
         extraData = mutableMapOf(
             "waveform" to waveformData,
             "duration" to 1000,
-        )
+        ),
     )
 
     ChatPreviewTheme {
@@ -213,7 +210,7 @@ internal fun AudioRecordAttachmentPreviewContentItemPreview() {
             playerState = AudioPlayerState(
                 attachment = attachment,
                 waveform = waveformData,
-                isPlaying = false
+                isPlaying = false,
             ),
         )
     }

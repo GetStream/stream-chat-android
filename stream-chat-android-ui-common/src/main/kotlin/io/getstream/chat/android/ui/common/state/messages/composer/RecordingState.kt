@@ -46,7 +46,7 @@ public sealed class RecordingState {
         override fun toString(): String = "Recording.Hold(" +
             "waveform=${waveform.size}, " +
             "duration=${durationInMs}ms, " +
-            "offset=[${offsetX}:${offsetY}]" +
+            "offset=[$offsetX:$offsetY]" +
             ")"
     }
 

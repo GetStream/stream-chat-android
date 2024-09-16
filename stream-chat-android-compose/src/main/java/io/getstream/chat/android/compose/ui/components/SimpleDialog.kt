@@ -79,7 +79,9 @@ public fun SimpleDialog(
                     Text(text = stringResource(id = R.string.stream_compose_cancel))
                 }
             }
-        } else null,
+        } else {
+            null
+        },
         backgroundColor = ChatTheme.colors.barsBackground,
     )
 }

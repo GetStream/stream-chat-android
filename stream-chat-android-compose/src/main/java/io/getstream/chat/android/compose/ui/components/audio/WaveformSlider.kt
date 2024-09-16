@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.audio
 
 import androidx.compose.foundation.Canvas
@@ -12,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -95,7 +110,7 @@ public fun WaveformSlider(
                         StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] cancel" }
                         onDragStop(currentProgress)
                         pressed = false
-                    }
+                    },
                 ) { change, dragAmount ->
                     change.consume()
 
@@ -134,7 +149,6 @@ public fun WaveformSlider(
                     }
                     onDragStop(currentProgress)
                     pressed = false
-
                 }
             }
             .onSizeChanged { size ->
@@ -142,7 +156,7 @@ public fun WaveformSlider(
                     "[onSizeChanged] Size changed: $size"
                 }
                 widthPx = size.width.toFloat()
-            }
+            },
     ) {
         // Draw the waveform
         WaveformTrack(
@@ -174,7 +188,6 @@ private fun WaveformThumb(
     progress: Float,
     parentWidthPx: Float,
 ) {
-
     val thumbWidth = when (pressed) {
         true -> style.widthPressed
         else -> style.widthDefault
@@ -196,7 +209,7 @@ private fun WaveformThumb(
             .fillMaxHeight()
             .width(thumbWidth)
             .background(style.backgroundColor, style.backgroundShape)
-            .border(style.borderWidth, style.borderColor, style.borderShape)
+            .border(style.borderWidth, style.borderColor, style.borderShape),
     )
 }
 
@@ -204,7 +217,8 @@ private fun WaveformThumb(
 internal fun WaveformTrack(
     modifier: Modifier = Modifier,
     style: WaveformTrackStyle = WaveformTrackStyle.defaultStyle(),
-    waveformData: List<Float> = emptyList(), visibleBarLimit: Int = 100,
+    waveformData: List<Float> = emptyList(),
+    visibleBarLimit: Int = 100,
     adjustBarWidthToLimit: Boolean = false,
     progress: Float = 0f,
 ) {
@@ -216,7 +230,7 @@ internal fun WaveformTrack(
 
     val totalBars = when (adjustBarWidthToLimit) {
         true -> visibleBarLimit
-        else -> when (waveformData.size > visibleBarLimit ) {
+        else -> when (waveformData.size > visibleBarLimit) {
             true -> visibleBarLimit
             else -> waveformData.size
         }
@@ -240,7 +254,7 @@ internal fun WaveformTrack(
 
         // Precompute constant values outside the loop
         val startIdx = maxOf(0, waveformData.size - totalBars)
-        //StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }
+        // StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }
         val minBarHeight = 4.dp.toPx()
         for (index in startIdx until waveformData.size) {
             val amplitude = waveformData[index]
@@ -248,11 +262,11 @@ internal fun WaveformTrack(
             val barHeight = maxOf(amplitude * canvasH, minBarHeight)
             val topLeft = Offset(
                 x = (index - startIdx) * (barWidth + barSpacing),
-                y = halfHeight - barHeight / 2
+                y = halfHeight - barHeight / 2,
             )
             val barSize = Size(
                 width = barWidth,
-                height = barHeight
+                height = barHeight,
             )
             val centerX = topLeft.x + barWidth / 2
 
@@ -261,7 +275,7 @@ internal fun WaveformTrack(
                 color = if (centerX < thresholdX) style.passedColor else style.futureColor,
                 topLeft = topLeft,
                 cornerRadius = barCornerRadius,
-                size = barSize
+                size = barSize,
             )
         }
     }
@@ -276,14 +290,13 @@ internal fun WaveformSeekBarPreview() {
         waveform.add(rand.nextFloat())
     }
 
-
     ChatPreviewTheme {
         Box(
             modifier = Modifier
                 .width(250.dp)
                 .height(60.dp)
                 .background(Color.Cyan),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             WaveformSlider(
                 modifier = Modifier
@@ -305,14 +318,13 @@ internal fun WaveformTrackPreview() {
         waveform.add((i + 1) / barCount.toFloat())
     }
 
-
     ChatPreviewTheme {
         Box(
             modifier = Modifier
                 .width(250.dp)
                 .height(80.dp)
                 .background(Color.Black),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             WaveformTrack(
                 modifier = Modifier
