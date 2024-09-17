@@ -38,18 +38,18 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
  *
  * @param height The height of the audio recording attachment.
  * @param padding The padding for the audio recording attachment.
- * @param playButton The theming for the play button.
- * @param pauseButton The theming for the pause button.
+ * @param playButton The style for the play button.
+ * @param pauseButton The style for the pause button.
  * @param timerTextWidth The width of the timer text.
  * @param timerTextStyle The text style for the timer text.
- * @param waveformSliderStyle The theming for the waveform slider.
+ * @param waveformSliderStyle The style for the waveform slider.
  * @param waveformSliderHeight The height of the waveform slider.
  * @param waveformSliderPadding The padding for the waveform slider.
- * @param tailWidth The width of the tail container which holds the speed button and the icon.
- * @param speedButton The theming for the speed button.
- * @param iconStyle The theming for the icon.
+ * @param tailWidth The width of the tail container which holds the speed button and the content type icon.
+ * @param speedButton The style for the speed button.
+ * @param contentTypeIcon The style for the content type icon.
  */
-public class AudioRecordingAttachmentTheme(
+public data class AudioRecordingAttachmentTheme(
     public val height: Dp,
     public val padding: ComponentPadding,
     public val playButton: IconContainerStyle,
@@ -61,16 +61,72 @@ public class AudioRecordingAttachmentTheme(
     public val waveformSliderPadding: ComponentPadding,
     public val tailWidth: Dp,
     public val speedButton: TextContainerStyle,
-    public val iconStyle: IconStyle,
+    public val contentTypeIcon: IconStyle,
 ) {
 
     public companion object {
+
+        /**
+         * Builds the default theming for the audio recording attachment for the current user.
+         *
+         * @param isInDarkMode If the app is in dark mode.
+         * @param typography The typography to use for the audio recording attachment.
+         * @param colors The colors to use for the audio recording attachment.
+         *
+         * @return The [AudioRecordingAttachmentTheme] instance with the default theming.
+         */
+        @Composable
+        public fun defaultOwnTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
+            typography: StreamTypography = StreamTypography.defaultTypography(),
+            colors: StreamColors = when (isInDarkMode) {
+                true -> StreamColors.defaultDarkColors()
+                else -> StreamColors.defaultColors()
+            }
+        ): AudioRecordingAttachmentTheme {
+            return defaultTheme(own = true, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
+        }
+
+        /**
+         * Builds the default theming for the audio recording attachment for other users.
+         *
+         * @param isInDarkMode If the app is in dark mode.
+         * @param typography The typography to use for the audio recording attachment.
+         * @param colors The colors to use for the audio recording attachment.
+         *
+         * @return The [AudioRecordingAttachmentTheme] instance with the default theming.
+         */
+        @Composable
+        public fun defaultOtherTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
+            typography: StreamTypography = StreamTypography.defaultTypography(),
+            colors: StreamColors = when (isInDarkMode) {
+                true -> StreamColors.defaultDarkColors()
+                else -> StreamColors.defaultColors()
+            }
+        ): AudioRecordingAttachmentTheme {
+            return defaultTheme(own = false, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
+        }
+
+        /**
+         * Builds the default theming for the audio recording attachment.
+         *
+         * @param own If the audio recording attachment is for the current user.
+         * @param isInDarkMode If the app is in dark mode.
+         * @param typography The typography to use for the audio recording attachment.
+         * @param colors The colors to use for the audio recording attachment.
+         *
+         * @return The [AudioRecordingAttachmentTheme] instance with the default theming.
+         */
         @Composable
         public fun defaultTheme(
             own: Boolean,
             isInDarkMode: Boolean = isSystemInDarkTheme(),
-            typography: StreamTypography,
-            colors: StreamColors,
+            typography: StreamTypography = StreamTypography.defaultTypography(),
+            colors: StreamColors = when (isInDarkMode) {
+                true -> StreamColors.defaultDarkColors()
+                else -> StreamColors.defaultColors()
+            },
         ): AudioRecordingAttachmentTheme {
             return AudioRecordingAttachmentTheme(
                 height = 60.dp,
@@ -107,7 +163,7 @@ public class AudioRecordingAttachmentTheme(
                     backgroundColor = Color.White,
                     textStyle = typography.body,
                 ),
-                iconStyle = IconStyle(
+                contentTypeIcon = IconStyle(
                     size = ComponentSize(height = 40.dp, width = 34.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_file_aac),
                     tint = Color.Unspecified,
