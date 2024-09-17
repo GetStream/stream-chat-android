@@ -338,7 +338,7 @@ internal class NativeMediaPlayerImpl(
 ) : NativeMediaPlayer {
 
     companion object {
-        private const val DEBUG = true
+        private const val DEBUG = false
     }
 
     private val logger by taggedLogger("Chat:NativeMediaPlayer")
