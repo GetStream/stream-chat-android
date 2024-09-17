@@ -47,7 +47,7 @@ internal abstract class BaseComposeTest {
                 ChatTheme(
                     isInDarkMode = isInDarkMode,
                     attachmentFactories = StreamAttachmentFactories.defaultFactories(
-                        chatClient = getChatClient(),
+                        getChatClient = this::getChatClient,
                     ),
                 ) {
                     Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
@@ -64,7 +64,7 @@ internal abstract class BaseComposeTest {
                 LocalInspectionMode provides true,
             ) {
                 val attachmentFactories = StreamAttachmentFactories.defaultFactories(
-                    chatClient = getChatClient(),
+                    getChatClient = this::getChatClient,
                 )
                 Column {
                     ChatTheme(

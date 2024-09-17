@@ -60,7 +60,7 @@ public object StreamAttachmentFactories {
     /**
      * Default attachment factories we provide, which can transform image, file and link attachments.
      *
-     * @param chatClient The ChatClient instance used to interact with the Stream Chat API.
+     * @param getChatClient - A lambda that provides the ChatClient instance.
      * @param linkDescriptionMaxLines - The limit of how long the link attachment descriptions can be.
      * @param giphyInfoType Used to modify the quality and dimensions of the rendered
      * Giphy attachments.
@@ -83,7 +83,7 @@ public object StreamAttachmentFactories {
      * @return A [List] of various [AttachmentFactory] instances that provide different attachments support.
      */
     public fun defaultFactories(
-        chatClient: ChatClient = ChatClient.instance(),
+        getChatClient: () -> ChatClient = { ChatClient.instance() },
         linkDescriptionMaxLines: Int = DEFAULT_LINK_DESCRIPTION_MAX_LINES,
         giphyInfoType: GiphyInfoType = GiphyInfoType.ORIGINAL,
         giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
@@ -114,11 +114,11 @@ public object StreamAttachmentFactories {
         ),
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
-                audioPlayer = chatClient.audioPlayer,
+                getAudioPlayer = { getChatClient().audioPlayer },
                 hasRecordingUri = { it.upload != null || it.assetUrl != null },
                 getRecordingUri = { it.upload?.toUri()?.toString() ?: it.assetUrl },
             ),
-            getCurrentUserId = { chatClient.getCurrentOrStoredUserId() },
+            getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
