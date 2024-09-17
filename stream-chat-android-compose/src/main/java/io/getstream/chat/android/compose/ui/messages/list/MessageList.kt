@@ -72,6 +72,7 @@ import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onUserAvatarClick Handler when users avatar is clicked.
+ * @param onMessageLinkClick Handler for clicking on a link in the message.
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottomClicked Handler when the user requests to scroll to the bottom of the messages list.
@@ -135,6 +136,7 @@ public fun MessageList(
         )
     },
     onUserAvatarClick: ((User) -> Unit)? = null,
+    onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -171,6 +173,7 @@ public fun MessageList(
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
             onUserAvatarClick = onUserAvatarClick,
+            onLinkClick = onMessageLinkClick,
         )
     },
 ) {
@@ -195,6 +198,7 @@ public fun MessageList(
         onQuotedMessageClick = onQuotedMessageClick,
         onMessagesPageEndReached = onMessagesPageEndReached,
         onScrollToBottom = onScrollToBottomClicked,
+        onMessageLinkClick = onMessageLinkClick,
     )
 }
 
@@ -211,6 +215,11 @@ public fun MessageList(
  * @param onQuotedMessageClick Handler for quoted message click action.
  * @param onCastVote Handler for casting a vote on an option.
  * @param onClosePoll Handler for closing a poll.
+ * @param onPollUpdated Handler for updating a poll.
+ * @param onRemoveVote Handler for removing a vote.
+ * @param selectPoll Handler for selecting a poll.
+ * @param onUserAvatarClick Handler when users avatar is clicked.
+ * @param onLinkClick Handler for clicking on a link in the message.
  */
 @Suppress("LongParameterList")
 @Composable
@@ -229,6 +238,7 @@ internal fun DefaultMessageContainer(
     onClosePoll: (String) -> Unit = { _ -> },
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: ((User) -> Unit)? = null,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -245,6 +255,7 @@ internal fun DefaultMessageContainer(
         onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,
+        onLinkClick = onLinkClick,
     )
 }
 
@@ -300,6 +311,7 @@ internal fun DefaultMessageListEmptyContent(modifier: Modifier) {
  * @param onMediaGalleryPreviewResult Handler when the user selects an option in the Media Gallery Preview screen.
  * @param onGiphyActionClick Handler when the user clicks on a giphy action such as shuffle, send or cancel.
  * @param onQuotedMessageClick Handler for quoted message click action.
+ * @param onMessageLinkClick Handler for clicking on a link in the message.
  * @param onMessagesPageEndReached Handler for pagination when the end of newest messages have been reached.
  * @param onScrollToBottom Handler when the user requests to scroll to the bottom of the messages list.
  * @param loadingContent Composable that represents the loading content, when we're loading the initial data.
@@ -337,6 +349,7 @@ public fun MessageList(
     onMessagesPageEndReached: (String) -> Unit = {},
     onScrollToBottom: (() -> Unit) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
+    onMessageLinkClick: ((Message, String) -> Unit)? = null,
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -366,6 +379,7 @@ public fun MessageList(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
             onUserAvatarClick = onUserAvatarClick,
+            onLinkClick = onMessageLinkClick,
         )
     },
 ) {

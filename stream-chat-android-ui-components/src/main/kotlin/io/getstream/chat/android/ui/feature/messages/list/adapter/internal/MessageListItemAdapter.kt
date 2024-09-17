@@ -66,7 +66,7 @@ internal class MessageListItemAdapter(
             }
             return
         }
-        holder.bindListItem(item, FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+        holder.bindListItem(item, MessageListItemPayloadDiff.FULL)
     }
 
     override fun onBindViewHolder(
@@ -78,9 +78,9 @@ internal class MessageListItemAdapter(
             payloads
                 .filterIsInstance<MessageListItemPayloadDiff>()
                 .takeIf { it.isNotEmpty() }
-                ?: listOf(FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF)
+                ?: listOf(MessageListItemPayloadDiff.FULL)
             )
-            .fold(EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF) { acc, messageListItemPayloadDiff ->
+            .fold(MessageListItemPayloadDiff.EMPTY) { acc, messageListItemPayloadDiff ->
                 acc + messageListItemPayloadDiff
             }
         val item = getItem(position)
@@ -120,36 +120,5 @@ internal class MessageListItemAdapter(
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
         doForAllViewHolders(recyclerView) { it.onDetachedFromWindow() }
         super.onDetachedFromRecyclerView(recyclerView)
-    }
-
-    companion object {
-        private val FULL_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
-            text = true,
-            replyText = true,
-            reactions = true,
-            attachments = true,
-            replies = true,
-            syncStatus = true,
-            deleted = true,
-            positions = true,
-            pinned = true,
-            user = true,
-            mentions = true,
-            footer = true,
-        )
-        private val EMPTY_MESSAGE_LIST_ITEM_PAYLOAD_DIFF = MessageListItemPayloadDiff(
-            text = false,
-            replyText = false,
-            reactions = false,
-            attachments = false,
-            replies = false,
-            syncStatus = false,
-            deleted = false,
-            positions = false,
-            pinned = false,
-            user = false,
-            mentions = false,
-            footer = false,
-        )
     }
 }

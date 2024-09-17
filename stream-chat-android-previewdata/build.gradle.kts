@@ -4,12 +4,11 @@ import io.getstream.chat.android.Dependencies
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
-    id("org.jetbrains.kotlin.plugin.compose")
 }
 
 rootProject.extra.apply {
     set("PUBLISH_GROUP_ID", Configuration.artifactGroup)
-    set("PUBLISH_ARTIFACT_ID", "stream-video-android-previewdata")
+    set("PUBLISH_ARTIFACT_ID", "stream-chat-android-previewdata")
     set("PUBLISH_VERSION", rootProject.extra.get("rootVersionName"))
 }
 
@@ -20,8 +19,8 @@ android {
     namespace = "io.getstream.chat.android.previewdata"
     resourcePrefix = "stream_compose_previewdata"
 
-    buildFeatures {
-        compose = true
+    defaultConfig {
+        consumerProguardFiles("consumer-rules.pro")
     }
 }
 
@@ -34,11 +33,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 }
 
 dependencies {
-    implementation(project(":stream-chat-android-state"))
-    implementation(project(":stream-chat-android-client"))
-
-    // Compose
-    implementation(Dependencies.composeUi)
+    api(project(":stream-chat-android-client"))
 
     detektPlugins(Dependencies.detektFormatting)
 }

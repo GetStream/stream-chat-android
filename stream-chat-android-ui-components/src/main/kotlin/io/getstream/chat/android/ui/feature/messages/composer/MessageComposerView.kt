@@ -28,7 +28,9 @@ import android.widget.PopupWindow
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.children
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.ChannelCapabilities
 import io.getstream.chat.android.models.Command
+import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
 import io.getstream.chat.android.ui.databinding.StreamUiMessageComposerBinding
@@ -67,6 +69,8 @@ public class MessageComposerView : ConstraintLayout {
 
     private val logger by taggedLogger("Chat:MsgComposerView")
 
+    private var arePollEnabled: Boolean = false
+
     /**
      * Generated binding class for the XML layout.
      */
@@ -96,6 +100,11 @@ public class MessageComposerView : ConstraintLayout {
      * Selection listener invoked when attachments are selected.
      */
     public var attachmentSelectionListener: (List<Attachment>) -> Unit = {}
+
+    /**
+     * Selection listener invoked when a poll is submitted.
+     */
+    public var pollSubmissionListener: (PollConfig) -> Unit = {}
 
     /**
      * Click listener for the remove attachment button.
@@ -143,6 +152,9 @@ public class MessageComposerView : ConstraintLayout {
                 setAttachmentsSelectionListener { attachments: List<Attachment> ->
                     attachmentSelectionListener(attachments)
                 }
+                setPollSubmissionListener { pollConfig ->
+                    pollSubmissionListener(pollConfig)
+                }
             }
     }
 
@@ -151,7 +163,13 @@ public class MessageComposerView : ConstraintLayout {
      */
     public var attachmentsButtonClickListener: () -> Unit = {
         context.getFragmentManager()?.let {
-            attachmentsPickerDialogBuilder(messageComposerContext.style.attachmentsPickerDialogStyle)
+            attachmentsPickerDialogBuilder(
+                messageComposerContext.style.attachmentsPickerDialogStyle
+                    .copy(
+                        pollAttachmentsTabEnabled = arePollEnabled &&
+                            messageComposerContext.style.attachmentsPickerDialogStyle.pollAttachmentsTabEnabled,
+                    ),
+            )
                 .show(it, AttachmentsPickerDialogFragment.TAG)
         }
     }
@@ -371,7 +389,7 @@ public class MessageComposerView : ConstraintLayout {
         (binding.headerContent.children.first() as? MessageComposerContent)?.renderState(state)
 
         renderSuggestion(state)
-
+        arePollEnabled = state.ownCapabilities.contains(ChannelCapabilities.SEND_POLL)
         validationErrorRenderer.renderValidationErrors(state.validationErrors)
     }
 

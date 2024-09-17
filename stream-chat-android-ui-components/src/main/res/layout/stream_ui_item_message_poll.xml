@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/messageItemView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="@dimen/stream_ui_spacing_small"
+    android:paddingEnd="@dimen/stream_ui_spacing_small"
+    >
+
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.GapView
+        android:id="@+id/gapView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/pinIndicatorTextView"
+        style="@style/StreamUiTextAppearance.Footnote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="44dp"
+        android:drawablePadding="@dimen/stream_ui_spacing_tiny"
+        android:paddingHorizontal="@dimen/stream_ui_spacing_tiny"
+        android:paddingTop="@dimen/stream_ui_spacing_tiny"
+        android:paddingBottom="@dimen/stream_ui_spacing_small"
+        android:textDirection="locale"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/gapView"
+        tools:visibility="visible"
+        />
+
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <Space
+        android:id="@+id/reactionsSpace"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/stream_ui_spacing_medium"
+        android:layout_marginStart="@dimen/stream_ui_spacing_medium"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_medium"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="@+id/messageContainer"
+        app:layout_constraintStart_toStartOf="@id/messageContainer"
+        app:layout_constraintTop_toBottomOf="@id/pinIndicatorTextView"
+        />
+
+    <LinearLayout
+        android:id="@+id/messageContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        android:layout_marginEnd="@dimen/stream_ui_spacing_small"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintStart_toEndOf="@id/marginStart"
+        app:layout_constraintTop_toBottomOf="@id/reactionsSpace"
+        >
+
+        <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.PollView
+            android:id="@+id/pollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
+    <io.getstream.chat.android.ui.feature.messages.list.reactions.view.internal.ViewReactionsView
+        android:id="@+id/reactionsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/reactionsSpace"
+        app:layout_constraintTop_toTopOf="@id/reactionsSpace"
+        />
+
+    <Space
+        android:id="@+id/threadGuideline"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/stream_ui_message_thread_reply_footnote_translation"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="@id/messageContainer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <io.getstream.chat.android.ui.feature.messages.list.adapter.view.internal.FootnoteView
+        android:id="@+id/footnote"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/stream_ui_spacing_small"
+        app:layout_constraintEnd_toEndOf="@id/marginEnd"
+        app:layout_constraintStart_toStartOf="@id/marginStart"
+        app:layout_constraintTop_toBottomOf="@id/messageContainer"
+        />
+
+    <ImageView
+        android:id="@+id/deliveryFailedIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/footnote"
+        app:layout_constraintEnd_toStartOf="@id/userAvatarMineView"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/stream_ui_ic_warning"
+        tools:visibility="visible"
+        />
+
+    <io.getstream.chat.android.ui.widgets.avatar.UserAvatarView
+        android:id="@+id/userAvatarMineView"
+        style="?attr/streamUiMessageListItemAvatarStyle"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:src="@tools:sample/avatars"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_constraintGuide_begin="20dp"
+        />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/marginEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_constraintGuide_end="20dp"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -642,13 +642,14 @@ internal class ChannelLogic(
             }
             is NotificationChannelMutesUpdatedEvent -> {
                 event.me.channelMutes.any { mute ->
-                    mute.channel.cid == mutableState.cid
+                    mute.channel?.cid == mutableState.cid
                 }.let(channelStateLogic::updateMute)
             }
             is ChannelUserBannedEvent -> {
                 channelStateLogic.updateMemberBanned(
                     memberUserId = event.user.id,
                     banned = true,
+                    banExpires = event.expiration,
                     shadow = event.shadow,
                 )
             }
@@ -656,6 +657,7 @@ internal class ChannelLogic(
                 channelStateLogic.updateMemberBanned(
                     memberUserId = event.user.id,
                     banned = false,
+                    banExpires = null,
                     shadow = false,
                 )
             }

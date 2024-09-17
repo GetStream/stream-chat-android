@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+
+    Licensed under the Stream License;
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+      https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<resources>
+    <string name="stream_ui_poll_question_label">Question</string>
+    <string name="stream_ui_poll_ask_a_question_hint">Ask a question</string>
+    <string name="stream_ui_poll_options_label">Options</string>
+    <string name="stream_ui_poll_add_an_option_label">Add an Option</string>
+    <string name="stream_ui_poll_multiple_answers_label">Multiple answers</string>
+    <string name="stream_ui_poll_max_number_of_answers_hint">Max number of answers</string>
+    <string name="stream_ui_poll_anonymous_poll_label">Anonymous poll</string>
+    <string name="stream_ui_poll_suggest_an_option_label">Suggest an option</string>
+    <string name="stream_ui_poll_add_a_comment_label">Add a comment</string>
+    <string name="stream_ui_poll_create_a_poll_title">Create a poll</string>
+    <string name="stream_ui_poll_this_is_already_an_option">This is already an option</string>
+</resources>

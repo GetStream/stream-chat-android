@@ -20,11 +20,13 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.extensions.internal.NEVER
 import io.getstream.chat.android.client.setup.state.ClientState
+import io.getstream.chat.android.client.test.randomChannelUserBannedEvent
 import io.getstream.chat.android.client.test.randomTypingStartEvent
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Config
+import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.toChannelData
@@ -34,6 +36,8 @@ import io.getstream.chat.android.randomDate
 import io.getstream.chat.android.randomDateAfter
 import io.getstream.chat.android.randomDateBefore
 import io.getstream.chat.android.randomInt
+import io.getstream.chat.android.randomMember
+import io.getstream.chat.android.randomMembers
 import io.getstream.chat.android.randomMessage
 import io.getstream.chat.android.randomString
 import io.getstream.chat.android.randomUser
@@ -83,6 +87,8 @@ internal class ChannelStateLogicTest {
             coroutineScope = testCoroutines.scope,
         )
         _messages = emptyMap()
+        _members.value = emptyList()
+        _membersCount.value = 0
         _unreadCount.value = 0
         _read.value = ChannelUserRead(
             user = user,
@@ -123,6 +129,7 @@ internal class ChannelStateLogicTest {
     private val _endOfNewerMessages = MutableStateFlow(true)
     private val _cachedMessages = MutableStateFlow<Map<String, Message>>(emptyMap())
     private val _quotedMessagesMap = MutableStateFlow<Map<String, List<String>>>(emptyMap())
+    private val _members = MutableStateFlow<List<Member>>(emptyList())
 
     @Suppress("UNCHECKED_CAST")
     private val mutableState: ChannelMutableState = mock { mock ->
@@ -139,6 +146,7 @@ internal class ChannelStateLogicTest {
         on(mock.endOfNewerMessages) doReturn _endOfNewerMessages
         on(mock.cachedLatestMessages) doReturn _cachedMessages
         on(mock.quotedMessagesMap) doReturn _quotedMessagesMap
+        on(mock.members) doReturn _members
     }
     private lateinit var clientState: ClientState
     private lateinit var spyMutableGlobalState: MutableGlobalState
@@ -310,5 +318,38 @@ internal class ChannelStateLogicTest {
         channelStateLogic.upsertMessage(updatedMessage)
 
         verify(mutableState).upsertMessages(eq(listOf(updatedMessage)))
+    }
+
+    @Test
+    fun `Given ChannelUserBannedEvent updates the channel state`() {
+        /* Given */
+        val originMembers = randomMembers(size = 2) { idx ->
+            randomMember(user = randomUser(id = "user_${idx + 1}"), banned = false, banExpires = null, shadowBanned = false)
+        }
+        _members.value = originMembers
+        _membersCount.value = originMembers.size
+        val bannedEvent = randomChannelUserBannedEvent(
+            cid = mutableState.cid,
+            user = originMembers.first().user,
+            banExpires = randomDate(),
+        )
+        val expectedMembers = originMembers.map {
+            if (it.user.id != bannedEvent.user.id) {
+                it
+            } else {
+                it.copy(banned = true, banExpires = bannedEvent.expiration)
+            }
+        }
+
+        /* When */
+        channelStateLogic.updateMemberBanned(
+            memberUserId = bannedEvent.user.id,
+            banned = true,
+            banExpires = bannedEvent.expiration,
+            shadow = false,
+        )
+
+        /* Then */
+        verify(mutableState).upsertMembers(eq(expectedMembers))
     }
 }

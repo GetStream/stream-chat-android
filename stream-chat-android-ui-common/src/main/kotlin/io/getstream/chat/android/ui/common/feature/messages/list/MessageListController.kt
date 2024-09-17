@@ -47,7 +47,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.MessagesState
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
-import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
@@ -235,10 +234,11 @@ public class MessageListController(
         .flatMapLatest { state ->
             combine(
                 state.channelData,
+                state.members,
                 state.membersCount,
                 state.watcherCount,
                 state.pinnedMessages,
-            ) { _, _, _, _ ->
+            ) { _, _, _, _, _ ->
                 state.toChannel()
             }
         }
@@ -467,7 +467,10 @@ public class MessageListController(
                     is MessagesState.NoQueryActive,
                     -> _messageListState.value.copy(isLoading = true)
 
-                    is MessagesState.OfflineNoResults -> _messageListState.value.copy(isLoading = false)
+                    is MessagesState.OfflineNoResults -> _messageListState.value.copy(
+                        isLoading = false,
+                        messageItems = emptyList(),
+                    )
                     is MessagesState.Result -> _messageListState.value.copy(
                         isLoading = false,
                         messageItems = groupMessages(
@@ -539,10 +542,23 @@ public class MessageListController(
                     }
             }
             .onFirst { channelUserRead ->
+                val unreadMessages = (channelState.value?.messages?.value ?: emptyList())
+                    .fold(emptyList<Message>()) { acc, message ->
+                        when {
+                            channelUserRead.lastReadMessageId == message.id -> emptyList()
+                            else -> acc + message
+                        }
+                    }
                 unreadLabelState.value = channelUserRead.lastReadMessageId
-                    ?.takeUnless { channelState.value?.messages?.value?.lastOrNull()?.id == it }
-                    ?.let {
-                        UnreadLabel(channelUserRead.unreadMessages, it, shouldShowButton)
+                    ?.takeUnless { unreadMessages.isEmpty() }
+                    ?.takeUnless { unreadMessages.lastOrNull()?.id == it }
+                    ?.let { lastReadMessageId ->
+                        UnreadLabel(
+                            unreadCount = channelUserRead.unreadMessages,
+                            lastReadMessageId = lastReadMessageId,
+                            buttonVisibility = shouldShowButton &&
+                                unreadMessages.any { !it.isDeleted() },
+                        )
                     }
             }.launchIn(scope)
     }
@@ -817,6 +833,8 @@ public class MessageListController(
             groupedMessages.add(StartOfTheChannelItemState(channel))
         }
 
+        var unreadLabelAdded = false
+        var lastReadMessageFound = false
         messages.forEachIndexed { index, message ->
             val user = message.user
             val previousMessage = messages.getOrNull(index - 1)
@@ -846,6 +864,14 @@ public class MessageListController(
                     groupedMessages.add(DateSeparatorItemState(createdAt))
                 }
             }
+
+            lastReadMessageFound = lastReadMessageFound || unreadLabel?.lastReadMessageId == previousMessage?.id
+
+            unreadLabel
+                ?.takeIf { lastReadMessageFound }
+                ?.takeUnless { unreadLabelAdded }
+                ?.takeUnless { message.isDeleted() }
+                ?.let { unreadLabelAdded = groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (message.isSystem() || (message.isError() && !message.isModerationBounce())) {
                 groupedMessages.add(SystemMessageItemState(message = message))
@@ -878,11 +904,6 @@ public class MessageListController(
                     ),
                 )
             }
-
-            unreadLabel
-                ?.takeIf { it.lastReadMessageId == message.id }
-                ?.takeIf { nextMessage != null }
-                ?.let { groupedMessages.add(UnreadSeparatorItemState(it.unreadCount)) }
 
             if (index == 0 && shouldAddThreadSeparator) {
                 groupedMessages.add(
@@ -1723,7 +1744,7 @@ public class MessageListController(
      * @param user The [User] for which to toggle the mute state.
      */
     public fun updateUserMute(user: User) {
-        val isUserMuted = chatClient.globalState.muted.value.any { it.target.id == user.id }
+        val isUserMuted = chatClient.globalState.muted.value.any { it.target?.id == user.id }
 
         if (isUserMuted) {
             unmuteUser(user)
@@ -1756,28 +1777,6 @@ public class MessageListController(
                 ErrorEvent.UnmuteUserError(it)
             }
         })
-    }
-
-    /**
-     * Creates a poll with the given [pollConfig].
-     *
-     * @param pollConfig Configuration for creating a poll.
-     */
-    public fun createPoll(pollConfig: PollConfig, onResult: (Result<Message>) -> Unit = {}) {
-        cid.cidToTypeAndId().let { (channelType, channelId) ->
-            chatClient.sendPoll(
-                channelType = channelType,
-                channelId = channelId,
-                pollConfig = pollConfig,
-            ).enqueue { response ->
-                onResult(response)
-                if (response is Result.Failure) {
-                    onActionResult(response.value) {
-                        ErrorEvent.PollCreationError(it)
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -2188,6 +2187,38 @@ public class MessageListController(
      */
     public fun onCleared() {
         scope.cancel()
+    }
+
+    /**
+     * Updates the poll option for the given message and poll.
+     *
+     * @param message The message containing the poll.
+     * @param poll The poll to update.
+     * @param option The option to update.
+     */
+    public fun updatePollOption(
+        message: Message,
+        poll: Poll,
+        option: Option,
+    ) {
+        scope.launch {
+            (
+                poll.ownVotes.firstOrNull { it.optionId == option.id }
+                    ?.let { chatClient.removePollVote(message.id, poll.id, it) }
+                    ?: chatClient.castPollVote(message.id, poll.id, option)
+                ).await()
+        }
+    }
+
+    /**
+     * Closes the given poll.
+     *
+     * @param poll The poll to close.
+     */
+    public fun closePoll(poll: Poll) {
+        scope.launch {
+            chatClient.closePoll(poll.id).await()
+        }
     }
 
     /**

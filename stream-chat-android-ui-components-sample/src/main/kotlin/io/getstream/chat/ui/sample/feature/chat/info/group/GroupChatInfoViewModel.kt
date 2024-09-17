@@ -152,7 +152,7 @@ class GroupChatInfoViewModel(
     }
 
     private fun updateChannelMuteStatus(channelMutes: List<ChannelMute>) {
-        _state.value = _state.value!!.copy(channelMuted = channelMutes.any { it.channel.cid == cid })
+        _state.value = _state.value!!.copy(channelMuted = channelMutes.any { it.channel?.cid == cid })
     }
 
     private fun updateChannelHideStatus(eventCid: String, hidden: Boolean) {

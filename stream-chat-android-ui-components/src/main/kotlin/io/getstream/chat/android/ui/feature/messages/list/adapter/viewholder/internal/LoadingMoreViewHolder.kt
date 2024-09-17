@@ -36,5 +36,5 @@ internal class LoadingMoreViewHolder(
     parent.streamThemeInflater.inflate(style.loadingMoreView, parent, false),
 ) {
 
-    override fun bindData(data: MessageListItem.LoadingMoreIndicatorItem, diff: MessageListItemPayloadDiff?) = Unit
+    override fun bindData(data: MessageListItem.LoadingMoreIndicatorItem, diff: MessageListItemPayloadDiff) = Unit
 }

@@ -22,6 +22,7 @@ import io.getstream.chat.android.client.extensions.getCreatedAtOrDefault
 import io.getstream.chat.android.client.extensions.internal.updateUsers
 import io.getstream.chat.android.client.extensions.internal.wasCreatedAfter
 import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelData
@@ -79,6 +80,13 @@ internal class ChannelMutableState(
     private var _loadingOlderMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loadingNewerMessages: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _lastSentMessageDate: MutableStateFlow<Date?>? = MutableStateFlow(null)
+    private val deletedMessagesIds: Set<String>
+        get() = _messages
+            ?.value
+            ?.values
+            ?.mapNotNull { it.takeIf { it.isDeleted() }?.id }
+            ?.toSet()
+            ?: emptySet()
 
     /** Channel config data. */
     private var _channelConfig: MutableStateFlow<Config>? = MutableStateFlow(Config())
@@ -106,10 +114,10 @@ internal class ChannelMutableState(
 
     val pinnedMessagesList: StateFlow<List<Message>> =
         combineStates(_pinnedMessages!!, latestUsers) { pinnedMessagesMap, userMap ->
-            pinnedMessagesMap.values.updateUsers(userMap)
+            pinnedMessagesMap.values.filter { it.isPinned(now) }.updateUsers(userMap)
         }
 
-    val rawPinnedMessages get() = _pinnedMessages?.value.orEmpty()
+    val rawPinnedMessages get() = _pinnedMessages?.value?.filterValues { it.isPinned(now) }.orEmpty()
 
     /** a list of messages sorted by message.createdAt */
     private val sortedVisibleMessages: StateFlow<List<Message>> =
@@ -136,7 +144,7 @@ internal class ChannelMutableState(
             messageCollection.asSequence()
                 .filter { it.parentId == null || it.showInChannel }
                 .filter { it.user.id == user?.id || !it.shadowed }
-                .filter { hideMessagesBefore == null || it.wasCreatedAfter(hideMessagesBefore) }
+                .filter(this::isMessageVisible)
                 .filter(extraPredicate)
                 .sortedBy { it.createdAt ?: it.createdLocallyAt }
                 .toList()
@@ -148,12 +156,12 @@ internal class ChannelMutableState(
     internal var keystrokeParentMessageId: String? = null
 
     internal val visibleMessages: StateFlow<Map<String, Message>> = messageList.mapState { messages ->
-        messages.filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+        messages.filter(this::isMessageVisible)
             .associateBy(Message::id)
     }
 
     internal val visiblePinnedMessages: StateFlow<Map<String, Message>> = pinnedMessagesList.mapState { messages ->
-        messages.filter { message -> hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore) }
+        messages.filter(this::isMessageVisible)
             .associateBy(Message::id)
     }
 
@@ -449,7 +457,10 @@ internal class ChannelMutableState(
      */
     internal fun deleteWatcher(user: User, watchersCount: Int) {
         logger.v { "[deleteWatcher] user.id: ${user.id}, watchersCount: $watchersCount" }
-        _watchers?.let { upsertWatchers((it.value - user.id).values.toList(), watchersCount) }
+        _watchers?.apply {
+            value = value - user.id
+            _watcherCount?.value = watchersCount.takeUnless { it < 0 } ?: value.size
+        }
     }
 
     fun deleteMessage(message: Message) {
@@ -535,7 +546,7 @@ internal class ChannelMutableState(
     }
 
     fun upsertMessages(updatedMessages: Collection<Message>) {
-        _messages?.apply { value += updatedMessages.associateBy(Message::id) }
+        _messages?.apply { value += (updatedMessages.associateBy(Message::id) - deletedMessagesIds) }
         _pinnedMessages?.value
             ?.let { pinnedMessages ->
                 val pinnedMessageIds = pinnedMessages.keys
@@ -556,15 +567,28 @@ internal class ChannelMutableState(
 
     fun upsertPinnedMessages(messages: Collection<Message>) {
         logger.d { "[upsertPinnedMessages] messages.size: ${messages.size}" }
-        setPinned { pinned -> pinned + messages.associateBy(Message::id) }
+        setPinned { pinned -> pinned + (messages.associateBy(Message::id) - deletedMessagesIds) }
     }
 
     private inline fun setPinned(producer: (Map<String, Message>) -> Map<String, Message>) {
         val curPinnedMessages = _pinnedMessages?.value
         curPinnedMessages ?: return
-        val newPinnedMessages = producer(curPinnedMessages)
+        val newPinnedMessages = producer(curPinnedMessages).filterValues { it.isPinned(now) }
         logger.v { "[setPinned] pinned.size: ${curPinnedMessages.size} => ${newPinnedMessages.size}" }
         _pinnedMessages?.value = newPinnedMessages
+    }
+
+    /**
+     * Checks if the given message is visible based on the `hideMessagesBefore` timestamp.
+     *
+     * This function returns `true` if `hideMessagesBefore` is `null` or if the message was created
+     * after the `hideMessagesBefore` timestamp.
+     *
+     * @param message The message to check for visibility.
+     * @return `true` if the message is visible, `false` otherwise.
+     */
+    private fun isMessageVisible(message: Message): Boolean {
+        return hideMessagesBefore == null || message.wasCreatedAfter(hideMessagesBefore)
     }
 
     private fun cacheLatestMessages() {

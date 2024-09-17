@@ -24,6 +24,7 @@ import androidx.core.view.isVisible
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isEphemeral
 import io.getstream.chat.android.client.utils.message.isGiphy
+import io.getstream.chat.android.core.utils.date.truncateFuture
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -43,6 +44,7 @@ import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.imp
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MediaAttachmentsViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessageDeletedViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.MessagePlainTextViewHolder
+import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.impl.PollViewHolder
 import io.getstream.chat.android.ui.font.setTextStyle
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrNull
 import io.getstream.chat.android.ui.utils.extensions.getUpdatedAtOrNull
@@ -64,6 +66,7 @@ private const val NO_READS = 0
  * message accordingly to the logic provided.
  * @property getLanguageDisplayName [String] Returns the language display name for the given language code.
  */
+@Suppress("TooManyFunctions")
 internal class FootnoteDecorator(
     private val dateFormatter: DateFormatter,
     private val isDirectMessage: () -> Boolean,
@@ -160,6 +163,17 @@ internal class FootnoteDecorator(
      */
     override fun decoratePlainTextMessage(
         viewHolder: MessagePlainTextViewHolder,
+        data: MessageListItem.MessageItem,
+    ) = setupFootnote(
+        viewHolder.binding.footnote,
+        viewHolder.binding.root,
+        viewHolder.binding.threadGuideline,
+        viewHolder.binding.messageContainer,
+        data,
+    )
+
+    override fun decoratePollMessage(
+        viewHolder: PollViewHolder,
         data: MessageListItem.MessageItem,
     ) = setupFootnote(
         viewHolder.binding.footnote,
@@ -334,7 +348,7 @@ internal class FootnoteDecorator(
     private fun setupMessageFooterTime(footnoteView: FootnoteView, data: MessageListItem.MessageItem) {
         val createdAt = data.message.getCreatedAtOrNull()
         val updatedAt = data.message.getUpdatedAtOrNull()
-        val editedAt = data.message.messageTextUpdatedAt?.let(dateFormatter::formatRelativeTime)
+        val editedAt = data.message.messageTextUpdatedAt.truncateFuture()?.let(dateFormatter::formatRelativeTime)
 
         when {
             createdAt == null || !data.showMessageFooter -> footnoteView.hideTimeLabel()

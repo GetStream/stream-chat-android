@@ -30,12 +30,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
@@ -125,6 +127,8 @@ import io.getstream.chat.android.ui.common.state.messages.updateMessage
  * @param skipEnrichUrl If new messages being sent, or existing ones being updated should skip enriching the URL.
  * If URL is not enriched, it will not be displayed as a link attachment. False by default.
  * @param threadMessagesStart Thread messages start at the bottom or top of the screen.
+ * @param topBarContent custom top bar content to be displayed on top of the messages list.
+ * @param bottomBarContent custom bottom bar content to be displayed at the bottom of the messages list.
  * Default: [ThreadMessagesStart.BOTTOM].
  */
 @Suppress("LongMethod")
@@ -137,11 +141,29 @@ public fun MessagesScreen(
     onHeaderTitleClick: (channel: Channel) -> Unit = {},
     onChannelAvatarClick: () -> Unit = {},
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    onMessageLinkClick: ((Message, String) -> Unit)? = null,
     onUserAvatarClick: (User) -> Unit = {},
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
     statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
+    topBarContent: @Composable (BackAction) -> Unit = {
+        DefaultTopBarContent(
+            viewModelFactory = viewModelFactory,
+            backAction = it,
+            onHeaderTitleClick = onHeaderTitleClick,
+            onChannelAvatarClick = onChannelAvatarClick,
+        )
+    },
+    bottomBarContent: @Composable () -> Unit = {
+        DefaultBottomBarContent(
+            viewModelFactory = viewModelFactory,
+            onComposerLinkPreviewClick = onComposerLinkPreviewClick,
+            skipPushNotification = skipPushNotification,
+            skipEnrichUrl = skipEnrichUrl,
+            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
+        )
+    },
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
@@ -155,7 +177,7 @@ public fun MessagesScreen(
     }
 
     val isImeVisible = WindowInsets.ime.getBottom(LocalDensity.current) > 0
-    val backAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
+    val backAction: BackAction = remember(listViewModel, composerViewModel, attachmentsPickerViewModel) {
         {
             val isInThread = listViewModel.isInThread
             val isShowingOverlay = listViewModel.isShowingOverlay
@@ -182,64 +204,20 @@ public fun MessagesScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .safeDrawingPadding()
+            // Explicitly consume IME inset (even if not needed), to avoid children applying it again on some devices.
+            .consumeWindowInsets(WindowInsets.ime)
             .testTag("Stream_MessagesScreen"),
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
                 if (showHeader) {
-                    val connectionState by listViewModel.connectionState.collectAsState()
-                    val user by listViewModel.user.collectAsState()
-
-                    MessageListHeader(
-                        modifier = Modifier
-                            .height(56.dp),
-                        channel = listViewModel.channel,
-                        currentUser = user,
-                        typingUsers = listViewModel.typingUsers,
-                        connectionState = connectionState,
-                        messageMode = messageMode,
-                        onBackPressed = backAction,
-                        onHeaderTitleClick = onHeaderTitleClick,
-                        onChannelAvatarClick = onChannelAvatarClick,
-                    )
+                    topBarContent(backAction)
                 }
             },
             bottomBar = {
-                MessageComposer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.Center),
-                    viewModel = composerViewModel,
-                    onAttachmentsClick = remember(attachmentsPickerViewModel) {
-                        {
-                            attachmentsPickerViewModel.changeAttachmentState(
-                                true,
-                            )
-                        }
-                    },
-                    onCommandsClick = remember(composerViewModel) { { composerViewModel.toggleCommandsVisibility() } },
-                    onCancelAction = remember(listViewModel, composerViewModel) {
-                        {
-                            listViewModel.dismissAllMessageActions()
-                            composerViewModel.dismissMessageActions()
-                        }
-                    },
-                    onLinkPreviewClick = onComposerLinkPreviewClick,
-                    onSendMessage = remember(composerViewModel) {
-                        {
-                                message ->
-                            composerViewModel.sendMessage(
-                                message.copy(
-                                    skipPushNotification = skipPushNotification,
-                                    skipEnrichUrl = skipEnrichUrl,
-                                ),
-                            )
-                        }
-                    },
-                    statefulStreamMediaRecorder = statefulStreamMediaRecorder,
-                )
+                bottomBarContent()
             },
         ) {
             val currentState = listViewModel.currentMessagesState
@@ -262,6 +240,7 @@ public fun MessagesScreen(
                     }
                 },
                 onUserAvatarClick = onUserAvatarClick,
+                onMessageLinkClick = onMessageLinkClick,
                 onMediaGalleryPreviewResult = remember(listViewModel, composerViewModel) {
                     {
                             result ->
@@ -318,6 +297,90 @@ public fun MessagesScreen(
 }
 
 /**
+ * Callback for when the user taps on the back button.
+ */
+public typealias BackAction = () -> Unit
+
+@Composable
+internal fun DefaultTopBarContent(
+    viewModelFactory: MessagesViewModelFactory,
+    backAction: BackAction,
+    onHeaderTitleClick: (channel: Channel) -> Unit,
+    onChannelAvatarClick: () -> Unit,
+) {
+    val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
+
+    val connectionState by listViewModel.connectionState.collectAsState()
+    val user by listViewModel.user.collectAsState()
+    val messageMode = listViewModel.messageMode
+
+    MessageListHeader(
+        modifier = Modifier
+            .height(56.dp),
+        channel = listViewModel.channel,
+        currentUser = user,
+        typingUsers = listViewModel.typingUsers,
+        connectionState = connectionState,
+        messageMode = messageMode,
+        onBackPressed = backAction,
+        onHeaderTitleClick = onHeaderTitleClick,
+        onChannelAvatarClick = onChannelAvatarClick,
+    )
+}
+
+@Composable
+internal fun DefaultBottomBarContent(
+    viewModelFactory: MessagesViewModelFactory,
+    onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
+    skipPushNotification: Boolean = false,
+    skipEnrichUrl: Boolean = false,
+    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
+) {
+    val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
+    val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
+    val attachmentsPickerViewModel =
+        viewModel(AttachmentsPickerViewModel::class.java, factory = viewModelFactory)
+
+    MessageComposer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
+        viewModel = composerViewModel,
+        onAttachmentsClick = remember(attachmentsPickerViewModel) {
+            {
+                attachmentsPickerViewModel.changeAttachmentState(
+                    true,
+                )
+            }
+        },
+        onCommandsClick = remember(composerViewModel) {
+            {
+                composerViewModel.toggleCommandsVisibility()
+            }
+        },
+        onCancelAction = remember(listViewModel, composerViewModel) {
+            {
+                listViewModel.dismissAllMessageActions()
+                composerViewModel.dismissMessageActions()
+            }
+        },
+        onLinkPreviewClick = onComposerLinkPreviewClick,
+        onSendMessage = remember(composerViewModel) {
+            {
+                    message ->
+                composerViewModel.sendMessage(
+                    message.copy(
+                        skipPushNotification = skipPushNotification,
+                        skipEnrichUrl = skipEnrichUrl,
+                    ),
+                )
+            }
+        },
+        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
+    )
+}
+
+/**
  * Contains the various menus and pickers the user
  * can use to interact with messages.
  *
@@ -329,7 +392,7 @@ public fun MessagesScreen(
  * displayed as a link attachment. False by default.
  */
 @Composable
-private fun BoxScope.MessageMenus(
+public fun BoxScope.MessageMenus(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     skipPushNotification: Boolean,
@@ -568,9 +631,10 @@ private fun BoxScope.MessagesScreenReactionsPicker(
  * @param composerViewModel The [MessageComposerViewModel] used to read state and
  * perform actions.
  */
+@Suppress("LongMethod")
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-private fun BoxScope.AttachmentsPickerMenu(
+public fun BoxScope.AttachmentsPickerMenu(
     listViewModel: MessageListViewModel,
     attachmentsPickerViewModel: AttachmentsPickerViewModel,
     composerViewModel: MessageComposerViewModel,
@@ -585,7 +649,11 @@ private fun BoxScope.AttachmentsPickerMenu(
         var isFullScreenContent by rememberSaveable { mutableStateOf(false) }
         val screenHeight = LocalConfiguration.current.screenHeightDp
         val pickerHeight by animateDpAsState(
-            targetValue = if (isFullScreenContent) screenHeight.dp else ChatTheme.dimens.attachmentsPickerHeight,
+            targetValue = when {
+                isFullScreenContent -> screenHeight.dp
+                ChatTheme.useDefaultSystemMediaPicker -> ChatTheme.dimens.attachmentsSystemPickerHeight
+                else -> ChatTheme.dimens.attachmentsPickerHeight
+            },
             label = "full sized picker animation",
         )
 
@@ -618,11 +686,10 @@ private fun BoxScope.AttachmentsPickerMenu(
             },
             onAttachmentPickerAction = { action ->
                 if (action is AttachmentPickerPollCreation) {
-                    listViewModel.createPoll(
+                    composerViewModel.createPoll(
                         pollConfig = PollConfig(
                             name = action.question,
                             options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
-                            description = action.question,
                             allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
                             votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
                                 VotingVisibility.ANONYMOUS
@@ -659,7 +726,7 @@ private fun BoxScope.AttachmentsPickerMenu(
  * perform actions.
  */
 @Composable
-private fun MessageModerationDialog(
+public fun MessageModerationDialog(
     listViewModel: MessageListViewModel,
     composerViewModel: MessageComposerViewModel,
     skipPushNotification: Boolean,
@@ -710,7 +777,7 @@ private fun MessageModerationDialog(
  * perform actions.
  */
 @Composable
-private fun MessageDialogs(listViewModel: MessageListViewModel) {
+public fun MessageDialogs(listViewModel: MessageListViewModel) {
     val messageActions = listViewModel.messageActions
 
     val deleteAction = messageActions.firstOrNull { it is Delete }
@@ -747,7 +814,7 @@ private fun MessageDialogs(listViewModel: MessageListViewModel) {
 }
 
 @Composable
-private fun PollDialogs(listViewModel: MessageListViewModel) {
+public fun PollDialogs(listViewModel: MessageListViewModel) {
     val dismiss = { listViewModel.displayPollMoreOptions(null) }
     val selectedPoll = listViewModel.pollState.selectedPoll
 

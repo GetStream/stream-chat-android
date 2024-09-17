@@ -69,6 +69,15 @@ public interface MessageRepository {
     public suspend fun selectMessage(messageId: String): Message?
 
     /**
+     * Selects all messages with a poll with the passed ID.
+     *
+     * @param pollId The ID of the poll.
+     *
+     * @return A list of messages with the poll.
+     */
+    public suspend fun selectMessagesWithPoll(pollId: String): List<Message>
+
+    /**
      * Inserts many messages.
      *
      * @param messages list of [Message]

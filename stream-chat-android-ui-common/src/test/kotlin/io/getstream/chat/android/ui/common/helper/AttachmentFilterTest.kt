@@ -14,14 +14,18 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalStreamChatApi::class)
+
 package io.getstream.chat.android.ui.common.helper
 
 import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.core.ExperimentalStreamChatApi
 import io.getstream.chat.android.models.FileUploadConfig
 import io.getstream.chat.android.positiveRandomLong
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
 import org.amshove.kluent.`should be equal to`
+import org.junit.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -34,6 +38,7 @@ internal class AttachmentFilterTest {
 
     private val chatClient: ChatClient = mock(defaultAnswer = Mockito.RETURNS_DEEP_STUBS)
 
+    @OptIn(ExperimentalStreamChatApi::class)
     @ParameterizedTest
     @MethodSource("attachmentFilterArguments")
     fun `Given file and image upload configs When filtering attachments Should return only valid attachments`(
@@ -46,6 +51,27 @@ internal class AttachmentFilterTest {
         val filteredAttachments = attachmentFilter.filterAttachments(attachments)
 
         filteredAttachments.size `should be equal to` attachmentFilterTestData.expectedAttachmentCount
+    }
+
+    @Test
+    fun `Given upload configs When getting supported MIME types Should return correct MIME types`() {
+        val fileUploadConfig = fileUploadConfig(
+            allowedMimeTypes = listOf("application/pdf", "text/plain"),
+            blockedMimeTypes = listOf("application/zip"),
+        )
+        val imageUploadConfig = fileUploadConfig(
+            allowedMimeTypes = listOf("image/jpeg", "image/png"),
+            blockedMimeTypes = listOf("image/gif"),
+        )
+
+        whenever(chatClient.getAppSettings().app.fileUploadConfig) doReturn fileUploadConfig
+        whenever(chatClient.getAppSettings().app.imageUploadConfig) doReturn imageUploadConfig
+
+        val attachmentFilter = AttachmentFilter(chatClient)
+
+        val supportedMimeTypes = attachmentFilter.getSupportedMimeTypes()
+
+        supportedMimeTypes `should be equal to` listOf("application/pdf", "text/plain", "image/jpeg", "image/png")
     }
 
     internal data class AttachmentFilterTestData(

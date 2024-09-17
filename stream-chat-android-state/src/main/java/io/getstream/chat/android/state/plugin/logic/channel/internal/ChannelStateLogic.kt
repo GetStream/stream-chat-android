@@ -418,11 +418,13 @@ internal class ChannelStateLogic(
      *
      * @param memberUserId Updated member user id.
      * @param banned Shows whether a user is banned or not in this channel.
+     * @param banExpires The date when the ban expires.
      * @param shadow Shows whether a user is shadow banned or not in this channel.
      */
     fun updateMemberBanned(
         memberUserId: String?,
         banned: Boolean,
+        banExpires: Date?,
         shadow: Boolean,
     ) {
         mutableState.upsertMembers(
@@ -430,6 +432,7 @@ internal class ChannelStateLogic(
                 when (member.user.id == memberUserId) {
                     true -> member.copy(
                         banned = banned,
+                        banExpires = banExpires,
                         shadowBanned = shadow,
                     )
                     false -> member
@@ -688,7 +691,7 @@ internal class ChannelStateLogic(
      */
     fun refreshMuteState() {
         val cid = mutableState.cid
-        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel.cid == cid }
+        val isChannelMuted = globalMutableState.channelMutes.value.any { it.channel?.cid == cid }
         StreamLog.d(TAG) { "[onQueryChannelRequest] isChannelMuted: $isChannelMuted, cid: $cid" }
         updateMute(isChannelMuted)
     }

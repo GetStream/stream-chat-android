@@ -39,9 +39,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.skydoves.landscapist.ImageOptions
@@ -50,12 +52,15 @@ import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.attachments.preview.handler.AttachmentPreviewHandler
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.MimeTypeIconProvider
 import io.getstream.chat.android.compose.ui.util.StreamImage
 import io.getstream.chat.android.compose.util.attachmentDownloadState
 import io.getstream.chat.android.compose.util.onDownloadHandleRequest
 import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.images.resizing.applyStreamCdnImageResizingIfEnabled
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
 import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
@@ -73,6 +78,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.imagePreviewUrl
 public fun FileAttachmentContent(
     attachmentState: AttachmentState,
     modifier: Modifier = Modifier,
+    showFileSize: (Attachment) -> Boolean = { true },
     onItemClick: (
         previewHandlers: List<AttachmentPreviewHandler>,
         attachment: Attachment,
@@ -103,6 +109,7 @@ public fun FileAttachmentContent(
                         onLongClick = { onItemLongClick(message) },
                     ),
                 attachment = attachment,
+                showFileSize = showFileSize,
             )
         }
     }
@@ -117,6 +124,7 @@ public fun FileAttachmentContent(
 @Composable
 public fun FileAttachmentItem(
     attachment: Attachment,
+    showFileSize: (Attachment) -> Boolean,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -132,7 +140,7 @@ public fun FileAttachmentItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             FileAttachmentImage(attachment = attachment)
-            FileAttachmentDescription(attachment = attachment)
+            FileAttachmentDescription(attachment = attachment, showFileSize = showFileSize)
             FileAttachmentDownloadIcon(attachment = attachment)
         }
     }
@@ -145,7 +153,10 @@ public fun FileAttachmentItem(
  *  @param attachment The attachment for which the information is displayed.
  */
 @Composable
-private fun FileAttachmentDescription(attachment: Attachment) {
+private fun FileAttachmentDescription(
+    attachment: Attachment,
+    showFileSize: (Attachment) -> Boolean,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth(0.85f)
@@ -161,11 +172,13 @@ private fun FileAttachmentDescription(attachment: Attachment) {
             color = ChatTheme.colors.textHighEmphasis,
         )
 
-        Text(
-            text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
-            style = ChatTheme.typography.footnote,
-            color = ChatTheme.colors.textLowEmphasis,
-        )
+        if (showFileSize(attachment)) {
+            Text(
+                text = MediaStringUtil.convertFileSizeByteCount(attachment.fileSize.toLong()),
+                style = ChatTheme.typography.footnote,
+                color = ChatTheme.colors.textLowEmphasis,
+            )
+        }
     }
 }
 
@@ -177,6 +190,18 @@ private fun FileAttachmentDescription(attachment: Attachment) {
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 private fun RowScope.FileAttachmentDownloadIcon(attachment: Attachment) {
+    if (LocalInspectionMode.current) {
+        Icon(
+            modifier = Modifier
+                .align(Alignment.Top)
+                .padding(end = 2.dp),
+            painter = painterResource(id = R.drawable.stream_compose_ic_file_download),
+            contentDescription = stringResource(id = R.string.stream_compose_download),
+            tint = ChatTheme.colors.textHighEmphasis,
+        )
+        return
+    }
+
     val (writePermissionState, downloadPayload) = attachmentDownloadState()
     val context = LocalContext.current
 
@@ -264,4 +289,17 @@ internal fun onFileAttachmentContentItemClick(
     attachment: Attachment,
 ) {
     previewHandlers.firstOrNull { it.canHandle(attachment) }?.handleAttachmentPreview(attachment)
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+internal fun FileAttachmentContentPreview() {
+    val attachment = Attachment(type = AttachmentType.FILE)
+    val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
+
+    ChatPreviewTheme {
+        FileAttachmentContent(
+            attachmentState = attachmentState,
+        )
+    }
 }

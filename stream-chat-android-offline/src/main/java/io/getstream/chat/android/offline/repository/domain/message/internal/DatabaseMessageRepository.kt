@@ -20,7 +20,9 @@ import androidx.collection.LruCache
 import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.persistance.repository.MessageRepository
 import io.getstream.chat.android.client.query.pagination.AnyChannelPaginationRequest
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.SyncStatus
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.offline.extensions.launchWithMutex
@@ -33,6 +35,7 @@ internal class DatabaseMessageRepository(
     private val scope: CoroutineScope,
     private val messageDao: MessageDao,
     private val replyMessageDao: ReplyMessageDao,
+    private val pollDao: PollDao,
     private val getUser: suspend (userId: String) -> User,
     private val currentUser: User,
     cacheSize: Int = 1000,
@@ -42,6 +45,7 @@ internal class DatabaseMessageRepository(
 
     private val messageCache: LruCache<String, Message> = LruCache(cacheSize)
     private val replyMessageCache: LruCache<String, Message> = LruCache(cacheSize)
+    private val deletedMessageIds: MutableSet<String> = mutableSetOf()
     private val dbMutex = Mutex()
 
     /**
@@ -68,7 +72,7 @@ internal class DatabaseMessageRepository(
             .map { it.toMessage() }
 
     private suspend fun selectRepliedMessage(messageId: String): Message? =
-        replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser)
+        replyMessageCache[messageId] ?: replyMessageDao.selectById(messageId)?.toModel(getUser, ::getPoll)
 
     /**
      * Selects messages by IDs.
@@ -108,6 +112,7 @@ internal class DatabaseMessageRepository(
         if (messages.isEmpty()) return
         val validMessages = messages
             .filter { message -> message.cid.isNotEmpty() }
+            .filterNot { message -> (message.id in deletedMessageIds) }
 
         val messagesToInsert = validMessages
             .filter { messageCache.get(it.id) != it }
@@ -118,6 +123,12 @@ internal class DatabaseMessageRepository(
         val replyMessagesToInsert = replyMessages
             .filter { replyMessageCache.get(it.id) != it }
             .map(Message::toReplyEntity)
+
+        validMessages.filter { it.isDeleted() }.let { deletedMessageIds.addAll(it.map { it.id }) }
+        (replyMessages + messages)
+            .mapNotNull { it.poll?.toEntity() }
+            .takeUnless { it.isEmpty() }
+            ?.let { pollDao.insertPolls(it) }
 
         replyMessages.forEach { replyMessageCache.put(it.id, it) }
         validMessages.forEach { messageCache.put(it.id, it) }
@@ -163,6 +174,7 @@ internal class DatabaseMessageRepository(
      * @param message [Message]
      */
     override suspend fun deleteChannelMessage(message: Message) {
+        deletedMessageIds.add(message.id)
         messageCache.remove(message.id)
         scope.launchWithMutex(dbMutex) { messageDao.deleteMessage(message.cid, message.id) }
     }
@@ -182,8 +194,11 @@ internal class DatabaseMessageRepository(
      * @param syncStatus [SyncStatus]
      */
     override suspend fun selectMessageBySyncState(syncStatus: SyncStatus): List<Message> {
-        return messageDao.selectBySyncStatus(syncStatus).map { it.toModel(getUser, ::selectRepliedMessage) }
+        return messageDao.selectBySyncStatus(syncStatus).map { it.toMessage() }
     }
+
+    override suspend fun selectMessagesWithPoll(pollId: String): List<Message> =
+        messageDao.selectMessagesWithPoll(pollId).map { it.toMessage() }
 
     override suspend fun evictMessage(messageId: String) {
         messageCache.remove(messageId)
@@ -241,18 +256,26 @@ internal class DatabaseMessageRepository(
         return messageDao.select(messageIds)
             .map { entity ->
                 entity.toMessage()
-                    .also { messageCache.put(it.id, it) }
+                    .also(::updateCache)
             }
     }
 
     private suspend fun fetchMessageFromDB(messageId: String): Message? {
         return messageDao.select(messageId)
             ?.toMessage()
-            ?.also { messageCache.put(it.id, it) }
+            ?.also(::updateCache)
+    }
+
+    private fun updateCache(message: Message) {
+        messageCache.put(message.id, message)
+        message.takeIf { message.isDeleted() }?.let { deletedMessageIds.add(it.id) }
     }
 
     private suspend fun MessageEntity.toMessage(): Message =
-        this.toModel(getUser, ::selectRepliedMessage).filterReactions()
+        this.toModel(getUser, ::selectRepliedMessage, ::getPoll).filterReactions()
+
+    private suspend fun getPoll(pollId: String): Poll? =
+        pollDao.getPoll(pollId)?.toModel(getUser)
 
     /**
      * Workaround to remove reactions which should not be displayed in the UI. This filtering

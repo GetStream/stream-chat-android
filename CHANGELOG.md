@@ -7,6 +7,7 @@
 ### ✅ Added
 
 ### ⚠️ Changed
+- Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
 
 ### ❌ Removed
 
@@ -14,20 +15,9 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
+- `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ✅ Added
-
-### ⚠️ Changed
-
-### ❌ Removed
-
-## stream-chat-android-core
-### 🐞 Fixed
-
-### ⬆️ Improved
-
-### ✅ Added
-- Added optional `banExpires` field to `Member` entity. [#5340](https://github.com/GetStream/stream-chat-android/pull/5340)
 
 ### ⚠️ Changed
 
@@ -57,6 +47,7 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
+- UnreadLabel is not added on the case all unread messages are deleted. [#5403](https://github.com/GetStream/stream-chat-android/pull/5403)
 
 ### ⬆️ Improved
 
@@ -68,7 +59,6 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
-- Fixed crash in `MessageListView` when posting a message to an empty channel. [#5332](https://github.com/GetStream/stream-chat-android/pull/5332)
 
 ### ⬆️ Improved
 
@@ -80,10 +70,13 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix condition to show async-voice attachments on MessageList. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391)
+- Added typing indicator on `ChannelList`. [#5399](https://github.com/GetStream/stream-chat-android/pull/5399)
 
 ### ⚠️ Changed
 
@@ -99,6 +92,85 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# August 30th, 2024 - 6.5.0
+## stream-chat-android-offline
+### ✅ Added
+- Store poll info on local data base. [#5283](https://github.com/GetStream/stream-chat-android/pull/5283)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed `ChannelState.watchers` not being updated when a watcher gets deleted. [#5378](https://github.com/GetStream/stream-chat-android/pull/5378)
+
+### ⬆️ Improved
+- Keep members updated on QueryChannelsState. [5382](https://github.com/GetStream/stream-chat-android/pull/5382) 
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- Fixed `MessageListController.channel.members` not being updated when a member is banned. [#5368](https://github.com/GetStream/stream-chat-android/pull/5368)
+
+### ⬆️ Improved
+- Hide "Unread Messages" button when there are no messages on the messages list. [#5376](https://github.com/GetStream/stream-chat-android/pull/5376)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Message list is cleared when the channel remove all its messages. [#5360](https://github.com/GetStream/stream-chat-android/pull/5360)
+- Ensure channels list doesn't show deleted messages on the last message preview. [#5367](https://github.com/GetStream/stream-chat-android/pull/5367)
+- Fixed `Message.messageTextUpdatedAt` fluctuations within `FootnoteDecorator` when editing a message. [#5374](https://github.com/GetStream/stream-chat-android/pull/5374)
+
+### ⬆️ Improved
+- `MessageOptionsDialogFragment` now uses `MessageListItemViewHolderFactory` to get item view type. [#5369](https://github.com/GetStream/stream-chat-android/pull/5369)
+- Default `MentionsViewHolder` uses `user.id` if `user.name` is empty. [#5384](https://github.com/GetStream/stream-chat-android/pull/5384)
+
+### ✅ Added
+- Create a new UI for the poll message. [#5285](https://github.com/GetStream/stream-chat-android/pull/5285)
+- Create a new UI to create a poll message. [#5361](https://github.com/GetStream/stream-chat-android/pull/5361)
+- Added system attachment picker to select media without extra permissions. [#5380](https://github.com/GetStream/stream-chat-android/pull/5380) 
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Message list is cleared when the channel remove all its messages. [#5360](https://github.com/GetStream/stream-chat-android/pull/5360)
+- Increase max allowed votes base on available options. [#5363](https://github.com/GetStream/stream-chat-android/pull/5363)
+- Poll Attachment show description instead of question twice. [#5364](https://github.com/GetStream/stream-chat-android/pull/5364)
+- Show proper votes count in anonymous polls. [#5366](https://github.com/GetStream/stream-chat-android/pull/5366)
+- Fixed `DefaultQuotedMessageTextFormatter` not using the correct text style. [#5373](https://github.com/GetStream/stream-chat-android/pull/5373)
+- Fixed `Message.messageTextUpdatedAt` fluctuations within `MessageFooter` when editing a message. [#5374](https://github.com/GetStream/stream-chat-android/pull/5374)
+- Expose `topBarContent` and `bottomBarContent` in `MessageScreen`. [#5377](https://github.com/GetStream/stream-chat-android/pull/5377)
+
+### ⬆️ Improved
+- `DefaultMentionSuggestionItemCenterContent` component uses `user.id` if `user.name` is empty. [#5384](https://github.com/GetStream/stream-chat-android/pull/5384)
+- Added `showFileSize` parameter to `StreamAttachmentFactories.defaultFactories` to control file size UI visibility. [#5383](https://github.com/GetStream/stream-chat-android/pull/5383)
+- Made `MessagesScreen` edge-to-edge friendly. [#5386](https://github.com/GetStream/stream-chat-android/pull/5386)
+
+### ✅ Added
+- Add `PollDialogs` component used to show poll dialogs. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `MessageDialogs` component used to prompt the user with message flagging and deletion actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `MessageModerationDialog` component used for message that needs to be moderated. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `AttachmentsPickerMenu` component used to show the attachment picker menu. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Add `MessageMenus` component used to prompt the user with message actions. [#5370](https://github.com/GetStream/stream-chat-android/pull/5370)
+- Added system attachment picker to select media without extra permissions. [#5380](https://github.com/GetStream/stream-chat-android/pull/5380)
+
+# August 09th, 2024 - 6.4.4
+## stream-chat-android-core
+### ✅ Added
+- Added optional `banExpires` field to `Member` entity. [#5340](https://github.com/GetStream/stream-chat-android/pull/5340)
+
+## stream-chat-android-state
+### 🐞 Fixed
+- Fixed expired pinned messages being exposed in the pinned message list. [#5343](https://github.com/GetStream/stream-chat-android/pull/5343)
+
+## stream-chat-android-ui-components
+### 🐞 Fixed
+- Fixed crash in `MessageListView` when posting a message to an empty channel. [#5332](https://github.com/GetStream/stream-chat-android/pull/5332)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fixed `Edited` label not being displayed right after editing a message. [#5342](https://github.com/GetStream/stream-chat-android/pull/5342)
+
+### ✅ Added
+- Added `onMessageLinkClick` to `MessagesScreen` to handle message link clicks. [#5346](https://github.com/GetStream/stream-chat-android/pull/5346)
+- Added new "attachment option" to create polls in the message composer. [#5305](https://github.com/GetStream/stream-chat-android/pull/5305)
+- Added new attachment type for polls in the message list. [#5308](https://github.com/GetStream/stream-chat-android/pull/5308)
 
 # July 23th, 2024 - 6.4.3
 ## stream-chat-android-client

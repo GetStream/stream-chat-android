@@ -55,7 +55,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
      * Workaround to allow a downcast of the MessageListItem to T.
      */
     @Suppress("UNCHECKED_CAST")
-    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff? = null) {
+    internal fun bindListItem(messageListItem: MessageListItem, diff: MessageListItemPayloadDiff) {
         messageListItem as T
 
         this.data = messageListItem
@@ -67,7 +67,7 @@ public abstract class BaseMessageItemViewHolder<T : MessageListItem>(
         }
     }
 
-    public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff?)
+    public abstract fun bindData(data: T, diff: MessageListItemPayloadDiff)
 
     @CallSuper
     public open fun unbind() {

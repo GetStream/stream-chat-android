@@ -30,8 +30,8 @@ import java.util.Date
  */
 @Immutable
 public data class ChannelMute(
-    val user: User,
-    val channel: Channel,
+    val user: User?,
+    val channel: Channel?,
     val createdAt: Date,
     val updatedAt: Date,
     val expires: Date?,

@@ -19,9 +19,14 @@ package io.getstream.chat.android.compose.ui.attachments.content
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
+import io.getstream.chat.android.models.Attachment
+import io.getstream.chat.android.models.AttachmentType
+import io.getstream.chat.android.models.Message
 
 @Composable
 public fun AudioRecordGroupContent(
@@ -46,5 +51,18 @@ public fun AudioRecordGroupContent(
                 }
             }
         }
+    }
+}
+
+@Preview(showSystemUi = true, showBackground = true)
+@Composable
+internal fun AudioRecordGroupContentPreview() {
+    val attachment = Attachment(type = AttachmentType.AUDIO_RECORDING, assetUrl = "asd")
+    val attachmentState = AttachmentState(Message(attachments = mutableListOf(attachment)))
+
+    ChatPreviewTheme {
+        AudioRecordGroupContent(
+            attachmentState = attachmentState,
+        )
     }
 }

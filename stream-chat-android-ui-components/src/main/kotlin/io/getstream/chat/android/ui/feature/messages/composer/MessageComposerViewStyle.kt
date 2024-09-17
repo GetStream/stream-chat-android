@@ -1092,7 +1092,10 @@ public data class MessageComposerViewStyle(
         }
 
         @Suppress("MaxLineLength", "LongMethod", "ComplexMethod")
-        private fun createAttachmentPickerDialogStyle(context: Context, a: TypedArray): AttachmentsPickerDialogStyle {
+        private fun createAttachmentPickerDialogStyle(
+            context: Context,
+            a: TypedArray,
+        ): AttachmentsPickerDialogStyle {
             val attachmentsPickerBackgroundColor = a.getColor(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerBackgroundColor,
                 context.getColorCompat(R.color.stream_ui_white_smoke),
@@ -1338,6 +1341,15 @@ public data class MessageComposerViewStyle(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerCameraAttachmentsTabIconDrawable,
             ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_permission_camera)!!
 
+            val pollAttachmentsTabEnabled = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerPollAttachmentsTabEnabled,
+                true,
+            )
+
+            val pollAttachmentsTabIconDrawable = a.getDrawable(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerPollAttachmentsTabIconDrawable,
+            ) ?: context.getDrawableCompat(R.drawable.stream_ui_attachment_poll)!!
+
             val allowAccessToCameraButtonText = a.getText(
                 R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerAllowAccessToCameraButtonText,
             )?.toString() ?: context.getString(R.string.stream_ui_message_composer_camera_access)
@@ -1351,7 +1363,13 @@ public data class MessageComposerViewStyle(
                 PickerMediaMode.PHOTO_AND_VIDEO,
             )
 
+            val useDefaultSystemMediaPicker = a.getBoolean(
+                R.styleable.MessageComposerView_streamUiMessageComposerAttachmentsPickerSystemPickerEnabled,
+                false,
+            )
+
             return AttachmentsPickerDialogStyle(
+                useDefaultSystemMediaPicker = useDefaultSystemMediaPicker,
                 attachmentsPickerBackgroundColor = attachmentsPickerBackgroundColor,
                 allowAccessButtonTextStyle = allowAccessButtonTextStyle,
                 submitAttachmentsButtonIconDrawable = submitAttachmentsButtonIconDrawable,
@@ -1388,6 +1406,8 @@ public data class MessageComposerViewStyle(
                 cameraAttachmentsTabIconDrawable = cameraAttachmentsTabIconDrawable,
                 allowAccessToCameraButtonText = allowAccessToCameraButtonText,
                 allowAccessToCameraIconDrawable = allowAccessToCameraIconDrawable,
+                pollAttachmentsTabEnabled = pollAttachmentsTabEnabled,
+                pollAttachmentsTabIconDrawable = pollAttachmentsTabIconDrawable,
                 pickerMediaMode = pickerMediaMode,
             ).let(TransformStyle.attachmentsPickerStyleTransformer::transform)
         }

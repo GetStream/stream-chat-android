@@ -43,8 +43,8 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView
 import io.getstream.chat.android.ui.feature.messages.list.MessageListViewStyle
 import io.getstream.chat.android.ui.feature.messages.list.adapter.BaseMessageItemViewHolder
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemPayloadDiff
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItemViewHolderFactory
-import io.getstream.chat.android.ui.feature.messages.list.adapter.internal.MessageListItemViewTypeMapper
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.attachment.AttachmentFactoryManager
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.Decorator
 import io.getstream.chat.android.ui.feature.messages.list.adapter.viewholder.decorator.DecoratorProvider
@@ -88,11 +88,6 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
      * Creates a list of decorators for the message item.
      */
     private lateinit var messageOptionsDecoratorProvider: MessageOptionsDecoratorProvider
-
-    /**
-     * A factory for the attachments in the selected message.
-     */
-    private lateinit var attachmentFactoryManager: AttachmentFactoryManager
 
     /**
      * The list of message options to display.
@@ -144,8 +139,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val isInitialized = ::optionsDialogType.isInitialized && ::message.isInitialized && ::style.isInitialized &&
-            ::messageListItemViewHolderFactory.isInitialized && ::attachmentFactoryManager.isInitialized &&
-            ::messageOptionItems.isInitialized
+            ::messageListItemViewHolderFactory.isInitialized && ::messageOptionItems.isInitialized
         if (savedInstanceState == null && isInitialized) {
             setupDialog()
         } else {
@@ -250,7 +244,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
         messageListItemViewHolderFactory.withDecoratorProvider(messageOptionsDecoratorProvider) {
             viewHolder = it.createViewHolder(
                 binding.messageContainer,
-                MessageListItemViewTypeMapper.getViewTypeValue(messageItem, attachmentFactoryManager),
+                it.getItemViewType(messageItem),
             ).also { viewHolder ->
                 viewHolder.itemView.setOnClickListener {
                     dismiss()
@@ -262,7 +256,7 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                     ),
                 )
-                viewHolder.bindListItem(messageItem)
+                viewHolder.bindListItem(messageItem, MessageListItemPayloadDiff.FULL)
             }
         }
     }
@@ -447,7 +441,6 @@ public class MessageOptionsDialogFragment : FullScreenDialogFragment() {
                 it.message = message
                 it.optionsDialogType = optionsDialogType
                 it.style = style
-                it.attachmentFactoryManager = attachmentFactoryManager
                 it.messageListItemViewHolderFactory = messageListItemViewHolderFactory
                 it.messageOptionsDecoratorProvider = MessageOptionsDecoratorProvider(
                     style.itemStyle,

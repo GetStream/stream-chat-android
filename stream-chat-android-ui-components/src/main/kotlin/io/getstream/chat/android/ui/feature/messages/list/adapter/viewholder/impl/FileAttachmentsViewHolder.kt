@@ -79,7 +79,7 @@ public class FileAttachmentsViewHolder internal constructor(
     /**
      * Binds the data to the view.
      */
-    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff?) {
+    override fun bindData(data: MessageListItem.MessageItem, diff: MessageListItemPayloadDiff) {
         logger.d { "[bindData] data: $data, diff: $diff" }
         super.bindData(data, diff)
 

@@ -33,6 +33,12 @@
     <string name="stream_ui_message_composer_permission_setting_message">Enable permissions on App Settings</string>
     <string name="stream_ui_message_composer_permissions_setting_button">Settings</string>
 
+    <!-- Attachment system picker -->
+    <string name="stream_ui_message_composer_attachment_picker_files">Files</string>
+    <string name="stream_ui_message_composer_attachment_picker_media">Media</string>
+    <string name="stream_ui_message_composer_attachment_picker_capture">Capture</string>
+    <string name="stream_ui_message_composer_attachment_picker_poll">Poll</string>
+
     <!--Attachment View-->
     <string name="stream_ui_message_list_attachment_load_failed">The load failed due to an unknown error.</string>
     <string name="stream_ui_message_list_attachment_invalid_url">The load failed due to the invalid url.</string>
@@ -40,6 +46,7 @@
     <string name="stream_ui_message_list_attachment_display_error">Error. File can\'t be displayed</string>
     <string name="stream_ui_message_list_video_display_error">Error. Video can\'t be displayed</string>
     <string name="stream_ui_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
+    <string name="stream_ui_message_list_footnote_edited_now">just now</string>
 
     <!--Moderation Dialog-->
     <string name="stream_ui_moderation_dialog_title">Failed to send message</string>

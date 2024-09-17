@@ -35,6 +35,7 @@ import io.getstream.chat.android.models.ConnectionState
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Filters
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.TypingEvent
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
 import io.getstream.chat.android.state.event.handler.chat.factory.ChatEventHandlerFactory
@@ -179,7 +180,7 @@ public class ChannelListViewModel(
      * @return True if the channel is muted for the current user.
      */
     public fun isChannelMuted(cid: String): Boolean {
-        return channelMutes.value.any { cid == it.channel.cid }
+        return channelMutes.value.any { cid == it.channel?.cid }
     }
 
     /**
@@ -361,46 +362,49 @@ public class ChannelListViewModel(
             messageLimit = messageLimit,
             memberLimit = memberLimit,
         )
-
         logger.d { "[observeQueryChannels] request: $queryChannelsRequest" }
         queryChannelsState = chatClient.queryChannelsAsState(
             request = queryChannelsRequest,
             chatEventHandlerFactory = chatEventHandlerFactory,
             coroutineScope = chListScope,
         )
-
         queryChannelsState.filterNotNull().collectLatest { queryChannelsState ->
-            channelMutes.combine(queryChannelsState.channelsStateData, ::Pair)
-                .map { (channelMutes, state) ->
-                    when (state) {
-                        ChannelsStateData.NoQueryActive,
-                        ChannelsStateData.Loading,
-                        -> channelsState.copy(
-                            isLoading = true,
+            combine(
+                queryChannelsState.channelsStateData,
+                channelMutes,
+                chatClient.globalState.typingChannels,
+            ) { state, channelMutes, typingChannels ->
+                when (state) {
+                    ChannelsStateData.NoQueryActive,
+                    ChannelsStateData.Loading,
+                    -> channelsState.copy(
+                        isLoading = true,
+                        searchQuery = searchQuery.value,
+                    ).also { logger.d { "[observeQueryChannels] state: Loading" } }
+                    ChannelsStateData.OfflineNoResults -> {
+                        logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
+                        channelsState.copy(
+                            isLoading = false,
+                            channelItems = emptyList(),
                             searchQuery = searchQuery.value,
-                        ).also {
-                            logger.d { "[observeQueryChannels] state: Loading" }
-                        }
-                        ChannelsStateData.OfflineNoResults -> {
-                            logger.v { "[observeQueryChannels] state: OfflineNoResults(channels are empty)" }
-                            channelsState.copy(
-                                isLoading = false,
-                                channelItems = emptyList(),
-                                searchQuery = searchQuery.value,
-                            )
-                        }
-                        is ChannelsStateData.Result -> {
-                            logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
-                            channelsState.copy(
-                                isLoading = false,
-                                channelItems = createChannelItems(state.channels, channelMutes),
-                                isLoadingMore = false,
-                                endOfChannels = queryChannelsState.endOfChannels.value,
-                                searchQuery = searchQuery.value,
-                            )
-                        }
+                        )
                     }
-                }.collectLatest { newState -> channelsState = newState }
+                    is ChannelsStateData.Result -> {
+                        logger.v { "[observeQueryChannels] state: Result(channels.size: ${state.channels.size})" }
+                        channelsState.copy(
+                            isLoading = false,
+                            channelItems = createChannelItems(
+                                channels = state.channels,
+                                channelMutes = channelMutes,
+                                typingEvents = typingChannels,
+                            ),
+                            isLoadingMore = false,
+                            endOfChannels = queryChannelsState.endOfChannels.value,
+                            searchQuery = searchQuery.value,
+                        )
+                    }
+                }
+            }.collectLatest { newState -> channelsState = newState }
         }
     }.onFailure {
         when (it is CancellationException) {
@@ -634,9 +638,16 @@ public class ChannelListViewModel(
     private fun createChannelItems(
         channels: List<Channel>,
         channelMutes: List<ChannelMute>,
+        typingEvents: Map<String, TypingEvent>,
     ): List<ItemState.ChannelItemState> {
-        val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel.cid }.toSet()
-        return channels.map { ItemState.ChannelItemState(it, it.cid in mutedChannelIds) }
+        val mutedChannelIds = channelMutes.map { channelMute -> channelMute.channel?.cid }.toSet()
+        return channels.map {
+            ItemState.ChannelItemState(
+                channel = it,
+                isMuted = it.cid in mutedChannelIds,
+                typingUsers = typingEvents[it.cid]?.users ?: emptyList(),
+            )
+        }
     }
 
     internal companion object {

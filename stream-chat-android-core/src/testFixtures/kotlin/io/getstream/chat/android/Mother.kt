@@ -154,7 +154,7 @@ public fun randomMessage(
     createdAt: Date? = randomDate(),
     updatedAt: Date? = randomDate(),
     messageTextUpdatedAt: Date? = randomDate(),
-    deletedAt: Date? = randomDate(),
+    deletedAt: Date? = randomDateOrNull(),
     updatedLocallyAt: Date? = randomDate(),
     createdLocallyAt: Date? = randomDate(),
     user: User = randomUser(),
@@ -416,6 +416,8 @@ public fun randomMember(
     inviteAcceptedAt: Date? = randomDate(),
     inviteRejectedAt: Date? = randomDate(),
     shadowBanned: Boolean = randomBoolean(),
+    banned: Boolean = false,
+    banExpires: Date? = null,
 ): Member = Member(
     user = user,
     createdAt = createdAt,
@@ -424,6 +426,8 @@ public fun randomMember(
     inviteAcceptedAt = inviteAcceptedAt,
     inviteRejectedAt = inviteRejectedAt,
     shadowBanned = shadowBanned,
+    banned = banned,
+    banExpires = banExpires,
 )
 
 public fun randomChannelInfo(

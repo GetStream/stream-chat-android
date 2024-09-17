@@ -21,6 +21,7 @@ import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isRegular
 import io.getstream.chat.android.client.utils.message.isSystem
 import io.getstream.chat.android.models.Channel
@@ -41,7 +42,7 @@ public fun Channel.getPreviewMessage(currentUser: User?): Message? =
         messages
     }.asSequence()
         .filter { it.createdAt != null || it.createdLocallyAt != null }
-        .filter { it.deletedAt == null }
+        .filterNot { it.isDeleted() }
         .filter { !it.silent }
         .filter { it.user.id == currentUser?.id || !it.shadowed }
         .filter { it.isRegular() || it.isSystem() }

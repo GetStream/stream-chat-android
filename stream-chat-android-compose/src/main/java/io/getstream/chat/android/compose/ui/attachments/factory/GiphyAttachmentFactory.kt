@@ -48,23 +48,21 @@ import io.getstream.chat.android.ui.common.utils.GiphySizingMode
  *
  * @return Returns an instance of [AttachmentFactory] that is used to handle Giphys.
  */
-@Suppress("FunctionName")
-public fun GiphyAttachmentFactory(
+public class GiphyAttachmentFactory(
     giphyInfoType: GiphyInfoType = GiphyInfoType.FIXED_HEIGHT_DOWNSAMPLED,
     giphySizingMode: GiphySizingMode = GiphySizingMode.ADAPTIVE,
     contentScale: ContentScale = ContentScale.Crop,
     onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
-): AttachmentFactory =
-    AttachmentFactory(
-        canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
-        content = @Composable { modifier, state ->
-            GiphyAttachmentContent(
-                modifier = modifier.wrapContentSize(),
-                attachmentState = state,
-                giphyInfoType = giphyInfoType,
-                giphySizingMode = giphySizingMode,
-                contentScale = contentScale,
-                onItemClick = onContentItemClick,
-            )
-        },
-    )
+) : AttachmentFactory(
+    canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
+    content = @Composable { modifier, state ->
+        GiphyAttachmentContent(
+            modifier = modifier.wrapContentSize(),
+            attachmentState = state,
+            giphyInfoType = giphyInfoType,
+            giphySizingMode = giphySizingMode,
+            contentScale = contentScale,
+            onItemClick = onContentItemClick,
+        )
+    },
+)

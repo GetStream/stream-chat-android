@@ -77,6 +77,9 @@ private val LocalShapes = compositionLocalOf<StreamShapes> {
 private val LocalAttachmentFactories = compositionLocalOf<List<AttachmentFactory>> {
     error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalUseDefaultSystemMediaPicker = compositionLocalOf<Boolean> {
+    error("No attachment factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalAttachmentPreviewHandlers = compositionLocalOf<List<AttachmentPreviewHandler>> {
     error("No attachment preview handlers provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
@@ -232,6 +235,7 @@ public fun ChatTheme(
     isInDarkMode: Boolean = isSystemInDarkTheme(),
     autoTranslationEnabled: Boolean = false,
     isComposerLinkPreviewEnabled: Boolean = false,
+    useDefaultSystemMediaPicker: Boolean = false,
     colors: StreamColors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors(),
     dimens: StreamDimens = StreamDimens.defaultDimens(),
     typography: StreamTypography = StreamTypography.defaultTypography(),
@@ -259,7 +263,12 @@ public fun ChatTheme(
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
-    attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> = AttachmentsPickerTabFactories.defaultFactories(),
+    attachmentsPickerTabFactories: List<AttachmentsPickerTabFactory> =
+        if (useDefaultSystemMediaPicker) {
+            AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions()
+        } else {
+            AttachmentsPickerTabFactories.defaultFactories()
+        },
     videoThumbnailsEnabled: Boolean = true,
     streamCdnImageResizing: StreamCdnImageResizing = StreamCdnImageResizing.defaultStreamCdnImageResizing(),
     readCountEnabled: Boolean = true,
@@ -313,6 +322,7 @@ public fun ChatTheme(
         LocalTypography provides typography,
         LocalShapes provides shapes,
         LocalRippleTheme provides rippleTheme,
+        LocalUseDefaultSystemMediaPicker provides useDefaultSystemMediaPicker,
         LocalAttachmentFactories provides attachmentFactories,
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
@@ -392,6 +402,11 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalShapes.current
+
+    public val useDefaultSystemMediaPicker: Boolean
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalUseDefaultSystemMediaPicker.current
 
     /**
      * Retrieves the current list of [AttachmentFactory] at the call site's position in the hierarchy.

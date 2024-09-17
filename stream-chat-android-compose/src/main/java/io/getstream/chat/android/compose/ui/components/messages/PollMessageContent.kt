@@ -58,6 +58,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
+import io.getstream.chat.android.models.VotingVisibility
 import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
@@ -194,7 +195,7 @@ private fun PollMessageContent(
         item {
             Text(
                 modifier = Modifier.padding(bottom = 8.dp),
-                text = poll.name,
+                text = poll.description,
                 color = ChatTheme.colors.textLowEmphasis,
                 fontSize = 12.sp,
             )
@@ -212,7 +213,7 @@ private fun PollMessageContent(
                 option = option,
                 voteCount = voteCount,
                 users = poll.votes.filter { it.optionId == option.id }.mapNotNull { it.user },
-                totalVoteCount = poll.votes.size,
+                totalVoteCount = poll.voteCountsByOption.values.sum(),
                 checkedCount = poll.ownVotes.count { it.optionId == option.id },
                 checked = isVotedByMine,
                 onCastVote = { onCastVote.invoke(option) },
@@ -301,7 +302,7 @@ private fun PollOptionItem(
             )
 
             Row {
-                if (voteCount > 0) {
+                if (voteCount > 0 && poll.votingVisibility != VotingVisibility.ANONYMOUS) {
                     UserAvatarRow(
                         modifier = Modifier.padding(end = 2.dp),
                         users = users,

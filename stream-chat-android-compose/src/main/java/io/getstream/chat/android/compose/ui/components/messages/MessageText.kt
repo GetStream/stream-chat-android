@@ -58,6 +58,7 @@ import io.getstream.chat.android.ui.common.utils.extensions.isMine
  * @param currentUser The currently logged in user.
  * @param modifier Modifier for styling.
  * @param onLongItemClick Handler used for long pressing on the message text.
+ * @param onLinkClick Handler used for clicking on a link in the message.
  */
 @Composable
 public fun MessageText(
@@ -65,6 +66,7 @@ public fun MessageText(
     currentUser: User?,
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
+    onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     val context = LocalContext.current
 
@@ -101,12 +103,14 @@ public fun MessageText(
             }?.item
 
             if (!targetUrl.isNullOrEmpty()) {
-                context.startActivity(
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(targetUrl),
-                    ),
-                )
+                onLinkClick?.invoke(message, targetUrl) ?: run {
+                    context.startActivity(
+                        Intent(
+                            Intent.ACTION_VIEW,
+                            Uri.parse(targetUrl),
+                        ),
+                    )
+                }
             }
         }
     } else {

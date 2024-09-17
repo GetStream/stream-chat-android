@@ -36,6 +36,8 @@ import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
 import io.getstream.chat.android.compose.ui.components.channels.MessageReadStatusIcon
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.core.utils.date.truncateFuture
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 
 /**
@@ -69,7 +71,7 @@ public fun MessageFooter(
     Column(horizontalAlignment = alignment.contentAlignment) {
         MessageTranslatedLabel(messageItem)
         if (messageItem.showMessageFooter) {
-            var showEditLabel by remember { mutableStateOf(message.messageTextUpdatedAt != null) }
+            val showEditLabel = message.messageTextUpdatedAt != null
             var showEditInfo by remember { mutableStateOf(false) }
             Row(
                 modifier = Modifier
@@ -109,7 +111,7 @@ public fun MessageFooter(
                 if (date != null) {
                     Timestamp(date = date, formatType = DateFormatType.TIME)
                 }
-                if (showEditLabel) {
+                if (showEditLabel && !showEditInfo) {
                     Text(
                         modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                         text = "·",
@@ -117,11 +119,7 @@ public fun MessageFooter(
                         color = ChatTheme.colors.textLowEmphasis,
                     )
                     Text(
-                        modifier = Modifier
-                            .clickable {
-                                showEditLabel = !showEditLabel
-                                showEditInfo = !showEditInfo
-                            },
+                        modifier = Modifier.clickable { showEditInfo = !showEditInfo },
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
                         style = ChatTheme.typography.footnote,
                         color = ChatTheme.colors.textLowEmphasis,
@@ -132,15 +130,12 @@ public fun MessageFooter(
                 Row(
                     modifier = Modifier
                         .padding(bottom = 4.dp)
-                        .clickable {
-                            showEditLabel = !showEditLabel
-                            showEditInfo = !showEditInfo
-                        },
+                        .clickable { showEditInfo = !showEditInfo },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(end = 8.dp)
+                            .padding(end = 4.dp)
                             .weight(1f, fill = false),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
                         style = ChatTheme.typography.footnote,
@@ -148,9 +143,29 @@ public fun MessageFooter(
                         maxLines = 1,
                         color = ChatTheme.colors.textLowEmphasis,
                     )
-                    Timestamp(date = message.messageTextUpdatedAt, formatType = DateFormatType.RELATIVE)
+                    MessageEditedTimestamp(message = message)
                 }
             }
         }
     }
+}
+
+/**
+ * Composable function to display the timestamp for when a message was last edited.
+ *
+ * This function adjusts the `message.messageTextUpdatedAt` time to ensure it does not exceed the current system time.
+ * If the `messageTextUpdatedAt` time is slightly in the future, it resets the time to the current system time.
+ *
+ * @param message The message object containing the `messageTextUpdatedAt` timestamp.
+ * @param modifier Modifier for styling.
+ * @param formatType The type of formatting to provide. By default, it's [DateFormatType.RELATIVE].
+ */
+@Composable
+internal fun MessageEditedTimestamp(
+    message: Message,
+    modifier: Modifier = Modifier,
+    formatType: DateFormatType = DateFormatType.RELATIVE,
+) {
+    val editedAt = message.messageTextUpdatedAt?.truncateFuture()
+    Timestamp(date = editedAt, modifier = modifier, formatType = formatType)
 }
