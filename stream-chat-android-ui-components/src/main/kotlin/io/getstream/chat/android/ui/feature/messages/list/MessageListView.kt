@@ -602,12 +602,11 @@ public class MessageListView : ConstraintLayout {
     }
     private val defaultOnPollCloseClickListener = OnPollCloseClickListener { false }
     private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { poll ->
-        val fm = context.getFragmentManager() ?: return@OnViewPollResultClickListener false
-        fm.let { fragmentManager ->
+        context.getFragmentManager()?.let { fragmentManager ->
             PollResultsDialogFragment.newInstance(poll)
                 .show(fragmentManager, PollResultsDialogFragment.TAG)
-        }
-        true
+            true
+        } ?: false
     }
 
     private val listenerContainer = MessageListListenerContainerImpl(
