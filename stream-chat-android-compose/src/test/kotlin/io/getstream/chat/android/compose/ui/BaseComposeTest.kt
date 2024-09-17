@@ -48,7 +48,7 @@ internal abstract class BaseComposeTest {
                     isInDarkMode = isInDarkMode,
                     attachmentFactories = StreamAttachmentFactories.defaultFactories(
                         chatClient = getChatClient(),
-                    )
+                    ),
                 ) {
                     Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                         composable.invoke()
@@ -69,7 +69,7 @@ internal abstract class BaseComposeTest {
                 Column {
                     ChatTheme(
                         isInDarkMode = true,
-                        attachmentFactories = attachmentFactories
+                        attachmentFactories = attachmentFactories,
                     ) {
                         Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                             composable.invoke()
@@ -77,7 +77,7 @@ internal abstract class BaseComposeTest {
                     }
                     ChatTheme(
                         isInDarkMode = false,
-                        attachmentFactories = attachmentFactories
+                        attachmentFactories = attachmentFactories,
                     ) {
                         Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                             composable.invoke()
