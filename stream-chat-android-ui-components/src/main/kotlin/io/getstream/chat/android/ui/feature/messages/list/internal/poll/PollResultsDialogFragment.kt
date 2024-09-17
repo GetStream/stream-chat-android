@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.feature.messages.list.internal
+package io.getstream.chat.android.ui.feature.messages.list.internal.poll
 
 import android.os.Bundle
 import android.view.LayoutInflater
