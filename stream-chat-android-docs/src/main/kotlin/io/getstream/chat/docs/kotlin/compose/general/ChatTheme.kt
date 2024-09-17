@@ -203,7 +203,9 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             }
         }
         return MessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled, typography, colors
+            autoTranslationEnabled = autoTranslationEnabled,
+            typography = typography,
+            colors = colors,
         ) { message, currentUser ->
             addStyle(
                 SpanStyle(
@@ -240,9 +242,9 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
     ): MessageTextFormatter {
         return MessageTextFormatter.composite(
             MessageTextFormatter.defaultFormatter(
-                autoTranslationEnabled,
-                typography,
-                colors
+                autoTranslationEnabled = autoTranslationEnabled,
+                typography = typography,
+                colors = colors
             ),
             blueLettersMessageTextFormatter()
         )
@@ -271,9 +273,10 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
 private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCustomization() {
 
     override val content: @Composable () -> Unit get() = {
-        val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+        val isInDarkMode: Boolean = isSystemInDarkTheme()
+        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
-        val defaultQuotedTextFormatter = buildQuotedMessageTextFormatter(typography, colors)
+        val defaultQuotedTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
         ChatTheme(
             colors = colors,
             typography = typography,
@@ -292,11 +295,12 @@ private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCust
      */
     @Composable
     private fun buildQuotedMessageTextFormatter(
+        isInDarkMode: Boolean,
         typography: StreamTypography,
         colors: StreamColors,
     ): QuotedMessageTextFormatter {
         return QuotedMessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled, LocalContext.current, typography, colors
+            autoTranslationEnabled, LocalContext.current, isInDarkMode, typography, colors
         ) { message, replyMessage, currentUser ->
             addStyle(
                 SpanStyle(
@@ -311,12 +315,13 @@ private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCust
 
 private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCustomization() {
     override val content: @Composable () -> Unit get() = {
-        val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+        val isInDarkMode = isSystemInDarkTheme()
+        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
         ChatTheme(
             colors = colors,
             typography = typography,
-            quotedMessageTextFormatter = buildQuotedMessageTextFormatter(typography, colors)
+            quotedMessageTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
         ) {
             MessagesScreen(
                 viewModelFactory = viewModelFactory,
@@ -328,6 +333,7 @@ private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCu
 
     @Composable
     private fun buildQuotedMessageTextFormatter(
+        isInDarkMode: Boolean,
         typography: StreamTypography,
         colors: StreamColors,
     ): QuotedMessageTextFormatter {
@@ -335,6 +341,7 @@ private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCu
             QuotedMessageTextFormatter.defaultFormatter(
                 autoTranslationEnabled,
                 LocalContext.current,
+                isInDarkMode,
                 typography,
                 colors
             ),

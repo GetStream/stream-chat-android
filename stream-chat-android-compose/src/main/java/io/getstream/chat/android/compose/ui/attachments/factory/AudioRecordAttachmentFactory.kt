@@ -32,6 +32,7 @@ import io.getstream.log.StreamLog
  */
 public class AudioRecordAttachmentFactory(
     private val viewModelFactory: AudioPlayerViewModelFactory,
+    private val getCurrentUserId: () -> String?,
 ) : AttachmentFactory(
     type = Type.BuiltIn.AUDIO_RECORD,
     canHandle = { attachments ->
@@ -52,6 +53,7 @@ public class AudioRecordAttachmentFactory(
                 .width(ChatTheme.dimens.attachmentsContentUnsupportedWidth),
             attachmentState = attachmentState,
             viewModelFactory = viewModelFactory,
+            getCurrentUserId = getCurrentUserId,
         )
     },
 ) {

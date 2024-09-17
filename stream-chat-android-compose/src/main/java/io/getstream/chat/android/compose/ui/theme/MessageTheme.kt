@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 
 /**
  * Represents message theming.
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
  * @param quotedTextStyle The text style for the quoted messages contained in a reply.
  * @param quotedBackgroundColor The background color for the quoted messages.
  * @param deletedBackgroundColor The background color for the deleted messages.
+ * @param audioRecording The theming for the audio recording attachment.
  */
 @Immutable
 public data class MessageTheme(
@@ -38,6 +40,7 @@ public data class MessageTheme(
     val quotedTextStyle: TextStyle,
     val quotedBackgroundColor: Color,
     val deletedBackgroundColor: Color,
+    val audioRecording: AudioRecordingAttachmentTheme,
 ) {
     public companion object {
 
@@ -48,12 +51,18 @@ public data class MessageTheme(
          */
         @Composable
         public fun defaultOwnTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): MessageTheme = defaultTheme(own = true, typography = typography, colors = colors)
+        ): MessageTheme = defaultTheme(
+            own = true,
+            isInDarkMode = isInDarkMode,
+            typography = typography,
+            colors = colors,
+        )
 
         /**
          * Builds the default message theme for other users' messages.
@@ -62,17 +71,24 @@ public data class MessageTheme(
          */
         @Composable
         public fun defaultOtherTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-        ): MessageTheme = defaultTheme(own = false, typography = typography, colors = colors)
+        ): MessageTheme = defaultTheme(
+            own = false,
+            isInDarkMode = isInDarkMode,
+            typography = typography,
+            colors = colors,
+        )
 
         @Composable
         @Suppress("DEPRECATION_ERROR")
         private fun defaultTheme(
             own: Boolean,
+            isInDarkMode: Boolean,
             typography: StreamTypography,
             colors: StreamColors,
         ): MessageTheme {
@@ -98,6 +114,12 @@ public data class MessageTheme(
                     else -> colors.otherMessageQuotedBackground
                 },
                 deletedBackgroundColor = colors.deletedMessagesBackground,
+                audioRecording = AudioRecordingAttachmentTheme.defaultTheme(
+                    own = own,
+                    isInDarkMode = isInDarkMode,
+                    typography = typography,
+                    colors = colors,
+                ),
             )
         }
     }

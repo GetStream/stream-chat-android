@@ -118,6 +118,7 @@ public object StreamAttachmentFactories {
                 hasRecordingUri = { it.upload != null || it.assetUrl != null },
                 getRecordingUri = { it.upload?.toUri()?.toString() ?: it.assetUrl },
             ),
+            getCurrentUserId = { chatClient.getCurrentOrStoredUserId() },
         ),
         LinkAttachmentFactory(
             linkDescriptionMaxLines = linkDescriptionMaxLines,
