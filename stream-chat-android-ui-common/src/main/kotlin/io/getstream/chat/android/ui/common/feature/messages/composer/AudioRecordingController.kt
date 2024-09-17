@@ -201,6 +201,9 @@ internal class AudioRecordingController(
         }
         logger.i { "[cancelRecording] state: $state" }
         mediaRecorder.release()
+        if (state is RecordingState.Overview && state.isPlaying) {
+            audioPlayer.resetAudio(state.playingId)
+        }
         clearData()
         this.recordingState.value = RecordingState.Idle
     }
