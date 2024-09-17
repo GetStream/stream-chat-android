@@ -82,7 +82,7 @@ public data class AudioRecordingAttachmentTheme(
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
-            }
+            },
         ): AudioRecordingAttachmentTheme {
             return defaultTheme(own = true, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
         }
@@ -103,7 +103,7 @@ public data class AudioRecordingAttachmentTheme(
             colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
-            }
+            },
         ): AudioRecordingAttachmentTheme {
             return defaultTheme(own = false, isInDarkMode = isInDarkMode, typography = typography, colors = colors)
         }
