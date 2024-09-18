@@ -33,6 +33,7 @@ import io.getstream.chat.android.ui.databinding.StreamUiItemPollAnswerBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollCloseBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollHeaderBinding
 import io.getstream.chat.android.ui.databinding.StreamUiItemPollResultsBinding
+import io.getstream.chat.android.ui.databinding.StreamUiItemPollShowAllOptionsBinding
 import io.getstream.chat.android.ui.utils.extensions.createStreamThemeWrapper
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import io.getstream.log.taggedLogger
@@ -47,6 +48,7 @@ internal class PollView : RecyclerView {
     var onOptionClick: ((Option) -> Unit) = { _ -> }
     var onClosePollClick: ((Poll) -> Unit) = { _ -> }
     var onViewPollResultsClick: ((Poll) -> Unit) = { _ -> }
+    var onShowAllPollOptionClick: (() -> Unit) = { }
 
     constructor(context: Context) : this(context, null, 0)
 
@@ -76,6 +78,7 @@ internal class PollView : RecyclerView {
                 onOptionClick = { option -> onOptionClick(option) },
                 onClosePollClick = { onClosePollClick(poll) },
                 onViewPollResultsClick = { onViewPollResultsClick(poll) },
+                onShowAllOptionsClick = { onShowAllPollOptionClick() },
             )
             adapter = pollAdapter
         }
@@ -83,25 +86,35 @@ internal class PollView : RecyclerView {
         val pollItems = mutableListOf<PollItem>()
         pollItems.add(PollItem.Header(poll.name, poll.description))
         pollItems.addAll(
-            poll.options.map { option ->
-                PollItem.Answer(
-                    option = option,
-                    votes = poll.getVotes(option)
-                        .takeUnless { poll.votingVisibility == VotingVisibility.ANONYMOUS }
-                        ?: emptyList(),
-                    voteCount = poll.voteCountsByOption[option.id] ?: 0,
-                    isVotedByUser = poll.ownVotes.any { it.optionId == option.id },
-                    totalVotes = poll.voteCountsByOption.values.sum(),
-                    closed = poll.closed,
-                    isWinner = poll.voteCountsByOption[option.id] == poll.voteCountsByOption.values.maxOrNull(),
-                )
-            },
+            poll.options
+                .take(MAX_OPTIONS)
+                .map { option ->
+                    PollItem.Answer(
+                        option = option,
+                        votes = poll.getVotes(option)
+                            .takeUnless { poll.votingVisibility == VotingVisibility.ANONYMOUS }
+                            ?: emptyList(),
+                        voteCount = poll.voteCountsByOption[option.id] ?: 0,
+                        isVotedByUser = poll.ownVotes.any { it.optionId == option.id },
+                        totalVotes = poll.voteCountsByOption.values.sum(),
+                        closed = poll.closed,
+                        isWinner = poll.voteCountsByOption[option.id] == poll.voteCountsByOption.values.maxOrNull(),
+                    )
+                },
         )
+        PollItem.ShowAllOptions
+            .takeIf { poll.options.size > MAX_OPTIONS }
+            ?.takeUnless { poll.closed }
+            ?.let { pollItems.add(it) }
         PollItem.ViewResults.takeUnless { poll.ownVotes.isEmpty() }
         PollItem.Close.takeIf { isMine && !poll.closed }
             ?.let { pollItems.add(it) }
 
         pollAdapter.submitList(pollItems)
+    }
+
+    private companion object {
+        private const val MAX_OPTIONS = 10
     }
 }
 
@@ -109,6 +122,7 @@ private class PollAdapter(
     private val onOptionClick: (Option) -> Unit,
     private val onClosePollClick: () -> Unit,
     private val onViewPollResultsClick: () -> Unit,
+    private val onShowAllOptionsClick: () -> Unit,
 ) : ListAdapter<PollItem, PollItemViewHolder<out PollItem>>(PollItemDiffCallback) {
 
     companion object {
@@ -116,6 +130,7 @@ private class PollAdapter(
         private const val VIEW_TYPE_ANSWER = 2
         private const val VIEW_TYPE_CLOSE = 3
         private const val VIEW_TYPE_RESULTS = 4
+        private const val VIEW_TYPE_SHOW_ALL_OPTIONS = 5
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PollItemViewHolder<out PollItem> {
@@ -135,6 +150,10 @@ private class PollAdapter(
                 StreamUiItemPollResultsBinding.inflate(parent.streamThemeInflater, parent, false),
                 onViewPollResultsClick,
             )
+            VIEW_TYPE_SHOW_ALL_OPTIONS -> ShowAllOptionsViewHolder(
+                StreamUiItemPollShowAllOptionsBinding.inflate(parent.streamThemeInflater, parent, false),
+                onShowAllOptionsClick,
+            )
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -144,6 +163,7 @@ private class PollAdapter(
         is PollItem.Answer -> VIEW_TYPE_ANSWER
         PollItem.Close -> VIEW_TYPE_CLOSE
         PollItem.ViewResults -> VIEW_TYPE_RESULTS
+        PollItem.ShowAllOptions -> VIEW_TYPE_SHOW_ALL_OPTIONS
     }
 
     override fun onBindViewHolder(holder: PollItemViewHolder<out PollItem>, position: Int) {
@@ -179,6 +199,7 @@ private sealed class PollItem {
     ) : PollItem()
 
     data object Close : PollItem()
+    data object ShowAllOptions : PollItem()
     data object ViewResults : PollItem()
 }
 
@@ -258,6 +279,15 @@ private class CloseViewHolder(
 ) : PollItemViewHolder<PollItem.Close>(binding) {
     override fun bind(pollItem: PollItem.Close) {
         binding.root.setOnClickListener { onClosePoll() }
+    }
+}
+
+private class ShowAllOptionsViewHolder(
+    private val binding: StreamUiItemPollShowAllOptionsBinding,
+    private val onShowAllOptions: () -> Unit,
+) : PollItemViewHolder<PollItem.ShowAllOptions>(binding) {
+    override fun bind(pollItem: PollItem.ShowAllOptions) {
+        binding.root.setOnClickListener { onShowAllOptions() }
     }
 }
 

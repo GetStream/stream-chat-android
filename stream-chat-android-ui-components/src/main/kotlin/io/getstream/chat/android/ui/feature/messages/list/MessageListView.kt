@@ -106,6 +106,7 @@ import io.getstream.chat.android.ui.feature.messages.list.background.MessageBack
 import io.getstream.chat.android.ui.feature.messages.list.background.MessageBackgroundFactoryImpl
 import io.getstream.chat.android.ui.feature.messages.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.feature.messages.list.internal.MessageListScrollHelper
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AllPollOptionsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionsDialogFragment
@@ -591,6 +592,13 @@ public class MessageListView : ConstraintLayout {
         false
     }
     private val defaultOnPollOptionClickListener = OnPollOptionClickListener { _, _, _ -> false }
+    private val defaultOnShowAllPollOptionClickListener = OnShowAllPollOptionClickListener { message, _ ->
+        context.getFragmentManager()?.let { fragmentManager ->
+            AllPollOptionsDialogFragment.newInstance(message)
+                .show(fragmentManager, AllPollOptionsDialogFragment.TAG)
+            true
+        } ?: false
+    }
     private val defaultOnPollCloseClickListener = OnPollCloseClickListener { false }
     private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { false }
 
@@ -606,6 +614,7 @@ public class MessageListView : ConstraintLayout {
         giphySendListener = defaultGiphySendListener,
         linkClickListener = defaultLinkClickListener,
         onPollOptionClickListener = defaultOnPollOptionClickListener,
+        onShowAllPollOptionClickListener = defaultOnShowAllPollOptionClickListener,
         onPollCloseClickListener = defaultOnPollCloseClickListener,
         onViewPollResultClickListener = defaultOnViewPollResultClickListener,
     )
@@ -2188,6 +2197,10 @@ public class MessageListView : ConstraintLayout {
 
     public fun interface OnPollOptionClickListener {
         public fun onPollOptionClick(message: Message, poll: Poll, option: Option): Boolean
+    }
+
+    public fun interface OnShowAllPollOptionClickListener {
+        public fun onShowAllPollOptionClick(message: Message, poll: Poll): Boolean
     }
 
     public fun interface OnPollCloseClickListener {
