@@ -22,7 +22,6 @@ import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitDragOrCancellation
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -75,6 +74,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingFloatingIconStyle
@@ -93,15 +93,20 @@ private const val HOLD_TO_RECORD_THRESHOLD = 1000L
 private const val HOLD_TO_RECORD_DISMISS_TIMEOUT = 1000L
 private const val PERMISSION_RATIONALE_DISMISS_TIMEOUT = 1000L
 
+/**
+ * Default implementation of the audio record button.
+ *
+ * @param state The current recording state.
+ * @param recordingActions The actions to perform on the recording.
+ * @param holdToRecordThreshold The threshold to hold to record.
+ * @param holdToRecordDismissTimeout The timeout to dismiss the hold to record popup.
+ * @param permissionRationaleDismissTimeout The timeout to dismiss the permission rationale popup.
+ */
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
 internal fun DefaultAudioRecordButton(
     state: RecordingState,
-    onCancelRecording: () -> Unit,
-    onSendRecording: () -> Unit,
-    onStartRecording: (Offset) -> Unit,
-    onHoldRecording: (Offset) -> Unit,
-    onLockRecording: () -> Unit,
+    recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     holdToRecordThreshold: Long = HOLD_TO_RECORD_THRESHOLD,
     holdToRecordDismissTimeout: Long = HOLD_TO_RECORD_DISMISS_TIMEOUT,
     permissionRationaleDismissTimeout: Long = PERMISSION_RATIONALE_DISMISS_TIMEOUT,
@@ -189,7 +194,7 @@ internal fun DefaultAudioRecordButton(
                         val holdStartTime = SystemClock.elapsedRealtime()
                         val startOffset = downOffset.minus(Offset(micSize.width.toFloat(), micSize.height.toFloat()))
                         StreamLog.w("AudioRecordButton") { "[onDragStart] state: $recordingState" }
-                        onStartRecording(Offset.Zero)
+                        recordingActions.onStartRecording(Offset.Zero)
 
                         // Await drag events
                         while (true) {
@@ -198,10 +203,10 @@ internal fun DefaultAudioRecordButton(
                                 val holdElapsedTime = SystemClock.elapsedRealtime() - holdStartTime
                                 if (holdElapsedTime >= holdToRecordThreshold && recordingState is RecordingState.Hold) {
                                     StreamLog.i("AudioRecordButton") { "[onSend] holdElapsedTime: $holdElapsedTime, state: $recordingState" }
-                                    onSendRecording()
+                                    recordingActions.onSendRecording()
                                 } else {
                                     StreamLog.e("AudioRecordButton") { "[onCancel] holdElapsedTime: $holdElapsedTime, state: $recordingState" }
-                                    onCancelRecording()
+                                    recordingActions.onCancelRecording()
                                     showDurationWarning = holdElapsedTime < holdToRecordThreshold
                                 }
                                 break
@@ -209,15 +214,15 @@ internal fun DefaultAudioRecordButton(
                             dragEvent.consume()
                             StreamLog.d("AudioRecordButton") { "[onDrag] no args" }
                             val diffOffset = dragEvent.position.minus(startOffset)
-                            onHoldRecording(diffOffset)
+                            recordingActions.onHoldRecording(diffOffset)
 
                             if (diffOffset.x <= -cancelThresholdX) {
                                 StreamLog.e("AudioRecordButton") { "[onCancel] diffOffset: $diffOffset" }
-                                onCancelRecording()
+                                recordingActions.onCancelRecording()
                                 break
                             } else if (diffOffset.y <= -lockThresholdY) {
                                 StreamLog.i("AudioRecordButton") { "[onLock] diffOffset: $diffOffset" }
-                                onLockRecording()
+                                recordingActions.onLockRecording()
                                 break
                             }
                         }
@@ -240,6 +245,9 @@ internal fun DefaultAudioRecordButton(
     }
 }
 
+/**
+ * Default implementation of the hold to record popup.
+ */
 @Composable
 internal fun DefaultHoldToRecordPopup(
     offset: Int,
@@ -337,17 +345,13 @@ internal fun DefaultAudioRecordPermissionRationale(
     }
 }
 
+/**
+ * Default implementation of the audio recording content.
+ */
 @Composable
 internal fun DefaultMessageComposerRecordingContent(
     messageComposerState: MessageComposerState,
-    onLockRecording: () -> Unit = {},
-    onCancelRecording: () -> Unit = {},
-    onDeleteRecording: () -> Unit = {},
-    onStopRecording: () -> Unit = {},
-    onCompleteRecording: (Boolean) -> Unit = {},
-    onToggleRecordingPlayback: () -> Unit = {},
-    onSliderDragStart: (Float) -> Unit = {},
-    onSliderDragStop: (Float) -> Unit = {},
+    recordingActions: AudioRecordingActions = AudioRecordingActions.None,
 ) {
     val recordingState = messageComposerState.recording
 
@@ -416,14 +420,7 @@ internal fun DefaultMessageComposerRecordingContent(
         holdControlsOffset = holdControlsOffset,
         recordingControlsVisible = recordingControlsVisible,
         recordingStopControlVisible = recordingStopControlVisible,
-        onLockRecording = onLockRecording,
-        onCancelRecording = onCancelRecording,
-        onDeleteRecording = onDeleteRecording,
-        onStopRecording = onStopRecording,
-        onCompleteRecording = onCompleteRecording,
-        onToggleRecordingPlayback = onToggleRecordingPlayback,
-        onSliderDragStart = onSliderDragStart,
-        onSliderDragStop = onSliderDragStop,
+        recordingActions = recordingActions,
     )
 }
 
@@ -442,14 +439,7 @@ private fun DefaultMessageComposerRecordingContent(
     holdControlsOffset: IntOffset = IntOffset.Zero,
     recordingControlsVisible: Boolean = true,
     recordingStopControlVisible: Boolean = true,
-    onLockRecording: () -> Unit = {},
-    onCancelRecording: () -> Unit = {},
-    onDeleteRecording: () -> Unit = {},
-    onStopRecording: () -> Unit = {},
-    onCompleteRecording: (Boolean) -> Unit = {},
-    onToggleRecordingPlayback: () -> Unit = {},
-    onSliderDragStart: (Float) -> Unit = {},
-    onSliderDragStop: (Float) -> Unit = {},
+    recordingActions: AudioRecordingActions = AudioRecordingActions.None,
 ) {
     var contentSize by remember { mutableStateOf(IntSize.Zero) }
     val density = LocalDensity.current
@@ -476,17 +466,17 @@ private fun DefaultMessageComposerRecordingContent(
             slideToCancelVisible = slideToCancelVisible,
             slideToCancelProgress = slideToCancelProgress,
             holdControlsOffset = holdControlsOffset,
-            onToggleRecordingPlayback = onToggleRecordingPlayback,
-            onSliderDragStart = onSliderDragStart,
-            onSliderDragStop = onSliderDragStop,
+            onToggleRecordingPlayback = recordingActions.onToggleRecordingPlayback,
+            onSliderDragStart = recordingActions.onRecordingSliderDragStart,
+            onSliderDragStop = recordingActions.onRecordingSliderDragStop,
         )
 
         if (recordingControlsVisible) {
             RecordingControlButtons(
                 isStopControlVisible = recordingStopControlVisible,
-                onDeleteRecording = onDeleteRecording,
-                onStopRecording = onStopRecording,
-                onCompleteRecording = onCompleteRecording,
+                onDeleteRecording = recordingActions.onDeleteRecording,
+                onStopRecording = recordingActions.onStopRecording,
+                onCompleteRecording = recordingActions.onCompleteRecording,
             )
         }
 

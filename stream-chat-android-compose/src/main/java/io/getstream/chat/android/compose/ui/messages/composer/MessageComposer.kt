@@ -179,14 +179,7 @@ public fun MessageComposer(
     audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerRecordingContent(
             messageComposerState = it,
-            onLockRecording = recordingActions.onLockRecording,
-            onCancelRecording = recordingActions.onCancelRecording,
-            onDeleteRecording = recordingActions.onDeleteRecording,
-            onStopRecording = recordingActions.onStopRecording,
-            onCompleteRecording = recordingActions.onCompleteRecording,
-            onToggleRecordingPlayback = recordingActions.onToggleRecordingPlayback,
-            onSliderDragStart = recordingActions.onRecordingSliderDragStart,
-            onSliderDragStop = recordingActions.onRecordingSliderDragStop,
+            recordingActions = recordingActions,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
@@ -197,11 +190,7 @@ public fun MessageComposer(
 
                 onSendMessage(message)
             },
-            onStartRecording = recordingActions.onStartRecording,
-            onHoldRecording = recordingActions.onHoldRecording,
-            onCancelRecording = recordingActions.onCancelRecording,
-            onSendRecording = recordingActions.onSendRecording,
-            onLockRecording = recordingActions.onLockRecording,
+            recordingActions = recordingActions,
         )
     },
 ) {
@@ -321,25 +310,14 @@ public fun MessageComposer(
     audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerRecordingContent(
             messageComposerState = it,
-            onLockRecording = recordingActions.onLockRecording,
-            onCancelRecording = recordingActions.onCancelRecording,
-            onDeleteRecording = recordingActions.onDeleteRecording,
-            onStopRecording = recordingActions.onStopRecording,
-            onCompleteRecording = recordingActions.onCompleteRecording,
-            onToggleRecordingPlayback = recordingActions.onToggleRecordingPlayback,
-            onSliderDragStart = recordingActions.onRecordingSliderDragStart,
-            onSliderDragStop = recordingActions.onRecordingSliderDragStop,
+            recordingActions = recordingActions,
         )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
             messageComposerState = it,
             onSendMessage = onSendMessage,
-            onStartRecording = recordingActions.onStartRecording,
-            onHoldRecording = recordingActions.onHoldRecording,
-            onCancelRecording = recordingActions.onCancelRecording,
-            onSendRecording = recordingActions.onSendRecording,
-            onLockRecording = recordingActions.onLockRecording,
+            recordingActions = recordingActions,
         )
     },
 ) {
@@ -647,21 +625,13 @@ private fun RowScope.DefaultComposerInputContent(
  *
  * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
- * @param onStartRecording Handler when the user starts recording an audio message.
- * @param onHoldRecording Handler when the user holds the recording button.
- * @param onCancelRecording Handler when the user cancels the recording.
- * @param onSendRecording Handler when the user sends the recording.
+ * @param recordingActions The actions that can be performed on an audio recording.
  */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun DefaultMessageComposerTrailingContent(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
-    onStartRecording: (Offset) -> Unit,
-    onHoldRecording: (Offset) -> Unit,
-    onLockRecording: () -> Unit,
-    onCancelRecording: () -> Unit,
-    onSendRecording: () -> Unit,
+    recordingActions: AudioRecordingActions,
 ) {
     val value = messageComposerState.inputValue
     val coolDownTime = messageComposerState.coolDownTime
@@ -720,11 +690,7 @@ internal fun DefaultMessageComposerTrailingContent(
         if (recordVisible) {
             DefaultAudioRecordButton(
                 state = messageComposerState.recording,
-                onCancelRecording = onCancelRecording,
-                onSendRecording = onSendRecording,
-                onStartRecording = onStartRecording,
-                onHoldRecording = onHoldRecording,
-                onLockRecording = onLockRecording,
+                recordingActions = recordingActions,
             )
         }
     }
