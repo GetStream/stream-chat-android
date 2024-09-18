@@ -36,7 +36,7 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 /**
  * Represents the theming for the audio recording attachment.
  *
- * @param height The height of the audio recording attachment.
+ * @param size The size of the audio recording attachment.
  * @param padding The padding for the audio recording attachment.
  * @param playButton The style for the play button.
  * @param pauseButton The style for the pause button.
@@ -50,7 +50,7 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
  * @param contentTypeIcon The style for the content type icon.
  */
 public data class AudioRecordingAttachmentTheme(
-    public val height: Dp,
+    public val size: ComponentSize,
     public val padding: ComponentPadding,
     public val playButton: IconContainerStyle,
     public val pauseButton: IconContainerStyle,
@@ -129,7 +129,7 @@ public data class AudioRecordingAttachmentTheme(
             },
         ): AudioRecordingAttachmentTheme {
             return AudioRecordingAttachmentTheme(
-                height = 60.dp,
+                size = ComponentSize.fillMaxWidth(height = 60.dp),
                 padding = ComponentPadding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
                 playButton = IconContainerStyle(
                     size = ComponentSize.square(36.dp),

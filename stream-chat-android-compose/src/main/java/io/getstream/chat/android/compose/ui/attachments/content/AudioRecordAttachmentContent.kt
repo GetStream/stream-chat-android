@@ -51,9 +51,12 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.ComponentPadding
+import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
@@ -186,6 +189,59 @@ public fun AudioRecordAttachmentContentItem(
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
+    val theme = when (isMine) {
+        true -> ChatTheme.ownMessageTheme.audioRecording
+        else -> ChatTheme.otherMessageTheme.audioRecording
+    }
+    AudioRecordAttachmentContentItemBase(
+        modifier = modifier.fillMaxWidth(),
+        attachment = attachment,
+        playerState = playerState,
+        size = theme.size,
+        padding = theme.padding,
+        playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
+        timerTextWidth = theme.timerTextWidth,
+        timerTextStyle = theme.timerTextStyle,
+        waveformSliderHeight = theme.waveformSliderHeight,
+        waveformSliderStyle = theme.waveformSliderStyle,
+        onPlayToggleClick = onPlayToggleClick,
+        onThumbDragStart = onThumbDragStart,
+        onThumbDragStop = onThumbDragStop,
+        tailContent = { isPlaying ->
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(width = theme.tailWidth),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isPlaying) {
+                    val speed = playerState?.playingSpeed ?: 1F
+                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(attachment) }
+                } else {
+                    ContentTypeIcon(theme.contentTypeIcon)
+                }
+            }
+        },
+    )
+}
+
+@Composable
+internal fun AudioRecordAttachmentContentItemBase(
+    modifier: Modifier = Modifier,
+    attachment: Attachment,
+    playerState: AudioPlayerState?,
+    size: ComponentSize,
+    padding: ComponentPadding,
+    playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
+    timerTextWidth: Dp,
+    timerTextStyle: TextStyle,
+    waveformSliderHeight: Dp,
+    waveformSliderStyle: WaveformSliderStyle,
+    onPlayToggleClick: (Attachment) -> Unit = {},
+    onThumbDragStart: (Attachment) -> Unit = {},
+    onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
+    tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
+) {
     val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
     val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
     val playing = isAttachmentPlaying && playerState?.isPlaying == true
@@ -197,58 +253,35 @@ public fun AudioRecordAttachmentContentItem(
         true -> playerState?.waveform ?: emptyList()
         else -> attachment.waveformData ?: emptyList()
     }
-    val speed = playerState?.playingSpeed?.takeIf { isAttachmentPlaying } ?: 1F
-
-    val theme = when (isMine) {
-        true -> ChatTheme.ownMessageTheme.audioRecording
-        else -> ChatTheme.otherMessageTheme.audioRecording
-    }
-    val toggleStyle = when (playing) {
-        true -> theme.pauseButton
-        else -> theme.playButton
-    }
 
     Surface(
         modifier = modifier
-            .padding(2.dp)
-            .fillMaxWidth(),
+            .padding(2.dp),
         color = ChatTheme.colors.appBackground,
         shape = ChatTheme.shapes.attachment,
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(theme.height)
-                .padding(theme.padding),
+                .size(size)
+                .padding(padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlaybackToggleButton(toggleStyle) { onPlayToggleClick(attachment) }
+            PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(attachment) }
 
-            PlaybackTimer(playbackText, theme.timerTextWidth, theme.timerTextStyle)
+            PlaybackTimer(playbackText, timerTextWidth, timerTextStyle)
 
             WaveformSlider(
                 modifier = Modifier
-                    .height(theme.waveformSliderHeight)
+                    .height(waveformSliderHeight)
                     .weight(1f),
-                style = theme.waveformSliderStyle,
+                style = waveformSliderStyle,
                 waveformData = waveform,
                 progress = trackProgress,
                 onDragStart = { onThumbDragStart(attachment) },
                 onDragStop = { progress -> onThumbDragStop(attachment, progress) },
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(width = theme.tailWidth),
-                contentAlignment = Alignment.Center,
-            ) {
-                if (playing) {
-                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(attachment) }
-                } else {
-                    ContentTypeIcon(theme.contentTypeIcon)
-                }
-            }
+            tailContent(playing)
         }
     }
 }

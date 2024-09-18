@@ -17,7 +17,9 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -100,59 +102,31 @@ public fun AudioRecordAttachmentPreviewContentItem(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
-    val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
-    val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
-    val playing = isAttachmentPlaying && playerState?.isPlaying == true
-    val playbackText = when (playing) {
-        true -> (playerState?.playbackInMs ?: 0).let(DurationFormatter::formatDurationInMillis)
-        else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
-    }
-    val waveform = when (playing) {
-        true -> playerState?.waveform ?: emptyList()
-        else -> attachment.waveformData ?: emptyList()
-    }
-
     val theme = ChatTheme.messageComposerTheme.attachmentsPreview.audioRecording
-    val toggleStyle = when (playing) {
-        true -> theme.pauseButton
-        else -> theme.playButton
-    }
-
-    Surface(
-        modifier = modifier
-            .padding(2.dp)
-            .fillMaxWidth(),
-        color = ChatTheme.colors.appBackground,
-        shape = ChatTheme.shapes.attachment,
-    ) {
-        Row(
-            modifier = Modifier
-                .size(theme.size)
-                .padding(theme.padding),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PlaybackToggleButton(toggleStyle) { onPlayToggleClick(attachment) }
-            PlaybackTimer(playbackText, theme.timerTextWidth, theme.timerTextStyle)
-
-            WaveformSlider(
-                modifier = Modifier
-                    .height(theme.waveformSliderHeight)
-                    .weight(1f),
-                style = theme.waveformSliderStyle,
-                waveformData = waveform,
-                progress = trackProgress,
-                onDragStart = { onThumbDragStart(attachment) },
-                onDragStop = { progress -> onThumbDragStop(attachment, progress) },
-            )
-
+    AudioRecordAttachmentContentItemBase(
+        modifier = modifier,
+        attachment = attachment,
+        playerState = playerState,
+        size = theme.size,
+        padding = theme.padding,
+        playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
+        timerTextWidth = theme.timerTextWidth,
+        timerTextStyle = theme.timerTextStyle,
+        waveformSliderHeight = theme.waveformSliderHeight,
+        waveformSliderStyle = theme.waveformSliderStyle,
+        onPlayToggleClick = onPlayToggleClick,
+        onThumbDragStart = onThumbDragStart,
+        onThumbDragStop = onThumbDragStop,
+        tailContent = {
             CancelIcon(
                 modifier = Modifier
                     .padding(4.dp),
                 onClick = { onAttachmentRemoved(attachment) },
             )
-        }
-    }
+        },
+    )
 }
+
 
 @Preview(showBackground = true)
 @Composable

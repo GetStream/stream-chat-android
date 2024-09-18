@@ -41,6 +41,39 @@ public data class ComponentSize(
          * @param size The size value.
          */
         public fun square(size: Dp): ComponentSize = ComponentSize(size, size)
+
+        /**
+         * Represents a fill max size.
+         */
+        public val FillMaxSize: ComponentSize = ComponentSize(Dp.Infinity, Dp.Infinity)
+
+        /**
+         * Represents a fill max width.
+         *
+         * @param height The height value.
+         */
+        public fun fillMaxWidth(height: Dp): ComponentSize = ComponentSize(Dp.Infinity, height)
+
+        /**
+         * Represents a fill max height.
+         *
+         * @param width The width value.
+         */
+        public fun fillMaxHeight(width: Dp): ComponentSize = ComponentSize(width, Dp.Infinity)
+
+        /**
+         * Represents a height size.
+         *
+         * @param height The height value.
+         */
+        public fun height(height: Dp): ComponentSize = ComponentSize(Dp.Unspecified, height)
+
+        /**
+         * Represents a width size.
+         *
+         * @param width The width value.
+         */
+        public fun width(width: Dp): ComponentSize = ComponentSize(width, Dp.Unspecified)
     }
 }
 
