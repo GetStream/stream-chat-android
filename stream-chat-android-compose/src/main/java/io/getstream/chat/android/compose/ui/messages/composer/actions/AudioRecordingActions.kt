@@ -33,6 +33,9 @@ public data class AudioRecordingActions(
 ) {
     public companion object {
 
+        /**
+         * No-op implementation of [AudioRecordingActions].
+         */
         public val None: AudioRecordingActions = AudioRecordingActions(
             onStartRecording = {},
             onHoldRecording = {},
@@ -48,9 +51,9 @@ public data class AudioRecordingActions(
         )
 
         /**
-         * No-op implementation of [AudioRecordingActions].
+         * Default implementation of [AudioRecordingActions].
          */
-        public fun defaultRecordingActions(
+        public fun defaultActions(
             viewModel: MessageComposerViewModel
         ): AudioRecordingActions = AudioRecordingActions(
             onStartRecording = { viewModel.startRecording(it.toRestrictedCoordinates()) },

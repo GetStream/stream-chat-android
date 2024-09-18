@@ -411,7 +411,7 @@ internal fun DefaultMessageComposerRecordingContent(
 }
 
 @Composable
-internal fun DefaultMessageComposerRecordingContent(
+private fun DefaultMessageComposerRecordingContent(
     modifier: Modifier = Modifier,
     recordingTimeMs: Int = 0,
     waveformVisible: Boolean = true,
