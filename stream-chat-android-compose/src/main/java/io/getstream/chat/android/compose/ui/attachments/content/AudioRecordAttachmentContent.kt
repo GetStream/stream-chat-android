@@ -54,8 +54,6 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
-import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
@@ -177,7 +175,6 @@ public fun AudioRecordAttachmentContent(
  * @param onThumbDragStart The callback for when the thumb gets dragged.
  * @param onThumbDragStop The callback for when the thumb gets released.
  */
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 public fun AudioRecordAttachmentContentItem(
     modifier: Modifier = Modifier,
