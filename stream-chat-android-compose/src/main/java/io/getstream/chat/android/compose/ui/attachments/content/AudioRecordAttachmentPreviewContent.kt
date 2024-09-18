@@ -141,7 +141,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
                 .padding(theme.padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlaybackToggleButton(toggleStyle, attachment, onPlayToggleClick)
+            PlaybackToggleButton(toggleStyle) { onPlayToggleClick(attachment) }
             PlaybackTimer(playbackText, theme.timerTextWidth, theme.timerTextStyle)
 
             WaveformSlider(

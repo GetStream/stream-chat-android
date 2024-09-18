@@ -52,6 +52,8 @@ import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
+import io.getstream.chat.android.compose.ui.theme.IconStyle
+import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.padding
@@ -194,11 +196,11 @@ public fun AudioRecordAttachmentContentItem(
         true -> (playerState?.playbackInMs ?: 0).let(DurationFormatter::formatDurationInMillis)
         else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
     }
-    val speed = playerState?.playingSpeed?.takeIf { isAttachmentPlaying } ?: 1F
     val waveform = when (playing) {
         true -> playerState?.waveform ?: emptyList()
         else -> attachment.waveformData ?: emptyList()
     }
+    val speed = playerState?.playingSpeed?.takeIf { isAttachmentPlaying } ?: 1F
 
     val theme = when (isMine) {
         true -> ChatTheme.ownMessageTheme.audioRecording
@@ -223,7 +225,7 @@ public fun AudioRecordAttachmentContentItem(
                 .padding(theme.padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlaybackToggleButton(toggleStyle, attachment, onPlayToggleClick)
+            PlaybackToggleButton(toggleStyle) { onPlayToggleClick(attachment) }
 
             PlaybackTimer(playbackText, theme.timerTextWidth, theme.timerTextStyle)
 
@@ -245,35 +247,9 @@ public fun AudioRecordAttachmentContentItem(
                 contentAlignment = Alignment.Center,
             ) {
                 if (playing) {
-                    Card(
-                        onClick = { onPlaySpeedClick(attachment) },
-                        elevation = 1.dp,
-                        shape = CircleShape,
-                        modifier = Modifier
-                            .size(theme.speedButton.size),
-                        backgroundColor = theme.speedButton.backgroundColor,
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = when (speed.isInt()) {
-                                    true -> "x${speed.toInt()}"
-                                    else -> "x$speed"
-                                },
-                                style = theme.speedButton.textStyle,
-                            )
-                        }
-                    }
+                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(attachment) }
                 } else {
-                    Icon(
-                        modifier = Modifier
-                            .size(theme.contentTypeIcon.size),
-                        painter = theme.contentTypeIcon.painter,
-                        contentDescription = null,
-                        tint = theme.contentTypeIcon.tint,
-                    )
+                    ContentTypeIcon(theme.contentTypeIcon)
                 }
             }
         }
@@ -306,21 +282,19 @@ internal fun PlaybackTimer(
  * Represents the playback toggle button.
  *
  * @param style The style for the toggle button.
- * @param attachment The attachment to display.
- * @param onToggleClick The callback for when the button is clicked.
+ * @param onClick The callback for when the button is clicked.
  */
 @Composable
 internal fun PlaybackToggleButton(
     style: IconContainerStyle,
-    attachment: Attachment,
-    onToggleClick: (Attachment) -> Unit = {},
+    onClick: () -> Unit = {},
 ) {
     Card(
         elevation = 1.dp,
         shape = CircleShape,
     ) {
         IconButton(
-            onClick = { onToggleClick(attachment) },
+            onClick = onClick,
             modifier = Modifier
                 .size(style.size)
                 .padding(style.padding),
@@ -333,6 +307,53 @@ internal fun PlaybackToggleButton(
             )
         }
     }
+}
+
+/**
+ * Represents the speed button.
+ */
+@Composable
+@OptIn(ExperimentalMaterialApi::class)
+private fun SpeedButton(
+    speed: Float,
+    style: TextContainerStyle,
+    onClick: () -> Unit,
+) {
+    Card(
+        onClick = onClick,
+        elevation = 1.dp,
+        shape = CircleShape,
+        modifier = Modifier
+            .size(style.size),
+        backgroundColor = style.backgroundColor,
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = when (speed.isInt()) {
+                    true -> "x${speed.toInt()}"
+                    else -> "x$speed"
+                },
+                style = style.textStyle,
+            )
+        }
+    }
+}
+
+/**
+ * Represents the content type icon.
+ */
+@Composable
+private fun ContentTypeIcon(style: IconStyle) {
+    Icon(
+        modifier = Modifier
+            .size(style.size),
+        painter = style.painter,
+        contentDescription = null,
+        tint = style.tint,
+    )
 }
 
 @Preview(showBackground = true)
