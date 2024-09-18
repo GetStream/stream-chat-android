@@ -76,6 +76,7 @@ dependencies {
 
     // Compose
     implementation Dependencies.composeUi
+    implementation Dependencies.composeAndroidLifecycle
     implementation Dependencies.composeUiTooling
     implementation Dependencies.composeFoundation
     implementation Dependencies.composeConstraintLayout

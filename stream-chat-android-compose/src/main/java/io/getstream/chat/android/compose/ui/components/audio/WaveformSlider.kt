@@ -54,9 +54,6 @@ import io.getstream.chat.android.compose.ui.theme.WaveformTrackStyle
 import io.getstream.log.StreamLog
 import kotlin.random.Random
 
-private const val DEFAULT_TRACKER_WIDTH_DP = 7
-private const val PRESSED_TRACKER_WIDTH_DP = 10
-
 /**
  * A slider that displays a waveform and allows the user to seek through it.
  *
@@ -65,7 +62,6 @@ private const val PRESSED_TRACKER_WIDTH_DP = 10
  * @param style The style for the waveform slider.
  * @param visibleBarLimit The number of bars to display at once.
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
- * @param barSpacingRatio The ratio of space between bars.
  * @param progress The current progress of the waveform.
  * @param isThumbVisible Whether to display the thumb.
  * @param onDragStart Callback when the user starts dragging the thumb.
@@ -83,10 +79,6 @@ public fun WaveformSlider(
     onDragStart: (Float) -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
     onDragStop: (Float) -> Unit = { StreamLog.e("WaveformSeekBar") { "[onDragStop] progress: $it" } },
 ) {
-    /*TODO
-    StreamLog.v("WaveformSeekBar") {
-        "[onDraw] progress: $progress"
-    }*/
     var widthPx by remember { mutableFloatStateOf(0f) }
     var pressed by remember { mutableStateOf(false) }
     var currentProgress by remember { mutableFloatStateOf(progress) }
@@ -113,16 +105,8 @@ public fun WaveformSlider(
                     },
                 ) { change, dragAmount ->
                     change.consume()
-
-                    /*StreamLog.v("WaveformSeekBar") {
-                        "[detectHorizontalDragGestures] width: $widthPx, dragAmount: $dragAmount, change: $change"
-                    }*/
                     if (widthPx > 0) {
                         currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
-
-                        // val center = change.position.x.toDp()
-                        // val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
-                        // thumbOffset = left.coerceIn(0.dp, width - DEFAULT_TRACKER_WIDTH_DP.dp)
                     }
                 }
             }
@@ -135,10 +119,6 @@ public fun WaveformSlider(
                         pressed = true
                         if (widthPx > 0) {
                             currentProgress = (it.x / widthPx).coerceIn(0f, 1f)
-
-                            // val center = it.x.toDp()
-                            // val left = center - (PRESSED_TRACKER_WIDTH_DP.dp / 2)
-                            // thumbOffset = left.coerceIn(0.dp, width - PRESSED_TRACKER_WIDTH_DP.dp)
                             onDragStart(currentProgress)
                         }
                     },
@@ -222,8 +202,6 @@ internal fun WaveformTrack(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float = 0f,
 ) {
-    // TODO StreamLog.v("WaveformTrack") { "[onDraw] progress: $progress" }
-
     // Ensure the spacing ratio is clamped between 0 and 1 (100% spacing would mean no bars)
     val finalSpacingRatio = style.barSpacingRatio.coerceIn(0f, 1f)
     val finalProgress = progress.coerceIn(0f, 1f)

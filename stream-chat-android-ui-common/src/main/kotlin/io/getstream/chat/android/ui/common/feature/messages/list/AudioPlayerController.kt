@@ -208,7 +208,7 @@ public class AudioPlayerController(
         }
         val playerState = audioPlayer.currentState
         val isIdleOrPaused = playerState == AudioState.IDLE || playerState == AudioState.PAUSE
-        if (!isIdleOrPaused) {
+        if (isIdleOrPaused.not()) {
             logger.v { "[resume] rejected (not idle or paused): $playerState" }
             return
         }

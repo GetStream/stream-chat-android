@@ -33,13 +33,13 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
@@ -58,9 +58,15 @@ import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
+/**
+ * Represents the audio recording attachment content.
+ */
 @Deprecated(
-    message = "Use AudioRecordAttachmentContent instead",
-    replaceWith = ReplaceWith("AudioRecordAttachmentContent"),
+    message = "Use AudioRecordAttachmentContent with 4 parameters instead",
+    replaceWith = ReplaceWith(
+        expression = "AudioRecordAttachmentContent(/* parameters */, getCurrentUserId = { /* your implementation */ })",
+        imports = ["io.getstream.chat.android.compose.ui.attachments.content"],
+    ),
 )
 @Composable
 public fun AudioRecordGroupContent(
@@ -75,9 +81,15 @@ public fun AudioRecordGroupContent(
     )
 }
 
+/**
+ * Represents the audio recording attachment content item.
+ */
 @Deprecated(
-    message = "Use AudioRecordAttachmentContent instead",
-    replaceWith = ReplaceWith("AudioRecordAttachmentContent"),
+    message = "Use AudioRecordAttachmentContentItem instead",
+    replaceWith = ReplaceWith(
+        expression = "AudioRecordAttachmentContentItem(/* parameters */)",
+        imports = ["io.getstream.chat.android.compose.ui.attachments.content"],
+    ),
 )
 @Composable
 public fun AudioRecordAttachmentContent(
@@ -95,11 +107,19 @@ public fun AudioRecordAttachmentContent(
         playerState = playerState,
         onPlayToggleClick = onPlayToggleClick,
         onPlaySpeedClick = onPlaySpeedClick,
-        onScrubberDragStart = onScrubberDragStart,
-        onScrubberDragStop = onScrubberDragStop,
+        onThumbDragStart = onScrubberDragStart,
+        onThumbDragStop = onScrubberDragStop,
     )
 }
 
+/**
+ * Represents the audio recording attachment content.
+ *
+ * @param modifier Modifier for styling.
+ * @param attachmentState The state of the attachment.
+ * @param viewModelFactory The factory for creating the [AudioPlayerViewModel].
+ * @param getCurrentUserId The function to get the current user ID.
+ */
 @Composable
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
@@ -112,7 +132,7 @@ public fun AudioRecordAttachmentContent(
     val audioRecordings = attachmentState.message.attachments
         .filter { attachment -> attachment.isAudioRecording() && attachment.assetUrl != null }
 
-    val playerState by viewModel.state.collectAsState()
+    val playerState by viewModel.state.collectAsStateWithLifecycle()
 
     val isMine = attachmentState.message.isMine(getCurrentUserId())
     Column(modifier = modifier) {
@@ -127,10 +147,10 @@ public fun AudioRecordAttachmentContent(
                 onPlaySpeedClick = { attachment ->
                     viewModel.changeSpeed(attachment)
                 },
-                onScrubberDragStart = { attachment ->
+                onThumbDragStart = { attachment ->
                     viewModel.startSeek(attachment)
                 },
-                onScrubberDragStop = { attachment, progress ->
+                onThumbDragStop = { attachment, progress ->
                     viewModel.seekTo(attachment, progress)
                 },
             )
@@ -139,9 +159,16 @@ public fun AudioRecordAttachmentContent(
 }
 
 /**
- * Represents fallback content for unsupported attachments.
+ * Represents the audio recording attachment content item.
  *
  * @param modifier Modifier for styling.
+ * @param attachment The attachment to display.
+ * @param playerState The state of the audio player.
+ * @param isMine If the message is from the current user.
+ * @param onPlayToggleClick The callback for when the play button is clicked.
+ * @param onPlaySpeedClick The callback for when the speed button is clicked.
+ * @param onThumbDragStart The callback for when the thumb gets dragged.
+ * @param onThumbDragStop The callback for when the thumb gets released.
  */
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -152,8 +179,8 @@ public fun AudioRecordAttachmentContentItem(
     isMine: Boolean = false,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onPlaySpeedClick: (Attachment) -> Unit = {},
-    onScrubberDragStart: (Attachment) -> Unit = {},
-    onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
+    onThumbDragStart: (Attachment) -> Unit = {},
+    onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
     val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
     val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
@@ -228,10 +255,10 @@ public fun AudioRecordAttachmentContentItem(
                 waveformData = waveform,
                 progress = trackProgress,
                 onDragStart = {
-                    onScrubberDragStart(attachment)
+                    onThumbDragStart(attachment)
                 },
                 onDragStop = { progress ->
-                    onScrubberDragStop(attachment, progress)
+                    onThumbDragStop(attachment, progress)
                 },
             )
 

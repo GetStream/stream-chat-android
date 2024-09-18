@@ -30,26 +30,11 @@ internal class AudioPlayerViewModel(
     private val controller: AudioPlayerController,
 ) : ViewModel() {
 
-    val state: StateFlow<AudioPlayerState?> get() = controller.state
-
-    init {
-        StreamLog.i("AudioPlayerViewModel") {
-            "<init> no args"
-        }
-    }
+    val state: StateFlow<AudioPlayerState?> = controller.state
 
     override fun onCleared() {
-        StreamLog.i("AudioPlayerViewModel") {
-            "[onCleared] no args"
-        }
         super.onCleared()
         controller.reset()
-    }
-
-    protected fun finalize() {
-        StreamLog.i("AudioPlayerViewModel") {
-            "<destroy> no args"
-        }
     }
 
     fun playOrPause(attachment: Attachment) {

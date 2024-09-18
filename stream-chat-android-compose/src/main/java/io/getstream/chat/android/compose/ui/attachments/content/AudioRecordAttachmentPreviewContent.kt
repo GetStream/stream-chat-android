@@ -33,7 +33,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +41,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.waveformData
@@ -65,7 +65,7 @@ public fun AudioRecordAttachmentPreviewContent(
 ) {
     val viewModel = viewModel(AudioPlayerViewModel::class.java, factory = viewModelFactory)
 
-    val playerState by viewModel.state.collectAsState()
+    val playerState by viewModel.state.collectAsStateWithLifecycle()
 
     LazyRow(
         modifier = modifier

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
+import androidx.compose.runtime.Immutable
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 
@@ -32,6 +33,7 @@ import io.getstream.chat.android.models.Attachment
  * @property playingProgress The progress of the audio playback.
  * @property playingId The ID of the audio that is currently playing.
  */
+@Immutable
 @InternalStreamChatApi
 public data class AudioPlayerState(
     val attachment: Attachment = Attachment(),
