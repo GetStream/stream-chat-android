@@ -51,7 +51,7 @@ internal class MessagingStyleNotificationHandler(
     private val notificationChannel: (() -> NotificationChannel),
     private val userIconBuilder: UserIconBuilder,
     private val permissionHandler: NotificationPermissionHandler?,
-    private val autoTranslationEnabled: Boolean = false,
+    private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -160,13 +160,11 @@ internal class MessagingStyleNotificationHandler(
         context: Context,
         currentUser: User?,
     ): NotificationCompat.MessagingStyle.Message {
-        val displayedText = when (autoTranslationEnabled) {
-            true -> currentUser?.language?.let { userLanguage ->
-                getTranslation(userLanguage).ifEmpty { text }
-            } ?: text
-            else -> text
-        }
-        return NotificationCompat.MessagingStyle.Message(displayedText, timestamp, person(context))
+        return NotificationCompat.MessagingStyle.Message(
+            notificationTextFormatter(currentUser, this),
+            timestamp,
+            person(context),
+        )
     }
 
     private suspend fun Message.person(context: Context): Person = user.toPerson(context)

@@ -49,6 +49,7 @@ public object NotificationHandlerFactory {
      * Used in SDK_INT >= VERSION_CODES.O.
      * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
+     * @param notificationTextFormatter Lambda expression used to formats the text of the notification.
      */
     @SuppressLint("NewApi")
     @JvmOverloads
@@ -60,53 +61,40 @@ public object NotificationHandlerFactory {
         notificationChannel: (() -> NotificationChannel)? = null,
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
         permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
-    ): NotificationHandler {
-        return createNotificationHandler(
-            context = context,
-            newMessageIntent = newMessageIntent,
-            notificationChannel = notificationChannel,
-            userIconBuilder = userIconBuilder,
-            permissionHandler = permissionHandler,
-            autoTranslationEnabled = notificationConfig.autoTranslationEnabled,
-        )
-    }
-
-    /**
-     * Method that creates a [NotificationHandler].
-     *
-     * @param context The [Context] to build the [NotificationHandler] with.
-     * @param newMessageIntent Lambda expression used to generate an [Intent] to open your app
-     * @param notificationChannel Lambda expression used to generate a [NotificationChannel].
-     * Used in SDK_INT >= VERSION_CODES.O.
-     * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
-     * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
-     * @param autoTranslationEnabled Enables automatic translation of push notifications.
-     */
-    @SuppressLint("NewApi")
-    @JvmOverloads
-    @JvmStatic
-    public fun createNotificationHandler(
-        context: Context,
-        newMessageIntent: ((message: Message, channel: Channel) -> Intent)? = null,
-        notificationChannel: (() -> NotificationChannel)? = null,
-        userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
-        permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
-        autoTranslationEnabled: Boolean = false,
+        notificationTextFormatter: ((currentUser: User?, message: Message) -> CharSequence)? = null,
     ): NotificationHandler {
         val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
+        val notificationTextFormatterFun = notificationTextFormatter
+            ?: getDefaultNotificationTextFormatter(notificationConfig)
         (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 MessagingStyleNotificationHandler(
-                    context,
-                    newMessageIntentFun,
-                    notificationChannelFun,
-                    userIconBuilder,
-                    permissionHandler,
-                    autoTranslationEnabled,
+                    context = context,
+                    newMessageIntent = newMessageIntentFun,
+                    notificationChannel = notificationChannelFun,
+                    userIconBuilder = userIconBuilder,
+                    permissionHandler = permissionHandler,
+                    notificationTextFormatter = notificationTextFormatterFun,
                 )
             } else {
-                ChatNotificationHandler(context, newMessageIntentFun, notificationChannelFun, autoTranslationEnabled)
+                ChatNotificationHandler(
+                    context = context,
+                    newMessageIntent = newMessageIntentFun,
+                    notificationChannel = notificationChannelFun,
+                    notificationTextFormatter = notificationTextFormatterFun,
+                )
             }
+        }
+    }
+
+    private fun getDefaultNotificationTextFormatter(
+        notificationConfig: NotificationConfig,
+    ): (currentUser: User?, message: Message) -> CharSequence = { currentUser, message ->
+        when (notificationConfig.autoTranslationEnabled) {
+            true -> currentUser?.language?.let { userLanguage ->
+                message.getTranslation(userLanguage).ifEmpty { message.text }
+            } ?: message.text
+            else -> message.text
         }
     }
 

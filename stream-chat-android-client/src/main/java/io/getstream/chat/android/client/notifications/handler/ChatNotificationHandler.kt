@@ -34,6 +34,7 @@ import io.getstream.chat.android.client.extensions.getUsersExcludingCurrent
 import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.User
 
 /**
  * Class responsible for handling chat notifications.
@@ -44,7 +45,7 @@ internal class ChatNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
     private val notificationChannel: (() -> NotificationChannel),
-    private val autoTranslationEnabled: Boolean = false,
+    private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -86,15 +87,9 @@ internal class ChatNotificationHandler(
     ): NotificationCompat.Builder {
         val currentUser = ChatClient.instance().getCurrentUser()
             ?: ChatClient.instance().getStoredUser()
-        val displayedText = when (autoTranslationEnabled) {
-            true -> currentUser?.language?.let { userLanguage ->
-                message.getTranslation(userLanguage).ifEmpty { message.text }
-            } ?: message.text
-            else -> message.text
-        }
         return getNotificationBuilder(
             contentTitle = channel.getNotificationContentTitle(),
-            contentText = displayedText,
+            contentText = notificationTextFormatter(currentUser, message),
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(message = message, channel = channel),
         ).apply {
@@ -152,7 +147,7 @@ internal class ChatNotificationHandler(
 
     private fun getNotificationBuilder(
         contentTitle: String,
-        contentText: String,
+        contentText: CharSequence,
         groupKey: String,
         intent: Intent,
     ): NotificationCompat.Builder {
