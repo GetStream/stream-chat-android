@@ -26,6 +26,7 @@ import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnMess
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollCloseClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnReactionViewClickListener
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnShowAllPollOptionClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnThreadClickListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUnreadLabelReachedListener
 import io.getstream.chat.android.ui.feature.messages.list.MessageListView.OnUserClickListener
@@ -45,6 +46,7 @@ internal class MessageListListenerContainerImpl(
     linkClickListener: OnLinkClickListener = OnLinkClickListener(EmptyFunctions.ONE_PARAM),
     onUnreadLabelReachedListener: OnUnreadLabelReachedListener = OnUnreadLabelReachedListener { },
     onPollOptionClickListener: OnPollOptionClickListener,
+    onShowAllPollOptionClickListener: OnShowAllPollOptionClickListener,
     onPollCloseClickListener: OnPollCloseClickListener,
     onViewPollResultClickListener: OnViewPollResultClickListener,
 ) : MessageListListeners {
@@ -146,6 +148,14 @@ internal class MessageListListenerContainerImpl(
     ) { realListener ->
         OnPollOptionClickListener { message, poll, option ->
             realListener().onPollOptionClick(message, poll, option)
+        }
+    }
+
+    override var onShowAllPollOptionClickListener: OnShowAllPollOptionClickListener by ListenerDelegate(
+        onShowAllPollOptionClickListener,
+    ) { realListener ->
+        OnShowAllPollOptionClickListener { message, poll ->
+            realListener().onShowAllPollOptionClick(message, poll)
         }
     }
 
