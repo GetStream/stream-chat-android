@@ -23,7 +23,6 @@ import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.feature.messages.list.AudioPlayerController
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
-import io.getstream.log.StreamLog
 import kotlinx.coroutines.flow.StateFlow
 
 internal class AudioPlayerViewModel(

@@ -416,6 +416,13 @@ public final class io/getstream/chat/android/compose/ui/attachments/content/Audi
 	public static final fun AudioRecordAttachmentPreviewContentItem (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Attachment;Lio/getstream/chat/android/ui/common/state/messages/list/AudioPlayerState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$AudioRecordAttachmentContentKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$AudioRecordAttachmentContentKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function3;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function3;
+}
+
 public final class io/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$GiphyAttachmentContentKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/attachments/content/ComposableSingletons$GiphyAttachmentContentKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function3;
@@ -1733,8 +1740,46 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/Compos
 public final class io/getstream/chat/android/compose/ui/messages/composer/MessageComposerKt {
 	public static final fun DefaultMessageComposerFooterContent (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public static final fun DefaultMessageComposerHeaderContent (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
-	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;IIIIII)V
-	public static final fun MessageComposer (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;IIIIII)V
+	public static final fun MessageComposer (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;IIII)V
+	public static final fun MessageComposer (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lkotlin/jvm/functions/Function2;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function4;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;IIII)V
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions$Companion;
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)V
+	public final fun component1 ()Lkotlin/jvm/functions/Function1;
+	public final fun component10 ()Lkotlin/jvm/functions/Function1;
+	public final fun component11 ()Lkotlin/jvm/functions/Function0;
+	public final fun component2 ()Lkotlin/jvm/functions/Function1;
+	public final fun component3 ()Lkotlin/jvm/functions/Function0;
+	public final fun component4 ()Lkotlin/jvm/functions/Function0;
+	public final fun component5 ()Lkotlin/jvm/functions/Function0;
+	public final fun component6 ()Lkotlin/jvm/functions/Function0;
+	public final fun component7 ()Lkotlin/jvm/functions/Function1;
+	public final fun component8 ()Lkotlin/jvm/functions/Function0;
+	public final fun component9 ()Lkotlin/jvm/functions/Function1;
+	public final fun copy (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getOnCancelRecording ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnCompleteRecording ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnDeleteRecording ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnHoldRecording ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnLockRecording ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnRecordingSliderDragStart ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnRecordingSliderDragStop ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnSendRecording ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnStartRecording ()Lkotlin/jvm/functions/Function1;
+	public final fun getOnStopRecording ()Lkotlin/jvm/functions/Function0;
+	public final fun getOnToggleRecordingPlayback ()Lkotlin/jvm/functions/Function0;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions$Companion {
+	public final fun defaultActions (Lio/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel;)Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
+	public final fun getNone ()Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;
 }
 
 public final class io/getstream/chat/android/compose/ui/messages/composer/internal/ComposableSingletons$DefaultMessageComposerRecordingContentKt {
@@ -1995,8 +2040,13 @@ public final class io/getstream/chat/android/compose/ui/theme/ComponentSize {
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ComponentSize$Companion {
+	public final fun fillMaxHeight-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun fillMaxWidth-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun getFillMaxSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
 	public final fun getZero ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun height-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
 	public final fun square-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun width-0680j_4 (F)Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
 }
 
 public final class io/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle {
@@ -2115,16 +2165,18 @@ public final class io/getstream/chat/android/compose/ui/theme/IconStyle {
 public final class io/getstream/chat/android/compose/ui/theme/MessageComposerTheme {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme$Companion;
-	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;)V
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;)V
 	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;
 	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;
 	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
-	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;
-	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
+	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
+	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/MessageComposerTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachmentCancelIcon ()Lio/getstream/chat/android/compose/ui/theme/ComposerCancelIconStyle;
-	public final fun getAudioRecording ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;
+	public final fun getAttachmentsPreview ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
+	public final fun getAudioRecording ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 	public final fun getInputField ()Lio/getstream/chat/android/compose/ui/theme/ComposerInputFieldTheme;
 	public final fun getLinkPreview ()Lio/getstream/chat/android/compose/ui/theme/ComposerLinkPreviewTheme;
 	public fun hashCode ()I
@@ -2564,6 +2616,20 @@ public final class io/getstream/chat/android/compose/ui/theme/TextContainerStyle
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle {
+	public static final field $stable I
+	public synthetic fun <init> (FLio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1-D9Ej5fM ()F
+	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;
+	public final fun copy-D5KLDUw (FLio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;)Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;
+	public static synthetic fun copy-D5KLDUw$default (Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;FLio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getHeight-D9Ej5fM ()F
+	public final fun getStyle ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/getstream/chat/android/compose/ui/theme/WaveformSliderStyle {
 	public static final field $stable I
 	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle$Companion;
@@ -2635,15 +2701,54 @@ public final class io/getstream/chat/android/compose/ui/theme/WaveformTrackStyle
 	public final fun defaultStyle (Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/WaveformTrackStyle;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme$Companion;
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;FLio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun component10 ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
+	public final fun component11 ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
+	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
+	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
+	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
+	public final fun component5-D9Ej5fM ()F
+	public final fun component6 ()Landroidx/compose/ui/text/TextStyle;
+	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
+	public final fun component8 ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;
+	public final fun component9-D9Ej5fM ()F
+	public final fun copy-dJv1p84 (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;FLio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+	public static synthetic fun copy-dJv1p84$default (Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;FLio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getContentTypeIcon ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
+	public final fun getPadding ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
+	public final fun getPauseButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
+	public final fun getPlayButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
+	public final fun getSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun getSpeedButton ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
+	public final fun getTailWidth-D9Ej5fM ()F
+	public final fun getTimerStyle ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
+	public final fun getTimerTextStyle ()Landroidx/compose/ui/text/TextStyle;
+	public final fun getTimerTextWidth-D9Ej5fM ()F
+	public final fun getWaveformSliderLayoutStyle ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme$Companion {
+	public final fun defaultOtherTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+	public final fun defaultOwnTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+	public final fun defaultTheme (ZZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme {
 	public static final field $stable I
 	public synthetic fun <init> (FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
 	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
-	public final fun copy-kHDZbjc (FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;
-	public static synthetic fun copy-kHDZbjc$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;
+	public final fun copy-kHDZbjc (FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;
+	public static synthetic fun copy-kHDZbjc$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getCompleteButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun getDeleteButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
@@ -2653,13 +2758,13 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle {
 	public static final field $stable I
 	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;JLandroidx/compose/ui/graphics/Shape;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component2-0d7_KjU ()J
 	public final fun component3 ()Landroidx/compose/ui/graphics/Shape;
-	public final fun copy-bw27NRU (Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;JLandroidx/compose/ui/graphics/Shape;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
-	public static synthetic fun copy-bw27NRU$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;JLandroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
+	public final fun copy-bw27NRU (Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;JLandroidx/compose/ui/graphics/Shape;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
+	public static synthetic fun copy-bw27NRU$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;JLandroidx/compose/ui/graphics/Shape;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getBackgroundColor-0d7_KjU ()J
 	public final fun getBackgroundShape ()Landroidx/compose/ui/graphics/Shape;
@@ -2670,27 +2775,27 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme {
 	public static final field $stable I
-	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentOffset;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
-	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
-	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentOffset;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
+	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
+	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
 	public final fun component4-D9Ej5fM ()F
 	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/ComponentOffset;
-	public final fun copy-2lqI77k (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentOffset;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;
-	public static synthetic fun copy-2lqI77k$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentOffset;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;
+	public final fun copy-2lqI77k (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentOffset;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;
+	public static synthetic fun copy-2lqI77k$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentOffset;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getLock ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
+	public final fun getLock ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
 	public final fun getLockEdgeOffset ()Lio/getstream/chat/android/compose/ui/theme/ComponentOffset;
 	public final fun getLockThreshold-D9Ej5fM ()F
-	public final fun getLocked ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
-	public final fun getMic ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconStyle;
+	public final fun getLocked ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
+	public final fun getMic ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme {
 	public static final field $stable I
 	public synthetic fun <init> (FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
@@ -2700,8 +2805,8 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public final fun component5-D9Ej5fM ()F
 	public final fun component6 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
 	public final fun component7 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun copy-Aq7BdUw (FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;
-	public static synthetic fun copy-Aq7BdUw$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;
+	public final fun copy-Aq7BdUw (FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;
+	public static synthetic fun copy-Aq7BdUw$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getContainerColor-0d7_KjU ()J
 	public final fun getContainerElevation-D9Ej5fM ()F
@@ -2714,7 +2819,7 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme {
 	public static final field $stable I
 	public synthetic fun <init> (FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FFFLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
@@ -2727,8 +2832,8 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public final fun component7-D9Ej5fM ()F
 	public final fun component8 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
 	public final fun component9 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun copy-2mmrWdQ (FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FFFLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;
-	public static synthetic fun copy-2mmrWdQ$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FFFLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;
+	public final fun copy-2mmrWdQ (FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FFFLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;
+	public static synthetic fun copy-2mmrWdQ$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;FJLandroidx/compose/ui/graphics/Shape;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;FFFLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Landroidx/compose/ui/text/TextStyle;Landroidx/compose/ui/text/TextStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getButtonTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getContainerBottomOffset-D9Ej5fM ()F
@@ -2744,7 +2849,7 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme {
 	public static final field $stable I
 	public synthetic fun <init> (FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1-D9Ej5fM ()F
@@ -2754,8 +2859,8 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public final fun component5 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component6 ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;
 	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun copy-AjpBEmI (FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;
-	public static synthetic fun copy-AjpBEmI$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;
+	public final fun copy-AjpBEmI (FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;
+	public static synthetic fun copy-AjpBEmI$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;FLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getHeight-D9Ej5fM ()F
 	public final fun getMicIndicator ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
@@ -2768,15 +2873,15 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme {
 	public static final field $stable I
 	public synthetic fun <init> (Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;FFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Landroidx/compose/ui/text/TextStyle;
 	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
 	public final fun component3-D9Ej5fM ()F
 	public final fun component4-D9Ej5fM ()F
-	public final fun copy-4j6BHR0 (Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;FF)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;
-	public static synthetic fun copy-4j6BHR0$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;FFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;
+	public final fun copy-4j6BHR0 (Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;FF)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;
+	public static synthetic fun copy-4j6BHR0$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;Landroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;FFILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getIconStyle ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
 	public final fun getMarginEnd-D9Ej5fM ()F
@@ -2786,80 +2891,87 @@ public final class io/getstream/chat/android/compose/ui/theme/composer/AudioReco
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme$Companion;
-	public fun <init> (ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;)V
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion;
+	public fun <init> (ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;)V
 	public final fun component1 ()Z
-	public final fun component10 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;
+	public final fun component10 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;
 	public final fun component2 ()Z
 	public final fun component3 ()Z
 	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
-	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;
-	public final fun component6 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;
-	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;
-	public final fun component8 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;
-	public final fun component9 ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;
-	public final fun copy (ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;
+	public final fun component5 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;
+	public final fun component6 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;
+	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;
+	public final fun component8 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;
+	public final fun component9 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;
+	public final fun copy (ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;ZZZLio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getControls ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingControlsTheme;
+	public final fun getControls ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingControlsTheme;
 	public final fun getEnabled ()Z
-	public final fun getFloatingIcons ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingFloatingIconsTheme;
-	public final fun getHoldToRecord ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingHoldToRecordTheme;
-	public final fun getPermissionRationale ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPermissionRationaleTheme;
-	public final fun getPlayback ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingPlaybackTheme;
+	public final fun getFloatingIcons ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingFloatingIconsTheme;
+	public final fun getHoldToRecord ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingHoldToRecordTheme;
+	public final fun getPermissionRationale ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPermissionRationaleTheme;
+	public final fun getPlayback ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingPlaybackTheme;
 	public final fun getRecordButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun getSendOnComplete ()Z
 	public final fun getShowRecordButtonOverSend ()Z
-	public final fun getSlideToCancel ()Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingSlideToCancelTheme;
+	public final fun getSlideToCancel ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingSlideToCancelTheme;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme$Companion {
-	public final fun defaultTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/composer/AudioRecordingTheme;
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme$Companion {
+	public final fun defaultTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/composer/AudioRecordingTheme;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme {
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme {
 	public static final field $stable I
-	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme$Companion;
-	public synthetic fun <init> (FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1-D9Ej5fM ()F
-	public final fun component10-D9Ej5fM ()F
-	public final fun component11 ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
-	public final fun component12 ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme$Companion;
+	public fun <init> (Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;
+	public final fun copy (Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getAudioRecording ()Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme$Companion {
+	public final fun defaultTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AttachmentsPreviewTheme;
+}
+
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme {
+	public static final field $stable I
+	public static final field Companion Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme$Companion;
+	public synthetic fun <init> (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
 	public final fun component2 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
 	public final fun component3 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun component4 ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun component5-D9Ej5fM ()F
 	public final fun component6 ()Landroidx/compose/ui/text/TextStyle;
-	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;
-	public final fun component8-D9Ej5fM ()F
-	public final fun component9 ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun copy-ZzF1z9A (FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
-	public static synthetic fun copy-ZzF1z9A$default (Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;FLio/getstream/chat/android/compose/ui/theme/ComponentPadding;FLio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+	public final fun component7 ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
+	public final fun component8 ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;
+	public final fun copy-FJfuzF0 (Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;
+	public static synthetic fun copy-FJfuzF0$default (Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;Lio/getstream/chat/android/compose/ui/theme/ComponentSize;Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;FLandroidx/compose/ui/text/TextStyle;Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;ILjava/lang/Object;)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getContentTypeIcon ()Lio/getstream/chat/android/compose/ui/theme/IconStyle;
-	public final fun getHeight-D9Ej5fM ()F
 	public final fun getPadding ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
 	public final fun getPauseButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
 	public final fun getPlayButton ()Lio/getstream/chat/android/compose/ui/theme/IconContainerStyle;
-	public final fun getSpeedButton ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
-	public final fun getTailWidth-D9Ej5fM ()F
+	public final fun getSize ()Lio/getstream/chat/android/compose/ui/theme/ComponentSize;
+	public final fun getTimerStyle ()Lio/getstream/chat/android/compose/ui/theme/TextContainerStyle;
 	public final fun getTimerTextStyle ()Landroidx/compose/ui/text/TextStyle;
 	public final fun getTimerTextWidth-D9Ej5fM ()F
-	public final fun getWaveformSliderHeight-D9Ej5fM ()F
-	public final fun getWaveformSliderPadding ()Lio/getstream/chat/android/compose/ui/theme/ComponentPadding;
-	public final fun getWaveformSliderStyle ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;
+	public final fun getWaveformSliderStyle ()Lio/getstream/chat/android/compose/ui/theme/WaveformSliderLayoutStyle;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme$Companion {
-	public final fun defaultOtherTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
-	public final fun defaultOwnTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
-	public final fun defaultTheme (ZZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/attachments/AudioRecordingAttachmentTheme;
+public final class io/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme$Companion {
+	public final fun defaultTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;
 }
 
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {

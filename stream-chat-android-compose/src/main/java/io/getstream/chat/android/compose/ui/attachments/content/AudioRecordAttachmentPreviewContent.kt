@@ -114,7 +114,6 @@ public fun AudioRecordAttachmentPreviewContentItem(
     )
 }
 
-
 @Preview(showBackground = true)
 @Composable
 internal fun AudioRecordAttachmentPreviewContentItemPreview() {

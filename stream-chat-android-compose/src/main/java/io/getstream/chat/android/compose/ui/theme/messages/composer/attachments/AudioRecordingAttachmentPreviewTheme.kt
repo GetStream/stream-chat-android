@@ -31,8 +31,8 @@ import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 
 /**
  * Represents the theming for the audio recording attachment.

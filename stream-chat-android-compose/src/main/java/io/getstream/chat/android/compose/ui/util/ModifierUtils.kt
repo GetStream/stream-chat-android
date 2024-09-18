@@ -44,7 +44,7 @@ internal fun Modifier.padding(padding: ComponentPadding): Modifier {
  */
 internal fun Modifier.size(size: ComponentSize): Modifier = when {
     size.width == Dp.Infinity && size.height == Dp.Infinity -> this.fillMaxSize()
-    size.width == Dp.Infinity  -> this.fillMaxWidth().height(size.height)
+    size.width == Dp.Infinity -> this.fillMaxWidth().height(size.height)
     size.height == Dp.Infinity -> this.fillMaxSize().width(size.width)
     size.width == Dp.Unspecified -> this.height(size.height)
     size.height == Dp.Unspecified -> this.width(size.width)
