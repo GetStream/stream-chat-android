@@ -78,10 +78,10 @@ public fun AudioRecordAttachmentPreviewContent(
                 onPlayToggleClick = { attachment ->
                     viewModel.playOrPause(attachment)
                 },
-                onScrubberDragStart = { attachment ->
+                onThumbDragStart = { attachment ->
                     viewModel.startSeek(attachment)
                 },
-                onScrubberDragStop = { attachment, progress ->
+                onThumbDragStop = { attachment, progress ->
                     viewModel.seekTo(attachment, progress)
                 },
                 onAttachmentRemoved = {
@@ -104,8 +104,8 @@ public fun AudioRecordAttachmentPreviewContentItem(
     attachment: Attachment,
     playerState: AudioPlayerState?,
     onPlayToggleClick: (Attachment) -> Unit = {},
-    onScrubberDragStart: (Attachment) -> Unit = {},
-    onScrubberDragStop: (Attachment, Float) -> Unit = { _, _ -> },
+    onThumbDragStart: (Attachment) -> Unit = {},
+    onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
     val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
@@ -134,7 +134,10 @@ public fun AudioRecordAttachmentPreviewContentItem(
                 .padding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Card(elevation = 1.dp, shape = CircleShape) {
+            Card(
+                elevation = 1.dp,
+                shape = CircleShape
+            ) {
                 IconButton(
                     onClick = { onPlayToggleClick(attachment) },
                     modifier = Modifier
@@ -172,10 +175,10 @@ public fun AudioRecordAttachmentPreviewContentItem(
                 waveformData = waveform,
                 progress = trackProgress,
                 onDragStart = {
-                    onScrubberDragStart(attachment)
+                    onThumbDragStart(attachment)
                 },
                 onDragStop = { progress ->
-                    onScrubberDragStop(attachment, progress)
+                    onThumbDragStop(attachment, progress)
                 },
             )
 

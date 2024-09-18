@@ -30,7 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.ui.theme.composer.AudioRecordingTheme
+import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingTheme
 
 /**
  * Represents the theming for the message composer.

@@ -200,8 +200,6 @@ public fun AudioRecordAttachmentContentItem(
         else -> ChatTheme.otherMessageTheme.audioRecording
     }
 
-    theme.playButton
-
     Surface(
         modifier = modifier
             .padding(2.dp)
