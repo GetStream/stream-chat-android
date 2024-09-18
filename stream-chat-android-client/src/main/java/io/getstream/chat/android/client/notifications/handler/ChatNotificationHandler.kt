@@ -25,6 +25,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import io.getstream.android.push.permissions.NotificationPermissionStatus
@@ -44,8 +45,9 @@ import io.getstream.chat.android.models.User
 internal class ChatNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
-    private val notificationChannel: (() -> NotificationChannel),
+    private val notificationChannel: () -> NotificationChannel,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
+    private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
 ) : NotificationHandler {
 
     private val sharedPreferences: SharedPreferences by lazy {
@@ -93,8 +95,7 @@ internal class ChatNotificationHandler(
             groupKey = getNotificationGroupKey(channelType = channel.type, channelId = channel.id),
             intent = getNewMessageIntent(message = message, channel = channel),
         ).apply {
-            addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
-            addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
+            actionsProvider(notificationId, channel, message).forEach(::addAction)
             setDeleteIntent(NotificationMessageReceiver.createDismissPendingIntent(context, notificationId, channel))
         }
     }

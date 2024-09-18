@@ -24,10 +24,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.graphics.drawable.IconCompat
 import io.getstream.android.push.permissions.DefaultNotificationPermissionHandler
 import io.getstream.android.push.permissions.NotificationPermissionHandler
 import io.getstream.chat.android.client.R
+import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -50,6 +52,7 @@ public object NotificationHandlerFactory {
      * @param userIconBuilder Generates [IconCompat] to be shown on notifications.
      * @param permissionHandler Handles [android.Manifest.permission.POST_NOTIFICATIONS] permission lifecycle.
      * @param notificationTextFormatter Lambda expression used to formats the text of the notification.
+     * @param actionsProvider Lambda expression used to provide actions for the notification.
      */
     @SuppressLint("NewApi")
     @JvmOverloads
@@ -57,35 +60,43 @@ public object NotificationHandlerFactory {
     public fun createNotificationHandler(
         context: Context,
         notificationConfig: NotificationConfig,
-        newMessageIntent: ((message: Message, channel: Channel) -> Intent)? = null,
-        notificationChannel: (() -> NotificationChannel)? = null,
+        newMessageIntent: ((message: Message, channel: Channel) -> Intent) = getDefaultNewMessageIntentFun(context),
+        notificationChannel: (() -> NotificationChannel) = getDefaultNotificationChannel(context),
         userIconBuilder: UserIconBuilder = provideDefaultUserIconBuilder(context),
         permissionHandler: NotificationPermissionHandler? = provideDefaultNotificationPermissionHandler(context),
-        notificationTextFormatter: ((currentUser: User?, message: Message) -> CharSequence)? = null,
-    ): NotificationHandler {
-        val notificationChannelFun = notificationChannel ?: getDefaultNotificationChannel(context)
-        val notificationTextFormatterFun = notificationTextFormatter
-            ?: getDefaultNotificationTextFormatter(notificationConfig)
-        (newMessageIntent ?: getDefaultNewMessageIntentFun(context)).let { newMessageIntentFun ->
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                MessagingStyleNotificationHandler(
-                    context = context,
-                    newMessageIntent = newMessageIntentFun,
-                    notificationChannel = notificationChannelFun,
-                    userIconBuilder = userIconBuilder,
-                    permissionHandler = permissionHandler,
-                    notificationTextFormatter = notificationTextFormatterFun,
-                )
-            } else {
-                ChatNotificationHandler(
-                    context = context,
-                    newMessageIntent = newMessageIntentFun,
-                    notificationChannel = notificationChannelFun,
-                    notificationTextFormatter = notificationTextFormatterFun,
-                )
-            }
-        }
+        notificationTextFormatter: ((currentUser: User?, message: Message) -> CharSequence) =
+            getDefaultNotificationTextFormatter(notificationConfig),
+        actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
+            getDefaultActionsProvider(context),
+    ): NotificationHandler = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        MessagingStyleNotificationHandler(
+            context = context,
+            newMessageIntent = newMessageIntent,
+            notificationChannel = notificationChannel,
+            userIconBuilder = userIconBuilder,
+            permissionHandler = permissionHandler,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+        )
+    } else {
+        ChatNotificationHandler(
+            context = context,
+            newMessageIntent = newMessageIntent,
+            notificationChannel = notificationChannel,
+            notificationTextFormatter = notificationTextFormatter,
+            actionsProvider = actionsProvider,
+        )
     }
+
+    private fun getDefaultActionsProvider(
+        context: Context,
+    ): (notificationId: Int, channel: Channel, message: Message) -> List<NotificationCompat.Action> =
+        { notificationId, channel, message ->
+            listOf(
+                NotificationMessageReceiver.createReadAction(context, notificationId, channel, message),
+                NotificationMessageReceiver.createReplyAction(context, notificationId, channel),
+            )
+        }
 
     private fun getDefaultNotificationTextFormatter(
         notificationConfig: NotificationConfig,

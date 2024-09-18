@@ -25,6 +25,7 @@ import android.content.SharedPreferences
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
 import androidx.core.app.Person
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
@@ -32,7 +33,6 @@ import io.getstream.android.push.permissions.NotificationPermissionHandler
 import io.getstream.android.push.permissions.NotificationPermissionStatus
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.R
-import io.getstream.chat.android.client.receivers.NotificationMessageReceiver
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -44,14 +44,18 @@ import java.util.Date
  * Notification channel should only be accessed if Build.VERSION.SDK_INT >= Build.VERSION_CODES.O.
  */
 @RequiresApi(Build.VERSION_CODES.M)
-@Suppress("TooManyFunctions")
+@Suppress(
+    "TooManyFunctions",
+    "LongParameterList",
+)
 internal class MessagingStyleNotificationHandler(
     private val context: Context,
     private val newMessageIntent: (message: Message, channel: Channel) -> Intent,
-    private val notificationChannel: (() -> NotificationChannel),
+    private val notificationChannel: () -> NotificationChannel,
     private val userIconBuilder: UserIconBuilder,
     private val permissionHandler: NotificationPermissionHandler?,
     private val notificationTextFormatter: (currentUser: User?, message: Message) -> CharSequence,
+    private val actionsProvider: (notificationId: Int, channel: Channel, message: Message) -> List<Action>,
 ) : NotificationHandler {
 
     private val logger by taggedLogger("Chat:MsnHandler")
@@ -95,8 +99,7 @@ internal class MessagingStyleNotificationHandler(
                 .setColor(ContextCompat.getColor(context, R.color.stream_ic_notification))
                 .setStyle(initialMessagingStyle.addMessage(message.toMessagingStyleMessage(context, currentUser)))
                 .setContentIntent(contentPendingIntent)
-                .addAction(NotificationMessageReceiver.createReadAction(context, notificationId, channel, message))
-                .addAction(NotificationMessageReceiver.createReplyAction(context, notificationId, channel))
+                .apply { actionsProvider(notificationId, channel, message).forEach(::addAction) }
                 .build()
             addNotificationId(notificationId)
             notificationManager.notify(notificationId, notification)
