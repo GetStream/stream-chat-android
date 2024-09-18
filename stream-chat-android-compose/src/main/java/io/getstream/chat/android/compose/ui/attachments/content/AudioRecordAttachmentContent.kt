@@ -199,7 +199,7 @@ public fun AudioRecordAttachmentContentItem(
         padding = theme.padding,
         playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
         timerStyle = theme.timerStyle,
-        waveformSliderStyle = theme.waveformSliderLayoutStyle,
+        waveformSliderStyle = theme.waveformSliderStyle,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,

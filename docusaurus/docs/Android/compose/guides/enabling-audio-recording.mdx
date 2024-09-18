@@ -162,8 +162,8 @@ And `AudioRecordingAttachmentTheme` contains the following attributes:
 
 ```kotlin
 public data class AudioRecordingAttachmentTheme(
-    /** The height of the audio recording attachment. */
-    public val height: Dp,
+    /** The size of the audio recording attachment. */
+    public val size: ComponentSize,
     
     /** The padding for the audio recording attachment. */
     public val padding: ComponentPadding,
@@ -181,13 +181,7 @@ public data class AudioRecordingAttachmentTheme(
     public val timerTextStyle: TextStyle,
     
     /** The style for the waveform slider. */
-    public val waveformSliderStyle: WaveformSliderStyle,
-    
-    /** The height of the waveform slider. */
-    public val waveformSliderHeight: Dp,
-    
-    /** The padding for the waveform slider. */
-    public val waveformSliderPadding: ComponentPadding,
+    public val waveformSliderStyle: WaveformSliderLayoutStyle,
     
     /** The width of the tail container which holds the speed button and the content type icon. */
     public val tailWidth: Dp,

@@ -44,8 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
  * @param timerTextWidth The width of the timer text.
  * @param timerTextStyle The text style for the timer text.
  * @param waveformSliderStyle The style for the waveform slider.
- * @param waveformSliderHeight The height of the waveform slider.
- * @param waveformSliderPadding The padding for the waveform slider.
  * @param tailWidth The width of the tail container which holds the speed button and the content type icon.
  * @param speedButton The style for the speed button.
  * @param contentTypeIcon The style for the content type icon.
@@ -58,7 +56,7 @@ public data class AudioRecordingAttachmentTheme(
     public val timerTextWidth: Dp,
     public val timerTextStyle: TextStyle,
     public val timerStyle: TextContainerStyle,
-    public val waveformSliderLayoutStyle: WaveformSliderLayoutStyle,
+    public val waveformSliderStyle: WaveformSliderLayoutStyle,
     public val tailWidth: Dp,
     public val speedButton: TextContainerStyle,
     public val contentTypeIcon: IconStyle,
@@ -161,7 +159,7 @@ public data class AudioRecordingAttachmentTheme(
                         color = colors.textLowEmphasis,
                     ),
                 ),
-                waveformSliderLayoutStyle = WaveformSliderLayoutStyle(
+                waveformSliderStyle = WaveformSliderLayoutStyle(
                     height = 36.dp,
                     style = WaveformSliderStyle.defaultStyle(colors = colors),
                 ),
