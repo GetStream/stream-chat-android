@@ -201,6 +201,7 @@ public fun MessageComposer(
             onHoldRecording = recordingActions.onHoldRecording,
             onCancelRecording = recordingActions.onCancelRecording,
             onSendRecording = recordingActions.onSendRecording,
+            onLockRecording = recordingActions.onLockRecording,
         )
     },
 ) {
@@ -338,6 +339,7 @@ public fun MessageComposer(
             onHoldRecording = recordingActions.onHoldRecording,
             onCancelRecording = recordingActions.onCancelRecording,
             onSendRecording = recordingActions.onSendRecording,
+            onLockRecording = recordingActions.onLockRecording,
         )
     },
 ) {
@@ -657,6 +659,7 @@ internal fun DefaultMessageComposerTrailingContent(
     onSendMessage: (String, List<Attachment>) -> Unit,
     onStartRecording: (Offset) -> Unit,
     onHoldRecording: (Offset) -> Unit,
+    onLockRecording: () -> Unit,
     onCancelRecording: () -> Unit,
     onSendRecording: () -> Unit,
 ) {
@@ -716,11 +719,12 @@ internal fun DefaultMessageComposerTrailingContent(
         }
         if (recordVisible) {
             DefaultAudioRecordButton(
-                messageComposerState.recording,
-                onCancelRecording,
-                onSendRecording,
-                onStartRecording,
-                onHoldRecording,
+                state = messageComposerState.recording,
+                onCancelRecording = onCancelRecording,
+                onSendRecording = onSendRecording,
+                onStartRecording = onStartRecording,
+                onHoldRecording = onHoldRecording,
+                onLockRecording = onLockRecording,
             )
         }
     }
