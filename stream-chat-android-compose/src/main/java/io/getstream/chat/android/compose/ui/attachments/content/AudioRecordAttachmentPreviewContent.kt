@@ -17,38 +17,27 @@
 package io.getstream.chat.android.compose.ui.attachments.content
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.extensions.duration
-import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.compose.ui.components.CancelIcon
-import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.util.padding
-import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
 @Composable
 public fun AudioRecordAttachmentPreviewContent(
@@ -110,9 +99,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
         size = theme.size,
         padding = theme.padding,
         playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
-        timerTextWidth = theme.timerTextWidth,
-        timerTextStyle = theme.timerTextStyle,
-        waveformSliderHeight = theme.waveformSliderHeight,
+        timerStyle = theme.timerStyle,
         waveformSliderStyle = theme.waveformSliderStyle,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,

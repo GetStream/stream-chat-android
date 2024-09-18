@@ -25,6 +25,17 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 /**
+ * Represents the style for the waveform slider layout.
+ *
+ * @param height The height of the waveform slider.
+ * @param style The style for the waveform slider.
+ */
+public data class WaveformSliderLayoutStyle(
+    val height: Dp,
+    val style: WaveformSliderStyle,
+)
+
+/**
  * Represents the style for the waveform slider.
  */
 public data class WaveformSliderStyle(

@@ -32,6 +32,7 @@ import io.getstream.chat.android.compose.ui.theme.StreamColors
 import io.getstream.chat.android.compose.ui.theme.StreamTypography
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
 
 /**
  * Represents the theming for the audio recording attachment.
@@ -43,8 +44,6 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
  * @param timerTextWidth The width of the timer text.
  * @param timerTextStyle The text style for the timer text.
  * @param waveformSliderStyle The style for the waveform slider.
- * @param waveformSliderHeight The height of the waveform slider.
- * @param waveformSliderPadding The padding for the waveform slider.
  */
 public data class AudioRecordingAttachmentPreviewTheme(
     public val size: ComponentSize,
@@ -53,9 +52,8 @@ public data class AudioRecordingAttachmentPreviewTheme(
     public val pauseButton: IconContainerStyle,
     public val timerTextWidth: Dp,
     public val timerTextStyle: TextStyle,
-    public val waveformSliderStyle: WaveformSliderStyle,
-    public val waveformSliderHeight: Dp,
-    public val waveformSliderPadding: ComponentPadding,
+    public val timerStyle: TextContainerStyle,
+    public val waveformSliderStyle: WaveformSliderLayoutStyle,
 ) {
 
     public companion object {
@@ -103,9 +101,18 @@ public data class AudioRecordingAttachmentPreviewTheme(
                 timerTextStyle = typography.body.copy(
                     color = colors.textLowEmphasis,
                 ),
-                waveformSliderStyle = WaveformSliderStyle.defaultStyle(colors = colors),
-                waveformSliderHeight = 36.dp,
-                waveformSliderPadding = ComponentPadding.Zero,
+                timerStyle = TextContainerStyle(
+                    size = ComponentSize.width(48.dp),
+                    padding = ComponentPadding.Zero,
+                    backgroundColor = Color.Unspecified,
+                    textStyle = typography.body.copy(
+                        color = colors.textLowEmphasis,
+                    ),
+                ),
+                waveformSliderStyle = WaveformSliderLayoutStyle(
+                    height = 36.dp,
+                    style = WaveformSliderStyle.defaultStyle(colors = colors),
+                ),
             )
         }
     }

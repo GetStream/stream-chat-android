@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,10 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -56,7 +54,7 @@ import io.getstream.chat.android.compose.ui.theme.ComponentSize
 import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
 import io.getstream.chat.android.compose.ui.theme.IconStyle
 import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
-import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformSliderLayoutStyle
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
@@ -200,10 +198,8 @@ public fun AudioRecordAttachmentContentItem(
         size = theme.size,
         padding = theme.padding,
         playbackToggleStyle = { isPlaying -> if (isPlaying) theme.pauseButton else theme.playButton },
-        timerTextWidth = theme.timerTextWidth,
-        timerTextStyle = theme.timerTextStyle,
-        waveformSliderHeight = theme.waveformSliderHeight,
-        waveformSliderStyle = theme.waveformSliderStyle,
+        timerStyle = theme.timerStyle,
+        waveformSliderStyle = theme.waveformSliderLayoutStyle,
         onPlayToggleClick = onPlayToggleClick,
         onThumbDragStart = onThumbDragStart,
         onThumbDragStop = onThumbDragStop,
@@ -233,10 +229,8 @@ internal fun AudioRecordAttachmentContentItemBase(
     size: ComponentSize,
     padding: ComponentPadding,
     playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
-    timerTextWidth: Dp,
-    timerTextStyle: TextStyle,
-    waveformSliderHeight: Dp,
-    waveformSliderStyle: WaveformSliderStyle,
+    timerStyle: TextContainerStyle,
+    waveformSliderStyle: WaveformSliderLayoutStyle,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
@@ -268,13 +262,13 @@ internal fun AudioRecordAttachmentContentItemBase(
         ) {
             PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(attachment) }
 
-            PlaybackTimer(playbackText, timerTextWidth, timerTextStyle)
+            PlaybackTimer(playbackText, timerStyle)
 
             WaveformSlider(
                 modifier = Modifier
-                    .height(waveformSliderHeight)
+                    .height(waveformSliderStyle.height)
                     .weight(1f),
-                style = waveformSliderStyle,
+                style = waveformSliderStyle.style,
                 waveformData = waveform,
                 progress = trackProgress,
                 onDragStart = { onThumbDragStart(attachment) },
@@ -290,22 +284,24 @@ internal fun AudioRecordAttachmentContentItemBase(
  * Represents the playback timer.
  *
  * @param playbackText The text to display.
- * @param width The width of the timer.
- * @param textStyle The style for the timer text.
+ * @param style The style for the timer component.
  */
 @Composable
 internal fun PlaybackTimer(
     playbackText: String,
-    width: Dp,
-    textStyle: TextStyle,
+    style: TextContainerStyle,
 ) {
-    Text(
-        modifier = Modifier
-            .width(width),
-        style = textStyle,
-        text = playbackText,
-        textAlign = TextAlign.Center,
-    )
+    Box(
+        modifier = Modifier.size(style.size)
+            .padding(style.padding)
+            .background(style.backgroundColor),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            style = style.textStyle,
+            text = playbackText,
+        )
+    }
 }
 
 /**
