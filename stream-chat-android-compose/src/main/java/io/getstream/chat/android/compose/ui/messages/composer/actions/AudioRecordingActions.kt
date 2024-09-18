@@ -1,5 +1,6 @@
 package io.getstream.chat.android.compose.ui.messages.composer.actions
 
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.geometry.Offset
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 
@@ -18,6 +19,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
  * @property onRecordingSliderDragStop Handler when the user stops dragging the recording slider.
  * @property onSendRecording Handler when the user sends the recording.
  */
+@Immutable
 public data class AudioRecordingActions(
     val onStartRecording: (Offset) -> Unit,
     val onHoldRecording: (Offset) -> Unit,

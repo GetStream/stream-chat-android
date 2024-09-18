@@ -50,6 +50,8 @@ import io.getstream.chat.android.compose.ui.components.CancelIcon
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.util.padding
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModelFactory
 import io.getstream.chat.android.models.Attachment
@@ -120,6 +122,12 @@ public fun AudioRecordAttachmentPreviewContentItem(
         else -> attachment.waveformData ?: emptyList()
     }
 
+    val theme = ChatTheme.messageComposerTheme.attachmentsPreview.audioRecording
+    val toggleStyle = when (playing) {
+        true -> theme.pauseButton
+        else -> theme.playButton
+    }
+
     Surface(
         modifier = modifier
             .padding(2.dp)
@@ -129,57 +137,22 @@ public fun AudioRecordAttachmentPreviewContentItem(
     ) {
         Row(
             modifier = Modifier
-                .width(200.dp)
-                .height(50.dp)
-                .padding(start = 8.dp, end = 0.dp, top = 2.dp, bottom = 2.dp),
+                .size(theme.size)
+                .padding(theme.padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Card(
-                elevation = 1.dp,
-                shape = CircleShape
-            ) {
-                IconButton(
-                    onClick = { onPlayToggleClick(attachment) },
-                    modifier = Modifier
-                        .width(36.dp)
-                        .height(36.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(
-                            id = when (playing) {
-                                true -> R.drawable.stream_compose_ic_pause
-                                else -> R.drawable.stream_compose_ic_play
-                            },
-                        ),
-                        contentDescription = null,
-                        tint = Color.Black,
-                    )
-                }
-            }
-
-            Text(
-                modifier = Modifier
-                    .size(height = 48.dp, width = 48.dp)
-                    .wrapContentSize(Alignment.Center),
-                style = ChatTheme.typography.body,
-                text = playbackText,
-                textAlign = TextAlign.Center,
-                color = ChatTheme.colors.textHighEmphasis,
-            )
+            PlaybackToggleButton(toggleStyle, attachment, onPlayToggleClick)
+            PlaybackTimer(playbackText, theme.timerTextWidth, theme.timerTextStyle)
 
             WaveformSlider(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(36.dp)
+                    .height(theme.waveformSliderHeight)
                     .weight(1f),
+                style = theme.waveformSliderStyle,
                 waveformData = waveform,
                 progress = trackProgress,
-                onDragStart = {
-                    onThumbDragStart(attachment)
-                },
-                onDragStop = { progress ->
-                    onThumbDragStop(attachment, progress)
-                },
+                onDragStart = { onThumbDragStart(attachment) },
+                onDragStop = { progress -> onThumbDragStop(attachment, progress) },
             )
 
             CancelIcon(

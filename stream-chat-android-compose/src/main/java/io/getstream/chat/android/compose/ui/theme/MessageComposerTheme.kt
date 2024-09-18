@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingTheme
+import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.AttachmentsPreviewTheme
 
 /**
  * Represents the theming for the message composer.
@@ -38,12 +39,14 @@ import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordi
  * @param linkPreview The theming for the link preview in the message composer.
  * @param inputField The theming for the input field in the message composer.
  * @param audioRecording The theming for the audio recording in the message composer.
+ * @param attachmentsPreview The theming for the attachments preview in the message composer.
  */
 public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,
     val linkPreview: ComposerLinkPreviewTheme,
     val inputField: ComposerInputFieldTheme,
     val audioRecording: AudioRecordingTheme,
+    val attachmentsPreview: AttachmentsPreviewTheme,
 ) {
 
     public companion object {
@@ -68,6 +71,7 @@ public data class MessageComposerTheme(
                 linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
                 audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
+                attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }
     }

@@ -36,8 +36,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -49,6 +51,9 @@ import io.getstream.chat.android.compose.state.messages.attachments.AttachmentSt
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.compose.ui.theme.IconContainerStyle
+import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
+import io.getstream.chat.android.compose.ui.theme.messages.attachments.AudioRecordingAttachmentTheme
 import io.getstream.chat.android.compose.ui.util.padding
 import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
@@ -199,6 +204,10 @@ public fun AudioRecordAttachmentContentItem(
         true -> ChatTheme.ownMessageTheme.audioRecording
         else -> ChatTheme.otherMessageTheme.audioRecording
     }
+    val toggleStyle = when (playing) {
+        true -> theme.pauseButton
+        else -> theme.playButton
+    }
 
     Surface(
         modifier = modifier
@@ -214,36 +223,9 @@ public fun AudioRecordAttachmentContentItem(
                 .padding(theme.padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Card(
-                elevation = 1.dp,
-                shape = CircleShape,
-            ) {
-                val toggleStyle = when (playing) {
-                    true -> theme.pauseButton
-                    else -> theme.playButton
-                }
-                IconButton(
-                    onClick = { onPlayToggleClick(attachment) },
-                    modifier = Modifier
-                        .size(toggleStyle.size)
-                        .padding(toggleStyle.padding),
-                ) {
-                    Icon(
-                        painter = toggleStyle.icon.painter,
-                        modifier = Modifier.size(toggleStyle.icon.size),
-                        contentDescription = null,
-                        tint = toggleStyle.icon.tint,
-                    )
-                }
-            }
+            PlaybackToggleButton(toggleStyle, attachment, onPlayToggleClick)
 
-            Text(
-                modifier = Modifier
-                    .width(theme.timerTextWidth),
-                style = theme.timerTextStyle,
-                text = playbackText,
-                textAlign = TextAlign.Center,
-            )
+            PlaybackTimer(playbackText, theme.timerTextWidth, theme.timerTextStyle)
 
             WaveformSlider(
                 modifier = Modifier
@@ -252,12 +234,8 @@ public fun AudioRecordAttachmentContentItem(
                 style = theme.waveformSliderStyle,
                 waveformData = waveform,
                 progress = trackProgress,
-                onDragStart = {
-                    onThumbDragStart(attachment)
-                },
-                onDragStop = { progress ->
-                    onThumbDragStop(attachment, progress)
-                },
+                onDragStart = { onThumbDragStart(attachment) },
+                onDragStop = { progress -> onThumbDragStop(attachment, progress) },
             )
 
             Box(
@@ -298,6 +276,61 @@ public fun AudioRecordAttachmentContentItem(
                     )
                 }
             }
+        }
+    }
+}
+
+/**
+ * Represents the playback timer.
+ *
+ * @param playbackText The text to display.
+ * @param width The width of the timer.
+ * @param textStyle The style for the timer text.
+ */
+@Composable
+internal fun PlaybackTimer(
+    playbackText: String,
+    width: Dp,
+    textStyle: TextStyle,
+) {
+    Text(
+        modifier = Modifier
+            .width(width),
+        style = textStyle,
+        text = playbackText,
+        textAlign = TextAlign.Center,
+    )
+}
+
+/**
+ * Represents the playback toggle button.
+ *
+ * @param style The style for the toggle button.
+ * @param attachment The attachment to display.
+ * @param onToggleClick The callback for when the button is clicked.
+ */
+@Composable
+internal fun PlaybackToggleButton(
+    style: IconContainerStyle,
+    attachment: Attachment,
+    onToggleClick: (Attachment) -> Unit = {},
+) {
+    Card(
+        elevation = 1.dp,
+        shape = CircleShape,
+    ) {
+        IconButton(
+            onClick = { onToggleClick(attachment) },
+            modifier = Modifier
+                .size(style.size)
+                .padding(style.padding),
+        ) {
+            Icon(
+                painter = style.icon.painter,
+                modifier = Modifier.size(style.icon.size),
+                contentDescription = null,
+                tint = style.icon.tint,
+            )
         }
     }
 }
