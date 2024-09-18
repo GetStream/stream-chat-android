@@ -89,7 +89,8 @@ public fun MessageText(
     }
     if (annotations.fastAny {
             it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
-        }) {
+        }
+    ) {
         ClickableText(
             modifier = modifier
                 .padding(
@@ -102,9 +103,7 @@ public fun MessageText(
             style = style,
             onLongPress = { onLongItemClick(message) },
         ) { position ->
-            val annotation = annotations.firstOrNull {
-                position in it.start..it.end
-            }
+            val annotation = annotations.firstOrNull { position in it.start..it.end }
             if (annotation?.tag == AnnotationTagMention) {
                 message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onTapUserMention.invoke(it) }
             } else {
