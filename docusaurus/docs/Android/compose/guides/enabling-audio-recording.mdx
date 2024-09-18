@@ -77,17 +77,18 @@ ChatTheme(
 }
 ```
 
-The `MessageComposerTheme` contains the `AudioRecordingTheme`
+The `MessageComposerTheme` contains the `AudioRecordingTheme` and `AttachmentsPreviewTheme`:
 
 ```kotlin
 public data class MessageComposerTheme(
     //...
     val audioRecording: AudioRecordingTheme,
+    val attachmentsPreview: AttachmentsPreviewTheme,
     //...
 )
 ```
 
-And `AudioRecordingTheme` contains the following attributes:
+The `AudioRecordingTheme` contains the following attributes:
 
 ```kotlin
 public data class AudioRecordingTheme(
@@ -120,6 +121,41 @@ public data class AudioRecordingTheme(
     
     /** The theme for the permission rationale component. */
     val permissionRationale: AudioRecordingPermissionRationaleTheme,
+)
+```
+
+The `AttachmentsPreviewTheme` contains the `AudioRecordingAttachmentPreviewTheme`:
+
+```kotlin
+public data class AttachmentsPreviewTheme(
+    //...
+    val audioRecording: AudioRecordingAttachmentPreviewTheme,
+    //...
+)
+```
+
+And `AudioRecordingAttachmentPreviewTheme` contains the following attributes:
+
+```kotlin
+public data class AudioRecordingAttachmentPreviewTheme(
+    
+    /** The size of the audio recording attachment preview. */
+    public val size: ComponentSize,
+    
+    /** The padding for the audio recording attachment preview. */
+    public val padding: ComponentPadding,
+    
+    /** The style for the play button. */
+    public val playButton: IconContainerStyle,
+    
+    /** The style for the pause button. */
+    public val pauseButton: IconContainerStyle,
+
+    /** The style for the timer component. */
+    public val timerStyle: TextContainerStyle,
+    
+    /** The style for the waveform slider. */
+    public val waveformSliderStyle: WaveformSliderLayoutStyle,
 )
 ```
 
@@ -173,12 +209,9 @@ public data class AudioRecordingAttachmentTheme(
     
     /** The style for the pause button. */
     public val pauseButton: IconContainerStyle,
-    
-    /** The width of the timer text. */
-    public val timerTextWidth: Dp,
-    
-    /** The text style for the timer text. */
-    public val timerTextStyle: TextStyle,
+
+    /** The style for the timer component. */
+    public val timerStyle: TextContainerStyle,
     
     /** The style for the waveform slider. */
     public val waveformSliderStyle: WaveformSliderLayoutStyle,

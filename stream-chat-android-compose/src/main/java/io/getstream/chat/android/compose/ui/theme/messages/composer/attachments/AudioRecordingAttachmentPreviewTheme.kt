@@ -20,8 +20,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
@@ -41,8 +39,7 @@ import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
  * @param padding The padding for the audio recording attachment preview.
  * @param playButton The style for the play button.
  * @param pauseButton The style for the pause button.
- * @param timerTextWidth The width of the timer text.
- * @param timerTextStyle The text style for the timer text.
+ * @param timerStyle The style for the timer component.
  * @param waveformSliderStyle The style for the waveform slider.
  */
 public data class AudioRecordingAttachmentPreviewTheme(
@@ -50,8 +47,6 @@ public data class AudioRecordingAttachmentPreviewTheme(
     public val padding: ComponentPadding,
     public val playButton: IconContainerStyle,
     public val pauseButton: IconContainerStyle,
-    public val timerTextWidth: Dp,
-    public val timerTextStyle: TextStyle,
     public val timerStyle: TextContainerStyle,
     public val waveformSliderStyle: WaveformSliderLayoutStyle,
 ) {
@@ -96,10 +91,6 @@ public data class AudioRecordingAttachmentPreviewTheme(
                         tint = Color.Black,
                         size = ComponentSize.square(24.dp),
                     ),
-                ),
-                timerTextWidth = 48.dp,
-                timerTextStyle = typography.body.copy(
-                    color = colors.textLowEmphasis,
                 ),
                 timerStyle = TextContainerStyle(
                     size = ComponentSize.width(48.dp),
