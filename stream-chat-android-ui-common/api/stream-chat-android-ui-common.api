@@ -997,6 +997,7 @@ public final class io/getstream/chat/android/ui/common/state/messages/composer/R
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAttachment ()Lio/getstream/chat/android/models/Attachment;
 	public final fun getDurationInMs ()I
+	public final fun getHasPlayingId ()Z
 	public final fun getPlayingId ()I
 	public final fun getPlayingProgress ()F
 	public final fun getWaveform ()Ljava/util/List;

@@ -27,7 +27,6 @@ import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttac
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentQuotedContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent
 import io.getstream.chat.android.uiutils.extension.hasLink
-import kotlin.math.atan
 
 /**
  * An [AttachmentFactory] that validates attachments as files and uses [MediaAttachmentQuotedContent] in case the
@@ -52,7 +51,8 @@ public object QuotedAttachmentFactory : AttachmentFactory(
 
         when {
             attachment.isAudioRecording() -> AudioRecordAttachmentQuotedContent(
-                modifier = modifier, attachment = attachment
+                modifier = modifier,
+                attachment = attachment,
             )
             attachment.isImage() || attachment.isVideo() || attachment.isGiphy() || attachment.hasLink() -> {
                 MediaAttachmentQuotedContent(modifier = modifier, attachment = attachment)

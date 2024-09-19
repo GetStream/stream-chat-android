@@ -34,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,37 +96,49 @@ public fun WaveformSlider(
             .onSizeChanged { size ->
                 widthPx = size.width.toFloat()
             }
-            .then(if (isTouchable.not()) Modifier else Modifier.pointerInput(Unit) {
-                detectDragGestures(
-                    onDragEnd = {
-                        onDragStop(currentProgress)
-                        pressed = false
-                    },
-                    onDragCancel = {
-                        onDragStop(currentProgress)
-                        pressed = false
-                    },
-                ) { change, _ ->
-                    change.consume()
-                    if (widthPx > 0) {
-                        currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
-                    }
-                }
-            })
-            .then(if (isTouchable.not()) Modifier else Modifier.pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        pressed = true
-                        if (widthPx > 0) {
-                            currentProgress = (it.x / widthPx).coerceIn(0f, 1f)
-                            onDragStart(currentProgress)
+            .then(
+                if (isTouchable.not()) {
+                    Modifier
+                } else {
+                    Modifier.pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragEnd = {
+                                onDragStop(currentProgress)
+                                pressed = false
+                            },
+                            onDragCancel = {
+                                onDragStop(currentProgress)
+                                pressed = false
+                            },
+                        ) { change, _ ->
+                            change.consume()
+                            if (widthPx > 0) {
+                                currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
+                            }
                         }
-                    },
-                ) { offset ->
-                    onDragStop(currentProgress)
-                    pressed = false
-                }
-            }),
+                    }
+                },
+            )
+            .then(
+                if (isTouchable.not()) {
+                    Modifier
+                } else {
+                    Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onPress = {
+                                pressed = true
+                                if (widthPx > 0) {
+                                    currentProgress = (it.x / widthPx).coerceIn(0f, 1f)
+                                    onDragStart(currentProgress)
+                                }
+                            },
+                        ) { offset ->
+                            onDragStop(currentProgress)
+                            pressed = false
+                        }
+                    }
+                },
+            ),
     ) {
         // Draw the waveform
         WaveformTrack(
