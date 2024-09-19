@@ -35,6 +35,7 @@ import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -187,6 +188,7 @@ public fun AudioRecordAttachmentContentItem(
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
+    val currentAttachment by rememberUpdatedState(attachment)
     val theme = when (isMine) {
         true -> ChatTheme.ownMessageTheme.audioRecording
         else -> ChatTheme.otherMessageTheme.audioRecording
@@ -212,7 +214,7 @@ public fun AudioRecordAttachmentContentItem(
             ) {
                 if (isPlaying) {
                     val speed = playerState?.playingSpeed ?: 1F
-                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(attachment) }
+                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(currentAttachment) }
                 } else {
                     ContentTypeIcon(theme.contentTypeIcon)
                 }
@@ -248,6 +250,7 @@ internal fun AudioRecordAttachmentContentItemBase(
         else -> attachment.waveformData ?: emptyList()
     }
 
+    val currentAttachment by rememberUpdatedState(attachment)
     Surface(
         modifier = modifier
             .padding(2.dp),
@@ -260,7 +263,7 @@ internal fun AudioRecordAttachmentContentItemBase(
                 .padding(padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(attachment) }
+            PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(currentAttachment) }
 
             PlaybackTimer(playbackText, timerStyle)
 
@@ -271,8 +274,8 @@ internal fun AudioRecordAttachmentContentItemBase(
                 style = waveformSliderStyle.style,
                 waveformData = waveform,
                 progress = trackProgress,
-                onDragStart = { onThumbDragStart(attachment) },
-                onDragStop = { progress -> onThumbDragStop(attachment, progress) },
+                onDragStart = { onThumbDragStart(currentAttachment) },
+                onDragStop = { progress -> onThumbDragStop(currentAttachment, progress) },
             )
 
             tailContent(playing)
@@ -292,7 +295,8 @@ internal fun PlaybackTimer(
     style: TextContainerStyle,
 ) {
     Box(
-        modifier = Modifier.size(style.size)
+        modifier = Modifier
+            .size(style.size)
             .padding(style.padding)
             .background(style.backgroundColor),
         contentAlignment = Alignment.Center,

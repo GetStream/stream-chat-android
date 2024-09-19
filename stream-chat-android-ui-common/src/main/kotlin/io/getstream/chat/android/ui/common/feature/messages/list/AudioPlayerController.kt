@@ -124,13 +124,14 @@ public class AudioPlayerController(
             logger.v { "[seekTo] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
+        val recordingUri = getRecordingUri(attachment) ?: run {
             logger.v { "[seekTo] rejected (no recordingUri): $attachment" }
             return
         }
+        val audioHash = recordingUri.hashCode()
         val durationInSeconds = attachment.duration ?: NULL_DURATION
         val positionInMs = (progress * durationInSeconds * MILLIS_IN_SECOND).toInt()
-        logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash" }
+        logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash, uri: $recordingUri" }
         audioPlayer.seekTo(positionInMs, audioHash)
     }
 
@@ -161,7 +162,7 @@ public class AudioPlayerController(
 
         val audioState = audioPlayer.currentState
         val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
-        logger.d { "[play] audioHash: $audioHash" }
+        logger.d { "[play] audioHash: $audioHash, uri: $recordingUri" }
         setState(
             AudioPlayerState(
                 attachment = attachment,
