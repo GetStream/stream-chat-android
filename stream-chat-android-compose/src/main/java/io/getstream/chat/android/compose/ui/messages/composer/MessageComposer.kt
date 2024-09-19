@@ -610,10 +610,14 @@ private fun RowScope.DefaultComposerInputContent(
 ) {
     val isRecording = messageComposerState.recording !is RecordingState.Idle
     MessageInput(
-        modifier = if (isRecording) Modifier.size(0.dp) else Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .weight(1f),
+        modifier = if (isRecording) {
+            Modifier.size(0.dp)
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .weight(1f)
+        },
         label = label,
         messageComposerState = messageComposerState,
         onValueChange = onValueChange,
