@@ -358,6 +358,8 @@ internal fun DefaultMessageComposerRecordingContent(
         else -> false
     }
 
+    val waveformTouchable = recordingState !is RecordingState.Locked
+
     val waveformData = when (recordingState) {
         is RecordingState.Recording -> recordingState.waveform
         is RecordingState.Overview -> recordingState.waveform
@@ -397,6 +399,7 @@ internal fun DefaultMessageComposerRecordingContent(
     DefaultMessageComposerRecordingContent(
         recordingTimeMs = recordingTimeMs,
         waveformVisible = waveformVisible,
+        waveformTouchable = waveformTouchable,
         waveformData = waveformData,
         waveformPlaying = waveformPlaying,
         waveformProgress = waveformProgress,
@@ -416,6 +419,7 @@ private fun DefaultMessageComposerRecordingContent(
     modifier: Modifier = Modifier,
     recordingTimeMs: Int = 0,
     waveformVisible: Boolean = true,
+    waveformTouchable: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
     waveformPlaying: Boolean = false,
@@ -446,6 +450,7 @@ private fun DefaultMessageComposerRecordingContent(
         RecordingContent(
             recordingTimeMs = recordingTimeMs,
             waveformVisible = waveformVisible,
+            waveformTouchable = waveformTouchable,
             waveformThumbVisible = waveformThumbVisible,
             waveformData = waveformData,
             waveformPlaying = waveformPlaying,
@@ -519,6 +524,7 @@ private fun RecordingContent(
     modifier: Modifier = Modifier,
     recordingTimeMs: Int = 0,
     waveformVisible: Boolean = true,
+    waveformTouchable: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
     waveformPlaying: Boolean = false,
@@ -595,6 +601,7 @@ private fun RecordingContent(
                         .padding(playbackTheme.waveformSliderPadding),
                     style = playbackTheme.waveformSliderStyle,
                     waveformData = waveformData,
+                    isTouchable = waveformTouchable,
                     visibleBarLimit = 100,
                     adjustBarWidthToLimit = true,
                     isThumbVisible = waveformThumbVisible,

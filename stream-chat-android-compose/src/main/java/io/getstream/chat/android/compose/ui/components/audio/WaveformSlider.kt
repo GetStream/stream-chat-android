@@ -34,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,6 +65,7 @@ import kotlin.random.Random
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
  * @param progress The current progress of the waveform.
  * @param isThumbVisible Whether to display the thumb.
+ * @param isTouchable Whether the waveform is touchable.
  * @param onDragStart Callback when the user starts dragging the thumb.
  * @param onDragStop Callback when the user stops dragging the thumb.
  */
@@ -76,6 +78,7 @@ public fun WaveformSlider(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float,
     isThumbVisible: Boolean = true,
+    isTouchable: Boolean = true,
     onDragStart: (Float) -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
     onDragStop: (Float) -> Unit = { StreamLog.e("WaveformSeekBar") { "[onDragStop] progress: $it" } },
 ) {
@@ -91,31 +94,29 @@ public fun WaveformSlider(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
+            .onSizeChanged { size ->
+                widthPx = size.width.toFloat()
+            }
+            .then(if (isTouchable.not()) Modifier else Modifier.pointerInput(Unit) {
                 detectDragGestures(
                     onDragEnd = {
-                        StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] end" }
                         onDragStop(currentProgress)
                         pressed = false
                     },
                     onDragCancel = {
-                        StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] cancel" }
                         onDragStop(currentProgress)
                         pressed = false
                     },
-                ) { change, dragAmount ->
+                ) { change, _ ->
                     change.consume()
                     if (widthPx > 0) {
                         currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
                     }
                 }
-            }
-            .pointerInput(Unit) {
+            })
+            .then(if (isTouchable.not()) Modifier else Modifier.pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {
-                        StreamLog.v("WaveformSeekBar") {
-                            "[detectTapGestures] press: $it"
-                        }
                         pressed = true
                         if (widthPx > 0) {
                             currentProgress = (it.x / widthPx).coerceIn(0f, 1f)
@@ -123,20 +124,10 @@ public fun WaveformSlider(
                         }
                     },
                 ) { offset ->
-
-                    StreamLog.v("WaveformSeekBar") {
-                        "[detectTapGestures] tap: $offset"
-                    }
                     onDragStop(currentProgress)
                     pressed = false
                 }
-            }
-            .onSizeChanged { size ->
-                StreamLog.v("WaveformSeekBar") {
-                    "[onSizeChanged] Size changed: $size"
-                }
-                widthPx = size.width.toFloat()
-            },
+            }),
     ) {
         // Draw the waveform
         WaveformTrack(
