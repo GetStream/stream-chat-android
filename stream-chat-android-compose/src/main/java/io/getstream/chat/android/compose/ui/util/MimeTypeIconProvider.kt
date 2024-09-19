@@ -47,6 +47,7 @@ internal object MimeTypeIconProvider {
         MimeType.MIME_TYPE_MP4 to R.drawable.stream_compose_ic_file_mp4,
         MimeType.MIME_TYPE_M4A to R.drawable.stream_compose_ic_file_m4a,
         MimeType.MIME_TYPE_MP3 to R.drawable.stream_compose_ic_file_mp3,
+        MimeType.MIME_TYPE_AAC to R.drawable.stream_compose_ic_file_aac,
         // For compatibility with other front end SDKs
         MimeType.MIME_TYPE_QUICKTIME to R.drawable.stream_compose_ic_file_mov,
         MimeType.MIME_TYPE_VIDEO_QUICKTIME to R.drawable.stream_compose_ic_file_mov,

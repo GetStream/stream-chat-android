@@ -65,6 +65,8 @@ import androidx.compose.ui.unit.dp
  * @param quotedMessageAttachmentBottomPadding The bottom padding of the quoted message attachment preview.
  * @param quotedMessageAttachmentStartPadding The start padding of the quoted message attachment preview.
  * @param quotedMessageAttachmentEndPadding The end padding of the quoted message attachment preview.
+ * @param quotedMessageAttachmentSpacerHorizontal The horizontal spacing between quoted message attachment components.
+ * @param quotedMessageAttachmentSpacerVertical The vertical spacing between quoted message attachment components.
  * @param groupAvatarInitialsXOffset The x offset of the user initials inside avatar when there are more than two
  * users.
  * @param groupAvatarInitialsYOffset The y offset of the user initials inside avatar when there are more than two
@@ -128,6 +130,8 @@ public data class StreamDimens(
     public val quotedMessageAttachmentBottomPadding: Dp,
     public val quotedMessageAttachmentStartPadding: Dp,
     public val quotedMessageAttachmentEndPadding: Dp,
+    public val quotedMessageAttachmentSpacerHorizontal: Dp,
+    public val quotedMessageAttachmentSpacerVertical: Dp,
     public val groupAvatarInitialsXOffset: Dp,
     public val groupAvatarInitialsYOffset: Dp,
     public val attachmentsPickerHeight: Dp,
@@ -190,6 +194,8 @@ public data class StreamDimens(
             quotedMessageAttachmentTopPadding = 6.dp,
             quotedMessageAttachmentStartPadding = 8.dp,
             quotedMessageAttachmentEndPadding = 0.dp,
+            quotedMessageAttachmentSpacerHorizontal = 8.dp,
+            quotedMessageAttachmentSpacerVertical = 2.dp,
             groupAvatarInitialsXOffset = 1.5.dp,
             groupAvatarInitialsYOffset = 2.5.dp,
             attachmentsPickerHeight = 350.dp,

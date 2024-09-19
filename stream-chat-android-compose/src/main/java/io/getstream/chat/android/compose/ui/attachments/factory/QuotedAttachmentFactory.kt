@@ -17,14 +17,17 @@
 package io.getstream.chat.android.compose.ui.attachments.factory
 
 import androidx.compose.runtime.Composable
+import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isFile
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
 import io.getstream.chat.android.client.utils.attachment.isVideo
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
+import io.getstream.chat.android.compose.ui.attachments.content.AudioRecordAttachmentQuotedContent
 import io.getstream.chat.android.compose.ui.attachments.content.FileAttachmentQuotedContent
 import io.getstream.chat.android.compose.ui.attachments.content.MediaAttachmentQuotedContent
 import io.getstream.chat.android.uiutils.extension.hasLink
+import kotlin.math.atan
 
 /**
  * An [AttachmentFactory] that validates attachments as files and uses [MediaAttachmentQuotedContent] in case the
@@ -37,6 +40,7 @@ public object QuotedAttachmentFactory : AttachmentFactory(
         it.firstOrNull()
             ?.let { attachment ->
                 attachment.isFile() ||
+                    attachment.isAudioRecording() ||
                     attachment.isImage() ||
                     attachment.isVideo() ||
                     attachment.isGiphy() ||
@@ -47,6 +51,9 @@ public object QuotedAttachmentFactory : AttachmentFactory(
         val attachment = attachmentState.message.attachments.first()
 
         when {
+            attachment.isAudioRecording() -> AudioRecordAttachmentQuotedContent(
+                modifier = modifier, attachment = attachment
+            )
             attachment.isImage() || attachment.isVideo() || attachment.isGiphy() || attachment.hasLink() -> {
                 MediaAttachmentQuotedContent(modifier = modifier, attachment = attachment)
             }
