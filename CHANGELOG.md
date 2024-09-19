@@ -78,6 +78,7 @@
 ### ✅ Added
 - Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391)
 - Added typing indicator on `ChannelList`. [#5399](https://github.com/GetStream/stream-chat-android/pull/5399)
+- Added support for Audio Recording feature. [#5404](https://github.com/GetStream/stream-chat-android/pull/5404)
 
 ### ⚠️ Changed
 

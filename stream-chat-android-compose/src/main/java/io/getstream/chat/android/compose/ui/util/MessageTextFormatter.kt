@@ -48,6 +48,7 @@ public fun interface MessageTextFormatter {
          * Builds the default message text formatter.
          *
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
+         * @param isInDarkMode Whether the app is in dark mode.
          * @param typography The typography to use for styling.
          * @param colors The colors to use for styling.
          * @param textStyle The text style to use for styling.
@@ -59,12 +60,13 @@ public fun interface MessageTextFormatter {
         @Composable
         public fun defaultFormatter(
             autoTranslationEnabled: Boolean,
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(typography, colors),
+            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             return DefaultMessageTextFormatter(autoTranslationEnabled, typography, colors, textStyle, builder)
@@ -86,23 +88,44 @@ public fun interface MessageTextFormatter {
         @Composable
         public fun defaultFormatter(
             autoTranslationEnabled: Boolean,
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(typography, colors),
-            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(typography, colors),
+            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+            ),
+            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+            ),
             builder: AnnotatedMessageTextBuilder? = null,
         ): MessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
-            return defaultFormatter(autoTranslationEnabled, typography, colors, textStyle, builder)
+            return defaultFormatter(autoTranslationEnabled, isInDarkMode, typography, colors, textStyle, builder)
         }
 
         @Composable
-        private fun defaultTextStyle(typography: StreamTypography, colors: StreamColors): (Boolean) -> TextStyle {
-            val ownTheme = MessageTheme.defaultOwnTheme(typography, colors)
-            val otherTheme = MessageTheme.defaultOtherTheme(typography, colors)
+        private fun defaultTextStyle(
+            isInDarkMode: Boolean,
+            typography: StreamTypography,
+            colors: StreamColors,
+        ): (Boolean) -> TextStyle {
+            val ownTheme = MessageTheme.defaultOwnTheme(
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+            )
+            val otherTheme = MessageTheme.defaultOtherTheme(
+                isInDarkMode = isInDarkMode,
+                typography = typography,
+                colors = colors,
+            )
             return defaultTextStyle(ownTheme, otherTheme)
         }
 

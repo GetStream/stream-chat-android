@@ -16,6 +16,10 @@
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$20</ID>
     <ID>MagicNumber:DefaultStreamMediaRecorder.kt$DefaultStreamMediaRecorder$31</ID>
     <ID>MagicNumber:DurationFormatter.kt$DurationFormatter$1000</ID>
+    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun changeSpeed(attachment: Attachment)</ID>
+    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun resetAudio(attachment: Attachment)</ID>
+    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun resume()</ID>
+    <ID>ReturnCount:AudioPlayerController.kt$AudioPlayerController$public fun startSeek(attachment: Attachment)</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun completeRecording()</ID>
     <ID>ReturnCount:AudioRecordingController.kt$AudioRecordingController$public fun toggleRecordingPlayback()</ID>
     <ID>ReturnCount:DefaultQueryFilter.kt$DefaultQueryFilter$private fun levenshteinDistance(search: String, target: String): Int</ID>

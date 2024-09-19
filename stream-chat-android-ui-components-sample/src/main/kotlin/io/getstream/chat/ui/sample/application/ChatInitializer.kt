@@ -190,5 +190,13 @@ class ChatInitializer(
         }*/
 
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
+
+        TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
+            defaultStyle.copy(
+                audioRecordingButtonVisible = true,
+                audioRecordingButtonEnabled = true,
+                audioRecordingButtonPreferred = true,
+            )
+        }
     }
 }

@@ -110,6 +110,7 @@
             android:textSize="@dimen/stream_ui_audio_record_player_speed_text_size"
             android:visibility="gone"
             tools:text="x0.5"
+            tools:visibility="visible"
             />
     </FrameLayout>
 

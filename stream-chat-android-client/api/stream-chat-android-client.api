@@ -578,14 +578,30 @@ public final class io/getstream/chat/android/client/api/models/WatchChannelReque
 }
 
 public final class io/getstream/chat/android/client/audio/NativeMediaPlayer$Companion {
+	public static final field MEDIA_ERROR_ALREADY_EXISTS I
+	public static final field MEDIA_ERROR_BAD_INDEX I
+	public static final field MEDIA_ERROR_BAD_TYPE I
+	public static final field MEDIA_ERROR_BAD_VALUE I
+	public static final field MEDIA_ERROR_DEAD_OBJECT I
+	public static final field MEDIA_ERROR_FAILED_TRANSACTION I
+	public static final field MEDIA_ERROR_INVALID_OPERATION I
 	public static final field MEDIA_ERROR_IO I
+	public static final field MEDIA_ERROR_JPARKS_BROKE_IT I
 	public static final field MEDIA_ERROR_MALFORMED I
+	public static final field MEDIA_ERROR_NAME_NOT_FOUND I
+	public static final field MEDIA_ERROR_NOT_ENOUGH_DATA I
 	public static final field MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK I
+	public static final field MEDIA_ERROR_NO_INIT I
+	public static final field MEDIA_ERROR_NO_MEMORY I
+	public static final field MEDIA_ERROR_OK I
+	public static final field MEDIA_ERROR_PERMISSION_DENIED I
 	public static final field MEDIA_ERROR_SERVER_DIED I
 	public static final field MEDIA_ERROR_SYSTEM I
 	public static final field MEDIA_ERROR_TIMED_OUT I
 	public static final field MEDIA_ERROR_UNKNOWN I
+	public static final field MEDIA_ERROR_UNKNOWN_ERROR I
 	public static final field MEDIA_ERROR_UNSUPPORTED I
+	public static final field MEDIA_ERROR_WOULD_BLOCK I
 }
 
 public final class io/getstream/chat/android/client/audio/WaveformExtractorKt {

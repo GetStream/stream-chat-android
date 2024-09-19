@@ -64,6 +64,102 @@ public interface NativeMediaPlayer {
          * system/core/include/utils/Errors.h
          */
         public const val MEDIA_ERROR_SYSTEM: Int = -2147483648
+
+        /**
+         * Unspecified low-level system error. This value originated from OK in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_OK: Int = 0
+
+        /**
+         * Unspecified low-level system error. This value originated from UNKNOWN_ERROR in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_UNKNOWN_ERROR: Int = -2147483648
+
+        /**
+         * Unspecified low-level system error. This value originated from NO_MEMORY in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_NO_MEMORY: Int = -12
+
+        /**
+         * Unspecified low-level system error. This value originated from INVALID_OPERATION in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_INVALID_OPERATION: Int = -38
+
+        /**
+         * Unspecified low-level system error. This value originated from BAD_VALUE in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_BAD_VALUE: Int = -22
+
+        /**
+         * Unspecified low-level system error. This value originated from BAD_TYPE in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_BAD_TYPE: Int = -2147483647
+
+        /**
+         * Unspecified low-level system error. This value originated from NAME_NOT_FOUND in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_NAME_NOT_FOUND: Int = -2
+
+        /**
+         * Unspecified low-level system error. This value originated from PERMISSION_DENIED in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_PERMISSION_DENIED: Int = -1
+
+        /**
+         * Unspecified low-level system error. This value originated from NO_INIT in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_NO_INIT: Int = -19
+
+        /**
+         * Unspecified low-level system error. This value originated from ALREADY_EXISTS in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_ALREADY_EXISTS: Int = -17
+
+        /**
+         * Unspecified low-level system error. This value originated from DEAD_OBJECT in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_DEAD_OBJECT: Int = -32
+
+        /**
+         * Unspecified low-level system error. This value originated from FAILED_TRANSACTION in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_FAILED_TRANSACTION: Int = -2147483646
+
+        /**
+         * Unspecified low-level system error. This value originated from JPARKS_BROKE_IT in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_JPARKS_BROKE_IT: Int = -32
+
+        /**
+         * Unspecified low-level system error. This value originated from BAD_INDEX in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_BAD_INDEX: Int = -75
+
+        /**
+         * Unspecified low-level system error. This value originated from NOT_ENOUGH_DATA in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_NOT_ENOUGH_DATA: Int = -61
+
+        /**
+         * Unspecified low-level system error. This value originated from WOULD_BLOCK in
+         * system/core/include/utils/Errors.h
+         */
+        public const val MEDIA_ERROR_WOULD_BLOCK: Int = -11
     }
 
     /**

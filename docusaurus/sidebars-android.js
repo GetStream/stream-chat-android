@@ -94,6 +94,7 @@ module.exports = {
           ],
         },
         "compose/guides/custom-translations",
+        "compose/guides/enabling-audio-recording",
         "compose/guides/customizing-image-and-video-previews",
         "compose/guides/implementing-own-capabilities",
       ]

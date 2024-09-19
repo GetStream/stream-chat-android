@@ -32,6 +32,7 @@ import io.getstream.chat.android.uiutils.extension.hasLink
  * for the quoted message.
  */
 public object QuotedAttachmentFactory : AttachmentFactory(
+    type = Type.BuiltIn.QUOTED,
     canHandle = {
         it.firstOrNull()
             ?.let { attachment ->

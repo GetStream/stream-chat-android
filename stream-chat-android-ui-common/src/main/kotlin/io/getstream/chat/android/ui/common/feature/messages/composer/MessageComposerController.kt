@@ -762,7 +762,16 @@ public class MessageComposerController(
      * Starts audio recording and moves [MessageComposerState.recording] state
      * from [RecordingState.Idle] to [RecordingState.Hold].
      */
-    public fun startRecording(): Unit = audioRecordingController.startRecording()
+    public fun startRecording(offset: Pair<Float, Float>? = null) {
+        audioRecordingController.startRecording(offset)
+    }
+
+    /**
+     * Sends coordinates of the touch event to the [AudioRecordingController].
+     */
+    public fun holdRecording(offset: Pair<Float, Float>? = null) {
+        audioRecordingController.holdRecording(offset)
+    }
 
     /**
      * Moves [MessageComposerState.recording] state to [RecordingState.Locked].
