@@ -239,7 +239,7 @@ internal fun AudioRecordAttachmentContentItemBase(
     val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
     val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
     val playing = isAttachmentPlaying && playerState?.isPlaying == true
-    val playbackText = when (playing) {
+    val playbackText = when (playing || trackProgress > 0) {
         true -> (playerState?.playbackInMs ?: 0).let(DurationFormatter::formatDurationInMillis)
         else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
     }

@@ -344,7 +344,7 @@ internal fun DefaultMessageComposerRecordingContent(
 
     val recordingTimeMs = when (recordingState) {
         is RecordingState.Recording -> recordingState.durationInMs
-        is RecordingState.Overview -> when (recordingState.isPlaying) {
+        is RecordingState.Overview -> when (recordingState.isPlaying || recordingState.playingProgress > 0f) {
             true -> (recordingState.durationInMs * recordingState.playingProgress).toInt()
             else -> recordingState.durationInMs
         }
