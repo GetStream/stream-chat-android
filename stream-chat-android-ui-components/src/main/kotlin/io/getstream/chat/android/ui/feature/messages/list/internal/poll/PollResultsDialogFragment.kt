@@ -23,6 +23,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import io.getstream.chat.android.models.Poll
@@ -41,7 +42,6 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     private var _binding: StreamUiFragmentPollResultsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var poll: Poll
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,13 +56,15 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupDialog()
+        (polls[arguments?.getString(ARG_POLL)])?.let {
+            setupDialog(it)
+        } ?: dismiss()
     }
 
     /**
      * Initializes the dialog.
      */
-    private fun setupDialog() {
+    private fun setupDialog(poll: Poll) {
         setupToolbar(binding.toolbar)
         binding.question.text = poll.name
         binding.optionList.adapter = ResultsAdapter(poll)
@@ -83,6 +85,8 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
 
     public companion object {
         public const val TAG: String = "create_poll_dialog_fragment"
+        private const val ARG_POLL: String = "arg_poll"
+        private val polls = mutableMapOf<String, Poll>()
 
         /**
          * Creates a new instance of [PollResultsDialogFragment].
@@ -90,7 +94,8 @@ public class PollResultsDialogFragment : AppCompatDialogFragment() {
          * @return A new instance of [PollResultsDialogFragment].
          */
         public fun newInstance(poll: Poll): PollResultsDialogFragment = PollResultsDialogFragment().apply {
-            this.poll = poll
+            polls[poll.id] = poll
+            this.arguments = bundleOf(ARG_POLL to poll.id)
         }
     }
 
