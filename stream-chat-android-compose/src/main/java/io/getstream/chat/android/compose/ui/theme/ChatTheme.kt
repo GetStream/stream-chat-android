@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
+import io.getstream.chat.android.compose.ui.util.MessagePreviewIconFactory
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
@@ -91,6 +92,9 @@ private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
 }
 private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
     error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalMessagePreviewIconFactory = compositionLocalOf<MessagePreviewIconFactory> {
+    error("No message preview icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalPollSwitchItemFactory = compositionLocalOf<PollSwitchItemFactory> {
     error(
@@ -206,6 +210,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
+ * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
@@ -247,6 +252,7 @@ public fun ChatTheme(
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
+    messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
     pollSwitchItemFactory: PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = LocalContext.current),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
@@ -330,6 +336,7 @@ public fun ChatTheme(
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
+        LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalPollSwitchItemFactory provides pollSwitchItemFactory,
         LocalDateFormatter provides dateFormatter,
@@ -450,6 +457,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionOptionsTheme.current
+
+    /**
+     * Retrieves the current message preview icon factory at the call site's position in the hierarchy.
+     */
+    public val messagePreviewIconFactory: MessagePreviewIconFactory
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessagePreviewIconFactory.current
 
     /**
      * Retrieves the current [PollSwitchItemFactory] at the call site's position in the hierarchy.

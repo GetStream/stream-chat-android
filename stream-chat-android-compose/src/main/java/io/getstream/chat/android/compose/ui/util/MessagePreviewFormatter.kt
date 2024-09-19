@@ -17,10 +17,18 @@
 package io.getstream.chat.android.compose.ui.util
 
 import android.content.Context
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.Icon
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.unit.sp
+import io.getstream.chat.android.client.utils.message.hasAudioRecording
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isPollClosed
 import io.getstream.chat.android.client.utils.message.isSystem
@@ -90,6 +98,10 @@ private class DefaultMessagePreviewFormatter(
     private val attachmentFactories: List<AttachmentFactory>,
 ) : MessagePreviewFormatter {
 
+    private companion object {
+        private const val SPACE = " "
+    }
+
     /**
      * Generates a preview text for the given message.
      *
@@ -101,19 +113,12 @@ private class DefaultMessagePreviewFormatter(
         message: Message,
         currentUser: User?,
     ): AnnotatedString {
-        val getTranslatedText: (Message, User?) -> String = { message, currentUser ->
-            when (autoTranslationEnabled) {
-                true -> currentUser?.language?.let { message.getTranslation(it) } ?: message.text
-                else -> message.text
-            }
-        }
         return buildAnnotatedString {
             message.let { message ->
-                val translatedText = getTranslatedText(message, currentUser)
-
-                val userLanguage = currentUser?.language.orEmpty()
                 val displayedText = when (autoTranslationEnabled) {
-                    true -> message.getTranslation(userLanguage).ifEmpty { message.text }
+                    true -> currentUser?.language?.let { userLanguage ->
+                        message.getTranslation(userLanguage).ifEmpty { message.text }
+                    } ?: message.text
                     else -> message.text
                 }.trim()
 
@@ -135,6 +140,10 @@ private class DefaultMessagePreviewFormatter(
                             ),
                         )
                     }
+                } else if (message.hasAudioRecording()) {
+                    appendInlineContent(DefaultMessagePreviewIconFactory.VOICE_MESSAGE)
+                    append(SPACE)
+                    append(context.getString(R.string.stream_compose_audio_recording_preview))
                 } else {
                     appendSenderName(
                         message = message,
