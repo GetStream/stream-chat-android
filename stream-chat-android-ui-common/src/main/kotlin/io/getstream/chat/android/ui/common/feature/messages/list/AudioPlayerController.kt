@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @InternalStreamChatApi
 public class AudioPlayerController(
     private val audioPlayer: AudioPlayer,
-    private val hasRecordingUri: (Attachment) -> Boolean,
     private val getRecordingUri: (Attachment) -> String?,
 ) {
 
@@ -64,23 +63,19 @@ public class AudioPlayerController(
             logger.v { "[togglePlayback] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        if (!hasRecordingUri(attachment)) {
+        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
             logger.v { "[togglePlayback] rejected (no recordingUri): $attachment" }
             return
         }
         val curState = state.value
-        logger.d { "[togglePlayback] state: ${curState?.stringify()}" }
-        if (curState?.attachment == attachment) {
-            if (curState.isPlaying) {
-                logger.v { "[togglePlayback] pause" }
-                pause()
-            } else {
-                logger.v { "[togglePlayback] resume" }
-                resume()
+        val isCurrentTrack = audioHash == audioPlayer.currentPlayingId
+        logger.d { "[togglePlayback] isCurrentTrack: $isCurrentTrack, state: ${curState?.stringify()}" }
+        when (isCurrentTrack) {
+            true -> when (curState?.isPlaying == true) {
+                true -> pause()
+                else -> resume()
             }
-        } else {
-            logger.v { "[togglePlayback] play" }
-            play(attachment)
+            else -> play(attachment)
         }
     }
 
@@ -149,12 +144,9 @@ public class AudioPlayerController(
             logger.v { "[play] rejected (no recordingUri): $attachment" }
             return
         }
-        val curState = state.value
-        if (curState != null) {
-            audioPlayer.resetAudio(curState.playingId)
-        }
 
         val audioHash = recordingUri.hashCode()
+        logger.d { "[play] audioHash: $audioHash, uri: $recordingUri" }
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
@@ -162,7 +154,6 @@ public class AudioPlayerController(
 
         val audioState = audioPlayer.currentState
         val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
-        logger.d { "[play] audioHash: $audioHash, uri: $recordingUri" }
         setState(
             AudioPlayerState(
                 attachment = attachment,
@@ -224,11 +215,21 @@ public class AudioPlayerController(
     }
 
     private fun onAudioStateChanged(playbackState: AudioState) {
-        val curState = state.value ?: return
+        val curState = state.value ?: run {
+            logger.v { "[onAudioStateChanged] rejected (no state)" }
+            return
+        }
+        logger.d { "[onAudioStateChanged] playbackState: $playbackState" }
         setState(
             curState.copy(
                 isLoading = playbackState == AudioState.LOADING,
                 isPlaying = playbackState == AudioState.PLAYING,
+                playingProgress = when (playbackState) {
+                    AudioState.PLAYING,
+                    AudioState.PAUSE,
+                    -> curState.playingProgress
+                    else -> 0f
+                },
             ),
         )
     }
@@ -255,7 +256,6 @@ public class AudioPlayerController(
     }
 
     private fun setState(newState: AudioPlayerState?) {
-        // logger.v { "[setState] ${state.value?.stringify()} => ${newState?.stringify()}" }
         state.value = newState
     }
 

@@ -115,7 +115,6 @@ public object StreamAttachmentFactories {
         AudioRecordAttachmentFactory(
             viewModelFactory = AudioPlayerViewModelFactory(
                 getAudioPlayer = { getChatClient().audioPlayer },
-                hasRecordingUri = { it.assetUrl != null || it.upload != null },
                 getRecordingUri = { it.assetUrl ?: it.upload?.toUri()?.toString() },
             ),
             getCurrentUserId = { getChatClient().getCurrentOrStoredUserId() },

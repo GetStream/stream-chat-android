@@ -62,6 +62,8 @@ internal class StreamMediaPlayer(
     private var playingSpeed = 1F
     private var currentIndex = 0
 
+    override val currentPlayingId: Int get() = currentAudioHash
+
     override val currentState: AudioState
         get() = when (playerState) {
             PlayerState.UNSET -> AudioState.UNSET

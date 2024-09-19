@@ -60,11 +60,10 @@ internal class AudioPlayerViewModel(
 @InternalStreamChatApi
 public class AudioPlayerViewModelFactory(
     private val getAudioPlayer: () -> AudioPlayer,
-    private val hasRecordingUri: (Attachment) -> Boolean,
     private val getRecordingUri: (Attachment) -> String?,
 ) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return AudioPlayerViewModel(AudioPlayerController(getAudioPlayer(), hasRecordingUri, getRecordingUri)) as T
+        return AudioPlayerViewModel(AudioPlayerController(getAudioPlayer(), getRecordingUri)) as T
     }
 }

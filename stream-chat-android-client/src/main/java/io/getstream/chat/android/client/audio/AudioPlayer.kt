@@ -31,6 +31,12 @@ public interface AudioPlayer {
     public val currentState: AudioState
 
     /**
+     * The identifier of the current audio track.
+     * If there is no current audio track, it returns -1.
+     */
+    public val currentPlayingId: Int
+
+    /**
      * Subscribing for audio state changes for the audio of the hash
      *
      * @param audioHash the identifier of the audio track

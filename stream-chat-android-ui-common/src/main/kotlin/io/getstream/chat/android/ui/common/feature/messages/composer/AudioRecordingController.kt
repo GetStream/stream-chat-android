@@ -211,34 +211,34 @@ internal class AudioRecordingController(
     public fun toggleRecordingPlayback() {
         val state = this.recordingState.value
         if (state !is RecordingState.Overview) {
-            logger.w { "[toggleRecordingPlayback] rejected (state is not Locked): $state" }
+            logger.v { "[toggleRecordingPlayback] rejected (state is not Locked): $state" }
             return
         }
         logger.i { "[toggleRecordingPlayback] state: $state, playerState: ${audioPlayer.currentState}" }
         val audioFile = state.attachment.upload ?: run {
-            logger.w { "[toggleRecordingPlayback] rejected (audioFile is null)" }
+            logger.v { "[toggleRecordingPlayback] rejected (audioFile is null)" }
             return
         }
-        if (state.isPlaying) {
-            logger.v { "[toggleRecordingPlayback] pause playback" }
-            audioPlayer.pause()
-            this.recordingState.value = state.copy(isPlaying = false)
+        if (state.hasPlayingId && state.playingId == audioPlayer.currentPlayingId) {
+            if (state.isPlaying) {
+                logger.d { "[toggleRecordingPlayback] pause playback" }
+                audioPlayer.pause()
+                this.recordingState.value = state.copy(isPlaying = false)
+            } else {
+                logger.d { "[toggleRecordingPlayback] resume playback" }
+                audioPlayer.resume(state.playingId)
+                this.recordingState.value = state.copy(isPlaying = true)
+            }
             return
         }
-        if (state.playingId != -1) {
-            logger.v { "[toggleRecordingPlayback] resume playback" }
-            audioPlayer.resume(state.playingId)
-            this.recordingState.value = state.copy(isPlaying = true)
-            return
-        }
-        logger.v { "[toggleRecordingPlayback] start playback" }
-        val hash = audioFile.hashCode()
-        audioPlayer.registerOnProgressStateChange(hash, ::onAudioPlayingProgress)
-        audioPlayer.registerOnAudioStateChange(hash, ::onAudioStateChanged)
-        audioPlayer.play(fileToUri(audioFile), hash)
+        val audioHash = audioFile.hashCode()
+        logger.d { "[toggleRecordingPlayback] start playback: $audioHash" }
+        audioPlayer.registerOnProgressStateChange(audioHash, ::onAudioPlayingProgress)
+        audioPlayer.registerOnAudioStateChange(audioHash, ::onAudioStateChanged)
+        audioPlayer.play(fileToUri(audioFile), audioHash)
         this.recordingState.value = state.copy(
             isPlaying = true,
-            playingId = hash,
+            playingId = audioHash,
         )
     }
 
@@ -261,7 +261,7 @@ internal class AudioRecordingController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        // logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
+        logger.v { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = this.recordingState.value
         if (curState is RecordingState.Overview) {
             this.recordingState.value = curState.copy(
@@ -306,8 +306,8 @@ internal class AudioRecordingController(
         }
         val positionInMs = (progress * state.durationInMs).toInt()
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
-        val hash = audioFile.hashCode()
-        audioPlayer.seekTo(positionInMs, hash)
+        val audioHash = audioFile.hashCode()
+        audioPlayer.seekTo(positionInMs, audioHash)
         this.recordingState.value = state.copy(playingProgress = progress)
     }
 
