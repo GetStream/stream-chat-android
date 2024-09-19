@@ -31,10 +31,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import com.google.android.material.datepicker.MaterialDatePicker
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.components.CancelIcon
@@ -44,7 +42,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewM
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.docs.R
-import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -54,10 +51,6 @@ import java.util.Date
 private object AddingCustomAttachmentsSnippet {
 
     class MessagesActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -71,7 +64,6 @@ private object AddingCustomAttachmentsSnippet {
                 ChatTheme(attachmentFactories = customFactories + defaultFactories) {
                     CustomMessagesScreen(
                         channelId = channelId,
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                         onBackPressed = { finish() },
                     )
                 }
@@ -92,7 +84,6 @@ private object AddingCustomAttachmentsSnippet {
     @Composable
     fun CustomMessagesScreen(
         channelId: String,
-        statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
         onBackPressed: () -> Unit = {},
     ) {
         val factory = MessagesViewModelFactory(
@@ -114,7 +105,6 @@ private object AddingCustomAttachmentsSnippet {
                     // 1
                     CustomMessageComposer(
                         viewModel = composerViewModel,
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                         onDateSelected = { date ->
                             // 2
                             val payload = SimpleDateFormat("MMMM dd, yyyy").format(Date(date))
@@ -137,7 +127,6 @@ private object AddingCustomAttachmentsSnippet {
     @Composable
     fun CustomMessageComposer(
         viewModel: MessageComposerViewModel,
-        statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
         onDateSelected: (Long) -> Unit,
     ) {
         val activity = LocalContext.current as AppCompatActivity
@@ -147,8 +136,6 @@ private object AddingCustomAttachmentsSnippet {
                 .fillMaxWidth()
                 .wrapContentHeight(),
             viewModel = viewModel,
-            //TODO add this and related entries to docs when documentation effort occurs
-            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
             integrations = { // here
                 IconButton(
                     modifier = Modifier
@@ -275,10 +262,6 @@ private object AddingCustomAttachmentsSnippet {
      */
     class QuotedMessagesActivity : AppCompatActivity() {
 
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
@@ -295,7 +278,6 @@ private object AddingCustomAttachmentsSnippet {
                     quotedAttachmentFactories = customQuotedFactories + defaultQuotedFactories) {
                     CustomMessagesScreen(
                         channelId = channelId,
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                         onBackPressed = { finish() }
                     )
                 }

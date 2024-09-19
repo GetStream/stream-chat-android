@@ -16,7 +16,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.StreamColors
@@ -29,8 +28,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFac
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.helper.DateFormatter
-import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
-import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -57,10 +54,6 @@ private object ChatThemeUsageSnippet {
 
     class MessageListActivity : AppCompatActivity() {
 
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
@@ -74,8 +67,6 @@ private object ChatThemeUsageSnippet {
                         ),
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {},
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -89,10 +80,6 @@ private object ChatThemeUsageSnippet {
 private object ChatThemeCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -115,8 +102,6 @@ private object ChatThemeCustomizationSnippet {
                         ),
                         onBackPressed = { finish() },
                         onHeaderTitleClick = {},
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -218,7 +203,9 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
             }
         }
         return MessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled, typography, colors
+            autoTranslationEnabled = autoTranslationEnabled,
+            typography = typography,
+            colors = colors,
         ) { message, currentUser ->
             addStyle(
                 SpanStyle(
@@ -255,9 +242,9 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
     ): MessageTextFormatter {
         return MessageTextFormatter.composite(
             MessageTextFormatter.defaultFormatter(
-                autoTranslationEnabled,
-                typography,
-                colors
+                autoTranslationEnabled = autoTranslationEnabled,
+                typography = typography,
+                colors = colors
             ),
             blueLettersMessageTextFormatter()
         )
@@ -286,9 +273,10 @@ private object ChatThemeMessageTextFormatterCompositeSnippet : ChatThemeCustomiz
 private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCustomization() {
 
     override val content: @Composable () -> Unit get() = {
-        val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+        val isInDarkMode: Boolean = isSystemInDarkTheme()
+        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
-        val defaultQuotedTextFormatter = buildQuotedMessageTextFormatter(typography, colors)
+        val defaultQuotedTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
         ChatTheme(
             colors = colors,
             typography = typography,
@@ -307,11 +295,12 @@ private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCust
      */
     @Composable
     private fun buildQuotedMessageTextFormatter(
+        isInDarkMode: Boolean,
         typography: StreamTypography,
         colors: StreamColors,
     ): QuotedMessageTextFormatter {
         return QuotedMessageTextFormatter.defaultFormatter(
-            autoTranslationEnabled, LocalContext.current, typography, colors
+            autoTranslationEnabled, LocalContext.current, isInDarkMode, typography, colors
         ) { message, replyMessage, currentUser ->
             addStyle(
                 SpanStyle(
@@ -326,12 +315,13 @@ private object ChatThemeQuotedMessageTextFormatterDefaultSnippet : ChatThemeCust
 
 private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCustomization() {
     override val content: @Composable () -> Unit get() = {
-        val colors = if (isSystemInDarkTheme()) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
+        val isInDarkMode = isSystemInDarkTheme()
+        val colors = if (isInDarkMode) StreamColors.defaultDarkColors() else StreamColors.defaultColors()
         val typography = StreamTypography.defaultTypography()
         ChatTheme(
             colors = colors,
             typography = typography,
-            quotedMessageTextFormatter = buildQuotedMessageTextFormatter(typography, colors)
+            quotedMessageTextFormatter = buildQuotedMessageTextFormatter(isInDarkMode, typography, colors)
         ) {
             MessagesScreen(
                 viewModelFactory = viewModelFactory,
@@ -343,6 +333,7 @@ private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCu
 
     @Composable
     private fun buildQuotedMessageTextFormatter(
+        isInDarkMode: Boolean,
         typography: StreamTypography,
         colors: StreamColors,
     ): QuotedMessageTextFormatter {
@@ -350,6 +341,7 @@ private object ChatThemeQuotedMessageTextFormatterCompositeSnippet : ChatThemeCu
             QuotedMessageTextFormatter.defaultFormatter(
                 autoTranslationEnabled,
                 LocalContext.current,
+                isInDarkMode,
                 typography,
                 colors
             ),

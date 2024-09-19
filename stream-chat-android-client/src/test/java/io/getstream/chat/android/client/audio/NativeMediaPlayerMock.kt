@@ -94,6 +94,14 @@ internal class NativeMediaPlayerMock(
     }
 
     override fun seekTo(msec: Int) {
+        if (_state != NativeMediaPlayerState.PREPARED &&
+            _state != NativeMediaPlayerState.PAUSED &&
+            _state != NativeMediaPlayerState.STARTED &&
+            _state != NativeMediaPlayerState.PLAYBACK_COMPLETED
+        ) {
+            onError("[seekTo] invalid state: $_state", what = NativeMediaPlayer.MEDIA_ERROR_INVALID_OPERATION)
+            return
+        }
         _currentPosition = msec
     }
 

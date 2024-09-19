@@ -7,19 +7,21 @@
     <ID>ComplexCondition:Messages.kt$!endOfMessages &amp;&amp; index == messages.lastIndex &amp;&amp; messages.isNotEmpty() &amp;&amp; lazyListState.isScrollInProgress</ID>
     <ID>ForbiddenComment:MessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
     <ID>ForbiddenComment:QuotedMessageText.kt$// TODO: Fix emoji font padding once this is resolved and exposed: https://issuetracker.google.com/issues/171394808</ID>
-    <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", (recordingDuration - remainder) / 60_000)</ID>
-    <ID>ImplicitDefaultLocale:MessageComposer.kt$String.format("%02d", remainder / 1000)</ID>
     <ID>LargeClass:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
     <ID>LongMethod:AttachmentsPicker.kt$@Composable public fun AttachmentsPicker( attachmentsPickerViewModel: AttachmentsPickerViewModel, onAttachmentsSelected: (List&lt;Attachment>) -> Unit, onTabClick: (Int, AttachmentsPickerMode) -> Unit, onAttachmentPickerAction: (AttachmentPickerAction) -> Unit = {}, onDismiss: () -> Unit, modifier: Modifier = Modifier, tabFactories: List&lt;AttachmentsPickerTabFactory> = ChatTheme.attachmentsPickerTabFactories, shape: Shape = ChatTheme.shapes.bottomSheet, )</ID>
     <ID>LongMethod:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$@Composable override fun PickerTabContent( onAttachmentPickerAction: (AttachmentPickerAction) -> Unit, attachments: List&lt;AttachmentPickerItemState>, onAttachmentsChanged: (List&lt;AttachmentPickerItemState>) -> Unit, onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit, onAttachmentsSubmitted: (List&lt;AttachmentMetaData>) -> Unit, )</ID>
-    <ID>LongMethod:AudioRecordAttachmentContent.kt$@Composable public fun AudioRecordAttachmentContent( modifier: Modifier = Modifier, audioPlayer: AudioPlayer = ChatClient.instance().audioPlayer, audioTrack: Attachment, onPlayPress: (Attachment) -> Unit, )</ID>
+    <ID>LongMethod:AudioRecordingTheme.kt$AudioRecordingTheme.Companion$@Composable public fun defaultTheme( isInDarkMode: Boolean = isSystemInDarkTheme(), typography: StreamTypography = StreamTypography.defaultTypography(), colors: StreamColors = when (isInDarkMode) { true -> StreamColors.defaultDarkColors() else -> StreamColors.defaultColors() }, ): AudioRecordingTheme</ID>
+    <ID>LongMethod:DefaultMessageComposerRecordingContent.kt$@Composable @OptIn(ExperimentalPermissionsApi::class) internal fun DefaultAudioRecordButton( state: RecordingState, recordingActions: AudioRecordingActions = AudioRecordingActions.None, holdToRecordThreshold: Long = HOLD_TO_RECORD_THRESHOLD, holdToRecordDismissTimeout: Long = HOLD_TO_RECORD_DISMISS_TIMEOUT, permissionRationaleDismissTimeout: Long = PERMISSION_RATIONALE_DISMISS_TIMEOUT, )</ID>
+    <ID>LongMethod:DefaultMessageComposerRecordingContent.kt$@Composable internal fun DefaultMessageComposerRecordingContent( messageComposerState: MessageComposerState, recordingActions: AudioRecordingActions = AudioRecordingActions.None, )</ID>
+    <ID>LongMethod:DefaultMessageComposerRecordingContent.kt$@Composable private fun DefaultMessageComposerRecordingContent( modifier: Modifier = Modifier, recordingTimeMs: Int = 0, waveformVisible: Boolean = true, waveformThumbVisible: Boolean = false, waveformData: List&lt;Float>, waveformPlaying: Boolean = false, waveformProgress: Float = 0f, slideToCancelVisible: Boolean = true, holdControlsVisible: Boolean = false, holdControlsLocked: Boolean = false, holdControlsOffset: IntOffset = IntOffset.Zero, recordingControlsVisible: Boolean = true, recordingStopControlVisible: Boolean = true, recordingActions: AudioRecordingActions = AudioRecordingActions.None, )</ID>
+    <ID>LongMethod:DefaultMessageComposerRecordingContent.kt$@Composable private fun RecordingContent( modifier: Modifier = Modifier, recordingTimeMs: Int = 0, waveformVisible: Boolean = true, waveformThumbVisible: Boolean = false, waveformData: List&lt;Float>, waveformPlaying: Boolean = false, waveformProgress: Float = 0f, slideToCancelVisible: Boolean = true, slideToCancelProgress: Float = 0f, holdControlsOffset: IntOffset = IntOffset.Zero, onToggleRecordingPlayback: () -> Unit, onSliderDragStart: (Float) -> Unit, onSliderDragStop: (Float) -> Unit, )</ID>
+    <ID>LongMethod:DefaultMessageComposerRecordingContent.kt$@Composable private fun RecordingControlButtons( isStopControlVisible: Boolean, onDeleteRecording: () -> Unit, onStopRecording: () -> Unit, onCompleteRecording: (Boolean) -> Unit, )</ID>
     <ID>LongMethod:GiphyMessageContent.kt$@Composable public fun GiphyMessageContent( message: Message, modifier: Modifier = Modifier, onGiphyActionClick: (GiphyAction) -> Unit = {}, )</ID>
     <ID>LongMethod:GroupAvatar.kt$@Composable public fun GroupAvatar( users: List&lt;User>, modifier: Modifier = Modifier, shape: Shape = ChatTheme.shapes.avatar, textStyle: TextStyle = ChatTheme.typography.captionBold, onClick: (() -> Unit)? = null, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun ImagePreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun MediaGalleryItem( index: Int, attachment: Attachment, user: User, pagerState: PagerState, )</ID>
     <ID>LongMethod:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$@Composable private fun VideoPreviewContent( attachment: Attachment, pagerState: PagerState, page: Int, onPlaybackError: () -> Unit, )</ID>
     <ID>LongMethod:MessageComposer.kt$@Composable internal fun DefaultComposerIntegrations( messageInputState: MessageComposerState, onAttachmentsClick: () -> Unit, onCommandsClick: () -> Unit, ownCapabilities: Set&lt;String>, )</ID>
-    <ID>LongMethod:MessageComposer.kt$@OptIn(ExperimentalPermissionsApi::class) @Composable internal fun DefaultMessageComposerTrailingContent( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, statefulStreamMediaRecorder: StatefulStreamMediaRecorder?, )</ID>
     <ID>LongMethod:MessageItem.kt$@Composable internal fun RegularMessageContent( messageItem: MessageItemState, modifier: Modifier = Modifier, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onLinkClick: ((Message, String) -> Unit)? = null, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, )</ID>
     <ID>LongMethod:MessageOptions.kt$@Composable public fun defaultMessageOptionsState( selectedMessage: Message, currentUser: User?, isInThread: Boolean, ownCapabilities: Set&lt;String>, ): List&lt;MessageOptionItemState></ID>
     <ID>LongMethod:PollCreationDiscardDialog.kt$@Composable public fun PollCreationDiscardDialog( usePlatformDefaultWidth: Boolean = false, onCancelClicked: () -> Unit, onDiscardClicked: () -> Unit, )</ID>
@@ -30,23 +32,30 @@
     <ID>LongMethod:PollOptionList.kt$@Composable public fun PollOptionList( modifier: Modifier = Modifier, lazyListState: LazyListState = rememberLazyListState(), title: String = stringResource(id = R.string.stream_compose_poll_option_title), optionItems: List&lt;PollOptionItem> = emptyList(), onQuestionsChanged: (List&lt;PollOptionItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 4.dp), )</ID>
     <ID>LongMethod:PollSwitchList.kt$@Composable public fun PollSwitchList( modifier: Modifier = Modifier, pollSwitchItems: List&lt;PollSwitchItem>, onSwitchesChanged: (List&lt;PollSwitchItem>) -> Unit, itemHeightSize: Dp = ChatTheme.dimens.pollOptionInputHeight, itemInnerPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 16.dp), )</ID>
     <ID>LongMethod:StreamTypography.kt$StreamTypography.Companion$public fun defaultTypography(fontFamily: FontFamily? = null): StreamTypography</ID>
+    <ID>LongMethod:WaveformSlider.kt$@Composable public fun WaveformSlider( modifier: Modifier = Modifier, style: WaveformSliderStyle = WaveformSliderStyle.defaultStyle(), waveformData: List&lt;Float>, visibleBarLimit: Int = 100, adjustBarWidthToLimit: Boolean = false, progress: Float, isThumbVisible: Boolean = true, onDragStart: (Float) -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } }, onDragStop: (Float) -> Unit = { StreamLog.e("WaveformSeekBar") { "[onDragStop] progress: $it" } }, )</ID>
+    <ID>LongParameterList:AudioRecordAttachmentContent.kt$( modifier: Modifier = Modifier, attachment: Attachment, playerState: AudioPlayerState?, size: ComponentSize, padding: ComponentPadding, playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle, timerStyle: TextContainerStyle, waveformSliderStyle: WaveformSliderLayoutStyle, onPlayToggleClick: (Attachment) -> Unit = {}, onThumbDragStart: (Attachment) -> Unit = {}, onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> }, tailContent: @Composable (isPlaying: Boolean) -> Unit = {}, )</ID>
     <ID>LongParameterList:MediaAttachmentContent.kt$( attachment: Attachment, message: Message, skipEnrichUrl: Boolean, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, onLongItemClick: (Message) -> Unit, onContentItemClick: ( mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>, message: Message, attachmentPosition: Int, videoThumbnailsEnabled: Boolean, streamCdnImageResizing: StreamCdnImageResizing, skipEnrichUrl: Boolean, ) -> Unit, overlayContent: @Composable (attachmentType: String?) -> Unit, )</ID>
     <ID>LongParameterList:MediaAttachmentContent.kt$( mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?>, message: Message, attachmentPosition: Int, videoThumbnailsEnabled: Boolean, streamCdnImageResizing: StreamCdnImageResizing, skipEnrichUrl: Boolean, )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$( context: Context, mediaGalleryPreviewAction: MediaGalleryPreviewAction, currentPage: Int, attachments: List&lt;Attachment>, writePermissionState: PermissionState, downloadPayload: MutableState&lt;Attachment?>, )</ID>
     <ID>LongParameterList:MediaGalleryPreviewActivityAttachmentState.kt$MediaGalleryPreviewActivityAttachmentState$( val name: String?, val thumbUrl: String?, val imageUrl: String?, val assetUrl: String?, val originalWidth: Int?, val originalHeight: Int?, val type: String?, )</ID>
-    <ID>LongParameterList:MessageComposer.kt$( value: String, coolDownTime: Int, attachments: List&lt;Attachment>, validationErrors: List&lt;ValidationError>, ownCapabilities: Set&lt;String>, isInEditMode: Boolean, onSendMessage: (String, List&lt;Attachment>) -> Unit, onRecordingSaved: (Attachment) -> Unit, statefulStreamMediaRecorder: StatefulStreamMediaRecorder?, )</ID>
     <ID>LongParameterList:MessageItem.kt$( messageItem: MessageItemState, onLongItemClick: (Message) -> Unit = {}, onGiphyActionClick: (GiphyAction) -> Unit = {}, onQuotedMessageClick: (Message) -> Unit = {}, onLinkClick: ((Message, String) -> Unit)? = null, onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {}, onPollUpdated: (Message, Poll) -> Unit, onCastVote: (Message, Poll, Option) -> Unit, onRemoveVote: (Message, Poll, Vote) -> Unit, selectPoll: (Message, Poll, PollSelectionType) -> Unit, onClosePoll: (String) -> Unit, )</ID>
     <ID>LongParameterList:MessagesScreen.kt$( listViewModel: MessageListViewModel, composerViewModel: MessageComposerViewModel, selectedMessageState: SelectedMessageState?, selectedMessage: Message, skipPushNotification: Boolean, skipEnrichUrl: Boolean, )</ID>
     <ID>LongParameterList:PollMessageContent.kt$( message: Message, poll: Poll, isMine: Boolean, onClosePoll: (String) -> Unit, onCastVote: (Option) -> Unit, onRemoveVote: (Vote) -> Unit, selectPoll: (Message, Poll, PollSelectionType) -> Unit, )</ID>
     <ID>LongParameterList:PollMessageContent.kt$( modifier: Modifier = Modifier, poll: Poll, option: Option, voteCount: Int, totalVoteCount: Int, users: List&lt;User>, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
     <ID>LongParameterList:PollMessageContent.kt$( modifier: Modifier, messageItem: MessageItemState, onCastVote: (Message, Poll, Option) -> Unit, onRemoveVote: (Message, Poll, Vote) -> Unit, selectPoll: (Message, Poll, PollSelectionType) -> Unit, onClosePoll: (String) -> Unit, onLongItemClick: (Message) -> Unit = {}, )</ID>
     <ID>LongParameterList:PollMoreOptionsDialog.kt$( index: Int, poll: Poll, option: Option, voteCount: Int, checkedCount: Int, checked: Boolean, onCastVote: () -> Unit, onRemoveVote: () -> Unit, )</ID>
+    <ID>LoopWithTooManyJumpStatements:DefaultMessageComposerRecordingContent.kt$while</ID>
+    <ID>MagicNumber:AudioRecordAttachmentPreviewContent.kt$100</ID>
+    <ID>MagicNumber:AudioRecordAttachmentPreviewContent.kt$1000</ID>
     <ID>MagicNumber:AudioRecording.kt$2.5f</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$0.4</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$100F</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$10F</ID>
     <ID>MagicNumber:AudioWaveSeekbar.kt$50F</ID>
     <ID>MagicNumber:AvatarPosition.kt$3</ID>
+    <ID>MagicNumber:DefaultMessageComposerRecordingContent.kt$1000</ID>
+    <ID>MagicNumber:DefaultMessageComposerRecordingContent.kt$150</ID>
+    <ID>MagicNumber:DefaultMessageComposerRecordingContent.kt$60</ID>
     <ID>MagicNumber:FileAttachmentContent.kt$0.85f</ID>
     <ID>MagicNumber:FilesPicker.kt$6f</ID>
     <ID>MagicNumber:MediaAttachmentContent.kt$0.4f</ID>
@@ -55,8 +64,6 @@
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.2f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$0.4f</ID>
     <ID>MagicNumber:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity$8f</ID>
-    <ID>MagicNumber:MessageComposer.kt$1000</ID>
-    <ID>MagicNumber:MessageComposer.kt$60_000</ID>
     <ID>MagicNumber:Messages.kt$3</ID>
     <ID>MagicNumber:Messages.kt$5</ID>
     <ID>MagicNumber:PollMessageContent.kt$0.5f</ID>
@@ -70,6 +77,8 @@
     <ID>MagicNumber:PollViewResultDialog.kt$400</ID>
     <ID>MagicNumber:SearchInput.kt$8f</ID>
     <ID>MagicNumber:TypingIndicatorAnimatedDot.kt$0.5f</ID>
+    <ID>MagicNumber:WaveformSlider.kt$100</ID>
+    <ID>MagicNumber:WaveformSlider.kt$50</ID>
     <ID>MaxLineLength:AttachmentsPickerPollTabFactory.kt$AttachmentsPickerPollTabFactory$var switchItemList: List&lt;PollSwitchItem> by remember { mutableStateOf(pollSwitchItemFactory.providePollSwitchItemList()) }</ID>
     <ID>MaxLineLength:AttachmentsPickerTabFactories.kt$AttachmentsPickerTabFactories$*</ID>
     <ID>MaxLineLength:ChatTheme.kt$error("No attachments picker tab factories provided! Make sure to wrap all usages of Stream components in a ChatTheme.")</ID>
@@ -82,12 +91,21 @@
     <ID>MaxLineLength:MessagesScreen.kt$allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" &amp;&amp; it.enabled }</ID>
     <ID>MaxLineLength:PollCreationHeader.kt$*</ID>
     <ID>MaxLineLength:PollSwitchItem.kt$PollSwitchInput$*</ID>
+    <ID>MaxLineLength:QuotedMessageTextFormatter.kt$QuotedMessageTextFormatter.Companion$private</ID>
     <ID>MaxLineLength:StreamAttachmentFactories.kt$StreamAttachmentFactories$mediaGalleryPreviewLauncher: ManagedActivityResultLauncher&lt;MediaGalleryPreviewContract.Input, MediaGalleryPreviewResult?></ID>
     <ID>MaxLineLength:StreamColors.kt$StreamColors$*</ID>
+    <ID>MaxLineLength:WaveformSlider.kt$// StreamLog.v("WaveformTrack") { "[onDraw] startIdx: $startIdx, totalBars: $totalBars, visibleBarLimit: $visibleBarLimit, waveformData.size: ${waveformData.size}" }</ID>
+    <ID>ParameterListWrapping:QuotedMessageTextFormatter.kt$QuotedMessageTextFormatter.Companion$(Boolean)</ID>
+    <ID>ParameterListWrapping:QuotedMessageTextFormatter.kt$QuotedMessageTextFormatter.Companion$(isInDarkMode: Boolean, typography: StreamTypography, colors: StreamColors)</ID>
     <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryChannels()</ID>
     <ID>ReturnCount:ChannelListViewModel.kt$ChannelListViewModel$private suspend fun loadMoreQueryMessages()</ID>
     <ID>TooManyFunctions:MediaGalleryPreviewActivity.kt$MediaGalleryPreviewActivity : AppCompatActivity</ID>
+    <ID>TooManyFunctions:MessageComposerViewModel.kt$MessageComposerViewModel : ViewModel</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_HEIGHT_DP = 60</ID>
     <ID>TopLevelPropertyNaming:AudioWaveSeekbar.kt$private const val DEFAULT_TRACKER_WIDTH = 4</ID>
+    <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val HOLD_TO_RECORD_DISMISS_TIMEOUT = 1000L</ID>
+    <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val HOLD_TO_RECORD_THRESHOLD = 1000L</ID>
+    <ID>TopLevelPropertyNaming:DefaultMessageComposerRecordingContent.kt$private const val PERMISSION_RATIONALE_DISMISS_TIMEOUT = 1000L</ID>
+    <ID>UnusedPrivateMember:MessageComposer.kt$private fun Offset.toRestrictedCoordinates(): Pair&lt;Float, Float></ID>
   </CurrentIssues>
 </SmellBaseline>

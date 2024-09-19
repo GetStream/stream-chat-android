@@ -41,6 +41,7 @@ public class FileAttachmentFactory(
         attachment: Attachment,
     ) -> Unit = ::onFileAttachmentContentItemClick,
 ) : AttachmentFactory(
+    type = Type.BuiltIn.FILE,
     canHandle = { attachments ->
         attachments.any { it.isAnyFileType() }
     },

@@ -47,4 +47,61 @@ public open class AttachmentFactory(
     public val textFormatter: (attachments: Attachment) -> String = {
         it.title ?: it.name ?: it.fallback ?: ""
     },
-)
+    public val type: Type = Type.None,
+) {
+
+    /**
+     * The type of the attachment factory.
+     */
+    public interface Type {
+        /**
+         * The none type.
+         */
+        public data object None : Type
+
+        /**
+         * The SDK built-in types.
+         */
+        public enum class BuiltIn : Type {
+            /**
+             * The attachment is a file.
+             */
+            FILE,
+
+            /**
+             * The attachment is a link.
+             */
+            LINK,
+
+            /**
+             * The attachment is a giphy.
+             */
+            GIPHY,
+
+            /**
+             * The attachment is a media, such as an image or video.
+             */
+            MEDIA,
+
+            /**
+             * The attachment is a quoted message.
+             */
+            QUOTED,
+
+            /**
+             * The attachment is an upload.
+             */
+            UPLOAD,
+
+            /**
+             * The attachment is an audio record.
+             */
+            AUDIO_RECORD,
+
+            /**
+             * The attachment is unsupported.
+             */
+            UNSUPPORTED,
+        }
+    }
+}

@@ -7,15 +7,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import io.getstream.sdk.chat.audio.recording.StreamMediaRecorder
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.messages.MessagesScreen
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
-import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 
 /**
  * [Usage](https://getstream.io/chat/docs/sdk/android/compose/message-components/messages-screen/#usage)
@@ -23,10 +20,6 @@ import io.getstream.sdk.chat.audio.recording.DefaultStreamMediaRecorder
 private object MessagesScreenUsageSnippet {
 
     class MyActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -40,8 +33,6 @@ private object MessagesScreenUsageSnippet {
                             context = this,
                             channelId = channelId
                         ),
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -55,10 +46,6 @@ private object MessagesScreenUsageSnippet {
 private object MessagesScreenHandlingActionsSnippet {
 
     class MyActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -76,8 +63,6 @@ private object MessagesScreenHandlingActionsSnippet {
                         onHeaderTitleClick = { channel ->
                             // Show channel info
                         },
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }
@@ -91,10 +76,6 @@ private object MessagesScreenHandlingActionsSnippet {
 private object MessagesScreenCustomizationSnippet {
 
     class MyActivity : AppCompatActivity() {
-
-        //TODO add this and related entries to docs when documentation effort occurs
-        private val streamMediaRecorder: StreamMediaRecorder by lazy { DefaultStreamMediaRecorder(applicationContext) }
-        private val statefulStreamMediaRecorder by lazy { StatefulStreamMediaRecorder(streamMediaRecorder) }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -112,8 +93,6 @@ private object MessagesScreenCustomizationSnippet {
                             showSystemMessages = true
                         ),
                         showHeader = true,
-                        //TODO add this and related entries to docs when documentation effort occurs
-                        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
                     )
                 }
             }

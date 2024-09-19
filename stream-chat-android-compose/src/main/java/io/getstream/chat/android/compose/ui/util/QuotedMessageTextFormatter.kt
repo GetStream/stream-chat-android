@@ -56,6 +56,7 @@ public fun interface QuotedMessageTextFormatter {
          *
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
          * @param context The context to load resources.
+         * @param isInDarkMode Whether the app is in dark mode.
          * @param typography The typography to use for styling.
          * @param colors The colors to use for styling.
          * @param textStyle The text style to use for styling.
@@ -68,12 +69,13 @@ public fun interface QuotedMessageTextFormatter {
         public fun defaultFormatter(
             autoTranslationEnabled: Boolean,
             context: Context = LocalContext.current,
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(typography, colors),
+            textStyle: (isMine: Boolean) -> TextStyle = defaultTextStyle(isInDarkMode, typography, colors),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             return DefaultQuotedMessageTextFormatter(
@@ -91,6 +93,7 @@ public fun interface QuotedMessageTextFormatter {
          *
          * @param autoTranslationEnabled Whether the auto-translation is enabled.
          * @param context The context to load resources.
+         * @param isInDarkMode Whether the app is in dark mode.
          * @param typography The typography to use for styling.
          * @param colors The colors to use for styling.
          * @param ownMessageTheme The theme to use for the current user's messages.
@@ -104,23 +107,32 @@ public fun interface QuotedMessageTextFormatter {
         public fun defaultFormatter(
             autoTranslationEnabled: Boolean,
             context: Context = LocalContext.current,
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             colors: StreamColors = when (isSystemInDarkTheme()) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
-            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(typography, colors),
-            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(typography, colors),
+            ownMessageTheme: MessageTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors),
+            otherMessageTheme: MessageTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors),
             builder: AnnotatedQuotedMessageTextBuilder? = null,
         ): QuotedMessageTextFormatter {
             val textStyle = defaultTextStyle(ownMessageTheme, otherMessageTheme)
-            return defaultFormatter(autoTranslationEnabled, context, typography, colors, textStyle, builder)
+            return defaultFormatter(
+                autoTranslationEnabled,
+                context,
+                isInDarkMode,
+                typography,
+                colors,
+                textStyle,
+                builder,
+            )
         }
 
         @Composable
-        private fun defaultTextStyle(typography: StreamTypography, colors: StreamColors): (Boolean) -> TextStyle {
-            val ownTheme = MessageTheme.defaultOwnTheme(typography, colors)
-            val otherTheme = MessageTheme.defaultOtherTheme(typography, colors)
+        private fun defaultTextStyle(isInDarkMode: Boolean, typography: StreamTypography, colors: StreamColors): (Boolean) -> TextStyle {
+            val ownTheme = MessageTheme.defaultOwnTheme(isInDarkMode, typography, colors)
+            val otherTheme = MessageTheme.defaultOtherTheme(isInDarkMode, typography, colors)
             return defaultTextStyle(ownTheme, otherTheme)
         }
 

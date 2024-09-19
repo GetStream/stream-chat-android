@@ -17,12 +17,8 @@
 package io.getstream.chat.android.compose.ui.messages.composer
 
 import android.Manifest
-import android.os.Build
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -46,20 +42,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Bottom
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.PointerEventPass
-import androidx.compose.ui.input.pointer.changedToUp
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
@@ -69,18 +57,16 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import io.getstream.chat.android.client.errors.extractCause
 import io.getstream.chat.android.compose.R
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
-import io.getstream.chat.android.compose.ui.attachments.audio.RunningWaveForm
 import io.getstream.chat.android.compose.ui.components.composer.ComposerLinkPreview
 import io.getstream.chat.android.compose.ui.components.composer.CoolDownIndicator
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.composer.MessageInputOptions
 import io.getstream.chat.android.compose.ui.components.suggestions.commands.CommandSuggestionList
 import io.getstream.chat.android.compose.ui.components.suggestions.mentions.MentionSuggestionList
+import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultAudioRecordButton
+import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMessageComposerRecordingContent
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
@@ -94,14 +80,10 @@ import io.getstream.chat.android.models.User
 import io.getstream.chat.android.ui.common.state.messages.Edit
 import io.getstream.chat.android.ui.common.state.messages.MessageMode
 import io.getstream.chat.android.ui.common.state.messages.composer.MessageComposerState
+import io.getstream.chat.android.ui.common.state.messages.composer.RecordingState
 import io.getstream.chat.android.ui.common.state.messages.composer.ValidationError
 import io.getstream.chat.android.ui.common.utils.MediaStringUtil
-import io.getstream.log.Priority
-import io.getstream.log.StreamLog
-import io.getstream.log.streamLog
-import io.getstream.sdk.chat.audio.recording.MediaRecorderState
-import kotlinx.coroutines.launch
-import java.util.Date
+import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 
 /**
  * Default MessageComposer component that relies on [MessageComposerViewModel] to handle data and
@@ -110,7 +92,6 @@ import java.util.Date
  * @param viewModel The ViewModel that provides pieces of data to show in the composer, like the
  * currently selected integration data or the user input. It also handles sending messages.
  * @param modifier Modifier for styling.
- * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
  * @param onSendMessage Handler when the user sends a message. By default it delegates this to the
  * ViewModel, but the user can override if they want more custom behavior.
  * @param onAttachmentsClick Handler for the default Attachments integration.
@@ -122,6 +103,7 @@ import java.util.Date
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
+ * @param recordingActions The actions that can be performed on an audio recording.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
@@ -140,7 +122,6 @@ import java.util.Date
 public fun MessageComposer(
     viewModel: MessageComposerViewModel,
     modifier: Modifier = Modifier,
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
     onSendMessage: (Message) -> Unit = { viewModel.sendMessage(it) },
     onAttachmentsClick: () -> Unit = {},
     onCommandsClick: () -> Unit = {},
@@ -151,7 +132,7 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = { viewModel.selectMention(it) },
     onCommandSelected: (Command) -> Unit = { viewModel.selectCommand(it) },
     onAlsoSendToChannelSelected: (Boolean) -> Unit = { viewModel.setAlsoSendToChannel(it) },
-    onRecordingSaved: (Attachment) -> Unit = { viewModel.addSelectedAttachments(listOf(it)) },
+    recordingActions: AudioRecordingActions = AudioRecordingActions.defaultActions(viewModel),
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
@@ -194,24 +175,21 @@ public fun MessageComposer(
             label = label,
         )
     },
-    audioRecordingContent: @Composable RowScope.(StatefulStreamMediaRecorder) -> Unit = {
-        DefaultMessageComposerAudioRecordingContent(it)
+    audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
+        DefaultMessageComposerRecordingContent(
+            messageComposerState = it,
+            recordingActions = recordingActions,
+        )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
-            value = it.inputValue,
-            coolDownTime = it.coolDownTime,
-            validationErrors = it.validationErrors,
-            attachments = it.attachments,
-            ownCapabilities = it.ownCapabilities,
-            isInEditMode = it.action is Edit,
+            messageComposerState = it,
             onSendMessage = { input, attachments ->
                 val message = viewModel.buildNewMessage(input, attachments)
 
                 onSendMessage(message)
             },
-            onRecordingSaved = onRecordingSaved,
-            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
+            recordingActions = recordingActions,
         )
     },
 ) {
@@ -227,6 +205,7 @@ public fun MessageComposer(
         onMentionSelected = onMentionSelected,
         onCommandSelected = onCommandSelected,
         onAlsoSendToChannelSelected = onAlsoSendToChannelSelected,
+        recordingActions = recordingActions,
         headerContent = headerContent,
         footerContent = footerContent,
         mentionPopupContent = mentionPopupContent,
@@ -237,7 +216,6 @@ public fun MessageComposer(
         trailingContent = trailingContent,
         messageComposerState = messageComposerState,
         onCancelAction = onCancelAction,
-        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
     )
 }
 
@@ -248,7 +226,6 @@ public fun MessageComposer(
  * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
  * @param modifier Modifier for styling.
- * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
  * @param onAttachmentsClick Handler for the default Attachments integration.
  * @param onCommandsClick Handler for the default Commands integration.
  * @param onValueChange Handler when the input field value changes.
@@ -257,6 +234,7 @@ public fun MessageComposer(
  * @param onMentionSelected Handler when the user taps on a mention suggestion item.
  * @param onCommandSelected Handler when the user taps on a command suggestion item.
  * @param onAlsoSendToChannelSelected Handler when the user checks the also send to channel checkbox.
+ * @param recordingActions The actions that can be performed on an audio recording.
  * @param headerContent The content shown at the top of the message composer.
  * @param footerContent The content shown at the bottom of the message composer.
  * @param mentionPopupContent Customizable composable that represents the mention suggestions popup.
@@ -276,7 +254,6 @@ public fun MessageComposer(
     messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
     modifier: Modifier = Modifier,
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
     onAttachmentsClick: () -> Unit = {},
     onCommandsClick: () -> Unit = {},
     onValueChange: (String) -> Unit = {},
@@ -286,7 +263,7 @@ public fun MessageComposer(
     onMentionSelected: (User) -> Unit = {},
     onCommandSelected: (Command) -> Unit = {},
     onAlsoSendToChannelSelected: (Boolean) -> Unit = {},
-    onRecordingSaved: (Attachment) -> Unit = {},
+    recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     headerContent: @Composable ColumnScope.(MessageComposerState) -> Unit = {
         DefaultMessageComposerHeaderContent(
             messageComposerState = it,
@@ -329,27 +306,24 @@ public fun MessageComposer(
             label = label,
         )
     },
-    audioRecordingContent: @Composable RowScope.(StatefulStreamMediaRecorder) -> Unit = {
-        DefaultMessageComposerAudioRecordingContent(it)
+    audioRecordingContent: @Composable RowScope.(MessageComposerState) -> Unit = {
+        DefaultMessageComposerRecordingContent(
+            messageComposerState = it,
+            recordingActions = recordingActions,
+        )
     },
     trailingContent: @Composable (MessageComposerState) -> Unit = {
         DefaultMessageComposerTrailingContent(
-            value = it.inputValue,
-            coolDownTime = it.coolDownTime,
-            validationErrors = it.validationErrors,
-            attachments = it.attachments,
+            messageComposerState = it,
             onSendMessage = onSendMessage,
-            ownCapabilities = messageComposerState.ownCapabilities,
-            isInEditMode = it.action is Edit,
-            onRecordingSaved = onRecordingSaved,
-            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
+            recordingActions = recordingActions,
         )
     },
 ) {
     val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val isRecording = statefulStreamMediaRecorder?.mediaRecorderState?.value
+    val noRecording = messageComposerState.recording is RecordingState.Idle
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -376,8 +350,8 @@ public fun MessageComposer(
                     )
                 }
 
-                if (isRecording == MediaRecorderState.RECORDING) {
-                    audioRecordingContent(statefulStreamMediaRecorder)
+                if (!noRecording) {
+                    audioRecordingContent(messageComposerState)
                 } else {
                     input(messageComposerState)
                 }
@@ -537,7 +511,9 @@ internal fun DefaultComposerIntegrations(
     val canSendMessage = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val canSendAttachments = ownCapabilities.contains(ChannelCapabilities.UPLOAD_FILE)
 
-    if (canSendMessage) {
+    val isRecording = messageInputState.recording !is RecordingState.Idle
+
+    if (canSendMessage && !isRecording) {
         Row(
             modifier = Modifier
                 .height(44.dp)
@@ -644,239 +620,79 @@ private fun RowScope.DefaultComposerInputContent(
 }
 
 /**
- * Used to display audio recording information while audio recording is in progress.
- *
- * @param statefulStreamMediaRecorder Used for recording audio messages.
- */
-@Composable
-internal fun RowScope.DefaultMessageComposerAudioRecordingContent(
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder,
-) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .align(Alignment.CenterVertically)
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .weight(1f),
-    ) {
-        val amplitudeSample = statefulStreamMediaRecorder.latestMaxAmplitude.value
-        val recordingDuration = statefulStreamMediaRecorder.activeRecordingDuration.value
-
-        val recordingDurationFormatted by remember(recordingDuration) {
-            derivedStateOf {
-                // TODO consider moving to common
-                val remainder = recordingDuration % 60_000
-                val seconds = String.format("%02d", remainder / 1000)
-                val minutes = String.format("%02d", (recordingDuration - remainder) / 60_000)
-
-                "$minutes:$seconds"
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(12.dp)
-                    .align(Alignment.CenterVertically),
-                painter = painterResource(id = R.drawable.stream_compose_ic_circle),
-                tint = Color.Red,
-                // TODO add later
-                contentDescription = null,
-            )
-
-            Text(
-                modifier = Modifier.align(Alignment.CenterVertically),
-                text = recordingDurationFormatted,
-                style = ChatTheme.typography.body,
-                color = ChatTheme.colors.textHighEmphasis,
-            )
-        }
-
-        RunningWaveForm(
-            modifier = Modifier
-                .align(Alignment.CenterVertically)
-                .fillMaxWidth()
-                .height(20.dp),
-            maxInputValue = 20_000,
-            barWidth = 8.dp,
-            barGap = 2.dp,
-            restartKey = true,
-            newValueKey = amplitudeSample.key,
-            latestValue = amplitudeSample.value,
-        )
-    }
-}
-
-/**
  * Represents the default trailing content for the Composer, which represent a send button or a cooldown timer.
  *
- * @param value The input value.
- * @param coolDownTime The amount of time left in cool-down mode.
- * @param attachments The selected attachments.
- * @param validationErrors List of errors for message validation.
+ * @param messageComposerState The state of the message input.
  * @param onSendMessage Handler when the user wants to send a message.
- * @param ownCapabilities Set of capabilities the user is given for the current channel.
- * For a full list @see [ChannelCapabilities].
- * @param streamMediaRecorder Used for recording audio messages.
- * For a full list @see [io.getstream.chat.android.client.models.ChannelCapabilities].
- * @param statefulStreamMediaRecorder Used for recording audio messages. Passing in null will disable audio recording.
+ * @param recordingActions The actions that can be performed on an audio recording.
  */
-@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun DefaultMessageComposerTrailingContent(
-    value: String,
-    coolDownTime: Int,
-    attachments: List<Attachment>,
-    validationErrors: List<ValidationError>,
-    ownCapabilities: Set<String>,
-    isInEditMode: Boolean,
+    messageComposerState: MessageComposerState,
     onSendMessage: (String, List<Attachment>) -> Unit,
-    onRecordingSaved: (Attachment) -> Unit,
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder?,
+    recordingActions: AudioRecordingActions,
 ) {
+    val value = messageComposerState.inputValue
+    val coolDownTime = messageComposerState.coolDownTime
+    val validationErrors = messageComposerState.validationErrors
+    val attachments = messageComposerState.attachments
+    val ownCapabilities = messageComposerState.ownCapabilities
+    val isInEditMode = messageComposerState.action is Edit
+
+    val isRecordAudioPermissionDeclared = LocalContext.current.isPermissionDeclared(Manifest.permission.RECORD_AUDIO)
+    val isRecordingEnabled = isRecordAudioPermissionDeclared && ChatTheme.messageComposerTheme.audioRecording.enabled
+    val showRecordOverSend = ChatTheme.messageComposerTheme.audioRecording.showRecordButtonOverSend
+
     val isSendButtonEnabled = ownCapabilities.contains(ChannelCapabilities.SEND_MESSAGE)
     val isInputValid by lazy { (value.isNotBlank() || attachments.isNotEmpty()) && validationErrors.isEmpty() }
     val sendButtonDescription = stringResource(id = R.string.stream_compose_cd_send_button)
-    val recordAudioButtonDescription = stringResource(id = R.string.stream_compose_cd_record_audio_message)
-    var permissionsRequested by rememberSaveable { mutableStateOf(false) }
-
-    val isRecording = statefulStreamMediaRecorder?.mediaRecorderState?.value
-
-    // TODO test permissions on lower APIs etc
-    val storageAndRecordingPermissionState = rememberMultiplePermissionsState(
-        permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            listOf(
-                Manifest.permission.READ_MEDIA_AUDIO,
-                Manifest.permission.RECORD_AUDIO,
-            )
-        } else {
-            listOf(
-                Manifest.permission.RECORD_AUDIO,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            )
-        },
-    ) {
-        // TODO should we track this or always ask?
-        permissionsRequested = true
-    }
-    val coroutineScope = rememberCoroutineScope()
-
-    val context = LocalContext.current
 
     if (coolDownTime > 0 && !isInEditMode) {
         CoolDownIndicator(coolDownTime = coolDownTime)
     } else {
-        Row(
-            modifier = Modifier
-                .height(44.dp)
-                .padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // TODO don't show if the own ability to send attachments isn't given
-            if (statefulStreamMediaRecorder != null) {
-                Box(
-                    modifier = Modifier
-                        .semantics { contentDescription = recordAudioButtonDescription }
-                        .size(32.dp)
-                        .pointerInput(Unit) {
-                            detectTapGestures(
-                                onLongPress = {
-                                    /**
-                                     * An internal function used to handle audio recording. It initiates the recording
-                                     * and stops and saves the file once the appropriate gesture has been completed.
-                                     */
-                                    fun handleAudioRecording() = coroutineScope.launch {
-                                        awaitPointerEventScope {
-                                            statefulStreamMediaRecorder.startAudioRecording(
-                                                context = context,
-                                                recordingName = "audio_recording_${Date()}",
-                                            )
+        val isRecording = messageComposerState.recording !is RecordingState.Idle
+        val layoutDirection = LocalLayoutDirection.current
 
-                                            while (true) {
-                                                val event = awaitPointerEvent(PointerEventPass.Main)
-
-                                                if (event.changes.all { it.changedToUp() }) {
-                                                    statefulStreamMediaRecorder
-                                                        .stopRecording()
-                                                        .onSuccess {
-                                                            StreamLog.i("MessageComposer") {
-                                                                "[onRecordingSaved] attachment: $it"
-                                                            }
-                                                            onRecordingSaved(it.attachment)
-                                                        }
-                                                        .onError {
-                                                            streamLog(throwable = it.extractCause()) {
-                                                                "Could not save audio recording: ${it.message}"
-                                                            }
-                                                        }
-                                                    break
-                                                }
-                                            }
-                                        }
-                                    }
-
-                                    when {
-                                        !storageAndRecordingPermissionState.allPermissionsGranted -> {
-                                            storageAndRecordingPermissionState.launchMultiplePermissionRequest()
-                                        }
-
-                                        isRecording == MediaRecorderState.UNINITIALIZED -> {
-                                            handleAudioRecording()
-                                        }
-
-                                        else -> streamLog(Priority.ERROR) { "Could not start audio recording" }
-                                    }
-                                },
-                            )
-                        },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val layoutDirection = LocalLayoutDirection.current
-
+        val sendEnabled = isSendButtonEnabled && isInputValid
+        val sendVisible = when {
+            !isRecordingEnabled -> true
+            isRecording -> false
+            showRecordOverSend -> sendEnabled
+            else -> true
+        }
+        if (sendVisible) {
+            IconButton(
+                modifier = Modifier
+                    .semantics { contentDescription = sendButtonDescription },
+                enabled = sendEnabled,
+                content = {
                     Icon(
                         modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                        painter = painterResource(id = R.drawable.stream_compose_ic_mic_active),
-                        contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
-                        // TODO disable if max attachments are reached
-                        tint = if (isRecording == MediaRecorderState.RECORDING) {
-                            ChatTheme.colors.primaryAccent
-                        } else {
-                            ChatTheme.colors.textLowEmphasis
-                        },
+                        painter = painterResource(id = R.drawable.stream_compose_ic_send),
+                        contentDescription = stringResource(id = R.string.stream_compose_send_message),
+                        tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
                     )
-                }
-            }
+                },
+                onClick = {
+                    if (isInputValid) {
+                        onSendMessage(value, attachments)
+                    }
+                },
+            )
         }
 
-        IconButton(
-            modifier = Modifier
-                .semantics { contentDescription = sendButtonDescription },
-            enabled = isSendButtonEnabled && isInputValid,
-            content = {
-                val layoutDirection = LocalLayoutDirection.current
-
-                Icon(
-                    modifier = Modifier.mirrorRtl(layoutDirection = layoutDirection),
-                    painter = painterResource(id = R.drawable.stream_compose_ic_send),
-                    contentDescription = stringResource(id = R.string.stream_compose_send_message),
-                    tint = if (isInputValid) ChatTheme.colors.primaryAccent else ChatTheme.colors.textLowEmphasis,
-                )
-            },
-            onClick = {
-                if (isInputValid) {
-                    onSendMessage(value, attachments)
-                }
-            },
-        )
+        val recordVisible = when {
+            !isRecordingEnabled -> false
+            showRecordOverSend -> !sendEnabled
+            else -> true
+        }
+        if (recordVisible) {
+            DefaultAudioRecordButton(
+                state = messageComposerState.recording,
+                recordingActions = recordingActions,
+            )
+        }
     }
-
-    // TODO release recorder after the composable moves of screen
 }
 
 /**
@@ -900,18 +716,21 @@ private fun MessageInputValidationError(validationErrors: List<ValidationError>,
                     firstValidationError.maxMessageLength,
                 )
             }
+
             is ValidationError.AttachmentCountExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_attachment_count,
                     firstValidationError.maxAttachmentCount,
                 )
             }
+
             is ValidationError.AttachmentSizeExceeded -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_file_size,
                     MediaStringUtil.convertFileSizeByteCount(firstValidationError.maxAttachmentSize),
                 )
             }
+
             is ValidationError.ContainsLinksWhenNotAllowed -> {
                 stringResource(
                     R.string.stream_compose_message_composer_error_sending_links_not_allowed,
@@ -949,3 +768,5 @@ private fun SnackbarPopup(snackbarHostState: SnackbarHostState) {
         SnackbarHost(hostState = snackbarHostState)
     }
 }
+
+private fun Offset.toRestrictedCoordinates(): Pair<Float, Float> = x.coerceAtMost(0f) to y.coerceAtMost(0f)

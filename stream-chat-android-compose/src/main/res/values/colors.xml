@@ -53,6 +53,24 @@
     <color name="stream_compose_show_more_overlay_dark">#99000000</color>
     <color name="stream_compose_show_more_text_dark">#FFFFFF</color>
 
+    <!-- Accents -->
+    <color name="stream_compose_accent_blue">#005FFF</color>
+    <color name="stream_compose_accent_red">#FF3742</color>
+    <color name="stream_compose_accent_green">#20E070</color>
+
+    <!-- Greys -->
+    <color name="stream_compose_black">#000000</color>
+    <color name="stream_compose_black_50">#80000000</color>
+    <color name="stream_compose_black_85">#D9000000</color>
+    <color name="stream_compose_grey">#7A7A7A</color>
+    <color name="stream_compose_grey_gainsboro">#DBDBDB</color>
+    <color name="stream_compose_grey_whisper">#ECEBEB</color>
+    <color name="stream_compose_white_smoke">#F2F2F2</color>
+    <color name="stream_compose_white_snow">#FCFCFC</color>
+    <color name="stream_compose_white">#FFFFFF</color>
+    <color name="stream_compose_white_85">#D9FFFFFF</color>
+    <color name="stream_compose_blue_alice">#E9F2FF</color>
+
     <!-- Avatar gradient colors -->
     <color name="stream_compose_avatar_gradient_orange">#FF8A65</color>
     <color name="stream_compose_avatar_gradient_green">#81C784</color>
