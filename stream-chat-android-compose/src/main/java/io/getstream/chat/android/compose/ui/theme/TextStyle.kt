@@ -22,10 +22,30 @@ import androidx.compose.ui.text.style.TextOverflow
 
 /**
  * Represents the styling for the text component.
+ *
+ * @param color The color of the component.
+ * @param style The style of the component.
+ * @param maxLines The maximum number of lines the component can have.
+ * @param overflow The overflow behavior of the component.
  */
 public data class TextComponentStyle(
     val color: Color,
     val style: TextStyle,
     val maxLines: Int = Int.MAX_VALUE,
     val overflow: TextOverflow = TextOverflow.Clip,
+)
+
+/**
+ * Represents the styling for the text component.
+ *
+ * @param size The size of the component.
+ * @param padding The padding of the component.
+ * @param backgroundColor The background color of the component.
+ * @param textStyle The text style of the component.
+ */
+public data class TextContainerStyle(
+    val size: ComponentSize,
+    val padding: ComponentPadding,
+    val backgroundColor: Color,
+    val textStyle: TextStyle,
 )

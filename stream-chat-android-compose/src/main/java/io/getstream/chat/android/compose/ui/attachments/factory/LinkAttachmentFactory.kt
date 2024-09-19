@@ -40,6 +40,7 @@ public class LinkAttachmentFactory(
     linkDescriptionMaxLines: Int,
     onContentItemClick: (context: Context, previewUrl: String) -> Unit = ::onLinkAttachmentContentClick,
 ) : AttachmentFactory(
+    type = Type.BuiltIn.LINK,
     canHandle = { links -> links.any { it.hasLink() && !it.isGiphy() } },
     content = @Composable { modifier, state ->
         LinkAttachmentContent(

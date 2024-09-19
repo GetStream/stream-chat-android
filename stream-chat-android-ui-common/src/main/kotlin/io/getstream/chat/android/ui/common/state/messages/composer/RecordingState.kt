@@ -33,8 +33,21 @@ public sealed class RecordingState {
     public data class Hold(
         override val durationInMs: Int = 0,
         override val waveform: List<Float> = emptyList(),
+        public val offset: Pair<Float, Float> = ZeroOffset,
     ) : Recording() {
-        override fun toString(): String = "Recording.Hold(waveform=${waveform.size}, duration=${durationInMs}ms)"
+
+        public val offsetX: Float get() = offset.first
+
+        public val offsetY: Float get() = offset.second
+
+        public companion object {
+            public val ZeroOffset: Pair<Float, Float> = Pair(0f, 0f)
+        }
+        override fun toString(): String = "Recording.Hold(" +
+            "waveform=${waveform.size}, " +
+            "duration=${durationInMs}ms, " +
+            "offset=[$offsetX:$offsetY]" +
+            ")"
     }
 
     public data class Locked(
@@ -75,6 +88,6 @@ public fun RecordingState.Recording.copy(
     duration: Int = this.durationInMs,
     waveform: List<Float> = this.waveform,
 ): RecordingState.Recording = when (this) {
-    is RecordingState.Hold -> RecordingState.Hold(duration, waveform)
+    is RecordingState.Hold -> RecordingState.Hold(duration, waveform, this.offset)
     is RecordingState.Locked -> RecordingState.Locked(duration, waveform)
 }

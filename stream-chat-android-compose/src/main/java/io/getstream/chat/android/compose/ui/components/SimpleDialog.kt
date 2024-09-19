@@ -34,6 +34,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatTheme
  * @param onPositiveAction Handler when the user confirms the dialog.
  * @param onDismiss Handler when the user dismisses the dialog.
  * @param modifier Modifier for styling.
+ * @param showDismissButton If we should show the dismiss button or not.
  */
 @Composable
 public fun SimpleDialog(
@@ -42,6 +43,7 @@ public fun SimpleDialog(
     onPositiveAction: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    showDismissButton: Boolean = true,
 ) {
     AlertDialog(
         modifier = modifier,
@@ -68,13 +70,17 @@ public fun SimpleDialog(
                 Text(text = stringResource(id = R.string.stream_compose_ok))
             }
         },
-        dismissButton = {
-            TextButton(
-                colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
-                onClick = onDismiss,
-            ) {
-                Text(text = stringResource(id = R.string.stream_compose_cancel))
+        dismissButton = if (showDismissButton) {
+            {
+                TextButton(
+                    colors = ButtonDefaults.textButtonColors(contentColor = ChatTheme.colors.primaryAccent),
+                    onClick = onDismiss,
+                ) {
+                    Text(text = stringResource(id = R.string.stream_compose_cancel))
+                }
             }
+        } else {
+            null
         },
         backgroundColor = ChatTheme.colors.barsBackground,
     )

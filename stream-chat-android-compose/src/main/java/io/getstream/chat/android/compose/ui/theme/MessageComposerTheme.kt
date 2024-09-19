@@ -30,15 +30,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.messages.composer.AudioRecordingTheme
+import io.getstream.chat.android.compose.ui.theme.messages.composer.attachments.AttachmentsPreviewTheme
 
 /**
  * Represents the theming for the message composer.
  * @param attachmentCancelIcon The theming for the cancel icon used in the message composer.
+ * @param linkPreview The theming for the link preview in the message composer.
+ * @param inputField The theming for the input field in the message composer.
+ * @param audioRecording The theming for the audio recording in the message composer.
+ * @param attachmentsPreview The theming for the attachments preview in the message composer.
  */
 public data class MessageComposerTheme(
     val attachmentCancelIcon: ComposerCancelIconStyle,
     val linkPreview: ComposerLinkPreviewTheme,
     val inputField: ComposerInputFieldTheme,
+    val audioRecording: AudioRecordingTheme,
+    val attachmentsPreview: AttachmentsPreviewTheme,
 ) {
 
     public companion object {
@@ -50,9 +58,10 @@ public data class MessageComposerTheme(
          */
         @Composable
         public fun defaultTheme(
+            isInDarkMode: Boolean = isSystemInDarkTheme(),
             typography: StreamTypography = StreamTypography.defaultTypography(),
             shapes: StreamShapes = StreamShapes.defaultShapes(),
-            colors: StreamColors = when (isSystemInDarkTheme()) {
+            colors: StreamColors = when (isInDarkMode) {
                 true -> StreamColors.defaultDarkColors()
                 else -> StreamColors.defaultColors()
             },
@@ -61,6 +70,8 @@ public data class MessageComposerTheme(
                 attachmentCancelIcon = ComposerCancelIconStyle.defaultStyle(colors),
                 linkPreview = ComposerLinkPreviewTheme.defaultTheme(typography, colors),
                 inputField = ComposerInputFieldTheme.defaultTheme(typography, shapes, colors),
+                audioRecording = AudioRecordingTheme.defaultTheme(isInDarkMode, typography, colors),
+                attachmentsPreview = AttachmentsPreviewTheme.defaultTheme(isInDarkMode, typography, colors),
             )
         }
     }

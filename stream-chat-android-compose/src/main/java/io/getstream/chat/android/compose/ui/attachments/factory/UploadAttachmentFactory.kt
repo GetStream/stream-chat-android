@@ -36,6 +36,7 @@ import io.getstream.chat.android.uiutils.extension.isUploading
 public class UploadAttachmentFactory(
     onContentItemClick: (Attachment, List<AttachmentPreviewHandler>) -> Unit = ::onFileUploadContentItemClick,
 ) : AttachmentFactory(
+    type = Type.BuiltIn.UPLOAD,
     canHandle = { attachments -> attachments.any { it.isUploading() } },
     content = @Composable { modifier, state ->
         FileUploadContent(

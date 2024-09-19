@@ -60,7 +60,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemState
-import io.getstream.chat.android.compose.state.messages.attachments.StatefulStreamMediaRecorder
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
@@ -146,7 +145,6 @@ public fun MessagesScreen(
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
     threadMessagesStart: ThreadMessagesStart = ThreadMessagesStart.BOTTOM,
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
     topBarContent: @Composable (BackAction) -> Unit = {
         DefaultTopBarContent(
             viewModelFactory = viewModelFactory,
@@ -161,7 +159,6 @@ public fun MessagesScreen(
             onComposerLinkPreviewClick = onComposerLinkPreviewClick,
             skipPushNotification = skipPushNotification,
             skipEnrichUrl = skipEnrichUrl,
-            statefulStreamMediaRecorder = statefulStreamMediaRecorder,
         )
     },
 ) {
@@ -334,7 +331,6 @@ internal fun DefaultBottomBarContent(
     onComposerLinkPreviewClick: ((LinkPreview) -> Unit)? = null,
     skipPushNotification: Boolean = false,
     skipEnrichUrl: Boolean = false,
-    statefulStreamMediaRecorder: StatefulStreamMediaRecorder? = null,
 ) {
     val listViewModel = viewModel(MessageListViewModel::class.java, factory = viewModelFactory)
     val composerViewModel = viewModel(MessageComposerViewModel::class.java, factory = viewModelFactory)
@@ -376,7 +372,6 @@ internal fun DefaultBottomBarContent(
                 )
             }
         },
-        statefulStreamMediaRecorder = statefulStreamMediaRecorder,
     )
 }
 
