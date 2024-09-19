@@ -69,16 +69,17 @@ public class AudioPlayerController(
             return
         }
         val curState = state.value
+        logger.d { "[togglePlayback] state: ${curState?.stringify()}" }
         if (curState?.attachment == attachment) {
             if (curState.isPlaying) {
-                logger.d { "[togglePlayback] pause" }
+                logger.v { "[togglePlayback] pause" }
                 pause()
             } else {
-                logger.d { "[togglePlayback] resume" }
+                logger.v { "[togglePlayback] resume" }
                 resume()
             }
         } else {
-            logger.d { "[togglePlayback] play" }
+            logger.v { "[togglePlayback] play" }
             play(attachment)
         }
     }
@@ -127,11 +128,6 @@ public class AudioPlayerController(
             logger.v { "[seekTo] rejected (no recordingUri): $attachment" }
             return
         }
-        // val curState = state.value
-        // if (curState?.attachment != attachment) {
-        //     logger.v { "[seekTo] rejected (not playing): $attachment" }
-        //     return
-        // }
         val durationInSeconds = attachment.duration ?: NULL_DURATION
         val positionInMs = (progress * durationInSeconds * MILLIS_IN_SECOND).toInt()
         logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash" }
@@ -237,7 +233,6 @@ public class AudioPlayerController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        // logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = state.value ?: return
         setState(
             curState.copy(
@@ -250,7 +245,6 @@ public class AudioPlayerController(
     }
 
     private fun onAudioPlayingSpeed(speed: Float) {
-        // logger.d { "[onAudioPlayingProgress] speed: $speed" }
         val curState = state.value ?: return
         setState(
             curState.copy(

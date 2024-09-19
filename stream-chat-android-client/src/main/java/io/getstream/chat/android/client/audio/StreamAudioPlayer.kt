@@ -265,7 +265,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun resume(audioHash: Int) {
-        logger.d { "[pause] audioHash: $audioHash, playerState: $playerState" }
+        logger.d { "[resume] audioHash: $audioHash, playerState: $playerState" }
         val isIdleOrPaused = playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE
         if (isIdleOrPaused && currentAudioHash == audioHash) {
             start()

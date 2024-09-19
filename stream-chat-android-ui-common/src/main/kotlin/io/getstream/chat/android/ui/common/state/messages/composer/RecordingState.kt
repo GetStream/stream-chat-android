@@ -66,6 +66,7 @@ public sealed class RecordingState {
         val playingId: Int = -1,
     ) : RecordingState() {
         override fun toString(): String = "Recording.Overview(" +
+            "playingId=$playingId, " +
             "waveform=${waveform.size}, " +
             "duration=${durationInMs}ms, " +
             "isPlaying=$isPlaying, " +

@@ -214,7 +214,7 @@ internal class AudioRecordingController(
             logger.w { "[toggleRecordingPlayback] rejected (state is not Locked): $state" }
             return
         }
-        logger.i { "[toggleRecordingPlayback] state: $state" }
+        logger.i { "[toggleRecordingPlayback] state: $state, playerState: ${audioPlayer.currentState}" }
         val audioFile = state.attachment.upload ?: run {
             logger.w { "[toggleRecordingPlayback] rejected (audioFile is null)" }
             return
@@ -227,7 +227,6 @@ internal class AudioRecordingController(
         }
         if (state.playingId != -1) {
             logger.v { "[toggleRecordingPlayback] resume playback" }
-            // audioPlayer.play(fileToUri(audioFile), state.playingId)
             audioPlayer.resume(state.playingId)
             this.recordingState.value = state.copy(isPlaying = true)
             return
@@ -308,9 +307,8 @@ internal class AudioRecordingController(
         val positionInMs = (progress * state.durationInMs).toInt()
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
         val hash = audioFile.hashCode()
-        // audioPlayer.prepare(fileToUri(audioFile), hash)
         audioPlayer.seekTo(positionInMs, hash)
-        this.recordingState.value = state.copy(playingProgress = progress, playingId = hash)
+        this.recordingState.value = state.copy(playingProgress = progress)
     }
 
     public fun pauseRecording() {
