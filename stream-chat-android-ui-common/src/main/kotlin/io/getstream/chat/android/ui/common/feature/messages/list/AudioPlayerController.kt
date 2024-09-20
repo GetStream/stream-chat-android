@@ -209,8 +209,9 @@ public class AudioPlayerController(
      * Resets the current audio recording.
      */
     public fun reset() {
-        audioPlayer.clearTracks()
-        state.value?.playingId?.also { audioPlayer.resetAudio(it) }
+        val curState = state.value
+        logger.d { "[reset] state.playingId: ${curState?.playingId}" }
+        audioPlayer.reset()
         setState(null)
     }
 

@@ -118,6 +118,11 @@ public interface AudioPlayer {
     public fun removeAudios(audioHashList: List<Int>)
 
     /**
+     * Resets the player to the initial state and removes all audios.
+     */
+    public fun reset()
+
+    /**
      * Disposes the MediaPlayer and remove all audios.
      */
     public fun dispose()
