@@ -3311,6 +3311,20 @@ public final class io/getstream/chat/android/ui/feature/messages/list/internal/p
 	public final fun newInstance (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/AllPollOptionsDialogFragment;
 }
 
+public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment : androidx/appcompat/app/AppCompatDialogFragment {
+	public static final field Companion Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment$Companion;
+	public static final field TAG Ljava/lang/String;
+	public fun <init> ()V
+	public fun getTheme ()I
+	public fun onCreateView (Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;)Landroid/view/View;
+	public fun onDestroyView ()V
+	public fun onViewCreated (Landroid/view/View;Landroid/os/Bundle;)V
+}
+
+public final class io/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment$Companion {
+	public final fun newInstance (Lio/getstream/chat/android/models/Poll;)Lio/getstream/chat/android/ui/feature/messages/list/internal/poll/PollResultsDialogFragment;
+}
+
 public class io/getstream/chat/android/ui/feature/messages/list/options/message/DefaultMessageOptionItemsFactory : io/getstream/chat/android/ui/feature/messages/list/options/message/MessageOptionItemsFactory {
 	public fun <init> (Landroid/content/Context;)V
 	public fun createMessageOptionItems (Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/User;ZLjava/util/Set;Lio/getstream/chat/android/ui/feature/messages/list/MessageListViewStyle;)Ljava/util/List;
