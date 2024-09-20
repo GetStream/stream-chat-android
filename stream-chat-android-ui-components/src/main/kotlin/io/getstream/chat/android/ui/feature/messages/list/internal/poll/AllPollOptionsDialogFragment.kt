@@ -55,16 +55,14 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
     private var _binding: StreamUiFragmentAllPollOptionsBinding? = null
     private val binding get() = _binding!!
-    private lateinit var message: Message
     private val viewModel by viewModels<AllPollOptionsViewModel>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    val (channelType, channelId) = message.cid.cidToTypeAndId()
                     return AllPollOptionsViewModel(
-                        message = message,
-                        channelId = channelId,
-                        channelType = channelType,
+                        messageId = requireArguments().getString(ARG_MESSAGE_ID)!!,
+                        channelId = requireArguments().getString(ARG_CHANNEL_ID)!!,
+                        channelType = requireArguments().getString(ARG_CHANNEL_TYPE)!!,
                         coroutineScope = viewLifecycleOwner.lifecycleScope,
                     ) as T
                 }
@@ -124,6 +122,9 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
     public companion object {
         public const val TAG: String = "create_all_poll_options_dialog"
+        private const val ARG_MESSAGE_ID = "message_id"
+        private const val ARG_CHANNEL_ID = "channel_id"
+        private const val ARG_CHANNEL_TYPE = "channel_type"
 
         /**
          * Creates a new instance of [AllPollOptionsDialogFragment].
@@ -131,7 +132,12 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
          * @return A new instance of [AllPollOptionsDialogFragment].
          */
         public fun newInstance(message: Message): AllPollOptionsDialogFragment = AllPollOptionsDialogFragment().apply {
-            this.message = message
+            val (channelType, channelId) = message.cid.cidToTypeAndId()
+            arguments = Bundle().apply {
+                putString(ARG_MESSAGE_ID, message.id)
+                putString(ARG_CHANNEL_ID, channelId)
+                putString(ARG_CHANNEL_TYPE, channelType)
+            }
         }
     }
 
@@ -189,7 +195,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
 
     private class AllPollOptionsViewModel(
         private val chatClient: ChatClient = ChatClient.instance(),
-        private val message: Message,
+        private val messageId: String,
         channelId: String,
         channelType: String,
         private val coroutineScope: CoroutineScope,
@@ -200,8 +206,8 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
                 pollState.value
                     ?.let { poll ->
                         poll.ownVotes.firstOrNull { it.optionId == option.id }
-                            ?.let { chatClient.removePollVote(message.id, poll.id, it) }
-                            ?: chatClient.castPollVote(message.id, poll.id, option)
+                            ?.let { chatClient.removePollVote(messageId, poll.id, it) }
+                            ?: chatClient.castPollVote(messageId, poll.id, option)
                     }?.await()
             }
         }
@@ -209,7 +215,7 @@ public class AllPollOptionsDialogFragment : AppCompatDialogFragment() {
         val pollState: StateFlow<Poll?> = chatClient.state
             .channel(channelType, channelId)
             .messages
-            .mapLatest { it.firstOrNull { it.id == message.id }?.poll }
+            .mapLatest { it.firstOrNull { it.id == messageId }?.poll }
             .stateIn(coroutineScope, SharingStarted.Eagerly, null)
     }
 }
