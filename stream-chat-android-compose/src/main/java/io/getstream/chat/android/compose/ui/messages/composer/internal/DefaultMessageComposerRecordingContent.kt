@@ -75,7 +75,6 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
-import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -345,16 +344,7 @@ internal fun DefaultMessageComposerRecordingContent(
 ) {
     val recordingState = messageComposerState.recording
 
-    val recordingTimeMs = when (recordingState) {
-        is RecordingState.Recording -> recordingState.durationInMs
-        is RecordingState.Overview -> when (recordingState.playingProgress > 0f) {
-            true -> (recordingState.durationInMs * recordingState.playingProgress).toInt()
-            else -> recordingState.durationInMs
-        }
-        else -> 0
-    }
-
-    val recordingDurationInMs = when (recordingState) {
+    val durationInMs = when (recordingState) {
         is RecordingState.Recording -> recordingState.durationInMs
         is RecordingState.Overview -> recordingState.durationInMs
         else -> 0
@@ -366,8 +356,6 @@ internal fun DefaultMessageComposerRecordingContent(
         -> true
         else -> false
     }
-
-    val waveformTouchable = recordingState !is RecordingState.Locked
 
     val waveformData = when (recordingState) {
         is RecordingState.Recording -> recordingState.waveform
@@ -406,10 +394,8 @@ internal fun DefaultMessageComposerRecordingContent(
     val recordingStopControlVisible = recordingState is RecordingState.Locked
 
     DefaultMessageComposerRecordingContent(
-        recordingTimeMs = recordingTimeMs,
-        recordingDurationInMs = recordingDurationInMs,
+        durationInMs = durationInMs,
         waveformVisible = waveformVisible,
-        waveformTouchable = waveformTouchable,
         waveformData = waveformData,
         waveformPlaying = waveformPlaying,
         waveformProgress = waveformProgress,
@@ -427,10 +413,8 @@ internal fun DefaultMessageComposerRecordingContent(
 @Composable
 private fun DefaultMessageComposerRecordingContent(
     modifier: Modifier = Modifier,
-    recordingTimeMs: Int = 0,
-    recordingDurationInMs: Int = 0,
+    durationInMs: Int = 0,
     waveformVisible: Boolean = true,
-    waveformTouchable: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
     waveformPlaying: Boolean = false,
@@ -459,10 +443,8 @@ private fun DefaultMessageComposerRecordingContent(
             },
     ) {
         RecordingContent(
-            recordingTimeMs = recordingTimeMs,
-            recordingDurationInMs = recordingDurationInMs,
+            durationInMs = durationInMs,
             waveformVisible = waveformVisible,
-            waveformTouchable = waveformTouchable,
             waveformThumbVisible = waveformThumbVisible,
             waveformData = waveformData,
             waveformPlaying = waveformPlaying,
@@ -534,10 +516,8 @@ private fun DefaultMessageComposerRecordingContent(
 @Composable
 private fun RecordingContent(
     modifier: Modifier = Modifier,
-    recordingTimeMs: Int = 0,
-    recordingDurationInMs: Int = 0,
+    durationInMs: Int = 0,
     waveformVisible: Boolean = true,
-    waveformTouchable: Boolean = true,
     waveformThumbVisible: Boolean = false,
     waveformData: List<Float>,
     waveformPlaying: Boolean = false,
@@ -595,11 +575,11 @@ private fun RecordingContent(
         }
 
         var currentProgress by remember { mutableFloatStateOf(waveformProgress) }
-        LaunchedEffect(waveformProgress) { currentProgress = waveformProgress }
+        LaunchedEffect(waveformProgress, durationInMs) { currentProgress = waveformProgress }
 
         PlaybackTimerText(
             progress = currentProgress,
-            durationInMs = recordingDurationInMs,
+            durationInMs = durationInMs,
             style = playbackTheme.timerTextStyle
         )
 
@@ -617,7 +597,6 @@ private fun RecordingContent(
                         .padding(playbackTheme.waveformSliderPadding),
                     style = playbackTheme.waveformSliderStyle,
                     waveformData = waveformData,
-                    isTouchable = waveformTouchable,
                     visibleBarLimit = 100,
                     adjustBarWidthToLimit = true,
                     isThumbVisible = waveformThumbVisible,

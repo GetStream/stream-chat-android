@@ -119,14 +119,14 @@ public class AudioPlayerController(
             logger.v { "[seekTo] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        val recordingUri = getRecordingUri(attachment) ?: run {
+        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
             logger.v { "[seekTo] rejected (no recordingUri): $attachment" }
             return
         }
-        val audioHash = recordingUri.hashCode()
+        val curState = state.value
         val durationInSeconds = attachment.duration ?: NULL_DURATION
         val positionInMs = (progress * durationInSeconds * MILLIS_IN_SECOND).toInt()
-        logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash, uri: $recordingUri" }
+        logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash, state: ${curState?.stringify()}" }
         audioPlayer.seekTo(positionInMs, audioHash)
     }
 
@@ -145,8 +145,9 @@ public class AudioPlayerController(
             return
         }
 
+        val curState = state.value
         val audioHash = recordingUri.hashCode()
-        logger.d { "[play] audioHash: $audioHash, uri: $recordingUri" }
+        logger.d { "[play] audioHash: $audioHash, state: ${curState?.stringify()}" }
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
@@ -236,7 +237,11 @@ public class AudioPlayerController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        val curState = state.value ?: return
+        val curState = state.value ?: run {
+            logger.v { "[onAudioPlayingProgress] rejected (no state)" }
+            return
+        }
+        logger.v { "[onAudioPlayingProgress] playingId: ${curState.playingId}, progressState: $progressState" }
         setState(
             curState.copy(
                 isPlaying = progressState.currentPosition > 0,
@@ -257,6 +262,7 @@ public class AudioPlayerController(
     }
 
     private fun setState(newState: AudioPlayerState?) {
+        logger.d { "[setState] newState(${newState != state.value}): ${newState?.stringify()}" }
         state.value = newState
     }
 

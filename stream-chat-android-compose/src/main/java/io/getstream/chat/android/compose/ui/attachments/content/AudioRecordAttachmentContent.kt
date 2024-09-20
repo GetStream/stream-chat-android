@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,7 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
@@ -54,7 +52,6 @@ import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
 import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimer
 import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
-import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
@@ -70,7 +67,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
 /**
  * Represents the audio recording attachment content.
@@ -245,9 +241,10 @@ internal fun AudioRecordAttachmentContentItemBase(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
-    val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
-    val playing = isAttachmentPlaying && playerState?.isPlaying == true
+    val attachmentUrl = attachment.assetUrl
+    val isCurrentAttachment = attachmentUrl == playerState?.attachment?.assetUrl
+    val trackProgress = playerState?.playingProgress?.takeIf { isCurrentAttachment } ?: 0F
+    val playing = isCurrentAttachment && playerState?.isPlaying == true
     val waveform = when (playing) {
         true -> playerState?.waveform
         else -> attachment.waveformData
@@ -269,7 +266,7 @@ internal fun AudioRecordAttachmentContentItemBase(
             PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(currentAttachment) }
 
             var currentProgress by remember { mutableFloatStateOf(trackProgress) }
-            LaunchedEffect(trackProgress) { currentProgress = trackProgress }
+            LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
 
             PlaybackTimer(currentProgress, currentAttachment.durationInMs, timerStyle)
 

@@ -80,7 +80,6 @@ public fun WaveformSlider(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float,
     isThumbVisible: Boolean = true,
-    isTouchable: Boolean = true,
     onDragStart: (Float) -> Unit = {},
     onDrag: (Float) -> Unit = {},
     onDragStop: (Float) -> Unit = {},
@@ -96,7 +95,6 @@ public fun WaveformSlider(
         adjustBarWidthToLimit = adjustBarWidthToLimit,
         progress = currentProgress,
         isThumbVisible = isThumbVisible,
-        isTouchable = isTouchable,
         onDragStart = {
             currentProgress = it
             onDragStart(it)
@@ -123,8 +121,8 @@ public fun WaveformSlider(
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
  * @param progress The current progress of the waveform.
  * @param isThumbVisible Whether to display the thumb.
- * @param isTouchable Whether the waveform is touchable.
  * @param onDragStart Callback when the user starts dragging the thumb.
+ * @param onDrag Callback when the user drags the thumb.
  * @param onDragStop Callback when the user stops dragging the thumb.
  */
 @Composable
@@ -136,7 +134,6 @@ public fun StaticWaveformSlider(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float,
     isThumbVisible: Boolean = true,
-    isTouchable: Boolean = true,
     onDragStart: (Float) -> Unit = {},
     onDrag: (Float) -> Unit = {},
     onDragStop: (Float) -> Unit = {},
@@ -151,7 +148,7 @@ public fun StaticWaveformSlider(
                 widthPx = size.width.toFloat()
             }
             .dragPointerInput(
-                enabled = isTouchable,
+                enabled = isThumbVisible,
                 onDragStart = {
                     pressed = true
                     onDragStart(it.toHorizontalProgress(widthPx))

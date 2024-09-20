@@ -3564,7 +3564,7 @@ internal constructor(
                     }
                 },
                 userScope = userScope,
-                isMarshmallowOrHigher = { Build.VERSION.SDK_INT >= Build.VERSION_CODES.M },
+                isMarshmallowOrHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M,
             )
 
             return ChatClient(

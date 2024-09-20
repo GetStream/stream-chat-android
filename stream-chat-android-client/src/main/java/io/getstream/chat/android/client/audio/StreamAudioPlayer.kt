@@ -33,7 +33,7 @@ internal class StreamMediaPlayer(
     private val mediaPlayer: NativeMediaPlayer,
     private val userScope: UserScope,
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
-    private val isMarshmallowOrHigher: () -> Boolean,
+    private val isMarshmallowOrHigher: Boolean,
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
@@ -121,7 +121,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun play(sourceUrl: String, audioHash: Int) {
-        logger.i { "[play] audioHash: $audioHash, sourceUrl.hash: ${sourceUrl.hashCode()}" }
+        logger.i { "[play] audioHash($currentAudioHash): $audioHash, playerState: $playerState" }
         if (audioHash != currentAudioHash) {
             resetPlayer()
             setAudio(sourceUrl, audioHash, autoPlay = true)
@@ -137,7 +137,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun changeSpeed() {
-        if (isMarshmallowOrHigher()) {
+        if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
             logger.i { "[changeSpeed] no args" }
             val currentSpeed = playingSpeed
             val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
@@ -146,18 +146,16 @@ internal class StreamMediaPlayer(
                 currentSpeed + SPEED_INCREMENT
             }
 
-            playingSpeed = newSpeed
-
-            if (playerState == PlayerState.PLAYING) {
+            if (playerState == PlayerState.PLAYING && mediaPlayer.isSpeedSettable()) {
+                playingSpeed = newSpeed
                 mediaPlayer.speed = newSpeed
+                publishSpeed(currentAudioHash, newSpeed)
             }
-
-            publishSpeed(currentAudioHash, newSpeed)
         }
     }
 
     override fun currentSpeed(): Float =
-        if (isMarshmallowOrHigher()) mediaPlayer.speed else 1F
+        if (isMarshmallowOrHigher) mediaPlayer.speed else 1F
 
     override fun dispose() {
         userScope.launch(DispatcherProvider.Main) {
@@ -249,15 +247,21 @@ internal class StreamMediaPlayer(
 
     private fun start() {
         val currentPosition = mediaPlayer.currentPosition
+        val currentAudioHash = currentAudioHash
         logger.d {
             "[start] currentAudioHash: $currentAudioHash" +
                 ", currentPosition: $currentPosition, playerState: $playerState"
         }
         if (playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE) {
             val seekTo = seekMap[currentAudioHash] ?: 0
-            logger.v { "[start] seekTo: $seekTo" }
+            val duration = mediaPlayer.duration
+            logger.v { "[start] seekTo: $seekTo, duration: $duration" }
+            if (seekTo >= duration) {
+                onComplete(currentAudioHash)
+                return
+            }
             mediaPlayer.seekTo(seekTo)
-            if (isMarshmallowOrHigher()) {
+            if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
                 mediaPlayer.speed = playingSpeed
                 publishSpeed(currentAudioHash, playingSpeed)
             }
@@ -307,6 +311,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun startSeek(audioHash: Int) {
+        logger.d { "[startSeek] audioHash: $audioHash, playerState: $playerState" }
         if (playerState == PlayerState.PLAYING && currentAudioHash == audioHash) {
             pause()
         }
@@ -324,6 +329,8 @@ internal class StreamMediaPlayer(
     private fun onError(audioHash: Int, what: Int, extra: Int): Boolean {
         logger.e { "[onError] audioHash: $audioHash, what: $what, extra: $extra" }
         complete(audioHash)
+        resetPlayer()
+        mediaPlayer.release()
         return true
     }
 
@@ -425,6 +432,20 @@ internal class StreamMediaPlayer(
             NativeMediaPlayerState.STARTED,
             NativeMediaPlayerState.PAUSED,
             NativeMediaPlayerState.PLAYBACK_COMPLETED,
+            -> true
+
+            else -> false
+        }
+    }
+
+    private fun NativeMediaPlayer.isSpeedSettable(): Boolean {
+        return when (state) {
+            NativeMediaPlayerState.INITIALIZED,
+            NativeMediaPlayerState.PREPARED,
+            NativeMediaPlayerState.STARTED,
+            NativeMediaPlayerState.PAUSED,
+            NativeMediaPlayerState.PLAYBACK_COMPLETED,
+            NativeMediaPlayerState.ERROR,
             -> true
 
             else -> false
