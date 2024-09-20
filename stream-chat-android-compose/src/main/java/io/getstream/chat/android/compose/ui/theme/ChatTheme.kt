@@ -52,6 +52,8 @@ import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
@@ -118,6 +120,9 @@ private val LocalQuotedMessageTextFormatter = compositionLocalOf<QuotedMessageTe
 }
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalStreamImageHeadersProvider = compositionLocalOf<ImageHeadersProvider> {
+    error("No ImageHeadersProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -212,6 +217,7 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
+ * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
@@ -260,6 +266,7 @@ public fun ChatTheme(
     ),
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
+    imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
@@ -346,6 +353,7 @@ public fun ChatTheme(
         LocalMessageComposerTheme provides messageComposerTheme,
         LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
+        LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -616,6 +624,11 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentPickerTheme.current
+
+    public val streamImageHeadersProvider: ImageHeadersProvider
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamImageHeadersProvider.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.
