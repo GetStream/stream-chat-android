@@ -107,6 +107,7 @@ import io.getstream.chat.android.ui.feature.messages.list.background.MessageBack
 import io.getstream.chat.android.ui.feature.messages.list.internal.HiddenMessageListItemPredicate
 import io.getstream.chat.android.ui.feature.messages.list.internal.MessageListScrollHelper
 import io.getstream.chat.android.ui.feature.messages.list.internal.poll.AllPollOptionsDialogFragment
+import io.getstream.chat.android.ui.feature.messages.list.internal.poll.PollResultsDialogFragment
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItem
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionItemsFactory
 import io.getstream.chat.android.ui.feature.messages.list.options.message.MessageOptionsDialogFragment
@@ -600,7 +601,13 @@ public class MessageListView : ConstraintLayout {
         } ?: false
     }
     private val defaultOnPollCloseClickListener = OnPollCloseClickListener { false }
-    private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { false }
+    private val defaultOnViewPollResultClickListener = OnViewPollResultClickListener { poll ->
+        context.getFragmentManager()?.let { fragmentManager ->
+            PollResultsDialogFragment.newInstance(poll)
+                .show(fragmentManager, PollResultsDialogFragment.TAG)
+            true
+        } ?: false
+    }
 
     private val listenerContainer = MessageListListenerContainerImpl(
         messageClickListener = defaultMessageClickListener,
