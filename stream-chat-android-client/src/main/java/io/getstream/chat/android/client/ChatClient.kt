@@ -2852,6 +2852,11 @@ internal constructor(
         return runCatching { userStateService.state.userOrError() }.getOrNull()
     }
 
+    @InternalStreamChatApi
+    public fun getCurrentOrStoredUserId(): String? {
+        return getCurrentUser()?.id ?: getStoredUser()?.id
+    }
+
     public fun getCurrentToken(): String? {
         return runCatching {
             when (userStateService.state) {

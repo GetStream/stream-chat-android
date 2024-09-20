@@ -38,7 +38,10 @@ internal class MessageRepositoryTest : BaseDomainTest2() {
             val attachment1 = randomAttachment(assetUrl = "url1")
             val attachment2 = randomAttachment(assetUrl = "url2")
             val attachment3 = randomAttachment(assetUrl = "url3")
-            val message = randomMessage(attachments = mutableListOf(attachment1, attachment2, attachment3))
+            val message = randomMessage(
+                attachments = mutableListOf(attachment1, attachment2, attachment3),
+                deletedAt = null,
+            )
             repos.insertMessage(message)
 
             val newAttachment1 = attachment1.copy(assetUrl = "newUrl1")

@@ -54,6 +54,7 @@ public class GiphyAttachmentFactory(
     contentScale: ContentScale = ContentScale.Crop,
     onContentItemClick: (context: Context, Url: String) -> Unit = ::onGiphyAttachmentContentClick,
 ) : AttachmentFactory(
+    type = Type.BuiltIn.GIPHY,
     canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
     content = @Composable { modifier, state ->
         GiphyAttachmentContent(

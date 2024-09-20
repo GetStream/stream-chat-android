@@ -25,7 +25,12 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalInspectionMode
 import app.cash.paparazzi.Paparazzi
+import io.getstream.chat.android.client.ChatClient
+import io.getstream.chat.android.client.audio.AudioPlayer
+import io.getstream.chat.android.compose.ui.attachments.StreamAttachmentFactories
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
 
 internal abstract class BaseComposeTest {
 
@@ -39,7 +44,12 @@ internal abstract class BaseComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
-                ChatTheme(isInDarkMode = isInDarkMode) {
+                ChatTheme(
+                    isInDarkMode = isInDarkMode,
+                    attachmentFactories = StreamAttachmentFactories.defaultFactories(
+                        getChatClient = this::getChatClient,
+                    ),
+                ) {
                     Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                         composable.invoke()
                     }
@@ -53,13 +63,22 @@ internal abstract class BaseComposeTest {
             CompositionLocalProvider(
                 LocalInspectionMode provides true,
             ) {
+                val attachmentFactories = StreamAttachmentFactories.defaultFactories(
+                    getChatClient = this::getChatClient,
+                )
                 Column {
-                    ChatTheme(isInDarkMode = true) {
+                    ChatTheme(
+                        isInDarkMode = true,
+                        attachmentFactories = attachmentFactories,
+                    ) {
                         Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                             composable.invoke()
                         }
                     }
-                    ChatTheme(isInDarkMode = false) {
+                    ChatTheme(
+                        isInDarkMode = false,
+                        attachmentFactories = attachmentFactories,
+                    ) {
                         Box(modifier = Modifier.background(ChatTheme.colors.appBackground)) {
                             composable.invoke()
                         }
@@ -86,6 +105,14 @@ internal abstract class BaseComposeTest {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun getChatClient(): ChatClient {
+        return mock {
+            on { getCurrentOrStoredUserId() } doReturn "mockedUser"
+            on { audioPlayer } doReturn mock<AudioPlayer> {
             }
         }
     }

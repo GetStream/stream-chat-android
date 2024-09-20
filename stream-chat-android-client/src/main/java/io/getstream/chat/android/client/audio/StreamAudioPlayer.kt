@@ -273,13 +273,14 @@ internal class StreamMediaPlayer(
     }
 
     override fun seekTo(positionInMs: Int, audioHash: Int) {
+        logger.d { "[seekTo] audioHash: $audioHash, positionInMs: $positionInMs, playerState: $playerState" }
         seekMap[audioHash] = positionInMs
 
-        if (currentAudioHash == audioHash) {
+        if (currentAudioHash == audioHash && mediaPlayer.isSeekable()) {
             mediaPlayer.seekTo(positionInMs)
             val currentPosition = mediaPlayer.currentPosition
             val duration = mediaPlayer.duration
-            logger.w { "[seekTo] msec: $positionInMs, currentPosition: $currentPosition, duration: $duration" }
+            logger.v { "[seekTo] msec: $positionInMs, currentPosition: $currentPosition, duration: $duration" }
         }
     }
 
@@ -400,6 +401,18 @@ internal class StreamMediaPlayer(
             return uri.toUri().toString()
         } catch (_: Throwable) {
             return uri
+        }
+    }
+
+    private fun NativeMediaPlayer.isSeekable(): Boolean {
+        return when (state) {
+            NativeMediaPlayerState.PREPARED,
+            NativeMediaPlayerState.STARTED,
+            NativeMediaPlayerState.PAUSED,
+            NativeMediaPlayerState.PLAYBACK_COMPLETED,
+            -> true
+
+            else -> false
         }
     }
 }

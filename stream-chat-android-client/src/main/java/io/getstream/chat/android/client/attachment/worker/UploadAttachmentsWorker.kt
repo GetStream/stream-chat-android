@@ -152,8 +152,6 @@ public class UploadAttachmentsWorker(
                 } ?: SyncStatus.FAILED_PERMANENTLY,
         )
         channelStateLogic?.upsertMessage(updatedMessage)
-        // RepositoryFacade::insertMessage is implemented as upsert, therefore we need to delete the message first
-        messageRepository.deleteChannelMessage(updatedMessage)
         messageRepository.insertMessage(updatedMessage)
         AttachmentsUploadStates.updateMessageAttachments(updatedMessage)
     }
