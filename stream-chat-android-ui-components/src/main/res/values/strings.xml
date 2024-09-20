@@ -26,5 +26,7 @@
     <string name="stream_ui_poll_add_a_comment_label">Add a comment</string>
     <string name="stream_ui_poll_create_a_poll_title">Create a poll</string>
     <string name="stream_ui_poll_options_title">Poll Options</string>
+    <string name="stream_ui_poll_results_title">Poll Results</string>
     <string name="stream_ui_poll_this_is_already_an_option">This is already an option</string>
+    <string name="stream_ui_poll_vote_counts">%d votes</string>
 </resources>
