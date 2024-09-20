@@ -37,6 +37,12 @@ public val Attachment.duration: Float?
     get() = (extraData[EXTRA_DURATION] as? Number)?.toFloat()
 
 /**
+ * Duration of the attachment in milliseconds.
+ */
+public val Attachment.durationInMs: Int?
+    get() = duration?.times(1000)?.toInt()
+
+/**
  * Waveform data of the attachment.
  */
 public val Attachment.waveformData: List<Float>?

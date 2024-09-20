@@ -34,8 +34,12 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,10 +47,13 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
+import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimer
+import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
@@ -241,14 +248,10 @@ internal fun AudioRecordAttachmentContentItemBase(
     val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
     val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
     val playing = isAttachmentPlaying && playerState?.isPlaying == true
-    val playbackText = when (playing || trackProgress > 0) {
-        true -> (playerState?.playbackInMs ?: 0).let(DurationFormatter::formatDurationInMillis)
-        else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
-    }
     val waveform = when (playing) {
-        true -> playerState?.waveform ?: emptyList()
-        else -> attachment.waveformData ?: emptyList()
-    }
+        true -> playerState?.waveform
+        else -> attachment.waveformData
+    } ?: emptyList()
 
     val currentAttachment by rememberUpdatedState(attachment)
     Surface(
@@ -265,46 +268,33 @@ internal fun AudioRecordAttachmentContentItemBase(
         ) {
             PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(currentAttachment) }
 
-            PlaybackTimer(playbackText, timerStyle)
+            var currentProgress by remember { mutableFloatStateOf(trackProgress) }
+            LaunchedEffect(trackProgress) { currentProgress = trackProgress }
 
-            WaveformSlider(
+            PlaybackTimer(currentProgress, currentAttachment.durationInMs, timerStyle)
+
+            StaticWaveformSlider(
                 modifier = Modifier
                     .height(waveformSliderStyle.height)
                     .weight(1f),
                 style = waveformSliderStyle.style,
                 waveformData = waveform,
-                progress = trackProgress,
-                onDragStart = { onThumbDragStart(currentAttachment) },
-                onDragStop = { progress -> onThumbDragStop(currentAttachment, progress) },
+                progress = currentProgress,
+                onDragStart = {
+                    currentProgress = it
+                    onThumbDragStart(currentAttachment)
+                },
+                onDrag = {
+                    currentProgress = it
+                },
+                onDragStop = {
+                    currentProgress = it
+                    onThumbDragStop(currentAttachment, it)
+                },
             )
 
             tailContent(playing)
         }
-    }
-}
-
-/**
- * Represents the playback timer.
- *
- * @param playbackText The text to display.
- * @param style The style for the timer component.
- */
-@Composable
-internal fun PlaybackTimer(
-    playbackText: String,
-    style: TextContainerStyle,
-) {
-    Box(
-        modifier = Modifier
-            .size(style.size)
-            .padding(style.padding)
-            .background(style.backgroundColor),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            style = style.textStyle,
-            text = playbackText,
-        )
     }
 }
 

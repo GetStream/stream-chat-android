@@ -261,7 +261,6 @@ internal class AudioRecordingController(
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        logger.v { "[onAudioPlayingProgress] progressState: $progressState" }
         val curState = this.recordingState.value
         if (curState is RecordingState.Overview) {
             this.recordingState.value = curState.copy(

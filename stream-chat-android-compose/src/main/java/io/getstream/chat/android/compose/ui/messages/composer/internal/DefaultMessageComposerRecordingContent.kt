@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -72,6 +73,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
+import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimerText
+import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
 import io.getstream.chat.android.compose.ui.messages.composer.actions.AudioRecordingActions
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
@@ -344,10 +347,16 @@ internal fun DefaultMessageComposerRecordingContent(
 
     val recordingTimeMs = when (recordingState) {
         is RecordingState.Recording -> recordingState.durationInMs
-        is RecordingState.Overview -> when (recordingState.isPlaying || recordingState.playingProgress > 0f) {
+        is RecordingState.Overview -> when (recordingState.playingProgress > 0f) {
             true -> (recordingState.durationInMs * recordingState.playingProgress).toInt()
             else -> recordingState.durationInMs
         }
+        else -> 0
+    }
+
+    val recordingDurationInMs = when (recordingState) {
+        is RecordingState.Recording -> recordingState.durationInMs
+        is RecordingState.Overview -> recordingState.durationInMs
         else -> 0
     }
 
@@ -398,6 +407,7 @@ internal fun DefaultMessageComposerRecordingContent(
 
     DefaultMessageComposerRecordingContent(
         recordingTimeMs = recordingTimeMs,
+        recordingDurationInMs = recordingDurationInMs,
         waveformVisible = waveformVisible,
         waveformTouchable = waveformTouchable,
         waveformData = waveformData,
@@ -418,6 +428,7 @@ internal fun DefaultMessageComposerRecordingContent(
 private fun DefaultMessageComposerRecordingContent(
     modifier: Modifier = Modifier,
     recordingTimeMs: Int = 0,
+    recordingDurationInMs: Int = 0,
     waveformVisible: Boolean = true,
     waveformTouchable: Boolean = true,
     waveformThumbVisible: Boolean = false,
@@ -449,6 +460,7 @@ private fun DefaultMessageComposerRecordingContent(
     ) {
         RecordingContent(
             recordingTimeMs = recordingTimeMs,
+            recordingDurationInMs = recordingDurationInMs,
             waveformVisible = waveformVisible,
             waveformTouchable = waveformTouchable,
             waveformThumbVisible = waveformThumbVisible,
@@ -523,6 +535,7 @@ private fun DefaultMessageComposerRecordingContent(
 private fun RecordingContent(
     modifier: Modifier = Modifier,
     recordingTimeMs: Int = 0,
+    recordingDurationInMs: Int = 0,
     waveformVisible: Boolean = true,
     waveformTouchable: Boolean = true,
     waveformThumbVisible: Boolean = false,
@@ -581,10 +594,13 @@ private fun RecordingContent(
             }
         }
 
-        Text(
-            text = formatMillis(recordingTimeMs),
-            style = playbackTheme.timerTextStyle,
-            modifier = Modifier,
+        var currentProgress by remember { mutableFloatStateOf(waveformProgress) }
+        LaunchedEffect(waveformProgress) { currentProgress = waveformProgress }
+
+        PlaybackTimerText(
+            progress = currentProgress,
+            durationInMs = recordingDurationInMs,
+            style = playbackTheme.timerTextStyle
         )
 
         Box(
@@ -594,7 +610,7 @@ private fun RecordingContent(
             contentAlignment = Alignment.CenterEnd,
         ) {
             if (waveformVisible) {
-                WaveformSlider(
+                StaticWaveformSlider(
                     modifier = Modifier
                         .fillMaxSize()
                         .align(Alignment.CenterStart)
@@ -605,9 +621,10 @@ private fun RecordingContent(
                     visibleBarLimit = 100,
                     adjustBarWidthToLimit = true,
                     isThumbVisible = waveformThumbVisible,
-                    progress = waveformProgress,
-                    onDragStart = onSliderDragStart,
-                    onDragStop = onSliderDragStop,
+                    progress = currentProgress,
+                    onDragStart = { currentProgress = it.also(onSliderDragStart) },
+                    onDrag = { currentProgress = it },
+                    onDragStop = { currentProgress = it.also(onSliderDragStop) },
                 )
             }
 

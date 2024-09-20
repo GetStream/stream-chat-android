@@ -28,9 +28,6 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
-private const val INITIAL_SPEED = 1F
-private const val SPEED_INCREMENT = 0.5F
-
 @Suppress("TooManyFunctions")
 internal class StreamMediaPlayer(
     private val mediaPlayer: NativeMediaPlayer,
@@ -42,6 +39,8 @@ internal class StreamMediaPlayer(
 
     companion object {
         private const val DEBUG_POLLING = false
+        private const val INITIAL_SPEED = 1F
+        private const val SPEED_INCREMENT = 0.5F
     }
 
     private val logger by taggedLogger("Chat:StreamMediaPlayer")
