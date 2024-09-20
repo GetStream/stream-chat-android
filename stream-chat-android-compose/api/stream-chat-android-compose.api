@@ -400,10 +400,6 @@ public final class io/getstream/chat/android/compose/ui/attachments/StreamAttach
 	public final fun defaultQuotedFactories ()Ljava/util/List;
 }
 
-public final class io/getstream/chat/android/compose/ui/attachments/audio/AudioRecordingKt {
-	public static final fun RunningWaveForm-rJsmZDw (Ljava/lang/Object;ILjava/lang/Integer;Landroidx/compose/ui/Modifier;IFFFJLandroidx/compose/ui/graphics/Brush;Landroidx/compose/runtime/Composer;II)V
-}
-
 public final class io/getstream/chat/android/compose/ui/attachments/content/AudioRecordAttachmentContentKt {
 	public static final fun AudioRecordAttachmentContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/state/messages/attachments/AttachmentState;Lio/getstream/chat/android/compose/viewmodel/messages/AudioPlayerViewModelFactory;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 	public static final fun AudioRecordAttachmentContent (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/Attachment;Lio/getstream/chat/android/ui/common/state/messages/list/AudioPlayerState;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
@@ -890,8 +886,16 @@ public final class io/getstream/chat/android/compose/ui/components/attachments/i
 	public static final fun ImagesPicker (Ljava/util/List;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
 }
 
+public final class io/getstream/chat/android/compose/ui/components/audio/ComposableSingletons$PlaybackTimerKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/components/audio/ComposableSingletons$PlaybackTimerKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
 public final class io/getstream/chat/android/compose/ui/components/audio/WaveformSliderKt {
-	public static final fun WaveformSlider (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Ljava/util/List;IZFZZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun StaticWaveformSlider (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Ljava/util/List;IZFZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+	public static final fun WaveformSlider (Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/compose/ui/theme/WaveformSliderStyle;Ljava/util/List;IZFZLkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
 
 public final class io/getstream/chat/android/compose/ui/components/avatar/AvatarKt {

@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,16 +45,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.coerceIn
 import androidx.compose.ui.unit.dp
-import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
-import io.getstream.chat.android.compose.ui.theme.TextContainerStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformThumbStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformTrackStyle
 import io.getstream.chat.android.compose.ui.util.dragPointerInput
-import io.getstream.log.StreamLog
 import kotlin.random.Random
-import kotlin.time.Duration
 
 /**
  * A slider that displays a waveform and allows the user to seek through it.
@@ -109,7 +104,6 @@ public fun WaveformSlider(
         },
     )
 }
-
 
 /**
  * A slider that displays a waveform.

@@ -2222,6 +2222,7 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 	public static final field EXTRA_UPLOAD_ID Ljava/lang/String;
 	public static final field EXTRA_WAVEFORM_DATA Ljava/lang/String;
 	public static final fun getDuration (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/Float;
+	public static final fun getDurationInMs (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/Integer;
 	public static final fun getUploadId (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
 	public static final fun getWaveformData (Lio/getstream/chat/android/models/Attachment;)Ljava/util/List;
 }

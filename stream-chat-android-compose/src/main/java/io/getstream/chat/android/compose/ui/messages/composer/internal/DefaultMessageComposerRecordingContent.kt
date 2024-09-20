@@ -580,7 +580,7 @@ private fun RecordingContent(
         PlaybackTimerText(
             progress = currentProgress,
             durationInMs = durationInMs,
-            style = playbackTheme.timerTextStyle
+            style = playbackTheme.timerTextStyle,
         )
 
         Box(
