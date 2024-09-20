@@ -215,6 +215,7 @@ internal class StreamMediaPlayer(
         playerState = PlayerState.UNSET
         if (currentAudioHash != -1) {
             publishAudioState(currentAudioHash, AudioState.UNSET)
+            seekMap.remove(currentAudioHash)
             currentAudioHash = -1
         }
     }
