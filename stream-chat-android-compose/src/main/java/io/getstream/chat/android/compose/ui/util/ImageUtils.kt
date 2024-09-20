@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.util
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
@@ -40,6 +41,8 @@ import com.skydoves.landscapist.components.ImageComponent
 import com.skydoves.landscapist.components.rememberImageComponent
 import com.skydoves.landscapist.plugins.ImagePlugin
 import io.getstream.chat.android.compose.R
+import io.getstream.chat.android.compose.ui.theme.ChatTheme
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.uiutils.util.adjustColorBrightness
 import kotlin.math.abs
 
@@ -113,12 +116,10 @@ public fun StreamImage(
     )? = null,
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
-    CoilImage(
-        imageModel = data,
-        imageLoader = { LocalStreamImageLoader.current },
+    StreamImage(
+        imageRequest = data.asImageRequest(LocalContext.current) { listener(requestListener?.invoke()) },
         modifier = modifier,
         component = component,
-        requestListener = requestListener,
         imageOptions = imageOptions,
         onImageStateChanged = onImageStateChanged,
         previewPlaceholder = previewPlaceholder,
@@ -160,7 +161,7 @@ public fun StreamImage(
     failure: @Composable (BoxScope.(imageState: CoilImageState.Failure) -> Unit)? = null,
 ) {
     CoilImage(
-        imageRequest = imageRequest,
+        imageRequest = imageRequest.provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
         imageLoader = { LocalStreamImageLoader.current },
         modifier = modifier,
         component = component,
@@ -208,14 +209,11 @@ public fun rememberStreamImagePainter(
     contentScale: ContentScale = ContentScale.Fit,
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ): AsyncImagePainter {
-    return rememberAsyncImagePainter(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(data)
-            .build(),
-        imageLoader = LocalStreamImageLoader.current,
-        placeholder = placeholderPainter,
-        error = errorPainter,
-        fallback = fallbackPainter,
+    return rememberStreamImagePainter(
+        model = data.toImageRequest(LocalContext.current),
+        placeholderPainter = placeholderPainter,
+        errorPainter = errorPainter,
+        fallbackPainter = fallbackPainter,
         contentScale = contentScale,
         onSuccess = onSuccess,
         onError = onError,
@@ -260,7 +258,7 @@ public fun rememberStreamImagePainter(
     filterQuality: FilterQuality = DrawScope.DefaultFilterQuality,
 ): AsyncImagePainter {
     return rememberAsyncImagePainter(
-        model = model,
+        model = model.provideHeaders(LocalContext.current, ChatTheme.streamImageHeadersProvider),
         imageLoader = LocalStreamImageLoader.current,
         placeholder = placeholderPainter,
         error = errorPainter,
@@ -272,6 +270,67 @@ public fun rememberStreamImagePainter(
         filterQuality = filterQuality,
     )
 }
+
+/**
+ * Converts the current lambda to another one that returns an [ImageRequest] that can be used to load the image.
+ *
+ * @param context The current context.
+ * @param block The block to apply to the [ImageRequest.Builder].
+ * @return The lambda that returns the [ImageRequest] that can be used to load the image.
+ */
+private fun (() -> Any?).asImageRequest(
+    context: Context,
+    block: ImageRequest.Builder.() -> Unit = { },
+): () -> ImageRequest =
+    { this().toImageRequest(context, block) }
+
+/**
+ * Converts the current data to an [ImageRequest] that can be used to load the image.
+ *
+ * @param context The current context.
+ * @param block The block to apply to the [ImageRequest.Builder].
+ * @return The [ImageRequest] that can be used to load the image.
+ */
+private fun Any?.toImageRequest(
+    context: Context,
+    block: ImageRequest.Builder.() -> Unit = { },
+): ImageRequest =
+    ImageRequest.Builder(context)
+        .data(this)
+        .apply(block)
+        .build()
+
+/**
+ * Converts the current lambda to another one that provides headers to the [ImageRequest] based on
+ * the [ImageHeadersProvider] implementation.
+ *
+ * @param context The current context.
+ * @param imageHeaderProvider The [ImageHeadersProvider] implementation to use.
+ * @return The lambda that returns the [ImageRequest] with the headers applied.
+ */
+private fun (() -> ImageRequest).provideHeaders(
+    context: Context,
+    imageHeaderProvider: ImageHeadersProvider,
+): () -> ImageRequest = { this().provideHeaders(context, imageHeaderProvider) }
+
+/**
+ * Provides headers to the given [ImageRequest] based on the [ImageHeadersProvider] implementation.
+ *
+ * @param context The current context.
+ * @param imageHeaderProvider The [ImageHeadersProvider] implementation to use.
+ * @return The [ImageRequest] with the headers applied.
+ */
+private fun ImageRequest.provideHeaders(
+    context: Context,
+    imageHeaderProvider: ImageHeadersProvider,
+): ImageRequest =
+    this.newBuilder(context)
+        .apply {
+            imageHeaderProvider.getImageRequestHeaders(this@provideHeaders.data.toString())
+                .entries
+                .forEach { addHeader(it.key, it.value) }
+        }
+        .build()
 
 /**
  * Used to change a parameter set on Coil requests in order
