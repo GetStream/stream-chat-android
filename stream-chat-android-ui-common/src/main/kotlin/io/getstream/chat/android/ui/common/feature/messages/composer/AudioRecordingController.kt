@@ -108,7 +108,7 @@ internal class AudioRecordingController(
                 logger.v { "[onRecorderDurationChanged] duration: $durationMs, state: $state" }
                 if (state is RecordingState.Recording) {
                     // TODO make duration Int
-                    recordingState.value = state.copy(duration = durationMs.toInt())
+                    setState(state.copy(duration = durationMs.toInt()))
                 }
             }
         }
@@ -153,7 +153,7 @@ internal class AudioRecordingController(
         val state = recordingState.value
         if (state is RecordingState.Recording) {
             logger.v { "[processWave] waveform.size($normalized): ${waveform.size}" }
-            recordingState.value = state.copy(waveform = ArrayList(waveform))
+            setState(state.copy(waveform = ArrayList(waveform)))
         }
     }
 
@@ -166,7 +166,7 @@ internal class AudioRecordingController(
         logger.i { "[startRecording] state: $state" }
         val recordingName = "audio_recording_${Date()}"
         mediaRecorder.startAudioRecording(recordingName, realPollingInterval.toLong())
-        this.recordingState.value = RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset)
+        setState(RecordingState.Hold(offset = offset ?: RecordingState.Hold.ZeroOffset))
     }
 
     public fun holdRecording(offset: Pair<Float, Float>? = null) {
@@ -180,7 +180,7 @@ internal class AudioRecordingController(
             return
         }
         logger.v { "[holdRecording] offset: Offset(${offset.first}:${offset.second})" }
-        this.recordingState.value = state.copy(offset = offset)
+        setState(state.copy(offset = offset))
     }
 
     public fun lockRecording() {
@@ -190,7 +190,7 @@ internal class AudioRecordingController(
             return
         }
         logger.i { "[lockRecording] state: $state" }
-        this.recordingState.value = RecordingState.Locked(state.durationInMs, state.waveform)
+        setState(RecordingState.Locked(state.durationInMs, state.waveform))
     }
 
     public fun cancelRecording() {
@@ -205,7 +205,7 @@ internal class AudioRecordingController(
             audioPlayer.resetAudio(state.playingId)
         }
         clearData()
-        this.recordingState.value = RecordingState.Idle
+        setState(RecordingState.Idle)
     }
 
     public fun toggleRecordingPlayback() {
@@ -223,11 +223,11 @@ internal class AudioRecordingController(
             if (state.isPlaying) {
                 logger.d { "[toggleRecordingPlayback] pause playback" }
                 audioPlayer.pause()
-                this.recordingState.value = state.copy(isPlaying = false)
+                setState(state.copy(isPlaying = false))
             } else {
                 logger.d { "[toggleRecordingPlayback] resume playback" }
                 audioPlayer.resume(state.playingId)
-                this.recordingState.value = state.copy(isPlaying = true)
+                setState(state.copy(isPlaying = true))
             }
             return
         }
@@ -236,9 +236,11 @@ internal class AudioRecordingController(
         audioPlayer.registerOnProgressStateChange(audioHash, ::onAudioPlayingProgress)
         audioPlayer.registerOnAudioStateChange(audioHash, ::onAudioStateChanged)
         audioPlayer.play(fileToUri(audioFile), audioHash)
-        this.recordingState.value = state.copy(
-            isPlaying = true,
-            playingId = audioHash,
+        setState(
+            state.copy(
+                isPlaying = true,
+                playingId = audioHash,
+            ),
         )
     }
 
@@ -249,24 +251,28 @@ internal class AudioRecordingController(
             return
         }
         logger.d { "[onAudioStateChanged] playbackState: $playbackState" }
-        this.recordingState.value = state.copy(
-            isPlaying = playbackState == AudioState.PLAYING,
-            playingProgress = when (playbackState) {
-                AudioState.PLAYING,
-                AudioState.PAUSE,
-                -> state.playingProgress
-                else -> 0f
-            },
+        setState(
+            state.copy(
+                isPlaying = playbackState == AudioState.PLAYING,
+                playingProgress = when (playbackState) {
+                    AudioState.PLAYING,
+                    AudioState.PAUSE,
+                    -> state.playingProgress
+                    else -> 0f
+                },
+            ),
         )
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
         val curState = this.recordingState.value
         if (curState is RecordingState.Overview) {
-            this.recordingState.value = curState.copy(
-                isPlaying = true,
-                playingProgress = progressState.progress,
-                durationInMs = progressState.duration,
+            setState(
+                curState.copy(
+                    isPlaying = true,
+                    playingProgress = progressState.progress,
+                    durationInMs = progressState.duration.takeIf { it > 0 } ?: curState.durationInMs,
+                ),
             )
         }
     }
@@ -282,7 +288,7 @@ internal class AudioRecordingController(
         if (result.isFailure) {
             logger.e { "[stopRecording] failed: ${result.errorOrNull()}" }
             clearData()
-            recordingState.value = RecordingState.Idle
+            setState(RecordingState.Idle)
             return
         }
         val adjusted = samples.downsampleMax(samplesTarget)
@@ -290,7 +296,7 @@ internal class AudioRecordingController(
         clearData()
         val recorded = result.getOrThrow()
         logger.v { "[stopRecording] recorded: $recorded" }
-        recordingState.value = RecordingState.Overview(recorded.durationInMs, normalized, recorded.attachment)
+        setState(RecordingState.Overview(recorded.durationInMs, normalized, recorded.attachment))
     }
 
     public fun seekRecordingTo(progress: Float) {
@@ -307,7 +313,7 @@ internal class AudioRecordingController(
         logger.i { "[seekRecordingTo] progress: $progress (${positionInMs}ms), state: $state" }
         val audioHash = audioFile.hashCode()
         audioPlayer.seekTo(positionInMs, audioHash)
-        this.recordingState.value = state.copy(playingProgress = progress)
+        setState(state.copy(playingProgress = progress))
     }
 
     public fun pauseRecording() {
@@ -318,7 +324,7 @@ internal class AudioRecordingController(
         }
         logger.i { "[pauseRecording] state: $state" }
         audioPlayer.startSeek(state.playingId)
-        this.recordingState.value = state.copy(isPlaying = false)
+        setState(state.copy(isPlaying = false))
     }
 
     public fun completeRecording() {
@@ -332,21 +338,23 @@ internal class AudioRecordingController(
             logger.d { "[completeRecording] completing from Overview state" }
             audioPlayer.resetAudio(state.playingId)
             clearData()
-            this.recordingState.value = RecordingState.Complete(
-                state.attachment.copy(
-                    extraData = state.attachment.extraData + mapOf(
-                        EXTRA_WAVEFORM_DATA to state.waveform,
+            setState(
+                RecordingState.Complete(
+                    state.attachment.copy(
+                        extraData = state.attachment.extraData + mapOf(
+                            EXTRA_WAVEFORM_DATA to state.waveform,
+                        ),
                     ),
                 ),
             )
-            this.recordingState.value = RecordingState.Idle
+            setState(RecordingState.Idle)
             return
         }
         val result = mediaRecorder.stopRecording()
         if (result.isFailure) {
             logger.e { "[completeRecording] failed: ${result.errorOrNull()}" }
             clearData()
-            recordingState.value = RecordingState.Idle
+            setState(RecordingState.Idle)
             return
         }
         val adjusted = samples.downsampleMax(samplesTarget)
@@ -362,8 +370,8 @@ internal class AudioRecordingController(
             )
         }
         logger.d { "[completeRecording] complete from state: $state" }
-        recordingState.value = RecordingState.Complete(recorded.attachment)
-        recordingState.value = RecordingState.Idle
+        setState(RecordingState.Complete(recorded.attachment))
+        setState(RecordingState.Idle)
     }
 
     public fun onCleared() {
@@ -384,6 +392,11 @@ internal class AudioRecordingController(
         samples.clear()
         samplesBuffer.clear()
         samplesBufferLimit = 1
+        setState(RecordingState.Idle)
+    }
+
+    private fun setState(state: RecordingState) {
+        recordingState.value = state
     }
 
     private fun List<Int>.normalize(): List<Float> {

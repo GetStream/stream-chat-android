@@ -73,21 +73,21 @@ internal class StreamMediaPlayer(
         }
 
     override fun registerOnAudioStateChange(audioHash: Int, onAudioStateChange: (AudioState) -> Unit) {
-        logger.i { "[registerOnAudioStateChange] audioHash: $audioHash" }
+        logger.v { "[registerOnAudioStateChange] audioHash: $audioHash, size: ${onStateListeners.size}" }
         onStateListeners[audioHash]?.add(onAudioStateChange) ?: run {
             onStateListeners[audioHash] = mutableListOf(onAudioStateChange)
         }
     }
 
     override fun registerOnProgressStateChange(audioHash: Int, onProgressDataChange: (ProgressData) -> Unit) {
-        logger.i { "[registerOnProgressStateChange] audioHash: $audioHash" }
+        logger.v { "[registerOnProgressStateChange] audioHash: $audioHash, size: ${onProgressListeners.size}" }
         onProgressListeners[audioHash]?.add(onProgressDataChange) ?: run {
             onProgressListeners[audioHash] = mutableListOf(onProgressDataChange)
         }
     }
 
     override fun registerOnSpeedChange(audioHash: Int, onSpeedChange: (Float) -> Unit) {
-        logger.i { "[registerOnSpeedChange] audioHash: $audioHash" }
+        logger.v { "[registerOnSpeedChange] audioHash: $audioHash, size: ${onSpeedListeners.size}" }
         onSpeedListeners[audioHash]?.add(onSpeedChange) ?: run {
             onSpeedListeners[audioHash] = mutableListOf(onSpeedChange)
         }
@@ -257,7 +257,8 @@ internal class StreamMediaPlayer(
             val duration = mediaPlayer.duration
             logger.v { "[start] seekTo: $seekTo, duration: $duration" }
             if (seekTo >= duration) {
-                onComplete(currentAudioHash)
+                publishProgress(currentAudioHash, ProgressData(duration, 1f, duration))
+                postOnComplete(currentAudioHash)
                 return
             }
             mediaPlayer.seekTo(seekTo)
@@ -332,6 +333,13 @@ internal class StreamMediaPlayer(
         resetPlayer()
         mediaPlayer.release()
         return true
+    }
+
+    private fun postOnComplete(audioHash: Int) {
+        logger.v { "[postOnComplete] audioHash: $audioHash" }
+        userScope.launch(DispatcherProvider.Main) {
+            complete(audioHash)
+        }
     }
 
     private fun onComplete(audioHash: Int) {

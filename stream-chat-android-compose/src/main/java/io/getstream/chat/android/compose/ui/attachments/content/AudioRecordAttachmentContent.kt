@@ -105,7 +105,7 @@ public fun AudioRecordGroupContent(
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     onPlayToggleClick: (Attachment) -> Unit,
     onPlaySpeedClick: (Attachment) -> Unit,
     onScrubberDragStart: (Attachment) -> Unit = {},
@@ -184,7 +184,7 @@ public fun AudioRecordAttachmentContent(
 public fun AudioRecordAttachmentContentItem(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     isMine: Boolean = false,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onPlaySpeedClick: (Attachment) -> Unit = {},
@@ -216,7 +216,7 @@ public fun AudioRecordAttachmentContentItem(
                 contentAlignment = Alignment.Center,
             ) {
                 if (isPlaying) {
-                    val speed = playerState?.playingSpeed ?: 1F
+                    val speed = playerState.current.playingSpeed ?: 1F
                     SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(currentAttachment) }
                 } else {
                     ContentTypeIcon(theme.contentTypeIcon)
@@ -230,7 +230,7 @@ public fun AudioRecordAttachmentContentItem(
 internal fun AudioRecordAttachmentContentItemBase(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     size: ComponentSize,
     padding: ComponentPadding,
     playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
@@ -242,11 +242,12 @@ internal fun AudioRecordAttachmentContentItemBase(
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
     val attachmentUrl = attachment.assetUrl
-    val isCurrentAttachment = attachmentUrl == playerState?.attachment?.assetUrl
-    val trackProgress = playerState?.playingProgress?.takeIf { isCurrentAttachment } ?: 0F
-    val playing = isCurrentAttachment && playerState?.isPlaying == true
+    val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
+    val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
+        ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(it.hashCode(), 0f) } ?: 0f
+    val playing = isCurrentAttachment && playerState.current.isPlaying
     val waveform = when (playing) {
-        true -> playerState?.waveform
+        true -> playerState.current.waveform
         else -> attachment.waveformData
     } ?: emptyList()
 
@@ -385,8 +386,10 @@ internal fun AudioRecordAttachmentContentItemPreview() {
                 .height(60.dp),
             attachment = attachment,
             playerState = AudioPlayerState(
-                attachment = attachment,
-                isPlaying = true,
+                current = AudioPlayerState.CurrentAudioState(
+                    audioUri = attachment.assetUrl.orEmpty(),
+                    isPlaying = true,
+                ),
             ),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},

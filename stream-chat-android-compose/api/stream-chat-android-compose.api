@@ -3275,6 +3275,17 @@ public final class io/getstream/chat/android/compose/viewmodel/messages/Attachme
 	public final fun setPolls (Ljava/util/List;)V
 }
 
+public final class io/getstream/chat/android/compose/viewmodel/messages/AudioPlayerViewModel : androidx/lifecycle/ViewModel {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/list/AudioPlayerController;)V
+	public final fun changeSpeed (Lio/getstream/chat/android/models/Attachment;)V
+	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun playOrPause (Lio/getstream/chat/android/models/Attachment;)V
+	public final fun reset (Lio/getstream/chat/android/models/Attachment;)V
+	public final fun seekTo (Lio/getstream/chat/android/models/Attachment;F)V
+	public final fun startSeek (Lio/getstream/chat/android/models/Attachment;)V
+}
+
 public final class io/getstream/chat/android/compose/viewmodel/messages/MessageComposerViewModel : androidx/lifecycle/ViewModel {
 	public static final field $stable I
 	public fun <init> (Lio/getstream/chat/android/ui/common/feature/messages/composer/MessageComposerController;)V

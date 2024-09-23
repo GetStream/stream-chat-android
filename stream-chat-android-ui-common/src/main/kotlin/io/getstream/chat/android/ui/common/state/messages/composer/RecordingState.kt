@@ -74,7 +74,7 @@ public sealed class RecordingState {
             "duration=${durationInMs}ms, " +
             "isPlaying=$isPlaying, " +
             "playingProgress=$playingProgress, " +
-            "attachment=${attachment.upload}" +
+            "attachment=${attachment.upload?.hashCode()}" +
             ")"
     }
 

@@ -25,34 +25,55 @@ import io.getstream.chat.android.ui.common.feature.messages.list.AudioPlayerCont
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
 import kotlinx.coroutines.flow.StateFlow
 
-internal class AudioPlayerViewModel(
+/**
+ * ViewModel class for the AudioPlayer.
+ */
+public class AudioPlayerViewModel(
     private val controller: AudioPlayerController,
 ) : ViewModel() {
 
-    val state: StateFlow<AudioPlayerState?> = controller.state
+    /**
+     * State of the audio player.
+     */
+    public val state: StateFlow<AudioPlayerState> = controller.state
 
     override fun onCleared() {
         super.onCleared()
         controller.reset()
     }
 
-    fun playOrPause(attachment: Attachment) {
+    /**
+     *  Play or pause the audio.
+     */
+    public fun playOrPause(attachment: Attachment) {
         controller.togglePlayback(attachment)
     }
 
-    fun changeSpeed(attachment: Attachment) {
+    /**
+     * Change the speed of the audio.
+     */
+    public fun changeSpeed(attachment: Attachment) {
         controller.changeSpeed(attachment)
     }
 
-    fun seekTo(attachment: Attachment, progress: Float) {
+    /**
+     * Seek to a specific progress in the audio.
+     */
+    public fun seekTo(attachment: Attachment, progress: Float) {
         controller.seekTo(attachment, progress)
     }
 
-    fun startSeek(attachment: Attachment) {
+    /**
+     * Start seeking the audio.
+     */
+    public fun startSeek(attachment: Attachment) {
         controller.startSeek(attachment)
     }
 
-    fun reset(attachment: Attachment) {
+    /**
+     * Stop seeking the audio.
+     */
+    public fun reset(attachment: Attachment) {
         controller.resetAudio(attachment)
     }
 }

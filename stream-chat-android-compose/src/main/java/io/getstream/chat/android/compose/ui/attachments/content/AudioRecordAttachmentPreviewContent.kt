@@ -86,7 +86,7 @@ public fun AudioRecordAttachmentPreviewContent(
 public fun AudioRecordAttachmentPreviewContentItem(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
@@ -136,9 +136,11 @@ internal fun AudioRecordAttachmentPreviewContentItemPreview() {
                 .height(60.dp),
             attachment = attachment,
             playerState = AudioPlayerState(
-                attachment = attachment,
-                waveform = waveformData,
-                isPlaying = false,
+                current = AudioPlayerState.CurrentAudioState(
+                    audioUri = attachment.assetUrl.orEmpty(),
+                    waveform = waveformData,
+                    isPlaying = false,
+                ),
             ),
         )
     }
