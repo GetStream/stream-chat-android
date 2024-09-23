@@ -291,7 +291,7 @@ public class AudioPlayerController(
         }
         val newState = curState.copy(
             current = curState.current.copy(
-                isPlaying = progressState.currentPosition > 0,
+                isPlaying = true,
                 playingProgress = progressState.progress,
                 playbackInMs = progressState.currentPosition,
                 durationInMs = progressState.duration,
