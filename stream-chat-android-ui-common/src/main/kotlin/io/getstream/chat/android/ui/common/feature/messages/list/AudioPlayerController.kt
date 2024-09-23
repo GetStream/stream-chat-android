@@ -68,9 +68,12 @@ public class AudioPlayerController(
             return
         }
         val curState = state.value
-        val isCurrentTrack = audioHash == audioPlayer.currentPlayingId
-        logger.d { "[togglePlayback] isCurrentTrack: $isCurrentTrack, state: ${curState?.stringify()}" }
-        when (isCurrentTrack) {
+        val currentPlayingId = audioPlayer.currentPlayingId
+        val isCurrentTrack = curState?.playingId == audioHash
+        val isProgressRunning = curState?.playingProgress?.let { it > 0 && it < 1 } ?: false
+        logger.d { "[togglePlayback] audioHash: $audioHash, currentPlayingId; $currentPlayingId, " +
+            "isCurrentTrack: $isCurrentTrack, isProgressRunning: $isProgressRunning, state: ${curState?.stringify()}" }
+        when (isCurrentTrack && isProgressRunning) {
             true -> when (curState?.isPlaying == true) {
                 true -> pause()
                 else -> resume()
