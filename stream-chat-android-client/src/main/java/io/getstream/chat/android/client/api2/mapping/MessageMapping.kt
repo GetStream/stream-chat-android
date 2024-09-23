@@ -18,9 +18,12 @@ package io.getstream.chat.android.client.api2.mapping
 
 import io.getstream.chat.android.client.api2.model.dto.AttachmentDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamMessageDto
+import io.getstream.chat.android.client.api2.model.dto.DownstreamReactionDto
 import io.getstream.chat.android.client.api2.model.dto.UpstreamMessageDto
+import io.getstream.chat.android.core.internal.StreamHandsOff
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.UserId
 import java.util.Date
@@ -58,9 +61,9 @@ internal fun DownstreamMessageDto.toDomain(currentUserId: UserId?): Message =
         html = html,
         i18n = i18n,
         id = id,
-        latestReactions = latest_reactions.mapTo(mutableListOf()) { it.toDomain(currentUserId) },
+        latestReactions = latest_reactions.toDomain(currentUserId, id),
         mentionedUsers = mentioned_users.mapTo(mutableListOf()) { it.toDomain(currentUserId) },
-        ownReactions = own_reactions.mapTo(mutableListOf()) { it.toDomain(currentUserId) },
+        ownReactions = own_reactions.toDomain(currentUserId, id),
         parentId = parent_id,
         pinExpires = pin_expires,
         pinned = pinned,
@@ -86,6 +89,24 @@ internal fun DownstreamMessageDto.toDomain(currentUserId: UserId?): Message =
         poll = poll?.toDomain(currentUserId),
         extraData = extraData.toMutableMap(),
     )
+
+/**
+ * Map a list of [DownstreamReactionDto] to a list of [Reaction].
+ * They are filtered by [messageId] and mapped to domain model.
+ *
+ * @param currentUserId the current user id
+ * @param messageId the message id
+ */
+@StreamHandsOff(
+    reason = "Backend response is including wrong reactions for the message, so we need to filter them manually.",
+
+)
+private fun List<DownstreamReactionDto>.toDomain(
+    currentUserId: UserId?,
+    messageId: String,
+): List<Reaction> =
+    filter { it.message_id == messageId }
+        .map { it.toDomain(currentUserId) }
 
 private fun DownstreamMessageDto.lastUpdateTime(): Date = listOfNotNull(
     updated_at,
