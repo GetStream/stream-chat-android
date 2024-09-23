@@ -303,7 +303,7 @@ internal class StreamMediaPlayer(
         }
     }
 
-    fun getCurrentProgress(audioHash: Int): Int {
+    override fun getCurrentPositionInMs(audioHash: Int): Int {
         if (currentIndex == audioHash) {
             return mediaPlayer.currentPosition
         }

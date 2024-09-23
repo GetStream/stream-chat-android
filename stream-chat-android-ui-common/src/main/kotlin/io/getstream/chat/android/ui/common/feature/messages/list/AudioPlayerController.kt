@@ -147,7 +147,8 @@ public class AudioPlayerController(
 
         val curState = state.value
         val audioHash = recordingUri.hashCode()
-        logger.d { "[play] audioHash: $audioHash, state: ${curState?.stringify()}" }
+        val playbackInMs = audioPlayer.getCurrentPositionInMs(audioHash)
+        logger.d { "[play] audioHash: $audioHash, playbackInMs: $playbackInMs, state: ${curState?.stringify()}" }
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
@@ -160,6 +161,8 @@ public class AudioPlayerController(
                 attachment = attachment,
                 waveform = attachment.waveformData ?: emptyList(),
                 durationInMs = durationInMs,
+                playbackInMs = playbackInMs,
+                playingProgress = playbackInMs.toFloat() / durationInMs,
                 isLoading = audioState == AudioState.LOADING,
                 isPlaying = audioState == AudioState.PLAYING,
                 playingId = audioHash,

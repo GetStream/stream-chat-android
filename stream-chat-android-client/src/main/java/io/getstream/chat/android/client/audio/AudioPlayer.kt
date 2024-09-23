@@ -108,6 +108,13 @@ public interface AudioPlayer {
     public fun currentSpeed(): Float
 
     /**
+     * Returns the current position of the audio track in milliseconds.
+     *
+     * @param audioHash the identifier of the audio track
+     */
+    public fun getCurrentPositionInMs(audioHash: Int): Int
+
+    /**
      * Removes the current audio form the reproduction queue and removes the listeners
      */
     public fun removeAudio(audioHash: Int)
