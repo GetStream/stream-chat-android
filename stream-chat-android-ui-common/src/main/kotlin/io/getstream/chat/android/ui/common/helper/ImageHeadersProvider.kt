@@ -30,6 +30,9 @@ public interface ImageHeadersProvider {
     public fun getImageRequestHeaders(url: String): Map<String, String>
 }
 
-internal object DefaultImageHeadersProvider : ImageHeadersProvider {
-    override fun getImageRequestHeaders(url: String): Map<String, String> = emptyMap<String, String>()
+/**
+ * Default implementation of [ImageHeadersProvider] that doesn't provide any headers.
+ */
+public object DefaultImageHeadersProvider : ImageHeadersProvider {
+    override fun getImageRequestHeaders(url: String): Map<String, String> = emptyMap()
 }
