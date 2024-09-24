@@ -161,7 +161,7 @@ public class AudioPlayerController(
                 )
                 else -> curState.current
             },
-            seekTo = curState.seekTo + (audioHash to progress)
+            seekTo = curState.seekTo + (audioHash to progress),
         )
         setState(newState)
     }
