@@ -183,7 +183,7 @@ constructor(
             // timeouts
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi)))
             .apply {
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
