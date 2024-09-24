@@ -413,6 +413,12 @@ public final class io/getstream/chat/android/ui/common/helper/DateFormatter$Comp
 	public static synthetic fun from$default (Lio/getstream/chat/android/ui/common/helper/DateFormatter$Companion;Landroid/content/Context;Ljava/util/Locale;ILjava/lang/Object;)Lio/getstream/chat/android/ui/common/helper/DateFormatter;
 }
 
+public final class io/getstream/chat/android/ui/common/helper/DefaultImageHeadersProvider : io/getstream/chat/android/ui/common/helper/ImageHeadersProvider {
+	public static final field $stable I
+	public static final field INSTANCE Lio/getstream/chat/android/ui/common/helper/DefaultImageHeadersProvider;
+	public fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
+}
+
 public abstract interface class io/getstream/chat/android/ui/common/helper/ImageHeadersProvider {
 	public abstract fun getImageRequestHeaders (Ljava/lang/String;)Ljava/util/Map;
 }
