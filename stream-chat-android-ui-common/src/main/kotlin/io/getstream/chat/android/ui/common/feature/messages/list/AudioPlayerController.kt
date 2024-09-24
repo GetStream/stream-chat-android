@@ -196,7 +196,7 @@ public class AudioPlayerController(
         val audioState = audioPlayer.currentState
         val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
         val newState = curState.copy(
-            current = AudioPlayerState.CurrentAudioState(
+            current = curState.current.copy(
                 audioUri = recordingUri,
                 waveform = attachment.waveformData ?: emptyList(),
                 durationInMs = durationInMs,
@@ -204,6 +204,7 @@ public class AudioPlayerController(
                 playingProgress = playbackInMs.toFloat() / durationInMs,
                 isLoading = audioState == AudioState.LOADING,
                 isPlaying = audioState == AudioState.PLAYING,
+                isSeeking = false,
                 playingId = audioHash,
             ),
         )
@@ -306,6 +307,7 @@ public class AudioPlayerController(
             logger.v { "[onAudioPlayingSpeed] rejected (no playingId)" }
             return
         }
+        logger.d { "[onAudioPlayingSpeed] speed: $speed, state: ${curState.stringify()}" }
         val newState = curState.copy(
             current = curState.current.copy(
                 playingSpeed = speed,

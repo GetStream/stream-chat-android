@@ -216,7 +216,7 @@ public fun AudioRecordAttachmentContentItem(
                 contentAlignment = Alignment.Center,
             ) {
                 if (isPlaying) {
-                    val speed = playerState.current.playingSpeed ?: 1F
+                    val speed = playerState.current.playingSpeed
                     SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(currentAttachment) }
                 } else {
                     ContentTypeIcon(theme.contentTypeIcon)

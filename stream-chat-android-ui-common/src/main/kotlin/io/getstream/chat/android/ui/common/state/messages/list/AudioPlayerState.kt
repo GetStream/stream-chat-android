@@ -49,7 +49,7 @@ public data class AudioPlayerState(
      */
     public data class CurrentAudioState(
         val playingId: Int = -1,
-        val playingSpeed: Float = 0.0f,
+        val playingSpeed: Float = 1.0f,
         val playingProgress: Float = 0f,
         val audioUri: String = "",
         val waveform: List<Float> = emptyList(),
