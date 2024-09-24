@@ -161,10 +161,7 @@ public class AudioPlayerController(
                 )
                 else -> curState.current
             },
-            seekTo = when (isCurrentAudio) {
-                true -> curState.seekTo + (audioHash to progress)
-                else -> curState.seekTo
-            },
+            seekTo = curState.seekTo + (audioHash to progress)
         )
         setState(newState)
     }
@@ -186,26 +183,32 @@ public class AudioPlayerController(
 
         val curState = state.value
         val audioHash = recordingUri.hashCode()
-        val playbackInMs = audioPlayer.getCurrentPositionInMs(audioHash)
+        val waveform = attachment.waveformData ?: emptyList()
+        var playbackInMs = audioPlayer.getCurrentPositionInMs(audioHash)
+        val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
+        val seekTo = curState.seekTo.getOrDefault(audioHash, 0f)
+        if (seekTo > 0) {
+            playbackInMs = (seekTo * durationInMs).toInt()
+            logger.v { "[play] seekTo: $playbackInMs" }
+        }
         logger.d { "[play] audioHash: $audioHash, playbackInMs: $playbackInMs, state: ${curState.stringify()}" }
+
+        // Set the initial state first cause the audio player may emit progress before the state is updated
+        val initialState = curState.newCurrentState(audioHash, recordingUri, waveform, playbackInMs, durationInMs)
+        setState(initialState)
+
+        if (seekTo > 0) audioPlayer.seekTo(playbackInMs, audioHash)
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
         audioPlayer.play(recordingUri, audioHash)
 
         val audioState = audioPlayer.currentState
-        val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
-        val newState = curState.copy(
-            current = curState.current.copy(
-                audioUri = recordingUri,
-                waveform = attachment.waveformData ?: emptyList(),
-                durationInMs = durationInMs,
-                playbackInMs = playbackInMs,
-                playingProgress = playbackInMs.toFloat() / durationInMs,
+        val nowState = state.value
+        val newState = nowState.copy(
+            current = nowState.current.copy(
                 isLoading = audioState == AudioState.LOADING,
                 isPlaying = audioState == AudioState.PLAYING,
-                isSeeking = false,
-                playingId = audioHash,
             ),
         )
         setState(newState)
@@ -273,12 +276,6 @@ public class AudioPlayerController(
             current = curState.current.copy(
                 isLoading = playbackState == AudioState.LOADING,
                 isPlaying = playbackState == AudioState.PLAYING,
-                playingProgress = when (playbackState) {
-                    AudioState.PLAYING,
-                    AudioState.PAUSE,
-                    -> curState.current.playingProgress
-                    else -> 0f
-                },
             ),
         )
         setState(newState)
@@ -297,6 +294,7 @@ public class AudioPlayerController(
                 playbackInMs = progressState.currentPosition,
                 durationInMs = progressState.duration,
             ),
+            seekTo = curState.seekTo - curState.current.playingId,
         )
         setState(newState)
     }
@@ -320,6 +318,29 @@ public class AudioPlayerController(
         state.value = newState
     }
 
+    private fun AudioPlayerState.newCurrentState(
+        audioHash: Int,
+        recordingUri: String,
+        waveform: List<Float>,
+        playbackInMs: Int,
+        durationInMs: Int,
+    ): AudioPlayerState {
+        return copy(
+            current = AudioPlayerState.CurrentAudioState(
+                playingId = audioHash,
+                audioUri = recordingUri,
+                waveform = waveform,
+                durationInMs = durationInMs,
+                playbackInMs = playbackInMs,
+                playingProgress = playbackInMs.toFloat() / durationInMs,
+            ),
+            seekTo = when (current.playingId != audioHash && current.playingId != NO_ID && current.playingProgress > 0) {
+                true -> seekTo + (current.playingId to current.playingProgress)
+                else -> seekTo
+            },
+        )
+    }
+
     private companion object {
         private const val NO_ID = -1
         private const val NULL_DURATION = 0f
@@ -327,12 +348,26 @@ public class AudioPlayerController(
     }
 
     internal operator fun IntFloatMap.plus(that: Pair<Int, Float>): IntFloatMap {
-        val newMap = MutableIntFloatMap(this.capacity + 1)
+        val newMap = MutableIntFloatMap(this.size + 1)
         this.forEach { key, value ->
             newMap[key] = value
         }
         val (key, value) = that
         newMap[key] = value
+        return newMap
+    }
+
+    internal operator fun IntFloatMap.minus(key: Int): IntFloatMap {
+        if (this.contains(key).not()) {
+            return this
+        }
+
+        val newMap = MutableIntFloatMap(this.size)
+        this.forEach { k, v ->
+            if (k != key) {
+                newMap[k] = v
+            }
+        }
         return newMap
     }
 }
