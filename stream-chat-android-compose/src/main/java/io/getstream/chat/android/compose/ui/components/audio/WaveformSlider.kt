@@ -19,8 +19,6 @@ package io.getstream.chat.android.compose.ui.components.audio
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,7 +40,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +49,7 @@ import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.WaveformSliderStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformThumbStyle
 import io.getstream.chat.android.compose.ui.theme.WaveformTrackStyle
-import io.getstream.log.StreamLog
+import io.getstream.chat.android.compose.ui.util.dragPointerInput
 import kotlin.random.Random
 
 /**
@@ -64,6 +62,7 @@ import kotlin.random.Random
  * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
  * @param progress The current progress of the waveform.
  * @param isThumbVisible Whether to display the thumb.
+ * @param isTouchable Whether the waveform is touchable.
  * @param onDragStart Callback when the user starts dragging the thumb.
  * @param onDragStop Callback when the user stops dragging the thumb.
  */
@@ -76,67 +75,86 @@ public fun WaveformSlider(
     adjustBarWidthToLimit: Boolean = false,
     progress: Float,
     isThumbVisible: Boolean = true,
-    onDragStart: (Float) -> Unit = { StreamLog.w("WaveformSeekBar") { "[onDragStart] no args" } },
-    onDragStop: (Float) -> Unit = { StreamLog.e("WaveformSeekBar") { "[onDragStop] progress: $it" } },
+    onDragStart: (Float) -> Unit = {},
+    onDrag: (Float) -> Unit = {},
+    onDragStop: (Float) -> Unit = {},
 ) {
+    var currentProgress by remember { mutableFloatStateOf(progress) }
+    LaunchedEffect(progress) { currentProgress = progress }
+
+    StaticWaveformSlider(
+        modifier = modifier,
+        style = style,
+        waveformData = waveformData,
+        visibleBarLimit = visibleBarLimit,
+        adjustBarWidthToLimit = adjustBarWidthToLimit,
+        progress = currentProgress,
+        isThumbVisible = isThumbVisible,
+        onDragStart = {
+            currentProgress = it
+            onDragStart(it)
+        },
+        onDrag = {
+            currentProgress = it
+            onDrag(it)
+        },
+        onDragStop = {
+            currentProgress = it
+            onDragStop(it)
+        },
+    )
+}
+
+/**
+ * A slider that displays a waveform.
+ *
+ * @param modifier Modifier for styling.
+ * @param waveformData The waveform data to display.
+ * @param style The style for the waveform slider.
+ * @param visibleBarLimit The number of bars to display at once.
+ * @param adjustBarWidthToLimit Whether to adjust the bar width to fit the visible bar limit.
+ * @param progress The current progress of the waveform.
+ * @param isThumbVisible Whether to display the thumb.
+ * @param onDragStart Callback when the user starts dragging the thumb.
+ * @param onDrag Callback when the user drags the thumb.
+ * @param onDragStop Callback when the user stops dragging the thumb.
+ */
+@Composable
+public fun StaticWaveformSlider(
+    modifier: Modifier = Modifier,
+    style: WaveformSliderStyle = WaveformSliderStyle.defaultStyle(),
+    waveformData: List<Float>,
+    visibleBarLimit: Int = 100,
+    adjustBarWidthToLimit: Boolean = false,
+    progress: Float,
+    isThumbVisible: Boolean = true,
+    onDragStart: (Float) -> Unit = {},
+    onDrag: (Float) -> Unit = {},
+    onDragStop: (Float) -> Unit = {},
+) {
+    val currentProcess by rememberUpdatedState(progress)
     var widthPx by remember { mutableFloatStateOf(0f) }
     var pressed by remember { mutableStateOf(false) }
-    var currentProgress by remember { mutableFloatStateOf(progress) }
-
-    // Sync currentProgress when progress changes from parent
-    LaunchedEffect(progress) {
-        currentProgress = progress
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                detectDragGestures(
-                    onDragEnd = {
-                        StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] end" }
-                        onDragStop(currentProgress)
-                        pressed = false
-                    },
-                    onDragCancel = {
-                        StreamLog.v("WaveformSeekBar") { "[detectHorizontalDragGestures] cancel" }
-                        onDragStop(currentProgress)
-                        pressed = false
-                    },
-                ) { change, dragAmount ->
-                    change.consume()
-                    if (widthPx > 0) {
-                        currentProgress = (change.position.x / widthPx).coerceIn(0f, 1f)
-                    }
-                }
-            }
-            .pointerInput(Unit) {
-                detectTapGestures(
-                    onPress = {
-                        StreamLog.v("WaveformSeekBar") {
-                            "[detectTapGestures] press: $it"
-                        }
-                        pressed = true
-                        if (widthPx > 0) {
-                            currentProgress = (it.x / widthPx).coerceIn(0f, 1f)
-                            onDragStart(currentProgress)
-                        }
-                    },
-                ) { offset ->
-
-                    StreamLog.v("WaveformSeekBar") {
-                        "[detectTapGestures] tap: $offset"
-                    }
-                    onDragStop(currentProgress)
-                    pressed = false
-                }
-            }
             .onSizeChanged { size ->
-                StreamLog.v("WaveformSeekBar") {
-                    "[onSizeChanged] Size changed: $size"
-                }
                 widthPx = size.width.toFloat()
-            },
+            }
+            .dragPointerInput(
+                enabled = isThumbVisible,
+                onDragStart = {
+                    pressed = true
+                    onDragStart(it.toHorizontalProgress(widthPx))
+                },
+                onDrag = {
+                    onDrag(it.toHorizontalProgress(widthPx))
+                },
+                onDragStop = {
+                    pressed = false
+                    onDragStop(it?.toHorizontalProgress(widthPx) ?: currentProcess)
+                },
+            ),
     ) {
         // Draw the waveform
         WaveformTrack(
@@ -145,7 +163,7 @@ public fun WaveformSlider(
             style = style.trackerStyle,
             visibleBarLimit = visibleBarLimit,
             adjustBarWidthToLimit = adjustBarWidthToLimit,
-            progress = currentProgress,
+            progress = progress,
         )
 
         // Draw the thumb
@@ -153,7 +171,7 @@ public fun WaveformSlider(
             WaveformThumb(
                 style = style.thumbStyle,
                 pressed = pressed,
-                progress = currentProgress,
+                progress = progress,
                 parentWidthPx = widthPx,
             )
         }
@@ -316,4 +334,8 @@ internal fun WaveformTrackPreview() {
             )
         }
     }
+}
+
+private fun Offset.toHorizontalProgress(base: Float): Float {
+    return if (base > 0) (x / base).coerceIn(0f, 1f) else 0f
 }

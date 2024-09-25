@@ -126,6 +126,11 @@ public fun Message.isError(): Boolean = type == MessageType.ERROR
 public fun Message.isGiphy(): Boolean = command == AttachmentType.GIPHY
 
 /**
+ * @return If the message has an audio recording attachment.
+ */
+public fun Message.hasAudioRecording(): Boolean = attachments.any { it.type == AttachmentType.AUDIO_RECORDING }
+
+/**
  * @return If the message is related to the poll.
  */
 public fun Message.isPoll(): Boolean = poll != null

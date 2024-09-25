@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -85,12 +86,13 @@ public fun AudioRecordAttachmentPreviewContent(
 public fun AudioRecordAttachmentPreviewContentItem(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     onAttachmentRemoved: (Attachment) -> Unit = {},
 ) {
+    val currentAttachment by rememberUpdatedState(attachment)
     val theme = ChatTheme.messageComposerTheme.attachmentsPreview.audioRecording
     AudioRecordAttachmentContentItemBase(
         modifier = modifier,
@@ -108,7 +110,7 @@ public fun AudioRecordAttachmentPreviewContentItem(
             CancelIcon(
                 modifier = Modifier
                     .padding(4.dp),
-                onClick = { onAttachmentRemoved(attachment) },
+                onClick = { onAttachmentRemoved(currentAttachment) },
             )
         },
     )
@@ -134,9 +136,11 @@ internal fun AudioRecordAttachmentPreviewContentItemPreview() {
                 .height(60.dp),
             attachment = attachment,
             playerState = AudioPlayerState(
-                attachment = attachment,
-                waveform = waveformData,
-                isPlaying = false,
+                current = AudioPlayerState.CurrentAudioState(
+                    audioUri = attachment.assetUrl.orEmpty(),
+                    waveform = waveformData,
+                    isPlaying = false,
+                ),
             ),
         )
     }

@@ -31,6 +31,12 @@ public interface AudioPlayer {
     public val currentState: AudioState
 
     /**
+     * The identifier of the current audio track.
+     * If there is no current audio track, it returns -1.
+     */
+    public val currentPlayingId: Int
+
+    /**
      * Subscribing for audio state changes for the audio of the hash
      *
      * @param audioHash the identifier of the audio track
@@ -102,6 +108,13 @@ public interface AudioPlayer {
     public fun currentSpeed(): Float
 
     /**
+     * Returns the current position of the audio track in milliseconds.
+     *
+     * @param audioHash the identifier of the audio track
+     */
+    public fun getCurrentPositionInMs(audioHash: Int): Int
+
+    /**
      * Removes the current audio form the reproduction queue and removes the listeners
      */
     public fun removeAudio(audioHash: Int)
@@ -110,6 +123,11 @@ public interface AudioPlayer {
      * Removes the current audios form the reproduction queue and removes the listeners
      */
     public fun removeAudios(audioHashList: List<Int>)
+
+    /**
+     * Resets the player to the initial state and removes all audios.
+     */
+    public fun reset()
 
     /**
      * Disposes the MediaPlayer and remove all audios.
