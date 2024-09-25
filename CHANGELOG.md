@@ -20,6 +20,7 @@
 ### ✅ Added
 Added `notificationTextFormatter` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to formats the text of the notification. [#5409](https://github.com/GetStream/stream-chat-android/pull/5409)
 Added `actionsProvider` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to provide actions for the notification. [#5409](https://github.com/GetStream/stream-chat-android/pull/5409)
+- Added `FileTransformer` to allow transforming files before uploading. [#5416](https://github.com/GetStream/stream-chat-android/pull/5416)
 
 ### ⚠️ Changed
 
