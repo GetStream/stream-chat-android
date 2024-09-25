@@ -2811,6 +2811,10 @@ public abstract interface class io/getstream/chat/android/client/token/TokenProv
 	public abstract fun loadToken ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/uploader/FileTransformer {
+	public abstract fun transform (Ljava/io/File;)Ljava/io/File;
+}
+
 public abstract interface class io/getstream/chat/android/client/uploader/FileUploader {
 	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
@@ -2818,6 +2822,11 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+}
+
+public final class io/getstream/chat/android/client/uploader/NoOpFileTransformer : io/getstream/chat/android/client/uploader/FileTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/client/uploader/NoOpFileTransformer;
+	public fun transform (Ljava/io/File;)Ljava/io/File;
 }
 
 public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeTypes {
