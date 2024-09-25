@@ -18,6 +18,8 @@
 - `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ✅ Added
+Added `notificationTextFormatter` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to formats the text of the notification. [#5409](https://github.com/GetStream/stream-chat-android/pull/5409)
+Added `actionsProvider` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to provide actions for the notification. [#5409](https://github.com/GetStream/stream-chat-android/pull/5409)
 
 ### ⚠️ Changed
 
