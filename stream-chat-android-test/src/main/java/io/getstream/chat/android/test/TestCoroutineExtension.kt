@@ -41,9 +41,7 @@ public class TestCoroutineExtension : BeforeEachCallback, BeforeAllCallback, Aft
     private var beforeAllCalled: Boolean = false
 
     override fun beforeAll(context: ExtensionContext) {
-        TestLoggingHelper.initialize {
-            dispatcher.scheduler.currentTime
-        }
+        TestLoggingHelper.initialize()
         Dispatchers.setMain(dispatcher)
         DispatcherProvider.set(
             mainDispatcher = dispatcher,

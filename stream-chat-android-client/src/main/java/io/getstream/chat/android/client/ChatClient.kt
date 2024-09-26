@@ -179,9 +179,9 @@ import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.log.AndroidStreamLogger
 import io.getstream.log.CompositeStreamLogger
 import io.getstream.log.StreamLog
-import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
