@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>EmptyFunctionBlock:TestLoggingHelper.kt$StreamTestLogger${}</ID>
+    <ID>EmptyIfBlock:TestLoggingHelper.kt$StreamTestLogger${ }</ID>
+  </CurrentIssues>
+</SmellBaseline>
