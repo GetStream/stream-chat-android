@@ -35,12 +35,13 @@ public object TestLoggingHelper {
 internal class StreamTestLogger : KotlinStreamLogger() {
 
     override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
-        if (throwable != null) {
-        }
+        // No-Op
     }
 
     override val now: () -> LocalDateTime
         get() = { Clock.System.now().toLocalDateTime(TimeZone.UTC) }
 
-    override fun install(minPriority: Priority, maxTagLength: Int) {}
+    override fun install(minPriority: Priority, maxTagLength: Int) {
+        // No-Op
+    }
 }
