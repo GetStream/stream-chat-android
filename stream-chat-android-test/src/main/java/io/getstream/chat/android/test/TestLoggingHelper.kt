@@ -42,6 +42,5 @@ internal class StreamTestLogger : KotlinStreamLogger() {
     override val now: () -> LocalDateTime
         get() = { Clock.System.now().toLocalDateTime(TimeZone.UTC) }
 
-    override fun install(minPriority: Priority, maxTagLength: Int) {
-    }
+    override fun install(minPriority: Priority, maxTagLength: Int) {}
 }
