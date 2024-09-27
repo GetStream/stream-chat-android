@@ -16,7 +16,6 @@
 
 package io.getstream.chat.android.compose.ui.attachments.content
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -34,19 +33,25 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import io.getstream.chat.android.client.extensions.duration
+import io.getstream.chat.android.client.extensions.durationInMs
 import io.getstream.chat.android.client.extensions.waveformData
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.message.isMine
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentState
-import io.getstream.chat.android.compose.ui.components.audio.WaveformSlider
+import io.getstream.chat.android.compose.ui.components.audio.PlaybackTimer
+import io.getstream.chat.android.compose.ui.components.audio.StaticWaveformSlider
 import io.getstream.chat.android.compose.ui.theme.ChatPreviewTheme
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.ComponentPadding
@@ -62,7 +67,6 @@ import io.getstream.chat.android.compose.viewmodel.messages.AudioPlayerViewModel
 import io.getstream.chat.android.extensions.isInt
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.ui.common.state.messages.list.AudioPlayerState
-import io.getstream.chat.android.ui.common.utils.DurationFormatter
 
 /**
  * Represents the audio recording attachment content.
@@ -101,7 +105,7 @@ public fun AudioRecordGroupContent(
 public fun AudioRecordAttachmentContent(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     onPlayToggleClick: (Attachment) -> Unit,
     onPlaySpeedClick: (Attachment) -> Unit,
     onScrubberDragStart: (Attachment) -> Unit = {},
@@ -180,13 +184,14 @@ public fun AudioRecordAttachmentContent(
 public fun AudioRecordAttachmentContentItem(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     isMine: Boolean = false,
     onPlayToggleClick: (Attachment) -> Unit = {},
     onPlaySpeedClick: (Attachment) -> Unit = {},
     onThumbDragStart: (Attachment) -> Unit = {},
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
 ) {
+    val currentAttachment by rememberUpdatedState(attachment)
     val theme = when (isMine) {
         true -> ChatTheme.ownMessageTheme.audioRecording
         else -> ChatTheme.otherMessageTheme.audioRecording
@@ -211,8 +216,8 @@ public fun AudioRecordAttachmentContentItem(
                 contentAlignment = Alignment.Center,
             ) {
                 if (isPlaying) {
-                    val speed = playerState?.playingSpeed ?: 1F
-                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(attachment) }
+                    val speed = playerState.current.playingSpeed
+                    SpeedButton(speed, theme.speedButton) { onPlaySpeedClick(currentAttachment) }
                 } else {
                     ContentTypeIcon(theme.contentTypeIcon)
                 }
@@ -225,7 +230,7 @@ public fun AudioRecordAttachmentContentItem(
 internal fun AudioRecordAttachmentContentItemBase(
     modifier: Modifier = Modifier,
     attachment: Attachment,
-    playerState: AudioPlayerState?,
+    playerState: AudioPlayerState,
     size: ComponentSize,
     padding: ComponentPadding,
     playbackToggleStyle: (isPlaying: Boolean) -> IconContainerStyle,
@@ -236,18 +241,17 @@ internal fun AudioRecordAttachmentContentItemBase(
     onThumbDragStop: (Attachment, Float) -> Unit = { _, _ -> },
     tailContent: @Composable (isPlaying: Boolean) -> Unit = {},
 ) {
-    val isAttachmentPlaying = playerState?.attachment?.assetUrl == attachment.assetUrl
-    val trackProgress = playerState?.playingProgress?.takeIf { isAttachmentPlaying } ?: 0F
-    val playing = isAttachmentPlaying && playerState?.isPlaying == true
-    val playbackText = when (playing) {
-        true -> (playerState?.playbackInMs ?: 0).let(DurationFormatter::formatDurationInMillis)
-        else -> (attachment.duration ?: 0f).let(DurationFormatter::formatDurationInSeconds)
-    }
+    val attachmentUrl = attachment.assetUrl
+    val isCurrentAttachment = attachmentUrl == playerState.current.audioUri
+    val trackProgress = playerState.current.playingProgress.takeIf { isCurrentAttachment }
+        ?: attachmentUrl?.let { playerState.seekTo.getOrDefault(it.hashCode(), 0f) } ?: 0f
+    val playing = isCurrentAttachment && playerState.current.isPlaying
     val waveform = when (playing) {
-        true -> playerState?.waveform ?: emptyList()
-        else -> attachment.waveformData ?: emptyList()
-    }
+        true -> playerState.current.waveform
+        else -> attachment.waveformData
+    } ?: emptyList()
 
+    val currentAttachment by rememberUpdatedState(attachment)
     Surface(
         modifier = modifier
             .padding(2.dp),
@@ -260,47 +264,35 @@ internal fun AudioRecordAttachmentContentItemBase(
                 .padding(padding),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(attachment) }
+            PlaybackToggleButton(playbackToggleStyle(playing)) { onPlayToggleClick(currentAttachment) }
 
-            PlaybackTimer(playbackText, timerStyle)
+            var currentProgress by remember { mutableFloatStateOf(trackProgress) }
+            LaunchedEffect(attachmentUrl, playing, trackProgress) { currentProgress = trackProgress }
 
-            WaveformSlider(
+            PlaybackTimer(currentProgress, currentAttachment.durationInMs, timerStyle)
+
+            StaticWaveformSlider(
                 modifier = Modifier
                     .height(waveformSliderStyle.height)
                     .weight(1f),
                 style = waveformSliderStyle.style,
                 waveformData = waveform,
-                progress = trackProgress,
-                onDragStart = { onThumbDragStart(attachment) },
-                onDragStop = { progress -> onThumbDragStop(attachment, progress) },
+                progress = currentProgress,
+                onDragStart = {
+                    currentProgress = it
+                    onThumbDragStart(currentAttachment)
+                },
+                onDrag = {
+                    currentProgress = it
+                },
+                onDragStop = {
+                    currentProgress = it
+                    onThumbDragStop(currentAttachment, it)
+                },
             )
 
             tailContent(playing)
         }
-    }
-}
-
-/**
- * Represents the playback timer.
- *
- * @param playbackText The text to display.
- * @param style The style for the timer component.
- */
-@Composable
-internal fun PlaybackTimer(
-    playbackText: String,
-    style: TextContainerStyle,
-) {
-    Box(
-        modifier = Modifier.size(style.size)
-            .padding(style.padding)
-            .background(style.backgroundColor),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            style = style.textStyle,
-            text = playbackText,
-        )
     }
 }
 
@@ -394,8 +386,10 @@ internal fun AudioRecordAttachmentContentItemPreview() {
                 .height(60.dp),
             attachment = attachment,
             playerState = AudioPlayerState(
-                attachment = attachment,
-                isPlaying = true,
+                current = AudioPlayerState.CurrentAudioState(
+                    audioUri = attachment.assetUrl.orEmpty(),
+                    isPlaying = true,
+                ),
             ),
             onPlayToggleClick = {},
             onPlaySpeedClick = {},

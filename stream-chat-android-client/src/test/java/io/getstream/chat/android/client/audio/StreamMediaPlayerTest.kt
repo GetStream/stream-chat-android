@@ -47,7 +47,7 @@ internal class StreamMediaPlayerTest {
         streamPlayer = StreamMediaPlayer(
             mediaPlayer = mediaPlayer,
             userScope = userScope,
-            isMarshmallowOrHigher = { true },
+            isMarshmallowOrHigher = true,
         )
     }
 

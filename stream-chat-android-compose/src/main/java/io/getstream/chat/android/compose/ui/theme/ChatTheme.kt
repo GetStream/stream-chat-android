@@ -45,6 +45,7 @@ import io.getstream.chat.android.compose.ui.util.DefaultPollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.LocalStreamImageLoader
 import io.getstream.chat.android.compose.ui.util.MessageAlignmentProvider
 import io.getstream.chat.android.compose.ui.util.MessagePreviewFormatter
+import io.getstream.chat.android.compose.ui.util.MessagePreviewIconFactory
 import io.getstream.chat.android.compose.ui.util.MessageTextFormatter
 import io.getstream.chat.android.compose.ui.util.PollSwitchItemFactory
 import io.getstream.chat.android.compose.ui.util.QuotedMessageTextFormatter
@@ -52,6 +53,8 @@ import io.getstream.chat.android.compose.ui.util.ReactionIconFactory
 import io.getstream.chat.android.compose.ui.util.SearchResultNameFormatter
 import io.getstream.chat.android.compose.ui.util.StreamCoilImageLoaderFactory
 import io.getstream.chat.android.ui.common.helper.DateFormatter
+import io.getstream.chat.android.ui.common.helper.DefaultImageHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.TimeProvider
 import io.getstream.chat.android.ui.common.images.resizing.StreamCdnImageResizing
 import io.getstream.chat.android.ui.common.state.messages.list.MessageOptionsUserReactionAlignment
@@ -92,6 +95,9 @@ private val LocalReactionIconFactory = compositionLocalOf<ReactionIconFactory> {
 private val LocalReactionOptionsTheme = compositionLocalOf<ReactionOptionsTheme> {
     error("No ReactionOptionsTheme provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
+private val LocalMessagePreviewIconFactory = compositionLocalOf<MessagePreviewIconFactory> {
+    error("No message preview icon factory provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
 private val LocalPollSwitchItemFactory = compositionLocalOf<PollSwitchItemFactory> {
     error(
         "No reaction poll switch item factory provided! Make sure to wrap all usages of Stream components " +
@@ -118,6 +124,9 @@ private val LocalQuotedMessageTextFormatter = compositionLocalOf<QuotedMessageTe
 }
 private val LocalSearchResultNameFormatter = compositionLocalOf<SearchResultNameFormatter> {
     error("No SearchResultNameFormatter provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
+}
+private val LocalStreamImageHeadersProvider = compositionLocalOf<ImageHeadersProvider> {
+    error("No ImageHeadersProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
 }
 private val LocalMessageAlignmentProvider = compositionLocalOf<MessageAlignmentProvider> {
     error("No MessageAlignmentProvider provided! Make sure to wrap all usages of Stream components in a ChatTheme.")
@@ -206,12 +215,14 @@ private val LocalStreamMediaRecorder = compositionLocalOf<StreamMediaRecorder> {
  * @param reactionIconFactory Used to create an icon [Painter] for the given reaction type.
  * @param reactionOptionsTheme [ReactionOptionsTheme] Theme for the reaction option list in the selected message menu.
  * For theming the message option list in the same menu, use [messageOptionsTheme].
+ * @param messagePreviewIconFactory Used to create a preview icon for the given message type.
  * @param allowUIAutomationTest Allow to simulate ui automation with given test tags.
  * @param dateFormatter [DateFormatter] Used throughout the app for date and time information.
  * @param timeProvider [TimeProvider] Used throughout the app for time information.
  * @param channelNameFormatter [ChannelNameFormatter] Used throughout the app for channel names.
  * @param messagePreviewFormatter [MessagePreviewFormatter] Used to generate a string preview for the given message.
  * @param imageLoaderFactory A factory that creates new Coil [ImageLoader] instances.
+ * @param imageHeadersProvider [ImageHeadersProvider] Used to provide headers for image requests.
  * @param messageAlignmentProvider [MessageAlignmentProvider] Used to provide message alignment for the given message.
  * @param messageOptionsTheme [MessageOptionsTheme] Theme for the message option list in the selected message menu.
  * For theming the reaction option list in the same menu, use [reactionOptionsTheme].
@@ -247,6 +258,7 @@ public fun ChatTheme(
     quotedAttachmentFactories: List<AttachmentFactory> = StreamAttachmentFactories.defaultQuotedFactories(),
     reactionIconFactory: ReactionIconFactory = ReactionIconFactory.defaultFactory(),
     reactionOptionsTheme: ReactionOptionsTheme = ReactionOptionsTheme.defaultTheme(),
+    messagePreviewIconFactory: MessagePreviewIconFactory = MessagePreviewIconFactory.defaultFactory(),
     pollSwitchItemFactory: PollSwitchItemFactory = DefaultPollSwitchItemFactory(context = LocalContext.current),
     allowUIAutomationTest: Boolean = false,
     dateFormatter: DateFormatter = DateFormatter.from(LocalContext.current),
@@ -260,6 +272,7 @@ public fun ChatTheme(
     ),
     searchResultNameFormatter: SearchResultNameFormatter = SearchResultNameFormatter.defaultFormatter(),
     imageLoaderFactory: StreamCoilImageLoaderFactory = StreamCoilImageLoaderFactory.defaultFactory(),
+    imageHeadersProvider: ImageHeadersProvider = DefaultImageHeadersProvider,
     messageAlignmentProvider: MessageAlignmentProvider = MessageAlignmentProvider.defaultMessageAlignmentProvider(),
     messageOptionsTheme: MessageOptionsTheme = MessageOptionsTheme.defaultTheme(),
     messageOptionsUserReactionAlignment: MessageOptionsUserReactionAlignment = MessageOptionsUserReactionAlignment.END,
@@ -330,6 +343,7 @@ public fun ChatTheme(
         LocalAttachmentPreviewHandlers provides attachmentPreviewHandlers,
         LocalQuotedAttachmentFactories provides quotedAttachmentFactories,
         LocalReactionIconFactory provides reactionIconFactory,
+        LocalMessagePreviewIconFactory provides messagePreviewIconFactory,
         LocalReactionOptionsTheme provides reactionOptionsTheme,
         LocalPollSwitchItemFactory provides pollSwitchItemFactory,
         LocalDateFormatter provides dateFormatter,
@@ -346,6 +360,7 @@ public fun ChatTheme(
         LocalMessageComposerTheme provides messageComposerTheme,
         LocalAttachmentPickerTheme provides attachmentPickerTheme,
         LocalStreamImageLoader provides imageLoaderFactory.imageLoader(LocalContext.current.applicationContext),
+        LocalStreamImageHeadersProvider provides imageHeadersProvider,
         LocalMessageAlignmentProvider provides messageAlignmentProvider,
         LocalMessageOptionsTheme provides messageOptionsTheme,
         LocalMessageOptionsUserReactionAlignment provides messageOptionsUserReactionAlignment,
@@ -450,6 +465,14 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalReactionOptionsTheme.current
+
+    /**
+     * Retrieves the current message preview icon factory at the call site's position in the hierarchy.
+     */
+    public val messagePreviewIconFactory: MessagePreviewIconFactory
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalMessagePreviewIconFactory.current
 
     /**
      * Retrieves the current [PollSwitchItemFactory] at the call site's position in the hierarchy.
@@ -616,6 +639,11 @@ public object ChatTheme {
         @Composable
         @ReadOnlyComposable
         get() = LocalAttachmentPickerTheme.current
+
+    public val streamImageHeadersProvider: ImageHeadersProvider
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalStreamImageHeadersProvider.current
 
     /**
      * Retrieves the current [autoTranslationEnabled] value at the call site's position in the hierarchy.

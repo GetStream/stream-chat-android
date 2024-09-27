@@ -70,6 +70,7 @@ import io.getstream.chat.android.client.socket.ChatSocket
 import io.getstream.chat.android.client.socket.SocketFactory
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
+import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.uploader.StreamFileUploader
 import io.getstream.chat.android.client.user.CurrentUserFetcher
@@ -80,12 +81,15 @@ import retrofit2.Retrofit
 import java.util.concurrent.TimeUnit
 
 @Suppress("TooManyFunctions")
-internal open class BaseChatModule(
+internal open class BaseChatModule
+@Suppress("LongParameterList")
+constructor(
     private val appContext: Context,
     private val clientScope: ClientScope,
     private val userScope: UserScope,
     private val config: ChatClientConfig,
     private val notificationsHandler: NotificationHandler,
+    private val fileTransformer: FileTransformer,
     private val fileUploader: FileUploader? = null,
     private val tokenManager: TokenManager = TokenManagerImpl(),
     private val customOkHttpClient: OkHttpClient? = null,
@@ -179,7 +183,7 @@ internal open class BaseChatModule(
             // timeouts
             // interceptors
             .addInterceptor(ApiKeyInterceptor(config.apiKey))
-            .addInterceptor(HeadersInterceptor(getAnonymousProvider(config, isAnonymousApi)))
+            .addInterceptor(HeadersInterceptor(context = appContext, getAnonymousProvider(config, isAnonymousApi)))
             .apply {
                 if (config.debugRequests) {
                     addInterceptor(ApiRequestAnalyserInterceptor(ApiRequestsAnalyser.get()))
@@ -234,6 +238,7 @@ internal open class BaseChatModule(
     private fun buildApi(chatConfig: ChatClientConfig): ChatApi = MoshiChatApi(
         currentUserIdProvider,
         fileUploader ?: defaultFileUploader,
+        fileTransformer = fileTransformer,
         buildRetrofitApi<UserApi>(),
         buildRetrofitApi<GuestApi>(),
         buildRetrofitApi<MessageApi>(),

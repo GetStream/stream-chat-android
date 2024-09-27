@@ -16,15 +16,32 @@
 
 package io.getstream.chat.android.test
 
+import io.getstream.log.KotlinStreamLogger
+import io.getstream.log.Priority
 import io.getstream.log.StreamLog
-import io.getstream.log.kotlin.KotlinStreamLogger
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 public object TestLoggingHelper {
 
-    public fun initialize(now: () -> Long = { System.currentTimeMillis() }) {
+    public fun initialize() {
         StreamLog.setValidator { _, _ -> true }
-        StreamLog.install(
-            KotlinStreamLogger(now = now),
-        )
+        StreamLog.install(StreamTestLogger())
+    }
+}
+
+internal class StreamTestLogger : KotlinStreamLogger() {
+
+    override fun log(priority: Priority, tag: String, message: String, throwable: Throwable?) {
+        // No-Op
+    }
+
+    override val now: () -> LocalDateTime
+        get() = { Clock.System.now().toLocalDateTime(TimeZone.UTC) }
+
+    override fun install(minPriority: Priority, maxTagLength: Int) {
+        // No-Op
     }
 }

@@ -80,6 +80,7 @@ This function lets you provide a custom `Intent` that can point to any `Activity
 ```kotlin {1-11,14}
 val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
     context = context,
+    notificationConfig = notificationConfig,
     newMessageIntent = {
         message: Message,
         channel: Channel,
@@ -104,7 +105,7 @@ boolean pushNotificationEnabled = true;
 List<PushDeviceGenerator> pushDeviceGeneratorList = new ArrayList<>();
 NotificationConfig notificationConfig = new NotificationConfig(pushNotificationEnabled, pushDeviceGeneratorList);
 
-NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, (messageId, channelType, channelId) -> {
+NotificationHandler notificationHandler = NotificationHandlerFactory.createNotificationHandler(context, notificationConfig, (message, channel) -> {
     // Return the intent you want to be triggered when the notification is clicked
     Intent intent = new Intent();
 

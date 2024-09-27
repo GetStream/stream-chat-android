@@ -220,6 +220,7 @@ internal fun RowScope.DefaultChannelItemCenterContent(
                     overflow = TextOverflow.Ellipsis,
                     style = ChatTheme.typography.body,
                     color = ChatTheme.colors.textLowEmphasis,
+                    inlineContent = ChatTheme.messagePreviewIconFactory.createPreviewIcons(),
                 )
             }
         }

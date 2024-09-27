@@ -28,20 +28,19 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
-private const val INITIAL_SPEED = 1F
-private const val SPEED_INCREMENT = 0.5F
-
 @Suppress("TooManyFunctions")
 internal class StreamMediaPlayer(
     private val mediaPlayer: NativeMediaPlayer,
     private val userScope: UserScope,
     @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
-    private val isMarshmallowOrHigher: () -> Boolean,
+    private val isMarshmallowOrHigher: Boolean,
     private val progressUpdatePeriod: Long = 50,
 ) : AudioPlayer {
 
     companion object {
         private const val DEBUG_POLLING = false
+        private const val INITIAL_SPEED = 1F
+        private const val SPEED_INCREMENT = 0.5F
     }
 
     private val logger by taggedLogger("Chat:StreamMediaPlayer")
@@ -62,6 +61,8 @@ internal class StreamMediaPlayer(
     private var playingSpeed = 1F
     private var currentIndex = 0
 
+    override val currentPlayingId: Int get() = currentAudioHash
+
     override val currentState: AudioState
         get() = when (playerState) {
             PlayerState.UNSET -> AudioState.UNSET
@@ -72,21 +73,21 @@ internal class StreamMediaPlayer(
         }
 
     override fun registerOnAudioStateChange(audioHash: Int, onAudioStateChange: (AudioState) -> Unit) {
-        logger.i { "[registerOnAudioStateChange] audioHash: $audioHash" }
+        logger.v { "[registerOnAudioStateChange] audioHash: $audioHash, size: ${onStateListeners.size}" }
         onStateListeners[audioHash]?.add(onAudioStateChange) ?: run {
             onStateListeners[audioHash] = mutableListOf(onAudioStateChange)
         }
     }
 
     override fun registerOnProgressStateChange(audioHash: Int, onProgressDataChange: (ProgressData) -> Unit) {
-        logger.i { "[registerOnProgressStateChange] audioHash: $audioHash" }
+        logger.v { "[registerOnProgressStateChange] audioHash: $audioHash, size: ${onProgressListeners.size}" }
         onProgressListeners[audioHash]?.add(onProgressDataChange) ?: run {
             onProgressListeners[audioHash] = mutableListOf(onProgressDataChange)
         }
     }
 
     override fun registerOnSpeedChange(audioHash: Int, onSpeedChange: (Float) -> Unit) {
-        logger.i { "[registerOnSpeedChange] audioHash: $audioHash" }
+        logger.v { "[registerOnSpeedChange] audioHash: $audioHash, size: ${onSpeedListeners.size}" }
         onSpeedListeners[audioHash]?.add(onSpeedChange) ?: run {
             onSpeedListeners[audioHash] = mutableListOf(onSpeedChange)
         }
@@ -113,16 +114,16 @@ internal class StreamMediaPlayer(
     override fun prepare(sourceUrl: String, audioHash: Int) {
         logger.d { "[prepare] audioHash: $audioHash, sourceUrl.hash: ${sourceUrl.hashCode()}" }
         if (audioHash != currentAudioHash) {
-            resetPlayer(currentAudioHash)
+            resetPlayer()
             setAudio(sourceUrl, audioHash, autoPlay = false)
             return
         }
     }
 
     override fun play(sourceUrl: String, audioHash: Int) {
-        logger.i { "[play] audioHash: $audioHash, sourceUrl.hash: ${sourceUrl.hashCode()}" }
+        logger.i { "[play] audioHash($currentAudioHash): $audioHash, playerState: $playerState" }
         if (audioHash != currentAudioHash) {
-            resetPlayer(currentAudioHash)
+            resetPlayer()
             setAudio(sourceUrl, audioHash, autoPlay = true)
             return
         }
@@ -136,7 +137,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun changeSpeed() {
-        if (isMarshmallowOrHigher()) {
+        if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
             logger.i { "[changeSpeed] no args" }
             val currentSpeed = playingSpeed
             val newSpeed = if (currentSpeed >= 2 || currentSpeed < 1) {
@@ -145,18 +146,16 @@ internal class StreamMediaPlayer(
                 currentSpeed + SPEED_INCREMENT
             }
 
-            playingSpeed = newSpeed
-
-            if (playerState == PlayerState.PLAYING) {
+            if (playerState == PlayerState.PLAYING && mediaPlayer.isSpeedSettable()) {
+                playingSpeed = newSpeed
                 mediaPlayer.speed = newSpeed
+                publishSpeed(currentAudioHash, newSpeed)
             }
-
-            publishSpeed(currentAudioHash, newSpeed)
         }
     }
 
     override fun currentSpeed(): Float =
-        if (isMarshmallowOrHigher()) mediaPlayer.speed else 1F
+        if (isMarshmallowOrHigher) mediaPlayer.speed else 1F
 
     override fun dispose() {
         userScope.launch(DispatcherProvider.Main) {
@@ -191,17 +190,31 @@ internal class StreamMediaPlayer(
     override fun resetAudio(audioHash: Int) {
         logger.i { "[resetAudio] playerState: $playerState, audioHash: $audioHash" }
         if (audioHash == currentAudioHash) {
-            resetPlayer(audioHash)
+            resetPlayer()
         }
         removeAudio(audioHash)
     }
 
-    private fun resetPlayer(audioHash: Int) {
-        logger.v { "[resetPlayer] playerState: $playerState, audioHash: $audioHash" }
+    override fun reset() {
+        logger.i { "[reset] playerState: $playerState, currentAudioHash: $currentAudioHash" }
+        resetPlayer()
+        onStateListeners.clear()
+        onProgressListeners.clear()
+        onSpeedListeners.clear()
+        audioTracks.clear()
+        seekMap.clear()
+    }
+
+    private fun resetPlayer() {
+        logger.v { "[resetPlayer] playerState: $playerState, audioHash: $currentAudioHash" }
         stopPolling()
         mediaPlayer.reset()
         playerState = PlayerState.UNSET
-        publishAudioState(audioHash, AudioState.UNSET)
+        if (currentAudioHash != -1) {
+            publishAudioState(currentAudioHash, AudioState.UNSET)
+            seekMap.remove(currentAudioHash)
+            currentAudioHash = -1
+        }
     }
 
     private fun setAudio(sourceUrl: String, audioHash: Int, autoPlay: Boolean = true) {
@@ -234,15 +247,22 @@ internal class StreamMediaPlayer(
 
     private fun start() {
         val currentPosition = mediaPlayer.currentPosition
+        val currentAudioHash = currentAudioHash
         logger.d {
             "[start] currentAudioHash: $currentAudioHash" +
                 ", currentPosition: $currentPosition, playerState: $playerState"
         }
         if (playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE) {
             val seekTo = seekMap[currentAudioHash] ?: 0
-            logger.v { "[start] seekTo: $seekTo" }
+            val duration = mediaPlayer.duration
+            logger.v { "[start] seekTo: $seekTo, duration: $duration" }
+            if (seekTo >= duration) {
+                publishProgress(currentAudioHash, ProgressData(duration, 1f, duration))
+                postOnComplete(currentAudioHash)
+                return
+            }
             mediaPlayer.seekTo(seekTo)
-            if (isMarshmallowOrHigher()) {
+            if (isMarshmallowOrHigher && mediaPlayer.isSpeedSettable()) {
                 mediaPlayer.speed = playingSpeed
                 publishSpeed(currentAudioHash, playingSpeed)
             }
@@ -265,7 +285,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun resume(audioHash: Int) {
-        logger.d { "[pause] audioHash: $audioHash, playerState: $playerState" }
+        logger.d { "[resume] audioHash: $audioHash, playerState: $playerState" }
         val isIdleOrPaused = playerState == PlayerState.IDLE || playerState == PlayerState.PAUSE
         if (isIdleOrPaused && currentAudioHash == audioHash) {
             start()
@@ -284,7 +304,7 @@ internal class StreamMediaPlayer(
         }
     }
 
-    fun getCurrentProgress(audioHash: Int): Int {
+    override fun getCurrentPositionInMs(audioHash: Int): Int {
         if (currentIndex == audioHash) {
             return mediaPlayer.currentPosition
         }
@@ -292,6 +312,7 @@ internal class StreamMediaPlayer(
     }
 
     override fun startSeek(audioHash: Int) {
+        logger.d { "[startSeek] audioHash: $audioHash, playerState: $playerState" }
         if (playerState == PlayerState.PLAYING && currentAudioHash == audioHash) {
             pause()
         }
@@ -309,7 +330,16 @@ internal class StreamMediaPlayer(
     private fun onError(audioHash: Int, what: Int, extra: Int): Boolean {
         logger.e { "[onError] audioHash: $audioHash, what: $what, extra: $extra" }
         complete(audioHash)
+        resetPlayer()
+        mediaPlayer.release()
         return true
+    }
+
+    private fun postOnComplete(audioHash: Int) {
+        logger.v { "[postOnComplete] audioHash: $audioHash" }
+        userScope.launch(DispatcherProvider.Main) {
+            complete(audioHash)
+        }
     }
 
     private fun onComplete(audioHash: Int) {
@@ -329,7 +359,7 @@ internal class StreamMediaPlayer(
         logger.v { "[complete] currentIndex: $currentIndex, lastIndex: ${audioTracks.lastIndex}" }
         if (currentIndex < audioTracks.lastIndex) {
             val trackInfo = audioTracks[currentIndex + 1]
-            resetPlayer(audioHash)
+            resetPlayer()
             setAudio(trackInfo.url, trackInfo.hash)
         }
     }
@@ -410,6 +440,20 @@ internal class StreamMediaPlayer(
             NativeMediaPlayerState.STARTED,
             NativeMediaPlayerState.PAUSED,
             NativeMediaPlayerState.PLAYBACK_COMPLETED,
+            -> true
+
+            else -> false
+        }
+    }
+
+    private fun NativeMediaPlayer.isSpeedSettable(): Boolean {
+        return when (state) {
+            NativeMediaPlayerState.INITIALIZED,
+            NativeMediaPlayerState.PREPARED,
+            NativeMediaPlayerState.STARTED,
+            NativeMediaPlayerState.PAUSED,
+            NativeMediaPlayerState.PLAYBACK_COMPLETED,
+            NativeMediaPlayerState.ERROR,
             -> true
 
             else -> false

@@ -65,12 +65,16 @@ public sealed class RecordingState {
         val playingProgress: Float = 0f,
         val playingId: Int = -1,
     ) : RecordingState() {
+
+        val hasPlayingId: Boolean get() = playingId != -1
+
         override fun toString(): String = "Recording.Overview(" +
+            "playingId=$playingId, " +
             "waveform=${waveform.size}, " +
             "duration=${durationInMs}ms, " +
             "isPlaying=$isPlaying, " +
             "playingProgress=$playingProgress, " +
-            "attachment=${attachment.upload}" +
+            "attachment=${attachment.upload?.hashCode()}" +
             ")"
     }
 
