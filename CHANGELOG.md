@@ -7,7 +7,6 @@
 ### ✅ Added
 
 ### ⚠️ Changed
-- Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
 
 ### ❌ Removed
 
@@ -15,7 +14,6 @@
 ### 🐞 Fixed
 
 ### ⬆️ Improved
-- `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ✅ Added
 
@@ -47,7 +45,6 @@
 
 ## stream-chat-android-ui-common
 ### 🐞 Fixed
-- UnreadLabel is not added on the case all unread messages are deleted. [#5403](https://github.com/GetStream/stream-chat-android/pull/5403)
 
 ### ⬆️ Improved
 
@@ -63,8 +60,6 @@
 ### ⬆️ Improved
 
 ### ✅ Added
-- Split poll options on the poll attachment to show a fit nubmer of options and a button to open new view with all options.[#5406](https://github.com/GetStream/stream-chat-android/pull/5406)
-- Add view to see poll results. [#5405](https://github.com/GetStream/stream-chat-android/pull/5405)
 
 ### ⚠️ Changed
 
@@ -72,15 +67,10 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
-- Fix condition to show async-voice attachments on MessageList. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
 
 ### ⬆️ Improved
 
 ### ✅ Added
-- Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391)
-- Added typing indicator on `ChannelList`. [#5399](https://github.com/GetStream/stream-chat-android/pull/5399)
-- Added support for Audio Recording feature. [#5404](https://github.com/GetStream/stream-chat-android/pull/5404)
-- Added `ChatTheme#imageHeadersProvider` to allow adding custom headers to image requests. [#5414](https://github.com/GetStream/stream-chat-android/pull/5414)
 
 ### ⚠️ Changed
 
@@ -96,6 +86,39 @@
 ### ⚠️ Changed
 
 ### ❌ Removed
+
+# September 26th, 2024 - 6.5.1
+## Common changes for all artifacts
+### ⚠️ Changed
+- Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
+
+## stream-chat-android-client
+### ⬆️ Improved
+- `Attachment.uploadId` is only used locally and removed whenever the attachments are uploaded. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
+
+### ✅ Added
+Added `notificationTextFormatter` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to formats the text of the notification. [#5409](https://github.com/GetStream/stream-chat-android/pull/5409)
+Added `actionsProvider` lambda parameter to `NotificationHandlerFactory::createNotificationHandler` which is being used to provide actions for the notification. [#5409](https://github.com/GetStream/stream-chat-android/pull/5409)
+- Added `FileTransformer` to allow transforming files before uploading. [#5416](https://github.com/GetStream/stream-chat-android/pull/5416)
+
+## stream-chat-android-ui-common
+### 🐞 Fixed
+- UnreadLabel is not added on the case all unread messages are deleted. [#5403](https://github.com/GetStream/stream-chat-android/pull/5403)
+
+## stream-chat-android-ui-components
+### ✅ Added
+- Split poll options on the poll attachment to show a fit nubmer of options and a button to open new view with all options.[#5406](https://github.com/GetStream/stream-chat-android/pull/5406)
+- Add view to see poll results. [#5405](https://github.com/GetStream/stream-chat-android/pull/5405)
+
+## stream-chat-android-compose
+### 🐞 Fixed
+- Fix condition to show async-voice attachments on MessageList. [#5395](https://github.com/GetStream/stream-chat-android/pull/5395)
+
+### ✅ Added
+- Add a default theme for `MediaPreviewActivity` and `MediaGalleryPreviewActivity`. [#5391](https://github.com/GetStream/stream-chat-android/pull/5391)
+- Added typing indicator on `ChannelList`. [#5399](https://github.com/GetStream/stream-chat-android/pull/5399)
+- Added support for Audio Recording feature. [#5404](https://github.com/GetStream/stream-chat-android/pull/5404)
+- Added `ChatTheme#imageHeadersProvider` to allow adding custom headers to image requests. [#5414](https://github.com/GetStream/stream-chat-android/pull/5414)
 
 # August 30th, 2024 - 6.5.0
 ## stream-chat-android-offline

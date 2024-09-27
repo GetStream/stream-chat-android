@@ -70,6 +70,7 @@ import io.getstream.chat.android.compose.ui.messages.composer.internal.DefaultMe
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AboveAnchorPopupPositionProvider
 import io.getstream.chat.android.compose.ui.util.mirrorRtl
+import io.getstream.chat.android.compose.ui.util.size
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.models.Attachment
 import io.getstream.chat.android.models.ChannelCapabilities
@@ -323,7 +324,7 @@ public fun MessageComposer(
     val (_, _, activeAction, validationErrors, mentionSuggestions, commandSuggestions) = messageComposerState
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val noRecording = messageComposerState.recording is RecordingState.Idle
+    val isRecording = messageComposerState.recording !is RecordingState.Idle
 
     MessageInputValidationError(
         validationErrors = validationErrors,
@@ -350,10 +351,10 @@ public fun MessageComposer(
                     )
                 }
 
-                if (!noRecording) {
+                input(messageComposerState)
+
+                if (isRecording) {
                     audioRecordingContent(messageComposerState)
-                } else {
-                    input(messageComposerState)
                 }
 
                 trailingContent(messageComposerState)
@@ -607,11 +608,16 @@ private fun RowScope.DefaultComposerInputContent(
     onAttachmentRemoved: (Attachment) -> Unit,
     label: @Composable (MessageComposerState) -> Unit,
 ) {
+    val isRecording = messageComposerState.recording !is RecordingState.Idle
     MessageInput(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .weight(1f),
+        modifier = if (isRecording) {
+            Modifier.size(0.dp)
+        } else {
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .weight(1f)
+        },
         label = label,
         messageComposerState = messageComposerState,
         onValueChange = onValueChange,

@@ -209,6 +209,7 @@ public final class io/getstream/chat/android/client/ChatClient$Builder : io/gets
 	public final fun debugRequests (Z)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableDistinctApiCalls ()Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun disableWarmUp ()Lio/getstream/chat/android/client/ChatClient$Builder;
+	public final fun fileTransformer (Lio/getstream/chat/android/client/uploader/FileTransformer;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun fileUploader (Lio/getstream/chat/android/client/uploader/FileUploader;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun logLevel (Lio/getstream/chat/android/client/logger/ChatLogLevel;)Lio/getstream/chat/android/client/ChatClient$Builder;
 	public final fun loggerHandler (Lio/getstream/chat/android/client/logger/ChatLoggerHandler;)Lio/getstream/chat/android/client/ChatClient$Builder;
@@ -2222,6 +2223,7 @@ public final class io/getstream/chat/android/client/extensions/AttachmentExtensi
 	public static final field EXTRA_UPLOAD_ID Ljava/lang/String;
 	public static final field EXTRA_WAVEFORM_DATA Ljava/lang/String;
 	public static final fun getDuration (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/Float;
+	public static final fun getDurationInMs (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/Integer;
 	public static final fun getUploadId (Lio/getstream/chat/android/models/Attachment;)Ljava/lang/String;
 	public static final fun getWaveformData (Lio/getstream/chat/android/models/Attachment;)Ljava/util/List;
 }
@@ -2359,19 +2361,14 @@ public final class io/getstream/chat/android/client/notifications/handler/Notifi
 
 public final class io/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory {
 	public static final field INSTANCE Lio/getstream/chat/android/client/notifications/handler/NotificationHandlerFactory;
-	public static final fun createNotificationHandler (Landroid/content/Context;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static final fun createNotificationHandler (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;Z)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
-	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;ZILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;Lkotlin/jvm/functions/Function2;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static final fun createNotificationHandler (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
+	public static synthetic fun createNotificationHandler$default (Landroid/content/Context;Lio/getstream/chat/android/client/notifications/handler/NotificationConfig;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function0;Lio/getstream/chat/android/client/notifications/handler/UserIconBuilder;Lio/getstream/android/push/permissions/NotificationPermissionHandler;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;ILjava/lang/Object;)Lio/getstream/chat/android/client/notifications/handler/NotificationHandler;
 }
 
 public abstract interface class io/getstream/chat/android/client/notifications/handler/PushDeviceGenerator {
@@ -2815,6 +2812,10 @@ public abstract interface class io/getstream/chat/android/client/token/TokenProv
 	public abstract fun loadToken ()Ljava/lang/String;
 }
 
+public abstract interface class io/getstream/chat/android/client/uploader/FileTransformer {
+	public abstract fun transform (Ljava/io/File;)Ljava/io/File;
+}
+
 public abstract interface class io/getstream/chat/android/client/uploader/FileUploader {
 	public abstract fun deleteFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
 	public abstract fun deleteImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/getstream/result/Result;
@@ -2822,6 +2823,11 @@ public abstract interface class io/getstream/chat/android/client/uploader/FileUp
 	public abstract fun sendFile (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;)Lio/getstream/result/Result;
 	public abstract fun sendImage (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/io/File;Lio/getstream/chat/android/client/utils/ProgressCallback;)Lio/getstream/result/Result;
+}
+
+public final class io/getstream/chat/android/client/uploader/NoOpFileTransformer : io/getstream/chat/android/client/uploader/FileTransformer {
+	public static final field INSTANCE Lio/getstream/chat/android/client/uploader/NoOpFileTransformer;
+	public fun transform (Ljava/io/File;)Ljava/io/File;
 }
 
 public final class io/getstream/chat/android/client/uploader/StreamCdnImageMimeTypes {
@@ -2870,6 +2876,7 @@ public final class io/getstream/chat/android/client/utils/internal/toggle/Toggle
 }
 
 public final class io/getstream/chat/android/client/utils/message/MessageUtils {
+	public static final fun hasAudioRecording (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isDeleted (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isEphemeral (Lio/getstream/chat/android/models/Message;)Z
 	public static final fun isError (Lio/getstream/chat/android/models/Message;)Z

@@ -16,6 +16,8 @@
 
 package io.getstream.chat.android.ui.common.feature.messages.list
 
+import androidx.collection.IntFloatMap
+import androidx.collection.MutableIntFloatMap
 import io.getstream.chat.android.client.audio.AudioPlayer
 import io.getstream.chat.android.client.audio.AudioState
 import io.getstream.chat.android.client.audio.ProgressData
@@ -31,13 +33,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 @InternalStreamChatApi
 public class AudioPlayerController(
     private val audioPlayer: AudioPlayer,
-    private val hasRecordingUri: (Attachment) -> Boolean,
     private val getRecordingUri: (Attachment) -> String?,
 ) {
 
     private val logger by taggedLogger("Chat:PlayerController")
 
-    public val state: MutableStateFlow<AudioPlayerState?> = MutableStateFlow(null)
+    public val state: MutableStateFlow<AudioPlayerState> = MutableStateFlow(AudioPlayerState())
 
     public fun resetAudio(attachment: Attachment) {
         if (attachment.isAudioRecording().not()) {
@@ -49,7 +50,7 @@ public class AudioPlayerController(
             return
         }
         val curState = state.value
-        if (curState?.playingId != audioHash) {
+        if (curState.current.playingId != audioHash) {
             logger.v { "[resetAudio] rejected (not playing): $audioHash" }
             return
         }
@@ -64,22 +65,24 @@ public class AudioPlayerController(
             logger.v { "[togglePlayback] rejected (not an audio recording): ${attachment.type}" }
             return
         }
-        if (!hasRecordingUri(attachment)) {
+        val audioHash = getRecordingUri(attachment)?.hashCode() ?: run {
             logger.v { "[togglePlayback] rejected (no recordingUri): $attachment" }
             return
         }
         val curState = state.value
-        if (curState?.attachment == attachment) {
-            if (curState.isPlaying) {
-                logger.d { "[togglePlayback] pause" }
-                pause()
-            } else {
-                logger.d { "[togglePlayback] resume" }
-                resume()
+        val currentPlayingId = audioPlayer.currentPlayingId
+        val isCurrentTrack = curState.current.playingId == audioHash
+        val isProgressRunning = curState.current.playingProgress.let { it > 0 && it < 1 }
+        logger.d {
+            "[togglePlayback] audioHash: $audioHash, currentPlayingId; $currentPlayingId, " +
+                "isCurrentTrack: $isCurrentTrack, isProgressRunning: $isProgressRunning, state: ${curState.stringify()}"
+        }
+        when (isCurrentTrack && isProgressRunning) {
+            true -> when (curState.current.isPlaying) {
+                true -> pause()
+                else -> resume()
             }
-        } else {
-            logger.d { "[togglePlayback] play" }
-            play(attachment)
+            else -> play(attachment)
         }
     }
 
@@ -93,7 +96,7 @@ public class AudioPlayerController(
             return
         }
         val curState = state.value
-        if (curState?.playingId != audioHash) {
+        if (curState.current.playingId != audioHash) {
             logger.v { "[startSeek] rejected (not playing): $audioHash" }
             return
         }
@@ -110,12 +113,24 @@ public class AudioPlayerController(
             return
         }
         val curState = state.value
-        if (curState?.playingId != audioHash) {
+        if (curState.current.playingId != audioHash) {
             logger.v { "[startSeek] rejected (not playing): $audioHash" }
             return
         }
-        logger.i { "[startSeek] audioHash: ${curState.playingId}" }
-        audioPlayer.startSeek(curState.playingId)
+        logger.i { "[startSeek] audioHash: ${curState.current.playingId}" }
+        audioPlayer.startSeek(curState.current.playingId)
+
+        val audioState = audioPlayer.currentState
+        val newState = curState.copy(
+            current = when (curState.current.playingId == audioHash) {
+                true -> curState.current.copy(
+                    isPlaying = audioState == AudioState.PLAYING,
+                    isSeeking = true,
+                )
+                else -> curState.current
+            },
+        )
+        setState(newState)
     }
 
     public fun seekTo(attachment: Attachment, progress: Float) {
@@ -127,15 +142,28 @@ public class AudioPlayerController(
             logger.v { "[seekTo] rejected (no recordingUri): $attachment" }
             return
         }
-        // val curState = state.value
-        // if (curState?.attachment != attachment) {
-        //     logger.v { "[seekTo] rejected (not playing): $attachment" }
-        //     return
-        // }
+        val curState = state.value
+        val isCurrentAudio = curState.current.playingId == audioHash
         val durationInSeconds = attachment.duration ?: NULL_DURATION
         val positionInMs = (progress * durationInSeconds * MILLIS_IN_SECOND).toInt()
-        logger.i { "[seekTo] positionInMs: $positionInMs, audioHash: $audioHash" }
+        logger.i {
+            "[seekTo] isCurrentAudio: $isCurrentAudio, positionInMs: $positionInMs, " +
+                "audioHash: $audioHash, state: ${curState.stringify()}"
+        }
         audioPlayer.seekTo(positionInMs, audioHash)
+
+        val newState = curState.copy(
+            current = when (isCurrentAudio) {
+                true -> curState.current.copy(
+                    isSeeking = false,
+                    playingProgress = progress,
+                    playbackInMs = positionInMs,
+                )
+                else -> curState.current
+            },
+            seekTo = curState.seekTo + (audioHash to progress),
+        )
+        setState(newState)
     }
 
     /**
@@ -152,45 +180,54 @@ public class AudioPlayerController(
             logger.v { "[play] rejected (no recordingUri): $attachment" }
             return
         }
-        val curState = state.value
-        if (curState != null) {
-            audioPlayer.resetAudio(curState.playingId)
-        }
 
+        val curState = state.value
         val audioHash = recordingUri.hashCode()
+        val waveform = attachment.waveformData ?: emptyList()
+        var playbackInMs = audioPlayer.getCurrentPositionInMs(audioHash)
+        val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
+        val seekTo = curState.seekTo.getOrDefault(audioHash, 0f)
+        if (seekTo > 0) {
+            playbackInMs = (seekTo * durationInMs).toInt()
+            logger.v { "[play] seekTo: $playbackInMs" }
+        }
+        logger.d { "[play] audioHash: $audioHash, playbackInMs: $playbackInMs, state: ${curState.stringify()}" }
+
+        // Set the initial state first cause the audio player may emit progress before the state is updated
+        val initialState = curState.newCurrentState(audioHash, recordingUri, waveform, playbackInMs, durationInMs)
+        setState(initialState)
+
+        if (seekTo > 0) audioPlayer.seekTo(playbackInMs, audioHash)
         audioPlayer.registerOnAudioStateChange(audioHash, this::onAudioStateChanged)
         audioPlayer.registerOnProgressStateChange(audioHash, this::onAudioPlayingProgress)
         audioPlayer.registerOnSpeedChange(audioHash, this::onAudioPlayingSpeed)
         audioPlayer.play(recordingUri, audioHash)
 
         val audioState = audioPlayer.currentState
-        val durationInMs = ((attachment.duration ?: NULL_DURATION) * MILLIS_IN_SECOND).toInt()
-        logger.d { "[play] audioHash: $audioHash" }
-        setState(
-            AudioPlayerState(
-                attachment = attachment,
-                waveform = attachment.waveformData ?: emptyList(),
-                durationInMs = durationInMs,
+        val nowState = state.value
+        val newState = nowState.copy(
+            current = nowState.current.copy(
                 isLoading = audioState == AudioState.LOADING,
                 isPlaying = audioState == AudioState.PLAYING,
-                playingId = audioHash,
             ),
         )
+        setState(newState)
     }
 
     /**
      * Pauses the current audio recording.
      */
     public fun pause() {
-        val curState = state.value ?: run {
-            logger.d { "[pause] rejected (no state)" }
+        val curState = state.value
+        if (curState.current.playingId == NO_ID) {
+            logger.v { "[pause] rejected (no playingId)" }
             return
         }
-        if (curState.isPlaying.not()) {
+        if (curState.current.isPlaying.not()) {
             logger.d { "[pause] rejected (not playing)" }
             return
         }
-        logger.d { "[pause] audioHash: ${curState.playingId}" }
+        logger.d { "[pause] audioHash: ${curState.current.playingId}" }
         audioPlayer.pause()
     }
 
@@ -198,11 +235,12 @@ public class AudioPlayerController(
      * Resumes the current audio recording.
      */
     public fun resume() {
-        val curState = state.value ?: run {
-            logger.v { "[resume] rejected (no state)" }
+        val curState = state.value
+        if (curState.current.playingId == NO_ID) {
+            logger.v { "[resume] rejected (no playingId)" }
             return
         }
-        if (curState.isPlaying) {
+        if (curState.current.isPlaying) {
             logger.v { "[resume] rejected (already playing)" }
             return
         }
@@ -212,7 +250,7 @@ public class AudioPlayerController(
             logger.v { "[resume] rejected (not idle or paused): $playerState" }
             return
         }
-        val audioHash = curState.playingId
+        val audioHash = curState.current.playingId
         logger.d { "[resume] audioHash: $audioHash" }
         audioPlayer.resume(audioHash)
     }
@@ -221,51 +259,115 @@ public class AudioPlayerController(
      * Resets the current audio recording.
      */
     public fun reset() {
-        audioPlayer.clearTracks()
-        state.value?.playingId?.also { audioPlayer.resetAudio(it) }
-        setState(null)
+        val curState = state.value
+        logger.d { "[reset] state.playingId: ${curState.current.playingId}" }
+        audioPlayer.reset()
+        setState(AudioPlayerState())
     }
 
     private fun onAudioStateChanged(playbackState: AudioState) {
-        val curState = state.value ?: return
-        setState(
-            curState.copy(
+        val curState = state.value
+        if (curState.current.playingId == NO_ID) {
+            logger.v { "[onAudioStateChanged] rejected (no playingId)" }
+            return
+        }
+        logger.d { "[onAudioStateChanged] playbackState: $playbackState" }
+        val newState = curState.copy(
+            current = curState.current.copy(
                 isLoading = playbackState == AudioState.LOADING,
                 isPlaying = playbackState == AudioState.PLAYING,
             ),
         )
+        setState(newState)
     }
 
     private fun onAudioPlayingProgress(progressState: ProgressData) {
-        // logger.d { "[onAudioPlayingProgress] progressState: $progressState" }
-        val curState = state.value ?: return
-        setState(
-            curState.copy(
-                isPlaying = progressState.currentPosition > 0,
+        val curState = state.value
+        if (curState.current.playingId == NO_ID) {
+            logger.v { "[onAudioPlayingProgress] rejected (no playingId)" }
+            return
+        }
+        val newState = curState.copy(
+            current = curState.current.copy(
+                isPlaying = true,
                 playingProgress = progressState.progress,
                 playbackInMs = progressState.currentPosition,
                 durationInMs = progressState.duration,
             ),
+            seekTo = curState.seekTo - curState.current.playingId,
         )
+        setState(newState)
     }
 
     private fun onAudioPlayingSpeed(speed: Float) {
-        // logger.d { "[onAudioPlayingProgress] speed: $speed" }
-        val curState = state.value ?: return
-        setState(
-            curState.copy(
+        val curState = state.value
+        if (curState.current.playingId == NO_ID) {
+            logger.v { "[onAudioPlayingSpeed] rejected (no playingId)" }
+            return
+        }
+        logger.d { "[onAudioPlayingSpeed] speed: $speed, state: ${curState.stringify()}" }
+        val newState = curState.copy(
+            current = curState.current.copy(
                 playingSpeed = speed,
             ),
         )
+        setState(newState)
     }
 
-    private fun setState(newState: AudioPlayerState?) {
-        // logger.v { "[setState] ${state.value?.stringify()} => ${newState?.stringify()}" }
+    private fun setState(newState: AudioPlayerState) {
         state.value = newState
     }
 
+    private fun AudioPlayerState.newCurrentState(
+        audioHash: Int,
+        recordingUri: String,
+        waveform: List<Float>,
+        playbackInMs: Int,
+        durationInMs: Int,
+    ): AudioPlayerState {
+        return copy(
+            current = AudioPlayerState.CurrentAudioState(
+                playingId = audioHash,
+                audioUri = recordingUri,
+                waveform = waveform,
+                durationInMs = durationInMs,
+                playbackInMs = playbackInMs,
+                playingProgress = playbackInMs.toFloat() / durationInMs,
+            ),
+            seekTo = when (current.playingId != audioHash && current.playingId != NO_ID && current.playingProgress > 0) {
+                true -> seekTo + (current.playingId to current.playingProgress)
+                else -> seekTo
+            },
+        )
+    }
+
     private companion object {
+        private const val NO_ID = -1
         private const val NULL_DURATION = 0f
         private const val MILLIS_IN_SECOND = 1000f
+    }
+
+    internal operator fun IntFloatMap.plus(that: Pair<Int, Float>): IntFloatMap {
+        val newMap = MutableIntFloatMap(this.size + 1)
+        this.forEach { key, value ->
+            newMap[key] = value
+        }
+        val (key, value) = that
+        newMap[key] = value
+        return newMap
+    }
+
+    internal operator fun IntFloatMap.minus(key: Int): IntFloatMap {
+        if (this.contains(key).not()) {
+            return this
+        }
+
+        val newMap = MutableIntFloatMap(this.size)
+        this.forEach { k, v ->
+            if (k != key) {
+                newMap[k] = v
+            }
+        }
+        return newMap
     }
 }

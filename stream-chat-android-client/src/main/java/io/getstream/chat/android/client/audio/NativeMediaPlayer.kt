@@ -343,6 +343,24 @@ internal class NativeMediaPlayerImpl(
 
     private val logger by taggedLogger("Chat:NativeMediaPlayer")
 
+    private val _onErrorListener = MediaPlayer.OnErrorListener { mp, what, extra ->
+        if (DEBUG) logger.e { "[onError] what: $what, extra: $extra, mp: ${mp.hashCode()}" }
+        state = NativeMediaPlayerState.ERROR
+        onErrorListener?.invoke(what, extra) ?: false
+    }
+
+    private val _onPreparedListener = MediaPlayer.OnPreparedListener {
+        if (DEBUG) logger.d { "[onPrepared] no args" }
+        state = NativeMediaPlayerState.PREPARED
+        onPreparedListener?.invoke()
+    }
+
+    private val _onCompletionListener = MediaPlayer.OnCompletionListener {
+        if (DEBUG) logger.d { "[onCompletion] no args" }
+        state = NativeMediaPlayerState.PLAYBACK_COMPLETED
+        onCompletionListener?.invoke()
+    }
+
     private var _mediaPlayer: MediaPlayer? = null
         set(value) {
             if (DEBUG) logger.i { "[setMediaPlayerInstance] instance: $value" }
@@ -374,7 +392,8 @@ internal class NativeMediaPlayerImpl(
         @RequiresApi(Build.VERSION_CODES.M)
         @Throws(IllegalStateException::class, IllegalArgumentException::class)
         set(value) {
-            if (DEBUG) logger.d { "[setSpeed] speed: $value" }
+            val mediaPlayer = mediaPlayer
+            if (DEBUG) logger.d { "[setSpeed] mediaPlayer: ${mediaPlayer.hashCode()}, speed: $value" }
             mediaPlayer.playbackParams = mediaPlayer.playbackParams.setSpeed(value)
         }
     override val currentPosition: Int
@@ -390,61 +409,73 @@ internal class NativeMediaPlayerImpl(
         IllegalStateException::class,
     )
     override fun setDataSource(path: String) {
-        if (DEBUG) logger.d { "[setDataSource] path: $path" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[setDataSource] mediaPlayer: ${mediaPlayer.hashCode()}, path: $path" }
         mediaPlayer.setDataSource(path)
         state = NativeMediaPlayerState.INITIALIZED
     }
 
     @Throws(IllegalStateException::class)
     override fun prepareAsync() {
-        if (DEBUG) logger.d { "[prepareAsync] no args" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[prepareAsync] mediaPlayer: ${mediaPlayer.hashCode()}" }
         mediaPlayer.prepareAsync()
         state = NativeMediaPlayerState.PREPARING
     }
 
     @Throws(IOException::class, IllegalStateException::class)
     override fun prepare() {
-        if (DEBUG) logger.d { "[prepare] no args" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[prepare] mediaPlayer: ${mediaPlayer.hashCode()}" }
         mediaPlayer.prepare()
         state = NativeMediaPlayerState.PREPARED
     }
 
     @Throws(IllegalStateException::class)
     override fun seekTo(msec: Int) {
-        if (DEBUG) logger.d { "[seekTo] msec: $msec" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[seekTo] mediaPlayer: ${mediaPlayer.hashCode()}, msec: $msec" }
         mediaPlayer.seekTo(msec)
     }
 
     @Throws(IllegalStateException::class)
     override fun start() {
-        if (DEBUG) logger.d { "[start] no args" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[start] mediaPlayer: ${mediaPlayer.hashCode()}" }
         mediaPlayer.start()
         state = NativeMediaPlayerState.STARTED
     }
 
     @Throws(IllegalStateException::class)
     override fun pause() {
-        if (DEBUG) logger.d { "[pause] no args" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[pause] mediaPlayer: ${mediaPlayer.hashCode()}" }
         mediaPlayer.pause()
         state = NativeMediaPlayerState.PAUSED
     }
 
     @Throws(IllegalStateException::class)
     override fun stop() {
-        if (DEBUG) logger.d { "[stop] no args" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[stop] mediaPlayer: ${mediaPlayer.hashCode()}" }
         mediaPlayer.stop()
         state = NativeMediaPlayerState.STOPPED
     }
 
     override fun reset() {
-        if (DEBUG) logger.d { "[reset] no args" }
+        val mediaPlayer = mediaPlayer
+        if (DEBUG) logger.d { "[reset] mediaPlayer: ${mediaPlayer.hashCode()}" }
         mediaPlayer.reset()
         state = NativeMediaPlayerState.IDLE
     }
 
     override fun release() {
-        if (DEBUG) logger.d { "[release] no args" }
-        mediaPlayer.release()
+        val mediaPlayer = _mediaPlayer ?: run {
+            if (DEBUG) logger.d { "[release] mediaPlayer is null" }
+            return
+        }
+        if (DEBUG) logger.d { "[release] mediaPlayer: ${mediaPlayer.hashCode()}" }
+        mediaPlayer.clearListeners().release()
         state = NativeMediaPlayerState.END
         _mediaPlayer = null
     }
@@ -465,22 +496,18 @@ internal class NativeMediaPlayerImpl(
     }
 
     private fun MediaPlayer.setupListeners(): MediaPlayer {
-        setOnErrorListener { _, what, extra ->
-            if (DEBUG) logger.e { "[onError] what: $what, extra: $extra" }
-            state = NativeMediaPlayerState.ERROR
-            _mediaPlayer = null
-            onErrorListener?.invoke(what, extra) ?: false
-        }
-        setOnPreparedListener {
-            if (DEBUG) logger.d { "[onPrepared] no args" }
-            state = NativeMediaPlayerState.PREPARED
-            onPreparedListener?.invoke()
-        }
-        setOnCompletionListener {
-            if (DEBUG) logger.d { "[onCompletion] no args" }
-            state = NativeMediaPlayerState.PLAYBACK_COMPLETED
-            onCompletionListener?.invoke()
-        }
+        if (DEBUG) logger.d { "[setupListeners] mediaPlayer: ${this.hashCode()}" }
+        setOnErrorListener(_onErrorListener)
+        setOnPreparedListener(_onPreparedListener)
+        setOnCompletionListener(_onCompletionListener)
+        return this
+    }
+
+    private fun MediaPlayer.clearListeners(): MediaPlayer {
+        if (DEBUG) logger.d { "[clearListeners] mediaPlayer: ${this.hashCode()}" }
+        setOnErrorListener(null)
+        setOnPreparedListener(null)
+        setOnCompletionListener(null)
         return this
     }
 }
