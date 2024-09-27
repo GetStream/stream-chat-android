@@ -137,7 +137,7 @@ public fun MessageList(
     },
     onUserAvatarClick: ((User) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {
         if (it?.resultType == MediaGalleryPreviewResultType.SHOW_IN_CHAT) {
             viewModel.scrollToMessage(
@@ -175,7 +175,7 @@ public fun MessageList(
             onQuotedMessageClick = onQuotedMessageClick,
             onUserAvatarClick = onUserAvatarClick,
             onLinkClick = onMessageLinkClick,
-            onTapUserMention = onTapUserMention,
+            onUserMentionClick = onUserMentionClick,
         )
     },
 ) {
@@ -241,7 +241,7 @@ internal fun DefaultMessageContainer(
     onQuotedMessageClick: (Message) -> Unit,
     onUserAvatarClick: ((User) -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
 ) {
     MessageContainer(
         messageListItemState = messageListItemState,
@@ -259,7 +259,7 @@ internal fun DefaultMessageContainer(
         onQuotedMessageClick = onQuotedMessageClick,
         onUserAvatarClick = onUserAvatarClick,
         onLinkClick = onLinkClick,
-        onTapUserMention = onTapUserMention,
+        onUserMentionClick = onUserMentionClick,
     )
 }
 
@@ -354,7 +354,7 @@ public fun MessageList(
     onScrollToBottom: (() -> Unit) -> Unit = {},
     onUserAvatarClick: ((User) -> Unit)? = null,
     onMessageLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = { _ -> },
+    onUserMentionClick: (User) -> Unit = { _ -> },
     loadingContent: @Composable () -> Unit = { DefaultMessageListLoadingIndicator(modifier) },
     emptyContent: @Composable () -> Unit = { DefaultMessageListEmptyContent(modifier) },
     helperContent: @Composable BoxScope.() -> Unit = {
@@ -385,7 +385,7 @@ public fun MessageList(
             onQuotedMessageClick = onQuotedMessageClick,
             onUserAvatarClick = onUserAvatarClick,
             onLinkClick = onMessageLinkClick,
-            onTapUserMention = onTapUserMention,
+            onUserMentionClick = onUserMentionClick,
         )
     },
 ) {

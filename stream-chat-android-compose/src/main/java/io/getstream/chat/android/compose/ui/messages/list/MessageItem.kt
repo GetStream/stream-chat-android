@@ -146,7 +146,7 @@ public fun MessageItem(
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: (() -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
@@ -169,7 +169,7 @@ public fun MessageItem(
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
-            onTapUserMention = onTapUserMention,
+            onUserMentionClick = onUserMentionClick,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -443,7 +443,7 @@ internal fun DefaultMessageItemCenterContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
@@ -488,7 +488,7 @@ internal fun DefaultMessageItemCenterContent(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
-            onTapUserMention = onTapUserMention,
+            onUserMentionClick = onUserMentionClick,
         )
     }
 }
@@ -567,7 +567,7 @@ internal fun RegularMessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -593,7 +593,7 @@ internal fun RegularMessageContent(
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onQuotedMessageClick = onQuotedMessageClick,
                     onLinkClick = onLinkClick,
-                    onTapUserMention = onTapUserMention,
+                    onUserMentionClick = onUserMentionClick,
                 )
             },
         )
@@ -682,7 +682,7 @@ internal fun DefaultMessageTextContent(
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     val quotedMessage = message.replyTo
@@ -703,7 +703,7 @@ internal fun DefaultMessageTextContent(
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onLinkClick = onLinkClick,
-            onTapUserMention = onTapUserMention,
+            onUserMentionClick = onUserMentionClick,
         )
     }
 }

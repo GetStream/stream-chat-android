@@ -69,7 +69,7 @@ public fun MessageText(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
     onLinkClick: ((Message, String) -> Unit)? = null,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -105,7 +105,7 @@ public fun MessageText(
         ) { position ->
             val annotation = annotations.firstOrNull { position in it.start..it.end }
             if (annotation?.tag == AnnotationTagMention) {
-                message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onTapUserMention.invoke(it) }
+                message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onUserMentionClick.invoke(it) }
             } else {
                 val targetUrl = annotation?.item
                 if (!targetUrl.isNullOrEmpty()) {

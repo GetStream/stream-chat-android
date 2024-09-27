@@ -58,7 +58,7 @@ public fun MessageContent(
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     giphyEphemeralContent: @Composable () -> Unit = {
@@ -78,7 +78,7 @@ public fun MessageContent(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
-            onTapUserMention = onTapUserMention,
+            onUserMentionClick = onUserMentionClick,
         )
     },
 ) {
@@ -145,7 +145,7 @@ internal fun DefaultMessageContent(
     onLongItemClick: (Message) -> Unit,
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit,
-    onTapUserMention: (User) -> Unit = {},
+    onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     Column {
@@ -162,7 +162,7 @@ internal fun DefaultMessageContent(
                 onLongItemClick = onLongItemClick,
                 onQuotedMessageClick = onQuotedMessageClick,
                 onLinkClick = onLinkClick,
-                onTapUserMention = onTapUserMention,
+                onUserMentionClick = onUserMentionClick,
             )
         }
     }

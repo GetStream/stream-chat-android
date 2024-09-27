@@ -161,7 +161,7 @@ class MessagesActivity : BaseConnectedActivity() {
                     onUserAvatarClick = { user ->
                         Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                     },
-                    onTapUserMention = { user ->
+                    onUserMentionClick = { user ->
                         Log.i("MessagesActivity", "user mention tapped: ${user.id}")
                     },
                 )
