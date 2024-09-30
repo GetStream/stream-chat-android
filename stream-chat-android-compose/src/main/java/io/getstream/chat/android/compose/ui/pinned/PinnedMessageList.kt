@@ -45,7 +45,6 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.util.Date
 
 /**
  * Default 'Pinned Messages List' component, which relies on [PinnedMessageListViewModel] to show and allow interactions
@@ -127,6 +126,7 @@ public fun PinnedMessageList(
  * (pagination).
  * @param onLoadMore Action executed when the scroll threshold was reached and a new page of messages should be loaded.
  */
+@Suppress("LongParameterList")
 @Composable
 private fun PinnedMessages(
     messages: List<Message>,
@@ -141,9 +141,9 @@ private fun PinnedMessages(
         derivedStateOf {
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
             val totalItemsCount = listState.layoutInfo.totalItemsCount
-            lastVisibleItem != null
-                && totalItemsCount - LOAD_MORE_THRESHOLD > 0
-                && lastVisibleItem.index >= totalItemsCount - LOAD_MORE_THRESHOLD
+            lastVisibleItem != null &&
+                totalItemsCount - LoadMoreThreshold > 0 &&
+                lastVisibleItem.index >= totalItemsCount - LoadMoreThreshold
         }
     }
     Box(
@@ -276,7 +276,7 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
  * Default load more threshold - Trigger the loading of the next page of items, if the user scrolls to the N-th element
  * from the end of the list.
  */
-private const val LOAD_MORE_THRESHOLD = 10
+private const val LoadMoreThreshold = 10
 
 @Composable
 @Preview
@@ -290,8 +290,7 @@ private fun DefaultPinnedMessageContentPreview() {
                 user = User(
                     id = "usr1",
                     name = "Test User"
-                ),
-                createdAt = Date(2024, 1, 1)
+                )
             )
             DefaultPinnedMessageItem(
                 message = message,

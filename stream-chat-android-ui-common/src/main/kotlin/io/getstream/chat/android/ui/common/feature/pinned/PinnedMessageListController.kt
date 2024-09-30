@@ -126,14 +126,16 @@ public class PinnedMessageListController(
 
     private fun shouldLoadMore(): Boolean {
         val currentState = _state.value
-        if (!currentState.canLoadMore) {
-            logger.d { "No more messages to load" }
-            return false
+        return when {
+            !currentState.canLoadMore -> {
+                logger.d { "No more messages to load" }
+                false
+            }
+            currentState.isLoading -> {
+                logger.d { "Already loading" }
+                false
+            }
+            else -> true
         }
-        if (currentState.isLoading) {
-            logger.d { "Already loading" }
-            return false
-        }
-        return true
     }
 }

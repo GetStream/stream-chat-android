@@ -11,7 +11,7 @@ import io.getstream.chat.android.ui.common.feature.pinned.PinnedMessageListContr
  *
  * @see PinnedMessageListViewModel
  */
-public class PinnedMessageListViewModelFactory(private val cid: String): ViewModelProvider.Factory {
+public class PinnedMessageListViewModelFactory(private val cid: String) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == PinnedMessageListViewModel::class.java) {
