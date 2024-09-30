@@ -94,6 +94,7 @@ import io.getstream.chat.android.client.extensions.syncUnreadCountWithReads
 import io.getstream.chat.android.client.helpers.CallPostponeHelper
 import io.getstream.chat.android.client.parser.toMap
 import io.getstream.chat.android.client.scope.UserScope
+import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
 import io.getstream.chat.android.client.utils.ProgressCallback
 import io.getstream.chat.android.models.AppSettings
@@ -142,6 +143,7 @@ internal class MoshiChatApi
 constructor(
     val currentUserIdProvider: () -> UserId?,
     private val fileUploader: FileUploader,
+    private val fileTransformer: FileTransformer,
     private val userApi: UserApi,
     private val guestApi: GuestApi,
     private val messageApi: MessageApi,
@@ -376,25 +378,26 @@ constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback?,
-    ): Call<UploadedFile> {
-        return CoroutineCall(coroutineScope) {
-            if (callback != null) {
-                fileUploader.sendFile(
-                    channelType = channelType,
-                    channelId = channelId,
-                    userId = userId,
-                    file = file,
-                    callback,
-                )
-            } else {
-                fileUploader.sendFile(
-                    channelType = channelType,
-                    channelId = channelId,
-                    userId = userId,
-                    file = file,
-                )
+    ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
+        fileTransformer.transform(file)
+            .let { transformedFile ->
+                if (callback != null) {
+                    fileUploader.sendFile(
+                        channelType = channelType,
+                        channelId = channelId,
+                        userId = userId,
+                        file = transformedFile,
+                        callback,
+                    )
+                } else {
+                    fileUploader.sendFile(
+                        channelType = channelType,
+                        channelId = channelId,
+                        userId = userId,
+                        file = transformedFile,
+                    )
+                }
             }
-        }
     }
 
     override fun sendImage(
@@ -402,25 +405,26 @@ constructor(
         channelId: String,
         file: File,
         callback: ProgressCallback?,
-    ): Call<UploadedFile> {
-        return CoroutineCall(coroutineScope) {
-            if (callback != null) {
-                fileUploader.sendImage(
-                    channelType = channelType,
-                    channelId = channelId,
-                    userId = userId,
-                    file = file,
-                    callback,
-                )
-            } else {
-                fileUploader.sendImage(
-                    channelType = channelType,
-                    channelId = channelId,
-                    userId = userId,
-                    file = file,
-                )
+    ): Call<UploadedFile> = CoroutineCall(coroutineScope) {
+        fileTransformer.transform(file)
+            .let { transformedFile ->
+                if (callback != null) {
+                    fileUploader.sendImage(
+                        channelType = channelType,
+                        channelId = channelId,
+                        userId = userId,
+                        file = transformedFile,
+                        callback,
+                    )
+                } else {
+                    fileUploader.sendImage(
+                        channelType = channelType,
+                        channelId = channelId,
+                        userId = userId,
+                        file = transformedFile,
+                    )
+                }
             }
-        }
     }
 
     override fun deleteFile(channelType: String, channelId: String, url: String): Call<Unit> {

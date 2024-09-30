@@ -128,7 +128,9 @@ import io.getstream.chat.android.client.token.ConstantTokenProvider
 import io.getstream.chat.android.client.token.TokenManager
 import io.getstream.chat.android.client.token.TokenManagerImpl
 import io.getstream.chat.android.client.token.TokenProvider
+import io.getstream.chat.android.client.uploader.FileTransformer
 import io.getstream.chat.android.client.uploader.FileUploader
+import io.getstream.chat.android.client.uploader.NoOpFileTransformer
 import io.getstream.chat.android.client.uploader.StreamCdnImageMimeTypes
 import io.getstream.chat.android.client.user.CredentialConfig
 import io.getstream.chat.android.client.user.CurrentUserFetcher
@@ -177,9 +179,9 @@ import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.log.AndroidStreamLogger
 import io.getstream.log.CompositeStreamLogger
 import io.getstream.log.StreamLog
-import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -3293,6 +3295,7 @@ internal constructor(
         private var debugRequests: Boolean = false
         private var repositoryFactoryProvider: RepositoryFactory.Provider? = null
         private var uploadAttachmentsNetworkType = UploadAttachmentsNetworkType.CONNECTED
+        private var fileTransformer: FileTransformer = NoOpFileTransformer
 
         /**
          * Sets the log level to be used by the client.
@@ -3359,6 +3362,14 @@ internal constructor(
         ): Builder = apply {
             this.notificationConfig = notificationConfig
             this.notificationsHandler = notificationsHandler
+        }
+
+        /**
+         * Sets a custom [FileTransformer] implementation that will be used by the client to transform
+         * files before uploading them.
+         */
+        public fun fileTransformer(fileTransformer: FileTransformer): Builder = apply {
+            this.fileTransformer = fileTransformer
         }
 
         /**
@@ -3545,6 +3556,7 @@ internal constructor(
                         context = appContext,
                         notificationConfig = notificationConfig,
                     ),
+                    fileTransformer = fileTransformer,
                     uploader = fileUploader,
                     tokenManager = tokenManager,
                     customOkHttpClient = customOkHttpClient,

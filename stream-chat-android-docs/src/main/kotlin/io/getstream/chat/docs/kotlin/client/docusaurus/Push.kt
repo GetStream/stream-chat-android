@@ -60,6 +60,7 @@ class Push {
 
         val notificationHandler = NotificationHandlerFactory.createNotificationHandler(
             context = context,
+            notificationConfig = notificationConfig,
             newMessageIntent = {
                     message: Message,
                     channel: Channel,
