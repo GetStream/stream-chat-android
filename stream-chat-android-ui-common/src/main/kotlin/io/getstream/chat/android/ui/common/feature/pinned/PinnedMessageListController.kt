@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.ui.common.feature.pinned
 
 import io.getstream.chat.android.client.ChatClient
@@ -43,7 +59,7 @@ public class PinnedMessageListController(
             results = emptyList(),
             isLoading = true,
             canLoadMore = true,
-            nextDate = Date()
+            nextDate = Date(),
         )
     }
 
@@ -86,7 +102,7 @@ public class PinnedMessageListController(
             _state.update { current ->
                 current.copy(
                     isLoading = true,
-                    results = current.results + Message()
+                    results = current.results + Message(),
                 )
             }
             loadPinnedMessages()
@@ -99,7 +115,7 @@ public class PinnedMessageListController(
         val result = channelClient.getPinnedMessages(
             limit = QUERY_LIMIT,
             sort = QuerySortByField.descByName("pinned_at"),
-            pagination = PinnedMessagesPagination.BeforeDate(nextDate, inclusive = false)
+            pagination = PinnedMessagesPagination.BeforeDate(nextDate, inclusive = false),
         ).await()
         when (result) {
             is Result.Success -> {
@@ -110,7 +126,7 @@ public class PinnedMessageListController(
                         results = (current.results + messages).filter { it.id.isNotEmpty() },
                         isLoading = false,
                         canLoadMore = messages.size == QUERY_LIMIT,
-                        nextDate = messages.lastOrNull()?.pinnedAt ?: nextDate
+                        nextDate = messages.lastOrNull()?.pinnedAt ?: nextDate,
                     )
                 }
             }

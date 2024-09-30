@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.pinned
 
 import android.widget.Toast
@@ -86,7 +102,7 @@ public fun PinnedMessageList(
     },
     loadingMoreContent: @Composable () -> Unit = {
         DefaultPinnedMessageListLoadingMoreContent()
-    }
+    },
 ) {
     val state by viewModel.state.collectAsState()
     when {
@@ -98,7 +114,7 @@ public fun PinnedMessageList(
             itemContent = itemContent,
             itemDivider = itemDivider,
             loadingMoreContent = loadingMoreContent,
-            onLoadMore = viewModel::loadMore
+            onLoadMore = viewModel::loadMore,
         )
     }
 
@@ -149,7 +165,7 @@ private fun PinnedMessages(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(ChatTheme.colors.appBackground)
+            .background(ChatTheme.colors.appBackground),
     ) {
         LazyColumn(state = listState) {
             itemsIndexed(messages) { index, pinnedMessage ->
@@ -187,7 +203,7 @@ internal fun DefaultPinnedMessageItem(
     PinnedMessageItem(
         message = message,
         currentUser = currentUser,
-        onPinnedMessageClick = onPinnedMessageClick
+        onPinnedMessageClick = onPinnedMessageClick,
     )
 }
 
@@ -214,12 +230,12 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
     Column(
         modifier = modifier.background(ChatTheme.colors.appBackground),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
     ) {
         Image(
             modifier = Modifier.size(112.dp),
             painter = painterResource(R.drawable.stream_compose_ic_pinned_messages_empty),
-            contentDescription = null
+            contentDescription = null,
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
@@ -230,7 +246,7 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
             color = ChatTheme.colors.textHighEmphasis,
             fontSize = 16.sp,
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -241,7 +257,7 @@ internal fun DefaultPinnedMessageListEmptyContent(modifier: Modifier = Modifier)
             textAlign = TextAlign.Center,
             style = ChatTheme.typography.bodyBold,
             color = ChatTheme.colors.textLowEmphasis,
-            fontSize = 16.sp
+            fontSize = 16.sp,
         )
     }
 }
@@ -268,7 +284,7 @@ internal fun DefaultPinnedMessageListLoadingMoreContent() {
             .fillMaxWidth()
             .wrapContentHeight()
             .background(ChatTheme.colors.appBackground)
-            .padding(8.dp)
+            .padding(8.dp),
     )
 }
 
@@ -289,13 +305,13 @@ private fun DefaultPinnedMessageContentPreview() {
                 text = "Some very long pinned message from a while ago.",
                 user = User(
                     id = "usr1",
-                    name = "Test User"
-                )
+                    name = "Test User",
+                ),
             )
             DefaultPinnedMessageItem(
                 message = message,
                 currentUser = null,
-                onPinnedMessageClick = {}
+                onPinnedMessageClick = {},
             )
         }
     }

@@ -118,7 +118,7 @@ private class DefaultMessagePreviewFormatter(
             context.getString(
                 R.string.stream_compose_message_preview_sender,
                 message.user.name,
-                channel.name
+                channel.name,
             ).parseBoldTags()
         } else {
             buildAnnotatedString {
