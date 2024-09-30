@@ -22,6 +22,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import io.getstream.chat.android.client.utils.message.hasAudioRecording
 import io.getstream.chat.android.client.utils.message.isPoll
 import io.getstream.chat.android.client.utils.message.isPollClosed
@@ -36,7 +38,15 @@ import io.getstream.chat.android.models.User
 /**
  * An interface that allows to generate a preview text for the given message.
  */
-public fun interface MessagePreviewFormatter {
+public interface MessagePreviewFormatter {
+
+    /**
+     * Generates a preview title for the given message.
+     *
+     * @param message The message whose data is used to generate the preview title.
+     * @return The formatted text representation of the preview title.
+     */
+    public fun formatMessageTitle(message: Message): AnnotatedString
 
     /**
      * Generates a preview text for the given message.
@@ -94,6 +104,29 @@ private class DefaultMessagePreviewFormatter(
 
     private companion object {
         private const val SPACE = " "
+    }
+
+    /**
+     * Generates a preview title for the given message.
+     *
+     * @param message The message whose data is used to generate the preview title.
+     * @return The formatted text representation of the preview title.
+     */
+    override fun formatMessageTitle(message: Message): AnnotatedString {
+        val channel = message.channelInfo
+        return if (channel?.name != null && channel.memberCount > 2) {
+            context.getString(
+                R.string.stream_compose_message_preview_sender,
+                message.user.name,
+                channel.name
+            ).parseBoldTags()
+        } else {
+            buildAnnotatedString {
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(message.user.name)
+                }
+            }
+        }
     }
 
     /**

@@ -18,6 +18,7 @@ package io.getstream.chat.android.ui.viewmodel.pinned
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import io.getstream.chat.android.ui.common.feature.pinned.PinnedMessageListController
 
 /**
  * A ViewModel factory for PinnedMessageListViewModel.
@@ -36,7 +37,7 @@ public class PinnedMessageListViewModelFactory(private val cid: String?) : ViewM
         }
 
         @Suppress("UNCHECKED_CAST")
-        return PinnedMessageListViewModel(cid) as T
+        return PinnedMessageListViewModel(controller = PinnedMessageListController(cid)) as T
     }
 
     @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN")
