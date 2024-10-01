@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -279,13 +278,15 @@ internal fun DefaultPinnedMessageListLoadingContent(modifier: Modifier = Modifie
  */
 @Composable
 internal fun DefaultPinnedMessageListLoadingMoreContent() {
-    LoadingIndicator(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
             .background(ChatTheme.colors.appBackground)
-            .padding(8.dp),
-    )
+            .padding(top = 8.dp, start = 8.dp, end = 8.dp, bottom = 40.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        LoadingIndicator(modifier = Modifier.size(16.dp))
+    }
 }
 
 /**

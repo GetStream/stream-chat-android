@@ -85,7 +85,7 @@ fun ChannelInfoOptionItem(
         Text(
             modifier = Modifier.weight(1f),
             text = text,
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             color = textColor,
