@@ -33,4 +33,16 @@
     <string name="custom_login_hint_user_id">User ID</string>
     <string name="custom_login_hint_user_token">User Token</string>
     <string name="custom_login_hint_user_name">Username (optional)</string>
+
+    <!--  Channel Info Screens  -->
+    <string name="channel_info_user_name">Username</string>
+    <string name="channel_info_option_mute_user">Mute User</string>
+    <string name="channel_info_option_pinned_messages">Pinned Messages</string>
+    <string name="channel_info_option_delete_conversation">Delete Conversation</string>
+    <string name="channel_info_delete_conversation_confirm">Are you sure you want to delete this conversation?</string>
+    <string name="channel_info_error_load_channel_details">Failed to load channel details</string>
+    <string name="channel_info_error_delete_channel">Failed to delete channel</string>
+    <string name="channel_group_info_owner">Owner</string>
+    <string name="channel_group_info_member">Member</string>
+    <string name="channel_group_info_moderator">Moderator</string>
 </resources>
