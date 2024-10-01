@@ -73,6 +73,8 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add `PinnedMessageList` component for showing the list of pinned messages in a channel. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
+- Add `formatMessageTitle` method to `MessagePreviewFormatter`, to allow message preview title formatting customization. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
 
 ### ⚠️ Changed
 

@@ -191,7 +191,8 @@ object PredefinedUserCredentials {
                 name = "Petar Velikov",
                 image = "https://ca.slack-edge.com/T02RM6X6B-U07LDJZRUTG-a4129fed05b6-512",
             ),
-            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicHZlbGlrb3YifQ.d5eenuTIZD5gZh7rHiv3lYbE8uOqUiHfwULtUr8a-l0",
+            token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicHZlbGlrb3YifQ." +
+                "d5eenuTIZD5gZh7rHiv3lYbE8uOqUiHfwULtUr8a-l0",
         ),
         UserCredentials(
             apiKey = API_KEY,
