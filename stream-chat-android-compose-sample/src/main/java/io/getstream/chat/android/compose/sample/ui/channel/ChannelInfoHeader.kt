@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.sample.ui.channel
 
 import androidx.compose.foundation.background
@@ -45,26 +61,26 @@ fun ChannelInfoHeader(
         modifier = Modifier
             .fillMaxWidth()
             .background(ChatTheme.colors.barsBackground),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(onClick = onBack) {
                 Icon(
                     modifier = Modifier.size(24.dp),
                     painter = painterResource(id = R.drawable.stream_compose_ic_arrow_back),
                     contentDescription = "Back",
-                    tint = ChatTheme.colors.textHighEmphasis
+                    tint = ChatTheme.colors.textHighEmphasis,
                 )
             }
         }
         UserAvatar(
             modifier = Modifier.size(72.dp),
-            user = member.user
+            user = member.user,
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
@@ -72,14 +88,14 @@ fun ChannelInfoHeader(
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
             color = ChatTheme.colors.textHighEmphasis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = member.user.getLastSeenText(context),
             fontSize = 12.sp,
             color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(16.dp))
         ChannelInfoContentDivider(height = 1.dp)
@@ -94,20 +110,20 @@ private fun UsernameSection(member: Member) {
             .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
             text = "@${member.user.name.lowercase()}",
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
             color = ChatTheme.colors.textHighEmphasis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
         Text(
             text = stringResource(id = R.string.channel_info_user_name),
             fontSize = 14.sp,
             color = ChatTheme.colors.textLowEmphasis,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
         )
     }
 }

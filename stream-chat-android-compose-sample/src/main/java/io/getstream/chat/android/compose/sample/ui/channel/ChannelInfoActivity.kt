@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.sample.ui.channel
 
 import android.content.Context
@@ -58,7 +74,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
 
     private val viewModelFactory by lazy {
         ChannelInfoViewModelFactory(
-            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
+            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
         )
     }
 
@@ -74,7 +90,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
                         state = state,
                         onBack = ::finish,
                         onPinnedMessagesClick = ::openPinnedMessages,
-                        onConfirmDelete = viewModel::onDeleteChannel
+                        onConfirmDelete = viewModel::onDeleteChannel,
                     )
                 }
             }
@@ -98,7 +114,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
     private fun openPinnedMessages() {
         val intent = PinnedMessagesActivity.createIntent(
             context = this,
-            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID))
+            channelId = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
         )
         startActivity(intent)
     }
@@ -129,7 +145,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
                     modifier = Modifier
                         .fillMaxSize()
                         .background(ChatTheme.colors.appBackground)
-                        .padding(padding)
+                        .padding(padding),
                 ) {
                     var showConfirmDeleteDialog by remember { mutableStateOf(false) }
                     LazyColumn {
@@ -142,7 +158,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
                             ChannelInfoOptionItem(
                                 icon = R.drawable.stream_compose_ic_message_pinned,
                                 text = stringResource(id = R.string.channel_info_option_pinned_messages),
-                                onClick = onPinnedMessagesClick
+                                onClick = onPinnedMessagesClick,
                             )
                             ChannelInfoContentDivider(height = 1.dp)
                         }
@@ -156,7 +172,7 @@ class ChannelInfoActivity : BaseConnectedActivity() {
                                     text = stringResource(id = R.string.channel_info_option_delete_conversation),
                                     textColor = ChatTheme.colors.errorAccent,
                                     onClick = { showConfirmDeleteDialog = true },
-                                    trailingContent = {}
+                                    trailingContent = {},
                                 )
                                 ChannelInfoContentDivider(height = 1.dp)
                             }
@@ -173,11 +189,11 @@ class ChannelInfoActivity : BaseConnectedActivity() {
                             },
                             onDismiss = {
                                 showConfirmDeleteDialog = false
-                            }
+                            },
                         )
                     }
                 }
-            }
+            },
         )
     }
 }

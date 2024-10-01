@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.sample.ui.channel
 
 import androidx.compose.foundation.background
@@ -42,30 +58,30 @@ fun ChannelInfoMemberItem(
             .fillMaxWidth()
             .background(ChatTheme.colors.barsBackground)
             .padding(8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         UserAvatar(
             modifier = Modifier.size(40.dp),
-            user = member.user
+            user = member.user,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = member.user.name,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 14.sp,
-                color = ChatTheme.colors.textHighEmphasis
+                color = ChatTheme.colors.textHighEmphasis,
             )
             Text(
                 text = member.user.getLastSeenText(context),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
         val isOwner = member.user.id == createdBy.id
@@ -81,7 +97,7 @@ fun ChannelInfoMemberItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 12.sp,
-                color = ChatTheme.colors.textLowEmphasis
+                color = ChatTheme.colors.textLowEmphasis,
             )
         }
     }
