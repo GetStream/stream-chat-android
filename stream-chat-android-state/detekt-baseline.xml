@@ -17,7 +17,6 @@
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun lessThanOrEqualsFilterArguments()</ID>
     <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notEqualsFilterArguments()</ID>
-    <ID>LongMethod:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$@JvmStatic fun notInFilterArguments()</ID>
     <ID>LongMethod:EventHandlerSequential.kt$EventHandlerSequential$private suspend fun updateOfflineStorage(batchEvent: BatchEvent)</ID>
     <ID>LongMethod:QueryChannelsSortTest.kt$QueryChannelsSortTest.Companion$@JvmStatic fun hasUnreadSortArguments()</ID>
     <ID>LoopWithTooManyJumpStatements:EventHandlerSequential.kt$EventHandlerSequential$for</ID>
@@ -32,7 +31,6 @@
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it > 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$compare(t.getMemberPropertyOrExtra(fieldName, value::class) as? Comparable&lt;Any>, value as? Comparable&lt;Any>) { it >= 0 }</ID>
     <ID>MaxLineLength:CustomObjectFiltering.kt$getMemberPropertyOrExtra(MEMBERS_FIELD_NAME, List::class)?.mapNotNull { (it as? Member)?.getUserId() } ?: emptyList()</ID>
-    <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$members = (List(positiveRandomInt(10)) { randomMember() } + members).shuffled()</ID>
     <ID>MaxLineLength:CustomObjectFilteringTest.kt$CustomObjectFilteringTest.Companion$randomChannel(members = (List(positiveRandomInt(10)) { randomMember() } + randomMember(randomUser(id = memberId))).shuffled())</ID>
     <ID>MaxLineLength:DeleteReactionErrorHandlerImpl.kt$DeleteReactionErrorHandlerImpl$*</ID>
     <ID>MaxLineLength:EventHandlerSequential.kt$EventHandlerSequential$"Skipping unread counts update for channel: $cid. ${ChannelCapabilities.READ_EVENTS} capability is missing."</ID>
