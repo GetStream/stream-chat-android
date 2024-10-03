@@ -48,6 +48,7 @@ public data class MessageListItemWrapper(
         return "MessageListItemWrapper(" +
             "endOfNewMessagesReached=$areNewestMessagesLoaded" +
             ", hasNewMessages=$hasNewMessages" +
+            ", newMessageState=$newMessageState" +
             ", items=${items.size}" +
             ", first: ${items.firstOrNull()?.stringify()}" +
             ", isTyping=$isTyping" +
