@@ -568,4 +568,8 @@ public class MessageListViewModel(
         messageListController.onCleared()
         super.onCleared()
     }
+
+    public fun addPollOption(poll: Poll, option: String) {
+        messageListController.addPollOption(poll, option)
+    }
 }
