@@ -58,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fixed `MessageListView` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
 ### ⬆️ Improved
 
@@ -69,6 +70,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fixed `MessageList` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
 ### ⬆️ Improved
 
