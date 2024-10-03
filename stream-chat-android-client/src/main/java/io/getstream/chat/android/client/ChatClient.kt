@@ -1510,6 +1510,14 @@ internal constructor(
             }
     }
 
+    @CheckResult
+    public fun suggestPollOption(
+        pollId: String,
+        option: String,
+    ): Call<Option> {
+        return api.suggestPollOption(pollId, option)
+    }
+
     /**
      * Cast a vote for a poll in a message.
      *
