@@ -633,16 +633,20 @@ public class MessageListController(
             logger.w { "[updateMessageList] #messageList; rejected (N1)" }
             return
         }
-        val first = newState.messageItems.filterIsInstance<MessageItemState>().firstOrNull()?.stringify()
-        val last = newState.messageItems.filterIsInstance<MessageItemState>().lastOrNull()?.stringify()
-        logger.d { "[updateMessageList] #messageList; first: $first, last: $last" }
+
+        logger.d {
+            "[updateMessageList] #messageList; first: " +
+                "${newState.messageItems.filterIsInstance<HasMessageListItemState>().firstOrNull()?.stringify()}, " +
+                "last: ${newState.messageItems.filterIsInstance<HasMessageListItemState>().lastOrNull()?.stringify()}"
+        }
 
         val oldLastMessage = _messageListState.value.lastItemOrNull<HasMessageListItemState>()?.message
         val newLastMessage = newState.lastItemOrNull<HasMessageListItemState>()?.message
 
-        val newMessageState = when (oldLastMessage?.id != newLastMessage?.id) {
-            true -> getNewMessageState(newLastMessage, lastLoadedMessage)
-            else -> null
+        val newMessageState = getNewMessageState(newLastMessage, lastLoadedMessage)
+        logger.v {
+            "[updateMessageList] #messageList; oldLastMessage: ${oldLastMessage?.text}, " +
+                "newLastMessage: ${newLastMessage?.text}, newMessageState: $newMessageState"
         }
         setMessageListState(newState.copy(newMessageState = newMessageState))
         if (newMessageState != null) lastLoadedMessage = newLastMessage
