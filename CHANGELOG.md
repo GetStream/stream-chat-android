@@ -58,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix max allowed votes base on available options. [#5431](https://github.com/GetStream/stream-chat-android/pull/5431)
 
 ### ⬆️ Improved
 
