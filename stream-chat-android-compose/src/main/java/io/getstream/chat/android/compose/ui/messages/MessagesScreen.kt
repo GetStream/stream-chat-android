@@ -63,6 +63,7 @@ import io.getstream.chat.android.compose.state.messageoptions.MessageOptionItemS
 import io.getstream.chat.android.compose.ui.components.SimpleDialog
 import io.getstream.chat.android.compose.ui.components.messageoptions.defaultMessageOptionsState
 import io.getstream.chat.android.compose.ui.components.moderatedmessage.ModeratedMessageDialog
+import io.getstream.chat.android.compose.ui.components.poll.PollAnswersDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollMoreOptionsDialog
 import io.getstream.chat.android.compose.ui.components.poll.PollViewResultDialog
 import io.getstream.chat.android.compose.ui.components.reactionpicker.ReactionsPicker
@@ -688,6 +689,7 @@ public fun BoxScope.AttachmentsPickerMenu(
                             name = action.question,
                             options = action.options.filter { it.title.isNotEmpty() }.map { it.title },
                             allowUserSuggestedOptions = action.switches.any { it.key == "allowUserSuggestedOptions" && it.enabled },
+                            allowAnswers = action.switches.any { it.key == "allowAnswers" && it.enabled },
                             votingVisibility = if (action.switches.any { it.key == "votingVisibility" && it.enabled }) {
                                 VotingVisibility.ANONYMOUS
                             } else {
@@ -828,6 +830,15 @@ public fun PollDialogs(listViewModel: MessageListViewModel) {
     if (selectedPoll?.pollSelectionType == PollSelectionType.ViewResult) {
         PollViewResultDialog(
             selectedPoll = selectedPoll,
+            onDismissRequest = { dismiss.invoke() },
+            onBackPressed = { dismiss.invoke() },
+        )
+    }
+
+    if (selectedPoll?.pollSelectionType == PollSelectionType.ViewAnswers) {
+        PollAnswersDialog(
+            selectedPoll = selectedPoll,
+            listViewModel = listViewModel,
             onDismissRequest = { dismiss.invoke() },
             onBackPressed = { dismiss.invoke() },
         )

@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
 import io.getstream.chat.android.compose.ui.components.composer.InputField
+import io.getstream.chat.android.compose.ui.components.poll.AddAnswerDialog
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.models.Message
@@ -67,7 +68,6 @@ import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.VotingVisibility
-import io.getstream.chat.android.previewdata.PreviewMessageData
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
 import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
@@ -83,16 +83,18 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param selectPoll Callback when a user selects a poll.
  * @param onClosePoll Callback when a user closes a poll.
  * @param onAddPollOption Callback when a user adds a new option to the poll.
+ * @param onAddAnswer Callback when a user adds a new answer to the poll.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  */
-@Composable
 @Suppress("LongParameterList", "LongMethod")
+@Composable
 public fun PollMessageContent(
     modifier: Modifier,
     messageItem: MessageItemState,
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
@@ -139,6 +141,9 @@ public fun PollMessageContent(
                         onRemoveVote.invoke(message, poll, vote)
                     },
                     selectPoll = selectPoll,
+                    onAddAnswer = { answer ->
+                        onAddAnswer.invoke(message, poll, answer)
+                    },
                     onClosePoll = onClosePoll,
                     onAddPollOption = onAddPollOption,
                 )
@@ -174,14 +179,15 @@ public fun PollMessageContent(
     }
 }
 
-@Composable
 @Suppress("LongParameterList", "LongMethod")
+@Composable
 private fun PollMessageContent(
     message: Message,
     poll: Poll,
     isMine: Boolean,
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
+    onAddAnswer: (answer: String) -> Unit,
     onRemoveVote: (Vote) -> Unit,
     onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
@@ -189,6 +195,14 @@ private fun PollMessageContent(
     val showDialog = remember { mutableStateOf(false) }
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
+    val showAddAnswerDialog = remember { mutableStateOf(false) }
+
+    if (showAddAnswerDialog.value) {
+        AddAnswerDialog(
+            onDismiss = { showAddAnswerDialog.value = false },
+            onNewAnswer = { newAnswer -> onAddAnswer.invoke(newAnswer) },
+        )
+    }
 
     if (showDialog.value) {
         NewOptionDialog(
@@ -254,6 +268,24 @@ private fun PollMessageContent(
                     text = stringResource(id = R.string.stream_compose_poll_suggest_option),
                     onButtonClicked = { showDialog.value = true },
                 )
+            }
+        }
+
+        if (poll.allowAnswers) {
+            if (poll.answers.isNotEmpty()) {
+                item {
+                    PollOptionButton(
+                        text = "View Answers",
+                        onButtonClicked = { selectPoll.invoke(message, poll, PollSelectionType.ViewAnswers) },
+                    )
+                }
+            } else if (!poll.closed) {
+                item {
+                    PollOptionButton(
+                        text = "Add Answer",
+                        onButtonClicked = { showAddAnswerDialog.value = true },
+                    )
+                }
             }
         }
 
@@ -498,6 +530,7 @@ private fun PollMessageContentPreview() {
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
                 selectPoll = { _, _, _ -> },
+                onAddAnswer = { _, _, _ -> },
                 onClosePoll = {},
                 onAddPollOption = { _, _ -> },
                 messageItem = MessageItemState(
@@ -513,6 +546,7 @@ private fun PollMessageContentPreview() {
                 onCastVote = { _, _, _ -> },
                 onRemoveVote = { _, _, _ -> },
                 selectPoll = { _, _, _ -> },
+                onAddAnswer = { _, _, _ -> },
                 onClosePoll = {},
                 onAddPollOption = { _, _ -> },
                 messageItem = MessageItemState(

@@ -76,6 +76,7 @@ public class DefaultPollSwitchItemFactory(
             ),
             PollSwitchItem(
                 title = context.getString(R.string.stream_compose_poll_option_switch_add_comment),
+                key = "allowAnswers",
                 enabled = false,
             ),
         )
