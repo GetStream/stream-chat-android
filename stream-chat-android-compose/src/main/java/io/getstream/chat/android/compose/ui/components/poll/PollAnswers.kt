@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.android.compose.ui.components.poll
 
 import androidx.activity.compose.BackHandler
@@ -47,6 +63,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
+@Suppress("LongMethod", "MagicNumber")
 @Composable
 public fun PollAnswersDialog(
     selectedPoll: SelectedPoll,
@@ -122,7 +139,7 @@ public fun PollAnswersDialog(
                                         topEnd = 12.dp,
                                         bottomStart = 12.dp,
                                         bottomEnd = 12.dp,
-                                    )
+                                    ),
                                 ),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -158,7 +175,7 @@ internal fun PollAnswersItem(
                     topEnd = 12.dp,
                     bottomStart = 12.dp,
                     bottomEnd = 12.dp,
-                )
+                ),
             )
             .padding(horizontal = 16.dp, vertical = 16.dp),
     ) {

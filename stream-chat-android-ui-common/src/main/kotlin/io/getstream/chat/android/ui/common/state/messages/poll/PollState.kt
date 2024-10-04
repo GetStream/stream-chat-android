@@ -41,8 +41,8 @@ public data class SelectedPoll(
 @Stable
 public sealed class PollSelectionType {
     public data object MoreOption : PollSelectionType()
-
     public data object ViewResult : PollSelectionType()
+    public data object ViewAnswers : PollSelectionType()
 }
 
 internal fun PollState.stringify(): String {

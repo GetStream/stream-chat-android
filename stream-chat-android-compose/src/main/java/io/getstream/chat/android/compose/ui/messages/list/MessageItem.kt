@@ -140,6 +140,7 @@ public fun MessageItem(
     onCastVote: (Message, Poll, Option) -> Unit = { _, _, _ -> },
     onRemoveVote: (Message, Poll, Vote) -> Unit = { _, _, _ -> },
     selectPoll: (Message, Poll, PollSelectionType) -> Unit = { _, _, _ -> },
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit = { _, _, _ -> },
     onClosePoll: (String) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
@@ -171,6 +172,7 @@ public fun MessageItem(
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
             selectPoll = selectPoll,
+            onAddAnswer = onAddAnswer,
             onClosePoll = onClosePoll,
         )
     },
@@ -432,6 +434,7 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onRemoveVote Handler when a user cast a remove on an option.
  * @param onClosePoll Handler when a user close a poll.
  */
+@Suppress("LongParameterList")
 @Composable
 internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
@@ -444,8 +447,8 @@ internal fun DefaultMessageItemCenterContent(
     onCastVote: (Message, Poll, Option) -> Unit,
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
+    onAddAnswer: (message: Message, poll: Poll, answer: String) -> Unit,
     onClosePoll: (String) -> Unit,
-
 ) {
     val modifier = Modifier.widthIn(max = ChatTheme.dimens.messageItemMaxWidth)
     if (messageItem.message.isPoll()) {
@@ -464,6 +467,7 @@ internal fun DefaultMessageItemCenterContent(
             selectPoll = selectPoll,
             onClosePoll = onClosePoll,
             onLongItemClick = onLongItemClick,
+            onAddAnswer = onAddAnswer,
         )
     } else if (messageItem.message.isEmojiOnlyWithoutBubble()) {
         EmojiMessageContent(
