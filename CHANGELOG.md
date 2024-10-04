@@ -58,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⬆️ Improved
 
@@ -69,10 +70,12 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⬆️ Improved
 
 ### ✅ Added
+- Add configuration options to `AttachmentsPickerTabFactories#defaultFactoriesWithoutStoragePermissions` to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⚠️ Changed
 
