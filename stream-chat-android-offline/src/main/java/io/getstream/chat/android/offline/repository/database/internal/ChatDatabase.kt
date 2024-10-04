@@ -22,6 +22,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
+import io.getstream.chat.android.offline.repository.database.converter.internal.AnswerConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.DateConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.ExtraDataConverter
 import io.getstream.chat.android.offline.repository.database.converter.internal.FilterObjectConverter
@@ -74,10 +75,11 @@ import io.getstream.chat.android.offline.repository.domain.user.internal.UserEnt
         SyncStateEntity::class,
         PollEntity::class,
     ],
-    version = 77,
+    version = 78,
     exportSchema = false,
 )
 @TypeConverters(
+    AnswerConverter::class,
     FilterObjectConverter::class,
     ListConverter::class,
     MapConverter::class,
