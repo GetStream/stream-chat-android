@@ -21,6 +21,7 @@ import io.getstream.chat.android.client.api.models.Pagination
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.WatchChannelRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -709,6 +710,14 @@ internal class ChannelLogic(
                 channelStateLogic.upsertPoll(
                     event.poll.copy(
                         ownVotes = ownVotes.values.toList(),
+                    ),
+                )
+            }
+            is AnswerCastedEvent -> {
+                val answers = event.poll.answers.associateBy { it.id } + (event.newAnswer.id to event.newAnswer)
+                channelStateLogic.upsertPoll(
+                    event.poll.copy(
+                        answers = answers.values.toList(),
                     ),
                 )
             }
