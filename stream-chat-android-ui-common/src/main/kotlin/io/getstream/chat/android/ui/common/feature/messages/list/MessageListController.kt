@@ -1811,6 +1811,21 @@ public class MessageListController(
     }
 
     /**
+     * Cast an answer for a poll in a message.
+     *
+     * @param messageId The message id where the poll is.
+     * @param pollId The poll id.
+     * @param answer The answer to cast.
+     */
+    public fun castAnswer(
+        messageId: String,
+        pollId: String,
+        answer: String,
+    ) {
+        chatClient.castPollAnswer(messageId, pollId, answer).enqueue()
+    }
+
+    /**
      * Remove a vote for a poll in a message.
      *
      * @param messageId The message id where the poll is.
