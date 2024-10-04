@@ -43,7 +43,7 @@ public object AttachmentsPickerTabFactories {
             mediaAllowed = mediaAllowed,
             captureImageAllowed = captureImageAllowed,
             captureVideoAllowed = captureVideoAllowed,
-            pollAllowed = pollAllowed
+            pollAllowed = pollAllowed,
         )
         return listOf(factory)
     }

@@ -170,7 +170,7 @@ public class AttachmentsPickerSystemTabFactory(
             filesAllowed = filesAllowed,
             mediaAllowed = mediaAllowed,
             captureAllowed = mediaPickerMode != null,
-            pollAllowed = pollAllowed
+            pollAllowed = pollAllowed,
         )
         val buttonActions = ButtonActions(
             onFilesClick = { filePickerLauncher.launch(filePickerIntent()) },
@@ -186,7 +186,7 @@ public class AttachmentsPickerSystemTabFactory(
                     captureLauncher?.launch(Unit)
                 }
             },
-            onPollClick = { pollShown = true }
+            onPollClick = { pollShown = true },
         )
 
         ButtonRow(config = buttonsConfig, actions = buttonActions)
@@ -200,15 +200,15 @@ public class AttachmentsPickerSystemTabFactory(
                     onAttachmentsChanged = onAttachmentsChanged,
                     onAttachmentItemSelected = onAttachmentItemSelected,
                     onAttachmentsSubmitted = onAttachmentsSubmitted,
-                    onDismissPollDialog = { pollShown = false }
-                )
+                    onDismissPollDialog = { pollShown = false },
+                ),
             )
         }
 
         if (cameraPermissionDialogShown && cameraPermissionState != null) {
             CameraPermissionDialog(
                 permissionState = cameraPermissionState,
-                onDismiss = { cameraPermissionDialogShown = false }
+                onDismiss = { cameraPermissionDialogShown = false },
             )
         }
 
@@ -300,7 +300,7 @@ private fun CameraPermissionDialog(
             modifier = Modifier
                 .wrapContentSize()
                 .background(ChatTheme.colors.barsBackground, RoundedCornerShape(16.dp)),
-            contentAlignment = Alignment.BottomCenter
+            contentAlignment = Alignment.BottomCenter,
         ) {
             MissingPermissionContent(permissionState)
         }

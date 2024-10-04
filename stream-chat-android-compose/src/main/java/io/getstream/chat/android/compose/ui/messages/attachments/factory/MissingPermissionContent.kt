@@ -48,7 +48,7 @@ import io.getstream.chat.android.uiutils.util.openSystemSettings
 @Composable
 internal fun MissingPermissionContent(
     permissionState: PermissionState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val title = when (permissionState.permission) {
         Manifest.permission.READ_EXTERNAL_STORAGE,
