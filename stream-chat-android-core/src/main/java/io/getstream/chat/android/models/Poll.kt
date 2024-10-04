@@ -56,6 +56,7 @@ public data class Poll(
     val createdAt: Date,
     val updatedAt: Date,
     val closed: Boolean,
+    val answers: List<Answer> = emptyList(),
 ) {
 
     /**
@@ -66,6 +67,16 @@ public data class Poll(
      */
     public fun getVotes(option: Option): List<Vote> = votes.filter { it.optionId == option.id }
 }
+
+@Immutable
+public data class Answer(
+    val id: String,
+    val pollId: String,
+    val text: String,
+    val createdAt: Date,
+    val updatedAt: Date,
+    val user: User?,
+)
 
 /**
  * The Option object represents an answer option in a poll.
@@ -90,6 +101,7 @@ public data class Option(
  * @property enforceUniqueVote If set to true, a user can only vote once. Default is true.
  * @property maxVotesAllowed The maximum number of votes a user can cast. Default is 1.
  * @property allowUserSuggestedOptions If set to true, users can suggest new options. Default is false.
+ * @property allowAnswers If set to true, users can send answers. Default is false.
  */
 public data class PollConfig(
     val name: String,
@@ -99,6 +111,7 @@ public data class PollConfig(
     val enforceUniqueVote: Boolean = true,
     val maxVotesAllowed: Int = 1,
     val allowUserSuggestedOptions: Boolean = false,
+    val allowAnswers: Boolean = false,
 )
 
 /**
