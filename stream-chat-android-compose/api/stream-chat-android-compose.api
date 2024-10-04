@@ -3205,6 +3205,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public final fun loadMore ()V
 	public final fun muteChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)V
+	public final fun refresh ()V
 	public final fun selectChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/models/querysort/QuerySorter;)V

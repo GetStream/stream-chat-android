@@ -75,6 +75,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelListViewModel.refresh` method to refresh the channel list. [#5425](https://github.com/GetStream/stream-chat-android/pull/5425)
 
 ### ⚠️ Changed
 
