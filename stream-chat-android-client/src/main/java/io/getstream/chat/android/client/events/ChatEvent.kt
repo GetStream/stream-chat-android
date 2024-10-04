@@ -18,6 +18,7 @@ package io.getstream.chat.android.client.events
 
 import io.getstream.chat.android.client.clientstate.DisconnectCause
 import io.getstream.chat.android.client.errors.ChatError
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
@@ -713,6 +714,20 @@ public data class VoteCastedEvent(
     override val channelId: String,
     override val poll: Poll,
     val newVote: Vote,
+) : CidEvent(), HasPoll
+
+/**
+ * Triggered when a vote is casted.
+ */
+public data class AnswerCastedEvent(
+    override val type: String,
+    override val createdAt: Date,
+    override val rawCreatedAt: String?,
+    override val cid: String,
+    override val channelType: String,
+    override val channelId: String,
+    override val poll: Poll,
+    val newAnswer: Answer,
 ) : CidEvent(), HasPoll
 
 /**

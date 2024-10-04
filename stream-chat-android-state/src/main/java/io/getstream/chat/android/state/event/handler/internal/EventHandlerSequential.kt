@@ -18,6 +18,7 @@ package io.getstream.chat.android.state.event.handler.internal
 
 import androidx.annotation.VisibleForTesting
 import io.getstream.chat.android.client.ChatEventListener
+import io.getstream.chat.android.client.events.AnswerCastedEvent
 import io.getstream.chat.android.client.events.ChannelDeletedEvent
 import io.getstream.chat.android.client.events.ChannelHiddenEvent
 import io.getstream.chat.android.client.events.ChannelTruncatedEvent
@@ -712,6 +713,18 @@ internal class EventHandlerSequential(
                     batch.addPoll(
                         event.poll.copy(
                             ownVotes = ownVotes.values.toList(),
+                        ),
+                    )
+                }
+                is AnswerCastedEvent -> {
+                    val answers = (
+                        batch.getPoll(event.poll.id)?.answers
+                            ?.associateBy { it.id }
+                            ?: emptyMap()
+                        ) + (event.newAnswer.id to event.newAnswer)
+                    batch.addPoll(
+                        event.poll.copy(
+                            answers = answers.values.toList(),
                         ),
                     )
                 }
