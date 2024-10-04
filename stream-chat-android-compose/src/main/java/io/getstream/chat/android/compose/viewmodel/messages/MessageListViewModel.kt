@@ -42,7 +42,6 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
 import io.getstream.chat.android.ui.common.state.messages.poll.PollState
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 import io.getstream.log.taggedLogger
-import io.getstream.result.call.Call
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -438,14 +437,27 @@ public class MessageListViewModel(
      * @param message The message where the poll is.
      * @param poll The poll that want to be casted a vote.
      * @param option The option to vote for.
-     *
-     * @return Executable async [Call] responsible for casting a vote.
      */
     public fun castVote(message: Message, poll: Poll, option: Option) {
         messageListController.castVote(
             messageId = message.id,
             pollId = poll.id,
             option = option,
+        )
+    }
+
+    /**
+     * Cast an answer for a poll in a message.
+     *
+     * @param message The message where the poll is.
+     * @param poll The poll that want to be casted an answer.
+     * @param answer The answer that should be casted.
+     */
+    public fun castAnswer(message: Message, poll: Poll, answer: String) {
+        messageListController.castAnswer(
+            messageId = message.id,
+            pollId = poll.id,
+            answer = answer,
         )
     }
 

@@ -63,7 +63,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.ui.common.state.messages.poll.SelectedPoll
 
-@Suppress("LongMethod")
+@Suppress("LongMethod", "MagicNumber")
 @Composable
 public fun PollAnswersDialog(
     selectedPoll: SelectedPoll,
