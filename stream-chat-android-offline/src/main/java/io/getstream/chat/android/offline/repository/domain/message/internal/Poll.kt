@@ -40,6 +40,7 @@ internal class PollEntity(
     val createdAt: Date,
     val updatedAt: Date,
     val closed: Boolean,
+    val answers: List<AnswerEntity>,
 )
 
 @JsonClass(generateAdapter = true)
@@ -53,6 +54,16 @@ internal class VoteEntity(
     val id: String,
     val pollId: String,
     val optionId: String,
+    val createdAt: Date,
+    val updatedAt: Date,
+    val userId: String?,
+)
+
+@JsonClass(generateAdapter = true)
+internal class AnswerEntity(
+    val id: String,
+    val pollId: String,
+    val text: String,
     val createdAt: Date,
     val updatedAt: Date,
     val userId: String?,
