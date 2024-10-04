@@ -1168,11 +1168,31 @@ constructor(
         messageId: String,
         pollId: String,
         optionId: String,
+    ): Call<Vote> = castVote(
+        messageId = messageId,
+        pollId = pollId,
+        vote = UpstreamVoteDto(option_id = optionId),
+    )
+
+    override fun castPollAnswer(
+        messageId: String,
+        pollId: String,
+        answer: String,
+    ): Call<Vote> = castVote(
+        messageId = messageId,
+        pollId = pollId,
+        vote = UpstreamVoteDto(answer_text = answer),
+    )
+
+    private fun castVote(
+        messageId: String,
+        pollId: String,
+        vote: UpstreamVoteDto,
     ): Call<Vote> {
         return pollsApi.castPollVote(
             messageId,
             pollId,
-            PollVoteRequest(UpstreamVoteDto(optionId)),
+            PollVoteRequest(vote),
         ).map { it.vote.toDomain(currentUserIdProvider()) }
     }
 
@@ -1213,6 +1233,7 @@ constructor(
                 enforce_unique_vote = pollConfig.enforceUniqueVote,
                 max_votes_allowed = pollConfig.maxVotesAllowed,
                 allow_user_suggested_options = pollConfig.allowUserSuggestedOptions,
+                allow_answers = pollConfig.allowAnswers,
             ),
         ).map { it.poll.toDomain(currentUserIdProvider()) }
     }

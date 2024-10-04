@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.api2.mapping
 import io.getstream.chat.android.client.api2.model.dto.DownstreamOptionDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamPollDto
 import io.getstream.chat.android.client.api2.model.dto.DownstreamVoteDto
+import io.getstream.chat.android.models.Answer
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.UserId
@@ -32,8 +33,38 @@ import io.getstream.chat.android.models.VotingVisibility
  */
 internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
     val ownUserId = currentUserId ?: own_votes.firstOrNull()?.user?.id
-    val votes = latest_votes_by_option?.values?.flatten()?.map { it.toDomain(currentUserId) } ?: emptyList()
-    val ownVotes = (own_votes.map { it.toDomain(currentUserId) } + votes.filter { it.user?.id == ownUserId })
+    val votes = latest_votes_by_option
+        ?.values
+        ?.flatten()
+        ?.filter { it.is_answer != true }
+        ?.map { it.toDomain(currentUserId) } ?: emptyList()
+    val ownVotes = (
+        own_votes
+            .filter { it.is_answer != true }
+            .map { it.toDomain(currentUserId) } +
+            votes.filter { it.user?.id == ownUserId }
+        )
+        .associateBy { it.id }
+        .values
+        .toList()
+
+    val answer = (
+        (
+            latest_votes_by_option
+                ?.values
+                ?.flatten()
+                ?.filter { it.is_answer == true }
+                ?.map { it.toAnswerDomain(currentUserId) }
+                ?: emptyList()
+            ) +
+            own_votes
+                .filter { it.is_answer == true }
+                .map { it.toAnswerDomain(currentUserId) }
+        )
+        .also {
+            println("JcLog: answerCount: ${it.size}")
+            it.forEach { println("JcLog: Answer: (${it.user?.name}) -> ${it.text}") }
+        }
         .associateBy { it.id }
         .values
         .toList()
@@ -54,6 +85,7 @@ internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
         createdAt = created_at,
         updatedAt = updated_at,
         closed = is_closed,
+        answers = answer,
     )
 }
 
@@ -76,6 +108,20 @@ internal fun DownstreamVoteDto.toDomain(currentUserId: UserId?): Vote = Vote(
     id = id,
     pollId = poll_id,
     optionId = option_id,
+    createdAt = created_at,
+    updatedAt = updated_at,
+    user = user?.toDomain(currentUserId),
+)
+
+/**
+ * Transforms DownstreamVoteDto to Answer
+ *
+ * @return Answer
+ */
+internal fun DownstreamVoteDto.toAnswerDomain(currentUserId: UserId?): Answer = Answer(
+    id = id,
+    pollId = poll_id,
+    text = answer_text ?: "",
     createdAt = created_at,
     updatedAt = updated_at,
     user = user?.toDomain(currentUserId),
