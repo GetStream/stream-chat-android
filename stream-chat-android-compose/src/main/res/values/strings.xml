@@ -216,6 +216,8 @@
     <string name="stream_compose_poll_see_more_options" translatable="false">See All %d Options</string>
     <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
     <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
+    <string name="stream_compose_poll_answers">Poll Answers</string>
+    <string name="stream_compose_add_answer">Add an Answer</string>
     <string name="stream_compose_poll_vote_counts" translatable="false">%d votes</string>
     <string name="stream_compose_poll_created_preview" translatable="false">📊 Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview" translatable="false">📊 Poll closed: %s</string>
