@@ -192,7 +192,7 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
             permissionChecker.checkCameraPermissions(
                 view = binding.root,
                 onPermissionDenied = { /* Do nothing */ },
-                onPermissionGranted = onPermissionGranted
+                onPermissionGranted = onPermissionGranted,
             )
         } else {
             onPermissionGranted()
