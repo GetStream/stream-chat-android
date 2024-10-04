@@ -122,6 +122,7 @@ class MessagesActivity : BaseConnectedActivity() {
             val shapes = StreamShapes.defaultShapes()
             val messageComposerTheme = MessageComposerTheme.defaultTheme(isInDarkMode, typography, shapes, colors)
             ChatTheme(
+                useDefaultSystemMediaPicker = true,
                 isInDarkMode = isInDarkMode,
                 colors = colors,
                 shapes = shapes,

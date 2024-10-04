@@ -19,7 +19,6 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
 import android.Manifest
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.ButtonDefaults
@@ -43,10 +42,14 @@ import io.getstream.chat.android.uiutils.util.openSystemSettings
  * The UI explains to the user which permission is missing and why we need it.
  *
  * @param permissionState A state object to control and observe permission status changes.
+ * @param modifier A [Modifier] for external customisation.
  */
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun MissingPermissionContent(permissionState: PermissionState) {
+internal fun MissingPermissionContent(
+    permissionState: PermissionState,
+    modifier: Modifier = Modifier
+) {
     val title = when (permissionState.permission) {
         Manifest.permission.READ_EXTERNAL_STORAGE,
         Manifest.permission.READ_MEDIA_IMAGES,
@@ -68,7 +71,7 @@ internal fun MissingPermissionContent(permissionState: PermissionState) {
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(

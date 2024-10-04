@@ -17,8 +17,6 @@
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
 import android.Manifest
-import android.content.Context
-import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +37,7 @@ import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
 import java.io.File
 
 /**
@@ -94,7 +93,7 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
     ) {
         val context = LocalContext.current
 
-        val requiresCameraPermission = isCameraPermissionDeclared(context)
+        val requiresCameraPermission = context.isPermissionDeclared(Manifest.permission.CAMERA)
 
         val cameraPermissionState =
             if (requiresCameraPermission) rememberPermissionState(permission = Manifest.permission.CAMERA) else null
@@ -120,36 +119,4 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
             MissingPermissionContent(cameraPermissionState)
         }
     }
-
-    /**
-     * Returns if we need to check for the camera permission or not.
-     *
-     * @param context The context of the app.
-     * @return If the camera permission is declared in the manifest or not.
-     */
-    private fun isCameraPermissionDeclared(context: Context): Boolean {
-        return context.packageManager
-            .getPackageInfo(context.packageName, PackageManager.GET_PERMISSIONS)
-            .requestedPermissions
-            .contains(Manifest.permission.CAMERA)
-    }
-
-    /**
-     * Define which media type will be allowed.
-     */
-    public enum class PickerMediaMode {
-        PHOTO,
-        VIDEO,
-        PHOTO_AND_VIDEO,
-    }
-
-    /**
-     * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
-     */
-    private val PickerMediaMode.mode: CaptureMediaContract.Mode
-        get() = when (this) {
-            PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
-            PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
-            PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
-        }
 }

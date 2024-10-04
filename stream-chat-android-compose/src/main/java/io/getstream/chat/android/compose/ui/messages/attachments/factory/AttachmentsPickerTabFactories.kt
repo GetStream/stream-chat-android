@@ -22,15 +22,30 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
  */
 public object AttachmentsPickerTabFactories {
 
-    public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> {
-        val otherFactories = defaultFactories(
-            imagesTabEnabled = false,
-            filesTabEnabled = false,
-            takeImageEnabled = true,
-            recordVideoEnabled = true,
-            pollEnabled = true,
+    /**
+     * Builds the default list of attachment picker tab factories (without requesting storage permission).
+     *
+     * @param filesAllowed If the option to pick files is included in the attachments picker.
+     * @param mediaAllowed If the option to pick media (images/videos) is included in the attachments picker.
+     * @param captureImageAllowed If the option to capture an image is included in the attachments picker.
+     * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
+     * @param pollAllowed If the option to create a poll is included in the attachments picker.
+     */
+    public fun defaultFactoriesWithoutStoragePermissions(
+        filesAllowed: Boolean = true,
+        mediaAllowed: Boolean = true,
+        captureImageAllowed: Boolean = true,
+        captureVideoAllowed: Boolean = true,
+        pollAllowed: Boolean = true,
+    ): List<AttachmentsPickerTabFactory> {
+        val factory = AttachmentsPickerSystemTabFactory(
+            filesAllowed = filesAllowed,
+            mediaAllowed = mediaAllowed,
+            captureImageAllowed = captureImageAllowed,
+            captureVideoAllowed = captureVideoAllowed,
+            pollAllowed = pollAllowed
         )
-        return listOf(AttachmentsPickerSystemTabFactory(otherFactories))
+        return listOf(factory)
     }
 
     /**
@@ -55,19 +70,13 @@ public object AttachmentsPickerTabFactories {
             if (filesTabEnabled) AttachmentsPickerFilesTabFactory() else null,
             when {
                 takeImageEnabled && recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
-                    )
+                    AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.PHOTO_AND_VIDEO)
 
                 takeImageEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
-                    )
+                    AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.PHOTO)
 
                 recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(
-                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
-                    )
+                    AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.VIDEO)
 
                 else -> null
             },
