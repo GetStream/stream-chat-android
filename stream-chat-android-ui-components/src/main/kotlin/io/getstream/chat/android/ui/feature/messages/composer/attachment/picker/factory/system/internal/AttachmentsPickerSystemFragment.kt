@@ -132,20 +132,19 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
                 ),
             )
         }
-        captureMedia = activity?.activityResultRegistry
-            ?.register(
-                LauncherRequestsKeys.CAPTURE_MEDIA,
-                CaptureMediaContract(style.pickerMediaMode.mode),
-            ) { file: File? ->
-                val result: List<AttachmentMetaData> = if (file == null) {
-                    emptyList()
-                } else {
-                    listOf(AttachmentMetaData(requireContext(), file))
-                }
-
-                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
-                attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
+        captureMedia = activity?.activityResultRegistry?.register(
+            LauncherRequestsKeys.CAPTURE_MEDIA,
+            CaptureMediaContract(style.pickerMediaMode.mode),
+        ) { file: File? ->
+            val result: List<AttachmentMetaData> = if (file == null) {
+                emptyList()
+            } else {
+                listOf(AttachmentMetaData(requireContext(), file))
             }
+
+            attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
+            attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
+        }
         captureMedia?.let {
             binding.buttonCapture.setOnClickListener {
                 checkCameraPermissions {
