@@ -62,8 +62,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
-import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -93,6 +94,10 @@ public class AttachmentsPickerSystemTabFactory(
     private val captureVideoAllowed: Boolean,
     private val pollAllowed: Boolean,
 ) : AttachmentsPickerTabFactory {
+
+    private val mediaPickerContract = resolveMediaPickerMode(captureImageAllowed, captureVideoAllowed)
+        ?.mode
+        ?.let(::CaptureMediaContract)
 
     private val pollFactory by lazy { AttachmentsPickerPollTabFactory() }
 
@@ -153,16 +158,17 @@ public class AttachmentsPickerSystemTabFactory(
             onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
         }
 
-        val mediaPickerMode = resolveMediaPickerMode(captureImageAllowed, captureVideoAllowed)
-        var cameraPermissionDialogShown by remember { mutableStateOf(false) }
+        val captureLauncher = rememberCaptureMediaLauncher { file ->
+            onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
+        }
+        var cameraRationaleShown by remember { mutableStateOf(false) }
         val cameraPermissionRequired = context.isPermissionDeclared(Manifest.permission.CAMERA)
-        val cameraPermissionState =
-            if (cameraPermissionRequired) rememberPermissionState(Manifest.permission.CAMERA) else null
-
-        val captureLauncher = mediaPickerMode?.let {
-            rememberCaptureMediaLauncher(mediaPickerMode) { file ->
-                onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
+        val cameraPermissionState = if (cameraPermissionRequired) {
+            rememberPermissionState(Manifest.permission.CAMERA) {
+                if (it) captureLauncher?.launch(Unit)
             }
+        } else {
+            null
         }
 
         var pollShown by remember { mutableStateOf(false) }
@@ -170,7 +176,7 @@ public class AttachmentsPickerSystemTabFactory(
         val buttonsConfig = ButtonsConfig(
             filesAllowed = filesAllowed,
             mediaAllowed = mediaAllowed,
-            captureAllowed = mediaPickerMode != null,
+            captureAllowed = mediaPickerContract != null,
             pollAllowed = pollAllowed,
         )
         val buttonActions = ButtonActions(
@@ -181,10 +187,12 @@ public class AttachmentsPickerSystemTabFactory(
             },
             onCaptureClick = {
                 // Permission grant is needed only if CAMERA is declared in the Manifest and is not yet granted
-                if (cameraPermissionRequired && cameraPermissionState?.status is PermissionStatus.Denied) {
-                    cameraPermissionDialogShown = true
-                } else {
+                if (!cameraPermissionRequired || cameraPermissionState?.status?.isGranted == true) {
                     captureLauncher?.launch(Unit)
+                } else if (cameraPermissionState?.status?.shouldShowRationale == true) {
+                    cameraRationaleShown = true
+                } else {
+                    cameraPermissionState?.launchPermissionRequest()
                 }
             },
             onPollClick = { pollShown = true },
@@ -206,15 +214,15 @@ public class AttachmentsPickerSystemTabFactory(
             )
         }
 
-        if (cameraPermissionDialogShown && cameraPermissionState != null) {
+        if (cameraRationaleShown && cameraPermissionState != null) {
             CameraPermissionDialog(
                 permissionState = cameraPermissionState,
-                onDismiss = { cameraPermissionDialogShown = false },
+                onDismiss = { cameraRationaleShown = false },
             )
         }
 
         LaunchedEffect(cameraPermissionState?.status) {
-            cameraPermissionDialogShown = false
+            cameraRationaleShown = false
         }
     }
 
@@ -234,9 +242,11 @@ public class AttachmentsPickerSystemTabFactory(
         }
 
     @Composable
-    private fun rememberCaptureMediaLauncher(mode: PickerMediaMode, onResult: (File) -> Unit) =
-        rememberLauncherForActivityResult(CaptureMediaContract(mode.mode)) { file ->
-            file?.let(onResult)
+    private fun rememberCaptureMediaLauncher(onResult: (File) -> Unit) =
+        mediaPickerContract?.let {
+            rememberLauncherForActivityResult(mediaPickerContract) { file ->
+                file?.let(onResult)
+            }
         }
 
     private fun resolveMediaPickerMode(captureImageAllowed: Boolean, captureVideoAllowed: Boolean) = when {
