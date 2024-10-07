@@ -4794,27 +4794,10 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel : androidx/lifecycle/ViewModel {
-	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/pinned/PinnedMessageListController;)V
 	public final fun getErrorEvents ()Landroidx/lifecycle/LiveData;
 	public final fun getState ()Landroidx/lifecycle/LiveData;
 	public final fun loadMore ()V
-}
-
-public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel$State {
-	public fun <init> (ZLjava/util/List;ZLjava/util/Date;)V
-	public final fun component1 ()Z
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()Z
-	public final fun component4 ()Ljava/util/Date;
-	public final fun copy (ZLjava/util/List;ZLjava/util/Date;)Lio/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel$State;
-	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel$State;ZLjava/util/List;ZLjava/util/Date;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModel$State;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getCanLoadMore ()Z
-	public final fun getNextDate ()Ljava/util/Date;
-	public final fun getResults ()Ljava/util/List;
-	public fun hashCode ()I
-	public final fun isLoading ()Z
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/getstream/chat/android/ui/viewmodel/pinned/PinnedMessageListViewModelBinding {

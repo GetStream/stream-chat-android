@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -47,7 +48,6 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,9 +57,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
 import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.component.MembersList
 import io.getstream.chat.android.compose.sample.vm.MembersViewModel
 import io.getstream.chat.android.compose.sample.vm.MembersViewModelFactory
@@ -88,6 +91,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
@@ -125,6 +129,13 @@ class MessagesActivity : BaseConnectedActivity() {
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
 
     private val membersViewModel by viewModels<MembersViewModel>(factoryProducer = { membersFactory })
+
+    private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        val channelDeleted = it.data?.getBooleanExtra(ChannelInfoActivity.KEY_CHANNEL_DELETED, false) == true
+        if (it.resultCode == RESULT_OK && channelDeleted) {
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -175,7 +186,7 @@ class MessagesActivity : BaseConnectedActivity() {
                         viewModelFactory = factory,
                         reactionSorting = ReactionSortingByLastReactionAt,
                         onBackPressed = { finish() },
-                        onHeaderTitleClick = {},
+                        onHeaderTitleClick = ::openChannelInfo,
                         onUserAvatarClick = { user ->
                             Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                         },
@@ -184,6 +195,16 @@ class MessagesActivity : BaseConnectedActivity() {
 
                 // MyCustomUi()
             }
+        }
+    }
+
+    private fun openChannelInfo(channel: Channel) {
+        if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
+            val intent = GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
+            startActivity(intent)
+        } else {
+            val intent = ChannelInfoActivity.createIntent(this, channelId = channel.cid)
+            channelInfoLauncher.launch(intent)
         }
     }
 

@@ -81,7 +81,7 @@
         app:layout_constraintStart_toEndOf="@id/userAvatarView"
         app:layout_constraintTop_toBottomOf="@id/nameTextView"
         app:layout_constraintVertical_chainStyle="packed"
-        tools:text="Las seen 3 days ago"
+        tools:text="Last seen 3 days ago"
         />
 
     <TextView
