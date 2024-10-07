@@ -101,6 +101,7 @@ dependencies {
     implementation Dependencies.androidxAppCompat
     implementation Dependencies.materialComponents
     implementation Dependencies.streamPushFirebase
+    implementation Dependencies.streamLog
 
     // Compose
     implementation Dependencies.composeUi
@@ -109,6 +110,7 @@ dependencies {
     implementation Dependencies.composeMaterial
 
     implementation Dependencies.composeActivity
+    implementation Dependencies.composeAndroidLifecycle
     implementation Dependencies.composeViewModel
     implementation Dependencies.composeAccompanistPermissions
     implementation Dependencies.composeAccompanistPager
