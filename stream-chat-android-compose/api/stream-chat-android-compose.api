@@ -1799,6 +1799,11 @@ public final class io/getstream/chat/android/compose/ui/messages/composer/intern
 	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
 }
 
+public final class io/getstream/chat/android/compose/ui/messages/composer/internal/DefaultMessageComposerRecordingContentKt {
+	public static final fun DefaultAudioRecordButton (Lio/getstream/chat/android/ui/common/state/messages/composer/RecordingState;Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;JJJLandroidx/compose/runtime/Composer;II)V
+	public static final fun DefaultMessageComposerRecordingContent (Lio/getstream/chat/android/ui/common/state/messages/composer/MessageComposerState;Lio/getstream/chat/android/compose/ui/messages/composer/actions/AudioRecordingActions;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/messages/header/ComposableSingletons$MessageListHeaderKt {
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/header/ComposableSingletons$MessageListHeaderKt;
 	public static field lambda-1 Lkotlin/jvm/functions/Function2;
@@ -3205,6 +3210,7 @@ public final class io/getstream/chat/android/compose/viewmodel/channels/ChannelL
 	public final fun loadMore ()V
 	public final fun muteChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun performChannelAction (Lio/getstream/chat/android/ui/common/state/channels/actions/ChannelAction;)V
+	public final fun refresh ()V
 	public final fun selectChannel (Lio/getstream/chat/android/models/Channel;)V
 	public final fun setFilters (Lio/getstream/chat/android/models/FilterObject;)V
 	public final fun setQuerySort (Lio/getstream/chat/android/models/querysort/QuerySorter;)V

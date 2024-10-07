@@ -132,6 +132,11 @@ public class ChannelListViewModel(
     private val searchQuery = MutableStateFlow<SearchQuery>(SearchQuery.Empty)
 
     /**
+     * The refresh flow used to trigger a refresh of either channels or search results.
+     */
+    private val refreshFlow = MutableStateFlow(0L)
+
+    /**
      * The current state of the channels screen. It holds all the information required to render the UI.
      */
     public var channelsState: ChannelsState by mutableStateOf(ChannelsState())
@@ -218,8 +223,9 @@ public class ChannelListViewModel(
      */
     private suspend fun init() {
         logger.d { "[init] no args" }
-        searchQuery.combine(queryConfigFlow) { query, config -> query to config }
-            .collectLatest { (query, config) ->
+        combine(searchQuery, queryConfigFlow, refreshFlow) { query, config, ts -> Triple(query, config, ts) }
+            .collectLatest { (query, config, ts) ->
+                logger.i { "[observeInit] ts: $ts, query: $query, config: $config" }
                 when (query) {
                     is SearchQuery.Empty,
                     is SearchQuery.Channels,
@@ -440,6 +446,14 @@ public class ChannelListViewModel(
         } else {
             filter
         }
+    }
+
+    /**
+     * Refreshes either channels or search results.
+     */
+    public fun refresh() {
+        logger.d { "[refresh] no args" }
+        refreshFlow.value = System.currentTimeMillis()
     }
 
     /**

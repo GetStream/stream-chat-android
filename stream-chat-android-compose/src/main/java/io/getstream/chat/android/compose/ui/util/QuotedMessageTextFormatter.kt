@@ -24,6 +24,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.client.utils.attachment.isImage
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.theme.MessageTheme
@@ -208,6 +209,7 @@ private class DefaultQuotedMessageTextFormatter(
 
         val attachment = message.attachments.firstOrNull()
         val quotedMessageText = when {
+            message.isDeleted() -> context.getString(R.string.stream_ui_message_list_message_deleted)
             displayedText.isNotBlank() -> displayedText
             attachment != null -> when {
                 attachment.name != null -> attachment.name
@@ -227,7 +229,7 @@ private class DefaultQuotedMessageTextFormatter(
 
         val textColor = textStyle(replyMessage?.isMine(currentUser) != false).color
         return buildAnnotatedMessageText(
-            text = displayedText,
+            text = quotedMessageText,
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
             linkColor = colors.primaryAccent,
