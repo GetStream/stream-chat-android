@@ -75,6 +75,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChannelListViewModel.refresh` method to refresh the channel list. [#5425](https://github.com/GetStream/stream-chat-android/pull/5425)
 - Add configuration options to `AttachmentsPickerTabFactories#defaultFactoriesWithoutStoragePermissions` to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⚠️ Changed
