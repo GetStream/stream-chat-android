@@ -24,7 +24,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.core.util.PatternsCompat
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import java.util.regex.Pattern
@@ -104,6 +106,27 @@ internal fun buildAnnotatedMessageText(
 
         // Finally, we apply any additional styling that was passed in.
         builder(this)
+    }
+}
+
+/**
+ * Transforms a given [String] containing bold (<b>...</b>) tags to an [AnnotatedString] to be rendered in Compose
+ * components.
+ */
+internal fun String.parseBoldTags(): AnnotatedString {
+    val parts = this.split("<b>", "</b>")
+    return buildAnnotatedString {
+        var inBoldPart = false
+        for (part in parts) {
+            if (inBoldPart) {
+                withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append(part)
+                }
+            } else {
+                append(part)
+            }
+            inBoldPart = !inBoldPart
+        }
     }
 }
 

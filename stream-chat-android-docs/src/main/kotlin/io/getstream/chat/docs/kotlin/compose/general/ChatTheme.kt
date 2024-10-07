@@ -195,6 +195,13 @@ private object ChatThemeMessageTextFormatterDefaultSnippet : ChatThemeCustomizat
         }
 
         val previewFormatter = object : MessagePreviewFormatter {
+            override fun formatMessageTitle(message: Message): AnnotatedString {
+                return buildAnnotatedString {
+                    append(message.user.name)
+                    // add your custom styling here
+                }
+            }
+
             override fun formatMessagePreview(message: Message, currentUser: User?): AnnotatedString {
                 return buildAnnotatedString {
                     append(message.text)

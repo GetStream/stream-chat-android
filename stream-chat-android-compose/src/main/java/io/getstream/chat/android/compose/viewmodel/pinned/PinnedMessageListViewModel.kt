@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014-2022 Stream.io Inc. All rights reserved.
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
  *
  * Licensed under the Stream License;
  * you may not use this file except in compliance with the License.
@@ -14,21 +14,18 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.ui.viewmodel.pinned
+package io.getstream.chat.android.compose.viewmodel.pinned
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
 import io.getstream.chat.android.models.Message
-import io.getstream.chat.android.state.utils.Event
 import io.getstream.chat.android.ui.common.feature.pinned.PinnedMessageListController
 import io.getstream.chat.android.ui.common.state.pinned.PinnedMessageListState
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * ViewModel responsible for providing pinned messages in the channel.
  * Pinned messages are provided in a descending order based on [Message.pinnedAt].
- * Can be bound to the view using [PinnedMessageListViewModel.bindView] function.
  *
  * @param controller the [PinnedMessageListController] handling the business logic and the state management for the
  * pinned message list.
@@ -38,14 +35,12 @@ public class PinnedMessageListViewModel(private val controller: PinnedMessageLis
     /**
      * The current pinned messages' state.
      */
-    public val state: LiveData<PinnedMessageListState> = controller.state.asLiveData()
+    public val state: StateFlow<PinnedMessageListState> = controller.state
 
     /**
      * One shot error events when a query fails.
      */
-    public val errorEvents: LiveData<Event<Unit>> = controller.errorEvents
-        .map(::Event)
-        .asLiveData()
+    public val errorEvents: SharedFlow<Unit> = controller.errorEvents
 
     init {
         controller.load()

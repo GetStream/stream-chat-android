@@ -77,6 +77,7 @@ module.exports = {
             "compose/message-components/selected-message-menu",
             "compose/message-components/selected-reactions-menu",
             "compose/guides/providing-custom-reactions",
+            "compose/utility-components/pinned-message-list",
           ],
         },
         {
