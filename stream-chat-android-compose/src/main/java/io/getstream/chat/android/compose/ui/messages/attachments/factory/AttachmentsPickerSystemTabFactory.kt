@@ -131,6 +131,7 @@ public class AttachmentsPickerSystemTabFactory(
      * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
     @OptIn(ExperimentalPermissionsApi::class)
+    @Suppress("LongMethod")
     @Composable
     override fun PickerTabContent(
         onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
