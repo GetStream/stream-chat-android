@@ -29,6 +29,7 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.extensions.duration
 import io.getstream.chat.android.client.utils.attachment.isAudioRecording
 import io.getstream.chat.android.client.utils.attachment.isLink
+import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.ui.ChatUI
 import io.getstream.chat.android.ui.R
@@ -213,7 +214,9 @@ public class MessageReplyView : FrameLayout {
     private fun setReplyText(message: Message, isMine: Boolean, style: MessageReplyStyle?) {
         val attachment = message.attachments.lastOrNull()
         val displayedText = message.getTranslatedText()
-        binding.replyText.text = if (attachment == null || displayedText.isNotBlank()) {
+        binding.replyText.text = if (message.isDeleted()) {
+            context.getString(R.string.stream_ui_message_list_message_deleted)
+        } else if (attachment == null || displayedText.isNotBlank()) {
             if (ellipsize) {
                 ellipsize(displayedText)
             } else {

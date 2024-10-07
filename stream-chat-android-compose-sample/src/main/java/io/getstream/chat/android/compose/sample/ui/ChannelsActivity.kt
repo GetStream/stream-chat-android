@@ -110,6 +110,9 @@ class ChannelsActivity : BaseConnectedActivity() {
                             openUserLogin()
                         }
                     },
+                    onHeaderActionClick = {
+                        listViewModel.refresh()
+                    },
                 )
 
 //                MyCustomUiSimplified()
