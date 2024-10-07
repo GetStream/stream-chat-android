@@ -29,6 +29,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,6 +48,7 @@ import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -57,10 +59,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.extensions.isAnonymousChannel
+import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
 import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.component.MembersList
+import io.getstream.chat.android.compose.sample.vm.MembersViewModel
+import io.getstream.chat.android.compose.sample.vm.MembersViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
@@ -112,10 +118,18 @@ class MessagesActivity : BaseConnectedActivity() {
         )
     }
 
+    private val membersFactory by lazy {
+        MembersViewModelFactory(
+            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+        )
+    }
+
     private val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
+
+    private val membersViewModel by viewModels<MembersViewModel>(factoryProducer = { membersFactory })
 
     private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         val channelDeleted = it.data?.getBooleanExtra(ChannelInfoActivity.KEY_CHANNEL_DELETED, false) == true
@@ -165,15 +179,20 @@ class MessagesActivity : BaseConnectedActivity() {
                     optionVisibility = MessageOptionItemVisibility(),
                 ),
             ) {
-                MessagesScreen(
-                    viewModelFactory = factory,
-                    reactionSorting = ReactionSortingByLastReactionAt,
-                    onBackPressed = { finish() },
-                    onHeaderTitleClick = ::openChannelInfo,
-                    onUserAvatarClick = { user ->
-                        Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
-                    },
-                )
+                Column {
+                    if (BuildConfig.DEBUG) {
+                        MembersList(viewModel = membersViewModel)
+                    }
+                    MessagesScreen(
+                        viewModelFactory = factory,
+                        reactionSorting = ReactionSortingByLastReactionAt,
+                        onBackPressed = { finish() },
+                        onHeaderTitleClick = ::openChannelInfo,
+                        onUserAvatarClick = { user ->
+                            Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
+                        },
+                    )
+                }
 
                 // MyCustomUi()
             }

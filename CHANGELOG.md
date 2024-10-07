@@ -78,6 +78,7 @@
 - Add `formatMessageTitle` method to `MessagePreviewFormatter`, to allow message preview title formatting customization. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
 
 ### ⚠️ Changed
+- Exposed `DefaultMessageComposerRecordingContent` and `DefaultAudioRecordButton` components. [#5433](https://github.com/GetStream/stream-chat-android/pull/5433) 
 
 ### ❌ Removed
 
