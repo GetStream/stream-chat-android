@@ -79,6 +79,7 @@
 - Add configuration options to `AttachmentsPickerTabFactories#defaultFactoriesWithoutStoragePermissions` to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⚠️ Changed
+- Exposed `DefaultMessageComposerRecordingContent` and `DefaultAudioRecordButton` components. [#5433](https://github.com/GetStream/stream-chat-android/pull/5433) 
 
 ### ❌ Removed
 

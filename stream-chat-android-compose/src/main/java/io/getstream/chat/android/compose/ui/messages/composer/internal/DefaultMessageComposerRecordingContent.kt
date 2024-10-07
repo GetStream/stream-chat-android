@@ -104,7 +104,7 @@ private const val PERMISSION_RATIONALE_DISMISS_TIMEOUT = 1000L
  */
 @Composable
 @OptIn(ExperimentalPermissionsApi::class)
-internal fun DefaultAudioRecordButton(
+public fun DefaultAudioRecordButton(
     state: RecordingState,
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
     holdToRecordThreshold: Long = HOLD_TO_RECORD_THRESHOLD,
@@ -338,7 +338,7 @@ internal fun DefaultAudioRecordPermissionRationale(
  * Default implementation of the audio recording content.
  */
 @Composable
-internal fun DefaultMessageComposerRecordingContent(
+public fun DefaultMessageComposerRecordingContent(
     messageComposerState: MessageComposerState,
     recordingActions: AudioRecordingActions = AudioRecordingActions.None,
 ) {

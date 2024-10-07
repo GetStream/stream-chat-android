@@ -32,7 +32,6 @@
   <string name="stream_ui_message_list_attachment_load_failed">"No se pudo cargar debido a un error inesperado."</string>
   <string name="stream_ui_message_list_error_cannot_open_link">"No hay ninguna aplicación para ver esta URL:
 %s"</string>
-  <string name="stream_ui_message_list_message_deleted">Este mensaje fue eliminado.</string>
   <string name="stream_ui_message_list_video_display_error">"Error. el video no se puede mostrar"</string>
   <string name="stream_ui_moderation_dialog_delete">"Eliminar mensaje"</string>
   <string name="stream_ui_moderation_dialog_description">"Este mensaje puede infringir nuestra política de moderación. ¿Estás seguro de que quieres enviarlo? Eche un vistazo a nuestras Pautas de la comunidad."</string>
