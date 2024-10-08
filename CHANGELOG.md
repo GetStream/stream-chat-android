@@ -60,6 +60,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix max allowed votes base on available options. [#5431](https://github.com/GetStream/stream-chat-android/pull/5431)
 - Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⬆️ Improved
