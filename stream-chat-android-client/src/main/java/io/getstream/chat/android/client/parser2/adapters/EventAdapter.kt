@@ -239,10 +239,8 @@ internal class EventDtoAdapter(
         return adapter.fromJsonValue(map)
     }
 
-    private fun Map<String, Any?>.containsAnswer(): Boolean {
-        return (((this["poll_vote"] as? Map<String, Any?>)?.get("is_answer") as? Boolean) ?: false)
-            .also { println("JcLog: containsAnswer -> $it") }
-    }
+    private fun Map<String, Any?>.containsAnswer(): Boolean =
+        (((this["poll_vote"] as? Map<String, Any?>)?.get("is_answer") as? Boolean) ?: false)
 
     override fun toJson(writer: JsonWriter, value: ChatEventDto?) {
         error("Can't convert this event to Json $value")
