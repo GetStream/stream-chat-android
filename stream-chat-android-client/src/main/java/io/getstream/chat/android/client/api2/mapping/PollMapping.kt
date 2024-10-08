@@ -61,10 +61,6 @@ internal fun DownstreamPollDto.toDomain(currentUserId: UserId?): Poll {
                 .filter { it.is_answer == true }
                 .map { it.toAnswerDomain(currentUserId) }
         )
-        .also {
-            println("JcLog: answerCount: ${it.size}")
-            it.forEach { println("JcLog: Answer: (${it.user?.name}) -> ${it.text}") }
-        }
         .associateBy { it.id }
         .values
         .toList()
