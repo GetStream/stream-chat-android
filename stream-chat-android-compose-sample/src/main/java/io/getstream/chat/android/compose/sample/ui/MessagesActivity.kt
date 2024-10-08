@@ -21,6 +21,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,8 +57,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.extensions.isAnonymousChannel
+import io.getstream.chat.android.compose.sample.BuildConfig
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.R
+import io.getstream.chat.android.compose.sample.ui.channel.ChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.channel.GroupChannelInfoActivity
+import io.getstream.chat.android.compose.sample.ui.component.MembersList
+import io.getstream.chat.android.compose.sample.vm.MembersViewModel
+import io.getstream.chat.android.compose.sample.vm.MembersViewModelFactory
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResultType
 import io.getstream.chat.android.compose.ui.components.composer.MessageInput
 import io.getstream.chat.android.compose.ui.components.messageoptions.MessageOptionItemVisibility
@@ -82,6 +91,7 @@ import io.getstream.chat.android.compose.viewmodel.messages.AttachmentsPickerVie
 import io.getstream.chat.android.compose.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessageListViewModel
 import io.getstream.chat.android.compose.viewmodel.messages.MessagesViewModelFactory
+import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.ReactionSortingByFirstReactionAt
 import io.getstream.chat.android.models.ReactionSortingByLastReactionAt
@@ -107,10 +117,25 @@ class MessagesActivity : BaseConnectedActivity() {
         )
     }
 
+    private val membersFactory by lazy {
+        MembersViewModelFactory(
+            cid = requireNotNull(intent.getStringExtra(KEY_CHANNEL_ID)),
+        )
+    }
+
     private val listViewModel by viewModels<MessageListViewModel>(factoryProducer = { factory })
 
     private val attachmentsPickerViewModel by viewModels<AttachmentsPickerViewModel>(factoryProducer = { factory })
     private val composerViewModel by viewModels<MessageComposerViewModel>(factoryProducer = { factory })
+
+    private val membersViewModel by viewModels<MembersViewModel>(factoryProducer = { membersFactory })
+
+    private val channelInfoLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        val channelDeleted = it.data?.getBooleanExtra(ChannelInfoActivity.KEY_CHANNEL_DELETED, false) == true
+        if (it.resultCode == RESULT_OK && channelDeleted) {
+            finish()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,21 +178,35 @@ class MessagesActivity : BaseConnectedActivity() {
                     optionVisibility = MessageOptionItemVisibility(),
                 ),
             ) {
-                MessagesScreen(
-                    viewModelFactory = factory,
-                    reactionSorting = ReactionSortingByLastReactionAt,
-                    onBackPressed = { finish() },
-                    onHeaderTitleClick = {},
-                    onUserAvatarClick = { user ->
-                        Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
-                    },
-                    onUserMentionClick = { user ->
-                        Log.i("MessagesActivity", "user mention tapped: ${user.id}")
-                    },
-                )
-
+                Column {
+                    if (BuildConfig.DEBUG) {
+                        MembersList(viewModel = membersViewModel)
+                    }
+                    MessagesScreen(
+                        viewModelFactory = factory,
+                        reactionSorting = ReactionSortingByLastReactionAt,
+                        onBackPressed = { finish() },
+                        onHeaderTitleClick = ::openChannelInfo,
+                        onUserAvatarClick = { user ->
+                            Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
+                        },
+                        onUserMentionClick = { user ->
+                          Log.i("MessagesActivity", "user mention tapped: ${user.id}")
+                        },
+                    )
+                }
                 // MyCustomUi()
             }
+        }
+    }
+
+    private fun openChannelInfo(channel: Channel) {
+        if (channel.memberCount > 2 || !channel.isAnonymousChannel()) {
+            val intent = GroupChannelInfoActivity.createIntent(this, channelId = channel.cid)
+            startActivity(intent)
+        } else {
+            val intent = ChannelInfoActivity.createIntent(this, channelId = channel.cid)
+            channelInfoLauncher.launch(intent)
         }
     }
 

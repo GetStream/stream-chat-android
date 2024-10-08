@@ -58,6 +58,7 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix max allowed votes base on available options. [#5431](https://github.com/GetStream/stream-chat-android/pull/5431)
 
 ### ⬆️ Improved
 
@@ -74,6 +75,8 @@
 
 ### ✅ Added
 - Added `ChannelListViewModel.refresh` method to refresh the channel list. [#5425](https://github.com/GetStream/stream-chat-android/pull/5425)
+- Add `PinnedMessageList` component for showing the list of pinned messages in a channel. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
+- Add `formatMessageTitle` method to `MessagePreviewFormatter`, to allow message preview title formatting customization. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
 
 ### ⚠️ Changed
 - Exposed `DefaultMessageComposerRecordingContent` and `DefaultAudioRecordButton` components. [#5433](https://github.com/GetStream/stream-chat-android/pull/5433) 

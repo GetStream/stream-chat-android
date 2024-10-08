@@ -699,6 +699,7 @@ public fun BoxScope.AttachmentsPickerMenu(
                             } else {
                                 1
                             },
+                            enforceUniqueVote = action.switches.none { it.key == "maxVotesAllowed" && it.enabled },
                         ),
                     )
                 }

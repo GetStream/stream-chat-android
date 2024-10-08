@@ -63,6 +63,15 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize"
             />
+        <activity
+            android:name=".ui.channel.ChannelInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.channel.GroupChannelInfoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.pinned.PinnedMessagesActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
