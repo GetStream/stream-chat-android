@@ -51,6 +51,8 @@ internal data class DownstreamVoteDto(
     val updated_at: Date,
     val user: DownstreamUserDto?,
     val user_id: String?,
+    val is_answer: Boolean?,
+    val answer_text: String?,
 )
 
 /**

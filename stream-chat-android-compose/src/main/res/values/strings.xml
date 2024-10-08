@@ -213,6 +213,8 @@
     <string name="stream_compose_poll_see_more_options" translatable="false">See All %d Options</string>
     <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
     <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
+    <string name="stream_compose_poll_answers">Poll Answers</string>
+    <string name="stream_compose_add_answer">Add an Answer</string>
     <string name="stream_compose_poll_vote_counts" translatable="false">%d votes</string>
     <string name="stream_compose_poll_created_preview" translatable="false">📊 Poll created: %s</string>
     <string name="stream_compose_poll_closed_preview" translatable="false">📊 Poll closed: %s</string>
@@ -224,4 +226,6 @@
 
     <!--  Message preview (User in mentions / pinned messages / search results)  -->
     <string name="stream_compose_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="stream_compose_confirm">Confirm</string>
+    <string name="stream_compose_dismiss">Dismiss</string>
 </resources>

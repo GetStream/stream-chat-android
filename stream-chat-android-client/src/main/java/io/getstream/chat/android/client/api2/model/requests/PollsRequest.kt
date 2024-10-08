@@ -48,6 +48,7 @@ internal data class PollRequest(
     val enforce_unique_vote: Boolean,
     val max_votes_allowed: Int,
     val allow_user_suggested_options: Boolean,
+    val allow_answers: Boolean,
 ) {
 
     companion object {
@@ -85,5 +86,6 @@ internal data class PollUpdateRequest(
  */
 @JsonClass(generateAdapter = true)
 internal data class UpstreamVoteDto(
-    val option_id: String,
+    val option_id: String? = null,
+    val answer_text: String? = null,
 )
