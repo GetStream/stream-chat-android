@@ -210,6 +210,7 @@
     <string name="stream_compose_poll_option_switch_add_comment" translatable="false">Add a comment</string>
     <string name="stream_compose_poll_view_result" translatable="false">View Results</string>
     <string name="stream_compose_poll_end_vote" translatable="false">End Vote</string>
+    <string name="stream_compose_poll_suggest_option">Suggest Option</string>
     <string name="stream_compose_poll_see_more_options" translatable="false">See All %d Options</string>
     <string name="stream_compose_poll_options" translatable="false">Poll Options</string>
     <string name="stream_compose_poll_results" translatable="false">Poll Results</string>
@@ -224,4 +225,7 @@
 
     <!--  Message preview (User in mentions / pinned messages / search results)  -->
     <string name="stream_compose_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
+    <string name="stream_compose_suggest_an_option">Suggest an Option</string>
+    <string name="stream_compose_confirm">Confirm</string>
+    <string name="stream_compose_dismiss">Dismiss</string>
 </resources>

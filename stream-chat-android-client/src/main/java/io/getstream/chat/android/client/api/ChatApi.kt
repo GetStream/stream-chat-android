@@ -39,6 +39,7 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
@@ -478,6 +479,9 @@ internal interface ChatApi {
 
     @CheckResult
     fun createPoll(pollConfig: PollConfig): Call<Poll>
+
+    @CheckResult
+    fun suggestPollOption(pollId: String, option: String): Call<Option>
 
     @CheckResult
     fun castPollVote(messageId: String, pollId: String, optionId: String): Call<Vote>

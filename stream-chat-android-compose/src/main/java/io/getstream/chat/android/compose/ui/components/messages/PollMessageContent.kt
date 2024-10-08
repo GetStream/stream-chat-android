@@ -31,13 +31,20 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.AlertDialog
 import androidx.compose.material.Icon
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -51,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.ui.components.avatar.UserAvatarRow
+import io.getstream.chat.android.compose.ui.components.composer.InputField
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.isErrorOrFailed
 import io.getstream.chat.android.models.Message
@@ -72,9 +80,13 @@ import io.getstream.chat.android.ui.common.state.messages.poll.PollSelectionType
  * @param onCastVote Callback when a user cast a vote on an option.
  * @param onMoreOption Callback when a user clicked seeing more options.
  * @param onRemoveVote Callback when a user remove a vote on an option.
+ * @param selectPoll Callback when a user selects a poll.
+ * @param onClosePoll Callback when a user closes a poll.
+ * @param onAddPollOption Callback when a user adds a new option to the poll.
  * @param onLongItemClick Handler when the user selects a message, on long tap.
  */
 @Composable
+@Suppress("LongParameterList", "LongMethod")
 public fun PollMessageContent(
     modifier: Modifier,
     messageItem: MessageItemState,
@@ -82,6 +94,7 @@ public fun PollMessageContent(
     onRemoveVote: (Message, Poll, Vote) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
     onClosePoll: (String) -> Unit,
+    onAddPollOption: (poll: Poll, option: String) -> Unit,
     onLongItemClick: (Message) -> Unit = {},
 ) {
     val message = messageItem.message
@@ -127,6 +140,7 @@ public fun PollMessageContent(
                     },
                     selectPoll = selectPoll,
                     onClosePoll = onClosePoll,
+                    onAddPollOption = onAddPollOption,
                 )
             },
         )
@@ -161,6 +175,7 @@ public fun PollMessageContent(
 }
 
 @Composable
+@Suppress("LongParameterList", "LongMethod")
 private fun PollMessageContent(
     message: Message,
     poll: Poll,
@@ -168,10 +183,19 @@ private fun PollMessageContent(
     onClosePoll: (String) -> Unit,
     onCastVote: (Option) -> Unit,
     onRemoveVote: (Vote) -> Unit,
+    onAddPollOption: (poll: Poll, option: String) -> Unit,
     selectPoll: (Message, Poll, PollSelectionType) -> Unit,
 ) {
+    val showDialog = remember { mutableStateOf(false) }
     val heightMax = LocalConfiguration.current.screenHeightDp
     val isClosed = poll.closed
+
+    if (showDialog.value) {
+        NewOptionDialog(
+            onDismiss = { showDialog.value = false },
+            onNewOption = { newOption -> onAddPollOption.invoke(poll, newOption) },
+        )
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -224,6 +248,15 @@ private fun PollMessageContent(
             )
         }
 
+        if (poll.allowUserSuggestedOptions && !isClosed) {
+            item {
+                PollOptionButton(
+                    text = stringResource(id = R.string.stream_compose_poll_suggest_option),
+                    onButtonClicked = { showDialog.value = true },
+                )
+            }
+        }
+
         if (poll.options.size > 10) {
             item {
                 PollOptionButton(
@@ -249,6 +282,54 @@ private fun PollMessageContent(
             }
         }
     }
+}
+
+@Composable
+private fun NewOptionDialog(
+    onDismiss: () -> Unit,
+    onNewOption: (newOption: String) -> Unit,
+) {
+    val newOption = remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    AlertDialog(
+        title = { Text(text = stringResource(R.string.stream_compose_suggest_an_option)) },
+        text = {
+            InputField(
+                value = newOption.value,
+                onValueChange = { newOption.value = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(focusRequester),
+                decorationBox = { innerTextField ->
+                    Column {
+                        innerTextField()
+                    }
+                },
+            )
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
+            }
+        },
+        onDismissRequest = { onDismiss.invoke() },
+        confirmButton = {
+            TextButton(
+                enabled = newOption.value.isNotBlank(),
+                onClick = {
+                    onNewOption.invoke(newOption.value)
+                    onDismiss.invoke()
+                },
+            ) {
+                Text(stringResource(R.string.stream_compose_confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = { onDismiss.invoke() },
+            ) {
+                Text(stringResource(R.string.stream_compose_dismiss))
+            }
+        },
+    )
 }
 
 @Composable
@@ -418,6 +499,7 @@ private fun PollMessageContentPreview() {
                 onRemoveVote = { _, _, _ -> },
                 selectPoll = { _, _, _ -> },
                 onClosePoll = {},
+                onAddPollOption = { _, _ -> },
                 messageItem = MessageItemState(
                     message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithPoll,
                     isMine = true,
@@ -432,6 +514,7 @@ private fun PollMessageContentPreview() {
                 onRemoveVote = { _, _, _ -> },
                 selectPoll = { _, _, _ -> },
                 onClosePoll = {},
+                onAddPollOption = { _, _ -> },
                 messageItem = MessageItemState(
                     message = io.getstream.chat.android.previewdata.PreviewMessageData.messageWithError,
                     isMine = true,
