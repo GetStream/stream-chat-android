@@ -90,13 +90,19 @@ public object AttachmentsPickerTabFactories {
             if (filesTabEnabled) AttachmentsPickerFilesTabFactory() else null,
             when {
                 takeImageEnabled && recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.PHOTO_AND_VIDEO)
+                    AttachmentsPickerMediaCaptureTabFactory(
+                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO_AND_VIDEO,
+                    )
 
                 takeImageEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.PHOTO)
+                    AttachmentsPickerMediaCaptureTabFactory(
+                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.PHOTO,
+                    )
 
                 recordVideoEnabled ->
-                    AttachmentsPickerMediaCaptureTabFactory(PickerMediaMode.VIDEO)
+                    AttachmentsPickerMediaCaptureTabFactory(
+                        AttachmentsPickerMediaCaptureTabFactory.PickerMediaMode.VIDEO,
+                    )
 
                 else -> null
             },

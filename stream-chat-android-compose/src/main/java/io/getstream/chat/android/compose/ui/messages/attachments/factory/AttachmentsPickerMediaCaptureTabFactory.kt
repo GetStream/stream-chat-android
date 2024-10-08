@@ -119,4 +119,23 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
             MissingPermissionContent(cameraPermissionState)
         }
     }
+
+    /**
+     * Define which media type will be allowed.
+     */
+    public enum class PickerMediaMode {
+        PHOTO,
+        VIDEO,
+        PHOTO_AND_VIDEO,
+    }
+
+    /**
+     * Map [PickerMediaMode] into [CaptureMediaContract.Mode]
+     */
+    private val PickerMediaMode.mode: CaptureMediaContract.Mode
+        get() = when (this) {
+            PickerMediaMode.PHOTO -> CaptureMediaContract.Mode.PHOTO
+            PickerMediaMode.VIDEO -> CaptureMediaContract.Mode.VIDEO
+            PickerMediaMode.PHOTO_AND_VIDEO -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+        }
 }

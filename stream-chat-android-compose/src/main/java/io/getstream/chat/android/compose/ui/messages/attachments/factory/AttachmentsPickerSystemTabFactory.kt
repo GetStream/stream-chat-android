@@ -120,7 +120,6 @@ public class AttachmentsPickerSystemTabFactory(
     )
 
     private val mediaPickerContract = resolveMediaPickerMode(captureImageAllowed, captureVideoAllowed)
-        ?.mode
         ?.let(::CaptureMediaContract)
 
     private val pollFactory by lazy { AttachmentsPickerPollTabFactory() }
@@ -274,9 +273,9 @@ public class AttachmentsPickerSystemTabFactory(
         }
 
     private fun resolveMediaPickerMode(captureImageAllowed: Boolean, captureVideoAllowed: Boolean) = when {
-        captureImageAllowed && captureVideoAllowed -> PickerMediaMode.PHOTO_AND_VIDEO
-        captureImageAllowed -> PickerMediaMode.PHOTO
-        captureVideoAllowed -> PickerMediaMode.VIDEO
+        captureImageAllowed && captureVideoAllowed -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+        captureImageAllowed -> CaptureMediaContract.Mode.PHOTO
+        captureVideoAllowed -> CaptureMediaContract.Mode.VIDEO
         else -> null
     }
 
