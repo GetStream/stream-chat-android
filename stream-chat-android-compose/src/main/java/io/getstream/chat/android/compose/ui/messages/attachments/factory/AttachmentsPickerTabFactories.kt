@@ -22,6 +22,26 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
  */
 public object AttachmentsPickerTabFactories {
 
+    @Deprecated(
+        message = "Use defaultFactoriesWithoutStoragePermissions(filesAllowed: Boolean, mediaAllowed: Boolean = true," +
+            " captureImageAllowed: Boolean, captureVideoAllowed: Boolean, pollAllowed: Boolean = true) instead.",
+        replaceWith = ReplaceWith(
+            expression = "defaultFactoriesWithoutStoragePermissions(filesAllowed, mediaAllowed, captureImageAllowed," +
+                " captureVideoAllowed, pollAllowed)",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> {
+        val otherFactories = defaultFactories(
+            imagesTabEnabled = false,
+            filesTabEnabled = false,
+            takeImageEnabled = true,
+            recordVideoEnabled = true,
+            pollEnabled = true,
+        )
+        return listOf(AttachmentsPickerSystemTabFactory(otherFactories))
+    }
+
     /**
      * Builds the default list of attachment picker tab factories (without requesting storage permission).
      *

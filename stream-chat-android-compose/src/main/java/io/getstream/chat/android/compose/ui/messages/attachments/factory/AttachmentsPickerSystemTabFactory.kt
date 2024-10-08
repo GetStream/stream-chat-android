@@ -69,6 +69,8 @@ import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
 import io.getstream.chat.android.compose.state.messages.attachments.Files
+import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
+import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
 import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
@@ -94,6 +96,28 @@ public class AttachmentsPickerSystemTabFactory(
     private val captureVideoAllowed: Boolean,
     private val pollAllowed: Boolean,
 ) : AttachmentsPickerTabFactory {
+
+    /**
+     * Holds the information required to add support for "files" tab in the attachment picker.
+     *
+     * @param otherFactories A list of other [AttachmentsPickerTabFactory] used to handle different attachment pickers.
+     */
+    @Deprecated(
+        message = "Use constructor(filesAllowed, mediaAllowed, captureImageAllowed, captureVideoAllowed, pollAllowed)" +
+            " instead.",
+        replaceWith = ReplaceWith(
+            expression = "AttachmentsPickerSystemTabFactory(filesAllowed, mediaAllowed, captureImageAllowed," +
+                " captureVideoAllowed, pollAllowed)",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(otherFactories: List<AttachmentsPickerTabFactory>) : this(
+        filesAllowed = true,
+        mediaAllowed = true,
+        captureImageAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
+        captureVideoAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
+        pollAllowed = otherFactories.any { it.attachmentsPickerMode == Poll },
+    )
 
     private val mediaPickerContract = resolveMediaPickerMode(captureImageAllowed, captureVideoAllowed)
         ?.mode

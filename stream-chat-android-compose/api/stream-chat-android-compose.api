@@ -1546,6 +1546,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 
 public final class io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerSystemTabFactory : io/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactory {
 	public static final field $stable I
+	public fun <init> (Ljava/util/List;)V
 	public fun <init> (ZZZZZ)V
 	public fun PickerTabContent (Lkotlin/jvm/functions/Function1;Ljava/util/List;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
 	public fun PickerTabIcon (ZZLandroidx/compose/runtime/Composer;I)V
@@ -1558,6 +1559,7 @@ public final class io/getstream/chat/android/compose/ui/messages/attachments/fac
 	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;
 	public final fun defaultFactories (ZZZZZ)Ljava/util/List;
 	public static synthetic fun defaultFactories$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZZILjava/lang/Object;)Ljava/util/List;
+	public final fun defaultFactoriesWithoutStoragePermissions ()Ljava/util/List;
 	public final fun defaultFactoriesWithoutStoragePermissions (ZZZZZ)Ljava/util/List;
 	public static synthetic fun defaultFactoriesWithoutStoragePermissions$default (Lio/getstream/chat/android/compose/ui/messages/attachments/factory/AttachmentsPickerTabFactories;ZZZZZILjava/lang/Object;)Ljava/util/List;
 }
