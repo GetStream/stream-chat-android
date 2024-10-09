@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.compose.R
@@ -58,7 +59,8 @@ internal fun MessagesScrollingOption(
             onClick = onClick,
             modifier = Modifier
                 .padding(top = 12.dp)
-                .size(48.dp),
+                .size(48.dp)
+                .testTag("Stream_ScrollToBottomButton"),
             shape = CircleShape,
             elevation = 4.dp,
             color = ChatTheme.colors.barsBackground,

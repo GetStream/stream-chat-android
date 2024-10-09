@@ -240,7 +240,8 @@ public fun MessageItem(
         Row(
             modifier
                 .widthIn(max = 300.dp)
-                .then(clickModifier),
+                .then(clickModifier)
+                .testTag("Stream_MessageCell"),
         ) {
             leadingContent(messageItem)
 
@@ -278,10 +279,10 @@ internal fun RowScope.DefaultMessageItemLeadingContent(
             messageItem.showMessageFooter || messageItem.groupPosition.contains(MessagePosition.BOTTOM) || messageItem.groupPosition.contains(
                 MessagePosition.NONE,
             )
-            )
+        )
     ) {
         UserAvatar(
-            modifier = modifier,
+            modifier = modifier.testTag("Stream_UserAvatar"),
             user = messageItem.message.user,
             textStyle = ChatTheme.typography.captionBold,
             showOnlineIndicator = false,

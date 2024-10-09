@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -63,6 +64,7 @@ public class AttachmentsPickerMediaCaptureTabFactory(private val pickerMediaMode
     @Composable
     override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
         Icon(
+            modifier = Modifier.testTag("Stream_AttachmentPickerMediaCaptureTab"),
             painter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
             contentDescription = stringResource(id = R.string.stream_compose_capture_option),
             tint = when {

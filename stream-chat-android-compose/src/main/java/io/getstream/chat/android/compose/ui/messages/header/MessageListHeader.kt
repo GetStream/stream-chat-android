@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -201,6 +202,7 @@ public fun DefaultMessageListHeaderCenterContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
+            modifier = Modifier.testTag("Stream_ChannelName"),
             text = title,
             style = ChatTheme.typography.title3Bold,
             maxLines = 1,
@@ -253,6 +255,7 @@ internal fun DefaultMessageListHeaderSubtitle(
 
     if (typingUsers.isEmpty()) {
         Text(
+            modifier = Modifier.testTag("Stream_ParticipantsInfo"),
             text = subtitle,
             color = textColor,
             style = textStyle,
@@ -275,6 +278,7 @@ internal fun DefaultMessageListHeaderSubtitle(
             TypingIndicator()
 
             Text(
+                modifier = Modifier.testTag("Stream_MessageListTypingIndicator"),
                 text = typingUsersText,
                 color = textColor,
                 style = textStyle,

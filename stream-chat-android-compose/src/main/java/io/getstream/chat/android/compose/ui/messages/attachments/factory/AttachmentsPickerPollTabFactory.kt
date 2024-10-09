@@ -39,6 +39,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -84,6 +85,7 @@ public class AttachmentsPickerPollTabFactory : AttachmentsPickerTabFactory {
     @Composable
     override fun PickerTabIcon(isEnabled: Boolean, isSelected: Boolean) {
         Icon(
+            modifier = Modifier.testTag("Stream_AttachmentPickerPollsTab"),
             painter = painterResource(id = R.drawable.stream_compose_ic_poll),
             contentDescription = stringResource(id = R.string.stream_compose_poll_option),
             tint = when {

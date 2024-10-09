@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.getstream.chat.android.client.utils.message.belongsToThread
@@ -85,7 +86,8 @@ public fun MessageFooter(
                     Text(
                         modifier = Modifier
                             .padding(end = 8.dp)
-                            .weight(1f, fill = false),
+                            .weight(1f, fill = false)
+                            .testTag("Stream_MessageAuthorName"),
                         text = message.user.name,
                         style = ChatTheme.typography.footnote,
                         overflow = TextOverflow.Ellipsis,
@@ -122,7 +124,9 @@ public fun MessageFooter(
                         color = ChatTheme.colors.textLowEmphasis,
                     )
                     Text(
-                        modifier = Modifier.clickable { showEditInfo = !showEditInfo },
+                        modifier = Modifier
+                            .clickable { showEditInfo = !showEditInfo }
+                            .testTag("Stream_MessageEditedLabel"),
                         text = LocalContext.current.getString(R.string.stream_compose_message_list_footnote_edited),
                         style = ChatTheme.typography.footnote,
                         color = ChatTheme.colors.textLowEmphasis,

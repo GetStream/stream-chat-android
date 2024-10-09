@@ -21,6 +21,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
@@ -37,7 +38,7 @@ public fun BackButton(
     modifier: Modifier = Modifier,
 ) {
     IconButton(
-        modifier = modifier,
+        modifier = modifier.testTag("Stream_BackButton"),
         onClick = onBackPressed,
     ) {
         Icon(
