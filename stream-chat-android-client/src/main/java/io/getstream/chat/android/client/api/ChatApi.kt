@@ -41,6 +41,7 @@ import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
@@ -458,7 +459,7 @@ internal interface ChatApi {
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    fun queryThreads(query: QueryThreadsRequest): Call<List<Thread>>
+    fun queryThreads(query: QueryThreadsRequest): Call<QueryThreadsResult>
 
     /**
      * Get a thread by [messageId].

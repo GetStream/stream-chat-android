@@ -167,6 +167,7 @@ import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.PushMessage
+import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
@@ -3204,6 +3205,18 @@ internal constructor(
     public fun queryThreads(
         query: QueryThreadsRequest,
     ): Call<List<Thread>> {
+        return queryThreadsResult(query).map { it.threads }
+    }
+
+    /**
+     * Query threads matching [query] request.
+     *
+     * @param query [QueryThreadsRequest] with query parameters to get matching users.
+     */
+    @CheckResult
+    public fun queryThreadsResult(
+        query: QueryThreadsRequest,
+    ): Call<QueryThreadsResult> {
         return api.queryThreads(query)
     }
 
