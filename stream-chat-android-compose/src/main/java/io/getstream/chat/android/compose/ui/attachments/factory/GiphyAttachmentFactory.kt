@@ -20,7 +20,9 @@ import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.testTag
 import io.getstream.chat.android.client.utils.attachment.isGiphy
 import io.getstream.chat.android.compose.ui.attachments.AttachmentFactory
 import io.getstream.chat.android.compose.ui.attachments.content.GiphyAttachmentContent
@@ -58,7 +60,9 @@ public class GiphyAttachmentFactory(
     canHandle = { attachments -> attachments.any(Attachment::isGiphy) },
     content = @Composable { modifier, state ->
         GiphyAttachmentContent(
-            modifier = modifier.wrapContentSize(),
+            modifier = modifier
+                .wrapContentSize()
+                .testTag("Stream_GiphyContent"),
             attachmentState = state,
             giphyInfoType = giphyInfoType,
             giphySizingMode = giphySizingMode,

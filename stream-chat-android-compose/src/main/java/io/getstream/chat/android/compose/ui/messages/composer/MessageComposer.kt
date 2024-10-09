@@ -50,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -428,6 +429,7 @@ public fun DefaultMessageComposerFooterContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Checkbox(
+                modifier = Modifier.testTag("Stream_AlsoSendToChannel"),
                 checked = messageComposerState.alsoSendToChannel,
                 onCheckedChange = { onAlsoSendToChannelSelected(it) },
                 colors = CheckboxDefaults.colors(
@@ -526,7 +528,8 @@ internal fun DefaultComposerIntegrations(
                     enabled = isAttachmentsButtonEnabled,
                     modifier = Modifier
                         .size(32.dp)
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .testTag("Stream_ComposerAttachmentsButton"),
                     content = {
                         Icon(
                             painter = painterResource(id = R.drawable.stream_compose_ic_add),
@@ -554,7 +557,8 @@ internal fun DefaultComposerIntegrations(
                 IconButton(
                     modifier = Modifier
                         .size(32.dp)
-                        .padding(4.dp),
+                        .padding(4.dp)
+                        .testTag("Stream_ComposerCommandsButton"),
                     enabled = isCommandsButtonEnabled,
                     content = {
                         Icon(
@@ -669,7 +673,8 @@ internal fun DefaultMessageComposerTrailingContent(
         if (sendVisible) {
             IconButton(
                 modifier = Modifier
-                    .semantics { contentDescription = sendButtonDescription },
+                    .semantics { contentDescription = sendButtonDescription }
+                    .testTag("Stream_ComposerSendButton"),
                 enabled = sendEnabled,
                 content = {
                     Icon(

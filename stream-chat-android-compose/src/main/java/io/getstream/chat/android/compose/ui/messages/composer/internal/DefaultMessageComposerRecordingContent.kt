@@ -58,6 +58,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -226,7 +227,8 @@ public fun DefaultAudioRecordButton(
         Icon(
             modifier = Modifier
                 .mirrorRtl(layoutDirection = layoutDirection)
-                .size(style.icon.size),
+                .size(style.icon.size)
+                .testTag("Stream_ComposerRecordAudioButton"),
             painter = style.icon.painter,
             contentDescription = stringResource(id = R.string.stream_compose_record_audio_message),
             tint = style.icon.tint,

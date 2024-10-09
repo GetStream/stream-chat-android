@@ -41,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -149,7 +150,8 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(max = 250.dp)
-                .clip(ChatTheme.shapes.attachment),
+                .clip(ChatTheme.shapes.attachment)
+                .testTag("Stream_LinkAttachmentPreview"),
             data = { data },
             imageOptions = ImageOptions(contentScale = ContentScale.Crop),
         )
@@ -181,7 +183,9 @@ private fun LinkAttachmentImagePreview(attachment: Attachment) {
 @Composable
 private fun LinkAttachmentTitle(text: String) {
     Text(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+        modifier = Modifier
+            .padding(start = 8.dp, end = 8.dp)
+            .testTag("Stream_LinkAttachmentTitle"),
         text = text,
         style = ChatTheme.typography.bodyBold,
         color = ChatTheme.colors.textHighEmphasis,
@@ -191,12 +195,14 @@ private fun LinkAttachmentTitle(text: String) {
 @Composable
 private fun LinkAttachmentDescription(description: String, linkDescriptionMaxLines: Int) {
     Text(
-        modifier = Modifier.padding(
-            start = 8.dp,
-            end = 8.dp,
-            bottom = 4.dp,
-            top = 2.dp,
-        ),
+        modifier = Modifier
+            .padding(
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 4.dp,
+                top = 2.dp,
+            )
+            .testTag("Stream_LinkAttachmentDescription"),
         text = description,
         style = ChatTheme.typography.footnote,
         color = ChatTheme.colors.textHighEmphasis,

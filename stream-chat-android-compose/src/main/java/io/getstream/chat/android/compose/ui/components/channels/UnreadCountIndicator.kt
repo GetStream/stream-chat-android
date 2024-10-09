@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,7 @@ public fun UnreadCountIndicator(
         contentAlignment = Alignment.Center,
     ) {
         Text(
+            modifier = Modifier.testTag("Stream_UnreadCountIndicator"),
             text = displayText,
             color = Color.White,
             textAlign = TextAlign.Center,

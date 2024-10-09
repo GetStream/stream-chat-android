@@ -29,6 +29,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -61,7 +62,8 @@ public fun CommandSuggestionList(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(max = ChatTheme.dimens.suggestionListMaxHeight)
-            .padding(ChatTheme.dimens.suggestionListPadding),
+            .padding(ChatTheme.dimens.suggestionListPadding)
+            .testTag("Stream_SuggestionList"),
         headerContent = {
             Row(
                 modifier = Modifier
@@ -72,7 +74,8 @@ public fun CommandSuggestionList(
                 Icon(
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .size(24.dp),
+                        .size(24.dp)
+                        .testTag("Stream_SuggestionListTitle"),
                     painter = painterResource(id = R.drawable.stream_compose_ic_command),
                     tint = ChatTheme.colors.primaryAccent,
                     contentDescription = null,

@@ -663,6 +663,7 @@ public fun BoxScope.AttachmentsPickerMenu(
         AttachmentsPicker(
             attachmentsPickerViewModel = attachmentsPickerViewModel,
             modifier = Modifier
+                .testTag("Stream_AttachmentsPicker")
                 .align(Alignment.BottomCenter)
                 .height(pickerHeight)
                 .animateEnterExit(

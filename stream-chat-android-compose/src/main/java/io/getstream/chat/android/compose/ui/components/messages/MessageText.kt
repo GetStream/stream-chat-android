@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -98,7 +99,8 @@ public fun MessageText(
                     end = 12.dp,
                     top = 8.dp,
                     bottom = 8.dp,
-                ),
+                )
+                .testTag("Stream_MessageClickableText"),
             text = styledText,
             style = style,
             onLongPress = { onLongItemClick(message) },
@@ -126,7 +128,8 @@ public fun MessageText(
                     horizontal = horizontalPadding,
                     vertical = verticalPadding,
                 )
-                .clipToBounds(),
+                .clipToBounds()
+                .testTag("Stream_MessageText"),
             text = styledText,
             style = style,
         )
