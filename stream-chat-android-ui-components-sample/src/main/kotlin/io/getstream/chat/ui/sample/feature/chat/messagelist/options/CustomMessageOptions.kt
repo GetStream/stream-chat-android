@@ -96,11 +96,13 @@ private class CustomMessageOptionItemsFactory(
         style: MessageListViewStyle,
     ): List<MessageOptionItem> {
         val messageOptions = mutableListOf<MessageOptionItem>()
-        if (selectedMessage.text.isNotEmpty() &&
-            !selectedMessage.isSystem() &&
-            !selectedMessage.isDeleted() &&
-            selectedMessage.user.id != currentUser?.id
-        ) {
+        val isNotEmptyMessage = selectedMessage.text.isNotEmpty()
+        val isNotSystemMessage = !selectedMessage.isSystem()
+        val isNotDeletedMessage = !selectedMessage.isDeleted()
+        val isNotCurrentUserMessage = selectedMessage.user.id != currentUser?.id
+        val shouldAddTranslationOption = isNotEmptyMessage && isNotSystemMessage &&
+            isNotDeletedMessage && isNotCurrentUserMessage
+        if (shouldAddTranslationOption) {
             messageOptions.add(
                 TranslationOption(
                     context,
