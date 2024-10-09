@@ -25,7 +25,7 @@ import io.getstream.chat.ui.sample.data.user.UserRepository
 class App : Application() {
 
     // done for simplicity, a DI framework should be used in the real app
-    val chatInitializer = ChatInitializer(context = this, autoTranslationEnabled = true)
+    val chatInitializer = ChatInitializer(context = this, autoTranslationEnabled = false)
     val userRepository = UserRepository(context = this)
 
     override fun onCreate() {

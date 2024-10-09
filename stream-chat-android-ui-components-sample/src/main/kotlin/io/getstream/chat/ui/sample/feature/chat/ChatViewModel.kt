@@ -23,19 +23,34 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.channel.state.ChannelState
+import io.getstream.chat.android.core.utils.Debouncer
 import io.getstream.chat.android.models.Member
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.state.extensions.watchChannelAsState
 import io.getstream.chat.android.state.utils.Event
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
+import io.getstream.chat.android.ui.model.MessageListItemWrapper
+import io.getstream.chat.ui.sample.application.MessageTranslator
 import io.getstream.chat.ui.sample.util.extensions.isAnonymousChannel
 import io.getstream.log.taggedLogger
+import io.getstream.result.Result
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.Locale
 
 class ChatViewModel(
     private val cid: String,
     private val chatClient: ChatClient = ChatClient.instance(),
 ) : ViewModel() {
+
+    private companion object {
+        private const val TRANSLATION_DEBOUNCE_MS = 300L
+    }
 
     private val logger by taggedLogger("Chat:ChannelVM")
 
@@ -47,12 +62,23 @@ class ChatViewModel(
     private val _navigationEvent: MutableLiveData<Event<NavigationEvent>> = MutableLiveData()
     val navigationEvent: LiveData<Event<NavigationEvent>> = _navigationEvent
 
+    private val _translationEvent: MutableLiveData<Event<Message>> = MutableLiveData()
+    val translationEvent: LiveData<Event<Message>> = _translationEvent
+
     val members: LiveData<List<Member>> = channelState.filterNotNull().flatMapLatest { it.members }.asLiveData()
+
+    private val translateDebouncer = Debouncer(TRANSLATION_DEBOUNCE_MS, viewModelScope)
 
     private fun observeChannelState(): StateFlow<ChannelState?> {
         val messageLimit = 0
         logger.d { "[observeChannelState] cid: $cid, messageLimit: $messageLimit" }
         return chatClient.watchChannelAsState(cid, messageLimit, viewModelScope)
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        translateDebouncer.cancelLastDebounce()
+        MessageTranslator.clearTranslations()
     }
 
     fun onAction(action: Action) {
@@ -67,11 +93,76 @@ class ChatViewModel(
                     },
                 )
             }
+            is Action.Translate -> {
+                translate(action.message)
+            }
+            is Action.ClearTranslation -> {
+                clearTranslation(action.message)
+            }
+        }
+    }
+
+    fun onMessageListState(state: MessageListItemWrapper) {
+        viewModelScope.launch {
+            withContext(Dispatchers.Default) {
+                val messages = state.items.filterIsInstance<MessageListItem.MessageItem>().map { it.message }
+                translationEvent.value?.peekContent()?.also { toBeTranslated ->
+                    messages.firstOrNull {
+                        it.id == toBeTranslated.id && it.i18n.isNotEmpty()
+                    }?.also {
+                        logger.v { "[onMessageListState] found: ${it.text}, i18n: ${it.i18n}" }
+                        emitTranslation(toBeTranslated)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun clearTranslation(message: Message) {
+        logger.d { "[clearTranslation] text: ${message.text}, i18n: ${message.i18n}" }
+        MessageTranslator.clearTranslation(message.id)
+        _translationEvent.value = Event(message)
+    }
+
+    private fun translate(message: Message) {
+        viewModelScope.launch {
+            val language = chatClient.getCurrentUser()?.language ?: Locale.getDefault().language
+            logger.d { "[translate] to: \"$language\", text: ${message.text}, i18n: ${message.i18n}" }
+            when (message.getTranslation(language).isNotEmpty()) {
+                true -> {
+                    logger.v { "[translate] already translated" }
+                    MessageTranslator.translate(message.id)
+                    _translationEvent.value = Event(message)
+                }
+                else -> when (val result = chatClient.translate(message.id, language).await()) {
+                    is Result.Success -> {
+                        val translatedMessage = result.value
+                        logger.v { "[translate] succeed: ${translatedMessage.text}, i18n: ${translatedMessage.i18n}" }
+                        MessageTranslator.translate(message.id)
+                        emitTranslation(translatedMessage)
+                    }
+
+                    is Result.Failure -> {
+                        logger.e { "[translate] failed: ${result.value}" }
+                        MessageTranslator.clearTranslation(message.id)
+                        emitTranslation(message)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun emitTranslation(message: Message) {
+        translateDebouncer.submit {
+            logger.v { "[emitTranslation] text: ${message.text}, i18n: ${message.i18n}" }
+            _translationEvent.value = Event(message)
         }
     }
 
     sealed class Action {
         class HeaderClicked(val members: List<Member>) : Action()
+        class Translate(val message: Message) : Action()
+        class ClearTranslation(val message: Message) : Action()
     }
 
     sealed class NavigationEvent {

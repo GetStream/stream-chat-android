@@ -52,7 +52,9 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.chat.composer.CustomMessageComposerLeadingContent
+import io.getstream.chat.ui.sample.feature.chat.messagelist.options.CustomMessageOptions
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import io.getstream.chat.ui.sample.util.extensions.notifyMessageChanged
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -171,6 +173,20 @@ class ChatFragment : Fragment() {
                         ChatFragmentDirections.actionChatFragmentToGroupChatInfoFragment(event.cid),
                     )
                 }
+            },
+        )
+
+        messageListViewModel.state.observe(viewLifecycleOwner) { state ->
+            if (state is MessageListViewModel.State.Result) {
+                logger.v { "[onMessageListViewModelState] messageListItem: ${state.messageListItem.items.size}" }
+                chatViewModel.onMessageListState(state.messageListItem)
+            }
+        }
+        chatViewModel.translationEvent.observe(
+            viewLifecycleOwner,
+            EventObserver { message ->
+                logger.v { "[onTranslationEvent] message: ${message.text}, i18n: ${message.i18n}" }
+                binding.messageListView.notifyMessageChanged(message)
             },
         )
     }
@@ -303,6 +319,14 @@ class ChatFragment : Fragment() {
                     else -> Unit
                 }
             }
+
+            setMessageOptionItemsFactory(CustomMessageOptions.optionFactory(context))
+            setCustomActionHandler(
+                CustomMessageOptions.actionHandler(
+                    onTranslate = { chatViewModel.onAction(ChatViewModel.Action.Translate(it)) },
+                    onClearTranslation = { chatViewModel.onAction(ChatViewModel.Action.ClearTranslation(it)) },
+                ),
+            )
         }
     }
 

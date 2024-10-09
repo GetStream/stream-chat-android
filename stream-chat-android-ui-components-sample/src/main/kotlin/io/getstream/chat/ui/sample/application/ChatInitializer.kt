@@ -113,81 +113,16 @@ class ChatInitializer(
             .build()
 
         // Using markdown as text transformer
+        val messageTranslator = MessageTranslator(client::getCurrentUser, autoTranslationEnabled)
         ChatUI.autoTranslationEnabled = autoTranslationEnabled
-        ChatUI.messageTextTransformer = MarkdownTextTransformer(context) { item ->
-            if (autoTranslationEnabled) {
-                client.getCurrentUser()?.language?.let { language ->
-                    item.message.getTranslation(language).ifEmpty { item.message.text }
-                } ?: item.message.text
-            } else {
-                item.message.text
-            }
-        }
+        ChatUI.messageTextTransformer = MarkdownTextTransformer(context, messageTranslator)
 
-        // ChatUI.messageTextTransformer = ChatMessageTextTransformer { textView, messageItem ->
-        //     textView.text = messageItem.message.text
-        // }
-
-        // ChatUI.channelAvatarRenderer = ChannelAvatarRenderer { _, channel, _, targetProvider ->
-        //     val targetView: AvatarImageView = targetProvider.regular()
-        //     if (channel.image.isBlank()) {
-        //         targetView.setAvatar(R.drawable.ic_channel_avatar)
-        //     } else {
-        //         targetView.setAvatar(channel.image)
-        //     }
-        // }
-
-        // TransformStyle.messageComposerStyleTransformer = StyleTransformer { defaultStyle ->
-        //     defaultStyle.copy(
-        //         audioRecordingHoldToRecordText = "Bla bla bla",
-        //         audioRecordingSlideToCancelText = "Wash to cancel",
-        //     )
-        // }
-
-        // TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
-        //     defaultStyle.copy(
-        //         reactionsViewStyle = defaultStyle.reactionsViewStyle.copy(
-        //             bubbleBorderColorMine = Color.CYAN,
-        //             reactionSorting = ReactionSortingByLastReactionAtDesc
-        //             // reactionSorting = ReactionSortingByLastReactionAt
-        //             // reactionSorting = ReactionSortingByFirstReactionAt
-        //         )
-        //     )
-        // }
-        //
         TransformStyle.viewReactionsStyleTransformer = StyleTransformer { defaultStyle ->
             defaultStyle.copy(
                 bubbleBorderColorMine = Color.YELLOW,
                 reactionSorting = ReactionSortingByLastReactionAt,
             )
         }
-
-        /*val lightGray = ContextCompat.getColor(context, R.color.stream_ui_grey_whisper)
-        TransformStyle.messageListItemStyleTransformer = StyleTransformer { defaultStyle ->
-            defaultStyle.copy(
-                messageBackgroundColorMine = Color.BLACK,
-                messageBackgroundColorTheirs = lightGray,
-                textStyleMine = defaultStyle.textStyleMine.copy(
-                    color = Color.WHITE,
-                ),
-                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
-                    color = Color.BLACK,
-                ),
-            )
-        }
-
-        TransformStyle.messageReplyStyleTransformer = StyleTransformer { defaultStyle ->
-            defaultStyle.copy(
-                messageBackgroundColorMine = lightGray,
-                messageBackgroundColorTheirs = Color.BLACK,
-                textStyleMine = defaultStyle.textStyleMine.copy(
-                    color = Color.BLACK,
-                ),
-                textStyleTheirs = defaultStyle.textStyleTheirs.copy(
-                    color = Color.WHITE,
-                ),
-            )
-        }*/
 
         ChatUI.decoratorProviderFactory = CustomDecoratorProviderFactory() + DecoratorProviderFactory.defaultFactory()
 
