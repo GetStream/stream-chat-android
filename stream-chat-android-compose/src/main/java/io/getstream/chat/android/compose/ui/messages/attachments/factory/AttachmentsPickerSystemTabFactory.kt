@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.compose.ui.messages.attachments.factory
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -27,7 +28,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,11 +36,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,6 +61,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentPickerItemState
 import io.getstream.chat.android.compose.state.messages.attachments.AttachmentsPickerMode
@@ -64,15 +73,56 @@ import io.getstream.chat.android.compose.state.messages.attachments.MediaCapture
 import io.getstream.chat.android.compose.state.messages.attachments.Poll
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.StorageHelperWrapper
+import io.getstream.chat.android.ui.common.contract.internal.CaptureMediaContract
 import io.getstream.chat.android.ui.common.helper.internal.AttachmentFilter
 import io.getstream.chat.android.ui.common.helper.internal.StorageHelper
 import io.getstream.chat.android.ui.common.state.messages.composer.AttachmentMetaData
+import io.getstream.chat.android.ui.common.utils.isPermissionDeclared
+import java.io.File
 
 /**
  * Holds the information required to add support for "files" tab in the attachment picker.
+ *
+ * @param filesAllowed If the option to pick files is included in the attachments picker.
+ * @param mediaAllowed If the option to pick media (images/videos) is included in the attachments picker.
+ * @param captureImageAllowed If the option to capture an image is included in the attachments picker.
+ * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
+ * @param pollAllowed If the option to create a poll is included in the attachments picker.
  */
-public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<AttachmentsPickerTabFactory>) :
-    AttachmentsPickerTabFactory {
+public class AttachmentsPickerSystemTabFactory(
+    private val filesAllowed: Boolean,
+    private val mediaAllowed: Boolean,
+    private val captureImageAllowed: Boolean,
+    private val captureVideoAllowed: Boolean,
+    private val pollAllowed: Boolean,
+) : AttachmentsPickerTabFactory {
+
+    /**
+     * Holds the information required to add support for "files" tab in the attachment picker.
+     *
+     * @param otherFactories A list of other [AttachmentsPickerTabFactory] used to handle different attachment pickers.
+     */
+    @Deprecated(
+        message = "Use constructor(filesAllowed, mediaAllowed, captureImageAllowed, captureVideoAllowed, pollAllowed)" +
+            " instead.",
+        replaceWith = ReplaceWith(
+            expression = "AttachmentsPickerSystemTabFactory(filesAllowed, mediaAllowed, captureImageAllowed," +
+                " captureVideoAllowed, pollAllowed)",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
+    public constructor(otherFactories: List<AttachmentsPickerTabFactory>) : this(
+        filesAllowed = true,
+        mediaAllowed = true,
+        captureImageAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
+        captureVideoAllowed = otherFactories.any { it.attachmentsPickerMode == MediaCapture },
+        pollAllowed = otherFactories.any { it.attachmentsPickerMode == Poll },
+    )
+
+    private val mediaPickerContract = resolveMediaPickerMode(captureImageAllowed, captureVideoAllowed)
+        ?.let(::CaptureMediaContract)
+
+    private val pollFactory by lazy { AttachmentsPickerPollTabFactory() }
 
     /**
      * The attachment picker mode that this factory handles.
@@ -109,6 +159,7 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
      * @param onAttachmentsSubmitted Handler to submit the selected attachments to the message composer.
      */
     @OptIn(ExperimentalPermissionsApi::class)
+    @Suppress("LongMethod")
     @Composable
     override fun PickerTabContent(
         onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
@@ -118,199 +169,242 @@ public class AttachmentsPickerSystemTabFactory(private val otherFactories: List<
         onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     ) {
         val context = LocalContext.current
-        val attachmentFilter = AttachmentFilter()
         val storageHelper: StorageHelperWrapper = remember {
-            StorageHelperWrapper(context, StorageHelper(), attachmentFilter)
+            StorageHelperWrapper(context, StorageHelper(), AttachmentFilter())
         }
 
-        val filePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.StartActivityForResult(),
-        ) { result ->
-            // Handle the file URI
+        val filePickerLauncher = rememberFilePickerLauncher { uri ->
+            onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
+        }
+
+        val imagePickerLauncher = rememberImagePickerLauncher { uri ->
+            onAttachmentsSubmitted(storageHelper.getAttachmentsMetadataFromUris(listOf(uri)))
+        }
+
+        val captureLauncher = rememberCaptureMediaLauncher { file ->
+            onAttachmentsSubmitted(listOf(AttachmentMetaData(context, file)))
+        }
+        var cameraRationaleShown by remember { mutableStateOf(false) }
+        val cameraPermissionRequired = context.isPermissionDeclared(Manifest.permission.CAMERA)
+        val cameraPermissionState = if (cameraPermissionRequired) {
+            rememberPermissionState(Manifest.permission.CAMERA) {
+                if (it) captureLauncher?.launch(Unit)
+            }
+        } else {
+            null
+        }
+
+        var pollShown by remember { mutableStateOf(false) }
+
+        val buttonsConfig = ButtonsConfig(
+            filesAllowed = filesAllowed,
+            mediaAllowed = mediaAllowed,
+            captureAllowed = mediaPickerContract != null,
+            pollAllowed = pollAllowed,
+        )
+        val buttonActions = ButtonActions(
+            onFilesClick = { filePickerLauncher.launch(filePickerIntent()) },
+            onMediaClick = {
+                imagePickerLauncher
+                    .launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageAndVideo))
+            },
+            onCaptureClick = {
+                // Permission grant is needed only if CAMERA is declared in the Manifest and is not yet granted
+                if (!cameraPermissionRequired || cameraPermissionState?.status?.isGranted == true) {
+                    captureLauncher?.launch(Unit)
+                } else if (cameraPermissionState?.status?.shouldShowRationale == true) {
+                    cameraRationaleShown = true
+                } else {
+                    cameraPermissionState?.launchPermissionRequest()
+                }
+            },
+            onPollClick = { pollShown = true },
+        )
+
+        ButtonRow(config = buttonsConfig, actions = buttonActions)
+
+        if (pollShown) {
+            PollDialog(
+                factory = pollFactory,
+                attachments = attachments,
+                actions = PollDialogActions(
+                    onAttachmentPickerAction = onAttachmentPickerAction,
+                    onAttachmentsChanged = onAttachmentsChanged,
+                    onAttachmentItemSelected = onAttachmentItemSelected,
+                    onAttachmentsSubmitted = onAttachmentsSubmitted,
+                    onDismissPollDialog = { pollShown = false },
+                ),
+            )
+        }
+
+        if (cameraRationaleShown && cameraPermissionState != null) {
+            CameraPermissionDialog(
+                permissionState = cameraPermissionState,
+                onDismiss = { cameraRationaleShown = false },
+            )
+        }
+
+        LaunchedEffect(cameraPermissionState?.status) {
+            cameraRationaleShown = false
+        }
+    }
+
+    @Composable
+    private fun rememberFilePickerLauncher(onResult: (Uri) -> Unit) =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val uri = result.data?.data
-                uri?.let {
-                    val attachmentMetadata = storageHelper.getAttachmentsMetadataFromUris(listOf(uri))
-                    onAttachmentsSubmitted(attachmentMetadata)
-                }
+                uri?.let(onResult)
             }
         }
 
-        val imagePickerLauncher = rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.PickVisualMedia(),
-        ) { uri: Uri? ->
-            // Handle the image URI
-            uri?.let {
-                val attachmentMetadata = storageHelper.getAttachmentsMetadataFromUris(listOf(uri))
-                onAttachmentsSubmitted(attachmentMetadata)
+    @Composable
+    private fun rememberImagePickerLauncher(onResult: (Uri) -> Unit) =
+        rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+            uri?.let(onResult)
+        }
+
+    @Composable
+    private fun rememberCaptureMediaLauncher(onResult: (File) -> Unit) =
+        mediaPickerContract?.let {
+            rememberLauncherForActivityResult(mediaPickerContract) { file ->
+                file?.let(onResult)
             }
         }
 
-        InnerContent(
-            InnerContentParams(
-                attachments = attachments,
-                otherFactories = otherFactories,
-            ),
-            InnerContentActions(
-                onAttachmentItemSelected = onAttachmentItemSelected,
-                onAttachmentsChanged = onAttachmentsChanged,
-                onAttachmentsSubmitted = onAttachmentsSubmitted,
-                onAttachmentPickerAction = onAttachmentPickerAction,
-                onFilesClick = {
-                    // Start file picker
-                    val filePickerIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                        type = "*/*" // General type to include multiple types
-                        putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                    }
-
-                    filePickerLauncher.launch(filePickerIntent)
-                },
-                onImagesClick = {
-                    // Start photo picker
-                    imagePickerLauncher.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageAndVideo,
-                        ),
-                    )
-                },
-            ),
-        )
-    }
-}
-
-@Composable
-private fun InnerContent(params: InnerContentParams, actions: InnerContentActions) {
-    val pollsFactory = remember {
-        params.otherFactories.firstOrNull { it.attachmentsPickerMode == Poll }
-    }
-    val mediaCaptureTabFactory = remember {
-        params.otherFactories.firstOrNull { it.attachmentsPickerMode == MediaCapture }
+    private fun resolveMediaPickerMode(captureImageAllowed: Boolean, captureVideoAllowed: Boolean) = when {
+        captureImageAllowed && captureVideoAllowed -> CaptureMediaContract.Mode.PHOTO_AND_VIDEO
+        captureImageAllowed -> CaptureMediaContract.Mode.PHOTO
+        captureVideoAllowed -> CaptureMediaContract.Mode.VIDEO
+        else -> null
     }
 
-    var pollSelected by remember {
-        mutableStateOf(false)
-    }
-    var mediaSelected by remember {
-        mutableStateOf(false)
-    }
-
-    DialogContent(
-        DialogContentParams(
-            pollsFactory = pollsFactory,
-            mediaCaptureTabFactory = mediaCaptureTabFactory,
-            mediaSelected = mediaSelected,
-            pollSelected = pollSelected,
-            attachments = params.attachments,
-        ),
-        DialogContentActions(
-            onAttachmentPickerAction = actions.onAttachmentPickerAction,
-            onAttachmentsChanged = actions.onAttachmentsChanged,
-            onAttachmentItemSelected = actions.onAttachmentItemSelected,
-            onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
-            onDismissPollDialog = { pollSelected = false },
-        ),
-    )
-
-    ButtonRow(
-        onFilesClick = actions.onFilesClick,
-        onImagesClick = actions.onImagesClick,
-        onMediaClick = { mediaSelected = !mediaSelected },
-        onPollClick = { pollSelected = !pollSelected },
-    )
-}
-
-@Composable
-private fun DialogContent(params: DialogContentParams, actions: DialogContentActions) {
-    if (params.mediaSelected) {
-        params.mediaCaptureTabFactory?.PickerTabContent(
-            onAttachmentPickerAction = actions.onAttachmentPickerAction,
-            attachments = params.attachments,
-            onAttachmentsChanged = actions.onAttachmentsChanged,
-            onAttachmentItemSelected = actions.onAttachmentItemSelected,
-            onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
-        )
-    }
-
-    if (params.pollSelected) {
-        Dialog(
-            properties = DialogProperties(
-                usePlatformDefaultWidth = false,
-            ),
-            onDismissRequest = actions.onDismissPollDialog,
-        ) {
-            Box(
-                modifier = Modifier
-                    .background(ChatTheme.colors.appBackground)
-                    .fillMaxWidth()
-                    .fillMaxHeight(), // Ensure the dialog fills the height
-            ) {
-                params.pollsFactory?.PickerTabContent(
-                    onAttachmentPickerAction = actions.onAttachmentPickerAction,
-                    attachments = params.attachments,
-                    onAttachmentsChanged = actions.onAttachmentsChanged,
-                    onAttachmentItemSelected = actions.onAttachmentItemSelected,
-                    onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
-                )
-            }
+    private fun filePickerIntent(): Intent {
+        val attachmentFilter = AttachmentFilter()
+        return Intent(Intent.ACTION_GET_CONTENT).apply {
+            type = "*/*" // General type to include multiple types
+            putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
+            addCategory(Intent.CATEGORY_OPENABLE)
         }
     }
 }
 
 @Composable
 private fun ButtonRow(
-    onFilesClick: () -> Unit,
-    onImagesClick: () -> Unit,
-    onMediaClick: () -> Unit,
-    onPollClick: () -> Unit,
+    config: ButtonsConfig,
+    actions: ButtonActions,
 ) {
-    val buttons = listOf<@Composable () -> Unit>(
-        {
-            RoundedIconButton(
-                onClick = onFilesClick,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
-                contentDescription = stringResource(id = R.string.stream_compose_files_option),
-                text = stringResource(id = R.string.stream_compose_files_option),
-            )
-        },
-        {
-            RoundedIconButton(
-                onClick = onImagesClick,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
-                contentDescription = stringResource(id = R.string.stream_compose_images_option),
-                text = stringResource(id = R.string.stream_compose_images_option),
-            )
-        },
-        {
-            RoundedIconButton(
-                onClick = onMediaClick,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
-                contentDescription = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
-                text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
-            )
-        },
-        {
-            RoundedIconButton(
-                onClick = onPollClick,
-                iconPainter = painterResource(id = R.drawable.stream_compose_ic_poll),
-                contentDescription = stringResource(id = R.string.stream_compose_poll_option),
-                text = stringResource(id = R.string.stream_compose_poll_option),
-            )
-        },
-    )
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.Center,
+    LazyRow(
+        modifier = Modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(16.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
     ) {
-        buttons.forEach { button ->
-            button()
+        if (config.filesAllowed) {
+            item {
+                FilesButton(actions.onFilesClick)
+            }
+        }
+        if (config.mediaAllowed) {
+            item {
+                MediaButton(actions.onMediaClick)
+            }
+        }
+        if (config.captureAllowed) {
+            item {
+                CaptureButton(actions.onCaptureClick)
+            }
+        }
+        if (config.pollAllowed) {
+            item {
+                PollButton(actions.onPollClick)
+            }
         }
     }
 }
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun CameraPermissionDialog(
+    permissionState: PermissionState,
+    onDismiss: () -> Unit,
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Box(
+            modifier = Modifier
+                .wrapContentSize()
+                .background(ChatTheme.colors.barsBackground, RoundedCornerShape(16.dp)),
+            contentAlignment = Alignment.BottomCenter,
+        ) {
+            MissingPermissionContent(permissionState)
+        }
+    }
+}
+
+@Composable
+private fun PollDialog(
+    factory: AttachmentsPickerPollTabFactory,
+    attachments: List<AttachmentPickerItemState>,
+    actions: PollDialogActions,
+) {
+    Dialog(
+        properties = DialogProperties(
+            usePlatformDefaultWidth = false,
+        ),
+        onDismissRequest = actions.onDismissPollDialog,
+    ) {
+        Box(
+            modifier = Modifier
+                .background(ChatTheme.colors.appBackground)
+                .fillMaxWidth()
+                .fillMaxHeight(), // Ensure the dialog fills the height
+        ) {
+            factory.PickerTabContent(
+                onAttachmentPickerAction = actions.onAttachmentPickerAction,
+                attachments = attachments,
+                onAttachmentsChanged = actions.onAttachmentsChanged,
+                onAttachmentItemSelected = actions.onAttachmentItemSelected,
+                onAttachmentsSubmitted = actions.onAttachmentsSubmitted,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilesButton(onClick: () -> Unit) =
+    RoundedIconButton(
+        onClick = onClick,
+        iconPainter = painterResource(id = R.drawable.stream_compose_ic_file_picker),
+        contentDescription = stringResource(id = R.string.stream_compose_files_option),
+        text = stringResource(id = R.string.stream_compose_files_option),
+    )
+
+@Composable
+private fun MediaButton(onClick: () -> Unit) =
+    RoundedIconButton(
+        onClick = onClick,
+        iconPainter = painterResource(id = R.drawable.stream_compose_ic_image_picker),
+        contentDescription = stringResource(id = R.string.stream_compose_images_option),
+        text = stringResource(id = R.string.stream_compose_images_option),
+    )
+
+@Composable
+private fun CaptureButton(onClick: () -> Unit) =
+    RoundedIconButton(
+        onClick = onClick,
+        iconPainter = painterResource(id = R.drawable.stream_compose_ic_media_picker),
+        contentDescription = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
+        text = stringResource(id = R.string.stream_ui_message_composer_capture_media_take_photo),
+    )
+
+@Composable
+private fun PollButton(onClick: () -> Unit) =
+    RoundedIconButton(
+        onClick = onClick,
+        iconPainter = painterResource(id = R.drawable.stream_compose_ic_poll),
+        contentDescription = stringResource(id = R.string.stream_compose_poll_option),
+        text = stringResource(id = R.string.stream_compose_poll_option),
+    )
 
 @Composable
 private fun RoundedIconButton(
@@ -363,32 +457,24 @@ private fun RoundedIconButton(
 
 //  Data classes to combine parameters.
 
-private data class InnerContentParams(
-    val otherFactories: List<AttachmentsPickerTabFactory>,
-    val attachments: List<AttachmentPickerItemState>,
+private data class ButtonsConfig(
+    val filesAllowed: Boolean,
+    val mediaAllowed: Boolean,
+    val captureAllowed: Boolean,
+    val pollAllowed: Boolean,
 )
 
-private data class InnerContentActions(
-    val onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
-    val onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
-    val onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
-    val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
+private data class ButtonActions(
     val onFilesClick: () -> Unit,
-    val onImagesClick: () -> Unit,
+    val onMediaClick: () -> Unit,
+    val onCaptureClick: () -> Unit,
+    val onPollClick: () -> Unit,
 )
 
-private data class DialogContentActions(
+private data class PollDialogActions(
     val onAttachmentPickerAction: (AttachmentPickerAction) -> Unit,
     val onAttachmentsChanged: (List<AttachmentPickerItemState>) -> Unit,
     val onAttachmentItemSelected: (AttachmentPickerItemState) -> Unit,
     val onAttachmentsSubmitted: (List<AttachmentMetaData>) -> Unit,
     val onDismissPollDialog: () -> Unit,
-)
-
-private data class DialogContentParams(
-    val pollsFactory: AttachmentsPickerTabFactory?,
-    val mediaCaptureTabFactory: AttachmentsPickerTabFactory?,
-    val mediaSelected: Boolean,
-    val pollSelected: Boolean,
-    val attachments: List<AttachmentPickerItemState>,
 )

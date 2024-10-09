@@ -22,6 +22,15 @@ package io.getstream.chat.android.compose.ui.messages.attachments.factory
  */
 public object AttachmentsPickerTabFactories {
 
+    @Deprecated(
+        message = "Use defaultFactoriesWithoutStoragePermissions(filesAllowed: Boolean, mediaAllowed: Boolean = true," +
+            " captureImageAllowed: Boolean, captureVideoAllowed: Boolean, pollAllowed: Boolean = true) instead.",
+        replaceWith = ReplaceWith(
+            expression = "defaultFactoriesWithoutStoragePermissions(filesAllowed, mediaAllowed, captureImageAllowed," +
+                " captureVideoAllowed, pollAllowed)",
+        ),
+        level = DeprecationLevel.WARNING,
+    )
     public fun defaultFactoriesWithoutStoragePermissions(): List<AttachmentsPickerTabFactory> {
         val otherFactories = defaultFactories(
             imagesTabEnabled = false,
@@ -31,6 +40,32 @@ public object AttachmentsPickerTabFactories {
             pollEnabled = true,
         )
         return listOf(AttachmentsPickerSystemTabFactory(otherFactories))
+    }
+
+    /**
+     * Builds the default list of attachment picker tab factories (without requesting storage permission).
+     *
+     * @param filesAllowed If the option to pick files is included in the attachments picker.
+     * @param mediaAllowed If the option to pick media (images/videos) is included in the attachments picker.
+     * @param captureImageAllowed If the option to capture an image is included in the attachments picker.
+     * @param captureVideoAllowed If the option to capture a video is included in the attachments picker.
+     * @param pollAllowed If the option to create a poll is included in the attachments picker.
+     */
+    public fun defaultFactoriesWithoutStoragePermissions(
+        filesAllowed: Boolean = true,
+        mediaAllowed: Boolean = true,
+        captureImageAllowed: Boolean = true,
+        captureVideoAllowed: Boolean = true,
+        pollAllowed: Boolean = true,
+    ): List<AttachmentsPickerTabFactory> {
+        val factory = AttachmentsPickerSystemTabFactory(
+            filesAllowed = filesAllowed,
+            mediaAllowed = mediaAllowed,
+            captureImageAllowed = captureImageAllowed,
+            captureVideoAllowed = captureVideoAllowed,
+            pollAllowed = pollAllowed,
+        )
+        return listOf(factory)
     }
 
     /**
