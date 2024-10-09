@@ -113,6 +113,7 @@ import io.getstream.chat.android.models.Mute
 import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
+import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.SearchMessagesResult
 import io.getstream.chat.android.models.Thread
@@ -1118,28 +1119,32 @@ constructor(
     /**
      * Queries a list of threads for the current user.
      *
-     * @param replyLimit The number of latest replies to fetch per thread. Defaults to 2.
-     * @param participantLimit The number of thread participants to request per thread. Defaults to 100.
-     * @param limit The number of threads to return. Defaults to 10.
-     * @param watch If true, all the channels corresponding to threads returned in response will be watched.
-     * Defaults to true.
-     * @param memberLimit The number of members to request per thread. Defaults to 100.
+     * @param query The [QueryThreadsRequest] model holding the data relevant for the `queryThreads` call.
      */
     override fun queryThreads(
         query: QueryThreadsRequest,
-    ): Call<List<Thread>> {
+    ): Call<QueryThreadsResult> {
         val lazyQueryThreads = {
             threadsApi.queryThreads(
                 connectionId,
                 io.getstream.chat.android.client.api2.model.requests.QueryThreadsRequest(
-                    reply_limit = query.replyLimit,
-                    participant_limit = query.participantLimit,
-                    limit = query.limit,
                     watch = query.watch,
+                    limit = query.limit,
                     member_limit = query.memberLimit,
                     next = query.next,
+                    participant_limit = query.participantLimit,
+                    prev = query.prev,
+                    reply_limit = query.replyLimit,
+                    user = query.user?.toDto(),
+                    user_id = query.userId,
                 ),
-            ).map { response -> response.threads.map { it.toDomain(currentUserIdProvider()) } }
+            ).map { response ->
+                QueryThreadsResult(
+                    threads = response.threads.map { it.toDomain(currentUserIdProvider()) },
+                    prev = response.prev,
+                    next = response.next,
+                )
+            }
         }
         return if (connectionId.isBlank() && query.watch) {
             logger.i { "[queryThreads] postponing because an active connection is required" }
