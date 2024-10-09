@@ -8,6 +8,8 @@
 
 ### ⚠️ Changed
 - Deprecate `NotInFilterObject` because it is not supported backend-side anymore. [#5393](https://github.com/GetStream/stream-chat-android/pull/5393)
+- Deprecate `AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions()` in favor of a more configurable method. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
+- Deprecate `AttachmentsPickerSystemTabFactory(otherFactories)` in favor of a more configurable constructor. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ❌ Removed
 - Remove `NotInFilterObject` because it is not supported backend-side anymore. [#5394](https://github.com/GetStream/stream-chat-android/pull/5394)
@@ -58,6 +60,8 @@
 
 ## stream-chat-android-ui-components
 ### 🐞 Fixed
+- Fix max allowed votes base on available options. [#5431](https://github.com/GetStream/stream-chat-android/pull/5431)
+- Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 - Fixed `MessageListView` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
 ### ⬆️ Improved
@@ -70,6 +74,7 @@
 
 ## stream-chat-android-compose
 ### 🐞 Fixed
+- Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 - Fixed `MessageList` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
 ### ⬆️ Improved
@@ -78,6 +83,8 @@
 - Added `ChannelListViewModel.refresh` method to refresh the channel list. [#5425](https://github.com/GetStream/stream-chat-android/pull/5425)
 - Add `PinnedMessageList` component for showing the list of pinned messages in a channel. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
 - Add `formatMessageTitle` method to `MessagePreviewFormatter`, to allow message preview title formatting customization. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
+- Add `AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions` to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
+- Add `AttachmentsPickerSystemTabFactory(filesAllowed, mediaAllowed, captureImageAllowed, captureVideoAllowed, pollAllowed)` to to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 
 ### ⚠️ Changed
 - Exposed `DefaultMessageComposerRecordingContent` and `DefaultAudioRecordButton` components. [#5433](https://github.com/GetStream/stream-chat-android/pull/5433) 
