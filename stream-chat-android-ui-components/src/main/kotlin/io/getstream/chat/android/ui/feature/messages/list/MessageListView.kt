@@ -907,6 +907,7 @@ public class MessageListView : ConstraintLayout {
      * Scrolls the message list to the bottom.sl
      */
     public fun scrollToBottom() {
+        logger.d { "[scrollToBottom] no args" }
         scrollHelper.scrollToBottom()
     }
 

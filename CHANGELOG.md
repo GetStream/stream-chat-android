@@ -62,6 +62,7 @@
 ### 🐞 Fixed
 - Fix max allowed votes base on available options. [#5431](https://github.com/GetStream/stream-chat-android/pull/5431)
 - Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
+- Fixed `MessageListView` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
 ### ⬆️ Improved
 
@@ -74,6 +75,7 @@
 ## stream-chat-android-compose
 ### 🐞 Fixed
 - Fix `CAMERA` permission request when using the capture photo/video attachment picker from `AttachmentsPickerSystemTabFactory`. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
+- Fixed `MessageList` scroll to the bottom behaviour when a new message is added. [#5427](https://github.com/GetStream/stream-chat-android/pull/5427)
 
 ### ⬆️ Improved
 

@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.common.state.messages.list
 
+import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.ChannelUserRead
 import io.getstream.chat.android.models.Message
@@ -128,3 +129,18 @@ public data class UnreadSeparatorItemState(
 public data class StartOfTheChannelItemState(
     val channel: Channel,
 ) : MessageListItemState()
+
+/**
+ * Returns a string representation of the [MessageListItemState].
+ */
+@InternalStreamChatApi
+public fun MessageListItemState.stringify(): String = when (this) {
+    is MessageItemState -> "MessageItemState(message.text: ${message.text}, isMine: $isMine)"
+    is DateSeparatorItemState -> "DateSeparatorItemState(date: $date)"
+    is ThreadDateSeparatorItemState -> "ThreadDateSeparatorItemState(date: $date, replyCount: $replyCount)"
+    is SystemMessageItemState -> "SystemMessageItemState(message.text: ${message.text})"
+    is TypingItemState -> "TypingItemState(typingUsers.size: ${typingUsers.size})"
+    is UnreadSeparatorItemState -> "UnreadSeparatorItemState(unreadCount: $unreadCount)"
+    is StartOfTheChannelItemState -> "StartOfTheChannelItemState(channel.name: ${channel.name})"
+    is EmptyThreadPlaceholderItemState -> "EmptyThreadPlaceholderItemState"
+}
