@@ -24,10 +24,13 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.liveData
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.ListAdapter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
@@ -43,6 +46,8 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
+import io.getstream.chat.android.ui.feature.messages.list.MessageListView
+import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
@@ -52,13 +57,16 @@ import io.getstream.chat.android.ui.viewmodel.messages.bindView
 import io.getstream.chat.ui.sample.common.navigateSafely
 import io.getstream.chat.ui.sample.databinding.FragmentChatBinding
 import io.getstream.chat.ui.sample.feature.chat.composer.CustomMessageComposerLeadingContent
+import io.getstream.chat.ui.sample.feature.chat.messagelist.options.CustomMessageOptions
 import io.getstream.chat.ui.sample.feature.common.ConfirmationDialogFragment
+import io.getstream.chat.ui.sample.util.extensions.notifyMessageChanged
 import io.getstream.chat.ui.sample.util.extensions.useAdjustResize
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import kotlin.math.log
 
 class ChatFragment : Fragment() {
 
@@ -171,6 +179,20 @@ class ChatFragment : Fragment() {
                         ChatFragmentDirections.actionChatFragmentToGroupChatInfoFragment(event.cid),
                     )
                 }
+            },
+        )
+
+        messageListViewModel.state.observe(viewLifecycleOwner) { state ->
+            if (state is MessageListViewModel.State.Result) {
+                logger.v { "[onMessageListViewModelState] messageListItem: ${state.messageListItem.items.size}" }
+                chatViewModel.onMessageListState(state.messageListItem)
+            }
+        }
+        chatViewModel.translationEvent.observe(
+            viewLifecycleOwner,
+            EventObserver { message ->
+                logger.v { "[onTranslationEvent] message: ${message.text}, i18n: ${message.i18n}" }
+                binding.messageListView.notifyMessageChanged(message)
             },
         )
     }
@@ -303,6 +325,14 @@ class ChatFragment : Fragment() {
                     else -> Unit
                 }
             }
+
+            setMessageOptionItemsFactory(CustomMessageOptions.optionFactory(context))
+            setCustomActionHandler(
+                CustomMessageOptions.actionHandler(
+                    onTranslate = { chatViewModel.onAction(ChatViewModel.Action.Translate(it)) },
+                    onClearTranslation = { chatViewModel.onAction(ChatViewModel.Action.ClearTranslation(it)) },
+                )
+            )
         }
     }
 
