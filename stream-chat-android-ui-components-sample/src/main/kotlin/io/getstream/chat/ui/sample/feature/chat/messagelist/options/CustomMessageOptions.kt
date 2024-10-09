@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014-2024 Stream.io Inc. All rights reserved.
+ *
+ * Licensed under the Stream License;
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    https://github.com/GetStream/stream-chat-android/blob/main/LICENSE
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package io.getstream.chat.ui.sample.feature.chat.messagelist.options
 
 import android.content.Context
@@ -80,16 +96,16 @@ private class CustomMessageOptionItemsFactory(
         style: MessageListViewStyle,
     ): List<MessageOptionItem> {
         val messageOptions = mutableListOf<MessageOptionItem>()
-        if (selectedMessage.text.isNotEmpty()
-            && !selectedMessage.isSystem()
-            && !selectedMessage.isDeleted()
-            && selectedMessage.user.id != currentUser?.id
+        if (selectedMessage.text.isNotEmpty() &&
+            !selectedMessage.isSystem() &&
+            !selectedMessage.isDeleted() &&
+            selectedMessage.user.id != currentUser?.id
         ) {
             messageOptions.add(
                 TranslationOption(
                     context,
                     selectedMessage,
-                )
+                ),
             )
         }
         return messageOptions
@@ -113,17 +129,22 @@ private class TranslationOption private constructor() {
 
             val hasTranslation = MessageTranslator.hasTranslation(selectedMessage.id)
             return MessageOptionItem(
-                optionText = ContextCompat.getString(context, when (hasTranslation) {
-                    true -> R.string.message_action_clear_translation
-                    else -> R.string.message_action_translate
-                }),
+                optionText = ContextCompat.getString(
+                    context,
+                    when (hasTranslation) {
+                        true -> R.string.message_action_clear_translation
+                        else -> R.string.message_action_translate
+                    },
+                ),
                 optionIcon = iconTinted,
                 messageAction = CustomAction(
                     message = selectedMessage,
-                    extraProperties = mapOf(ACTION to when (hasTranslation) {
-                        true -> CLEAR_TRANSLATION
-                        else -> TRANSLATE
-                    }),
+                    extraProperties = mapOf(
+                        ACTION to when (hasTranslation) {
+                            true -> CLEAR_TRANSLATION
+                            else -> TRANSLATE
+                        },
+                    ),
                 ),
                 isWarningItem = false,
             )
@@ -138,4 +159,3 @@ private class TranslationOption private constructor() {
         }
     }
 }
-

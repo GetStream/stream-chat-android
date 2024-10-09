@@ -24,13 +24,10 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.asFlow
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.liveData
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.ListAdapter
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.models.Flag
 import io.getstream.chat.android.models.Message
@@ -46,8 +43,6 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeleteMessage
 import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVisibility
 import io.getstream.chat.android.ui.common.state.messages.list.EditMessage
 import io.getstream.chat.android.ui.common.state.messages.list.SendAnyway
-import io.getstream.chat.android.ui.feature.messages.list.MessageListView
-import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 import io.getstream.chat.android.ui.utils.extensions.getCreatedAtOrThrow
 import io.getstream.chat.android.ui.viewmodel.messages.MessageComposerViewModel
 import io.getstream.chat.android.ui.viewmodel.messages.MessageListHeaderViewModel
@@ -66,7 +61,6 @@ import io.getstream.result.Error
 import io.getstream.result.Result
 import kotlinx.coroutines.launch
 import java.util.Calendar
-import kotlin.math.log
 
 class ChatFragment : Fragment() {
 
@@ -331,7 +325,7 @@ class ChatFragment : Fragment() {
                 CustomMessageOptions.actionHandler(
                     onTranslate = { chatViewModel.onAction(ChatViewModel.Action.Translate(it)) },
                     onClearTranslation = { chatViewModel.onAction(ChatViewModel.Action.ClearTranslation(it)) },
-                )
+                ),
             )
         }
     }
