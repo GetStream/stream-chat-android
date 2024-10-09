@@ -22,6 +22,7 @@ import java.util.Date
 /**
  * The DTO for a thread.
  *
+ * @param active_participant_count: The number of active participants.
  * @param channel_cid: The channel CID.
  * @param channel: The channel info.
  * @param parent_message_id: The parent message ID.
@@ -34,27 +35,30 @@ import java.util.Date
  * @param last_message_at: The date of the last message in the thread.
  * @param created_at: The date when the thread was created.
  * @param updated_at: The date when the thread was updated.
+ * @param deleted_at: The date when the thread was deleted.
  * @param title: The title of the thread.
  * @param latest_replies: The latest replies in the thread.
  * @param read: The read states of the thread.
  */
 @JsonClass(generateAdapter = true)
 internal data class DownstreamThreadDto(
+    val active_participant_count: Int?,
     val channel_cid: String,
-    val channel: ChannelInfoDto,
+    val channel: ChannelInfoDto?,
     val parent_message_id: String,
-    val parent_message: DownstreamMessageDto,
+    val parent_message: DownstreamMessageDto?,
     val created_by_user_id: String,
-    val created_by: DownstreamUserDto,
-    val reply_count: Int,
-    val participant_count: Int,
-    val thread_participants: List<DownstreamThreadParticipantDto>,
+    val created_by: DownstreamUserDto?,
+    val reply_count: Int?,
+    val participant_count: Int?,
+    val thread_participants: List<DownstreamThreadParticipantDto>?,
     val last_message_at: Date,
     val created_at: Date,
     val updated_at: Date?,
+    val deleted_at: Date?,
     val title: String,
     val latest_replies: List<DownstreamMessageDto>,
-    val read: List<DownstreamChannelUserRead>,
+    val read: List<DownstreamChannelUserRead>?,
 )
 
 /**

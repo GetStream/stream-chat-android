@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package io.getstream.chat.android.client.api2.model.response
+package io.getstream.chat.android.models
 
-import com.squareup.moshi.JsonClass
-import io.getstream.chat.android.client.api2.endpoint.ThreadsApi
-import io.getstream.chat.android.client.api2.model.dto.DownstreamThreadDto
+import androidx.compose.runtime.Immutable
 
 /**
- * Response for [ThreadsApi.queryThreads]
+ * Model representing the result of a 'Query Threads' operation.
  *
  * @param threads: The list of threads.
- * @param duration: The duration of the request.
  * @param prev: The identifier for the previous page of threads.
  * @param next: The identifier for the next page of threads.
  */
-@JsonClass(generateAdapter = true)
-internal data class QueryThreadsResponse(
-    val threads: List<DownstreamThreadDto>,
-    val duration: String,
+@Immutable
+public data class QueryThreadsResult(
+    val threads: List<Thread>,
     val prev: String?,
     val next: String?,
 )
