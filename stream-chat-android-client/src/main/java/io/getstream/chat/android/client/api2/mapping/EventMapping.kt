@@ -55,6 +55,7 @@ import io.getstream.chat.android.client.api2.model.dto.NotificationMarkUnreadEve
 import io.getstream.chat.android.client.api2.model.dto.NotificationMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationMutesUpdatedEventDto
 import io.getstream.chat.android.client.api2.model.dto.NotificationRemovedFromChannelEventDto
+import io.getstream.chat.android.client.api2.model.dto.NotificationThreadMessageNewEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollClosedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollDeletedEventDto
 import io.getstream.chat.android.client.api2.model.dto.PollUpdatedEventDto
@@ -110,6 +111,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -176,6 +178,7 @@ internal fun ChatEventDto.toDomain(currentUserId: UserId?): ChatEvent {
         is NotificationMarkReadEventDto -> toDomain(currentUserId)
         is NotificationMarkUnreadEventDto -> toDomain(currentUserId)
         is NotificationMessageNewEventDto -> toDomain(currentUserId)
+        is NotificationThreadMessageNewEventDto -> toDomain(currentUserId)
         is NotificationMutesUpdatedEventDto -> toDomain(currentUserId)
         is NotificationRemovedFromChannelEventDto -> toDomain(currentUserId)
         is ReactionDeletedEventDto -> toDomain(currentUserId)
@@ -531,6 +534,21 @@ private fun NotificationMessageNewEventDto.toDomain(currentUserId: UserId?): Not
         message = message.toDomain(currentUserId),
         totalUnreadCount = total_unread_count,
         unreadChannels = unread_channels,
+    )
+}
+
+private fun NotificationThreadMessageNewEventDto.toDomain(currentUserId: UserId?): NotificationThreadMessageNewEvent {
+    return NotificationThreadMessageNewEvent(
+        type = type,
+        cid = cid,
+        channelId = channel_id,
+        channelType = channel_type,
+        message = message.toDomain(currentUserId),
+        channel = channel.toDomain(currentUserId),
+        createdAt = created_at.date,
+        rawCreatedAt = created_at.rawDate,
+        unreadThreads = unread_threads,
+        unreadThreadMessages = unread_thread_messages,
     )
 }
 

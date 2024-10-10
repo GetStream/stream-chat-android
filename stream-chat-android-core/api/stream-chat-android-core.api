@@ -796,6 +796,7 @@ public final class io/getstream/chat/android/models/EventType {
 	public static final field NOTIFICATION_MESSAGE_NEW Ljava/lang/String;
 	public static final field NOTIFICATION_MUTES_UPDATED Ljava/lang/String;
 	public static final field NOTIFICATION_REMOVED_FROM_CHANNEL Ljava/lang/String;
+	public static final field NOTIFICATION_THREAD_MESSAGE_NEW Ljava/lang/String;
 	public static final field POLL_CLOSED Ljava/lang/String;
 	public static final field POLL_DELETED Ljava/lang/String;
 	public static final field POLL_UPDATED Ljava/lang/String;
