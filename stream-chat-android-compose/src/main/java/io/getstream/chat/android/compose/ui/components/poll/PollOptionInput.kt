@@ -107,6 +107,7 @@ public fun PollOptionInput(
                     textColor = textColor,
                     textFontStyle = typography.body.fontStyle,
                     linkColor = colors.primaryAccent,
+                    mentionsColor = colors.primaryAccent,
                 )
                 TransformedText(styledText, OffsetMapping.Identity)
             },

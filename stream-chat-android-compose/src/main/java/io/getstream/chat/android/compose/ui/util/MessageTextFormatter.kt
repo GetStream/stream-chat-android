@@ -192,12 +192,15 @@ private class DefaultMessageTextFormatter(
             } ?: message.text
             else -> message.text
         }
+        val mentionedUserNames = message.mentionedUsers.map { it.name.ifEmpty { it.id } }
         val textColor = textStyle(message.isMine(currentUser)).color
         return buildAnnotatedMessageText(
             text = displayedText,
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
             linkColor = colors.primaryAccent,
+            mentionsColor = colors.primaryAccent,
+            mentionedUserNames = mentionedUserNames,
             builder = {
                 builder?.invoke(this, message, currentUser)
             },

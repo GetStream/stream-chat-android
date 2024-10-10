@@ -233,6 +233,7 @@ private class DefaultQuotedMessageTextFormatter(
             textColor = textColor,
             textFontStyle = typography.body.fontStyle,
             linkColor = colors.primaryAccent,
+            mentionsColor = colors.primaryAccent,
             builder = {
                 builder?.invoke(this, message, replyMessage, currentUser)
             },

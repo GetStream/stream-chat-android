@@ -38,12 +38,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastAny
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 import io.getstream.chat.android.compose.ui.util.AnnotationTagEmail
+import io.getstream.chat.android.compose.ui.util.AnnotationTagMention
 import io.getstream.chat.android.compose.ui.util.AnnotationTagUrl
 import io.getstream.chat.android.compose.ui.util.isEmojiOnlyWithoutBubble
 import io.getstream.chat.android.compose.ui.util.isFewEmoji
 import io.getstream.chat.android.compose.ui.util.isSingleEmoji
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
+import io.getstream.chat.android.ui.common.utils.extensions.getUserByNameOrId
 import io.getstream.chat.android.ui.common.utils.extensions.isMine
 
 /**
@@ -67,6 +69,7 @@ public fun MessageText(
     modifier: Modifier = Modifier,
     onLongItemClick: (Message) -> Unit,
     onLinkClick: ((Message, String) -> Unit)? = null,
+    onUserMentionClick: (User) -> Unit = {},
 ) {
     val context = LocalContext.current
 
@@ -84,8 +87,10 @@ public fun MessageText(
             ChatTheme.otherMessageTheme.textStyle
         }
     }
-
-    if (annotations.fastAny { it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail }) {
+    if (annotations.fastAny {
+            it.tag == AnnotationTagUrl || it.tag == AnnotationTagEmail || it.tag == AnnotationTagMention
+        }
+    ) {
         ClickableText(
             modifier = modifier
                 .padding(
@@ -98,18 +103,17 @@ public fun MessageText(
             style = style,
             onLongPress = { onLongItemClick(message) },
         ) { position ->
-            val targetUrl = annotations.firstOrNull {
-                position in it.start..it.end
-            }?.item
-
-            if (!targetUrl.isNullOrEmpty()) {
-                onLinkClick?.invoke(message, targetUrl) ?: run {
-                    context.startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(targetUrl),
-                        ),
-                    )
+            val annotation = annotations.firstOrNull { position in it.start..it.end }
+            if (annotation?.tag == AnnotationTagMention) {
+                message.mentionedUsers.getUserByNameOrId(annotation.item)?.let { onUserMentionClick.invoke(it) }
+            } else {
+                val targetUrl = annotation?.item
+                if (!targetUrl.isNullOrEmpty()) {
+                    onLinkClick?.invoke(message, targetUrl) ?: run {
+                        context.startActivity(
+                            Intent(Intent.ACTION_VIEW, Uri.parse(targetUrl)),
+                        )
+                    }
                 }
             }
         }
