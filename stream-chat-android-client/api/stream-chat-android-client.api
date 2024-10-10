@@ -1314,6 +1314,11 @@ public abstract interface class io/getstream/chat/android/client/events/HasUnrea
 	public abstract fun getUnreadChannels ()I
 }
 
+public abstract interface class io/getstream/chat/android/client/events/HasUnreadThreadCounts {
+	public abstract fun getUnreadThreadMessages ()I
+	public abstract fun getUnreadThreads ()I
+}
+
 public abstract interface class io/getstream/chat/android/client/events/HasWatcherCount {
 	public abstract fun getWatcherCount ()I
 }
@@ -1855,6 +1860,35 @@ public final class io/getstream/chat/android/client/events/NotificationRemovedFr
 	public fun getRawCreatedAt ()Ljava/lang/String;
 	public fun getType ()Ljava/lang/String;
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/client/events/NotificationThreadMessageNewEvent : io/getstream/chat/android/client/events/CidEvent, io/getstream/chat/android/client/events/HasChannel, io/getstream/chat/android/client/events/HasMessage, io/getstream/chat/android/client/events/HasUnreadThreadCounts {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;Ljava/util/Date;Ljava/lang/String;II)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component10 ()I
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun component5 ()Lio/getstream/chat/android/models/Message;
+	public final fun component6 ()Lio/getstream/chat/android/models/Channel;
+	public final fun component7 ()Ljava/util/Date;
+	public final fun component8 ()Ljava/lang/String;
+	public final fun component9 ()I
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;Ljava/util/Date;Ljava/lang/String;II)Lio/getstream/chat/android/client/events/NotificationThreadMessageNewEvent;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/client/events/NotificationThreadMessageNewEvent;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/getstream/chat/android/models/Message;Lio/getstream/chat/android/models/Channel;Ljava/util/Date;Ljava/lang/String;IIILjava/lang/Object;)Lio/getstream/chat/android/client/events/NotificationThreadMessageNewEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun getChannel ()Lio/getstream/chat/android/models/Channel;
+	public fun getChannelId ()Ljava/lang/String;
+	public fun getChannelType ()Ljava/lang/String;
+	public fun getCid ()Ljava/lang/String;
+	public fun getCreatedAt ()Ljava/util/Date;
+	public fun getMessage ()Lio/getstream/chat/android/models/Message;
+	public fun getRawCreatedAt ()Ljava/lang/String;
+	public fun getType ()Ljava/lang/String;
+	public fun getUnreadThreadMessages ()I
+	public fun getUnreadThreads ()I
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
