@@ -77,6 +77,24 @@ android {
         }
     }
 
+    flavorDimensions "version"
+    productFlavors {
+        demo {
+            dimension "version"
+        }
+        e2e {
+            dimension "version"
+            applicationIdSuffix ".e2etest"
+        }
+    }
+
+    variantFilter { variant ->
+        def names = variant.flavors*.name
+        if (buildType.name != "debug" && names.contains("e2e")) {
+            setIgnore(true)
+        }
+    }
+
     buildFeatures {
         compose true
         buildConfig true

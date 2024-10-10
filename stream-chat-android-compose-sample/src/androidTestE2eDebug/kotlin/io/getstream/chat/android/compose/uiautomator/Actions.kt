@@ -28,11 +28,6 @@ fun UiDevice.exec(command: String): String {
 
 fun UiDevice.startApp() {
     // Proof of Concept #1
-    val sharedPreferences = appContext.getSharedPreferences("TestPreferences", Context.MODE_PRIVATE)
-    val sharedPreferencesEditor = sharedPreferences.edit()
-    sharedPreferencesEditor.putString("BASE_URL", "$mockServerUrl:4568")
-    sharedPreferencesEditor.apply()
-
     val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 

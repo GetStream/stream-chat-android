@@ -22,6 +22,7 @@ import io.getstream.chat.android.compose.uiautomator.device
 import io.getstream.chat.android.compose.uiautomator.swipeUp
 import io.getstream.chat.android.compose.uiautomator.typeText
 import io.getstream.chat.android.compose.uiautomator.sleep
+import io.getstream.chat.android.compose.uiautomator.startApp
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.qameta.allure.kotlin.Allure.step
 import org.junit.Assert.assertTrue
