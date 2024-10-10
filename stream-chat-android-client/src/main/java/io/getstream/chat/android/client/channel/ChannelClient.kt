@@ -62,6 +62,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -242,6 +243,7 @@ public class ChannelClient internal constructor(
             is NotificationMarkReadEvent -> event.cid == cid
             is NotificationMarkUnreadEvent -> event.cid == cid
             is NotificationMessageNewEvent -> event.cid == cid
+            is NotificationThreadMessageNewEvent -> event.cid == cid
             is NotificationRemovedFromChannelEvent -> event.cid == cid
             is ReactionDeletedEvent -> event.cid == cid
             is ReactionNewEvent -> event.cid == cid

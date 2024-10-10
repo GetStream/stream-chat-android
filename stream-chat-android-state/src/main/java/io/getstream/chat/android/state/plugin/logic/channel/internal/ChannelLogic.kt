@@ -59,6 +59,7 @@ import io.getstream.chat.android.client.events.NotificationMarkUnreadEvent
 import io.getstream.chat.android.client.events.NotificationMessageNewEvent
 import io.getstream.chat.android.client.events.NotificationMutesUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationRemovedFromChannelEvent
+import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.client.events.PollClosedEvent
 import io.getstream.chat.android.client.events.PollDeletedEvent
 import io.getstream.chat.android.client.events.PollUpdatedEvent
@@ -548,6 +549,9 @@ internal class ChannelLogic(
                 }
                 channelStateLogic.updateCurrentUserRead(event.createdAt, event.message)
                 channelStateLogic.toggleHidden(false)
+            }
+            is NotificationThreadMessageNewEvent -> {
+                // TODO: See what to do here
             }
             is ReactionNewEvent -> {
                 upsertEventMessage(event.message)
