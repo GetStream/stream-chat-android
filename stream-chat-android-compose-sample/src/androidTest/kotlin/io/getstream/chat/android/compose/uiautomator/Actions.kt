@@ -16,13 +16,29 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
 
+fun UiDevice.exec(command: String): String {
+    return executeShellCommand(command)
+}
+
 fun UiDevice.startApp() {
+    // Proof of Concept #1
+    val sharedPreferences = appContext.getSharedPreferences("TestPreferences", Context.MODE_PRIVATE)
+    val sharedPreferencesEditor = sharedPreferences.edit()
+    sharedPreferencesEditor.putString("BASE_URL", "$mockServerUrl:4568")
+    sharedPreferencesEditor.apply()
+
     val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+
+    // Proof of Concept #2
+    intent?.putExtra("BASE_URL", "$mockServerUrl:4568")
+
     testContext.startActivity(intent)
 }
 
@@ -60,6 +76,7 @@ fun UiDevice.swipeUp(steps: Int = 10, times: Int = 1) {
             middleOfTheScreenVertically,
             middleOfTheScreenHorizontally,
             0,
-            steps)
+            steps
+        )
     }
 }

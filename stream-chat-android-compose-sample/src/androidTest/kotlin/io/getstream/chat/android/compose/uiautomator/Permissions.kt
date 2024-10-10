@@ -24,13 +24,13 @@ import androidx.test.uiautomator.UiDevice
  * Grant app permissions.
  */
 fun UiDevice.grantPermission(permission: String) =
-    execShell("pm grant $packageName $permission")
+    exec("pm grant $packageName $permission")
 
 /**
  * Revoke app permissions.
  */
 fun UiDevice.revokePermission(permission: String) =
-    execShell("pm revoke $packageName $permission")
+    exec("pm revoke $packageName $permission")
 
 /**
  * Checking whether the permission is allowed.

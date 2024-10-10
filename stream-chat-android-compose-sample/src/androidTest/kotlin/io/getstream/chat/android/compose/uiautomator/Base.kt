@@ -29,6 +29,11 @@ import androidx.test.uiautomator.UiDevice
 val defaultTimeout: Long = 5.seconds
 
 /**
+ * Mock server ip address.
+ */
+val mockServerUrl: String get() = device.exec("ip neigh").lines().first().split(" ").first()
+
+/**
  * UIDevice property initialized by singleton [UiDevice.getInstance] method, for the running Instrumentation.
  */
 val device: UiDevice get() = UiDevice.getInstance(instrumentation)
@@ -72,10 +77,3 @@ infix fun Resources.nameOf(viewId: Int): String = getResourceName(viewId)
  * Get string value of the resource by id.
  */
 infix fun Context.stringOf(stringResId: Int) = getString(stringResId)
-
-/**
- * Execute adb shell command.
- */
-fun execShell(command: String) {
-    instrumentation.uiAutomation.executeShellCommand(command)
-}
