@@ -83,7 +83,12 @@ object ChatHelper {
             .withPlugins(offlinePlugin, statePluginFactory)
             .logLevel(logLevel)
             .uploadAttachmentsNetworkType(UploadAttachmentsNetworkType.NOT_ROAMING)
-            .apply { baseUrl?.let { baseUrl(it) } }
+            .apply {
+                baseUrl?.let {
+                    if (it.startsWith("http://")) forceInsecureConnection()
+                    baseUrl(it)
+                }
+            }
             .build()
     }
 

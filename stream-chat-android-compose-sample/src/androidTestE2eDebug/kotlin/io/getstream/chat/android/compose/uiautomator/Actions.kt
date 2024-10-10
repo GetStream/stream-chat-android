@@ -32,7 +32,7 @@ fun UiDevice.startApp() {
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
     // Proof of Concept #2
-    intent?.putExtra("BASE_URL", "$mockServerUrl:4568")
+    intent?.putExtra("BASE_URL", "http://$mockServerUrl:4568")
 
     testContext.startActivity(intent)
 }
