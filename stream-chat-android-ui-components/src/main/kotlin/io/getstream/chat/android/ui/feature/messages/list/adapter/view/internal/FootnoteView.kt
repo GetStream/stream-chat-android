@@ -112,9 +112,14 @@ internal class FootnoteView : LinearLayoutCompat {
             root.isVisible = true
             threadsOrnamentLeft.isVisible = !isMine
             threadsOrnamentRight.isVisible = isMine
-
-            threadRepliesButton.text =
-                resources.getQuantityString(R.plurals.stream_ui_message_list_thread_reply, replyCount, replyCount)
+            threadRepliesButton.text = when (replyCount) {
+                0 -> resources.getString(R.string.stream_ui_message_list_thread_footnote_thread_reply)
+                else -> resources.getQuantityString(
+                    R.plurals.stream_ui_message_list_thread_footnote,
+                    replyCount,
+                    replyCount,
+                )
+            }
             threadRepliesButton.setTextStyle(style.textStyleThreadCounter)
         }
         setupUserAvatars(isMine, threadParticipants)

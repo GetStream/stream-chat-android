@@ -228,6 +228,7 @@ public class MessageListViewModel(
             is Event.BottomEndRegionReached -> onBottomEndRegionReached(event.messageId)
             is Event.LastMessageRead -> messageListController.markLastMessageRead()
             is Event.ThreadModeEntered -> onThreadModeEntered(event.parentMessage)
+            is Event.OpenThread -> onOpenThread(event.message)
             is Event.BackButtonPressed -> onBackButtonPressed()
             is Event.MarkAsUnreadMessage -> messageListController.markUnread(event.message)
             is Event.DeleteMessage -> messageListController.deleteMessage(event.message, event.hard)
@@ -412,6 +413,17 @@ public class MessageListViewModel(
     }
 
     /**
+     * Handles an event to open a thread.
+     *
+     * @param message The message to open the thread for.
+     */
+    private fun onOpenThread(message: Message) {
+        viewModelScope.launch {
+            messageListController.openRelatedThread(message)
+        }
+    }
+
+    /**
      * Handles reacting to messages while taking into account if unique reactions are enforced.
      *
      * @param message The message the user is reacting to.
@@ -526,6 +538,11 @@ public class MessageListViewModel(
          * @param parentMessage The original message the thread was spun off from.
          */
         public data class ThreadModeEntered(val parentMessage: Message) : Event()
+
+        /**
+         * When the user
+         */
+        public data class OpenThread(val message: Message) : Event()
 
         /**
          * When the user deletes a message.
