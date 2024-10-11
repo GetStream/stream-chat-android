@@ -3214,9 +3214,31 @@ internal constructor(
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
-    public fun queryThreadsResult(
-        query: QueryThreadsRequest,
-    ): Call<QueryThreadsResult> {
+    public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> {
+        return queryThreadsInternal(query)
+            .doOnStart(userScope) {
+                plugins.forEach { plugin ->
+                    plugin.onQueryThreadsRequest(query)
+                }
+            }
+            .doOnResult(userScope) { result ->
+                plugins.forEach { plugin ->
+                    plugin.onQueryThreadsResult(result, query)
+                }
+            }
+            .precondition(plugins) {
+                onQueryThreadsPrecondition(query)
+            }
+    }
+
+    /**
+     * Queries the threads without applying side-effects.
+     *
+     * @param query The [QueryThreadsRequest] holding query parameters to be applied for the search.
+     */
+    @CheckResult
+    @InternalStreamChatApi
+    public fun queryThreadsInternal(query: QueryThreadsRequest): Call<QueryThreadsResult> {
         return api.queryThreads(query)
     }
 

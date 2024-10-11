@@ -30,6 +30,7 @@ import io.getstream.chat.android.client.plugin.listeners.HideChannelListener
 import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
+import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
@@ -52,6 +53,7 @@ import io.getstream.chat.android.state.plugin.listener.internal.HideChannelListe
 import io.getstream.chat.android.state.plugin.listener.internal.MarkAllReadListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.QueryChannelsListenerState
+import io.getstream.chat.android.state.plugin.listener.internal.QueryThreadsListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendAttachmentListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendGiphyListenerState
 import io.getstream.chat.android.state.plugin.listener.internal.SendMessageListenerState
@@ -110,7 +112,8 @@ public class StatePlugin internal constructor(
     SendMessageListener by SendMessageListenerState(logic),
     TypingEventListener by TypingEventListenerState(stateRegistry),
     SendAttachmentListener by SendAttachmentListenerState(logic),
-    FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState) {
+    FetchCurrentUserListener by FetchCurrentUserListenerState(clientState, globalState),
+    QueryThreadsListener by QueryThreadsListenerState(logic) {
 
     private val lazyErrorHandler: ErrorHandler by lazy { errorHandlerFactory.create() }
     override fun getErrorHandler(): ErrorHandler = lazyErrorHandler

@@ -19,6 +19,7 @@ package io.getstream.chat.android.client.plugin
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelRequest
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.errorhandler.ErrorHandler
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.plugin.listeners.ChannelMarkReadListener
@@ -34,6 +35,7 @@ import io.getstream.chat.android.client.plugin.listeners.MarkAllReadListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelListener
 import io.getstream.chat.android.client.plugin.listeners.QueryChannelsListener
 import io.getstream.chat.android.client.plugin.listeners.QueryMembersListener
+import io.getstream.chat.android.client.plugin.listeners.QueryThreadsListener
 import io.getstream.chat.android.client.plugin.listeners.SendAttachmentListener
 import io.getstream.chat.android.client.plugin.listeners.SendGiphyListener
 import io.getstream.chat.android.client.plugin.listeners.SendMessageListener
@@ -45,6 +47,7 @@ import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.FilterObject
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
+import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.chat.android.models.Reaction
 import io.getstream.chat.android.models.User
 import io.getstream.chat.android.models.querysort.QuerySorter
@@ -76,7 +79,8 @@ public interface Plugin :
     CreateChannelListener,
     DeleteChannelListener,
     GetMessageListener,
-    FetchCurrentUserListener {
+    FetchCurrentUserListener,
+    QueryThreadsListener {
 
     public fun getErrorHandler(): ErrorHandler? = null
 
@@ -388,6 +392,16 @@ public interface Plugin :
     public override suspend fun onFetchCurrentUserResult(
         result: Result<User>,
     ) {
+        /* No-Op */
+    }
+
+    override suspend fun onQueryThreadsPrecondition(request: QueryThreadsRequest): Result<Unit> = Result.Success(Unit)
+
+    override suspend fun onQueryThreadsRequest(request: QueryThreadsRequest) {
+        /* No-Op */
+    }
+
+    override suspend fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
         /* No-Op */
     }
 }
