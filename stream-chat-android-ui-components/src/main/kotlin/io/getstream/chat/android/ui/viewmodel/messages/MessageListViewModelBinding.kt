@@ -66,6 +66,7 @@ public fun MessageListViewModel.bindView(
     view.setLastMessageReadHandler { onEvent(LastMessageRead) }
     view.setMessageDeleteHandler { onEvent(DeleteMessage(it, hard = false)) }
     view.setThreadStartHandler { onEvent(ThreadModeEntered(it)) }
+    view.setOpenThreadHandler { onEvent(MessageListViewModel.Event.OpenThread(it)) }
     view.setMessageFlagHandler {
         onEvent(
             FlagMessage(
