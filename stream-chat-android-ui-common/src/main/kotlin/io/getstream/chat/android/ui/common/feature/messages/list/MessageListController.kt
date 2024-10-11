@@ -31,6 +31,7 @@ import io.getstream.chat.android.client.utils.message.isGiphy
 import io.getstream.chat.android.client.utils.message.isModerationBounce
 import io.getstream.chat.android.client.utils.message.isModerationError
 import io.getstream.chat.android.client.utils.message.isSystem
+import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.core.internal.InternalStreamChatApi
 import io.getstream.chat.android.core.internal.coroutines.DispatcherProvider
 import io.getstream.chat.android.core.internal.exhaustive
@@ -1143,6 +1144,18 @@ public class MessageListController(
             limit = messageLimit,
         ).enqueue {
             _threadListState.value = _threadListState.value.copy(isLoadingOlderMessages = false)
+        }
+    }
+
+    /**
+     * Open the thread for the given message.
+     * If the message is a thread start, it will open the thread.
+     * If the message is a reply, it will open the thread for the parent message.
+     */
+    public suspend fun openRelatedThread(message: Message) {
+        when (message.isThreadStart()) {
+            true -> enterThreadMode(message)
+            else -> message.parentId?.let { enterThreadSequential(it) }
         }
     }
 
