@@ -29,6 +29,8 @@ import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.channel.thread.internal.ThreadMutableState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
 import io.getstream.chat.android.state.plugin.state.querychannels.internal.QueryChannelsMutableState
+import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
+import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 import io.getstream.log.taggedLogger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -57,6 +59,10 @@ public class StateRegistry constructor(
     private val queryChannels: ConcurrentHashMap<Pair<FilterObject, QuerySorter<Channel>>, QueryChannelsMutableState> =
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
+
+    // Note: At the moment, there is no need for multiple instances of QueryThreadsLogic, as we always load all threads,
+    // without the option for filtering. Update this is we decide to support different queries.
+    private val queryThreads: QueryThreadsMutableState = QueryThreadsMutableState()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
     /**
@@ -114,6 +120,16 @@ public class StateRegistry constructor(
     }
 
     /**
+     * Returns a [QueryThreadsState] holding the current state of the threads data.
+     */
+    public fun queryThreads(): QueryThreadsState = queryThreads
+
+    /**
+     * Returns a [QueryThreadsState] holding the current state of the threads data.
+     */
+    internal fun mutableQueryThreads(): QueryThreadsMutableState = queryThreads
+
+    /**
      * Returns [ThreadState] of thread replies with parent message that has id equal to [messageId].
      *
      * @param messageId Thread's parent message id.
@@ -146,6 +162,7 @@ public class StateRegistry constructor(
         queryChannels.clear()
         channels.forEach { it.value.destroy() }
         channels.clear()
+        queryThreads.destroy()
         threads.forEach { it.value.destroy() }
         threads.clear()
     }

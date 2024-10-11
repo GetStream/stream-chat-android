@@ -25,6 +25,7 @@ import android.os.Environment
 import androidx.annotation.CheckResult
 import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryChannelsRequest
+import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.channel.state.ChannelState
 import io.getstream.chat.android.client.extensions.cidToTypeAndId
 import io.getstream.chat.android.client.utils.internal.validateCidWithResult
@@ -47,6 +48,7 @@ import io.getstream.chat.android.state.plugin.state.StateRegistry
 import io.getstream.chat.android.state.plugin.state.channel.thread.ThreadState
 import io.getstream.chat.android.state.plugin.state.global.GlobalState
 import io.getstream.chat.android.state.plugin.state.querychannels.QueryChannelsState
+import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import io.getstream.log.StreamLog
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
@@ -60,7 +62,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -146,6 +147,23 @@ public fun ChatClient.watchChannelAsState(
 }
 
 /**
+ * Performs [ChatClient.queryThreadsResult] under the hood and returns [QueryThreadsState].
+ * The [QueryThreadsState] cannot be created before connecting the user therefore, the method returns a StateFlow
+ * that emits a null when the user has not been connected yet and the new value every time the user changes.
+ *
+ * @param request The [QueryThreadsRequest] used to perform the query threads operation.
+ * @return A [StateFlow] emitting changes in the [QueryThreadsState].
+ */
+public fun ChatClient.queryThreadsAsState(
+    request: QueryThreadsRequest,
+    coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),
+): StateFlow<QueryThreadsState?> {
+    return getStateOrNull(coroutineScope) {
+        requestsAsState(coroutineScope).queryThreads(request)
+    }
+}
+
+/**
  * Same class of ChatClient.getReplies, but provides the result as [ThreadState]
  *
  * @param messageId The ID of the original message the replies were made to.
@@ -177,7 +195,6 @@ public suspend fun ChatClient.getRepliesAsState(
  * @param messageId The ID of the original message the replies were made to.
  * @param messageLimit The number of messages that will be initially loaded.
  * @param olderToNewer The flag that determines the order of the messages.
- * @param coroutineScope The [CoroutineScope] used for executing the request.
  *
  * @return [ThreadState] wrapped inside a [Call].
  */
