@@ -2225,6 +2225,7 @@ public final class io/getstream/chat/android/ui/feature/messages/list/MessageLis
 	public final fun setOnUserClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserClickListener;)V
 	public final fun setOnUserReactionClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnUserReactionClickListener;)V
 	public final fun setOnViewPollResultClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OnViewPollResultClickListener;)V
+	public final fun setOpenThreadHandler (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$OpenThreadHandler;)V
 	public final fun setOwnCapabilities (Ljava/util/Set;)V
 	public final fun setReactionViewClickListener (Lio/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener;)V
 	public final fun setReactionsEnabled (Z)V
@@ -2474,6 +2475,10 @@ public abstract interface class io/getstream/chat/android/ui/feature/messages/li
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OnViewPollResultClickListener {
 	public abstract fun onViewPollResultClick (Lio/getstream/chat/android/models/Poll;)Z
+}
+
+public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$OpenThreadHandler {
+	public abstract fun onOpenThread (Lio/getstream/chat/android/models/Message;)V
 }
 
 public abstract interface class io/getstream/chat/android/ui/feature/messages/list/MessageListView$ReactionViewClickListener {
@@ -4549,6 +4554,17 @@ public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListVi
 	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MuteUser;Lio/getstream/chat/android/models/User;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$MuteUser;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getUser ()Lio/getstream/chat/android/models/User;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$OpenThread : io/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event {
+	public fun <init> (Lio/getstream/chat/android/models/Message;)V
+	public final fun component1 ()Lio/getstream/chat/android/models/Message;
+	public final fun copy (Lio/getstream/chat/android/models/Message;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$OpenThread;
+	public static synthetic fun copy$default (Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$OpenThread;Lio/getstream/chat/android/models/Message;ILjava/lang/Object;)Lio/getstream/chat/android/ui/viewmodel/messages/MessageListViewModel$Event$OpenThread;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getMessage ()Lio/getstream/chat/android/models/Message;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
