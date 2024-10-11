@@ -55,11 +55,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.client.utils.message.isDeleted
 import io.getstream.chat.android.client.utils.message.isGiphyEphemeral
 import io.getstream.chat.android.client.utils.message.isPinned
 import io.getstream.chat.android.client.utils.message.isPoll
-import io.getstream.chat.android.client.utils.message.isThreadStart
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.mediagallerypreview.MediaGalleryPreviewResult
 import io.getstream.chat.android.compose.state.reactionoptions.ReactionOptionItemState
@@ -196,7 +196,7 @@ public fun MessageItem(
         Modifier.combinedClickable(
             interactionSource = remember { MutableInteractionSource() },
             indication = null,
-            onClick = { if (message.isThreadStart()) onThreadClick(message) },
+            onClick = { if (message.belongsToThread()) onThreadClick(message) },
             onLongClick = { if (!message.isUploading()) onLongItemClick(message) },
         )
     }

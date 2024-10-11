@@ -250,7 +250,7 @@ public class MessageListViewModel(
      */
     public fun openMessageThread(message: Message) {
         viewModelScope.launch {
-            messageListController.enterThreadMode(message)
+            messageListController.openRelatedThread(message)
         }
     }
 

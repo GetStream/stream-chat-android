@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import io.getstream.chat.android.client.utils.message.belongsToThread
 import io.getstream.chat.android.compose.R
 import io.getstream.chat.android.compose.state.DateFormatType
 import io.getstream.chat.android.compose.ui.components.Timestamp
@@ -52,19 +53,21 @@ public fun MessageFooter(
     messageItem: MessageItemState,
 ) {
     val message = messageItem.message
-    val hasThread = message.threadParticipants.isNotEmpty()
     val alignment = ChatTheme.messageAlignmentProvider.provideMessageAlignment(messageItem)
 
-    if (hasThread && !messageItem.isInThread) {
-        val replyCount = message.replyCount
+    if (message.belongsToThread() && !messageItem.isInThread) {
+        val threadFooterText = when (message.replyCount) {
+            0 -> LocalContext.current.resources.getString(R.string.stream_compose_thread_reply)
+            else -> LocalContext.current.resources.getQuantityString(
+                R.plurals.stream_compose_message_list_thread_footnote,
+                message.replyCount,
+                message.replyCount,
+            )
+        }
         MessageThreadFooter(
             participants = message.threadParticipants,
             messageAlignment = alignment,
-            text = LocalContext.current.resources.getQuantityString(
-                R.plurals.stream_compose_message_list_thread_footnote,
-                replyCount,
-                replyCount,
-            ),
+            text = threadFooterText,
         )
     }
 
