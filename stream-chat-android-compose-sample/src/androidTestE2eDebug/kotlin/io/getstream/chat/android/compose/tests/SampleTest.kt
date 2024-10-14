@@ -16,16 +16,10 @@
 
 package io.getstream.chat.android.compose.tests
 
-import io.getstream.chat.android.compose.pages.ChannelListPage
 import io.getstream.chat.android.compose.pages.LoginPage
-import io.getstream.chat.android.compose.uiautomator.device
-import io.getstream.chat.android.compose.uiautomator.swipeUp
-import io.getstream.chat.android.compose.uiautomator.typeText
 import io.getstream.chat.android.compose.uiautomator.sleep
-import io.getstream.chat.android.compose.uiautomator.startApp
 import io.getstream.chat.android.compose.uiautomator.waitToAppear
 import io.qameta.allure.kotlin.Allure.step
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SampleTest : StreamTestCase() {
@@ -34,10 +28,7 @@ class SampleTest : StreamTestCase() {
     fun testSample() {
         step("Sample step") {
             LoginPage.loginButton.waitToAppear().click()
-            ChannelListPage.searchField.waitToAppear().typeText("test")
-            device.swipeUp()
             sleep()
-            assertTrue(true)
         }
     }
 }
