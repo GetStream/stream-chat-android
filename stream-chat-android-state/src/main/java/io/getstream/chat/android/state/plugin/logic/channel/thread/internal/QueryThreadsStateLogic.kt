@@ -27,12 +27,22 @@ import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryT
 internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMutableState) {
 
     /**
+     * Retrieves the current state of the 'loading' indicator from the [mutableState].
+     */
+    internal fun isLoading() = mutableState.loading.value
+
+    /**
      * Updates the loading state of the [mutableState].
      *
      * @param loading The new loading state.
      */
     internal fun setLoading(loading: Boolean) =
         mutableState.setLoading(loading)
+
+    /**
+     * Retrieves the current state of the 'loading more' indicator from the [mutableState].
+     */
+    internal fun isLoadingMore() = mutableState.loadingMore.value
 
     /**
      * Updates the loading more state of the [mutableState].
