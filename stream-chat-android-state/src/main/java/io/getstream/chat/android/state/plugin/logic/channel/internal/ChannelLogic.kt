@@ -550,6 +550,7 @@ internal class ChannelLogic(
             }
             is NotificationThreadMessageNewEvent -> {
                 // TODO: See what to do here
+                upsertEventMessage(event.message)
             }
             is ReactionNewEvent -> {
                 upsertEventMessage(event.message)

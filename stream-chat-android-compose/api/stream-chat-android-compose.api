@@ -3039,6 +3039,65 @@ public final class io/getstream/chat/android/compose/ui/theme/messages/composer/
 	public final fun defaultTheme (ZLio/getstream/chat/android/compose/ui/theme/StreamTypography;Lio/getstream/chat/android/compose/ui/theme/StreamColors;Landroidx/compose/runtime/Composer;II)Lio/getstream/chat/android/compose/ui/theme/messages/composer/attachments/AudioRecordingAttachmentPreviewTheme;
 }
 
+public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadItemKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadItemKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
+	public static field lambda-5 Lkotlin/jvm/functions/Function2;
+	public static field lambda-6 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$ThreadListKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public static field lambda-4 Lkotlin/jvm/functions/Function2;
+	public static field lambda-5 Lkotlin/jvm/functions/Function2;
+	public static field lambda-6 Lkotlin/jvm/functions/Function2;
+	public static field lambda-7 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-4$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-5$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-6$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-7$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ComposableSingletons$UnreadThreadsBannerKt {
+	public static final field INSTANCE Lio/getstream/chat/android/compose/ui/threads/ComposableSingletons$UnreadThreadsBannerKt;
+	public static field lambda-1 Lkotlin/jvm/functions/Function2;
+	public static field lambda-2 Lkotlin/jvm/functions/Function2;
+	public static field lambda-3 Lkotlin/jvm/functions/Function2;
+	public fun <init> ()V
+	public final fun getLambda-1$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-2$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+	public final fun getLambda-3$stream_chat_android_compose_release ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadItemKt {
+	public static final fun ThreadItem (Lio/getstream/chat/android/models/Thread;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/ThreadListKt {
+	public static final fun ThreadList (Lio/getstream/chat/android/compose/viewmodel/threads/ThreadListViewModel;Landroidx/compose/ui/Modifier;Lio/getstream/chat/android/models/User;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;III)V
+}
+
+public final class io/getstream/chat/android/compose/ui/threads/UnreadThreadsBannerKt {
+	public static final fun UnreadThreadsBanner (ILandroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+}
+
 public final class io/getstream/chat/android/compose/ui/util/ChannelUtilsKt {
 	public static final fun getLastMessage (Lio/getstream/chat/android/models/Channel;Lio/getstream/chat/android/models/User;)Lio/getstream/chat/android/models/Message;
 	public static final fun getMembersStatusText (Lio/getstream/chat/android/models/Channel;Landroid/content/Context;Lio/getstream/chat/android/models/User;)Ljava/lang/String;
@@ -3474,6 +3533,20 @@ public final class io/getstream/chat/android/compose/viewmodel/pinned/PinnedMess
 public final class io/getstream/chat/android/compose/viewmodel/pinned/PinnedMessageListViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
 	public static final field $stable I
 	public fun <init> (Ljava/lang/String;)V
+	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
+}
+
+public final class io/getstream/chat/android/compose/viewmodel/threads/ThreadListViewModel : androidx/lifecycle/ViewModel {
+	public static final field $stable I
+	public fun <init> (Lio/getstream/chat/android/ui/common/feature/threads/ThreadListController;)V
+	public final fun getState ()Lkotlinx/coroutines/flow/StateFlow;
+	public final fun load ()V
+	public final fun loadNextPage ()V
+}
+
+public final class io/getstream/chat/android/compose/viewmodel/threads/ThreadsViewModelFactory : androidx/lifecycle/ViewModelProvider$Factory {
+	public static final field $stable I
+	public fun <init> ()V
 	public fun create (Ljava/lang/Class;)Landroidx/lifecycle/ViewModel;
 }
 

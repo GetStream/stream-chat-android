@@ -33,6 +33,12 @@ public interface QueryThreadsState {
     /** Indicator if the current state is loading more threads (a next page is being loaded). */
     public val loadingMore: StateFlow<Boolean>
 
-    /** Indicator if the end of the threads was reached (last page). */
-    public val endOfThreads: StateFlow<Boolean>
+    /**
+     * The identifier for the next page of threads.
+     * null-value represents that the last page is loaded and there are no more threads to load.
+     */
+    public val next: StateFlow<String?>
+
+    /** The IDs of the threads which exist, but are not (yet) loaded in the paginated list of threads. */
+    public val unseenThreadIds: StateFlow<Set<String>>
 }

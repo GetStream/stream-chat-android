@@ -161,6 +161,7 @@
     <string name="stream_compose_message_list_you">You</string>
     <string name="stream_compose_also_sent_to_channel">Also sent to the channel</string>
     <string name="stream_compose_replied_to_thread">Replied to a thread</string>
+    <string name="stream_compose_replied_to">replied to:&#160;</string>
 
     <!--  Image Preview  -->
     <string name="stream_compose_image_options">Image options</string>
@@ -224,4 +225,11 @@
 
     <!--  Message preview (User in mentions / pinned messages / search results)  -->
     <string name="stream_compose_message_preview_sender">&lt;b&gt;%1$s&lt;/b&gt; in &lt;b&gt;%2$s&lt;/b&gt;</string>
+
+    <!--  Threads  -->
+    <string name="stream_compose_thread_list_empty_title">No threads here yet...</string>
+    <plurals name="stream_compose_thread_list_new_threads">
+        <item quantity="one">%d new thread</item>
+        <item quantity="other">%d new threads</item>
+    </plurals>
 </resources>

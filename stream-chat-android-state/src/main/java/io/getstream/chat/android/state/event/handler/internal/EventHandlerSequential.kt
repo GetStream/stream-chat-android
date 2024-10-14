@@ -265,6 +265,7 @@ internal class EventHandlerSequential(
             updateGlobalState(event)
             updateChannelsState(event)
             updateOfflineStorage(event)
+            updateQueryThreadsState(event)
             updateThreadState(event)
             logger.v { "[handleBatchEvent] <<< id: ${event.id}" }
         } catch (e: Throwable) {
@@ -416,6 +417,11 @@ internal class EventHandlerSequential(
             }
         }.awaitAll()
         logger.v { "[updateChannelsState] completed batchId: ${batchEvent.id}" }
+    }
+
+    private fun updateQueryThreadsState(batchEvent: BatchEvent) {
+        logger.v { "[updateQueryThreadsState] batchEvent.size: ${batchEvent.size}" }
+        logicRegistry.queryThreads().handleEvents(batchEvent.sortedEvents)
     }
 
     private fun updateThreadState(batchEvent: BatchEvent) {
