@@ -114,6 +114,7 @@ private fun ThreadTitle(
         Icon(
             painter = painterResource(id = R.drawable.stream_compose_ic_thread),
             contentDescription = null,
+            tint = ChatTheme.colors.textHighEmphasis,
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
