@@ -34,6 +34,7 @@ object AppConfig {
             name = "Aleksandar Apostolov",
             image = "https://ca.slack-edge.com/T02RM6X6B-U05UD37MA1G-f062f8b7afc2-72",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYWFwb3N0b2wifQ.kjeSx_Zyj84NDl37FLuEiEgZEdfpa4AKfhRFkonPP9A",
+            language = "de",
         ),
         SampleUser(
             apiKey = apiKey,
@@ -48,6 +49,7 @@ object AppConfig {
             name = "Jc Miñarro",
             image = "https://ca.slack-edge.com/T02RM6X6B-U011KEXDPB2-891dbb8df64f-128",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamMifQ.2_5Hae3LKjVSfA0gQxXlZn54Bq6xDlhjPx2J7azUNB4",
+            language = "es",
         ),
         SampleUser(
             apiKey = apiKey,
@@ -55,6 +57,7 @@ object AppConfig {
             name = "Amit Kumar",
             image = "https://ca.slack-edge.com/T02RM6X6B-U027L4AMGQ3-9ca65ea80b60-128",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW1pdCJ9.MNfrDsGkFINEZ3kCQ9hAqI38lZ6S-miHINAuH3kQy2o",
+            language = "hi",
         ),
         SampleUser(
             apiKey = apiKey,
@@ -83,6 +86,7 @@ object AppConfig {
             name = "Jaewoong Eum",
             image = "https://ca.slack-edge.com/T02RM6X6B-U02HU1XR9LM-626fb91c334e-128",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFld29vbmcifQ.d-7AREGaSirn7TjxwLyAUvOU-nz2_LL5oMTycZvcnQc",
+            language = "ko",
         ),
         SampleUser(
             apiKey = apiKey,
@@ -90,6 +94,7 @@ object AppConfig {
             name = "Leandro Borges Ferreira",
             image = "https://ca.slack-edge.com/T02RM6X6B-U01AQ67NJ9Z-2f28d711cae9-128",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVhbmRybyJ9.CjlYUr79r4GopAhXIbqLBighl3meLsT4dQKzdKX7L3g",
+            language = "pt",
         ),
         SampleUser(
             apiKey = apiKey,
@@ -111,6 +116,7 @@ object AppConfig {
             name = "Rafal Adasiewicz",
             image = "https://ca.slack-edge.com/T02RM6X6B-U0177N46AFN-a4e664d1960d-128",
             token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicmFmYWwifQ.7Y4QCvc42Km8ETLdCQT5ynjiKVbZZbuN0XTiGxJNU6k",
+            language = "pl",
         ),
         SampleUser(
             apiKey = apiKey,
