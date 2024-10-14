@@ -152,7 +152,10 @@ private fun Threads(
     val shouldLoadMore by remember {
         derivedStateOf {
             val lastVisibleItem = listState.layoutInfo.visibleItemsInfo.lastOrNull()
-            lastVisibleItem != null && lastVisibleItem.index == threads.lastIndex
+            val totalItemsCount = listState.layoutInfo.totalItemsCount
+            lastVisibleItem != null &&
+                totalItemsCount - LoadMoreThreshold > 0 &&
+                lastVisibleItem.index >= totalItemsCount - LoadMoreThreshold
         }
     }
     Box(modifier = modifier) {
@@ -270,6 +273,12 @@ internal fun DefaultThreadListLoadingMoreContent() {
         LoadingIndicator(modifier = Modifier.size(16.dp))
     }
 }
+
+/**
+ * Default load more threshold - Trigger the loading of the next page of items, if the user scrolls to the N-th element
+ * from the end of the list.
+ */
+private const val LoadMoreThreshold = 10
 
 @Preview
 @Composable
