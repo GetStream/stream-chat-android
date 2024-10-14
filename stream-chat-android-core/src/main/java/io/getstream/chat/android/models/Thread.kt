@@ -23,7 +23,7 @@ import java.util.Date
 public data class Thread(
     val activeParticipantCount: Int?,
     val cid: String,
-    val channelInfo: ChannelInfo?,
+    val channel: Channel?,
     val parentMessageId: String,
     val parentMessage: Message?,
     val createdByUserId: String,

@@ -26,7 +26,7 @@ internal fun DownstreamThreadDto.toDomain(currentUserId: UserId?): Thread =
     Thread(
         activeParticipantCount = active_participant_count,
         cid = channel_cid,
-        channelInfo = channel?.toDomain(),
+        channel = channel?.toDomain(currentUserId),
         parentMessageId = parent_message_id,
         parentMessage = parent_message?.toDomain(currentUserId),
         createdByUserId = created_by_user_id,

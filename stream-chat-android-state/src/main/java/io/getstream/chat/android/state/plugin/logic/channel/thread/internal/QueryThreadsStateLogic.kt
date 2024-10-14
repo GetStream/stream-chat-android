@@ -43,6 +43,11 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         mutableState.setLoadingMore(loading)
 
     /**
+     * Retrieves the current state of the thread list from the [mutableState].
+     */
+    internal fun getThreads() = mutableState.threads.value
+
+    /**
      * Updates the thread state of the [mutableState].
      *
      * @param threads The new threads state.
@@ -59,10 +64,24 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
         mutableState.appendThreads(threads)
 
     /**
-     * Updates the end of threads reached indicator in the [mutableState].
+     * Updates the identifier for the next page of threads in the [mutableState].
      *
-     * @param endOfThreadsReached The new end of threads indicator.
+     * @param next The next page identifier.
      */
-    internal fun setEndOfThreadsReached(endOfThreadsReached: Boolean) =
-        mutableState.setEndOfThreadsReached(endOfThreadsReached)
+    internal fun setNext(next: String?) =
+        mutableState.setNext(next)
+
+    /**
+     * Adds a new thread to the set of unseen thread IDs in the [mutableState].
+     *
+     * @param id The ID of the new [Thread].
+     */
+    internal fun addUnseenThreadId(id: String) =
+        mutableState.addUnseenThreadId(id)
+
+    /**
+     * Clears the set of unseen thread IDs in the [mutableState].
+     */
+    internal fun clearUnseenThreadIds() =
+        mutableState.clearUnseenThreadIds()
 }
