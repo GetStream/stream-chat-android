@@ -25,6 +25,8 @@ import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
+import io.getstream.log.taggedLogger
+import io.getstream.result.Error
 import io.getstream.result.Result
 
 /**
@@ -34,6 +36,31 @@ import io.getstream.result.Result
  */
 internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic) {
 
+    private val logger by taggedLogger("Chat:QueryThreadsLogic")
+
+    /**
+     * Run precondition for the request. If it returns [Result.Success] then the request is run otherwise it returns
+     * [Result.Failure] and no request is made.
+     *
+     * @param request [QueryThreadsRequest] which is going to be used for the request.
+     *
+     * @return [Result.Success] if precondition passes otherwise [Result.Failure]
+     */
+    internal fun onQueryThreadsPrecondition(request: QueryThreadsRequest): Result<Unit> {
+        if (stateLogic.isLoading()) {
+            val errorMsg = "Already loading the threads, ignoring all other load requests."
+            logger.d { errorMsg }
+            return Result.Failure(Error.GenericError(errorMsg))
+        }
+        return if (stateLogic.isLoadingMore() && isNextPageRequest(request)) {
+            val errorMsg = "Already loading the next page of threads, ignoring all other next page requests."
+            logger.d { errorMsg }
+            Result.Failure(Error.GenericError(errorMsg))
+        } else {
+            Result.Success(Unit)
+        }
+    }
+
     /**
      * Handles the actions that are needed to update the threads state before the attempt to load the threads
      * from the network.
@@ -41,7 +68,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      * @param request The [QueryThreadsRequest] used to fetch the threads.
      */
     internal fun onQueryThreadsRequest(request: QueryThreadsRequest) {
-        if (isLoadingMore(request)) {
+        if (isNextPageRequest(request)) {
             stateLogic.setLoadingMore(true)
         } else {
             stateLogic.setLoading(true)
@@ -57,15 +84,15 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      * @param request The [QueryThreadsRequest] used to fetch the threads.
      */
     internal fun onQueryThreadsResult(result: Result<QueryThreadsResult>, request: QueryThreadsRequest) {
-        val isLoadingMore = isLoadingMore(request)
-        if (isLoadingMore) {
+        val isNextPageRequest = isNextPageRequest(request)
+        if (isNextPageRequest) {
             stateLogic.setLoadingMore(false)
         } else {
             stateLogic.setLoading(false)
         }
         when (result) {
             is Result.Success -> {
-                if (isLoadingMore) {
+                if (isNextPageRequest) {
                     stateLogic.appendThreads(result.value.threads)
                 } else {
                     stateLogic.setThreads(result.value.threads)
@@ -97,7 +124,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
         }
     }
 
-    private fun isLoadingMore(request: QueryThreadsRequest) = request.next != null
+    private fun isNextPageRequest(request: QueryThreadsRequest) = request.next != null
 
     private fun addNewThreadMessage(event: NotificationThreadMessageNewEvent) {
         val threads = stateLogic.getThreads()
