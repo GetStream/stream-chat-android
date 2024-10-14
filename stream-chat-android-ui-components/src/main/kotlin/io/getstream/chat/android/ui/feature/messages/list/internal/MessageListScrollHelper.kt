@@ -68,7 +68,7 @@ internal class MessageListScrollHelper(
      */
     private var isAtBottom = false
         set(value) {
-            logger.d { "[setIsAtBottom] value: $value" }
+            logger.v { "[setIsAtBottom] value: $value" }
             if (value && !field) {
                 callback.onLastMessageRead()
             }
@@ -211,9 +211,10 @@ internal class MessageListScrollHelper(
         isInitialList: Boolean,
         endOfNewMessagesReached: Boolean,
     ) {
+        val isAtBottom = isAtBottom
         logger.d {
-            "[onMessageListChanged] isInitialList: $isInitialList" +
-                ", endOfNewMessagesReached: $endOfNewMessagesReached"
+            "[onMessageListChanged] isInitialList: $isInitialList, hasNewMessages: $hasNewMessages" +
+                ", endOfNewMessagesReached: $endOfNewMessagesReached, isAtBottom: $isAtBottom"
         }
         this.endOfNewMessagesReached = endOfNewMessagesReached
         scrollButtonView.isVisible = shouldScrollToBottomBeVisible()
@@ -226,7 +227,12 @@ internal class MessageListScrollHelper(
             layoutManager.scrollToPosition(currentList.lastIndex)
             return
         }
-        val shouldScrollToBottom = shouldScrollToBottom(isInitialList, endOfNewMessagesReached, hasNewMessages)
+        val shouldScrollToBottom = shouldScrollToBottom(
+            isInitialList,
+            endOfNewMessagesReached,
+            hasNewMessages,
+            isAtBottom,
+        )
         logger.v { "[onMessageListChanged] shouldScrollToBottom: $shouldScrollToBottom" }
         if (shouldScrollToBottom) {
             layoutManager.scrollToPosition(currentList.lastIndex)
@@ -246,11 +252,13 @@ internal class MessageListScrollHelper(
         isInitialList: Boolean,
         endOfNewMessagesReached: Boolean,
         hasNewMessages: Boolean,
+        isAtBottom: Boolean,
     ): Boolean {
         logger.v {
-            "[shouldScrollToBottom] isInitialList: $isInitialList, " +
-                "endOfNewMessagesReached: $endOfNewMessagesReached, hasNewMessages: $hasNewMessages" +
-                ", isLastMessageMine: ${isLastMessageMine()}, "
+            "[shouldScrollToBottom] hasNewMessages: $hasNewMessages" +
+                ", endOfNewMessagesReached: $endOfNewMessagesReached, isInitialList: $isInitialList" +
+                ", isLastMessageMine: ${isLastMessageMine()}" +
+                ", isAtBottom: $isAtBottom, alwaysScrollToBottom: $alwaysScrollToBottom"
         }
         return hasNewMessages &&
             endOfNewMessagesReached &&

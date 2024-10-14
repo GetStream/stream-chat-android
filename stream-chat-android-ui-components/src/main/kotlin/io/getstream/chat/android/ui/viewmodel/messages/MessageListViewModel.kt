@@ -207,6 +207,8 @@ public class MessageListViewModel(
                         State.Result(
                             it.first.toMessageListItemWrapper(
                                 isInThread = it.second is MessageMode.MessageThread,
+                                prevNewMessageState = stateMerger.value?.asResultOrNull()
+                                    ?.messageListItem?.newMessageState,
                             ),
                         )
                     }
@@ -476,9 +478,7 @@ public class MessageListViewModel(
         /**
          * Signifies that the message list is loading.
          */
-        public object Loading : State() {
-            override fun toString(): String = "Loading"
-        }
+        public data object Loading : State()
 
         /**
          * Signifies that the messages have successfully loaded.
@@ -490,10 +490,10 @@ public class MessageListViewModel(
         /**
          * Signals that the View should navigate back.
          */
-        public object NavigateUp : State() {
-            override fun toString(): String = "NavigateUp"
-        }
+        public data object NavigateUp : State()
     }
+
+    private fun State.asResultOrNull(): State.Result? = this as? State.Result
 
     /**
      * Represents events coming from the View class.
