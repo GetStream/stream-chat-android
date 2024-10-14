@@ -19,6 +19,7 @@ package io.getstream.chat.android.ui
 import android.content.Context
 import io.getstream.chat.android.ui.common.helper.DateFormatter
 import io.getstream.chat.android.ui.common.helper.DefaultVideoHeadersProvider
+import io.getstream.chat.android.ui.common.helper.ImageAssetTransformer
 import io.getstream.chat.android.ui.common.helper.ImageHeadersProvider
 import io.getstream.chat.android.ui.common.helper.VideoHeadersProvider
 import io.getstream.chat.android.ui.common.images.internal.StreamImageLoader
@@ -64,6 +65,12 @@ public object ChatUI {
      */
     @JvmStatic
     public var navigator: ChatNavigator = ChatNavigator()
+
+    /**
+     * Provides a custom implementation for loading images.
+     */
+    @JvmStatic
+    public var imageAssetTransformer: ImageAssetTransformer by StreamImageLoader.instance()::imageAssetTransformer
 
     /**
      * Provides HTTP headers for image loading requests.
