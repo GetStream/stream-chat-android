@@ -163,6 +163,7 @@
     <string name="stream_compose_message_list_you">You</string>
     <string name="stream_compose_also_sent_to_channel">Also sent to the channel</string>
     <string name="stream_compose_replied_to_thread">Replied to a thread</string>
+    <string name="stream_compose_replied_to">replied to:&#160;</string>
 
     <!--  Image Preview  -->
     <string name="stream_compose_image_options">Image options</string>
@@ -234,4 +235,11 @@
     <string name="stream_compose_confirm">Confirm</string>
     <string name="stream_compose_dismiss">Dismiss</string>
     <string name="stream_compose_view_answers">View Comments</string>
+
+    <!--  Threads  -->
+    <string name="stream_compose_thread_list_empty_title">No threads here yet...</string>
+    <plurals name="stream_compose_thread_list_new_threads">
+        <item quantity="one">%d new thread</item>
+        <item quantity="other">%d new threads</item>
+    </plurals>
 </resources>

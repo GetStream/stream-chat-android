@@ -20,6 +20,7 @@ import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.state.plugin.state.querythreads.QueryThreadsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  * Mutable state holder of [QueryThreadsState] type.
@@ -29,13 +30,15 @@ internal class QueryThreadsMutableState : QueryThreadsState {
     private var _threads: MutableStateFlow<List<Thread>>? = MutableStateFlow(emptyList())
     private var _loading: MutableStateFlow<Boolean>? = MutableStateFlow(false)
     private var _loadingMore: MutableStateFlow<Boolean>? = MutableStateFlow(false)
-    private var _endOfThreads: MutableStateFlow<Boolean>? = MutableStateFlow(false)
+    private var _next: MutableStateFlow<String?>? = MutableStateFlow(null)
+    private var _unseenThreadIds: MutableStateFlow<Set<String>>? = MutableStateFlow(emptySet())
 
     // Note: The backing flow will always be initialized at this point
     override val threads: StateFlow<List<Thread>> = _threads!!
     override val loading: StateFlow<Boolean> = _loading!!
     override val loadingMore: StateFlow<Boolean> = _loadingMore!!
-    override val endOfThreads: StateFlow<Boolean> = _endOfThreads!!
+    override val next: StateFlow<String?> = _next!!
+    override val unseenThreadIds: StateFlow<Set<String>> = _unseenThreadIds!!
 
     /**
      * Updates the loading state. Will be true only during the initial load, or during a full reload.
@@ -75,12 +78,32 @@ internal class QueryThreadsMutableState : QueryThreadsState {
     }
 
     /**
-     * Updates the flag whether the end of the threads list has been reached.
+     * Updates the identifier for the next page of threads.
      *
-     * @param endOfThreadsReached The new end of threads indicator.
+     * @param next The next page identifier.
      */
-    internal fun setEndOfThreadsReached(endOfThreadsReached: Boolean) {
-        _endOfThreads?.value = endOfThreadsReached
+    internal fun setNext(next: String?) {
+        _next?.value = next
+    }
+
+    /**
+     * Adds a new thread to the set of unseen thread IDs.
+     *
+     * @param id The ID of the new [Thread].
+     */
+    internal fun addUnseenThreadId(id: String) {
+        _unseenThreadIds?.update { set ->
+            val mutableUnseenThreadIds = set.toMutableSet()
+            mutableUnseenThreadIds.add(id)
+            mutableUnseenThreadIds
+        }
+    }
+
+    /**
+     * Clears the set of unseen thread IDs.
+     */
+    internal fun clearUnseenThreadIds() {
+        _unseenThreadIds?.value = emptySet()
     }
 
     /**
@@ -90,6 +113,7 @@ internal class QueryThreadsMutableState : QueryThreadsState {
         _threads = null
         _loading = null
         _loadingMore = null
-        _endOfThreads = null
+        _next = null
+        _unseenThreadIds = null
     }
 }

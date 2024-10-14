@@ -44,7 +44,7 @@ import java.util.Date
 internal data class DownstreamThreadDto(
     val active_participant_count: Int?,
     val channel_cid: String,
-    val channel: ChannelInfoDto?,
+    val channel: DownstreamChannelDto?,
     val parent_message_id: String,
     val parent_message: DownstreamMessageDto?,
     val created_by_user_id: String,
