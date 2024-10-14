@@ -31,7 +31,7 @@ import io.getstream.result.Result
 internal class QueryThreadsListenerState(private val logic: LogicRegistry) : QueryThreadsListener {
 
     override suspend fun onQueryThreadsPrecondition(request: QueryThreadsRequest): Result<Unit> {
-        return Result.Success(Unit)
+        return logic.queryThreads().onQueryThreadsPrecondition(request)
     }
 
     override suspend fun onQueryThreadsRequest(request: QueryThreadsRequest) {

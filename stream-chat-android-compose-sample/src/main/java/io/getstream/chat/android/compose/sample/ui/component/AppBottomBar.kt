@@ -40,14 +40,6 @@ import io.getstream.chat.android.compose.sample.R
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
 
 /**
- * Defines the possible options of the app bottom bar.
- */
-enum class AppBottomBarOption {
-    CHATS,
-    THREADS,
-}
-
-/**
  * Renders the default app bottom bar for switching between chats/threads.
  *
  * @param selectedOption The currently selected [AppBottomBarOption].
@@ -78,6 +70,14 @@ fun AppBottomBar(
             onClick = { onOptionSelected(AppBottomBarOption.THREADS) },
         )
     }
+}
+
+/**
+ * Defines the possible options of the app bottom bar.
+ */
+enum class AppBottomBarOption {
+    CHATS,
+    THREADS,
 }
 
 @Composable
