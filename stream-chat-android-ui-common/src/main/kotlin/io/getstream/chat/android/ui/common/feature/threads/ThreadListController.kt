@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /**
@@ -110,7 +109,6 @@ public class ThreadListController(
     public fun loadNextPage() {
         if (!shouldLoadNextPage()) return
         scope.launch {
-            _state.update { it.copy(isLoadingMore = true) }
             val next = queryThreadsState.value?.next?.value
             val nextPageQuery = query.copy(next = next)
             chatClient.queryThreadsResult(query = nextPageQuery).enqueue()
