@@ -108,11 +108,9 @@ public class ThreadListController(
      */
     public fun loadNextPage() {
         if (!shouldLoadNextPage()) return
-        scope.launch {
-            val next = queryThreadsState.value?.next?.value
-            val nextPageQuery = query.copy(next = next)
-            chatClient.queryThreadsResult(query = nextPageQuery).enqueue()
-        }
+        val next = queryThreadsState.value?.next?.value
+        val nextPageQuery = query.copy(next = next)
+        chatClient.queryThreadsResult(query = nextPageQuery).enqueue()
     }
 
     private fun shouldLoadNextPage(): Boolean {
