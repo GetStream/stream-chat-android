@@ -25,7 +25,7 @@ import io.getstream.chat.android.ui.common.feature.threads.ThreadListController
  *
  * @see ThreadListViewModel
  */
-public class ThreadsViewModelFactory : ViewModelProvider.Factory {
+internal class ThreadsViewModelFactory : ViewModelProvider.Factory {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         require(modelClass == ThreadListViewModel::class.java) {

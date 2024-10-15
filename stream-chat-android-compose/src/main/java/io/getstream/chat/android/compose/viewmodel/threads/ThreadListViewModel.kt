@@ -27,18 +27,18 @@ import kotlinx.coroutines.flow.StateFlow
  * @param controller The [ThreadListController] handling the business logic and the state management for the threads
  * list.
  */
-public class ThreadListViewModel(private val controller: ThreadListController) : ViewModel() {
+internal class ThreadListViewModel(private val controller: ThreadListController) : ViewModel() {
 
     /**
      * The current thread list state.
      */
-    public val state: StateFlow<ThreadListState> = controller.state
+    val state: StateFlow<ThreadListState> = controller.state
 
     /**
      * Loads the initial data when requested.
      * Overrides all previously retrieved data.
      */
-    public fun load() {
+    fun load() {
         controller.load()
     }
 
@@ -47,7 +47,7 @@ public class ThreadListViewModel(private val controller: ThreadListController) :
      *
      * Does nothing if the end of the list has already been reached or loading is already in progress.
      */
-    public fun loadNextPage() {
+    fun loadNextPage() {
         controller.loadNextPage()
     }
 }
