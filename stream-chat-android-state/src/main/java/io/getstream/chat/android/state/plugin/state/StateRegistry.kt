@@ -60,8 +60,8 @@ public class StateRegistry constructor(
         ConcurrentHashMap()
     private val channels: ConcurrentHashMap<Pair<String, String>, ChannelMutableState> = ConcurrentHashMap()
 
-    // Note: At the moment, there is no need for multiple instances of QueryThreadsLogic, as we always load all threads,
-    // without the option for filtering. Update this is we decide to support different queries.
+    // Note: At the moment, there is no need for multiple instances of QueryThreadsMutableState, as we always load all
+    // threads, without the option for filtering. Update this is we decide to support different queries.
     private val queryThreads: QueryThreadsMutableState = QueryThreadsMutableState()
     private val threads: ConcurrentHashMap<String, ThreadMutableState> = ConcurrentHashMap()
 
