@@ -21,6 +21,7 @@ import android.os.Build
 import io.getstream.chat.android.client.ChatClient
 import okhttp3.Interceptor
 import okhttp3.Response
+import java.text.Normalizer
 
 internal class HeadersInterceptor(
     context: Context,
@@ -77,8 +78,16 @@ internal class HeadersInterceptor(
                 }
             }.getOrNull() ?: "StandAloneInstall"
 
-            return "$appName / $versionName($versionCode); $installerName; ($manufacturer; " +
-                "$model; SDK $version; Android $versionRelease)"
+            return (
+                "$appName / $versionName($versionCode); $installerName; ($manufacturer; " +
+                    "$model; SDK $version; Android $versionRelease)"
+                )
+                .sanitize()
         }
+    }
+
+    private fun String.sanitize(): String {
+        return Normalizer.normalize(this, Normalizer.Form.NFD)
+            .replace("[^\\p{ASCII}]".toRegex(), "")
     }
 }
