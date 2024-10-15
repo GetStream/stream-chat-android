@@ -39,7 +39,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,8 +49,6 @@ import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.compose.sample.ChatApp
 import io.getstream.chat.android.compose.sample.ChatHelper
 import io.getstream.chat.android.compose.sample.R
-import io.getstream.chat.android.compose.sample.ui.component.AppBottomBar
-import io.getstream.chat.android.compose.sample.ui.component.AppBottomBarOption
 import io.getstream.chat.android.compose.sample.ui.login.UserLoginActivity
 import io.getstream.chat.android.compose.state.channels.list.ItemState
 import io.getstream.chat.android.compose.state.channels.list.SearchQuery
@@ -63,11 +60,8 @@ import io.getstream.chat.android.compose.ui.channels.list.ChannelItem
 import io.getstream.chat.android.compose.ui.channels.list.ChannelList
 import io.getstream.chat.android.compose.ui.components.SearchInput
 import io.getstream.chat.android.compose.ui.theme.ChatTheme
-import io.getstream.chat.android.compose.ui.threads.ThreadList
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelListViewModel
 import io.getstream.chat.android.compose.viewmodel.channels.ChannelViewModelFactory
-import io.getstream.chat.android.compose.viewmodel.threads.ThreadListViewModel
-import io.getstream.chat.android.compose.viewmodel.threads.ThreadsViewModelFactory
 import io.getstream.chat.android.models.Channel
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.User
@@ -76,17 +70,15 @@ import kotlinx.coroutines.launch
 
 class ChannelsActivity : BaseConnectedActivity() {
 
-    private val listViewModelFactory by lazy {
+    private val factory by lazy {
         ChannelViewModelFactory(
             ChatClient.instance(),
             QuerySortByField.descByName("last_updated"),
             null,
         )
     }
-    private val threadsViewModelFactory by lazy { ThreadsViewModelFactory() }
 
-    private val listViewModel: ChannelListViewModel by viewModels { listViewModelFactory }
-    private val threadsViewModel: ThreadListViewModel by viewModels { threadsViewModelFactory }
+    private val listViewModel: ChannelListViewModel by viewModels { factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,64 +91,34 @@ class ChannelsActivity : BaseConnectedActivity() {
          * or build a custom component yourself, like [MyCustomUi].
          */
         setContent {
-            var selectedTab by rememberSaveable { mutableStateOf(AppBottomBarOption.CHATS) }
-
             ChatTheme(
                 dateFormatter = ChatApp.dateFormatter,
                 autoTranslationEnabled = ChatApp.autoTranslationEnabled,
                 allowUIAutomationTest = true,
             ) {
-                Scaffold(
-                    bottomBar = {
-                        AppBottomBar(
-                            selectedOption = selectedTab,
-                            onOptionSelected = { selectedTab = it },
-                        )
-                    },
-                    content = { _ ->
-                        when (selectedTab) {
-                            AppBottomBarOption.CHATS -> ChannelsContent()
-                            AppBottomBarOption.THREADS -> ThreadsContent()
+                ChannelsScreen(
+                    viewModelFactory = factory,
+                    title = stringResource(id = R.string.app_name),
+                    isShowingHeader = true,
+                    searchMode = SearchMode.Messages,
+                    onChannelClick = ::openMessages,
+                    onSearchMessageItemClick = ::openMessages,
+                    onBackPressed = ::finish,
+                    onHeaderAvatarClick = {
+                        listViewModel.viewModelScope.launch {
+                            ChatHelper.disconnectUser()
+                            openUserLogin()
                         }
                     },
+                    onHeaderActionClick = {
+                        listViewModel.refresh()
+                    },
                 )
-            }
-        }
-    }
-
-    @Composable
-    private fun ChannelsContent() {
-        ChannelsScreen(
-            viewModelFactory = listViewModelFactory,
-            title = stringResource(id = R.string.app_name),
-            isShowingHeader = true,
-            searchMode = SearchMode.Messages,
-            onChannelClick = ::openMessages,
-            onSearchMessageItemClick = ::openMessages,
-            onBackPressed = ::finish,
-            onHeaderAvatarClick = {
-                listViewModel.viewModelScope.launch {
-                    ChatHelper.disconnectUser()
-                    openUserLogin()
-                }
-            },
-            onHeaderActionClick = {
-                listViewModel.refresh()
-            },
-        )
 
 //                MyCustomUiSimplified()
 //                MyCustomUi()
-    }
-
-    @Composable
-    private fun ThreadsContent() {
-        ThreadList(
-            viewModel = threadsViewModel,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(ChatTheme.colors.appBackground),
-        )
+            }
+        }
     }
 
     /**
