@@ -104,7 +104,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
             }
 
             is Result.Failure -> {
-                // TODO: What to do in this case??
+                logger.i { "[queryThreadsResult] with request: $request failed." }
             }
         }
     }

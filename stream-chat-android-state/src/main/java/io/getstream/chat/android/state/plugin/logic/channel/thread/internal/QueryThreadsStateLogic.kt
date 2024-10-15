@@ -105,12 +105,12 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
     internal fun updateParent(parent: Message): Boolean {
         val oldThreads = getThreads()
         val oldThread = oldThreads.find { it.parentMessageId == parent.id }
-        oldThread ?: return false  // no matching parent message was found
+        oldThread ?: return false // no matching parent message was found
         val newThread = oldThread.copy(
             parentMessage = parent,
             deletedAt = parent.deletedAt,
             updatedAt = parent.updatedAt,
-            replyCount = parent.replyCount
+            replyCount = parent.replyCount,
         )
         val newThreads = oldThreads.map {
             if (it.parentMessageId == newThread.parentMessageId) {
@@ -120,7 +120,7 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
             }
         }
         mutableState.setThreads(newThreads)
-        return true  // matching parent message was found and updated
+        return true // matching parent message was found and updated
     }
 
     /**
