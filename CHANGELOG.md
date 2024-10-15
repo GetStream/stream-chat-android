@@ -19,6 +19,7 @@
 - Sanitize User Agen Header to avoid issues with ilegal characters on the Http Headers. [#5440](https://github.com/GetStream/stream-chat-android/pull/5440)
 
 ### ⬆️ Improved
+- Avoid multiple `ChatClient::connectUser` invocations by sharing the `Call`. [#5439](https://github.com/GetStream/stream-chat-android/pull/5439)
 
 ### ✅ Added
 
