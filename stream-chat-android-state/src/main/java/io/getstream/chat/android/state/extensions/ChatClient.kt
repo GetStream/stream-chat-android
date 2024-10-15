@@ -154,6 +154,7 @@ public fun ChatClient.watchChannelAsState(
  * @param request The [QueryThreadsRequest] used to perform the query threads operation.
  * @return A [StateFlow] emitting changes in the [QueryThreadsState].
  */
+@InternalStreamChatApi
 public fun ChatClient.queryThreadsAsState(
     request: QueryThreadsRequest,
     coroutineScope: CoroutineScope = CoroutineScope(DispatcherProvider.IO),

@@ -3267,6 +3267,7 @@ internal constructor(
      * @param query [QueryThreadsRequest] with query parameters to get matching users.
      */
     @CheckResult
+    @InternalStreamChatApi
     public fun queryThreadsResult(query: QueryThreadsRequest): Call<QueryThreadsResult> {
         return queryThreadsInternal(query)
             .doOnStart(userScope) {

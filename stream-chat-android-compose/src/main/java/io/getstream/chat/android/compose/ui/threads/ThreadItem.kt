@@ -70,7 +70,7 @@ import java.util.Date
  */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-public fun ThreadItem(
+internal fun ThreadItem(
     thread: Thread,
     currentUser: User?,
     onThreadClick: (Thread) -> Unit,
