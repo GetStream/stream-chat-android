@@ -16,6 +16,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Sanitize User Agen Header to avoid issues with ilegal characters on the Http Headers. [#5440](https://github.com/GetStream/stream-chat-android/pull/5440)
 
 ### ⬆️ Improved
 
@@ -53,6 +54,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ImageAssetTransformer` to transform image assets before rendering them on the UI. [#5438](https://github.com/GetStream/stream-chat-android/pull/5438)
 
 ### ⚠️ Changed
 
@@ -67,6 +69,7 @@
 ### ⬆️ Improved
 
 ### ✅ Added
+- Added `ChatUI.imageAssetTransformer` to transform image assets before rendering them on the UI. [#5438](https://github.com/GetStream/stream-chat-android/pull/5438)
 
 ### ⚠️ Changed
 
@@ -85,6 +88,7 @@
 - Add `formatMessageTitle` method to `MessagePreviewFormatter`, to allow message preview title formatting customization. [#5420](https://github.com/GetStream/stream-chat-android/pull/5420)
 - Add `AttachmentsPickerTabFactories.defaultFactoriesWithoutStoragePermissions` to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
 - Add `AttachmentsPickerSystemTabFactory(filesAllowed, mediaAllowed, captureImageAllowed, captureVideoAllowed, pollAllowed)` to to customize which attachment pickers are allowed. [#5430](https://github.com/GetStream/stream-chat-android/pull/5430)
+- Added `ChatTheme.imageAssetTransformer` to transform image assets before rendering them on the UI. [#5438](https://github.com/GetStream/stream-chat-android/pull/5438)
 
 ### ⚠️ Changed
 - Exposed `DefaultMessageComposerRecordingContent` and `DefaultAudioRecordButton` components. [#5433](https://github.com/GetStream/stream-chat-android/pull/5433) 
