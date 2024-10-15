@@ -16,13 +16,15 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
-import io.getstream.chat.android.client.ChatClient
 import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.events.ChatEvent
 import io.getstream.chat.android.client.events.MessageDeletedEvent
 import io.getstream.chat.android.client.events.MessageUpdatedEvent
 import io.getstream.chat.android.client.events.NotificationChannelDeletedEvent
 import io.getstream.chat.android.client.events.NotificationThreadMessageNewEvent
+import io.getstream.chat.android.client.events.ReactionDeletedEvent
+import io.getstream.chat.android.client.events.ReactionNewEvent
+import io.getstream.chat.android.client.events.ReactionUpdateEvent
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.QueryThreadsResult
 import io.getstream.log.taggedLogger
@@ -117,9 +119,12 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
     private fun handleEvent(event: ChatEvent) {
         when (event) {
             is NotificationThreadMessageNewEvent -> addNewThreadMessage(event)
-            is MessageUpdatedEvent -> updateMessageInThread(event.message)
-            is MessageDeletedEvent -> updateMessageInThread(event.message)
             is NotificationChannelDeletedEvent -> deleteThreadsFromChannel(event.cid)
+            is MessageDeletedEvent -> updateParentOrReply(event.message)
+            is MessageUpdatedEvent -> updateParentOrReply(event.message)
+            is ReactionNewEvent -> updateParentOrReply(event.message)
+            is ReactionUpdateEvent -> updateParentOrReply(event.message)
+            is ReactionDeletedEvent -> updateParentOrReply(event.message)
             else -> Unit
         }
     }
@@ -137,42 +142,7 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
             return
         }
         // Update the thread inline if it is already loaded
-        val participants = thread.threadParticipants.orEmpty()
-        val newParticipants = if (participants.any { it.id == event.message.user.id }) {
-            participants // User of the new message is already a participant
-        } else {
-            participants + listOf(event.message.user)
-        }
-        val participantsCount = newParticipants.size
-        val lastMessageAt = event.message.createdAt
-        val updatedAt = event.createdAt
-        // Append new message at the end of latest replies
-        val latestReplies = thread.latestReplies + listOf(event.message)
-        val currentUserId = ChatClient.instance().getCurrentOrStoredUserId()
-        val read = thread.read?.map {
-            if (it.user.id == currentUserId) {
-                it.copy(unreadMessages = it.unreadMessages + 1)
-            } else {
-                it
-            }
-        }
-        val updatedThread = thread.copy(
-            replyCount = thread.replyCount?.let { it + 1 },
-            participantCount = participantsCount,
-            threadParticipants = newParticipants,
-            lastMessageAt = lastMessageAt ?: thread.lastMessageAt, // update if possible
-            updatedAt = updatedAt,
-            latestReplies = latestReplies,
-            read = read,
-        )
-        val updatedThreads = threads.map {
-            if (it.parentMessageId == thread.parentMessageId) {
-                updatedThread
-            } else {
-                it
-            }
-        }
-        stateLogic.setThreads(updatedThreads)
+        stateLogic.upsertReply(reply = event.message)
     }
 
     /**
@@ -180,57 +150,11 @@ internal class QueryThreadsLogic(private val stateLogic: QueryThreadsStateLogic)
      *
      * @param message The updated [Message].
      */
-    private fun updateMessageInThread(message: Message) {
-        val parentMessagedUpdated = updateParentMessage(message)
-        if (!parentMessagedUpdated) {
-            updateReplyMessage(message)
+    private fun updateParentOrReply(message: Message) {
+        val parentUpdated = stateLogic.updateParent(parent = message)
+        if (!parentUpdated) {
+            stateLogic.upsertReply(reply = message)
         }
-    }
-
-    /**
-     * Updates the parent message of the thread (if the updated [message] is a parent message).
-     */
-    private fun updateParentMessage(message: Message): Boolean {
-        val threads = stateLogic.getThreads()
-        val affectedThread = threads.find { it.parentMessageId == message.id }
-        affectedThread ?: return false // No thread was changed
-
-        val updatedThread = affectedThread.copy(parentMessage = message, parentMessageId = message.id)
-        val updatedThreads = threads.map { thread ->
-            if (thread.parentMessageId == message.id) {
-                updatedThread
-            } else {
-                thread
-            }
-        }
-        stateLogic.setThreads(updatedThreads)
-        return true // thread was changed
-    }
-
-    /**
-     * Updates a reply message in a thread (if the updated [message] is a reply message).
-     */
-    private fun updateReplyMessage(message: Message) {
-        val threads = stateLogic.getThreads()
-        val affectedThread = threads.find { it.parentMessageId == message.parentId }
-        affectedThread ?: return
-
-        val updatedReplies = affectedThread.latestReplies.map {
-            if (it.id == message.id) {
-                message
-            } else {
-                it
-            }
-        }
-        val updatedThread = affectedThread.copy(latestReplies = updatedReplies)
-        val updatedThreads = threads.map {
-            if (it.parentMessageId == updatedThread.parentMessageId) {
-                updatedThread
-            } else {
-                it
-            }
-        }
-        stateLogic.setThreads(updatedThreads)
     }
 
     /**
