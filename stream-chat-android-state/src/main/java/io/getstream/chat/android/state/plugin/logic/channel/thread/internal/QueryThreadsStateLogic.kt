@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.state.plugin.logic.channel.thread.internal
 
+import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Thread
 import io.getstream.chat.android.state.plugin.state.querythreads.internal.QueryThreadsMutableState
 
@@ -94,4 +95,68 @@ internal class QueryThreadsStateLogic(private val mutableState: QueryThreadsMuta
      */
     internal fun clearUnseenThreadIds() =
         mutableState.clearUnseenThreadIds()
+
+    /**
+     * Updates the parent message of a thread.
+     *
+     * @param parent The new state of the thread parent message.
+     * @return true if matching parent message was found and was updated, false otherwise.
+     */
+    internal fun updateParent(parent: Message): Boolean {
+        val oldThreads = getThreads()
+        val oldThread = oldThreads.find { it.parentMessageId == parent.id }
+        oldThread ?: return false  // no matching parent message was found
+        val newThread = oldThread.copy(
+            parentMessage = parent,
+            deletedAt = parent.deletedAt,
+            updatedAt = parent.updatedAt,
+            replyCount = parent.replyCount
+        )
+        val newThreads = oldThreads.map {
+            if (it.parentMessageId == newThread.parentMessageId) {
+                newThread
+            } else {
+                it
+            }
+        }
+        mutableState.setThreads(newThreads)
+        return true  // matching parent message was found and updated
+    }
+
+    /**
+     * Inserts/updates the given reply into the appropriate thread.
+     *
+     * @param reply The reply to upsert.
+     */
+    internal fun upsertReply(reply: Message) {
+        val oldThreads = getThreads()
+        val thread = oldThreads.find { it.parentMessageId == reply.parentId }
+        thread ?: return
+        val oldReplies = thread.latestReplies
+        val newReplies = if (oldReplies.any { it.id == reply.id }) {
+            // update
+            oldReplies.map {
+                if (it.id == reply.id) {
+                    reply
+                } else {
+                    it
+                }
+            }
+        } else {
+            // insert
+            oldReplies + listOf(reply)
+        }
+        val sortedNewReplies = newReplies.sortedBy {
+            it.createdAt ?: it.createdLocallyAt
+        }
+        val newThread = thread.copy(latestReplies = sortedNewReplies)
+        val newThreads = oldThreads.map {
+            if (it.parentMessageId == newThread.parentMessageId) {
+                newThread
+            } else {
+                it
+            }
+        }
+        mutableState.setThreads(newThreads)
+    }
 }
