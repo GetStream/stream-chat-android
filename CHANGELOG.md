@@ -16,6 +16,7 @@
 
 ## stream-chat-android-client
 ### 🐞 Fixed
+- Sanitize User Agen Header to avoid issues with ilegal characters on the Http Headers. [#5440](https://github.com/GetStream/stream-chat-android/pull/5440)
 
 ### ⬆️ Improved
 
