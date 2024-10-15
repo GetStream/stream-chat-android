@@ -1,5 +1,4 @@
 import io.getstream.chat.android.Dependencies
-import io.getstream.chat.android.Versions
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
@@ -151,6 +150,7 @@ dependencies {
     androidTestImplementation(Dependencies.allureKotlinJunit)
     androidTestImplementation(Dependencies.allureKotlinCommons)
     androidTestImplementation(Dependencies.allureKotlinAndroid)
+    androidTestImplementation(project(":stream-chat-android-e2e-test"))
 
     detektPlugins(Dependencies.detektFormatting)
 

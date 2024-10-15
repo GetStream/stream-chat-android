@@ -16,17 +16,19 @@
 
 package io.getstream.chat.android.compose.uiautomator
 
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.UiObject2
+import io.getstream.chat.android.e2e.test.SomeClass
 
 fun UiDevice.exec(command: String): String {
     return executeShellCommand(command)
 }
 
 fun UiDevice.startApp() {
+    // We can use code from "android-chat-android-e2e-test" module
+    SomeClass().someMethod()
+
     // Proof of Concept #1
     val intent = testContext.packageManager.getLaunchIntentForPackage(packageName)
     intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
