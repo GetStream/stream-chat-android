@@ -45,8 +45,4 @@
     <string name="channel_group_info_owner">Owner</string>
     <string name="channel_group_info_member">Member</string>
     <string name="channel_group_info_moderator">Moderator</string>
-
-    <!--  App Bottom Bar  -->
-    <string name="app_bottom_bar_chats">Chats</string>
-    <string name="app_bottom_bar_threads">Threads</string>
 </resources>
