@@ -50,6 +50,7 @@ import io.getstream.chat.android.ui.common.state.messages.list.DeletedMessageVis
 import io.getstream.chat.android.ui.common.state.messages.list.MessageItemState
 import io.getstream.chat.android.ui.common.state.messages.list.MessageListState
 import io.getstream.chat.android.ui.common.state.messages.list.MessagePosition
+import io.getstream.chat.android.ui.common.state.messages.list.Other
 import io.getstream.chat.android.ui.common.state.messages.list.TypingItemState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -542,9 +543,73 @@ internal class MessageListControllerTests {
         controller.lastSeenMessageId `should be equal to` newMessage.id
     }
 
+    @Test
+    fun `When new message arrives, newMessageState should remain the same`() = runTest {
+        /* Given */
+        val chatClient: ChatClient = mock()
+        val members = randomMembers(size = 2) {
+            randomMember(user = if (it % 2 == 0) user1 else user2)
+        }
+        val channelData = ChannelData(
+            type = CHANNEL_TYPE,
+            id = CHANNEL_ID,
+            memberCount = members.size,
+            createdBy = user1,
+        )
+
+        val messages = suspendableRandomMessageList(2) {
+            nowMessage(author = user1, type = "regular", text = "regular_$it").also {
+                delay(100L)
+            }
+        }
+        val membersState = MutableStateFlow(members)
+        val channelDataState = MutableStateFlow(channelData)
+        val membersCountState = MutableStateFlow(members.size)
+        val messagesState = MutableStateFlow(emptyList<Message>())
+        val typingState = MutableStateFlow(TypingEvent(CHANNEL_ID, emptyList()))
+        val controller = Fixture(chatClient = chatClient)
+            .givenCurrentUser()
+            .givenChannelQuery()
+            .givenMarkRead()
+            .givenChannelState(
+                channelDataState = channelDataState,
+                membersState = membersState,
+                membersCountState = membersCountState,
+                messagesState = messagesState,
+                typingState = typingState,
+            )
+            .get()
+
+        /* When */
+
+        // 1 ==> simulate channel entering
+        messagesState.emit(messages)
+        controller.updateLastSeenMessage(messages.last())
+
+        // wait for 1 sec
+        delay(1000)
+
+        // 2 ==> simulate typing start event
+        typingState.emit(TypingEvent(CHANNEL_ID, listOf(user2)))
+
+        // 3 ==> simulate new system message arrival
+        val newMessage = nowMessage(author = user2, type = "regular", text = "Last message")
+        messagesState.emit(messages + newMessage)
+        controller.updateLastSeenMessage(newMessage)
+
+        // 4 ==> simulate typing stop event
+        typingState.emit(TypingEvent(CHANNEL_ID, emptyList()))
+
+        // wait for 1 sec
+        delay(1000)
+
+        /* Then */
+        controller.messageListState.value.newMessageState `should be equal to` Other(newMessage.createdAt?.time)
+    }
+
     private class Fixture(
         private val chatClient: ChatClient = mock(),
-        private val channelId: String = CID,
+        private val cid: String = CID,
         statePluginConfig: StatePluginConfig = StatePluginConfig(),
     ) {
         private val clientState: ClientState = mock()
@@ -594,6 +659,7 @@ internal class MessageListControllerTests {
             watchersState: StateFlow<List<User>> = MutableStateFlow(emptyList()),
             watchersCountState: StateFlow<Int> = MutableStateFlow(0),
             typingUsers: List<User> = listOf(),
+            typingState: StateFlow<TypingEvent> = MutableStateFlow(TypingEvent(cid, typingUsers)),
         ) = apply {
             whenever(channelState.cid) doReturn CID
             whenever(channelState.channelData) doReturn channelDataState
@@ -607,7 +673,7 @@ internal class MessageListControllerTests {
             whenever(channelState.messagesState) doReturn messagesState.map { messages ->
                 MessagesState.Result(messages)
             }.stateIn(testCoroutines.scope, SharingStarted.Eagerly, MessagesState.Result(emptyList()))
-            whenever(channelState.typing) doReturn MutableStateFlow(TypingEvent(channelId, typingUsers))
+            whenever(channelState.typing) doReturn typingState
             whenever(channelState.reads) doReturn MutableStateFlow(listOf())
             whenever(channelState.read) doReturn MutableStateFlow(randomChannelUserRead(lastReadMessageId = null))
             whenever(channelState.endOfOlderMessages) doReturn MutableStateFlow(false)
@@ -628,7 +694,7 @@ internal class MessageListControllerTests {
             deletedMessageVisibility: DeletedMessageVisibility = DeletedMessageVisibility.ALWAYS_VISIBLE,
         ): MessageListController {
             return MessageListController(
-                cid = channelId,
+                cid = cid,
                 chatClient = chatClient,
                 clipboardHandler = mock(),
                 dateSeparatorHandler = dateSeparatorHandler,

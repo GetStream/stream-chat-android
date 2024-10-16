@@ -207,30 +207,6 @@ internal class FilterObjectConverterTest {
                 }
             },
             randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomString() }.distinct().let { values ->
-                    Arguments.of(
-                        Filters.`nin`(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}",
-                    )
-                }
-            },
-            randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt() }.distinct().let { values ->
-                    Arguments.of(
-                        Filters.`nin`(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
-                    )
-                }
-            },
-            randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomBoolean() }.distinct().let { values ->
-                    Arguments.of(
-                        Filters.`nin`(fieldName, values),
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
-                    )
-                }
-            },
-            randomString().let { fieldName ->
                 List(positiveRandomInt(20)) { randomInt() }.distinct().let { values ->
                     Arguments.of(
                         Filters.and(
@@ -422,30 +398,6 @@ internal class FilterObjectConverterTest {
                     Arguments.of(
                         "{\"$fieldName\":{\"\$in\":[${values.joinToString(separator = ",")}]}}",
                         Filters.`in`(fieldName, values),
-                    )
-                }
-            },
-            randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomString() }.distinct().let { values ->
-                    Arguments.of(
-                        "{\"$fieldName\":{\"\$nin\":[\"${values.joinToString(separator = "\",\"")}\"]}}",
-                        Filters.`nin`(fieldName, values),
-                    )
-                }
-            },
-            randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomInt().toDouble() }.distinct().let { values ->
-                    Arguments.of(
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
-                        Filters.`nin`(fieldName, values),
-                    )
-                }
-            },
-            randomString().let { fieldName ->
-                List(positiveRandomInt(20)) { randomBoolean() }.distinct().let { values ->
-                    Arguments.of(
-                        "{\"$fieldName\":{\"\$nin\":[${values.joinToString(separator = ",")}]}}",
-                        Filters.`nin`(fieldName, values),
                     )
                 }
             },

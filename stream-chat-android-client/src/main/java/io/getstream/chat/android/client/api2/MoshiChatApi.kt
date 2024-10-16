@@ -71,6 +71,7 @@ import io.getstream.chat.android.client.api2.model.requests.RemoveMembersRequest
 import io.getstream.chat.android.client.api2.model.requests.SendActionRequest
 import io.getstream.chat.android.client.api2.model.requests.SendEventRequest
 import io.getstream.chat.android.client.api2.model.requests.SendMessageRequest
+import io.getstream.chat.android.client.api2.model.requests.SuggestPollOptionRequest
 import io.getstream.chat.android.client.api2.model.requests.SyncHistoryRequest
 import io.getstream.chat.android.client.api2.model.requests.TruncateChannelRequest
 import io.getstream.chat.android.client.api2.model.requests.UnblockUserRequest
@@ -109,6 +110,7 @@ import io.getstream.chat.android.models.GuestUser
 import io.getstream.chat.android.models.Member
 import io.getstream.chat.android.models.Message
 import io.getstream.chat.android.models.Mute
+import io.getstream.chat.android.models.Option
 import io.getstream.chat.android.models.Poll
 import io.getstream.chat.android.models.PollConfig
 import io.getstream.chat.android.models.Reaction
@@ -1189,6 +1191,13 @@ constructor(
                 set = mapOf("is_closed" to true),
             ),
         ).map { it.poll.toDomain(currentUserIdProvider()) }
+    }
+
+    override fun suggestPollOption(pollId: String, option: String): Call<Option> {
+        return pollsApi.suggestPollOption(
+            pollId,
+            SuggestPollOptionRequest(option),
+        ).map { it.poll_option.toDomain() }
     }
 
     override fun createPoll(pollConfig: PollConfig): Call<Poll> {

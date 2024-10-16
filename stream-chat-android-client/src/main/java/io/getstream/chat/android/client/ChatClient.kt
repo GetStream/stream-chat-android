@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
+import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteReactionIdentifier
@@ -179,9 +180,9 @@ import io.getstream.chat.android.models.VideoCallToken
 import io.getstream.chat.android.models.Vote
 import io.getstream.chat.android.models.querysort.QuerySortByField
 import io.getstream.chat.android.models.querysort.QuerySorter
+import io.getstream.log.AndroidStreamLogger
 import io.getstream.log.CompositeStreamLogger
 import io.getstream.log.StreamLog
-import io.getstream.log.android.AndroidStreamLogger
 import io.getstream.log.taggedLogger
 import io.getstream.result.Error
 import io.getstream.result.Result
@@ -645,6 +646,7 @@ internal constructor(
             userScope.userId.value = user.id
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
         }
+            .share(clientScope) { ConnectUserIdentifier(user) }
     }
 
     private suspend fun connectUserSuspend(
@@ -1506,6 +1508,14 @@ internal constructor(
                     Message(extraData = mapOf("poll_id" to poll.id)),
                 )
             }
+    }
+
+    @CheckResult
+    public fun suggestPollOption(
+        pollId: String,
+        option: String,
+    ): Call<Option> {
+        return api.suggestPollOption(pollId, option)
     }
 
     /**

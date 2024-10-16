@@ -37,6 +37,7 @@ import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.camera.internal.CameraAttachmentFragment.Companion.mode
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.factory.camera.internal.CameraAttachmentFragment.LauncherRequestsKeys
 import io.getstream.chat.android.ui.feature.messages.composer.attachment.picker.poll.CreatePollDialogFragment
+import io.getstream.chat.android.ui.utils.PermissionChecker
 import io.getstream.chat.android.ui.utils.extensions.getFragmentManager
 import io.getstream.chat.android.ui.utils.extensions.streamThemeInflater
 import java.io.File
@@ -48,6 +49,8 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var style: AttachmentsPickerDialogStyle
+
+    private val permissionChecker: PermissionChecker = PermissionChecker()
 
     /**
      * A listener invoked when attachments are selected in the attachment tab.
@@ -114,7 +117,6 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
 
         // Setup listeners and actions
         binding.buttonFiles.setOnClickListener {
-            val supportedMimeTypes = attachmentFilter.getSupportedMimeTypes()
             val filePickerIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = "*/*" // General type to include multiple types
                 putExtra(Intent.EXTRA_MIME_TYPES, attachmentFilter.getSupportedMimeTypes().toTypedArray())
@@ -130,23 +132,24 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
                 ),
             )
         }
-        captureMedia = activity?.activityResultRegistry
-            ?.register(
-                LauncherRequestsKeys.CAPTURE_MEDIA,
-                CaptureMediaContract(style.pickerMediaMode.mode),
-            ) { file: File? ->
-                val result: List<AttachmentMetaData> = if (file == null) {
-                    emptyList()
-                } else {
-                    listOf(AttachmentMetaData(requireContext(), file))
-                }
-
-                attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
-                attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
+        captureMedia = activity?.activityResultRegistry?.register(
+            LauncherRequestsKeys.CAPTURE_MEDIA,
+            CaptureMediaContract(style.pickerMediaMode.mode),
+        ) { file: File? ->
+            val result: List<AttachmentMetaData> = if (file == null) {
+                emptyList()
+            } else {
+                listOf(AttachmentMetaData(requireContext(), file))
             }
+
+            attachmentsPickerTabListener?.onSelectedAttachmentsChanged(result)
+            attachmentsPickerTabListener?.onSelectedAttachmentsSubmitted()
+        }
         captureMedia?.let {
             binding.buttonCapture.setOnClickListener {
-                captureMedia?.launch(Unit)
+                checkCameraPermissions {
+                    captureMedia?.launch(Unit)
+                }
             }
         }
 
@@ -182,6 +185,18 @@ internal class AttachmentsPickerSystemFragment : Fragment() {
      */
     fun setStyle(style: AttachmentsPickerDialogStyle) {
         this.style = style
+    }
+
+    private fun checkCameraPermissions(onPermissionGranted: () -> Unit) {
+        if (permissionChecker.isNeededToRequestForCameraPermissions(requireContext())) {
+            permissionChecker.checkCameraPermissions(
+                view = binding.root,
+                onPermissionDenied = { /* Do nothing */ },
+                onPermissionGranted = onPermissionGranted,
+            )
+        } else {
+            onPermissionGranted()
+        }
     }
 
     companion object {

@@ -76,8 +76,15 @@ public fun Avatar(
     }
 
     val cdnImageResizing = ChatTheme.streamCdnImageResizing
+    val clickableModifier = if (onClick != null) {
+        Modifier.clickable { onClick() }
+    } else {
+        Modifier
+    }
     StreamImage(
-        modifier = modifier.clip(shape).clickable { onClick?.invoke() },
+        modifier = modifier
+            .clip(shape)
+            .then(clickableModifier),
         data = { imageUrl.applyStreamCdnImageResizingIfEnabled(cdnImageResizing) },
         loading = {
             if (placeholderPainter != null) {

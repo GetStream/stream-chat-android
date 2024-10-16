@@ -48,6 +48,9 @@
     <string name="stream_ui_message_list_error_cannot_open_link">There is no app to view this url:\n%s</string>
     <string name="stream_ui_message_list_footnote_edited_now">just now</string>
 
+    <!-- Message List -->
+    <string name="stream_ui_message_list_message_deleted">This message was deleted.</string>
+
     <!--Moderation Dialog-->
     <string name="stream_ui_moderation_dialog_title">Failed to send message</string>
     <string name="stream_ui_moderation_dialog_description">This message might violate our moderation policy. Are you sure you want to send it? Please take a look at our Community Guidelines.</string>

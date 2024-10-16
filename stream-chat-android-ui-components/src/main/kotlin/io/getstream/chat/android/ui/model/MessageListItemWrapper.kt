@@ -16,6 +16,7 @@
 
 package io.getstream.chat.android.ui.model
 
+import io.getstream.chat.android.ui.common.state.messages.list.NewMessageState
 import io.getstream.chat.android.ui.feature.messages.list.adapter.MessageListItem
 
 /**
@@ -36,6 +37,7 @@ public data class MessageListItemWrapper(
         "The name of this field will to be aligned with `MessageListState.endOfNewMessagesReached` field.",
     )
     val areNewestMessagesLoaded: Boolean = true,
+    internal val newMessageState: NewMessageState? = null,
 ) {
 
     override fun toString(): String {
@@ -46,6 +48,7 @@ public data class MessageListItemWrapper(
         return "MessageListItemWrapper(" +
             "endOfNewMessagesReached=$areNewestMessagesLoaded" +
             ", hasNewMessages=$hasNewMessages" +
+            ", newMessageState=$newMessageState" +
             ", items=${items.size}" +
             ", first: ${items.firstOrNull()?.stringify()}" +
             ", isTyping=$isTyping" +
