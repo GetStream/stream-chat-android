@@ -37,6 +37,7 @@ import io.getstream.chat.android.client.api.models.QueryThreadsRequest
 import io.getstream.chat.android.client.api.models.QueryUsersRequest
 import io.getstream.chat.android.client.api.models.SendActionRequest
 import io.getstream.chat.android.client.api.models.identifier.AddDeviceIdentifier
+import io.getstream.chat.android.client.api.models.identifier.ConnectUserIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteDeviceIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteMessageIdentifier
 import io.getstream.chat.android.client.api.models.identifier.DeleteReactionIdentifier
@@ -645,6 +646,7 @@ internal constructor(
             userScope.userId.value = user.id
             connectUserSuspend(user, tokenProvider, timeoutMilliseconds)
         }
+            .share(clientScope) { ConnectUserIdentifier(user) }
     }
 
     private suspend fun connectUserSuspend(
