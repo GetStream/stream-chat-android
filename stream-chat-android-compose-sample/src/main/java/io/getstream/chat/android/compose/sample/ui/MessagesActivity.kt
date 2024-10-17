@@ -190,9 +190,11 @@ class MessagesActivity : BaseConnectedActivity() {
                         onUserAvatarClick = { user ->
                             Log.i("MessagesActivity", "user avatar clicked: ${user.id}")
                         },
+                        onUserMentionClick = { user ->
+                          Log.i("MessagesActivity", "user mention tapped: ${user.id}")
+                        },
                     )
                 }
-
                 // MyCustomUi()
             }
         }

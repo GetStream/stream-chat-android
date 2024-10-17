@@ -44,6 +44,11 @@ internal const val AnnotationTagUrl: AnnotationTag = "URL"
 internal const val AnnotationTagEmail: AnnotationTag = "EMAIL"
 
 /**
+ * The tag used to annotate mentions in the message text.
+ */
+internal const val AnnotationTagMention: AnnotationTag = "MENTION"
+
+/**
  * Takes the given message text and builds an annotated message text that shows links and allows for clicks,
  * if there are any links available.
  *
@@ -63,6 +68,7 @@ internal fun buildAnnotatedMessageText(
         textColor = color,
         textFontStyle = ChatTheme.typography.body.fontStyle,
         linkColor = ChatTheme.colors.primaryAccent,
+        mentionsColor = ChatTheme.colors.primaryAccent,
     )
 }
 
@@ -72,6 +78,8 @@ internal fun buildAnnotatedMessageText(
     textColor: Color,
     textFontStyle: FontStyle?,
     linkColor: Color,
+    mentionsColor: Color,
+    mentionedUserNames: List<String> = emptyList(),
     builder: (AnnotatedString.Builder).() -> Unit = {},
 ): AnnotatedString {
     return buildAnnotatedString {
@@ -102,6 +110,11 @@ internal fun buildAnnotatedMessageText(
             pattern = PatternsCompat.AUTOLINK_EMAIL_ADDRESS,
             schemes = EMAIL_SCHEMES,
             linkColor = linkColor,
+        )
+        tagUser(
+            text = text,
+            mentionsColor = mentionsColor,
+            mentionedUserNames = mentionedUserNames,
         )
 
         // Finally, we apply any additional styling that was passed in.
@@ -165,6 +178,35 @@ private fun AnnotatedString.Builder.linkify(
             tag = tag,
             annotation = url,
             start = start,
+            end = end,
+        )
+    }
+}
+
+private fun AnnotatedString.Builder.tagUser(
+    text: String,
+    mentionsColor: Color,
+    mentionedUserNames: List<String>,
+) {
+    mentionedUserNames.forEach { userName ->
+        val start = text.indexOf(userName)
+        val end = start + userName.length
+
+        if (start < 0) return@forEach
+
+        addStyle(
+            style = SpanStyle(
+                color = mentionsColor,
+                fontWeight = FontWeight.Bold,
+            ),
+            start = start - 1, // -1 to include the @ symbol
+            end = end,
+        )
+
+        addStringAnnotation(
+            tag = AnnotationTagMention,
+            annotation = userName,
+            start = start - 1, // -1 to include the @ symbol
             end = end,
         )
     }

@@ -48,6 +48,7 @@ import androidx.compose.ui.Alignment.Companion.BottomEnd
 import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -147,6 +148,7 @@ public fun MessageItem(
     onQuotedMessageClick: (Message) -> Unit = {},
     onUserAvatarClick: (() -> Unit)? = null,
     onLinkClick: ((Message, String) -> Unit)? = null,
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     leadingContent: @Composable RowScope.(MessageItemState) -> Unit = {
         DefaultMessageItemLeadingContent(
@@ -169,6 +171,7 @@ public fun MessageItem(
             onGiphyActionClick = onGiphyActionClick,
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
             onPollUpdated = onPollUpdated,
             onCastVote = onCastVote,
             onRemoveVote = onRemoveVote,
@@ -436,14 +439,15 @@ internal fun DefaultMessageItemTrailingContent(
  * @param onClosePoll Handler when a user close a poll.
  * @param onAddPollOption Handler when a user add a poll option.
  */
-@Composable
 @Suppress("LongParameterList")
+@Composable
 internal fun DefaultMessageItemCenterContent(
     messageItem: MessageItemState,
     onLongItemClick: (Message) -> Unit = {},
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
     onPollUpdated: (Message, Poll) -> Unit,
     onCastVote: (Message, Poll, Option) -> Unit,
@@ -490,6 +494,7 @@ internal fun DefaultMessageItemCenterContent(
             onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
             onQuotedMessageClick = onQuotedMessageClick,
             onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
         )
     }
 }
@@ -568,31 +573,16 @@ internal fun RegularMessageContent(
     onGiphyActionClick: (GiphyAction) -> Unit = {},
     onQuotedMessageClick: (Message) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
+    onUserMentionClick: (User) -> Unit = {},
     onMediaGalleryPreviewResult: (MediaGalleryPreviewResult?) -> Unit = {},
 ) {
     val message = messageItem.message
     val position = messageItem.groupPosition
     val ownsMessage = messageItem.isMine
 
-    val messageBubbleShape = when {
-        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
-        else -> {
-            if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
-        }
-    }
+    val messageBubbleShape = getMessageBubbleShape(position = position, ownsMessage = ownsMessage)
 
-    val messageBubbleColor = when {
-        message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
-        message.isDeleted() -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.deletedBackgroundColor
-            else -> ChatTheme.otherMessageTheme.deletedBackgroundColor
-        }
-
-        else -> when (ownsMessage) {
-            true -> ChatTheme.ownMessageTheme.backgroundColor
-            else -> ChatTheme.otherMessageTheme.backgroundColor
-        }
-    }
+    val messageBubbleColor = getMessageBubbleColor(message = message, ownsMessage = ownsMessage)
 
     if (!messageItem.isErrorOrFailed()) {
         MessageBubble(
@@ -609,6 +599,7 @@ internal fun RegularMessageContent(
                     onMediaGalleryPreviewResult = onMediaGalleryPreviewResult,
                     onQuotedMessageClick = onQuotedMessageClick,
                     onLinkClick = onLinkClick,
+                    onUserMentionClick = onUserMentionClick,
                 )
             },
         )
@@ -644,6 +635,46 @@ internal fun RegularMessageContent(
 }
 
 /**
+ * Determines the shape of the message bubble based on the message position and ownership.
+ *
+ * @param position The position of the message in the group (top, middle, etc.).
+ * @param ownsMessage Indicates if the current user owns the message.
+ * @return A shape for the message bubble.
+ */
+@Composable
+private fun getMessageBubbleShape(position: List<MessagePosition>, ownsMessage: Boolean): Shape {
+    return when {
+        position.contains(MessagePosition.TOP) || position.contains(MessagePosition.MIDDLE) -> RoundedCornerShape(16.dp)
+        else -> if (ownsMessage) ChatTheme.shapes.myMessageBubble else ChatTheme.shapes.otherMessageBubble
+    }
+}
+
+/**
+ * Determines the background color of the message bubble based on the message content and ownership.
+ *
+ * @param message The message data.
+ * @param ownsMessage Indicates if the current user owns the message.
+ * @return A color for the message bubble.
+ */
+@Composable
+private fun getMessageBubbleColor(message: Message, ownsMessage: Boolean): Color {
+    return when {
+        message.isGiphyEphemeral() -> ChatTheme.colors.giphyMessageBackground
+        message.isDeleted() -> if (ownsMessage) {
+            ChatTheme.ownMessageTheme.deletedBackgroundColor
+        } else {
+            ChatTheme.otherMessageTheme.deletedBackgroundColor
+        }
+
+        else -> if (ownsMessage) {
+            ChatTheme.ownMessageTheme.backgroundColor
+        } else {
+            ChatTheme.otherMessageTheme.backgroundColor
+        }
+    }
+}
+
+/**
  * The default text message content. It holds the quoted message in case there is one.
  *
  * @param message The message to show.
@@ -657,6 +688,7 @@ internal fun DefaultMessageTextContent(
     currentUser: User?,
     onLongItemClick: (Message) -> Unit,
     onQuotedMessageClick: (Message) -> Unit,
+    onUserMentionClick: (User) -> Unit = {},
     onLinkClick: ((Message, String) -> Unit)? = null,
 ) {
     val quotedMessage = message.replyTo
@@ -677,6 +709,7 @@ internal fun DefaultMessageTextContent(
             currentUser = currentUser,
             onLongItemClick = onLongItemClick,
             onLinkClick = onLinkClick,
+            onUserMentionClick = onUserMentionClick,
         )
     }
 }

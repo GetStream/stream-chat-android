@@ -64,6 +64,11 @@ object TestData {
         image = FakeImageLoader.AVATAR_BELAL,
     )
 
+    fun user6(): User = User().copy(
+        id = "jake",
+        image = FakeImageLoader.AVATAR_AMIT,
+    )
+
     fun member1() = Member(
         user = user1(),
         isInvited = false,
@@ -119,6 +124,24 @@ object TestData {
         createdAt = date4(),
         type = MessageType.REGULAR,
         user = user4(),
+    )
+
+    fun message5(): Message = Message().copy(
+        id = "message5",
+        text = "tagged @Belal Khan ",
+        createdAt = date1(),
+        type = MessageType.REGULAR,
+        user = user4(),
+        mentionedUsers = listOf(user5()),
+    )
+
+    fun message6(): Message = Message().copy(
+        id = "message6",
+        text = "tagged @jake ",
+        createdAt = date1(),
+        type = MessageType.REGULAR,
+        user = user5(),
+        mentionedUsers = listOf(user6()),
     )
 
     fun channel1() = Channel().copy(

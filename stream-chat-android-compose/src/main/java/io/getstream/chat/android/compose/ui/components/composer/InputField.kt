@@ -115,6 +115,7 @@ public fun InputField(
                 textColor = theme.textStyle.color,
                 textFontStyle = typography.body.fontStyle,
                 linkColor = colors.primaryAccent,
+                mentionsColor = colors.primaryAccent,
             )
             TransformedText(styledText, OffsetMapping.Identity)
         },
